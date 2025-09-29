@@ -1024,7 +1024,4 @@ export class IntegratedDynamicsClasses {
       return arr;
     }
   }   
-
-
-  globalMap = new IntegratedDynamicsClasses.TypeMap();
 }

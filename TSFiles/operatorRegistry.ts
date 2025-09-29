@@ -6,6 +6,8 @@
 import { IntegratedDynamicsClasses } from "./IntegratedDynamicsClasses";
 import { TypeLambda, TypeNumber, TypeOperatorRegistry } from "./types";
 
+let globalMap = new IntegratedDynamicsClasses.TypeMap();
+
 let operatorRegistry: TypeOperatorRegistry = {
   "baseOperators": {
     "and": new IntegratedDynamicsClasses.Operator({
