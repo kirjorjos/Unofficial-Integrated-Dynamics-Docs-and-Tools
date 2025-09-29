@@ -73,7 +73,7 @@ IntegratedDynamicsClasses = {
     constructor({internalName, nicknames, parsedSignature: rawSignature, symbol, interactName, function: fn}) {
       super("...args", "return this.__call__(...args)");
       this.fn = fn;
-      this.parsedSignature = new InDyClasses.TypeMap(rawSignature);
+      this.parsedSignature = new IntegratedDynamicsClasses.TypeMap(rawSignature);
       this.internalName = internalName;
       this.nicknames = nicknames;
       this.symbol = symbol;
@@ -354,7 +354,7 @@ const operatorRegistry = {
       "nicknames": [
         "logicalAnd"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -402,7 +402,7 @@ const operatorRegistry = {
       "nicknames": [
         "logicalOr"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -450,7 +450,7 @@ const operatorRegistry = {
       "nicknames": [
         "logicalNot"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -485,7 +485,7 @@ const operatorRegistry = {
       "nicknames": [
         "logicalNand"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -535,7 +535,7 @@ const operatorRegistry = {
       "nicknames": [
         "logicalNor"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -585,7 +585,7 @@ const operatorRegistry = {
       "nicknames": [
         "arithmeticAddition"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -633,7 +633,7 @@ const operatorRegistry = {
       "nicknames": [
         "arithmeticSubtraction"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -681,7 +681,7 @@ const operatorRegistry = {
       "nicknames": [
         "arithmeticMultiplication"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -729,7 +729,7 @@ const operatorRegistry = {
       "nicknames": [
         "arithmeticDivision"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -777,7 +777,7 @@ const operatorRegistry = {
       "nicknames": [
         "arithmeticMaximum"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -816,7 +816,7 @@ const operatorRegistry = {
       "interactName": "numberMax",
       "function": (num1) => {
         return (num2) => {
-          return InDyClasses.Number.max(num1, num2);
+          return IntegratedDynamicsClasses.Number.max(num1, num2);
         }
       }
     }),
@@ -825,7 +825,7 @@ const operatorRegistry = {
       "nicknames": [
         "arithmeticMinimum"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -864,7 +864,7 @@ const operatorRegistry = {
       "interactName": "numberMin",
       "function": (num1) => {
         return (num2) => {
-          return InDyClasses.Number.min(num1, num2);
+          return IntegratedDynamicsClasses.Number.min(num1, num2);
         }
       }
     }),
@@ -873,7 +873,7 @@ const operatorRegistry = {
       "nicknames": [
         "arithmeticIncrement"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -908,7 +908,7 @@ const operatorRegistry = {
       "nicknames": [
         "arithmeticDecrement"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -943,7 +943,7 @@ const operatorRegistry = {
       "nicknames": [
         "arithmeticModulus"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -989,7 +989,7 @@ const operatorRegistry = {
     "doubleSqrt": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:double_sqrt",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -1021,7 +1021,7 @@ const operatorRegistry = {
       "nicknames": [
         "doublePow"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -1069,7 +1069,7 @@ const operatorRegistry = {
       "nicknames": [
         "relationalEquals"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -1117,7 +1117,7 @@ const operatorRegistry = {
       "nicknames": [
         "relationalGt"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -1156,7 +1156,7 @@ const operatorRegistry = {
       "interactName": "numberGreaterThan",
       "function": (num1) => {
         return (num2) => {
-          return InDyClasses.Number.gt(num1, num2);
+          return IntegratedDynamicsClasses.Number.gt(num1, num2);
         }
       }
     }),
@@ -1165,7 +1165,7 @@ const operatorRegistry = {
       "nicknames": [
         "relationalLt"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -1204,7 +1204,7 @@ const operatorRegistry = {
       "interactName": "numberLessThan",
       "function": (num1) => {
         return (num2) => {
-          return InDyClasses.Number.lt(num1, num2);
+          return IntegratedDynamicsClasses.Number.lt(num1, num2);
         }
       }
     }),
@@ -1213,7 +1213,7 @@ const operatorRegistry = {
       "nicknames": [
         "relationalNotequals"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -1261,7 +1261,7 @@ const operatorRegistry = {
       "nicknames": [
         "relationalGe"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -1300,7 +1300,7 @@ const operatorRegistry = {
       "interactName": "anyGreaterThanOrEquals",
       "function": (num1) => {
         return (num2) => {
-          return InDyClasses.Number.gt(num1, num2) || (() => {
+          return IntegratedDynamicsClasses.Number.gt(num1, num2) || (() => {
             try {
               return num1.equals(num2);
             } catch (e) {
@@ -1315,7 +1315,7 @@ const operatorRegistry = {
       "nicknames": [
         "relationalLe"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -1354,7 +1354,7 @@ const operatorRegistry = {
       "interactName": "anyLessThanOrEquals",
       "function": (num1) => {
         return (num2) => {
-          return InDyClasses.Number.lt(num1, num2) || (() => {
+          return IntegratedDynamicsClasses.Number.lt(num1, num2) || (() => {
             try {
               return num1.equals(num2);
             } catch (e) {
@@ -1367,7 +1367,7 @@ const operatorRegistry = {
     "binaryAnd": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:binary_and",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -1413,7 +1413,7 @@ const operatorRegistry = {
     "binaryOr": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:binary_or",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -1459,7 +1459,7 @@ const operatorRegistry = {
     "binaryXor": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:binary_xor",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -1505,7 +1505,7 @@ const operatorRegistry = {
     "binaryComplement": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:binary_complement",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -1540,7 +1540,7 @@ const operatorRegistry = {
       "nicknames": [
         "binaryLshift"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -1588,7 +1588,7 @@ const operatorRegistry = {
       "nicknames": [
         "binaryRshift"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -1636,7 +1636,7 @@ const operatorRegistry = {
       "nicknames": [
         "binaryRzshift"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -1682,7 +1682,7 @@ const operatorRegistry = {
     "stringLength": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:string_length",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -1715,7 +1715,7 @@ const operatorRegistry = {
     "stringConcat": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:string_concat",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -1761,7 +1761,7 @@ const operatorRegistry = {
     "stringContains": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:string_contains",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -1807,7 +1807,7 @@ const operatorRegistry = {
     "containsRegex": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:string_contains_regex",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -1854,7 +1854,7 @@ const operatorRegistry = {
     "matchesRegex": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:string_matches_regex",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -1903,7 +1903,7 @@ const operatorRegistry = {
     "stringIndexOf": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:string_index_of",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -1951,7 +1951,7 @@ const operatorRegistry = {
       "nicknames": [
         "stringIndexOfRegex"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -2000,7 +2000,7 @@ const operatorRegistry = {
       "nicknames": [
         "stringStartsWith"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -2048,7 +2048,7 @@ const operatorRegistry = {
       "nicknames": [
         "stringEndsWith"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -2094,7 +2094,7 @@ const operatorRegistry = {
     "stringSplitOn": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:string_split_on",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -2146,7 +2146,7 @@ const operatorRegistry = {
     "stringSplitOnRegex": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:string_split_on_regex",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -2201,7 +2201,7 @@ const operatorRegistry = {
       "nicknames": [
         "stringSubstring"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -2260,7 +2260,7 @@ const operatorRegistry = {
     "stringRegexGroup": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:string_regex_group",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -2325,7 +2325,7 @@ const operatorRegistry = {
     "stringRegexGroups": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:string_regex_groups",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -2383,7 +2383,7 @@ const operatorRegistry = {
     "stringRegexScan": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:string_regex_scan",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -2460,7 +2460,7 @@ const operatorRegistry = {
     "stringReplace": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:string_replace",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -2519,7 +2519,7 @@ const operatorRegistry = {
     "stringReplaceRegex": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:string_replace_regex",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -2579,7 +2579,7 @@ const operatorRegistry = {
     "stringJoin": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:string_join",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -2637,7 +2637,7 @@ const operatorRegistry = {
         "namedName",
         "toString"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -2672,7 +2672,7 @@ const operatorRegistry = {
       "nicknames": [
         "uniquelynamedUniquename"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -2707,7 +2707,7 @@ const operatorRegistry = {
       "nicknames": [
         "string_error"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -2742,7 +2742,7 @@ const operatorRegistry = {
       "nicknames": [
         "numberRound"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -2777,7 +2777,7 @@ const operatorRegistry = {
       "nicknames": [
         "numberCeil"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -2812,7 +2812,7 @@ const operatorRegistry = {
       "nicknames": [
         "numberFloor"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -2847,7 +2847,7 @@ const operatorRegistry = {
       "nicknames": [
         "numberCompact"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -2882,7 +2882,7 @@ const operatorRegistry = {
       "nicknames": [
         "nullableIsnull"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -2917,7 +2917,7 @@ const operatorRegistry = {
       "nicknames": [
         "nullableIsnotnull"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -2950,7 +2950,7 @@ const operatorRegistry = {
     "listLength": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:list_length",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -2989,7 +2989,7 @@ const operatorRegistry = {
     "listEmpty": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:list_empty",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -3028,7 +3028,7 @@ const operatorRegistry = {
     "listNotEmpty": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:list_notempty",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -3069,7 +3069,7 @@ const operatorRegistry = {
       "nicknames": [
         "listElement"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -3127,7 +3127,7 @@ const operatorRegistry = {
         "listElementDefault",
         "get_or_default"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -3193,7 +3193,7 @@ const operatorRegistry = {
     "listContains": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:list_contains",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -3245,7 +3245,7 @@ const operatorRegistry = {
     "listContainsPredicate": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:list_contains_p",
       "nicknames": ["listContainsP"],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -3317,7 +3317,7 @@ const operatorRegistry = {
     "listCount": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:list_count",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -3370,7 +3370,7 @@ const operatorRegistry = {
     "listCountPredicate": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:list_count_p",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -3444,7 +3444,7 @@ const operatorRegistry = {
       "nicknames": [
         "listAppend"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -3502,7 +3502,7 @@ const operatorRegistry = {
     "listConcat": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:list_concat",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -3568,7 +3568,7 @@ const operatorRegistry = {
       "nicknames": [
         "listLazybuilt"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -3664,7 +3664,7 @@ const operatorRegistry = {
       "nicknames": [
         "listHead"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -3709,7 +3709,7 @@ const operatorRegistry = {
       "nicknames": [
         "listTail"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -3757,7 +3757,7 @@ const operatorRegistry = {
     "listUniqPredicate": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:list_uniq_p",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -3857,7 +3857,7 @@ const operatorRegistry = {
     "listUniq": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:list_uniq",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -3912,7 +3912,7 @@ const operatorRegistry = {
       "nicknames": [
         "listSlice"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -3988,7 +3988,7 @@ const operatorRegistry = {
       "nicknames": [
         "listIntersection"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -4055,7 +4055,7 @@ const operatorRegistry = {
       "nicknames": [
         "listEqualsSet"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -4117,7 +4117,7 @@ const operatorRegistry = {
       "nicknames": [
         "listEqualsMultiset"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -4191,7 +4191,7 @@ const operatorRegistry = {
       "nicknames": [
         "BlockOpaque"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -4229,7 +4229,7 @@ const operatorRegistry = {
         "blockItemstack",
         "block_itemstack"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -4267,7 +4267,7 @@ const operatorRegistry = {
         "blockMod",
         "block_modname"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -4304,7 +4304,7 @@ const operatorRegistry = {
         "block_break_sound",
         "blockBreakSound"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -4341,7 +4341,7 @@ const operatorRegistry = {
         "blockPlaceSound",
         "block_place_sound"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -4378,7 +4378,7 @@ const operatorRegistry = {
         "blockStepSound",
         "block_step_sound"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -4415,7 +4415,7 @@ const operatorRegistry = {
         "block_is_shearable",
         "blockIsShearable"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -4452,7 +4452,7 @@ const operatorRegistry = {
         "block_plant_age",
         "blockPlantAge"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -4488,7 +4488,7 @@ const operatorRegistry = {
         "BlockByName",
         "block_by_name"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -4524,7 +4524,7 @@ const operatorRegistry = {
         "BlockProperties",
         "block_properties"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -4560,7 +4560,7 @@ const operatorRegistry = {
         "BlockWithProperties",
         "block_with_properties"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -4609,7 +4609,7 @@ const operatorRegistry = {
         "BlockPossibleProperties",
         "block_possible_properties"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -4644,7 +4644,7 @@ const operatorRegistry = {
       "nicknames": [
         "BlockTag"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -4686,7 +4686,7 @@ const operatorRegistry = {
         "BlockTagStacks",
         "block_tag_stacks"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -4729,7 +4729,7 @@ const operatorRegistry = {
         "itemstack_size",
         "itemstackSize"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -4766,7 +4766,7 @@ const operatorRegistry = {
         "itemstack_max_size",
         "itemstackMaxSize"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -4803,7 +4803,7 @@ const operatorRegistry = {
         "itemstack_is_stackable",
         "itemstackIsStackable"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -4840,7 +4840,7 @@ const operatorRegistry = {
         "itemstack_is_damageable",
         "itemstackIsDamageable"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -4877,7 +4877,7 @@ const operatorRegistry = {
         "itemstack_damage",
         "itemstackDamage"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -4914,7 +4914,7 @@ const operatorRegistry = {
         "itemstack_max_damage",
         "itemstackMaxDamage"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -4952,7 +4952,7 @@ const operatorRegistry = {
         "itemstackIsEnchanted",
         "isEnchanted"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -4990,7 +4990,7 @@ const operatorRegistry = {
         "itemstackIsEnchantable",
         "isEnchantable"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -5027,7 +5027,7 @@ const operatorRegistry = {
         "itemstack_repair_cost",
         "itemstackRepairCost"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -5064,7 +5064,7 @@ const operatorRegistry = {
         "itemstack_rarity",
         "itemstackRarity"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -5101,7 +5101,7 @@ const operatorRegistry = {
         "itemstack_strength_vs_block",
         "itemstackStrengthVsBlock"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -5151,7 +5151,7 @@ const operatorRegistry = {
         "itemstack_can_harvest_block",
         "itemstackCanHarvestBlock"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -5201,7 +5201,7 @@ const operatorRegistry = {
         "itemstack_block",
         "itemstackBlock"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -5239,7 +5239,7 @@ const operatorRegistry = {
         "itemstackIsFluidstack",
         "itemHasFluid"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -5282,7 +5282,7 @@ const operatorRegistry = {
         "itemstack_fluid",
         "itemstackFluid"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -5323,7 +5323,7 @@ const operatorRegistry = {
         "item_fluidstack_capacity",
         "itemFluidstackCapacity"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -5360,7 +5360,7 @@ const operatorRegistry = {
         "itemstack_is_dataequal",
         "itemstackIsDataequal"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -5410,7 +5410,7 @@ const operatorRegistry = {
         "itemstack_is_itemequalnodata",
         "itemstackIsItemequalnodata"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -5460,7 +5460,7 @@ const operatorRegistry = {
         "itemstack_is_rawitemequal",
         "itemstackIsRawitemequal"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -5510,7 +5510,7 @@ const operatorRegistry = {
         "item_mod",
         "itemModname"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -5547,7 +5547,7 @@ const operatorRegistry = {
         "item_fuel_burn_time",
         "itemFuelBurnTime"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -5586,7 +5586,7 @@ const operatorRegistry = {
         "item_is_fuel",
         "itemIsFuel"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -5624,7 +5624,7 @@ const operatorRegistry = {
         "itemstackTagNames",
         "item_tag_names"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -5668,7 +5668,7 @@ const operatorRegistry = {
         "itemstackTagValues",
         "item_tag_values"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -5712,7 +5712,7 @@ const operatorRegistry = {
         "itemstackWithSize",
         "item_with_size"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -5764,7 +5764,7 @@ const operatorRegistry = {
         "item_is_fe_container",
         "itemIsFecontainer"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -5803,7 +5803,7 @@ const operatorRegistry = {
         "item_stored_fe",
         "itemStoredFe"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -5842,7 +5842,7 @@ const operatorRegistry = {
         "item_fe_capacity",
         "itemFeCapacity"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -5881,7 +5881,7 @@ const operatorRegistry = {
         "item_has_inventory",
         "itemHasInventory"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -5920,7 +5920,7 @@ const operatorRegistry = {
         "item_inventory_size",
         "itemInventorySize"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -5958,7 +5958,7 @@ const operatorRegistry = {
         "itemstackInventory",
         "item_inventory"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -6002,7 +6002,7 @@ const operatorRegistry = {
         "itemstackByName",
         "item_by_name"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -6040,7 +6040,7 @@ const operatorRegistry = {
         "itemstackListCount",
         "item_list_count"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -6101,7 +6101,7 @@ const operatorRegistry = {
         "item_data",
         "itemData"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -6140,7 +6140,7 @@ const operatorRegistry = {
         "item_has_data",
         "itemHasData"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -6179,7 +6179,7 @@ const operatorRegistry = {
         "item_data_keys",
         "itemDataKeys"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -6228,7 +6228,7 @@ const operatorRegistry = {
         "item_data_value",
         "itemDataValue"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -6276,7 +6276,7 @@ const operatorRegistry = {
         "item_with_data",
         "itemWithData"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -6331,7 +6331,7 @@ const operatorRegistry = {
         "itemstackTooltip",
         "item_tooltip"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -6375,7 +6375,7 @@ const operatorRegistry = {
         "itemstackEntityTooltip",
         "item_entity_tooltip"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -6432,7 +6432,7 @@ const operatorRegistry = {
         "entity_is_mob",
         "entityIsMob"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -6469,7 +6469,7 @@ const operatorRegistry = {
         "entity_is_animal",
         "entityIsAnimal"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -6506,7 +6506,7 @@ const operatorRegistry = {
         "entity_is_item",
         "entityIsItem"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -6543,7 +6543,7 @@ const operatorRegistry = {
         "entity_is_player",
         "entityIsPlayer"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -6580,7 +6580,7 @@ const operatorRegistry = {
         "entity_is_minecart",
         "entityIsMinecart"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -6620,7 +6620,7 @@ const operatorRegistry = {
         "entityItemStack",
         "entity_item"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -6662,7 +6662,7 @@ const operatorRegistry = {
         "entity_health_value",
         "entityHealthValue"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -6698,7 +6698,7 @@ const operatorRegistry = {
         "EntityWidth",
         "entity_width"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -6734,7 +6734,7 @@ const operatorRegistry = {
         "EntityHeight",
         "entity_height"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -6771,7 +6771,7 @@ const operatorRegistry = {
         "entity_is_burning",
         "entityIsBurning"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -6808,7 +6808,7 @@ const operatorRegistry = {
         "entity_is_wet",
         "entityIsWet"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -6845,7 +6845,7 @@ const operatorRegistry = {
         "entity_is_crouching",
         "entityIsCrouching"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -6882,7 +6882,7 @@ const operatorRegistry = {
         "entity_is_eating",
         "entityIsEating"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -6920,7 +6920,7 @@ const operatorRegistry = {
         "entityArmorInventory",
         "entity_armor"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -6965,7 +6965,7 @@ const operatorRegistry = {
         "entity_inventory_contents",
         "entityInventoryContents"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -7008,7 +7008,7 @@ const operatorRegistry = {
         "entity_mod_name",
         "entityModName"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -7044,7 +7044,7 @@ const operatorRegistry = {
         "PlayerTargetblock",
         "player_target_block"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -7080,7 +7080,7 @@ const operatorRegistry = {
         "PlayerTargetentity",
         "player_target_entity"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -7116,7 +7116,7 @@ const operatorRegistry = {
         "PlayerHasguiopen",
         "player_has_gui_open"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -7153,7 +7153,7 @@ const operatorRegistry = {
         "entity_held_item_main",
         "entityHeldItemMain"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -7190,7 +7190,7 @@ const operatorRegistry = {
         "entity_held_item_off",
         "entityHeldItemOff"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -7226,7 +7226,7 @@ const operatorRegistry = {
         "EntityMounted",
         "entitys_mounted"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -7270,7 +7270,7 @@ const operatorRegistry = {
         "itemframeContents",
         "item_frame_contents"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -7312,7 +7312,7 @@ const operatorRegistry = {
         "itemframeRotation",
         "item_frame_rotation"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -7352,7 +7352,7 @@ const operatorRegistry = {
         "EntityHurtsound",
         "entity_hurt_sound"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -7388,7 +7388,7 @@ const operatorRegistry = {
         "EntityDeathsound",
         "entity_death_sound"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -7424,7 +7424,7 @@ const operatorRegistry = {
         "EntityAge",
         "entity_age"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -7461,7 +7461,7 @@ const operatorRegistry = {
         "entity_is_child",
         "entityIsChild"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -7498,7 +7498,7 @@ const operatorRegistry = {
         "entity_can_breed",
         "entityCanBreed"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -7535,7 +7535,7 @@ const operatorRegistry = {
         "entity_is_in_love",
         "entityIsInLove"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -7572,7 +7572,7 @@ const operatorRegistry = {
         "entity_can_breed_with",
         "entityCanBreedWith"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -7620,7 +7620,7 @@ const operatorRegistry = {
         "entity_is_shearable",
         "entityIsShearable"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -7656,7 +7656,7 @@ const operatorRegistry = {
         "EntityNbt",
         "entity_nbt"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -7692,7 +7692,7 @@ const operatorRegistry = {
         "EntityType",
         "entity_type"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -7730,7 +7730,7 @@ const operatorRegistry = {
         "entityItems",
         "entity_item_list"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -7772,7 +7772,7 @@ const operatorRegistry = {
         "EntityFluids",
         "entity_fluids"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -7814,7 +7814,7 @@ const operatorRegistry = {
         "EntityEnergyStored",
         "entity_energy_stored"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -7850,7 +7850,7 @@ const operatorRegistry = {
         "EntityEnergyCapacity",
         "entity_energy_capacity"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -7890,7 +7890,7 @@ const operatorRegistry = {
         "fluid_stack_amount",
         "fluid_amount"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -7930,7 +7930,7 @@ const operatorRegistry = {
         "fluid_stack_block",
         "fluid_block"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -7970,7 +7970,7 @@ const operatorRegistry = {
         "fluid_stack_light_level",
         "fluid_light_level"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -8010,7 +8010,7 @@ const operatorRegistry = {
         "fluid_stack_density",
         "fluid_density"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -8050,7 +8050,7 @@ const operatorRegistry = {
         "fluid_stack_temperature",
         "fluid_temperature"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -8090,7 +8090,7 @@ const operatorRegistry = {
         "fluid_stack_viscosity",
         "fluid_viscosity"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -8131,7 +8131,7 @@ const operatorRegistry = {
         "fluid_is_lighter_than_air",
         "fluidIsLighterThanAir"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -8171,7 +8171,7 @@ const operatorRegistry = {
         "fluid_stack_rarity",
         "fluid_rarity"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -8211,7 +8211,7 @@ const operatorRegistry = {
         "fluid_stack_sound_bucket_empty",
         "fluid_sound_bucket_empty"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -8251,7 +8251,7 @@ const operatorRegistry = {
         "fluid_stack_sound_fluid_vaporize",
         "fluid_sound_fluid_vaporize"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -8291,7 +8291,7 @@ const operatorRegistry = {
         "fluid_stack_sound_bucket_fill",
         "fluid_sound_bucket_fill"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -8331,7 +8331,7 @@ const operatorRegistry = {
         "fluid_stack_bucket",
         "fluid_bucket"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -8372,7 +8372,7 @@ const operatorRegistry = {
         "fluid_israwfluidequal",
         "isRawFluidEqual"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -8425,7 +8425,7 @@ const operatorRegistry = {
         "fluid_stack_modname",
         "fluid_mod_name"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -8471,7 +8471,7 @@ const operatorRegistry = {
         "fluidstack_NBT",
         "fluidstackNBT"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -8511,7 +8511,7 @@ const operatorRegistry = {
         "fluid_stack_with_amount",
         "fluid_with_amount"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -8570,7 +8570,7 @@ const operatorRegistry = {
         "fluidstack_NBT_keys",
         "fluidstackNBTKeys"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -8626,7 +8626,7 @@ const operatorRegistry = {
         "fluidstack_NBT_value",
         "fluidstackNBTValue"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -8681,7 +8681,7 @@ const operatorRegistry = {
         "fluid_stack_with_data",
         "fluidStackWithData"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": {
           "kind": "Function",
@@ -8730,7 +8730,7 @@ const operatorRegistry = {
         "fluidstackTagStacks",
         "fluidstackTagStack"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -8773,7 +8773,7 @@ const operatorRegistry = {
         "fluidStackTagStacks",
         "fluid_stack_tag_stacks"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -8814,7 +8814,7 @@ const operatorRegistry = {
       "nicknames": [
         "operatorApply"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -8872,7 +8872,7 @@ const operatorRegistry = {
       "nicknames": [
         "operatorApply_2"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -8951,7 +8951,7 @@ const operatorRegistry = {
       "nicknames": [
         "operatorApply_3"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -9051,7 +9051,7 @@ const operatorRegistry = {
       "nicknames": [
         "operatorApplyN"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -9128,7 +9128,7 @@ const operatorRegistry = {
       "nicknames": [
         "operatorApply_0"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -9168,7 +9168,7 @@ const operatorRegistry = {
       "nicknames": [
         "operatorMap"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -9244,7 +9244,7 @@ const operatorRegistry = {
       "nicknames": [
         "operatorFilter"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -9320,7 +9320,7 @@ const operatorRegistry = {
       "nicknames": [
         "operatorConjunction"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -9418,7 +9418,7 @@ const operatorRegistry = {
       "nicknames": [
         "operatorDisjunction"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -9516,7 +9516,7 @@ const operatorRegistry = {
       "nicknames": [
         "operatorNegation"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -9585,7 +9585,7 @@ const operatorRegistry = {
       "nicknames": [
         "operatorPipe"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -9698,7 +9698,7 @@ const operatorRegistry = {
         "operatorPipe2",
         "pipe2"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -9840,7 +9840,7 @@ const operatorRegistry = {
       "nicknames": [
         "operatorFlip"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -9943,7 +9943,7 @@ const operatorRegistry = {
       "nicknames": [
         "operatorReduce"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -10033,7 +10033,7 @@ const operatorRegistry = {
       "nicknames": [
         "operatorReduce1"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -10111,7 +10111,7 @@ const operatorRegistry = {
       "nicknames": [
         "operatorByName"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -10158,7 +10158,7 @@ const operatorRegistry = {
       "nicknames": [
         "nbtCompoundSize"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -10193,7 +10193,7 @@ const operatorRegistry = {
       "nicknames": [
         "nbtCompoundKeys"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -10234,7 +10234,7 @@ const operatorRegistry = {
       "nicknames": [
         "nbtCompoundHaskey"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -10282,7 +10282,7 @@ const operatorRegistry = {
       "nicknames": [
         "nbtCompoundValueType"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -10332,7 +10332,7 @@ const operatorRegistry = {
       "nicknames": [
         "nbtCompoundValueTag"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -10380,7 +10380,7 @@ const operatorRegistry = {
       "nicknames": [
         "nbtCompoundValueBoolean"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -10428,7 +10428,7 @@ const operatorRegistry = {
       "nicknames": [
         "nbtCompoundValueInteger"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -10480,7 +10480,7 @@ const operatorRegistry = {
       "nicknames": [
         "nbtCompoundValueLong"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -10532,7 +10532,7 @@ const operatorRegistry = {
       "nicknames": [
         "nbtCompoundValueDouble"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -10584,7 +10584,7 @@ const operatorRegistry = {
       "nicknames": [
         "nbtCompoundValueString"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -10632,7 +10632,7 @@ const operatorRegistry = {
       "nicknames": [
         "nbtCompoundValueCompound"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -10681,7 +10681,7 @@ const operatorRegistry = {
         "nbtCompoundValueListTag",
         "nbtCompoundValueList"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -10738,7 +10738,7 @@ const operatorRegistry = {
       "nicknames": [
         "nbtCompoundValueListByte"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -10795,7 +10795,7 @@ const operatorRegistry = {
       "nicknames": [
         "nbtCompoundValueListInt"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -10852,7 +10852,7 @@ const operatorRegistry = {
       "nicknames": [
         "nbtCompoundValueListLong"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -10909,7 +10909,7 @@ const operatorRegistry = {
       "nicknames": [
         "nbtCompoundWithout"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -10957,7 +10957,7 @@ const operatorRegistry = {
       "nicknames": [
         "nbtCompoundWithBoolean"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -11011,7 +11011,7 @@ const operatorRegistry = {
       "nicknames": [
         "nbtCompoundWithShort"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -11065,7 +11065,7 @@ const operatorRegistry = {
       "nicknames": [
         "nbtCompoundWithInteger"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -11119,7 +11119,7 @@ const operatorRegistry = {
       "nicknames": [
         "nbtCompoundWithLong"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -11173,7 +11173,7 @@ const operatorRegistry = {
       "nicknames": [
         "nbtCompoundWithDouble"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -11227,7 +11227,7 @@ const operatorRegistry = {
       "nicknames": [
         "nbtCompoundWithFloat"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -11281,7 +11281,7 @@ const operatorRegistry = {
       "nicknames": [
         "nbtCompoundWithString"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -11335,7 +11335,7 @@ const operatorRegistry = {
       "nicknames": [
         "nbtCompoundWithCompound"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -11389,7 +11389,7 @@ const operatorRegistry = {
       "nicknames": [
         "nbtCompoundWithListTag"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -11449,7 +11449,7 @@ const operatorRegistry = {
       "nicknames": [
         "nbtCompoundWithListByte"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -11509,7 +11509,7 @@ const operatorRegistry = {
       "nicknames": [
         "nbtCompoundWithListInt"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -11569,7 +11569,7 @@ const operatorRegistry = {
       "nicknames": [
         "nbtCompoundWithListLong"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -11629,7 +11629,7 @@ const operatorRegistry = {
       "nicknames": [
         "nbtCompoundSubset"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -11672,7 +11672,7 @@ const operatorRegistry = {
       "nicknames": [
         "nbtCompoundUnion"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -11715,7 +11715,7 @@ const operatorRegistry = {
       "nicknames": [
         "nbtCompoundIntersection"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -11758,7 +11758,7 @@ const operatorRegistry = {
       "nicknames": [
         "nbtCompoundMinus"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -11799,7 +11799,7 @@ const operatorRegistry = {
     "nbtAsBoolean": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:nbt_as_boolean",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -11829,7 +11829,7 @@ const operatorRegistry = {
     "nbtAsByte": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:nbt_as_byte",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -11859,7 +11859,7 @@ const operatorRegistry = {
     "nbtAsShort": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:nbt_as_short",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -11889,7 +11889,7 @@ const operatorRegistry = {
     "nbtAsInt": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:nbt_as_int",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -11919,7 +11919,7 @@ const operatorRegistry = {
     "nbtAsLong": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:nbt_as_long",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -11949,7 +11949,7 @@ const operatorRegistry = {
     "nbtAsDouble": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:nbt_as_double",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -11979,7 +11979,7 @@ const operatorRegistry = {
     "nbtAsFloat": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:nbt_as_float",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -12009,7 +12009,7 @@ const operatorRegistry = {
     "nbtAsString": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:nbt_as_string",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -12039,7 +12039,7 @@ const operatorRegistry = {
     "nbtAsTagList": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:nbt_as_tag_list",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -12075,7 +12075,7 @@ const operatorRegistry = {
     "nbtAsByteList": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:nbt_as_byte_list",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -12111,7 +12111,7 @@ const operatorRegistry = {
     "nbtAsIntList": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:nbt_as_int_list",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -12147,7 +12147,7 @@ const operatorRegistry = {
     "nbtAsLongList": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:nbt_as_long_list",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -12183,7 +12183,7 @@ const operatorRegistry = {
     "nbtFromBoolean": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:nbt_from_boolean",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -12213,7 +12213,7 @@ const operatorRegistry = {
     "nbtFromShort": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:nbt_from_short",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -12243,7 +12243,7 @@ const operatorRegistry = {
     "nbtFromByte": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:nbt_from_byte",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -12273,7 +12273,7 @@ const operatorRegistry = {
     "nbtFromInt": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:nbt_from_int",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -12303,7 +12303,7 @@ const operatorRegistry = {
     "nbtFromLong": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:nbt_from_long",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -12333,7 +12333,7 @@ const operatorRegistry = {
     "nbtFromDouble": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:nbt_from_double",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -12363,7 +12363,7 @@ const operatorRegistry = {
     "nbtFromFloat": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:nbt_from_float",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -12393,7 +12393,7 @@ const operatorRegistry = {
     "nbtFromString": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:nbt_from_string",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -12423,7 +12423,7 @@ const operatorRegistry = {
     "nbtFromTagList": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:nbt_from_tag_list",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -12459,7 +12459,7 @@ const operatorRegistry = {
     "nbtFromByteList": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:nbt_from_byte_list",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -12495,7 +12495,7 @@ const operatorRegistry = {
     "nbtFromIntList": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:nbt_from_int_list",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -12531,7 +12531,7 @@ const operatorRegistry = {
     "nbtFromLongList": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:nbt_from_long_list",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -12567,7 +12567,7 @@ const operatorRegistry = {
     "nbtPathMatchFirst": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:nbt_path_match_first",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -12608,7 +12608,7 @@ const operatorRegistry = {
     "nbtPathMatchAll": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:nbt_path_match_all",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -12655,7 +12655,7 @@ const operatorRegistry = {
     "NBTPathTest": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:nbt_path_test",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -12696,7 +12696,7 @@ const operatorRegistry = {
     "ingredientsItems": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:ingredients_items",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -12732,7 +12732,7 @@ const operatorRegistry = {
     "ingredientsFluids": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:ingredients_fluids",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -12768,7 +12768,7 @@ const operatorRegistry = {
     "ingredientsEnergies": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:ingredients_energies",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -12804,7 +12804,7 @@ const operatorRegistry = {
     "ingredientsWithItem": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:ingredients_with_item",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -12856,7 +12856,7 @@ const operatorRegistry = {
     "ingredientsWithFluid": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:ingredients_with_fluid",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -12908,7 +12908,7 @@ const operatorRegistry = {
     "ingredientsWithEnergy": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:ingredients_with_energy",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -12960,7 +12960,7 @@ const operatorRegistry = {
     "ingredientsWithItems": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:ingredients_with_items",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -13018,7 +13018,7 @@ const operatorRegistry = {
     "ingredientsWithFluids": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:ingredients_with_fluids",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -13076,7 +13076,7 @@ const operatorRegistry = {
     "ingredientsWithEnergies": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:ingredients_with_energies",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -13134,7 +13134,7 @@ const operatorRegistry = {
     "recipeInput": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:recipe_input",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -13164,7 +13164,7 @@ const operatorRegistry = {
     "recipeOutput": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:recipe_output",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -13194,7 +13194,7 @@ const operatorRegistry = {
     "recipeWithInput": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:recipe_with_input",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -13235,7 +13235,7 @@ const operatorRegistry = {
     "recipeWithOutput": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:recipe_with_output",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -13276,7 +13276,7 @@ const operatorRegistry = {
     "recipeWithInputOutput": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:recipe_with_input_output",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -13317,7 +13317,7 @@ const operatorRegistry = {
     "parseBoolean": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.boolean",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -13348,7 +13348,7 @@ const operatorRegistry = {
     "parseDouble": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.double",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -13379,7 +13379,7 @@ const operatorRegistry = {
     "parseInteger": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.integer",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -13410,7 +13410,7 @@ const operatorRegistry = {
     "parseLong": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.long",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -13441,7 +13441,7 @@ const operatorRegistry = {
     "parseNBT": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.nbt",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -13474,7 +13474,7 @@ const operatorRegistry = {
       "nicknames": [
         "generalChoice"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -13529,7 +13529,7 @@ const operatorRegistry = {
     "generalIdentity": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:general_identity",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -13561,7 +13561,7 @@ const operatorRegistry = {
     "generalConstant": new IntegratedDynamicsClasses.Operator({
       "internalName": "integrateddynamics:general_constant",
       "nicknames": [],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -13608,7 +13608,7 @@ const operatorRegistry = {
         "intToDouble",
         "integerDouble"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -13641,7 +13641,7 @@ const operatorRegistry = {
         "intToLong",
         "integerLong"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -13674,7 +13674,7 @@ const operatorRegistry = {
         "doubleToInt",
         "doubleInteger"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -13706,7 +13706,7 @@ const operatorRegistry = {
       "nicknames": [
         "doubleToLong"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -13739,7 +13739,7 @@ const operatorRegistry = {
         "longToInt",
         "longInteger"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
@@ -13772,7 +13772,7 @@ const operatorRegistry = {
         "longToDouble",
         "longDouble"
       ],
-      "parsedSignature": new IntegratedDynamicsClasses.parsedSignature({
+      "parsedSignature": new IntegratedDynamicsClasses.ParsedSignature({
         "kind": "Operator",
         "args": [
           {
