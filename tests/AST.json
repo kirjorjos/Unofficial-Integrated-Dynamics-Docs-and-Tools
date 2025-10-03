@@ -1,267 +1,267 @@
 [
-	{
-		"serializer": "apply",
-		"args": [
-			{
-				"operator": {
-					"serializer": "pipe",
-					"args": [
-						{
-							"serializer": "flip",
-							"args": [
-								{
-									"serializer": "pipe",
-									"args": [
-										{
-											"serializer": "flip",
-											"args": [
-												{
-													"operator": "pipe",
-													"args": []
-												}
-											]
-										},
-										{
-											"serializer": "flip",
-											"args": [
-												{
-													"operator": "pipe",
-													"args": []
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							"operator": "apply",
-							"args": []
-						}
-					]
-				},
-				"args": [
-					{
-						"serializer": "flip",
-						"args": [
-							{
-								"serializer": "pipe",
-								"args": [
-									{
-										"serializer": "flip",
-										"args": [
-											{
-												"operator": "pipe",
-												"args": []
-											}
-										]
-									},
-									{
-										"serializer": "flip",
-										"args": [
-											{
-												"operator": "pipe",
-												"args": []
-											}
-										]
-									}
-								]
-							}
-						]
-					}
-				]
-			}
-		]
-	},
-	{
-		"serializer": "pipe",
-		"args": [
-			{
-				"serializer": "pipe",
-				"args": [
-					{
-						"serializer": "pipe",
-						"args": [
-							{
-								"serializer": "apply",
-								"args": [
-									{
-										"operator": {
-											"serializer": "flip",
-											"args": [
-												{
-													"operator": "pipe",
-													"args": []
-												}
-											]
-										},
-										"args": [
-											{
-												"operator": "flip",
-												"args": []
-											}
-										]
-									}
-								]
-							},
-							{
-								"operator": "flip",
-								"args": []
-							}
-						]
-					},
-					{
-						"serializer": "apply",
-						"args": [
-							{
-								"operator": {
-									"serializer": "flip",
-									"args": [
-										{
-											"operator": "pipe",
-											"args": []
-										}
-									]
-								},
-								"args": [
-									{
-										"operator": "apply3",
-										"args": []
-									}
-								]
-							}
-						]
-					}
-				]
-			},
-			{
-				"serializer": "apply",
-				"args": [
-					{
-						"operator": {
-							"serializer": "flip",
-							"args": [
-								{
-									"operator": "pipe",
-									"args": []
-								}
-							]
-						},
-						"args": [
-							{
-								"operator": "flip",
-								"args": []
-							}
-						]
-					}
-				]
-			}
-		]
-	},
-	{
-		"serializer": "apply",
-		"args": [
-			{
-				"operator": {
-					"serializer": "pipe",
-					"args": [
-						{
-							"serializer": "flip",
-							"args": [
-								{
-									"serializer": "pipe",
-									"args": [
-										{
-											"serializer": "flip",
-											"args": [
-												{
-													"operator": "pipe",
-													"args": []
-												}
-											]
-										},
-										{
-											"serializer": "flip",
-											"args": [
-												{
-													"operator": "pipe",
-													"args": []
-												}
-											]
-										}
-									]
-								}
-							]
-						},
-						{
-							"operator": "apply",
-							"args": []
-						}
-					]
-				},
-				"args": [
-					{
-						"serializer": "flip",
-						"args": [
-							{
-								"serializer": "pipe",
-								"args": [
-									{
-										"serializer": "flip",
-										"args": [
-											{
-												"operator": "pipe",
-												"args": []
-											}
-										]
-									},
-									{
-										"serializer": "flip",
-										"args": [
-											{
-												"operator": "pipe",
-												"args": []
-											}
-										]
-									}
-								]
-							}
-						]
-					}
-				]
-			}
-		]
-	},
-	{
-		"serializer": "pipe",
-		"args": [
-			{
-				"serializer": "pipe",
-				"args": [
-					{
-						"operator": "multiply",
-						"args": []
-					},
-					{
-						"serializer": "apply",
-						"args": [
-							{
-								"operator": "lazybuilt",
-								"args": [
-									{
-										"type": "integer",
-										"value": 1
-									}
-								]
-							}
-						]
-					}
-				]
-			},
-			{
-				"operator": "get",
-				"args": []
-			}
-		]
-	}	
+  {
+    "serializer": "apply",
+    "args": [
+      {
+        "operator": {
+          "serializer": "pipe",
+          "args": [
+            {
+              "serializer": "flip",
+              "args": [
+                {
+                  "serializer": "pipe",
+                  "args": [
+                    {
+                      "serializer": "flip",
+                      "args": [
+                        {
+                          "operator": "pipe",
+                          "args": []
+                        }
+                      ]
+                    },
+                    {
+                      "serializer": "flip",
+                      "args": [
+                        {
+                          "operator": "pipe",
+                          "args": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "operator": "apply",
+              "args": []
+            }
+          ]
+        },
+        "args": [
+          {
+            "serializer": "flip",
+            "args": [
+              {
+                "serializer": "pipe",
+                "args": [
+                  {
+                    "serializer": "flip",
+                    "args": [
+                      {
+                        "operator": "pipe",
+                        "args": []
+                      }
+                    ]
+                  },
+                  {
+                    "serializer": "flip",
+                    "args": [
+                      {
+                        "operator": "pipe",
+                        "args": []
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "serializer": "pipe",
+    "args": [
+      {
+        "serializer": "pipe",
+        "args": [
+          {
+            "serializer": "pipe",
+            "args": [
+              {
+                "serializer": "apply",
+                "args": [
+                  {
+                    "operator": {
+                      "serializer": "flip",
+                      "args": [
+                        {
+                          "operator": "pipe",
+                          "args": []
+                        }
+                      ]
+                    },
+                    "args": [
+                      {
+                        "operator": "flip",
+                        "args": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "operator": "flip",
+                "args": []
+              }
+            ]
+          },
+          {
+            "serializer": "apply",
+            "args": [
+              {
+                "operator": {
+                  "serializer": "flip",
+                  "args": [
+                    {
+                      "operator": "pipe",
+                      "args": []
+                    }
+                  ]
+                },
+                "args": [
+                  {
+                    "operator": "apply3",
+                    "args": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "serializer": "apply",
+        "args": [
+          {
+            "operator": {
+              "serializer": "flip",
+              "args": [
+                {
+                  "operator": "pipe",
+                  "args": []
+                }
+              ]
+            },
+            "args": [
+              {
+                "operator": "flip",
+                "args": []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "serializer": "apply",
+    "args": [
+      {
+        "operator": {
+          "serializer": "pipe",
+          "args": [
+            {
+              "serializer": "flip",
+              "args": [
+                {
+                  "serializer": "pipe",
+                  "args": [
+                    {
+                      "serializer": "flip",
+                      "args": [
+                        {
+                          "operator": "pipe",
+                          "args": []
+                        }
+                      ]
+                    },
+                    {
+                      "serializer": "flip",
+                      "args": [
+                        {
+                          "operator": "pipe",
+                          "args": []
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "operator": "apply",
+              "args": []
+            }
+          ]
+        },
+        "args": [
+          {
+            "serializer": "flip",
+            "args": [
+              {
+                "serializer": "pipe",
+                "args": [
+                  {
+                    "serializer": "flip",
+                    "args": [
+                      {
+                        "operator": "pipe",
+                        "args": []
+                      }
+                    ]
+                  },
+                  {
+                    "serializer": "flip",
+                    "args": [
+                      {
+                        "operator": "pipe",
+                        "args": []
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "serializer": "pipe",
+    "args": [
+      {
+        "serializer": "pipe",
+        "args": [
+          {
+            "operator": "multiply",
+            "args": []
+          },
+          {
+            "serializer": "apply",
+            "args": [
+              {
+                "operator": "lazybuilt",
+                "args": [
+                  {
+                    "type": "integer",
+                    "value": 1
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "operator": "get",
+        "args": []
+      }
+    ]
+  }
 ]

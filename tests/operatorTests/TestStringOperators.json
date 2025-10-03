@@ -63,25 +63,17 @@
     "labc": {
       "type": "List",
       "listType": "String",
-      "values": [
-        "a",
-        "b",
-        "c"
-      ]
+      "values": ["a", "b", "c"]
     },
     "lint": {
       "type": "List",
       "listType": "Integer",
-      "values": [
-        "123"
-      ]
+      "values": ["123"]
     },
     "lstringinvalidtypes": {
       "type": "List",
       "listType": "String",
-      "values": [
-        "123"
-      ]
+      "values": ["123"]
     },
     "lstring_inf": {
       "type": "InfiniteList",
@@ -93,17 +85,12 @@
     "STRING_LENGTH": {
       "testStringLength": [
         {
-          "args": [
-            "sabc"
-          ]
+          "args": ["sabc"]
         }
       ],
       "testInvalidInputSizeLengthLarge": [
         {
-          "args": [
-            "sabc",
-            "sabc"
-          ]
+          "args": ["sabc", "sabc"]
         }
       ],
       "testInvalidInputSizeLengthSmall": [
@@ -113,945 +100,562 @@
       ],
       "testInvalidInputTypeLength": [
         {
-          "args": [
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE"]
         }
       ]
     },
     "STRING_CONCAT": {
       "testStringConcat": [
         {
-          "args": [
-            "sabc",
-            "sabc"
-          ]
+          "args": ["sabc", "sabc"]
         }
       ],
       "testInvalidInputSizConcatLarge": [
         {
-          "args": [
-            "sabc",
-            "sabc",
-            "sabc"
-          ]
+          "args": ["sabc", "sabc", "sabc"]
         }
       ],
       "testInvalidInputSizeConcatSmall": [
         {
-          "args": [
-            "sabc"
-          ]
+          "args": ["sabc"]
         }
       ],
       "testInvalidInputTypeConcat": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "STRING_CONTAINS": {
       "testStringContains": [
         {
-          "args": [
-            "shello",
-            "shelloWorld"
-          ]
+          "args": ["shello", "shelloWorld"]
         },
         {
-          "args": [
-            "sworld",
-            "shelloWorld"
-          ]
+          "args": ["sworld", "shelloWorld"]
         },
         {
-          "args": [
-            "sabc",
-            "shelloWorld"
-          ]
+          "args": ["sabc", "shelloWorld"]
         }
       ],
       "testInvalidInputSizeContainsLarge": [
         {
-          "args": [
-            "sabc",
-            "sabc",
-            "sabc"
-          ]
+          "args": ["sabc", "sabc", "sabc"]
         }
       ],
       "testInvalidInputSizeContainsSmall": [
         {
-          "args": [
-            "sabc"
-          ]
+          "args": ["sabc"]
         }
       ],
       "testInvalidInputTypeContains": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "STRING_INDEX_OF": {
       "testStringIndexOf": [
         {
-          "args": [
-            "shello",
-            "shelloWorld"
-          ]
+          "args": ["shello", "shelloWorld"]
         },
         {
-          "args": [
-            "sworld",
-            "shelloWorld"
-          ]
+          "args": ["sworld", "shelloWorld"]
         },
         {
-          "args": [
-            "sabc",
-            "shelloWorld"
-          ]
+          "args": ["sabc", "shelloWorld"]
         }
       ],
       "testInvalidInputSizeIndexOfLarge": [
         {
-          "args": [
-            "sabc",
-            "sabc",
-            "sabc"
-          ]
+          "args": ["sabc", "sabc", "sabc"]
         }
       ],
       "testInvalidInputSizeIndexOfSmall": [
         {
-          "args": [
-            "sabc"
-          ]
+          "args": ["sabc"]
         }
       ],
       "testInvalidInputTypeIndexOf": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "STRING_INDEX_OF_REGEX": {
       "testStringIndexOfRegex": [
         {
-          "args": [
-            "sregex",
-            "shelloWorld"
-          ]
+          "args": ["sregex", "shelloWorld"]
         },
         {
-          "args": [
-            "sworld",
-            "shelloWorld"
-          ]
+          "args": ["sworld", "shelloWorld"]
         },
         {
-          "args": [
-            "word",
-            "shelloWorld"
-          ]
+          "args": ["word", "shelloWorld"]
         },
         {
-          "args": [
-            "sabc",
-            "shelloWorld"
-          ]
+          "args": ["sabc", "shelloWorld"]
         }
       ],
       "testInvalidPatternIndexOfRegex": [
         {
-          "args": [
-            "sbrokenRegex",
-            "sabc"
-          ]
+          "args": ["sbrokenRegex", "sabc"]
         }
       ],
       "testInvalidInputSizeIndexOfRegexLarge": [
         {
-          "args": [
-            "sabc",
-            "sabc",
-            "sabc"
-          ]
+          "args": ["sabc", "sabc", "sabc"]
         }
       ],
       "testInvalidInputSizeIndexOfRegexSmall": [
         {
-          "args": [
-            "sabc"
-          ]
+          "args": ["sabc"]
         }
       ],
       "testInvalidInputTypeIndexOfRegex": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "STRING_STARTS_WITH": {
       "testStringStartsWith": [
         {
-          "args": [
-            "shello",
-            "shelloWorld"
-          ]
+          "args": ["shello", "shelloWorld"]
         },
         {
-          "args": [
-            "sworld",
-            "shelloWorld"
-          ]
+          "args": ["sworld", "shelloWorld"]
         }
       ],
       "testInvalidInputSizeStartsWithLarge": [
         {
-          "args": [
-            "sabc",
-            "sabc",
-            "sabc"
-          ]
+          "args": ["sabc", "sabc", "sabc"]
         }
       ],
       "testInvalidInputSizeStartsWithSmall": [
         {
-          "args": [
-            "sabc"
-          ]
+          "args": ["sabc"]
         }
       ],
       "testInvalidInputTypeStartsWith": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "STRING_ENDS_WITH": {
       "testStringEndsWith": [
         {
-          "args": [
-            "sworld",
-            "shelloWorld"
-          ]
+          "args": ["sworld", "shelloWorld"]
         },
         {
-          "args": [
-            "shello",
-            "shelloWorld"
-          ]
+          "args": ["shello", "shelloWorld"]
         }
       ],
       "testInvalidInputSizeEndsWithLarge": [
         {
-          "args": [
-            "sabc",
-            "sabc",
-            "sabc"
-          ]
+          "args": ["sabc", "sabc", "sabc"]
         }
       ],
       "testInvalidInputSizeEndsWithSmall": [
         {
-          "args": [
-            "sabc"
-          ]
+          "args": ["sabc"]
         }
       ],
       "testInvalidInputTypeEndsWith": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "STRING_CONTAINS_REGEX": {
       "testStringContainsRegex": [
         {
-          "args": [
-            "shelloPlus",
-            "shelloWorld"
-          ]
+          "args": ["shelloPlus", "shelloWorld"]
         },
         {
-          "args": [
-            "sstarWorld",
-            "shelloWorld"
-          ]
+          "args": ["sstarWorld", "shelloWorld"]
         },
         {
-          "args": [
-            "sregex",
-            "shelloWorld"
-          ]
+          "args": ["sregex", "shelloWorld"]
         },
         {
-          "args": [
-            "sabc",
-            "shelloWorld"
-          ]
+          "args": ["sabc", "shelloWorld"]
         },
         {
-          "args": [
-            "sello",
-            "shelloWorld"
-          ]
+          "args": ["sello", "shelloWorld"]
         }
       ],
       "testInvalidPatternContainsRegex": [
         {
-          "args": [
-            "sbrokenRegex",
-            "sabc"
-          ]
+          "args": ["sbrokenRegex", "sabc"]
         }
       ],
       "testInvalidInputSizeContainsRegexLarge": [
         {
-          "args": [
-            "sabc",
-            "sabc",
-            "sabc"
-          ]
+          "args": ["sabc", "sabc", "sabc"]
         }
       ],
       "testInvalidInputSizeContainsRegexSmall": [
         {
-          "args": [
-            "sabc"
-          ]
+          "args": ["sabc"]
         }
       ],
       "testInvalidInputTypeContainsRegex": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "STRING_MATCHES_REGEX": {
       "testStringMatchesRegex": [
         {
-          "args": [
-            "shelloPlus",
-            "shelloWorld"
-          ]
+          "args": ["shelloPlus", "shelloWorld"]
         },
         {
-          "args": [
-            "sstarWorld",
-            "shelloWorld"
-          ]
+          "args": ["sstarWorld", "shelloWorld"]
         },
         {
-          "args": [
-            "sregex",
-            "shelloWorld"
-          ]
+          "args": ["sregex", "shelloWorld"]
         },
         {
-          "args": [
-            "sabc",
-            "shelloWorld"
-          ]
+          "args": ["sabc", "shelloWorld"]
         },
         {
-          "args": [
-            "sello",
-            "shelloWorld"
-          ]
+          "args": ["sello", "shelloWorld"]
         }
       ],
       "testInvalidPatternMatchesRegex": [
         {
-          "args": [
-            "sbrokenRegex",
-            "sabc"
-          ]
+          "args": ["sbrokenRegex", "sabc"]
         }
       ],
       "testInvalidInputSizeMatchesRegexLarge": [
         {
-          "args": [
-            "sabc",
-            "sabc",
-            "sabc"
-          ]
+          "args": ["sabc", "sabc", "sabc"]
         }
       ],
       "testInvalidInputSizeMatchesRegexSmall": [
         {
-          "args": [
-            "sabc"
-          ]
+          "args": ["sabc"]
         }
       ],
       "testInvalidInputTypeMatchesRegex": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "STRING_SPLIT_ON": {
       "testStringSplitOn": [
         {
-          "args": [
-            "sspace",
-            "shelloWorld"
-          ]
+          "args": ["sspace", "shelloWorld"]
         }
       ],
       "testInvalidInputSizeSplitOnLarge": [
         {
-          "args": [
-            "sabc",
-            "sabc",
-            "sabc"
-          ]
+          "args": ["sabc", "sabc", "sabc"]
         }
       ],
       "testInvalidInputSizeSplitOnSmall": [
         {
-          "args": [
-            "sabc"
-          ]
+          "args": ["sabc"]
         }
       ],
       "testInvalidInputTypeSplitOn": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "STRING_SPLIT_ON_REGEX": {
       "testStringSplitOnRegex": [
         {
-          "args": [
-            "swhitespace",
-            "shelloWorld"
-          ]
+          "args": ["swhitespace", "shelloWorld"]
         }
       ],
       "testInvalidPatternSplitOnRegex": [
         {
-          "args": [
-            "sbroken",
-            "sabc"
-          ]
+          "args": ["sbroken", "sabc"]
         }
       ],
       "testInvalidInputSizeSplitOnRegexLarge": [
         {
-          "args": [
-            "sabc",
-            "sabc",
-            "sabc"
-          ]
+          "args": ["sabc", "sabc", "sabc"]
         }
       ],
       "testInvalidInputSizeSplitOnRegexSmall": [
         {
-          "args": [
-            "sabc"
-          ]
+          "args": ["sabc"]
         }
       ],
       "testInvalidInputTypeSplitOnRegex": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "STRING_SUBSTRING": {
       "testStringSubstring": [
         {
-          "args": [
-            "i1",
-            "i2",
-            "sabc"
-          ]
+          "args": ["i1", "i2", "sabc"]
         },
         {
-          "args": [
-            "i1",
-            "i10",
-            "shelloWorld"
-          ]
+          "args": ["i1", "i10", "shelloWorld"]
         },
         {
-          "args": [
-            "i1",
-            "i1",
-            "sabc"
-          ]
+          "args": ["i1", "i1", "sabc"]
         },
         {
-          "args": [
-            "i1",
-            "i11",
-            "shelloWorld"
-          ]
+          "args": ["i1", "i11", "shelloWorld"]
         }
       ],
       "testOutOfBoundsSubstring": [
         {
-          "args": [
-            "i10",
-            "i10",
-            "sabc"
-          ]
+          "args": ["i10", "i10", "sabc"]
         }
       ],
       "testNegativeSubstring": [
         {
-          "args": [
-            "iNeg1",
-            "i10",
-            "sabc"
-          ]
+          "args": ["iNeg1", "i10", "sabc"]
         }
       ],
       "testInvertedSubstring": [
         {
-          "args": [
-            "i10",
-            "i1",
-            "sabc"
-          ]
+          "args": ["i10", "i1", "sabc"]
         }
       ],
       "testInvalidInputSizeSubstringLarge": [
         {
-          "args": [
-            "sabc",
-            "sabc",
-            "sabc",
-            "sabc"
-          ]
+          "args": ["sabc", "sabc", "sabc", "sabc"]
         }
       ],
       "testInvalidInputSizeSubstringSmall": [
         {
-          "args": [
-            "sabc",
-            "sabc"
-          ]
+          "args": ["sabc", "sabc"]
         }
       ],
       "testInvalidInputTypeSubstring": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "STRING_REGEX_GROUP": {
       "testStringRegexGroup": [
         {
-          "args": [
-            "sregex",
-            "i0",
-            "shelloWorld"
-          ]
+          "args": ["sregex", "i0", "shelloWorld"]
         },
         {
-          "args": [
-            "sregex",
-            "i1",
-            "shelloWorld"
-          ]
+          "args": ["sregex", "i1", "shelloWorld"]
         },
         {
-          "args": [
-            "sregex",
-            "i2",
-            "shelloWorld"
-          ]
+          "args": ["sregex", "i2", "shelloWorld"]
         }
       ],
       "testOutOfBoundsRegexGroup": [
         {
-          "args": [
-            "sregex",
-            "i10",
-            "shelloWorld"
-          ]
+          "args": ["sregex", "i10", "shelloWorld"]
         }
       ],
       "testNegativeRegexGroup": [
         {
-          "args": [
-            "sregex",
-            "iNeg1",
-            "shelloWorld"
-          ]
+          "args": ["sregex", "iNeg1", "shelloWorld"]
         }
       ],
       "testInvalidPatternRegexGroup": [
         {
-          "args": [
-            "sbrokenRegex",
-            "i1",
-            "sabc"
-          ]
+          "args": ["sbrokenRegex", "i1", "sabc"]
         }
       ],
       "testInvalidInputSizeRegexGroupLarge": [
         {
-          "args": [
-            "sabc",
-            "sabc",
-            "sabc",
-            "sabc"
-          ]
+          "args": ["sabc", "sabc", "sabc", "sabc"]
         }
       ],
       "testInvalidInputSizeRegexGroupSmall": [
         {
-          "args": [
-            "sabc",
-            "sabc"
-          ]
+          "args": ["sabc", "sabc"]
         }
       ],
       "testInvalidInputTypeRegexGroup": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "STRING_REGEX_GROUPS": {
       "testStringRegexGroups": [
         {
-          "args": [
-            "sabc",
-            "shelloWorld"
-          ]
+          "args": ["sabc", "shelloWorld"]
         },
         {
-          "args": [
-            "sregex",
-            "shelloWorld"
-          ]
+          "args": ["sregex", "shelloWorld"]
         }
       ],
       "testInvalidPatternRegexGroups": [
         {
-          "args": [
-            "sbrokenRegex",
-            "sabc"
-          ]
+          "args": ["sbrokenRegex", "sabc"]
         }
       ],
       "testInvalidInputSizeRegexGroupsLarge": [
         {
-          "args": [
-            "sabc",
-            "sabc",
-            "sabc"
-          ]
+          "args": ["sabc", "sabc", "sabc"]
         }
       ],
       "testInvalidInputSizeRegexGroupsSmall": [
         {
-          "args": [
-            "sabc"
-          ]
+          "args": ["sabc"]
         }
       ],
       "testInvalidInputTypeRegexGroups": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "STRING_REGEX_SCAN": {
       "testStringRegexScan": [
         {
-          "args": [
-            "sabc",
-            "i0",
-            "shelloWorld"
-          ]
+          "args": ["sabc", "i0", "shelloWorld"]
         },
         {
-          "args": [
-            "firstLetters",
-            "i1",
-            "shelloWorld"
-          ]
+          "args": ["firstLetters", "i1", "shelloWorld"]
         }
       ],
       "testStringRegexScanComplex": [
         {
-          "args": [
-            "regex",
-            "i1",
-            "haystack"
-          ]
+          "args": ["regex", "i1", "haystack"]
         }
       ],
       "testInvalidPatternRegexScan": [
         {
-          "args": [
-            "sbrokenRegex",
-            "i0",
-            "sabc"
-          ]
+          "args": ["sbrokenRegex", "i0", "sabc"]
         }
       ],
       "testInvalidInputSizeRegexScanLarge": [
         {
-          "args": [
-            "sabc",
-            "sabc",
-            "sabc",
-            "sabc"
-          ]
+          "args": ["sabc", "sabc", "sabc", "sabc"]
         }
       ],
       "testInvalidInputSizeRegexScanSmall": [
         {
-          "args": [
-            "sabc",
-            "sabc"
-          ]
+          "args": ["sabc", "sabc"]
         }
       ],
       "testInvalidInputTypeRegexScan": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "STRING_REPLACE": {
       "testStringReplace": [
         {
-          "args": [
-            "sl",
-            "sempty",
-            "shelloWorld"
-          ]
+          "args": ["sl", "sempty", "shelloWorld"]
         },
         {
-          "args": [
-            "shelloWorld",
-            "sempty",
-            "shelloWorld"
-          ]
+          "args": ["shelloWorld", "sempty", "shelloWorld"]
         }
       ],
       "testInvalidInputSizeReplaceLarge": [
         {
-          "args": [
-            "sabc",
-            "sabc",
-            "sabc",
-            "sabc"
-          ]
+          "args": ["sabc", "sabc", "sabc", "sabc"]
         }
       ],
       "testInvalidInputSizeReplaceSmall": [
         {
-          "args": [
-            "sabc",
-            "sabc"
-          ]
+          "args": ["sabc", "sabc"]
         }
       ],
       "testInvalidInputTypeReplace": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "STRING_REPLACE_REGEX": {
       "testStringReplaceRegex": [
         {
-          "args": [
-            "sl",
-            "szerozero",
-            "shelloWorld"
-          ]
+          "args": ["sl", "szerozero", "shelloWorld"]
         },
         {
-          "args": [
-            "sregex",
-            "sone",
-            "shelloWorld"
-          ]
+          "args": ["sregex", "sone", "shelloWorld"]
         },
         {
-          "args": [
-            "sregex",
-            "sempty",
-            "shelloWorld"
-          ]
+          "args": ["sregex", "sempty", "shelloWorld"]
         }
       ],
       "testInvalidPatternReplaceRegex": [
         {
-          "args": [
-            "sbrokenRegex",
-            "i0",
-            "sabc"
-          ]
+          "args": ["sbrokenRegex", "i0", "sabc"]
         }
       ],
       "testInvalidInputSizeReplaceRegexLarge": [
         {
-          "args": [
-            "sabc",
-            "sabc",
-            "sabc",
-            "sabc"
-          ]
+          "args": ["sabc", "sabc", "sabc", "sabc"]
         }
       ],
       "testInvalidInputSizeReplaceRegexSmall": [
         {
-          "args": [
-            "sabc",
-            "sabc"
-          ]
+          "args": ["sabc", "sabc"]
         }
       ],
       "testInvalidInputTypeReplaceRegex": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "STRING_JOIN": {
       "testStringJoin": [
         {
-          "args": [
-            "scomma",
-            "labc"
-          ]
+          "args": ["scomma", "labc"]
         }
       ],
       "testInvalidInputListType": [
         {
-          "args": [
-            "scomma",
-            "lint"
-          ]
+          "args": ["scomma", "lint"]
         }
       ],
       "testInvalidInputListTypeInner": [
         {
-          "args": [
-            "scomma",
-            "lstringinvalidtypes"
-          ]
+          "args": ["scomma", "lstringinvalidtypes"]
         }
       ],
       "testInvalidInputListInfinite": [
         {
-          "args": [
-            "scomma",
-            "lstring_inf"
-          ]
+          "args": ["scomma", "lstring_inf"]
         }
       ],
       "testInvalidInputSizeJoinLarge": [
         {
-          "args": [
-            "scomma",
-            "labc",
-            "labc"
-          ]
+          "args": ["scomma", "labc", "labc"]
         }
       ],
       "testInvalidInputSizeJoinSmall": [
         {
-          "args": [
-            "scomma"
-          ]
+          "args": ["scomma"]
         }
       ],
       "testInvalidInputTypeJoin": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "NAMED_NAME": {
       "testStringNamedName": [
         {
-          "args": [
-            "i10"
-          ]
+          "args": ["i10"]
         },
         {
-          "args": [
-            "d10_5"
-          ]
+          "args": ["d10_5"]
         }
       ],
       "testInvalidInputSizNamedNameLarge": [
         {
-          "args": [
-            "sabc",
-            "sabc"
-          ]
+          "args": ["sabc", "sabc"]
         }
       ],
       "testInvalidInputSizeNamedNameSmall": [
@@ -1061,33 +665,24 @@
       ],
       "testInvalidInputTypeNamedName": [
         {
-          "args": [
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE"]
         }
       ]
     },
     "STRING_ERROR": {
       "testStringErrorWithSymbols": [
         {
-          "args": [
-            "sregex"
-          ]
+          "args": ["sregex"]
         }
       ],
       "testStringErrorWithSpaces": [
         {
-          "args": [
-            "shelloWorld"
-          ]
+          "args": ["shelloWorld"]
         }
       ],
       "testInvalidInputSizeErrorLong": [
         {
-          "args": [
-            "sabc",
-            "sabc"
-          ]
+          "args": ["sabc", "sabc"]
         }
       ],
       "testInvalidInputSizeErrorSmall": [
@@ -1097,10 +692,7 @@
       ],
       "testInvalidInputTypeError": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     }

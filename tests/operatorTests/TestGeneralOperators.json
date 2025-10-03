@@ -13,76 +13,45 @@
     "GENERAL_CHOICE": {
       "testLogicalChoice": [
         {
-          "args": [
-            "bTrue",
-            "i1",
-            "i2"
-          ]
+          "args": ["bTrue", "i1", "i2"]
         },
         {
-          "args": [
-            "bFalse",
-            "i1",
-            "i2"
-          ]
+          "args": ["bFalse", "i1", "i2"]
         }
       ],
       "testInvalidInputSizeChoiceLarge": [
         {
-          "args": [
-            "bTrue",
-            "bTrue",
-            "bTrue",
-            "bTrue"
-          ]
+          "args": ["bTrue", "bTrue", "bTrue", "bTrue"]
         }
       ],
       "testInvalidInputSizeChoiceSmall": [
         {
-          "args": [
-            "bTrue",
-            "bTrue"
-          ]
+          "args": ["bTrue", "bTrue"]
         }
       ],
       "testInvalidInputTypeChoice": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ],
       "testInvalidLogicalChoiceDifferentTypes": [
         {
-          "args": [
-            "bFalse",
-            "i1",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["bFalse", "i1", "DUMMY_VARIABLE"]
         }
       ]
     },
     "GENERAL_IDENTITY": {
       "testLogicalIdentity": [
         {
-          "args": [
-            "i1"
-          ]
+          "args": ["i1"]
         },
         {
-          "args": [
-            "bFalse"
-          ]
+          "args": ["bFalse"]
         }
       ],
       "testInvalidInputSizeIdentityLarge": [
         {
-          "args": [
-            "bTrue",
-            "bTrue"
-          ]
+          "args": ["bTrue", "bTrue"]
         }
       ],
       "testInvalidInputSizeIdentitySmall": [
@@ -94,54 +63,35 @@
     "GENERAL_CONSTANT": {
       "testLogicalConstant": [
         {
-          "args": [
-            "i1",
-            "bFalse"
-          ]
+          "args": ["i1", "bFalse"]
         },
         {
-          "args": [
-            "bFalse",
-            "i1"
-          ]
+          "args": ["bFalse", "i1"]
         }
       ],
       "testInvalidInputSizeConstantLarge": [
         {
-          "args": [
-            "bTrue",
-            "bTrue",
-            "bTrue"
-          ]
+          "args": ["bTrue", "bTrue", "bTrue"]
         }
       ],
       "testInvalidInputSizeConstantSmall": [
         {
-          "args": [
-            "bTrue"
-          ]
+          "args": ["bTrue"]
         }
       ]
     },
     "NULLABLE_ISNULL": {
       "testLogicalIsNull": [
         {
-          "args": [
-            "i1"
-          ]
+          "args": ["i1"]
         },
         {
-          "args": [
-            "bFalse"
-          ]
+          "args": ["bFalse"]
         }
       ],
       "testInvalidInputSizeIsNullLarge": [
         {
-          "args": [
-            "bTrue",
-            "bTrue"
-          ]
+          "args": ["bTrue", "bTrue"]
         }
       ],
       "testInvalidInputSizeIsNullSmall": [
@@ -153,22 +103,15 @@
     "NULLABLE_ISNOTNULL": {
       "testLogicalIsNotNull": [
         {
-          "args": [
-            "i1"
-          ]
+          "args": ["i1"]
         },
         {
-          "args": [
-            "bFalse"
-          ]
+          "args": ["bFalse"]
         }
       ],
       "testInvalidInputSizeIsNotNullLarge": [
         {
-          "args": [
-            "bTrue",
-            "bTrue"
-          ]
+          "args": ["bTrue", "bTrue"]
         }
       ],
       "testInvalidInputSizeIsNotNullSmall": [

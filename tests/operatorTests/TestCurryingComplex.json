@@ -21,16 +21,12 @@
     "OPERATOR_FLIP": {
       "testBind2": [
         {
-          "args": [
-            "oApply2"
-          ]
+          "args": ["oApply2"]
         }
       ],
       "testBind2Overflow": [
         {
-          "args": [
-            "oApply2"
-          ]
+          "args": ["oApply2"]
         }
       ]
     },
@@ -81,20 +77,14 @@
       ],
       "testOmegaOperator": [
         {
-          "args": [
-            "new IVariable[]{new DummyVariable(ValueTypes.OPERATOR, oX"
-          ]
+          "args": ["new IVariable[]{new DummyVariable(ValueTypes.OPERATOR, oX"]
         }
       ]
     },
     "OPERATOR_PIPE2": {
       "testOmegaOperator": [
         {
-          "args": [
-            "oId",
-            "oId",
-            "oApply"
-          ]
+          "args": ["oId", "oId", "oApply"]
         }
       ]
     }

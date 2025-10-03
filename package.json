@@ -9,10 +9,19 @@
   "devDependencies": {
     "jest": "^30.0.5",
     "live-server": "^1.2.2",
-    "nodemon": "^3.1.10"
+    "nodemon": "^3.1.10",
+    "prettier": "3.6.2"
   },
   "scripts": {
     "test": "jest",
-    "watch:test": "node tests/run-matching-tests.js"
+    "watch:test": "node tests/run-matching-tests.js",
+    "format": "prettier --write ."
+  },
+  "prettier": {
+    "tabWidth": 2,
+    "trailingComma": "es5",
+    "arrowParens": "always",
+    "bracketSpacing": true,
+    "singleQuote": false
   }
 }

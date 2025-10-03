@@ -37,42 +37,27 @@
     "NUMBER_ROUND": {
       "testDoubleRound": [
         {
-          "args": [
-            "d0"
-          ]
+          "args": ["d0"]
         },
         {
-          "args": [
-            "dm10"
-          ]
+          "args": ["dm10"]
         },
         {
-          "args": [
-            "d0P5"
-          ]
+          "args": ["d0P5"]
         },
         {
-          "args": [
-            "d0P1"
-          ]
+          "args": ["d0P1"]
         },
         {
-          "args": [
-            "d0P9"
-          ]
+          "args": ["d0P9"]
         },
         {
-          "args": [
-            "i10"
-          ]
+          "args": ["i10"]
         }
       ],
       "testInvalidInputSizeDoubleRoundLarge": [
         {
-          "args": [
-            "d0",
-            "d0"
-          ]
+          "args": ["d0", "d0"]
         }
       ],
       "testInvalidInputSizeDoubleRoundSmall": [
@@ -82,51 +67,34 @@
       ],
       "testInvalidInputTypeDoubleRound": [
         {
-          "args": [
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE"]
         }
       ]
     },
     "NUMBER_CEIL": {
       "testDoubleCeil": [
         {
-          "args": [
-            "d0"
-          ]
+          "args": ["d0"]
         },
         {
-          "args": [
-            "dm10"
-          ]
+          "args": ["dm10"]
         },
         {
-          "args": [
-            "d0P5"
-          ]
+          "args": ["d0P5"]
         },
         {
-          "args": [
-            "d0P1"
-          ]
+          "args": ["d0P1"]
         },
         {
-          "args": [
-            "d0P9"
-          ]
+          "args": ["d0P9"]
         },
         {
-          "args": [
-            "i10"
-          ]
+          "args": ["i10"]
         }
       ],
       "testInvalidInputSizeDoubleCeilLarge": [
         {
-          "args": [
-            "d0",
-            "d0"
-          ]
+          "args": ["d0", "d0"]
         }
       ],
       "testInvalidInputSizeDoubleCeilSmall": [
@@ -136,51 +104,34 @@
       ],
       "testInvalidInputTypeDoubleCeil": [
         {
-          "args": [
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE"]
         }
       ]
     },
     "NUMBER_FLOOR": {
       "testDoubleFloor": [
         {
-          "args": [
-            "d0"
-          ]
+          "args": ["d0"]
         },
         {
-          "args": [
-            "dm10"
-          ]
+          "args": ["dm10"]
         },
         {
-          "args": [
-            "d0P5"
-          ]
+          "args": ["d0P5"]
         },
         {
-          "args": [
-            "d0P1"
-          ]
+          "args": ["d0P1"]
         },
         {
-          "args": [
-            "d0P9"
-          ]
+          "args": ["d0P9"]
         },
         {
-          "args": [
-            "i10"
-          ]
+          "args": ["i10"]
         }
       ],
       "testInvalidInputSizeDoubleFloorLarge": [
         {
-          "args": [
-            "d0",
-            "d0"
-          ]
+          "args": ["d0", "d0"]
         }
       ],
       "testInvalidInputSizeDoubleFloorSmall": [
@@ -190,33 +141,23 @@
       ],
       "testInvalidInputTypeDoubleFloor": [
         {
-          "args": [
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE"]
         }
       ]
     },
     "NUMBER_COMPACT": {
       "testNumberCompact": [
         {
-          "args": [
-            "d0"
-          ]
+          "args": ["d0"]
         },
         {
-          "args": [
-            "i10"
-          ]
+          "args": ["i10"]
         },
         {
-          "args": [
-            "i1k"
-          ]
+          "args": ["i1k"]
         },
         {
-          "args": [
-            "i1m"
-          ]
+          "args": ["i1m"]
         }
       ]
     }

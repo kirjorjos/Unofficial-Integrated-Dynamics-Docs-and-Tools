@@ -168,27 +168,18 @@
     "NBT_COMPOUND_SIZE": {
       "testNbtSize": [
         {
-          "args": [
-            "nempty"
-          ]
+          "args": ["nempty"]
         },
         {
-          "args": [
-            "nsasa"
-          ]
+          "args": ["nsasa"]
         },
         {
-          "args": [
-            "nsasasbsc"
-          ]
+          "args": ["nsasasbsc"]
         }
       ],
       "testInvalidInputNbtSizeSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "nempty"
-          ]
+          "args": ["nempty", "nempty"]
         }
       ],
       "testInvalidInputNbtSizeSizeSmall": [
@@ -198,31 +189,22 @@
       ],
       "testInvalidInputTypeNbtSize": [
         {
-          "args": [
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE"]
         }
       ]
     },
     "NBT_COMPOUND_KEYS": {
       "testNbtKeys": [
         {
-          "args": [
-            "nempty"
-          ]
+          "args": ["nempty"]
         },
         {
-          "args": [
-            "nsasasbsc"
-          ]
+          "args": ["nsasasbsc"]
         }
       ],
       "testInvalidInputNbtKeysSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "nempty"
-          ]
+          "args": ["nempty", "nempty"]
         }
       ],
       "testInvalidInputNbtKeysSizeSmall": [
@@ -232,1405 +214,847 @@
       ],
       "testInvalidInputTypeNbtKeys": [
         {
-          "args": [
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE"]
         }
       ]
     },
     "NBT_COMPOUND_HASKEY": {
       "testNbtHasKey": [
         {
-          "args": [
-            "nempty",
-            "sa"
-          ]
+          "args": ["nempty", "sa"]
         },
         {
-          "args": [
-            "nsasasbsc",
-            "sa"
-          ]
+          "args": ["nsasasbsc", "sa"]
         }
       ],
       "testInvalidInputNbtHasKeySizeLarge": [
         {
-          "args": [
-            "nempty",
-            "sa",
-            "sa"
-          ]
+          "args": ["nempty", "sa", "sa"]
         }
       ],
       "testInvalidInputNbtHasKeySizeSmall": [
         {
-          "args": [
-            "nempty"
-          ]
+          "args": ["nempty"]
         }
       ],
       "testInvalidInputTypeNbtHasKey": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "NBT_COMPOUND_VALUE_TYPE": {
       "testNbtValueType": [
         {
-          "args": [
-            "nempty",
-            "sa"
-          ]
+          "args": ["nempty", "sa"]
         },
         {
-          "args": [
-            "nall",
-            "sbyte"
-          ]
+          "args": ["nall", "sbyte"]
         },
         {
-          "args": [
-            "nall",
-            "sshort"
-          ]
+          "args": ["nall", "sshort"]
         },
         {
-          "args": [
-            "nall",
-            "sinteger"
-          ]
+          "args": ["nall", "sinteger"]
         },
         {
-          "args": [
-            "nall",
-            "slong"
-          ]
+          "args": ["nall", "slong"]
         },
         {
-          "args": [
-            "nall",
-            "sfloat"
-          ]
+          "args": ["nall", "sfloat"]
         },
         {
-          "args": [
-            "nall",
-            "sdouble"
-          ]
+          "args": ["nall", "sdouble"]
         },
         {
-          "args": [
-            "nall",
-            "sstring"
-          ]
+          "args": ["nall", "sstring"]
         },
         {
-          "args": [
-            "nall",
-            "sbytearray"
-          ]
+          "args": ["nall", "sbytearray"]
         },
         {
-          "args": [
-            "nall",
-            "sintarray"
-          ]
+          "args": ["nall", "sintarray"]
         },
         {
-          "args": [
-            "nall",
-            "sboolean"
-          ]
+          "args": ["nall", "sboolean"]
         },
         {
-          "args": [
-            "nall",
-            "scompound"
-          ]
+          "args": ["nall", "scompound"]
         },
         {
-          "args": [
-            "nall",
-            "slist"
-          ]
+          "args": ["nall", "slist"]
         }
       ],
       "testInvalidInputNbtValueTypeSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "sa",
-            "sa"
-          ]
+          "args": ["nempty", "sa", "sa"]
         }
       ],
       "testInvalidInputNbtValueTypeSizeSmall": [
         {
-          "args": [
-            "nempty"
-          ]
+          "args": ["nempty"]
         }
       ],
       "testInvalidInputTypeNbtValueType": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "NBT_COMPOUND_VALUE_TAG": {
       "testNbtValueTag": [
         {
-          "args": [
-            "nempty",
-            "sboolean"
-          ]
+          "args": ["nempty", "sboolean"]
         },
         {
-          "args": [
-            "nall",
-            "sboolean"
-          ]
+          "args": ["nall", "sboolean"]
         },
         {
-          "args": [
-            "nall",
-            "sinteger"
-          ]
+          "args": ["nall", "sinteger"]
         }
       ],
       "testInvalidInputNbtValueTagSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "sa",
-            "sa"
-          ]
+          "args": ["nempty", "sa", "sa"]
         }
       ],
       "testInvalidInputNbtValueTagSizeSmall": [
         {
-          "args": [
-            "nempty"
-          ]
+          "args": ["nempty"]
         }
       ],
       "testInvalidInputTypeNbtValueTag": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "NBT_COMPOUND_VALUE_BOOLEAN": {
       "testNbtValueBoolean": [
         {
-          "args": [
-            "nempty",
-            "sboolean"
-          ]
+          "args": ["nempty", "sboolean"]
         },
         {
-          "args": [
-            "nall",
-            "sboolean"
-          ]
+          "args": ["nall", "sboolean"]
         },
         {
-          "args": [
-            "nall",
-            "sbyte"
-          ]
+          "args": ["nall", "sbyte"]
         }
       ],
       "testInvalidInputNbtValueBooleanSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "sa",
-            "sa"
-          ]
+          "args": ["nempty", "sa", "sa"]
         }
       ],
       "testInvalidInputNbtValueBooleanSizeSmall": [
         {
-          "args": [
-            "nempty"
-          ]
+          "args": ["nempty"]
         }
       ],
       "testInvalidInputTypeNbtValueBoolean": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "NBT_COMPOUND_VALUE_INTEGER": {
       "testNbtValueInteger": [
         {
-          "args": [
-            "nempty",
-            "sinteger"
-          ]
+          "args": ["nempty", "sinteger"]
         },
         {
-          "args": [
-            "nall",
-            "sinteger"
-          ]
+          "args": ["nall", "sinteger"]
         },
         {
-          "args": [
-            "nall",
-            "sbyte"
-          ]
+          "args": ["nall", "sbyte"]
         },
         {
-          "args": [
-            "nall",
-            "sshort"
-          ]
+          "args": ["nall", "sshort"]
         }
       ],
       "testInvalidInputNbtValueIntegerSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "sa",
-            "sa"
-          ]
+          "args": ["nempty", "sa", "sa"]
         }
       ],
       "testInvalidInputNbtValueIntegerSizeSmall": [
         {
-          "args": [
-            "nempty"
-          ]
+          "args": ["nempty"]
         }
       ],
       "testInvalidInputTypeNbtValueInteger": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "NBT_COMPOUND_VALUE_LONG": {
       "testNbtValueLong": [
         {
-          "args": [
-            "nempty",
-            "slong"
-          ]
+          "args": ["nempty", "slong"]
         },
         {
-          "args": [
-            "nall",
-            "slong"
-          ]
+          "args": ["nall", "slong"]
         }
       ],
       "testInvalidInputNbtValueLongSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "sa",
-            "sa"
-          ]
+          "args": ["nempty", "sa", "sa"]
         }
       ],
       "testInvalidInputNbtValueLongSizeSmall": [
         {
-          "args": [
-            "nempty"
-          ]
+          "args": ["nempty"]
         }
       ],
       "testInvalidInputTypeNbtValueLong": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "NBT_COMPOUND_VALUE_DOUBLE": {
       "testNbtValueDouble": [
         {
-          "args": [
-            "nempty",
-            "sdouble"
-          ]
+          "args": ["nempty", "sdouble"]
         },
         {
-          "args": [
-            "nall",
-            "sdouble"
-          ]
+          "args": ["nall", "sdouble"]
         },
         {
-          "args": [
-            "nall",
-            "sfloat"
-          ]
+          "args": ["nall", "sfloat"]
         }
       ],
       "testInvalidInputNbtValueDoubleSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "sa",
-            "sa"
-          ]
+          "args": ["nempty", "sa", "sa"]
         }
       ],
       "testInvalidInputNbtValueDoubleSizeSmall": [
         {
-          "args": [
-            "nempty"
-          ]
+          "args": ["nempty"]
         }
       ],
       "testInvalidInputTypeNbtValueDouble": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "NBT_COMPOUND_VALUE_STRING": {
       "testNbtValueString": [
         {
-          "args": [
-            "nempty",
-            "sstring"
-          ]
+          "args": ["nempty", "sstring"]
         },
         {
-          "args": [
-            "nall",
-            "sstring"
-          ]
+          "args": ["nall", "sstring"]
         }
       ],
       "testInvalidInputNbtValueStringSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "sa",
-            "sa"
-          ]
+          "args": ["nempty", "sa", "sa"]
         }
       ],
       "testInvalidInputNbtValueStringSizeSmall": [
         {
-          "args": [
-            "nempty"
-          ]
+          "args": ["nempty"]
         }
       ],
       "testInvalidInputTypeNbtValueString": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "NBT_COMPOUND_VALUE_COMPOUND": {
       "testNbtValueCompound": [
         {
-          "args": [
-            "nempty",
-            "scompound"
-          ]
+          "args": ["nempty", "scompound"]
         },
         {
-          "args": [
-            "nall",
-            "scompound"
-          ]
+          "args": ["nall", "scompound"]
         }
       ],
       "testInvalidInputNbtValueCompoundSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "sa",
-            "sa"
-          ]
+          "args": ["nempty", "sa", "sa"]
         }
       ],
       "testInvalidInputNbtValueCompoundSizeSmall": [
         {
-          "args": [
-            "nempty"
-          ]
+          "args": ["nempty"]
         }
       ],
       "testInvalidInputTypeNbtValueCompound": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "NBT_COMPOUND_VALUE_LIST_TAG": {
       "testNbtValueListTag": [
         {
-          "args": [
-            "nempty",
-            "slist"
-          ]
+          "args": ["nempty", "slist"]
         },
         {
-          "args": [
-            "nall",
-            "slist"
-          ]
+          "args": ["nall", "slist"]
         }
       ],
       "testInvalidInputNbtValueListTagSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "sa",
-            "sa"
-          ]
+          "args": ["nempty", "sa", "sa"]
         }
       ],
       "testInvalidInputNbtValueListTagSizeSmall": [
         {
-          "args": [
-            "nempty"
-          ]
+          "args": ["nempty"]
         }
       ],
       "testInvalidInputTypeNbtValueListTag": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "NBT_COMPOUND_VALUE_LIST_INT": {
       "testNbtValueListInt": [
         {
-          "args": [
-            "nempty",
-            "slist"
-          ]
+          "args": ["nempty", "slist"]
         },
         {
-          "args": [
-            "nall",
-            "sintarray"
-          ]
+          "args": ["nall", "sintarray"]
         }
       ],
       "testInvalidInputNbtValueListIntSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "sa",
-            "sa"
-          ]
+          "args": ["nempty", "sa", "sa"]
         }
       ],
       "testInvalidInputNbtValueListIntSizeSmall": [
         {
-          "args": [
-            "nempty"
-          ]
+          "args": ["nempty"]
         }
       ],
       "testInvalidInputTypeNbtValueListInt": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "NBT_COMPOUND_VALUE_LIST_LONG": {
       "testNbtValueListLong": [
         {
-          "args": [
-            "nempty",
-            "slist"
-          ]
+          "args": ["nempty", "slist"]
         },
         {
-          "args": [
-            "nall",
-            "slongarray"
-          ]
+          "args": ["nall", "slongarray"]
         }
       ],
       "testInvalidInputNbtValueListLongSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "sa",
-            "sa"
-          ]
+          "args": ["nempty", "sa", "sa"]
         }
       ],
       "testInvalidInputNbtValueListLongSizeSmall": [
         {
-          "args": [
-            "nempty"
-          ]
+          "args": ["nempty"]
         }
       ],
       "testInvalidInputTypeNbtValueListLong": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "NBT_COMPOUND_VALUE_LIST_BYTE": {
       "testNbtValueListByte": [
         {
-          "args": [
-            "nempty",
-            "slist"
-          ]
+          "args": ["nempty", "slist"]
         },
         {
-          "args": [
-            "nall",
-            "sbytearray"
-          ]
+          "args": ["nall", "sbytearray"]
         }
       ],
       "testInvalidInputNbtValueListByteSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "sa",
-            "sa"
-          ]
+          "args": ["nempty", "sa", "sa"]
         }
       ],
       "testInvalidInputNbtValueListByteSizeSmall": [
         {
-          "args": [
-            "nempty"
-          ]
+          "args": ["nempty"]
         }
       ],
       "testInvalidInputTypeNbtValueListByte": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "NBT_COMPOUND_WITHOUT": {
       "testNbtWithout": [
         {
-          "args": [
-            "nsasa",
-            "sa"
-          ]
+          "args": ["nsasa", "sa"]
         },
         {
-          "args": [
-            "nsasasbsc",
-            "sa"
-          ]
+          "args": ["nsasasbsc", "sa"]
         }
       ],
       "testInvalidInputNbtWithoutSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "sa",
-            "sa"
-          ]
+          "args": ["nempty", "sa", "sa"]
         }
       ],
       "testInvalidInputNbtWithoutSizeSmall": [
         {
-          "args": [
-            "nempty"
-          ]
+          "args": ["nempty"]
         }
       ],
       "testInvalidInputTypeNbtWithout": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "NBT_COMPOUND_WITH_BOOLEAN": {
       "testNbtWithBoolean": [
         {
-          "args": [
-            "nsasa",
-            "sc",
-            "btrue"
-          ]
+          "args": ["nsasa", "sc", "btrue"]
         },
         {
-          "args": [
-            "nsasasbsc",
-            "sa",
-            "btrue"
-          ]
+          "args": ["nsasasbsc", "sa", "btrue"]
         }
       ],
       "testInvalidInputNbtWithBooleanSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "sa",
-            "sa"
-          ]
+          "args": ["nempty", "sa", "sa"]
         }
       ],
       "testInvalidInputNbtWithBooleanSizeSmall": [
         {
-          "args": [
-            "nempty"
-          ]
+          "args": ["nempty"]
         }
       ],
       "testInvalidInputTypeNbtWithBoolean": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "NBT_COMPOUND_WITH_SHORT": {
       "testNbtWithShort": [
         {
-          "args": [
-            "nsasa",
-            "sc",
-            "i1"
-          ]
+          "args": ["nsasa", "sc", "i1"]
         },
         {
-          "args": [
-            "nsasasbsc",
-            "sa",
-            "i1"
-          ]
+          "args": ["nsasasbsc", "sa", "i1"]
         }
       ],
       "testInvalidInputNbtWithShortSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "sa",
-            "sa"
-          ]
+          "args": ["nempty", "sa", "sa"]
         }
       ],
       "testInvalidInputNbtWithShortSizeSmall": [
         {
-          "args": [
-            "nempty"
-          ]
+          "args": ["nempty"]
         }
       ],
       "testInvalidInputTypeNbtWithShort": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "NBT_COMPOUND_WITH_INTEGER": {
       "testNbtWithInteger": [
         {
-          "args": [
-            "nsasa",
-            "sc",
-            "i1"
-          ]
+          "args": ["nsasa", "sc", "i1"]
         },
         {
-          "args": [
-            "nsasasbsc",
-            "sa",
-            "i1"
-          ]
+          "args": ["nsasasbsc", "sa", "i1"]
         }
       ],
       "testInvalidInputNbtWithIntegerSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "sa",
-            "sa"
-          ]
+          "args": ["nempty", "sa", "sa"]
         }
       ],
       "testInvalidInputNbtWithIntegerSizeSmall": [
         {
-          "args": [
-            "nempty"
-          ]
+          "args": ["nempty"]
         }
       ],
       "testInvalidInputTypeNbtWithInteger": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "NBT_COMPOUND_WITH_LONG": {
       "testNbtWithLong": [
         {
-          "args": [
-            "nsasa",
-            "sc",
-            "l1"
-          ]
+          "args": ["nsasa", "sc", "l1"]
         },
         {
-          "args": [
-            "nsasasbsc",
-            "sa",
-            "l1"
-          ]
+          "args": ["nsasasbsc", "sa", "l1"]
         }
       ],
       "testInvalidInputNbtWithLongSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "sa",
-            "sa"
-          ]
+          "args": ["nempty", "sa", "sa"]
         }
       ],
       "testInvalidInputNbtWithLongSizeSmall": [
         {
-          "args": [
-            "nempty"
-          ]
+          "args": ["nempty"]
         }
       ],
       "testInvalidInputTypeNbtWithLong": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "NBT_COMPOUND_WITH_DOUBLE": {
       "testNbtWithDouble": [
         {
-          "args": [
-            "nsasa",
-            "sc",
-            "d1_5"
-          ]
+          "args": ["nsasa", "sc", "d1_5"]
         },
         {
-          "args": [
-            "nsasasbsc",
-            "sa",
-            "d1_5"
-          ]
+          "args": ["nsasasbsc", "sa", "d1_5"]
         }
       ],
       "testInvalidInputNbtWithDoubleSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "sa",
-            "sa"
-          ]
+          "args": ["nempty", "sa", "sa"]
         }
       ],
       "testInvalidInputNbtWithDoubleSizeSmall": [
         {
-          "args": [
-            "nempty"
-          ]
+          "args": ["nempty"]
         }
       ],
       "testInvalidInputTypeNbtWithDouble": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "NBT_COMPOUND_WITH_FLOAT": {
       "testNbtWithFloat": [
         {
-          "args": [
-            "nsasa",
-            "sc",
-            "d1_5"
-          ]
+          "args": ["nsasa", "sc", "d1_5"]
         },
         {
-          "args": [
-            "nsasasbsc",
-            "sa",
-            "d1_5"
-          ]
+          "args": ["nsasasbsc", "sa", "d1_5"]
         }
       ],
       "testInvalidInputNbtWithFloatSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "sa",
-            "sa"
-          ]
+          "args": ["nempty", "sa", "sa"]
         }
       ],
       "testInvalidInputNbtWithFloatSizeSmall": [
         {
-          "args": [
-            "nempty"
-          ]
+          "args": ["nempty"]
         }
       ],
       "testInvalidInputTypeNbtWithFloat": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "NBT_COMPOUND_WITH_STRING": {
       "testNbtWithString": [
         {
-          "args": [
-            "nsasa",
-            "sc",
-            "sc"
-          ]
+          "args": ["nsasa", "sc", "sc"]
         },
         {
-          "args": [
-            "nsasasbsc",
-            "sa",
-            "sc"
-          ]
+          "args": ["nsasasbsc", "sa", "sc"]
         }
       ],
       "testInvalidInputNbtWithStringSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "sa",
-            "i1"
-          ]
+          "args": ["nempty", "sa", "i1"]
         }
       ],
       "testInvalidInputNbtWithStringSizeSmall": [
         {
-          "args": [
-            "nempty"
-          ]
+          "args": ["nempty"]
         }
       ],
       "testInvalidInputTypeNbtWithString": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "NBT_COMPOUND_WITH_COMPOUND": {
       "testNbtWithTag": [
         {
-          "args": [
-            "nsasa",
-            "sc",
-            "nsasa"
-          ]
+          "args": ["nsasa", "sc", "nsasa"]
         },
         {
-          "args": [
-            "nsasasbsc",
-            "sa",
-            "nsasa"
-          ]
+          "args": ["nsasasbsc", "sa", "nsasa"]
         }
       ],
       "testInvalidInputNbtWithTagSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "sa",
-            "sa"
-          ]
+          "args": ["nempty", "sa", "sa"]
         }
       ],
       "testInvalidInputNbtWithTagSizeSmall": [
         {
-          "args": [
-            "nempty"
-          ]
+          "args": ["nempty"]
         }
       ],
       "testInvalidInputTypeNbtWithTag": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "NBT_COMPOUND_WITH_LIST_TAG": {
       "testNbtWithListTag": [
         {
-          "args": [
-            "nsasa",
-            "sc",
-            "ltags"
-          ]
+          "args": ["nsasa", "sc", "ltags"]
         },
         {
-          "args": [
-            "nsasasbsc",
-            "sa",
-            "ltags"
-          ]
+          "args": ["nsasasbsc", "sa", "ltags"]
         }
       ],
       "testInvalidInputNbtWithListTagSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "sa",
-            "sa"
-          ]
+          "args": ["nempty", "sa", "sa"]
         }
       ],
       "testInvalidInputNbtWithListTagSizeSmall": [
         {
-          "args": [
-            "nempty"
-          ]
+          "args": ["nempty"]
         }
       ],
       "testInvalidInputTypeNbtWithListTag": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "NBT_COMPOUND_WITH_LIST_BYTE": {
       "testNbtWithListByte": [
         {
-          "args": [
-            "nsasa",
-            "sc",
-            "lints"
-          ]
+          "args": ["nsasa", "sc", "lints"]
         },
         {
-          "args": [
-            "nsasasbsc",
-            "sa",
-            "lints"
-          ]
+          "args": ["nsasasbsc", "sa", "lints"]
         }
       ],
       "testInvalidInputNbtWithListByteSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "sa",
-            "sa"
-          ]
+          "args": ["nempty", "sa", "sa"]
         }
       ],
       "testInvalidInputNbtWithListByteSizeSmall": [
         {
-          "args": [
-            "nempty"
-          ]
+          "args": ["nempty"]
         }
       ],
       "testInvalidInputTypeNbtWithListByte": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "NBT_COMPOUND_WITH_LIST_INT": {
       "testNbtWithListInt": [
         {
-          "args": [
-            "nsasa",
-            "sc",
-            "lints"
-          ]
+          "args": ["nsasa", "sc", "lints"]
         },
         {
-          "args": [
-            "nsasasbsc",
-            "sa",
-            "lints"
-          ]
+          "args": ["nsasasbsc", "sa", "lints"]
         }
       ],
       "testInvalidInputNbtWithListIntSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "sa",
-            "sa"
-          ]
+          "args": ["nempty", "sa", "sa"]
         }
       ],
       "testInvalidInputNbtWithListIntSizeSmall": [
         {
-          "args": [
-            "nempty"
-          ]
+          "args": ["nempty"]
         }
       ],
       "testInvalidInputTypeNbtWithListInt": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "NBT_COMPOUND_WITH_LIST_LONG": {
       "testNbtWithListLong": [
         {
-          "args": [
-            "nsasa",
-            "sc",
-            "llongs"
-          ]
+          "args": ["nsasa", "sc", "llongs"]
         },
         {
-          "args": [
-            "nsasasbsc",
-            "sa",
-            "llongs"
-          ]
+          "args": ["nsasasbsc", "sa", "llongs"]
         }
       ],
       "testInvalidInputNbtWithListLongSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "sa",
-            "sa"
-          ]
+          "args": ["nempty", "sa", "sa"]
         }
       ],
       "testInvalidInputNbtWithListLongSizeSmall": [
         {
-          "args": [
-            "nempty"
-          ]
+          "args": ["nempty"]
         }
       ],
       "testInvalidInputTypeNbtWithListLong": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "NBT_COMPOUND_SUBSET": {
       "testNbtSubset": [
         {
-          "args": [
-            "nempty",
-            "nall"
-          ]
+          "args": ["nempty", "nall"]
         },
         {
-          "args": [
-            "nall",
-            "nempty"
-          ]
+          "args": ["nall", "nempty"]
         },
         {
-          "args": [
-            "nsome",
-            "nall"
-          ]
+          "args": ["nsome", "nall"]
         }
       ],
       "testInvalidInputNbtSubsetSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "nempty",
-            "nempty"
-          ]
+          "args": ["nempty", "nempty", "nempty"]
         }
       ],
       "testInvalidInputNbtSubsetSizeSmall": [
         {
-          "args": [
-            "nempty"
-          ]
+          "args": ["nempty"]
         }
       ],
       "testInvalidInputTypeNbtSubset": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "NBT_COMPOUND_UNION": {
       "testNbtUnion": [
         {
-          "args": [
-            "nempty",
-            "nall"
-          ]
+          "args": ["nempty", "nall"]
         },
         {
-          "args": [
-            "nall",
-            "nempty"
-          ]
+          "args": ["nall", "nempty"]
         },
         {
-          "args": [
-            "nsome",
-            "nall"
-          ]
+          "args": ["nsome", "nall"]
         },
         {
-          "args": [
-            "nsasa",
-            "nsbsb"
-          ]
+          "args": ["nsasa", "nsbsb"]
         }
       ],
       "testInvalidInputNbtUnionSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "nempty",
-            "nempty"
-          ]
+          "args": ["nempty", "nempty", "nempty"]
         }
       ],
       "testInvalidInputNbtUnionSizeSmall": [
         {
-          "args": [
-            "nempty"
-          ]
+          "args": ["nempty"]
         }
       ],
       "testInvalidInputTypeNbtUnion": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "NBT_COMPOUND_INTERSECTION": {
       "testNbtIntersection": [
         {
-          "args": [
-            "nempty",
-            "nall"
-          ]
+          "args": ["nempty", "nall"]
         },
         {
-          "args": [
-            "nall",
-            "nempty"
-          ]
+          "args": ["nall", "nempty"]
         },
         {
-          "args": [
-            "nsome",
-            "nall"
-          ]
+          "args": ["nsome", "nall"]
         },
         {
-          "args": [
-            "nsasa",
-            "nsbsb"
-          ]
+          "args": ["nsasa", "nsbsb"]
         },
         {
-          "args": [
-            "nsasa",
-            "nsasasbsc"
-          ]
+          "args": ["nsasa", "nsasasbsc"]
         }
       ],
       "testInvalidInputNbtIntersectionSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "nempty",
-            "nempty"
-          ]
+          "args": ["nempty", "nempty", "nempty"]
         }
       ],
       "testInvalidInputNbtIntersectionSizeSmall": [
         {
-          "args": [
-            "nempty"
-          ]
+          "args": ["nempty"]
         }
       ],
       "testInvalidInputTypeNbtIntersection": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "NBT_COMPOUND_MINUS": {
       "testNbtMinus": [
         {
-          "args": [
-            "nempty",
-            "nall"
-          ]
+          "args": ["nempty", "nall"]
         },
         {
-          "args": [
-            "nall",
-            "nempty"
-          ]
+          "args": ["nall", "nempty"]
         },
         {
-          "args": [
-            "nsome",
-            "nall"
-          ]
+          "args": ["nsome", "nall"]
         },
         {
-          "args": [
-            "nsasa",
-            "nsbsb"
-          ]
+          "args": ["nsasa", "nsbsb"]
         },
         {
-          "args": [
-            "nsasasbsc",
-            "nsasa"
-          ]
+          "args": ["nsasasbsc", "nsasa"]
         }
       ],
       "testInvalidInputNbtMinusSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "nempty",
-            "nempty"
-          ]
+          "args": ["nempty", "nempty", "nempty"]
         }
       ],
       "testInvalidInputNbtMinusSizeSmall": [
         {
-          "args": [
-            "nempty"
-          ]
+          "args": ["nempty"]
         }
       ],
       "testInvalidInputTypeNbtMinus": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "NBT_AS_BOOLEAN": {
       "testNbtAsBoolean": [
         {
-          "args": [
-            "nboolean"
-          ]
+          "args": ["nboolean"]
         },
         {
-          "args": [
-            "nempty"
-          ]
+          "args": ["nempty"]
         }
       ],
       "testInvalidInputNbtAsBooleanSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "nempty"
-          ]
+          "args": ["nempty", "nempty"]
         }
       ],
       "testInvalidInputNbtAsBooleanSizeSmall": [
@@ -1640,31 +1064,22 @@
       ],
       "testInvalidInputTypeNbtAsBoolean": [
         {
-          "args": [
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE"]
         }
       ]
     },
     "NBT_AS_BYTE": {
       "testNbtAsByte": [
         {
-          "args": [
-            "nbyte"
-          ]
+          "args": ["nbyte"]
         },
         {
-          "args": [
-            "nempty"
-          ]
+          "args": ["nempty"]
         }
       ],
       "testInvalidInputNbtAsByteSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "nempty"
-          ]
+          "args": ["nempty", "nempty"]
         }
       ],
       "testInvalidInputNbtAsByteSizeSmall": [
@@ -1674,31 +1089,22 @@
       ],
       "testInvalidInputTypeNbtAsByte": [
         {
-          "args": [
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE"]
         }
       ]
     },
     "NBT_AS_SHORT": {
       "testNbtAsShort": [
         {
-          "args": [
-            "nshort"
-          ]
+          "args": ["nshort"]
         },
         {
-          "args": [
-            "nempty"
-          ]
+          "args": ["nempty"]
         }
       ],
       "testInvalidInputNbtAsShortSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "nempty"
-          ]
+          "args": ["nempty", "nempty"]
         }
       ],
       "testInvalidInputNbtAsShortSizeSmall": [
@@ -1708,31 +1114,22 @@
       ],
       "testInvalidInputTypeNbtAsShort": [
         {
-          "args": [
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE"]
         }
       ]
     },
     "NBT_AS_INT": {
       "testNbtAsInt": [
         {
-          "args": [
-            "nint"
-          ]
+          "args": ["nint"]
         },
         {
-          "args": [
-            "nempty"
-          ]
+          "args": ["nempty"]
         }
       ],
       "testInvalidInputNbtAsIntSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "nempty"
-          ]
+          "args": ["nempty", "nempty"]
         }
       ],
       "testInvalidInputNbtAsIntSizeSmall": [
@@ -1742,31 +1139,22 @@
       ],
       "testInvalidInputTypeNbtAsInt": [
         {
-          "args": [
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE"]
         }
       ]
     },
     "NBT_AS_LONG": {
       "testNbtAsLong": [
         {
-          "args": [
-            "nlong"
-          ]
+          "args": ["nlong"]
         },
         {
-          "args": [
-            "nempty"
-          ]
+          "args": ["nempty"]
         }
       ],
       "testInvalidInputNbtAsLongSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "nempty"
-          ]
+          "args": ["nempty", "nempty"]
         }
       ],
       "testInvalidInputNbtAsLongSizeSmall": [
@@ -1776,31 +1164,22 @@
       ],
       "testInvalidInputTypeNbtAsLong": [
         {
-          "args": [
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE"]
         }
       ]
     },
     "NBT_AS_DOUBLE": {
       "testNbtAsDouble": [
         {
-          "args": [
-            "ndouble"
-          ]
+          "args": ["ndouble"]
         },
         {
-          "args": [
-            "nempty"
-          ]
+          "args": ["nempty"]
         }
       ],
       "testInvalidInputNbtAsDoubleSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "nempty"
-          ]
+          "args": ["nempty", "nempty"]
         }
       ],
       "testInvalidInputNbtAsDoubleSizeSmall": [
@@ -1810,31 +1189,22 @@
       ],
       "testInvalidInputTypeNbtAsDouble": [
         {
-          "args": [
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE"]
         }
       ]
     },
     "NBT_AS_FLOAT": {
       "testNbtAsFloat": [
         {
-          "args": [
-            "nfloat"
-          ]
+          "args": ["nfloat"]
         },
         {
-          "args": [
-            "nempty"
-          ]
+          "args": ["nempty"]
         }
       ],
       "testInvalidInputNbtAsFloatSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "nempty"
-          ]
+          "args": ["nempty", "nempty"]
         }
       ],
       "testInvalidInputNbtAsFloatSizeSmall": [
@@ -1844,31 +1214,22 @@
       ],
       "testInvalidInputTypeNbtAsFloat": [
         {
-          "args": [
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE"]
         }
       ]
     },
     "NBT_AS_STRING": {
       "testNbtAsString": [
         {
-          "args": [
-            "nstring"
-          ]
+          "args": ["nstring"]
         },
         {
-          "args": [
-            "nempty"
-          ]
+          "args": ["nempty"]
         }
       ],
       "testInvalidInputNbtAsStringSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "nempty"
-          ]
+          "args": ["nempty", "nempty"]
         }
       ],
       "testInvalidInputNbtAsStringSizeSmall": [
@@ -1878,31 +1239,22 @@
       ],
       "testInvalidInputTypeNbtAsString": [
         {
-          "args": [
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE"]
         }
       ]
     },
     "NBT_AS_TAG_LIST": {
       "testNbtAsTagList": [
         {
-          "args": [
-            "ntaglist"
-          ]
+          "args": ["ntaglist"]
         },
         {
-          "args": [
-            "nempty"
-          ]
+          "args": ["nempty"]
         }
       ],
       "testInvalidInputNbtAsTagListSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "nempty"
-          ]
+          "args": ["nempty", "nempty"]
         }
       ],
       "testInvalidInputNbtAsTagListSizeSmall": [
@@ -1912,31 +1264,22 @@
       ],
       "testInvalidInputTypeNbtAsTagList": [
         {
-          "args": [
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE"]
         }
       ]
     },
     "NBT_AS_BYTE_LIST": {
       "testNbtAsByteList": [
         {
-          "args": [
-            "nbytelist"
-          ]
+          "args": ["nbytelist"]
         },
         {
-          "args": [
-            "nempty"
-          ]
+          "args": ["nempty"]
         }
       ],
       "testInvalidInputNbtAsByteListSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "nempty"
-          ]
+          "args": ["nempty", "nempty"]
         }
       ],
       "testInvalidInputNbtAsByteListSizeSmall": [
@@ -1946,31 +1289,22 @@
       ],
       "testInvalidInputTypeNbtAsByteList": [
         {
-          "args": [
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE"]
         }
       ]
     },
     "NBT_AS_INT_LIST": {
       "testNbtAsIntList": [
         {
-          "args": [
-            "nintlist"
-          ]
+          "args": ["nintlist"]
         },
         {
-          "args": [
-            "nempty"
-          ]
+          "args": ["nempty"]
         }
       ],
       "testInvalidInputNbtAsIntListSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "nempty"
-          ]
+          "args": ["nempty", "nempty"]
         }
       ],
       "testInvalidInputNbtAsIntListSizeSmall": [
@@ -1980,31 +1314,22 @@
       ],
       "testInvalidInputTypeNbtAsIntList": [
         {
-          "args": [
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE"]
         }
       ]
     },
     "NBT_AS_LONG_LIST": {
       "testNbtAsLongList": [
         {
-          "args": [
-            "nlonglist"
-          ]
+          "args": ["nlonglist"]
         },
         {
-          "args": [
-            "nempty"
-          ]
+          "args": ["nempty"]
         }
       ],
       "testInvalidInputNbtAsLongListSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "nempty"
-          ]
+          "args": ["nempty", "nempty"]
         }
       ],
       "testInvalidInputNbtAsLongListSizeSmall": [
@@ -2014,9 +1339,7 @@
       ],
       "testInvalidInputTypeNbtAsLongList": [
         {
-          "args": [
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE"]
         }
       ]
     },
@@ -2030,10 +1353,7 @@
       ],
       "testInvalidInputNbtFromBooleanSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "nempty"
-          ]
+          "args": ["nempty", "nempty"]
         }
       ],
       "testInvalidInputNbtFromBooleanSizeSmall": [
@@ -2043,9 +1363,7 @@
       ],
       "testInvalidInputTypeNbtFromBoolean": [
         {
-          "args": [
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE"]
         }
       ]
     },
@@ -2059,10 +1377,7 @@
       ],
       "testInvalidInputNbtFromByteSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "nempty"
-          ]
+          "args": ["nempty", "nempty"]
         }
       ],
       "testInvalidInputNbtFromByteSizeSmall": [
@@ -2072,9 +1387,7 @@
       ],
       "testInvalidInputTypeNbtFromByte": [
         {
-          "args": [
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE"]
         }
       ]
     },
@@ -2088,10 +1401,7 @@
       ],
       "testInvalidInputNbtFromShortSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "nempty"
-          ]
+          "args": ["nempty", "nempty"]
         }
       ],
       "testInvalidInputNbtFromShortSizeSmall": [
@@ -2101,9 +1411,7 @@
       ],
       "testInvalidInputTypeNbtFromShort": [
         {
-          "args": [
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE"]
         }
       ]
     },
@@ -2117,10 +1425,7 @@
       ],
       "testInvalidInputNbtFromIntSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "nempty"
-          ]
+          "args": ["nempty", "nempty"]
         }
       ],
       "testInvalidInputNbtFromIntSizeSmall": [
@@ -2130,9 +1435,7 @@
       ],
       "testInvalidInputTypeNbtFromInt": [
         {
-          "args": [
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE"]
         }
       ]
     },
@@ -2146,10 +1449,7 @@
       ],
       "testInvalidInputNbtFromLongSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "nempty"
-          ]
+          "args": ["nempty", "nempty"]
         }
       ],
       "testInvalidInputNbtFromLongSizeSmall": [
@@ -2159,9 +1459,7 @@
       ],
       "testInvalidInputTypeNbtFromLong": [
         {
-          "args": [
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE"]
         }
       ]
     },
@@ -2175,10 +1473,7 @@
       ],
       "testInvalidInputNbtFromDoubleSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "nempty"
-          ]
+          "args": ["nempty", "nempty"]
         }
       ],
       "testInvalidInputNbtFromDoubleSizeSmall": [
@@ -2188,9 +1483,7 @@
       ],
       "testInvalidInputTypeNbtFromDouble": [
         {
-          "args": [
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE"]
         }
       ]
     },
@@ -2204,10 +1497,7 @@
       ],
       "testInvalidInputNbtFromFloatSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "nempty"
-          ]
+          "args": ["nempty", "nempty"]
         }
       ],
       "testInvalidInputNbtFromFloatSizeSmall": [
@@ -2217,9 +1507,7 @@
       ],
       "testInvalidInputTypeNbtFromFloat": [
         {
-          "args": [
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE"]
         }
       ]
     },
@@ -2233,10 +1521,7 @@
       ],
       "testInvalidInputNbtFromStringSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "nempty"
-          ]
+          "args": ["nempty", "nempty"]
         }
       ],
       "testInvalidInputNbtFromStringSizeSmall": [
@@ -2246,9 +1531,7 @@
       ],
       "testInvalidInputTypeNbtFromString": [
         {
-          "args": [
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE"]
         }
       ]
     },
@@ -2262,10 +1545,7 @@
       ],
       "testInvalidInputNbtFromTagListSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "nempty"
-          ]
+          "args": ["nempty", "nempty"]
         }
       ],
       "testInvalidInputNbtFromTagListSizeSmall": [
@@ -2275,9 +1555,7 @@
       ],
       "testInvalidInputTypeNbtFromTagList": [
         {
-          "args": [
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE"]
         }
       ]
     },
@@ -2291,10 +1569,7 @@
       ],
       "testInvalidInputNbtFromByteListSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "nempty"
-          ]
+          "args": ["nempty", "nempty"]
         }
       ],
       "testInvalidInputNbtFromByteListSizeSmall": [
@@ -2304,9 +1579,7 @@
       ],
       "testInvalidInputTypeNbtFromByteList": [
         {
-          "args": [
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE"]
         }
       ]
     },
@@ -2327,10 +1600,7 @@
       ],
       "testInvalidInputNbtFromIntListSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "nempty"
-          ]
+          "args": ["nempty", "nempty"]
         }
       ],
       "testInvalidInputNbtFromIntListSizeSmall": [
@@ -2340,9 +1610,7 @@
       ],
       "testInvalidInputTypeNbtFromIntList": [
         {
-          "args": [
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE"]
         }
       ]
     },
@@ -2356,10 +1624,7 @@
       ],
       "testInvalidInputNbtFromLongListSizeLarge": [
         {
-          "args": [
-            "nempty",
-            "nempty"
-          ]
+          "args": ["nempty", "nempty"]
         }
       ],
       "testInvalidInputNbtFromLongListSizeSmall": [
@@ -2369,9 +1634,7 @@
       ],
       "testInvalidInputTypeNbtFromLongList": [
         {
-          "args": [
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE"]
         }
       ]
     },
@@ -2390,34 +1653,22 @@
       ],
       "testInvalidInputNbtPathMatchFirstInvalidPathExpression": [
         {
-          "args": [
-            "nstring",
-            "nempty"
-          ]
+          "args": ["nstring", "nempty"]
         }
       ],
       "testInvalidInputNbtPathMatchFirstSizeLarge": [
         {
-          "args": [
-            "nstring",
-            "nempty",
-            "nempty"
-          ]
+          "args": ["nstring", "nempty", "nempty"]
         }
       ],
       "testInvalidInputNbtPathMatchFirstSizeSmall": [
         {
-          "args": [
-            "nstring"
-          ]
+          "args": ["nstring"]
         }
       ],
       "testInvalidInputTypeNbtPathMatchFirst": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
@@ -2436,34 +1687,22 @@
       ],
       "testInvalidInputNbtPathMatchAllInvalidPathExpression": [
         {
-          "args": [
-            "nstring",
-            "nempty"
-          ]
+          "args": ["nstring", "nempty"]
         }
       ],
       "testInvalidInputNbtPathMatchAllSizeLarge": [
         {
-          "args": [
-            "nstring",
-            "nempty",
-            "nempty"
-          ]
+          "args": ["nstring", "nempty", "nempty"]
         }
       ],
       "testInvalidInputNbtPathMatchAllSizeSmall": [
         {
-          "args": [
-            "nstring"
-          ]
+          "args": ["nstring"]
         }
       ],
       "testInvalidInputTypeNbtPathMatchAll": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
@@ -2482,34 +1721,22 @@
       ],
       "testInvalidInputNbtPathTestInvalidPathExpression": [
         {
-          "args": [
-            "nstring",
-            "nempty"
-          ]
+          "args": ["nstring", "nempty"]
         }
       ],
       "testInvalidInputNbtPathTestSizeLarge": [
         {
-          "args": [
-            "nstring",
-            "nempty",
-            "nempty"
-          ]
+          "args": ["nstring", "nempty", "nempty"]
         }
       ],
       "testInvalidInputNbtPathTestSizeSmall": [
         {
-          "args": [
-            "nstring"
-          ]
+          "args": ["nstring"]
         }
       ],
       "testInvalidInputTypeNbtPathTest": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     }

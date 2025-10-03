@@ -132,550 +132,316 @@
     "OPERATOR_APPLY": {
       "testApply": [
         {
-          "args": [
-            "oGeneralIdentity",
-            "bFalse"
-          ]
+          "args": ["oGeneralIdentity", "bFalse"]
         },
         {
-          "args": [
-            "oGeneralIdentity",
-            "bTrue"
-          ]
+          "args": ["oGeneralIdentity", "bTrue"]
         },
         {
-          "args": [
-            "oLogicalNot",
-            "bTrue"
-          ]
+          "args": ["oLogicalNot", "bTrue"]
         },
         {
-          "args": [
-            "oLogicalNot",
-            "bFalse"
-          ]
+          "args": ["oLogicalNot", "bFalse"]
         }
       ],
       "testApplyCurring": [
         {
-          "args": [
-            "oLogicalAnd",
-            "bTrue"
-          ]
+          "args": ["oLogicalAnd", "bTrue"]
         },
         {
-          "args": [
-            "oLogicalAndCurriedTrue",
-            "bTrue"
-          ]
+          "args": ["oLogicalAndCurriedTrue", "bTrue"]
         },
         {
-          "args": [
-            "oLogicalAndCurriedTrue",
-            "bFalse"
-          ]
+          "args": ["oLogicalAndCurriedTrue", "bFalse"]
         },
         {
-          "args": [
-            "oLogicalAnd",
-            "bFalse"
-          ]
+          "args": ["oLogicalAnd", "bFalse"]
         },
         {
-          "args": [
-            "oLogicalAndCurriedFalse",
-            "bTrue"
-          ]
+          "args": ["oLogicalAndCurriedFalse", "bTrue"]
         },
         {
-          "args": [
-            "oLogicalAndCurriedFalse",
-            "bFalse"
-          ]
+          "args": ["oLogicalAndCurriedFalse", "bFalse"]
         }
       ],
       "testInvalidInputSizeApplyLarge": [
         {
-          "args": [
-            "oGeneralIdentity",
-            "bFalse",
-            "bFalse"
-          ]
+          "args": ["oGeneralIdentity", "bFalse", "bFalse"]
         }
       ],
       "testInvalidInputSizeApplyCurryingLarge": [
         {
-          "args": [
-            "oLogicalAnd",
-            "bTrue"
-          ]
+          "args": ["oLogicalAnd", "bTrue"]
         },
         {
-          "args": [
-            "curriedOperatorValue",
-            "bFalse",
-            "bFalse"
-          ]
+          "args": ["curriedOperatorValue", "bFalse", "bFalse"]
         }
       ],
       "testInvalidInputSizeApplySmall": [
         {
-          "args": [
-            "oGeneralIdentity"
-          ]
+          "args": ["oGeneralIdentity"]
         }
       ],
       "testInvalidInputSizeApplyCurringSmall": [
         {
-          "args": [
-            "oLogicalAnd",
-            "bTrue"
-          ]
+          "args": ["oLogicalAnd", "bTrue"]
         },
         {
-          "args": [
-            "curriedOperatorValue"
-          ]
+          "args": ["curriedOperatorValue"]
         }
       ],
       "testInvalidOperatorTypeApply": [
         {
-          "args": [
-            "bFalse",
-            "bFalse"
-          ]
+          "args": ["bFalse", "bFalse"]
         }
       ],
       "testInvalidOperatorInputTypeApply": [
         {
-          "args": [
-            "oLogicalNot",
-            "oGeneralIdentity"
-          ]
+          "args": ["oLogicalNot", "oGeneralIdentity"]
         }
       ],
       "testInvalidOperatorInputTypeAnyApply": [
         {
-          "args": [
-            "i4Any",
-            "i4Any"
-          ]
+          "args": ["i4Any", "i4Any"]
         }
       ],
       "testConditionalOutputTypesApplyCurring": [
         {
-          "args": [
-            "oLogicalAnd",
-            "bTrue"
-          ]
+          "args": ["oLogicalAnd", "bTrue"]
         }
       ],
       "testApply2OnOpWith3Inputs": [
         {
-          "args": [
-            "new IVariable[]{new Variable<>(res1"
-          ]
+          "args": ["new IVariable[]{new Variable<>(res1"]
         }
       ],
       "testApply3ThreeAnd": [
         {
-          "args": [
-            "oPipeFlip",
-            "oLogicalAnd"
-          ]
+          "args": ["oPipeFlip", "oLogicalAnd"]
         }
       ],
       "testMap": [
         {
-          "args": [
-            "oLogicalAnd",
-            "bTrue"
-          ]
+          "args": ["oLogicalAnd", "bTrue"]
         }
       ],
       "testConditionalOutputTypesMap": [
         {
-          "args": [
-            "oLogicalAnd",
-            "bTrue"
-          ]
+          "args": ["oLogicalAnd", "bTrue"]
         }
       ],
       "testPredicateConjunction": [
         {
-          "args": [
-            "oRelationalLessThan",
-            "i0"
-          ]
+          "args": ["oRelationalLessThan", "i0"]
         },
         {
-          "args": [
-            "oRelationalGreaterThan",
-            "i2"
-          ]
+          "args": ["oRelationalGreaterThan", "i2"]
         },
         {
-          "args": [
-            "zeroLessThanandTwoGreaterThan",
-            "i0"
-          ]
+          "args": ["zeroLessThanandTwoGreaterThan", "i0"]
         },
         {
-          "args": [
-            "zeroLessThanandTwoGreaterThan",
-            "i1"
-          ]
+          "args": ["zeroLessThanandTwoGreaterThan", "i1"]
         },
         {
-          "args": [
-            "zeroLessThanandTwoGreaterThan",
-            "i2"
-          ]
+          "args": ["zeroLessThanandTwoGreaterThan", "i2"]
         }
       ],
       "testInvalidInputSizePredicateConjunctionLarge": [
         {
-          "args": [
-            "oRelationalLessThan",
-            "i0"
-          ]
+          "args": ["oRelationalLessThan", "i0"]
         }
       ],
       "testInvalidInputSizePredicateConjunctionSmall": [
         {
-          "args": [
-            "oRelationalLessThan",
-            "i0"
-          ]
+          "args": ["oRelationalLessThan", "i0"]
         }
       ],
       "testInvalidOperatorTypePredicateConjunction": [
         {
-          "args": [
-            "oRelationalLessThan",
-            "i0"
-          ]
+          "args": ["oRelationalLessThan", "i0"]
         }
       ],
       "testInvalidOperatorInputTypePredicateConjunction": [
         {
-          "args": [
-            "oRelationalEquals",
-            "i2"
-          ]
+          "args": ["oRelationalEquals", "i2"]
         }
       ],
       "testConditionalOutputTypesPredicateConjunction": [
         {
-          "args": [
-            "oRelationalEquals",
-            "i2"
-          ]
+          "args": ["oRelationalEquals", "i2"]
         }
       ],
       "testPredicateDisjunction": [
         {
-          "args": [
-            "oRelationalLessThan",
-            "i0"
-          ]
+          "args": ["oRelationalLessThan", "i0"]
         },
         {
-          "args": [
-            "oRelationalGreaterThan",
-            "i2"
-          ]
+          "args": ["oRelationalGreaterThan", "i2"]
         },
         {
-          "args": [
-            "zeroLessThanorTwoGreaterThan",
-            "i0"
-          ]
+          "args": ["zeroLessThanorTwoGreaterThan", "i0"]
         },
         {
-          "args": [
-            "zeroLessThanorTwoGreaterThan",
-            "i1"
-          ]
+          "args": ["zeroLessThanorTwoGreaterThan", "i1"]
         },
         {
-          "args": [
-            "zeroLessThanorTwoGreaterThan",
-            "i2"
-          ]
+          "args": ["zeroLessThanorTwoGreaterThan", "i2"]
         }
       ],
       "testInvalidInputSizePredicateDisjunctionLarge": [
         {
-          "args": [
-            "oRelationalLessThan",
-            "i0"
-          ]
+          "args": ["oRelationalLessThan", "i0"]
         }
       ],
       "testInvalidInputSizePredicateDisjunctionSmall": [
         {
-          "args": [
-            "oRelationalLessThan",
-            "i0"
-          ]
+          "args": ["oRelationalLessThan", "i0"]
         }
       ],
       "testInvalidOperatorTypePredicateDisjunction": [
         {
-          "args": [
-            "oRelationalLessThan",
-            "i0"
-          ]
+          "args": ["oRelationalLessThan", "i0"]
         }
       ],
       "testInvalidOperatorInputTypePredicateDisjunction": [
         {
-          "args": [
-            "oRelationalEquals",
-            "i2"
-          ]
+          "args": ["oRelationalEquals", "i2"]
         }
       ],
       "testConditionalOutputTypesPredicateDisjunction": [
         {
-          "args": [
-            "oRelationalEquals",
-            "i2"
-          ]
+          "args": ["oRelationalEquals", "i2"]
         }
       ],
       "testPredicateNegation": [
         {
-          "args": [
-            "oRelationalGreaterThan",
-            "i2"
-          ]
+          "args": ["oRelationalGreaterThan", "i2"]
         },
         {
-          "args": [
-            "notTwoGreaterThan",
-            "i0"
-          ]
+          "args": ["notTwoGreaterThan", "i0"]
         },
         {
-          "args": [
-            "notTwoGreaterThan",
-            "i1"
-          ]
+          "args": ["notTwoGreaterThan", "i1"]
         },
         {
-          "args": [
-            "notTwoGreaterThan",
-            "i2"
-          ]
+          "args": ["notTwoGreaterThan", "i2"]
         },
         {
-          "args": [
-            "notTwoGreaterThan",
-            "i3"
-          ]
+          "args": ["notTwoGreaterThan", "i3"]
         }
       ],
       "testInvalidInputSizePredicateNegationLarge": [
         {
-          "args": [
-            "oRelationalLessThan",
-            "i0"
-          ]
+          "args": ["oRelationalLessThan", "i0"]
         }
       ],
       "testConditionalOutputTypesPredicateNegation": [
         {
-          "args": [
-            "oRelationalEquals",
-            "i2"
-          ]
+          "args": ["oRelationalEquals", "i2"]
         }
       ],
       "testPredicatePipe": [
         {
-          "args": [
-            "increment2",
-            "i0"
-          ]
+          "args": ["increment2", "i0"]
         },
         {
-          "args": [
-            "increment2",
-            "i1"
-          ]
+          "args": ["increment2", "i1"]
         }
       ],
       "testPredicatePipe3Incr": [
         {
-          "args": [
-            "op",
-            "i2"
-          ]
+          "args": ["op", "i2"]
         }
       ],
       "testPredicatePipeAddAddError": [
         {
-          "args": [
-            "op",
-            "i2",
-            "i2"
-          ]
+          "args": ["op", "i2", "i2"]
         }
       ],
       "testPredicatePipe2": [
         {
-          "args": [
-            "addOneAndSelfMultiply",
-            "i0"
-          ]
+          "args": ["addOneAndSelfMultiply", "i0"]
         },
         {
-          "args": [
-            "addOneAndSelfMultiply",
-            "i1"
-          ]
+          "args": ["addOneAndSelfMultiply", "i1"]
         },
         {
-          "args": [
-            "addOneAndSelfMultiply",
-            "i2"
-          ]
+          "args": ["addOneAndSelfMultiply", "i2"]
         },
         {
-          "args": [
-            "addOneAndSelfMultiply",
-            "i3"
-          ]
+          "args": ["addOneAndSelfMultiply", "i3"]
         }
       ],
       "testPredicateFlip": [
         {
-          "args": [
-            "lessThanFlipped",
-            "i2"
-          ]
+          "args": ["lessThanFlipped", "i2"]
         },
         {
-          "args": [
-            "lessThan2",
-            "i0"
-          ]
+          "args": ["lessThan2", "i0"]
         },
         {
-          "args": [
-            "lessThan2",
-            "i1"
-          ]
+          "args": ["lessThan2", "i1"]
         },
         {
-          "args": [
-            "lessThan2",
-            "i2"
-          ]
+          "args": ["lessThan2", "i2"]
         },
         {
-          "args": [
-            "lessThan2",
-            "i3"
-          ]
+          "args": ["lessThan2", "i3"]
         }
       ],
       "testPredicateFlipOperatorWithThreeInputs": [
         {
-          "args": [
-            "choiceFlipped",
-            "i0"
-          ]
+          "args": ["choiceFlipped", "i0"]
         },
         {
-          "args": [
-            "choiceFlipped0",
-            "bFalse"
-          ]
+          "args": ["choiceFlipped0", "bFalse"]
         },
         {
-          "args": [
-            "choiceFlipped0",
-            "bTrue"
-          ]
+          "args": ["choiceFlipped0", "bTrue"]
         },
         {
-          "args": [
-            "choiceFlipped0False",
-            "i1"
-          ]
+          "args": ["choiceFlipped0False", "i1"]
         },
         {
-          "args": [
-            "choiceFlipped0True",
-            "i1"
-          ]
+          "args": ["choiceFlipped0True", "i1"]
         }
       ],
       "testFilter": [
         {
-          "args": [
-            "oRelationalEquals",
-            "i2"
-          ]
+          "args": ["oRelationalEquals", "i2"]
         },
         {
-          "args": [
-            "oRelationalLessThan",
-            "i0"
-          ]
+          "args": ["oRelationalLessThan", "i0"]
         },
         {
-          "args": [
-            "oRelationalGreaterThan",
-            "i2"
-          ]
+          "args": ["oRelationalGreaterThan", "i2"]
         },
         {
-          "args": [
-            "modulusFlipped",
-            "i2"
-          ]
+          "args": ["modulusFlipped", "i2"]
         },
         {
-          "args": [
-            "oRelationalEquals",
-            "i0"
-          ]
+          "args": ["oRelationalEquals", "i0"]
         }
       ],
       "testInvalidInputSizeFilterLarge": [
         {
-          "args": [
-            "oRelationalEquals",
-            "i2"
-          ]
+          "args": ["oRelationalEquals", "i2"]
         }
       ],
       "testInvalidInputSizeFilterSmall": [
         {
-          "args": [
-            "oRelationalEquals",
-            "i2"
-          ]
+          "args": ["oRelationalEquals", "i2"]
         }
       ],
       "testInvalidOperatorInputTypeFilter": [
         {
-          "args": [
-            "oRelationalEquals",
-            "i2"
-          ]
+          "args": ["oRelationalEquals", "i2"]
         }
       ],
       "testConditionalOutputTypesFilter": [
         {
-          "args": [
-            "oRelationalEquals",
-            "i2"
-          ]
+          "args": ["oRelationalEquals", "i2"]
         }
       ],
       "testReduce1Complex": [
@@ -689,175 +455,100 @@
     "OPERATOR_APPLY_2": {
       "testApply2": [
         {
-          "args": [
-            "oLogicalAnd",
-            "bTrue",
-            "bFalse"
-          ]
+          "args": ["oLogicalAnd", "bTrue", "bFalse"]
         },
         {
-          "args": [
-            "oLogicalAnd",
-            "bTrue",
-            "bTrue"
-          ]
+          "args": ["oLogicalAnd", "bTrue", "bTrue"]
         },
         {
-          "args": [
-            "oRelationalGreaterThan",
-            "i0",
-            "i1"
-          ]
+          "args": ["oRelationalGreaterThan", "i0", "i1"]
         },
         {
-          "args": [
-            "oRelationalGreaterThan",
-            "i2",
-            "i1"
-          ]
+          "args": ["oRelationalGreaterThan", "i2", "i1"]
         }
       ],
       "testApply2OnOpWith3Inputs": [
         {
-          "args": [
-            "oChoice",
-            "bTrue",
-            "i1"
-          ]
+          "args": ["oChoice", "bTrue", "i1"]
         }
       ],
       "testInvalidInputSizeApply2Large": [
         {
-          "args": [
-            "oLogicalAnd",
-            "bFalse",
-            "bFalse",
-            "bFalse"
-          ]
+          "args": ["oLogicalAnd", "bFalse", "bFalse", "bFalse"]
         }
       ],
       "testInvalidInputSizeApply2Small": [
         {
-          "args": [
-            "oLogicalAnd",
-            "bTrue"
-          ]
+          "args": ["oLogicalAnd", "bTrue"]
         }
       ],
       "testInvalidOperatorTypeApply2": [
         {
-          "args": [
-            "bFalse",
-            "bFalse",
-            "bFalse"
-          ]
+          "args": ["bFalse", "bFalse", "bFalse"]
         }
       ],
       "testInvalidOperatorInputTypeApply2": [
         {
-          "args": [
-            "oLogicalNot",
-            "oGeneralIdentity",
-            "bTrue"
-          ]
+          "args": ["oLogicalNot", "oGeneralIdentity", "bTrue"]
         }
       ],
       "testApply3ThreeAnd": [
         {
-          "args": [
-            "oPipeFlip",
-            "oThreeAnd_1",
-            "oLogicalAnd"
-          ]
+          "args": ["oPipeFlip", "oThreeAnd_1", "oLogicalAnd"]
         }
       ],
       "testPredicatePipeLargeInputCount": [
         {
-          "args": [
-            "incrementAndAdd",
-            "s1",
-            "i2"
-          ]
+          "args": ["incrementAndAdd", "s1", "i2"]
         }
       ],
       "testPredicatePipeMixed": [
         {
-          "args": [
-            "listLengthIncr",
-            "lintegers",
-            "i2"
-          ]
+          "args": ["listLengthIncr", "lintegers", "i2"]
         }
       ],
       "testPredicatePipeLenAddMap": [
         {
-          "args": [
-            "op",
-            "lintegers",
-            "lintegers"
-          ]
+          "args": ["op", "lintegers", "lintegers"]
         }
       ],
       "testPredicatePipeMapContains": [
         {
-          "args": [
-            "mapContains",
-            "lintegers",
-            "lintegers"
-          ]
+          "args": ["mapContains", "lintegers", "lintegers"]
         }
       ]
     },
     "OPERATOR_APPLY_3": {
       "testApply3": [
         {
-          "args": [
-            "oSubStr",
-            "i0",
-            "i1",
-            "sAnd"
-          ]
+          "args": ["oSubStr", "i0", "i1", "sAnd"]
         }
       ],
       "testApply3ThreeAnd": [
         {
-          "args": [
-            "oThreeAnd",
-            "bTrue",
-            "bTrue",
-            "bTrue"
-          ]
+          "args": ["oThreeAnd", "bTrue", "bTrue", "bTrue"]
         }
       ]
     },
     "OPERATOR_FLIP": {
       "testApply3ThreeAnd": [
         {
-          "args": [
-            "oPipe"
-          ]
+          "args": ["oPipe"]
         }
       ],
       "testPredicateFlip": [
         {
-          "args": [
-            "oRelationalLessThan"
-          ]
+          "args": ["oRelationalLessThan"]
         }
       ],
       "testPredicateFlipOperatorWithThreeInputs": [
         {
-          "args": [
-            "oChoice"
-          ]
+          "args": ["oChoice"]
         }
       ],
       "testInvalidInputSizePredicateFlipLarge": [
         {
-          "args": [
-            "oRelationalLessThan",
-            "oRelationalLessThan"
-          ]
+          "args": ["oRelationalLessThan", "oRelationalLessThan"]
         }
       ],
       "testInvalidInputSizePredicateFlipSmall": [
@@ -867,23 +558,17 @@
       ],
       "testInvalidOperatorTypePredicateFlip": [
         {
-          "args": [
-            "bFalse"
-          ]
+          "args": ["bFalse"]
         }
       ],
       "testConditionalOutputTypesPredicateFlip": [
         {
-          "args": [
-            "oRelationalLessThan"
-          ]
+          "args": ["oRelationalLessThan"]
         }
       ],
       "testFilter": [
         {
-          "args": [
-            "oArithmeticModulus"
-          ]
+          "args": ["oArithmeticModulus"]
         }
       ],
       "testReduce1Complex": [
@@ -897,196 +582,126 @@
     "OPERATOR_APPLY_N": {
       "testApplyN": [
         {
-          "args": [
-            "oSubStr",
-            "applyArgs"
-          ]
+          "args": ["oSubStr", "applyArgs"]
         }
       ]
     },
     "OPERATOR_APPLY_0": {
       "testApply0": [
         {
-          "args": [
-            "oGetConstStr"
-          ]
+          "args": ["oGetConstStr"]
         }
       ]
     },
     "OPERATOR_MAP": {
       "testMap": [
         {
-          "args": [
-            "oArithmeticIncrement",
-            "lintegers"
-          ]
+          "args": ["oArithmeticIncrement", "lintegers"]
         },
         {
-          "args": [
-            "oLogicalNot",
-            "lbooleans"
-          ]
+          "args": ["oLogicalNot", "lbooleans"]
         },
         {
-          "args": [
-            "curriedOperatorValue",
-            "lbooleans"
-          ]
+          "args": ["curriedOperatorValue", "lbooleans"]
         },
         {
-          "args": [
-            "oLogicalAnd",
-            "lbooleans"
-          ]
+          "args": ["oLogicalAnd", "lbooleans"]
         }
       ],
       "testInvalidInputSizeMapLarge": [
         {
-          "args": [
-            "oArithmeticIncrement",
-            "lintegers",
-            "lintegers"
-          ]
+          "args": ["oArithmeticIncrement", "lintegers", "lintegers"]
         }
       ],
       "testInvalidInputSizeMapSmall": [
         {
-          "args": [
-            "oArithmeticIncrement"
-          ]
+          "args": ["oArithmeticIncrement"]
         }
       ],
       "testInvalidOperatorTypeMap": [
         {
-          "args": [
-            "bFalse",
-            "bFalse"
-          ]
+          "args": ["bFalse", "bFalse"]
         }
       ],
       "testInvalidOperatorInputTypeMap": [
         {
-          "args": [
-            "oArithmeticIncrement",
-            "oArithmeticIncrement"
-          ]
+          "args": ["oArithmeticIncrement", "oArithmeticIncrement"]
         }
       ]
     },
     "OPERATOR_CONJUNCTION": {
       "testPredicateConjunction": [
         {
-          "args": [
-            "zeroLessThan",
-            "twoGreaterThan"
-          ]
+          "args": ["zeroLessThan", "twoGreaterThan"]
         }
       ],
       "testInvalidInputSizePredicateConjunctionLarge": [
         {
-          "args": [
-            "zeroLessThan",
-            "zeroLessThan",
-            "zeroLessThan"
-          ]
+          "args": ["zeroLessThan", "zeroLessThan", "zeroLessThan"]
         }
       ],
       "testInvalidInputSizePredicateConjunctionSmall": [
         {
-          "args": [
-            "zeroLessThan"
-          ]
+          "args": ["zeroLessThan"]
         }
       ],
       "testInvalidOperatorTypePredicateConjunction": [
         {
-          "args": [
-            "bFalse",
-            "zeroLessThan"
-          ]
+          "args": ["bFalse", "zeroLessThan"]
         }
       ],
       "testInvalidOperatorInputTypePredicateConjunction": [
         {
-          "args": [
-            "equalsTwo",
-            "i0"
-          ]
+          "args": ["equalsTwo", "i0"]
         }
       ],
       "testFilter": [
         {
-          "args": [
-            "zeroLessThan",
-            "twoGreaterThan"
-          ]
+          "args": ["zeroLessThan", "twoGreaterThan"]
         }
       ]
     },
     "OPERATOR_DISJUNCTION": {
       "testPredicateDisjunction": [
         {
-          "args": [
-            "zeroLessThan",
-            "twoGreaterThan"
-          ]
+          "args": ["zeroLessThan", "twoGreaterThan"]
         }
       ],
       "testInvalidInputSizePredicateDisjunctionLarge": [
         {
-          "args": [
-            "zeroLessThan",
-            "zeroLessThan",
-            "zeroLessThan"
-          ]
+          "args": ["zeroLessThan", "zeroLessThan", "zeroLessThan"]
         }
       ],
       "testInvalidInputSizePredicateDisjunctionSmall": [
         {
-          "args": [
-            "zeroLessThan"
-          ]
+          "args": ["zeroLessThan"]
         }
       ],
       "testInvalidOperatorTypePredicateDisjunction": [
         {
-          "args": [
-            "bFalse",
-            "zeroLessThan"
-          ]
+          "args": ["bFalse", "zeroLessThan"]
         }
       ],
       "testInvalidOperatorInputTypePredicateDisjunction": [
         {
-          "args": [
-            "equalsTwo",
-            "i0"
-          ]
+          "args": ["equalsTwo", "i0"]
         }
       ],
       "testFilter": [
         {
-          "args": [
-            "isZero",
-            "isEvenUnsafe"
-          ]
+          "args": ["isZero", "isEvenUnsafe"]
         }
       ]
     },
     "OPERATOR_NEGATION": {
       "testPredicateNegation": [
         {
-          "args": [
-            "twoGreaterThan"
-          ]
+          "args": ["twoGreaterThan"]
         }
       ],
       "testInvalidInputSizePredicateNegationLarge": [
         {
-          "args": [
-            "zeroLessThan",
-            "zeroLessThan"
-          ]
+          "args": ["zeroLessThan", "zeroLessThan"]
         }
       ],
       "testInvalidInputSizePredicateNegationSmall": [
@@ -1096,35 +711,24 @@
       ],
       "testInvalidOperatorTypePredicateNegation": [
         {
-          "args": [
-            "bFalse"
-          ]
+          "args": ["bFalse"]
         }
       ]
     },
     "OPERATOR_PIPE": {
       "testPredicatePipe": [
         {
-          "args": [
-            "oArithmeticIncrement",
-            "oArithmeticIncrement"
-          ]
+          "args": ["oArithmeticIncrement", "oArithmeticIncrement"]
         }
       ],
       "testPredicatePipeLargeInputCount": [
         {
-          "args": [
-            "oParseInt",
-            "oArithmeticAddition"
-          ]
+          "args": ["oParseInt", "oArithmeticAddition"]
         }
       ],
       "testPredicatePipeMixed": [
         {
-          "args": [
-            "oListLength",
-            "oArithmeticAddition"
-          ]
+          "args": ["oListLength", "oArithmeticAddition"]
         }
       ],
       "testPredicatePipeLenAddMap": [
@@ -1134,10 +738,7 @@
           ]
         },
         {
-          "args": [
-            "oArithmeticAddition",
-            "oOperatorMap"
-          ]
+          "args": ["oArithmeticAddition", "oOperatorMap"]
         }
       ],
       "testPredicatePipe3Incr": [
@@ -1147,26 +748,17 @@
           ]
         },
         {
-          "args": [
-            "oArithmeticIncrement",
-            "oArithmeticIncrement"
-          ]
+          "args": ["oArithmeticIncrement", "oArithmeticIncrement"]
         }
       ],
       "testPredicatePipeAddAddError": [
         {
-          "args": [
-            "oArithmeticAddition",
-            "oArithmeticAddition"
-          ]
+          "args": ["oArithmeticAddition", "oArithmeticAddition"]
         }
       ],
       "testPredicatePipeMapContains": [
         {
-          "args": [
-            "oListContains",
-            "oOperatorMap"
-          ]
+          "args": ["oListContains", "oOperatorMap"]
         }
       ],
       "testInvalidInputSizePredicatePipeLarge": [
@@ -1180,40 +772,27 @@
       ],
       "testInvalidInputSizePredicatePipeSmall": [
         {
-          "args": [
-            "oArithmeticIncrement"
-          ]
+          "args": ["oArithmeticIncrement"]
         }
       ],
       "testInvalidOperatorTypePredicatePipe": [
         {
-          "args": [
-            "bFalse",
-            "oArithmeticIncrement"
-          ]
+          "args": ["bFalse", "oArithmeticIncrement"]
         }
       ],
       "testInvalidOperatorInputTypePredicatePipe": [
         {
-          "args": [
-            "oArithmeticIncrement",
-            "i0"
-          ]
+          "args": ["oArithmeticIncrement", "i0"]
         }
       ],
       "testFilter": [
         {
-          "args": [
-            "modulus2",
-            "isZero"
-          ]
+          "args": ["modulus2", "isZero"]
         }
       ],
       "testReduce1Complex": [
         {
-          "args": [
-            "new DummyVariableOperator((ValueTypeOperator.ValueOperator"
-          ]
+          "args": ["new DummyVariableOperator((ValueTypeOperator.ValueOperator"]
         }
       ]
     },
@@ -1238,192 +817,119 @@
     "OPERATOR_FILTER": {
       "testFilter": [
         {
-          "args": [
-            "equalsTwo",
-            "lintegers"
-          ]
+          "args": ["equalsTwo", "lintegers"]
         },
         {
-          "args": [
-            "zeroLessThanandTwoGreaterThan",
-            "lintegers"
-          ]
+          "args": ["zeroLessThanandTwoGreaterThan", "lintegers"]
         },
         {
-          "args": [
-            "isEven",
-            "lintegers"
-          ]
+          "args": ["isEven", "lintegers"]
         }
       ],
       "testInvalidInputSizeFilterLarge": [
         {
-          "args": [
-            "equalsTwo",
-            "lintegers",
-            "lintegers"
-          ]
+          "args": ["equalsTwo", "lintegers", "lintegers"]
         }
       ],
       "testInvalidInputSizeFilterSmall": [
         {
-          "args": [
-            "equalsTwo"
-          ]
+          "args": ["equalsTwo"]
         }
       ],
       "testInvalidOperatorTypeFilter": [
         {
-          "args": [
-            "bFalse",
-            "lintegers"
-          ]
+          "args": ["bFalse", "lintegers"]
         }
       ],
       "testInvalidOperatorInputTypeFilter": [
         {
-          "args": [
-            "equalsTwo",
-            "oArithmeticIncrement"
-          ]
+          "args": ["equalsTwo", "oArithmeticIncrement"]
         }
       ]
     },
     "OPERATOR_REDUCE": {
       "testReduce": [
         {
-          "args": [
-            "oArithmeticAddition",
-            "lintegers",
-            "i0"
-          ]
+          "args": ["oArithmeticAddition", "lintegers", "i0"]
         }
       ],
       "testInvalidInputSizeReduceLarge": [
         {
-          "args": [
-            "oArithmeticAddition",
-            "lintegers",
-            "i0",
-            "i0"
-          ]
+          "args": ["oArithmeticAddition", "lintegers", "i0", "i0"]
         }
       ],
       "testInvalidInputSizeReduceSmall": [
         {
-          "args": [
-            "oArithmeticAddition",
-            "lintegers"
-          ]
+          "args": ["oArithmeticAddition", "lintegers"]
         }
       ],
       "testInvalidOperatorTypeReduce": [
         {
-          "args": [
-            "bFalse",
-            "lintegers",
-            "i0"
-          ]
+          "args": ["bFalse", "lintegers", "i0"]
         }
       ],
       "testInvalidOperatorInputTypeReduce": [
         {
-          "args": [
-            "oArithmeticAddition",
-            "i0",
-            "i0"
-          ]
+          "args": ["oArithmeticAddition", "i0", "i0"]
         }
       ],
       "testInvalidOperatorAccumulatorTypeReduce": [
         {
-          "args": [
-            "oArithmeticAddition",
-            "lintegers",
-            "lintegers"
-          ]
+          "args": ["oArithmeticAddition", "lintegers", "lintegers"]
         }
       ]
     },
     "OPERATOR_REDUCE1": {
       "testReduce1": [
         {
-          "args": [
-            "oArithmeticAddition",
-            "lintegers"
-          ]
+          "args": ["oArithmeticAddition", "lintegers"]
         }
       ],
       "testReduce1Complex": [
         {
-          "args": [
-            "reducer",
-            "lintegers"
-          ]
+          "args": ["reducer", "lintegers"]
         }
       ],
       "testInvalidInputSizeReduce1Large": [
         {
-          "args": [
-            "oArithmeticAddition",
-            "lintegers",
-            "i0"
-          ]
+          "args": ["oArithmeticAddition", "lintegers", "i0"]
         }
       ],
       "testInvalidInputSizeReduce1Small": [
         {
-          "args": [
-            "oArithmeticAddition"
-          ]
+          "args": ["oArithmeticAddition"]
         }
       ],
       "testInvalidOperatorTypeReduce1": [
         {
-          "args": [
-            "bFalse",
-            "lintegers"
-          ]
+          "args": ["bFalse", "lintegers"]
         }
       ],
       "testInvalidOperatorInputTypeReduce1": [
         {
-          "args": [
-            "oArithmeticAddition",
-            "i0"
-          ]
+          "args": ["oArithmeticAddition", "i0"]
         }
       ],
       "testInvalidEmptyListReduce1": [
         {
-          "args": [
-            "oArithmeticAddition",
-            "lempty"
-          ]
+          "args": ["oArithmeticAddition", "lempty"]
         }
       ]
     },
     "OPERATOR_BY_NAME": {
       "testByName": [
         {
-          "args": [
-            "sAnd"
-          ]
+          "args": ["sAnd"]
         }
       ],
       "testByNameNonExisting": [
         {
-          "args": [
-            "sOther"
-          ]
+          "args": ["sOther"]
         }
       ],
       "testInvalidInputSizeByNameLarge": [
         {
-          "args": [
-            "sAnd",
-            "sAnd"
-          ]
+          "args": ["sAnd", "sAnd"]
         }
       ],
       "testInvalidInputSizeByNameSmall": [
@@ -1433,9 +939,7 @@
       ],
       "testInvalidOperatorInputTypeByName": [
         {
-          "args": [
-            "oArithmeticIncrement"
-          ]
+          "args": ["oArithmeticIncrement"]
         }
       ]
     }
