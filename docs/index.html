@@ -1,57 +1,57 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Integrated Dynamics NBT Tester</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="../node-bundles/REJ2.js"></script>
-  <script src="helpers.js"></script>
-  <script src="operatorRegistry.js"></script>
-  <script src="ASTTransformers/ASTtoNBT.js"></script>
-  <script src="ASTTransformers/NBTtoAST.js"></script>
-  <script src="index.js"></script>
-  <style>
-    .fields-row {
-      display: flex;
-      gap: 1em;
-      margin-bottom: 1em;
-    }
-    .field-col {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-    }
-    .field-col label {
-      margin-bottom: 0.5em;
-    }
-    .field-col textarea {
-      width: 100%;
-      min-height: 120px;
-      resize: vertical;
-    }
-    .parse-btn-row {
-      display: flex;
-      justify-content: center;
-      margin-top: 1em;
-    }
-  </style>
-</head>
-<body>
-  <div style="max-width: 900px; margin: 2em auto; font-family: sans-serif;">
-    <div class="fields-row">
-      <div class="field-col">
-        <label for="ast">AST</label>
-        <textarea id="ast" rows="6"></textarea>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Integrated Dynamics NBT Tester</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="../node-bundles/REJ2.js"></script>
+    <script src="helpers.js"></script>
+    <script src="operatorRegistry.js"></script>
+    <script src="ASTTransformers/ASTtoNBT.js"></script>
+    <script src="ASTTransformers/NBTtoAST.js"></script>
+    <script src="index.js"></script>
+    <style>
+      .fields-row {
+        display: flex;
+        gap: 1em;
+        margin-bottom: 1em;
+      }
+      .field-col {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+      .field-col label {
+        margin-bottom: 0.5em;
+      }
+      .field-col textarea {
+        width: 100%;
+        min-height: 120px;
+        resize: vertical;
+      }
+      .parse-btn-row {
+        display: flex;
+        justify-content: center;
+        margin-top: 1em;
+      }
+    </style>
+  </head>
+  <body>
+    <div style="max-width: 900px; margin: 2em auto; font-family: sans-serif">
+      <div class="fields-row">
+        <div class="field-col">
+          <label for="ast">AST</label>
+          <textarea id="ast" rows="6"></textarea>
+        </div>
+        <div class="field-col">
+          <label for="output">NBT</label>
+          <textarea id="nbt" rows="6"></textarea>
+        </div>
       </div>
-      <div class="field-col">
-        <label for="output">NBT</label>
-        <textarea id="nbt" rows="6"></textarea>
+      <div class="parse-btn-row">
+        <button style="padding: 0.5em 2em" id="ast-btn">Parse AST</button>
+        <button style="padding: 0.5em 2em" id="nbt-btn">Parse NBT</button>
       </div>
     </div>
-    <div class="parse-btn-row">
-      <button style="padding:0.5em 2em;" id="ast-btn">Parse AST</button>
-      <button style="padding:0.5em 2em;" id="nbt-btn">Parse NBT</button>
-    </div>
-  </div>
-</body>
+  </body>
 </html>

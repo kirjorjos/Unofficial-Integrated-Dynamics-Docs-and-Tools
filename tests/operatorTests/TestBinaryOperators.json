@@ -37,232 +37,135 @@
     "BINARY_AND": {
       "testBinaryAnd": [
         {
-          "args": [
-            "i10",
-            "i10"
-          ]
+          "args": ["i10", "i10"]
         },
         {
-          "args": [
-            "i0",
-            "i10"
-          ]
+          "args": ["i0", "i10"]
         },
         {
-          "args": [
-            "i10",
-            "i0"
-          ]
+          "args": ["i10", "i0"]
         },
         {
-          "args": [
-            "im10",
-            "i10"
-          ]
+          "args": ["im10", "i10"]
         },
         {
-          "args": [
-            "i10",
-            "im10"
-          ]
+          "args": ["i10", "im10"]
         },
         {
-          "args": [
-            "i1",
-            "i2"
-          ]
+          "args": ["i1", "i2"]
         },
         {
-          "args": [
-            "i5",
-            "i3"
-          ]
+          "args": ["i5", "i3"]
         }
       ],
       "testInvalidInputSizeAndLarge": [
         {
-          "args": [
-            "i0",
-            "i0",
-            "i0"
-          ]
+          "args": ["i0", "i0", "i0"]
         }
       ],
       "testInvalidInputSizeAndSmall": [
         {
-          "args": [
-            "i0"
-          ]
+          "args": ["i0"]
         }
       ],
       "testInvalidInputTypeAnd": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "BINARY_OR": {
       "testBinaryOr": [
         {
-          "args": [
-            "i10",
-            "i10"
-          ]
+          "args": ["i10", "i10"]
         },
         {
-          "args": [
-            "i0",
-            "i10"
-          ]
+          "args": ["i0", "i10"]
         },
         {
-          "args": [
-            "i10",
-            "i0"
-          ]
+          "args": ["i10", "i0"]
         },
         {
-          "args": [
-            "im10",
-            "i10"
-          ]
+          "args": ["im10", "i10"]
         },
         {
-          "args": [
-            "i10",
-            "im10"
-          ]
+          "args": ["i10", "im10"]
         },
         {
-          "args": [
-            "i1",
-            "i2"
-          ]
+          "args": ["i1", "i2"]
         },
         {
-          "args": [
-            "i5",
-            "i3"
-          ]
+          "args": ["i5", "i3"]
         }
       ],
       "testInvalidInputSizeOrLarge": [
         {
-          "args": [
-            "i0",
-            "i0",
-            "i0"
-          ]
+          "args": ["i0", "i0", "i0"]
         }
       ],
       "testInvalidInputSizeOrSmall": [
         {
-          "args": [
-            "i0"
-          ]
+          "args": ["i0"]
         }
       ],
       "testInvalidInputTypeOr": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "BINARY_XOR": {
       "testBinaryXor": [
         {
-          "args": [
-            "i10",
-            "i10"
-          ]
+          "args": ["i10", "i10"]
         },
         {
-          "args": [
-            "i0",
-            "i10"
-          ]
+          "args": ["i0", "i10"]
         },
         {
-          "args": [
-            "i10",
-            "i0"
-          ]
+          "args": ["i10", "i0"]
         },
         {
-          "args": [
-            "im10",
-            "i10"
-          ]
+          "args": ["im10", "i10"]
         },
         {
-          "args": [
-            "i10",
-            "im10"
-          ]
+          "args": ["i10", "im10"]
         },
         {
-          "args": [
-            "i1",
-            "i2"
-          ]
+          "args": ["i1", "i2"]
         },
         {
-          "args": [
-            "i5",
-            "i3"
-          ]
+          "args": ["i5", "i3"]
         }
       ],
       "testInvalidInputSizeXorLarge": [
         {
-          "args": [
-            "i0",
-            "i0",
-            "i0"
-          ]
+          "args": ["i0", "i0", "i0"]
         }
       ],
       "testInvalidInputSizeXorSmall": [
         {
-          "args": [
-            "i0"
-          ]
+          "args": ["i0"]
         }
       ],
       "testInvalidInputTypeXor": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "BINARY_COMPLEMENT": {
       "testBinaryComplement": [
         {
-          "args": [
-            "i10"
-          ]
+          "args": ["i10"]
         },
         {
-          "args": [
-            "im10"
-          ]
+          "args": ["im10"]
         }
       ],
       "testInvalidInputSizeComplementLarge": [
         {
-          "args": [
-            "i0",
-            "i0"
-          ]
+          "args": ["i0", "i0"]
         }
       ],
       "testInvalidInputSizeComplementSmall": [
@@ -272,219 +175,127 @@
       ],
       "testInvalidInputTypeComplement": [
         {
-          "args": [
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE"]
         }
       ]
     },
     "BINARY_LSHIFT": {
       "testBinaryLShift": [
         {
-          "args": [
-            "i10",
-            "i10"
-          ]
+          "args": ["i10", "i10"]
         },
         {
-          "args": [
-            "i0",
-            "i10"
-          ]
+          "args": ["i0", "i10"]
         },
         {
-          "args": [
-            "i10",
-            "i0"
-          ]
+          "args": ["i10", "i0"]
         },
         {
-          "args": [
-            "im10",
-            "i10"
-          ]
+          "args": ["im10", "i10"]
         },
         {
-          "args": [
-            "i10",
-            "im10"
-          ]
+          "args": ["i10", "im10"]
         },
         {
-          "args": [
-            "i1",
-            "i2"
-          ]
+          "args": ["i1", "i2"]
         },
         {
-          "args": [
-            "i5",
-            "i3"
-          ]
+          "args": ["i5", "i3"]
         }
       ],
       "testInvalidInputSizeLShiftLarge": [
         {
-          "args": [
-            "i0",
-            "i0",
-            "i0"
-          ]
+          "args": ["i0", "i0", "i0"]
         }
       ],
       "testInvalidInputSizeLShiftSmall": [
         {
-          "args": [
-            "i0"
-          ]
+          "args": ["i0"]
         }
       ],
       "testInvalidInputTypeLShift": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "BINARY_RSHIFT": {
       "testBinaryRShift": [
         {
-          "args": [
-            "i10",
-            "i10"
-          ]
+          "args": ["i10", "i10"]
         },
         {
-          "args": [
-            "i0",
-            "i10"
-          ]
+          "args": ["i0", "i10"]
         },
         {
-          "args": [
-            "i10",
-            "i0"
-          ]
+          "args": ["i10", "i0"]
         },
         {
-          "args": [
-            "im10",
-            "i10"
-          ]
+          "args": ["im10", "i10"]
         },
         {
-          "args": [
-            "i10",
-            "im10"
-          ]
+          "args": ["i10", "im10"]
         },
         {
-          "args": [
-            "i1",
-            "i2"
-          ]
+          "args": ["i1", "i2"]
         },
         {
-          "args": [
-            "i5",
-            "i3"
-          ]
+          "args": ["i5", "i3"]
         }
       ],
       "testInvalidInputSizeRShiftLarge": [
         {
-          "args": [
-            "i0",
-            "i0",
-            "i0"
-          ]
+          "args": ["i0", "i0", "i0"]
         }
       ],
       "testInvalidInputSizeRShiftSmall": [
         {
-          "args": [
-            "i0"
-          ]
+          "args": ["i0"]
         }
       ],
       "testInvalidInputTypeRShift": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "BINARY_RZSHIFT": {
       "testBinaryRZShift": [
         {
-          "args": [
-            "i10",
-            "i10"
-          ]
+          "args": ["i10", "i10"]
         },
         {
-          "args": [
-            "i0",
-            "i10"
-          ]
+          "args": ["i0", "i10"]
         },
         {
-          "args": [
-            "i10",
-            "i0"
-          ]
+          "args": ["i10", "i0"]
         },
         {
-          "args": [
-            "im10",
-            "i10"
-          ]
+          "args": ["im10", "i10"]
         },
         {
-          "args": [
-            "i10",
-            "im10"
-          ]
+          "args": ["i10", "im10"]
         },
         {
-          "args": [
-            "i1",
-            "i2"
-          ]
+          "args": ["i1", "i2"]
         },
         {
-          "args": [
-            "i5",
-            "i3"
-          ]
+          "args": ["i5", "i3"]
         }
       ],
       "testInvalidInputSizeRZShiftLarge": [
         {
-          "args": [
-            "i0",
-            "i0",
-            "i0"
-          ]
+          "args": ["i0", "i0", "i0"]
         }
       ],
       "testInvalidInputSizeRZShiftSmall": [
         {
-          "args": [
-            "i0"
-          ]
+          "args": ["i0"]
         }
       ],
       "testInvalidInputTypeRZShift": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     }

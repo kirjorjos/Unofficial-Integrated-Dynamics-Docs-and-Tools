@@ -37,364 +37,211 @@
     "RELATIONAL_EQUALS": {
       "testRelationalEquals": [
         {
-          "args": [
-            "i10",
-            "i10"
-          ]
+          "args": ["i10", "i10"]
         },
         {
-          "args": [
-            "i0",
-            "i10"
-          ]
+          "args": ["i0", "i10"]
         },
         {
-          "args": [
-            "i10",
-            "i0"
-          ]
+          "args": ["i10", "i0"]
         },
         {
-          "args": [
-            "im10",
-            "i10"
-          ]
+          "args": ["im10", "i10"]
         },
         {
-          "args": [
-            "i10",
-            "im10"
-          ]
+          "args": ["i10", "im10"]
         }
       ],
       "testInvalidInputSizeEqualsLarge": [
         {
-          "args": [
-            "i0",
-            "i0",
-            "i0"
-          ]
+          "args": ["i0", "i0", "i0"]
         }
       ],
       "testInvalidInputSizeEqualsSmall": [
         {
-          "args": [
-            "i0"
-          ]
+          "args": ["i0"]
         }
       ]
     },
     "RELATIONAL_GT": {
       "testRelationalGT": [
         {
-          "args": [
-            "i10",
-            "i10"
-          ]
+          "args": ["i10", "i10"]
         },
         {
-          "args": [
-            "i0",
-            "i10"
-          ]
+          "args": ["i0", "i10"]
         },
         {
-          "args": [
-            "i10",
-            "i0"
-          ]
+          "args": ["i10", "i0"]
         },
         {
-          "args": [
-            "im10",
-            "i10"
-          ]
+          "args": ["im10", "i10"]
         },
         {
-          "args": [
-            "i10",
-            "im10"
-          ]
+          "args": ["i10", "im10"]
         }
       ],
       "testInvalidInputSizeGTLarge": [
         {
-          "args": [
-            "i0",
-            "i0",
-            "i0"
-          ]
+          "args": ["i0", "i0", "i0"]
         }
       ],
       "testInvalidInputSizeGTSmall": [
         {
-          "args": [
-            "i0"
-          ]
+          "args": ["i0"]
         }
       ],
       "testInvalidInputTypeGT": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "RELATIONAL_LT": {
       "testRelationalLT": [
         {
-          "args": [
-            "i10",
-            "i10"
-          ]
+          "args": ["i10", "i10"]
         },
         {
-          "args": [
-            "i0",
-            "i10"
-          ]
+          "args": ["i0", "i10"]
         },
         {
-          "args": [
-            "i10",
-            "i0"
-          ]
+          "args": ["i10", "i0"]
         },
         {
-          "args": [
-            "im10",
-            "i10"
-          ]
+          "args": ["im10", "i10"]
         },
         {
-          "args": [
-            "i10",
-            "im10"
-          ]
+          "args": ["i10", "im10"]
         }
       ],
       "testInvalidInputSizeLTLarge": [
         {
-          "args": [
-            "i0",
-            "i0",
-            "i0"
-          ]
+          "args": ["i0", "i0", "i0"]
         }
       ],
       "testInvalidInputSizeLTSmall": [
         {
-          "args": [
-            "i0"
-          ]
+          "args": ["i0"]
         }
       ],
       "testInvalidInputTypeLT": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "RELATIONAL_NOTEQUALS": {
       "testRelationalNotEquals": [
         {
-          "args": [
-            "i10",
-            "i10"
-          ]
+          "args": ["i10", "i10"]
         },
         {
-          "args": [
-            "i0",
-            "i10"
-          ]
+          "args": ["i0", "i10"]
         },
         {
-          "args": [
-            "i10",
-            "i0"
-          ]
+          "args": ["i10", "i0"]
         },
         {
-          "args": [
-            "im10",
-            "i10"
-          ]
+          "args": ["im10", "i10"]
         },
         {
-          "args": [
-            "i10",
-            "im10"
-          ]
+          "args": ["i10", "im10"]
         }
       ],
       "testInvalidInputSizeNotEqualsLarge": [
         {
-          "args": [
-            "i0",
-            "i0",
-            "i0"
-          ]
+          "args": ["i0", "i0", "i0"]
         }
       ],
       "testInvalidInputSizeNotEqualsSmall": [
         {
-          "args": [
-            "i0"
-          ]
+          "args": ["i0"]
         }
       ]
     },
     "RELATIONAL_GE": {
       "testRelationalGE": [
         {
-          "args": [
-            "i10",
-            "i10"
-          ]
+          "args": ["i10", "i10"]
         },
         {
-          "args": [
-            "i0",
-            "i10"
-          ]
+          "args": ["i0", "i10"]
         },
         {
-          "args": [
-            "i10",
-            "i0"
-          ]
+          "args": ["i10", "i0"]
         },
         {
-          "args": [
-            "im10",
-            "i10"
-          ]
+          "args": ["im10", "i10"]
         },
         {
-          "args": [
-            "i10",
-            "im10"
-          ]
+          "args": ["i10", "im10"]
         }
       ],
       "testRelationalGEDouble": [
         {
-          "args": [
-            "d10",
-            "d10"
-          ]
+          "args": ["d10", "d10"]
         },
         {
-          "args": [
-            "d0",
-            "d10"
-          ]
+          "args": ["d0", "d10"]
         },
         {
-          "args": [
-            "d10",
-            "d0"
-          ]
+          "args": ["d10", "d0"]
         },
         {
-          "args": [
-            "dm10",
-            "d10"
-          ]
+          "args": ["dm10", "d10"]
         },
         {
-          "args": [
-            "d10",
-            "dm10"
-          ]
+          "args": ["d10", "dm10"]
         }
       ],
       "testInvalidInputSizeGELarge": [
         {
-          "args": [
-            "i0",
-            "i0",
-            "i0"
-          ]
+          "args": ["i0", "i0", "i0"]
         }
       ],
       "testInvalidInputSizeGESmall": [
         {
-          "args": [
-            "i0"
-          ]
+          "args": ["i0"]
         }
       ],
       "testInvalidInputTypeGE": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     },
     "RELATIONAL_LE": {
       "testRelationalLE": [
         {
-          "args": [
-            "i10",
-            "i10"
-          ]
+          "args": ["i10", "i10"]
         },
         {
-          "args": [
-            "i0",
-            "i10"
-          ]
+          "args": ["i0", "i10"]
         },
         {
-          "args": [
-            "i10",
-            "i0"
-          ]
+          "args": ["i10", "i0"]
         },
         {
-          "args": [
-            "im10",
-            "i10"
-          ]
+          "args": ["im10", "i10"]
         },
         {
-          "args": [
-            "i10",
-            "im10"
-          ]
+          "args": ["i10", "im10"]
         }
       ],
       "testInvalidInputSizeLELarge": [
         {
-          "args": [
-            "i0",
-            "i0",
-            "i0"
-          ]
+          "args": ["i0", "i0", "i0"]
         }
       ],
       "testInvalidInputSizeLESmall": [
         {
-          "args": [
-            "i0"
-          ]
+          "args": ["i0"]
         }
       ],
       "testInvalidInputTypeLE": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ]
     }

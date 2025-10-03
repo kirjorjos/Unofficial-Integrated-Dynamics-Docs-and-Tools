@@ -5,7 +5,9 @@ function extractKeyByInternalName(fullId) {
     }
   }
 
-  throw new Error(`No matching internalName found for: ${JSON.stringify(fullId)}`);
+  throw new Error(
+    `No matching internalName found for: ${JSON.stringify(fullId)}`
+  );
 }
 
 function extractSerializer(fullId) {
@@ -15,7 +17,9 @@ function extractSerializer(fullId) {
     }
   }
 
-  throw new Error(`No matching serializer found for: ${JSON.stringify(fullId)}`);
+  throw new Error(
+    `No matching serializer found for: ${JSON.stringify(fullId)}`
+  );
 }
 
 function capitalizeFirstChar(str) {

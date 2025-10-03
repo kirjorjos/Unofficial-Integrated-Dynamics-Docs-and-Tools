@@ -13,142 +13,87 @@
     "LOGICAL_AND": {
       "testLogicalAnd": [
         {
-          "args": [
-            "bTrue",
-            "bTrue"
-          ]
+          "args": ["bTrue", "bTrue"]
         },
         {
-          "args": [
-            "bTrue",
-            "bFalse"
-          ]
+          "args": ["bTrue", "bFalse"]
         },
         {
-          "args": [
-            "bFalse",
-            "bTrue"
-          ]
+          "args": ["bFalse", "bTrue"]
         },
         {
-          "args": [
-            "bFalse",
-            "bFalse"
-          ]
+          "args": ["bFalse", "bFalse"]
         }
       ],
       "testInvalidInputSizeAndLarge": [
         {
-          "args": [
-            "bTrue",
-            "bTrue",
-            "bTrue"
-          ]
+          "args": ["bTrue", "bTrue", "bTrue"]
         }
       ],
       "testInvalidInputSizeAndSmall": [
         {
-          "args": [
-            "bTrue"
-          ]
+          "args": ["bTrue"]
         }
       ],
       "testInvalidInputTypeAnd": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ],
       "testShortCircuitingAnd": [
         {
-          "args": [
-            "bFalse",
-            "bTrue"
-          ]
+          "args": ["bFalse", "bTrue"]
         }
       ]
     },
     "LOGICAL_OR": {
       "testLogicalOr": [
         {
-          "args": [
-            "bTrue",
-            "bTrue"
-          ]
+          "args": ["bTrue", "bTrue"]
         },
         {
-          "args": [
-            "bTrue",
-            "bFalse"
-          ]
+          "args": ["bTrue", "bFalse"]
         },
         {
-          "args": [
-            "bFalse",
-            "bTrue"
-          ]
+          "args": ["bFalse", "bTrue"]
         },
         {
-          "args": [
-            "bFalse",
-            "bFalse"
-          ]
+          "args": ["bFalse", "bFalse"]
         }
       ],
       "testInvalidInputSizeOrLarge": [
         {
-          "args": [
-            "bTrue",
-            "bTrue",
-            "bTrue"
-          ]
+          "args": ["bTrue", "bTrue", "bTrue"]
         }
       ],
       "testInvalidInputSizeOrSmall": [
         {
-          "args": [
-            "bTrue"
-          ]
+          "args": ["bTrue"]
         }
       ],
       "testInvalidInputTypeOr": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ],
       "testShortCircuitingOr": [
         {
-          "args": [
-            "bTrue",
-            "bFalse"
-          ]
+          "args": ["bTrue", "bFalse"]
         }
       ]
     },
     "LOGICAL_NOT": {
       "testLogicalNot": [
         {
-          "args": [
-            "bTrue"
-          ]
+          "args": ["bTrue"]
         },
         {
-          "args": [
-            "bFalse"
-          ]
+          "args": ["bFalse"]
         }
       ],
       "testInvalidInputSizeNotLarge": [
         {
-          "args": [
-            "bTrue",
-            "bTrue"
-          ]
+          "args": ["bTrue", "bTrue"]
         }
       ],
       "testInvalidInputSizeNotSmall": [
@@ -158,129 +103,79 @@
       ],
       "testInvalidInputTypeNot": [
         {
-          "args": [
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE"]
         }
       ]
     },
     "LOGICAL_NAND": {
       "testLogicalNand": [
         {
-          "args": [
-            "bTrue",
-            "bTrue"
-          ]
+          "args": ["bTrue", "bTrue"]
         },
         {
-          "args": [
-            "bTrue",
-            "bFalse"
-          ]
+          "args": ["bTrue", "bFalse"]
         },
         {
-          "args": [
-            "bFalse",
-            "bTrue"
-          ]
+          "args": ["bFalse", "bTrue"]
         },
         {
-          "args": [
-            "bFalse",
-            "bFalse"
-          ]
+          "args": ["bFalse", "bFalse"]
         }
       ],
       "testInvalidInputSizeNandLarge": [
         {
-          "args": [
-            "bTrue",
-            "bTrue",
-            "bTrue"
-          ]
+          "args": ["bTrue", "bTrue", "bTrue"]
         }
       ],
       "testInvalidInputSizeNandSmall": [
         {
-          "args": [
-            "bTrue"
-          ]
+          "args": ["bTrue"]
         }
       ],
       "testInvalidInputTypeNand": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ],
       "testShortCircuitingNand": [
         {
-          "args": [
-            "bFalse",
-            "bTrue"
-          ]
+          "args": ["bFalse", "bTrue"]
         }
       ]
     },
     "LOGICAL_NOR": {
       "testLogicalNor": [
         {
-          "args": [
-            "bTrue",
-            "bTrue"
-          ]
+          "args": ["bTrue", "bTrue"]
         },
         {
-          "args": [
-            "bTrue",
-            "bFalse"
-          ]
+          "args": ["bTrue", "bFalse"]
         },
         {
-          "args": [
-            "bFalse",
-            "bTrue"
-          ]
+          "args": ["bFalse", "bTrue"]
         },
         {
-          "args": [
-            "bFalse",
-            "bFalse"
-          ]
+          "args": ["bFalse", "bFalse"]
         }
       ],
       "testInvalidInputSizeNorLarge": [
         {
-          "args": [
-            "bTrue",
-            "bTrue",
-            "bTrue"
-          ]
+          "args": ["bTrue", "bTrue", "bTrue"]
         }
       ],
       "testInvalidInputSizeNorSmall": [
         {
-          "args": [
-            "bTrue"
-          ]
+          "args": ["bTrue"]
         }
       ],
       "testInvalidInputTypeNor": [
         {
-          "args": [
-            "DUMMY_VARIABLE",
-            "DUMMY_VARIABLE"
-          ]
+          "args": ["DUMMY_VARIABLE", "DUMMY_VARIABLE"]
         }
       ],
       "testShortCircuitingNor": [
         {
-          "args": [
-            "bTrue",
-            "bFalse"
-          ]
+          "args": ["bTrue", "bFalse"]
         }
       ]
     }
