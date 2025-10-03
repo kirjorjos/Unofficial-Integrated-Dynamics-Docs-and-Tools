@@ -1,5 +1,8 @@
-import { IntegratedDynamicsClasses } from "./IntegratedDynamicsClasses";
 import { operatorRegistry } from "./operatorRegistry";
+import { Operator } from './IntegratedDynamicsClasses/Operator'
+import { Double } from "./JavaNumberClasses/Double";
+import { Integer } from "./JavaNumberClasses/Integer";
+import { Long } from "./JavaNumberClasses/Long";
 
 export type TypeFunction = { kind: "Function"; from: TypeAny | TypeConcrete | TypeGeneric | TypeFunction | TypeList; to: TypeAny | TypeConcrete | TypeGeneric | TypeFunction | TypeList };
 export type TypeAny = { kind: "Any"; typeID: string; argName?: string };
@@ -9,18 +12,21 @@ export type TypeOperator = { kind: "Operator"; args: TypeFunction[] };
 export type TypeList = { kind: "Concrete"; name: "List"; params: TypeAny[] | TypeConcrete[] | TypeGeneric[] | TypeFunction[] | TypeList[] };
 export type TypeTypeMap = { [typeID: string]: string };
 export type TypeLambda<P, R> = (...args: [P]) => R;
-export type TypeInteger = InstanceType<typeof IntegratedDynamicsClasses.Number> & { dataType: "Integer" };
-export type TypeLong = InstanceType<typeof IntegratedDynamicsClasses.Number> & { dataType: "Long" };
-export type TypeDouble = InstanceType<typeof IntegratedDynamicsClasses.Number> & { dataType: "Double" };
-export type TypeNumber = TypeInteger | TypeLong | TypeDouble;
 export type TypeNumericString = `${number}` | `-${number}`;
 export type TypeOperatorKey = keyof typeof operatorRegistry["baseOperators"];
 export type TypeOperatorNicknames = typeof operatorRegistry["baseOperators"][TypeOperatorKey]["nicknames"][number];
 export type TypeOperatorInternalName = typeof operatorRegistry["baseOperators"][TypeOperatorKey]["internalName"];
+export type TypeBit = 0|1;
+export type TypeInt4 = [TypeBit, TypeBit, TypeBit, TypeBit];
+export type TypeInt8 = [...TypeInt4, ...TypeInt4]
+export type TypeInt16 = [...TypeInt8, ...TypeInt8]
+export type TypeInt32 = [...TypeInt16, ...TypeInt16]
+export type TypeInt64 = [...TypeInt32, ...TypeInt32]
+export type TypeNumber = Integer | Long | Double;
 
 export interface TypeOperatorRegistry {
   baseOperators: {
-    [k: string]: InstanceType<typeof IntegratedDynamicsClasses.Operator>;
+    [k: string]: Operator;
   };
   typeSerializers: {
     [k: string]: { valueType: string; nbtType: string };
