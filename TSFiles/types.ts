@@ -4,34 +4,9 @@ import { Double } from "./JavaNumberClasses/Double";
 import { Integer } from "./JavaNumberClasses/Integer";
 import { Long } from "./JavaNumberClasses/Long";
 
-export type TypeFunction = {
-  kind: "Function";
-  from: TypeAny | TypeConcrete | TypeGeneric | TypeFunction | TypeList;
-  to: TypeAny | TypeConcrete | TypeGeneric | TypeFunction | TypeList;
+export type TypeTypeMap = {
+  [typeID: number]: TypeRawSignatureAST.RawSignatureDefiniteValue;
 };
-export type TypeAny = { kind: "Any"; typeID: string; argName?: string };
-export type TypeConcrete = {
-  name: "Integer" | "Long" | "Double" | "Boolean" | "String" | "Number";
-  kind: "Concrete";
-};
-export type TypeGeneric = {
-  name: string;
-  kind: "Generic";
-  of: TypeConcrete | TypeAny | TypeList;
-  argName?: string;
-};
-export type TypeOperator = { kind: "Operator"; args: TypeFunction[] };
-export type TypeList = {
-  kind: "Concrete";
-  name: "List";
-  params:
-    | TypeAny[]
-    | TypeConcrete[]
-    | TypeGeneric[]
-    | TypeFunction[]
-    | TypeList[];
-};
-export type TypeTypeMap = { [typeID: string]: string };
 export type TypeLambda<P, R> = (...args: [P]) => R;
 export type TypeNumericString = `${number}` | `-${number}`;
 export type TypeOperatorKey = keyof (typeof operatorRegistry)["baseOperators"];
@@ -46,6 +21,52 @@ export type TypeInt16 = [...TypeInt8, ...TypeInt8];
 export type TypeInt32 = [...TypeInt16, ...TypeInt16];
 export type TypeInt64 = [...TypeInt32, ...TypeInt32];
 export type TypeNumber = Integer | Long | Double;
+
+export namespace TypeRawSignatureAST {
+  export type RawSignatureNode = RawSignatureDefiniteValue | RawSignatureAny;
+
+  export type RawSignatureFunction = {
+    type: "Function";
+    from: RawSignatureNode;
+    to: RawSignatureNode;
+  };
+
+  export type RawSignatureList = {
+    type: "List";
+    listType: RawSignatureDefiniteValue | RawSignatureAny;
+  };
+
+  export type RawSignatureAny = {
+    type: "Any";
+    typeID: number;
+  };
+
+  export type RawSignatureDefiniteValue =
+    | {
+        type:
+          | "Integer"
+          | "Long"
+          | "Double"
+          | "Number"
+          | "Boolean"
+          | "String"
+          | "Number"
+          | "Item"
+          | "Block"
+          | "Fluid"
+          | "NBT"
+          | "Ingredients";
+      }
+    | RawSignatureList
+    | RawSignatureFunction
+    | RawSignatureRecipe;
+
+  export type RawSignatureRecipe = {
+    type: "Recipe";
+    input: { type: "Ingredients" };
+    output: { type: "Ingredients" };
+  };
+}
 
 export interface TypeOperatorRegistry {
   baseOperators: {

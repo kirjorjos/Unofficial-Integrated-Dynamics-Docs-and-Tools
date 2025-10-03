@@ -1,17 +1,8 @@
-import {
-  TypeAny,
-  TypeConcrete,
-  TypeFunction,
-  TypeGeneric,
-  TypeList,
-  TypeOperator,
-} from "../types";
+import { TypeRawSignatureAST } from "../types";
 
 export class TypeMap {
   aliases: Map<any, any>;
-  constructor(
-    ast?: TypeAny | TypeConcrete | TypeGeneric | TypeFunction | TypeOperator
-  ) {
+  constructor(ast?: TypeRawSignatureAST.RawSignatureNode) {
     this.aliases = new Map();
 
     if (ast) {
@@ -19,146 +10,122 @@ export class TypeMap {
     }
   }
 
-  private extractTypeIDs(node: any) {
-    if (!node || typeof node !== "object") return;
-
-    if (node.kind === "Generic" && node.typeID) {
+  private extractTypeIDs(node: TypeRawSignatureAST.RawSignatureNode) {
+    if (node.type === "Any") {
       this.aliases.set(node.typeID, "Any");
     }
 
-    // Recurse through all child properties
-    for (const value of Object.values(node)) {
-      if (Array.isArray(value)) {
-        value.forEach((v) => this.extractTypeIDs(v));
-      } else if (typeof value === "object" && value !== null) {
-        this.extractTypeIDs(value);
-      }
+    if (node.type === "Function") {
+      this.extractTypeIDs(node.from);
+      this.extractTypeIDs(node.to);
+    }
+
+    if (node.type === "List") {
+      this.extractTypeIDs(node.listType);
     }
   }
 
-  find(typeID: string) {
+  find(typeID: number) {
     while (this.aliases.has(typeID)) {
       typeID = this.aliases.get(typeID);
     }
     return typeID;
   }
 
-  unify<
-    T extends
-      | TypeAny
-      | TypeConcrete
-      | TypeGeneric
-      | TypeList
-      | TypeFunction
-      | TypeOperator,
-  >(a: T, b: typeof a) {
-    if (!a || !b) return;
-
-    const repA = this._getID(a);
-    const repB = this._getID(b);
-
-    if (repA && repB) {
-      this.aliases.set(this.find(repA), this.find(repB));
+  unify(
+    a: TypeRawSignatureAST.RawSignatureNode,
+    b: TypeRawSignatureAST.RawSignatureNode
+  ): void {
+    if (a.type === "Any" && b.type === "Any") {
+      this.aliases.set(this.find(a.typeID), this.find(b.typeID));
       return;
     }
 
-    if (a.kind === "Concrete" && b.kind === "Concrete") {
-      if (a.name !== b.name) {
-        throw new Error(`Concrete type mismatch: ${a.name} vs ${b.name}`);
-      }
-
-      const pa = (a.name === "List" ? (a as TypeList).params : []) ?? [];
-      const pb = (b.name === "List" ? (b as TypeList).params : []) ?? [];
-
-      const n = Math.min(pa.length, pb.length);
-      for (let i = 0; i < n; i++) this.unify(pa[i], pb[i]);
+    if (a.type === "Any" && b.type !== "Any") {
+      this.aliases.set(this.find(a.typeID), b);
       return;
     }
-  }
+    if (b.type === "Any" && a.type !== "Any") {
+      this.aliases.set(this.find(b.typeID), a);
+      return;
+    }
 
-  _getID(
-    node:
-      | TypeAny
-      | TypeGeneric
-      | TypeConcrete
-      | TypeList
-      | TypeFunction
-      | TypeOperator
-  ) {
-    if (node.kind === "Any") return node.typeID;
-    if (node.kind === "Generic") return node.name;
-    return null;
+    if (a.type === "Function" && b.type === "Function") {
+      this.unify(a.from, b.from);
+      this.unify(a.to, b.to);
+      return;
+    }
+
+    if (a.type === "List" && b.type === "List") {
+      if (typeof a.listType !== "string" && typeof b.listType !== "string")
+        this.unify(a.listType, b.listType);
+      return;
+    }
+
+    if (a.type === "Recipe" && b.type === "Recipe") {
+      this.unify(a.input, b.input);
+      this.unify(a.output, b.output);
+      return;
+    }
+
+    if (a.type !== b.type) {
+      throw new Error(`Type mismatch: ${a.type} vs ${b.type}`);
+    }
+
+    throw new Error(
+      `Unhandled unify case: ${JSON.stringify(a)} vs ${JSON.stringify(b)}`
+    );
   }
 
   rewrite(
-    node: TypeAny | TypeConcrete | TypeFunction | TypeGeneric | TypeList
-  ): TypeAny | TypeConcrete | TypeFunction | TypeGeneric | TypeList {
-    if (node.kind === "Any" && node.typeID) {
+    node: TypeRawSignatureAST.RawSignatureNode
+  ): TypeRawSignatureAST.RawSignatureNode {
+    if (node.type === "Any" && node.typeID) {
       return { ...node, typeID: this.find(node.typeID) };
     }
-    if (node.kind === "Generic" && node.name) {
-      return { ...node, name: this.find(node.name) };
-    }
-    if (node.kind === "Function") {
+
+    if (node.type === "Function") {
       return {
-        kind: "Function",
+        type: "Function",
         from: this.rewrite(node.from),
         to: this.rewrite(node.to),
       };
     }
-    if (node.kind === "Concrete" && node.name === "List" && node.params) {
+
+    if (node.type === "List") {
       return {
-        kind: "Concrete",
-        name: node.name,
-        params: node.params.map((p) => this.rewrite(p)),
-      } as TypeList;
+        type: "List",
+        listType: this.rewrite(node.listType),
+      };
     }
+
     return node;
   }
 
-  resolve(
-    node: TypeAny | TypeGeneric | TypeConcrete | TypeFunction | TypeList
-  ): typeof node {
-    if (node.kind === "Any") {
+  resolve(node: TypeRawSignatureAST.RawSignatureNode): typeof node {
+    if (node.type === "Any") {
       const alias = this.aliases.get(node.typeID);
       if (alias) {
-        return this.resolve(alias as any);
+        return this.resolve(alias);
       }
       return node;
     }
 
-    if (node.kind === "Generic") {
-      const resolvedTypeID = this.aliases.get(node.name);
-      if (resolvedTypeID) {
-        const resolved = this.aliases.get(resolvedTypeID);
-        if (!resolved)
-          throw new Error(
-            `TypeMap inconsistency: alias ${resolvedTypeID} not found`
-          );
-        return this.resolve(resolved);
-      }
-      return node;
-    }
-
-    if (node.kind === "Function") {
+    if (node.type === "Function") {
       return {
-        kind: "Function",
+        type: "Function",
         from: this.resolve(node.from),
         to: this.resolve(node.to),
       };
     }
 
-    if (node.kind === "Concrete") {
-      if (node.name === "List") {
-        return {
-          kind: "Concrete",
-          name: "List",
-          params: (node as TypeList).params.map((p) => this.resolve(p)),
-        } as TypeList;
-      }
-      return node as TypeConcrete;
+    if (node.type === "List") {
+      return {
+        type: "List",
+        listType: this.resolve(node.listType),
+      };
     }
 
-    throw new Error(`Unknown node kind in resolve: ${JSON.stringify(node)}`);
+    return node;
   }
 }

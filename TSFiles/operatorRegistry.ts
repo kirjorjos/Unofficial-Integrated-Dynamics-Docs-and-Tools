@@ -20,40 +20,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["logicalAnd"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Boolean",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Boolean",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Boolean",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Boolean",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Boolean",
             },
-          ],
+            to: {
+              type: "Boolean",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "&&",
@@ -69,40 +50,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["logicalOr"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Boolean",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Boolean",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Boolean",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Boolean",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Boolean",
             },
-          ],
+            to: {
+              type: "Boolean",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "||",
@@ -118,29 +80,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["logicalNot"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Boolean",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Boolean",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Boolean",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
+
         globalMap
       ),
       symbol: "!",
@@ -154,40 +102,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["logicalNand"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Boolean",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Boolean",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Boolean",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Boolean",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Boolean",
             },
-          ],
+            to: {
+              type: "Boolean",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "!&&",
@@ -209,40 +138,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["logicalNor"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Boolean",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Boolean",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Boolean",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Boolean",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Boolean",
             },
-          ],
+            to: {
+              type: "Boolean",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "!||",
@@ -264,40 +174,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["arithmeticAddition"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Number",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Number",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Number",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Number",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Number",
             },
-          ],
+            to: {
+              type: "Number",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "+",
@@ -313,40 +204,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["arithmeticSubtraction"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Number",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Number",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Number",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Number",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Number",
             },
-          ],
+            to: {
+              type: "Number",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "-",
@@ -362,40 +234,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["arithmeticMultiplication"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Number",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Number",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Number",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Number",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Number",
             },
-          ],
+            to: {
+              type: "Number",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "*",
@@ -411,40 +264,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["arithmeticDivision"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Number",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Number",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Number",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Number",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Number",
             },
-          ],
+            to: {
+              type: "Number",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "/",
@@ -460,40 +294,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["arithmeticMaximum"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Number",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Number",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Number",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Number",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Number",
             },
-          ],
+            to: {
+              type: "Number",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "max",
@@ -509,40 +324,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["arithmeticMinimum"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Number",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Number",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Number",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Number",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Number",
             },
-          ],
+            to: {
+              type: "Number",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "min",
@@ -558,29 +354,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["arithmeticIncrement"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Number",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Number",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Number",
+          },
+          to: {
+            type: "Number",
+          },
         },
+
         globalMap
       ),
       symbol: "++",
@@ -594,29 +376,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["arithmeticDecrement"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Number",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Number",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Number",
+          },
+          to: {
+            type: "Number",
+          },
         },
+
         globalMap
       ),
       symbol: "--",
@@ -630,40 +398,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["arithmeticModulus"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Number",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Number",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Number",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Number",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Number",
             },
-          ],
+            to: {
+              type: "Number",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "%",
@@ -679,29 +428,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Double",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Double",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Double",
+          },
+          to: {
+            type: "Double",
+          },
         },
+
         globalMap
       ),
       symbol: "sqrt",
@@ -715,40 +450,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["doublePow"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Double",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Double",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Double",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Double",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Double",
             },
-          ],
+            to: {
+              type: "Double",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "pow",
@@ -764,40 +480,17 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["relationalEquals"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Any",
-                  typeID: "$type1",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Any",
-                    typeID: "$type1",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Boolean",
-                  },
-                },
-              },
+          type: "Function",
+          from: { type: "Any", typeID: 1 },
+          to: {
+            type: "Function",
+            from: { type: "Any", typeID: 1 },
+            to: {
+              type: "Boolean",
             },
-          ],
+          },
         },
+
         globalMap
       ),
       symbol: "==",
@@ -817,40 +510,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["relationalGt"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Number",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Number",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Boolean",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Number",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Number",
             },
-          ],
+            to: {
+              type: "Boolean",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: ">",
@@ -866,40 +540,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["relationalLt"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Number",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Number",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Boolean",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Number",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Number",
             },
-          ],
+            to: {
+              type: "Boolean",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "<",
@@ -915,40 +570,17 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["relationalNotequals"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Any",
-                  typeID: "$type1",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Any",
-                    typeID: "$type1",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Boolean",
-                  },
-                },
-              },
+          type: "Function",
+          from: { type: "Any", typeID: 1 },
+          to: {
+            type: "Function",
+            from: { type: "Any", typeID: 1 },
+            to: {
+              type: "Boolean",
             },
-          ],
+          },
         },
+
         globalMap
       ),
       symbol: "!=",
@@ -968,40 +600,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["relationalGe"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Number",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Number",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Boolean",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Number",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Number",
             },
-          ],
+            to: {
+              type: "Boolean",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: ">=",
@@ -1017,40 +630,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["relationalLe"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Number",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Number",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Boolean",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Number",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Number",
             },
-          ],
+            to: {
+              type: "Boolean",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "<=",
@@ -1066,40 +660,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Integer",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Integer",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Integer",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Integer",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Integer",
             },
-          ],
+            to: {
+              type: "Integer",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "&",
@@ -1115,40 +690,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Integer",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Integer",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Integer",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Integer",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Integer",
             },
-          ],
+            to: {
+              type: "Integer",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "|",
@@ -1164,40 +720,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Integer",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Integer",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Integer",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Integer",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Integer",
             },
-          ],
+            to: {
+              type: "Integer",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "^",
@@ -1213,29 +750,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Integer",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Integer",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Integer",
+          },
+          to: {
+            type: "Integer",
+          },
         },
+
         globalMap
       ),
       symbol: "~",
@@ -1249,40 +772,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["binaryLshift"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Integer",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Integer",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Integer",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Integer",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Integer",
             },
-          ],
+            to: {
+              type: "Integer",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "<<",
@@ -1298,40 +802,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["binaryRshift"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Integer",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Integer",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Integer",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Integer",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Integer",
             },
-          ],
+            to: {
+              type: "Integer",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: ">>",
@@ -1347,40 +832,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["binaryRzshift"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Integer",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Integer",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Integer",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Integer",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Integer",
             },
-          ],
+            to: {
+              type: "Integer",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: ">>>",
@@ -1396,29 +862,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "String",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Integer",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: {
+            type: "Integer",
+          },
         },
+
         globalMap
       ),
       symbol: "len",
@@ -1432,40 +884,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "String",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "String",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "String",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
             },
-          ],
+            to: {
+              type: "String",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "+",
@@ -1481,40 +914,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "String",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "String",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Boolean",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
             },
-          ],
+            to: {
+              type: "Boolean",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "contains",
@@ -1530,40 +944,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "String",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "String",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Boolean",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
             },
-          ],
+            to: {
+              type: "Boolean",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "contains_regex",
@@ -1580,40 +975,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "String",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "String",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Boolean",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
             },
-          ],
+            to: {
+              type: "Boolean",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "matches_regex",
@@ -1632,40 +1008,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "String",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "String",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Integer",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
             },
-          ],
+            to: {
+              type: "Integer",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "index_of",
@@ -1681,40 +1038,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["stringIndexOfRegex"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "String",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "String",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Integer",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
             },
-          ],
+            to: {
+              type: "Integer",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "index_of_regex",
@@ -1731,40 +1069,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["stringStartsWith"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "String",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "String",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Boolean",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
             },
-          ],
+            to: {
+              type: "Boolean",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "starts_with",
@@ -1780,40 +1099,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["stringEndsWith"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "String",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "String",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Boolean",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
             },
-          ],
+            to: {
+              type: "Boolean",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "ends_with",
@@ -1829,46 +1129,19 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "String",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "String",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "List",
-                    params: [
-                      {
-                        kind: "Concrete",
-                        name: "String",
-                      },
-                    ],
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
             },
-          ],
+            to: { type: "List", listType: { type: "String" } },
+          },
         },
+
         globalMap
       ),
       symbol: "split_on",
@@ -1884,46 +1157,19 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "String",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "String",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "List",
-                    params: [
-                      {
-                        kind: "Concrete",
-                        name: "String",
-                      },
-                    ],
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
             },
-          ],
+            to: { type: "List", listType: { type: "String" } },
+          },
         },
+
         globalMap
       ),
       symbol: "split_on_regex",
@@ -1940,51 +1186,27 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["stringSubstring"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
+          type: "Function",
+          from: {
+            type: "Integer",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Integer",
+            },
+            to: {
+              type: "Function",
               from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Integer",
-                },
+                type: "String",
               },
               to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Integer",
-                  },
-                },
-                to: {
-                  kind: "Function",
-                  from: {
-                    kind: "Generic",
-                    name: "$3",
-                    of: {
-                      kind: "Concrete",
-                      name: "String",
-                    },
-                  },
-                  to: {
-                    kind: "Generic",
-                    name: "$4",
-                    of: {
-                      kind: "Concrete",
-                      name: "String",
-                    },
-                  },
-                },
+                type: "String",
               },
             },
-          ],
+          },
         },
+
         globalMap
       ),
       symbol: "substring",
@@ -2007,51 +1229,27 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Integer",
+            },
+            to: {
+              type: "Function",
               from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "String",
-                },
+                type: "String",
               },
               to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Integer",
-                  },
-                },
-                to: {
-                  kind: "Function",
-                  from: {
-                    kind: "Generic",
-                    name: "$3",
-                    of: {
-                      kind: "Concrete",
-                      name: "String",
-                    },
-                  },
-                  to: {
-                    kind: "Generic",
-                    name: "$4",
-                    of: {
-                      kind: "Concrete",
-                      name: "String",
-                    },
-                  },
-                },
+                type: "String",
               },
             },
-          ],
+          },
         },
+
         globalMap
       ),
       symbol: "regex_group",
@@ -2077,46 +1275,19 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "String",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "String",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "List",
-                    params: [
-                      {
-                        kind: "Concrete",
-                        name: "String",
-                      },
-                    ],
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
             },
-          ],
+            to: { type: "List", listType: { type: "String" } },
+          },
         },
+
         globalMap
       ),
       symbol: "regex_groups",
@@ -2140,57 +1311,25 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "String",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Integer",
-                  },
-                },
-                to: {
-                  kind: "Function",
-                  from: {
-                    kind: "Generic",
-                    name: "$3",
-                    of: {
-                      kind: "Concrete",
-                      name: "String",
-                    },
-                  },
-                  to: {
-                    kind: "Generic",
-                    name: "$4",
-                    of: {
-                      kind: "Concrete",
-                      name: "List",
-                      params: [
-                        {
-                          kind: "Concrete",
-                          name: "String",
-                        },
-                      ],
-                    },
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Integer",
             },
-          ],
+            to: {
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: { type: "List", listType: { type: "String" } },
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "regex_scan",
@@ -2220,51 +1359,27 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Function",
               from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "String",
-                },
+                type: "String",
               },
               to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "String",
-                  },
-                },
-                to: {
-                  kind: "Function",
-                  from: {
-                    kind: "Generic",
-                    name: "$3",
-                    of: {
-                      kind: "Concrete",
-                      name: "String",
-                    },
-                  },
-                  to: {
-                    kind: "Generic",
-                    name: "$4",
-                    of: {
-                      kind: "Concrete",
-                      name: "String",
-                    },
-                  },
-                },
+                type: "String",
               },
             },
-          ],
+          },
         },
+
         globalMap
       ),
       symbol: "replace",
@@ -2284,51 +1399,27 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Function",
               from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "String",
-                },
+                type: "String",
               },
               to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "String",
-                  },
-                },
-                to: {
-                  kind: "Function",
-                  from: {
-                    kind: "Generic",
-                    name: "$3",
-                    of: {
-                      kind: "Concrete",
-                      name: "String",
-                    },
-                  },
-                  to: {
-                    kind: "Generic",
-                    name: "$4",
-                    of: {
-                      kind: "Concrete",
-                      name: "String",
-                    },
-                  },
-                },
+                type: "String",
               },
             },
-          ],
+          },
         },
+
         globalMap
       ),
       symbol: "replace_regex",
@@ -2347,46 +1438,19 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "String",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "List",
-                    params: [
-                      {
-                        kind: "Concrete",
-                        name: "String",
-                      },
-                    ],
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "String",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: {
+            type: "Function",
+            from: { type: "List", listType: { type: "String" } },
+            to: {
+              type: "String",
             },
-          ],
+          },
         },
+
         globalMap
       ),
       symbol: "join",
@@ -2405,29 +1469,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["namedName", "toString"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Named",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "String",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Named",
+          },
+          to: {
+            type: "String",
+          },
         },
+
         globalMap
       ),
       symbol: "name",
@@ -2441,29 +1491,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["uniquelynamedUniquename"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "UniquelyNamed",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "String",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "UniquelyNamed",
+          },
+          to: {
+            type: "String",
+          },
         },
+
         globalMap
       ),
       symbol: "uname",
@@ -2477,29 +1513,13 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["string_error"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "String",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Any",
-                  typeID: "$type1",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: { type: "Any", typeID: 1 },
         },
+
         globalMap
       ),
       symbol: "error",
@@ -2513,29 +1533,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["numberRound"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Number",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Integer",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Number",
+          },
+          to: {
+            type: "Integer",
+          },
         },
+
         globalMap
       ),
       symbol: "|| ||",
@@ -2549,29 +1555,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["numberCeil"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Number",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Integer",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Number",
+          },
+          to: {
+            type: "Integer",
+          },
         },
+
         globalMap
       ),
       symbol: "⌈ ⌉",
@@ -2585,29 +1577,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["numberFloor"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Number",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Integer",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Number",
+          },
+          to: {
+            type: "Integer",
+          },
         },
+
         globalMap
       ),
       symbol: "⌊ ⌋",
@@ -2621,29 +1599,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["numberCompact"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Number",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "String",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Number",
+          },
+          to: {
+            type: "String",
+          },
         },
+
         globalMap
       ),
       symbol: "compact",
@@ -2657,29 +1621,13 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["nullableIsnull"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Any",
-                  typeID: "$type1",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Boolean",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: { type: "Any", typeID: 1 },
+          to: {
+            type: "Boolean",
+          },
         },
+
         globalMap
       ),
       symbol: "o",
@@ -2693,29 +1641,13 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["nullableIsnotnull"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Any",
-                  typeID: "$type1",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Boolean",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: { type: "Any", typeID: 1 },
+          to: {
+            type: "Boolean",
+          },
         },
+
         globalMap
       ),
       symbol: "∅",
@@ -2729,35 +1661,13 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "List",
-                  params: [
-                    {
-                      kind: "Any",
-                      typeID: "$type1",
-                    },
-                  ],
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Integer",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: { type: "List", listType: { type: "Any", typeID: 1 } },
+          to: {
+            type: "Integer",
+          },
         },
+
         globalMap
       ),
       symbol: "| |",
@@ -2771,35 +1681,13 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "List",
-                  params: [
-                    {
-                      kind: "Any",
-                      typeID: "$type1",
-                    },
-                  ],
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Boolean",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: { type: "List", listType: { type: "Any", typeID: 1 } },
+          to: {
+            type: "Boolean",
+          },
         },
+
         globalMap
       ),
       symbol: "∅",
@@ -2813,35 +1701,13 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "List",
-                  params: [
-                    {
-                      kind: "Any",
-                      typeID: "$type1",
-                    },
-                  ],
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Boolean",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: { type: "List", listType: { type: "Any", typeID: 1 } },
+          to: {
+            type: "Boolean",
+          },
         },
+
         globalMap
       ),
       symbol: "o",
@@ -2855,46 +1721,17 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["listElement"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "List",
-                  params: [
-                    {
-                      kind: "Any",
-                      typeID: "$type1",
-                    },
-                  ],
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Integer",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Any",
-                    typeID: "$type1",
-                  },
-                },
-              },
+          type: "Function",
+          from: { type: "List", listType: { type: "Any", typeID: 1 } },
+          to: {
+            type: "Function",
+            from: {
+              type: "Integer",
             },
-          ],
+            to: { type: "Any", typeID: 1 },
+          },
         },
+
         globalMap
       ),
       symbol: "get",
@@ -2915,57 +1752,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["listElementDefault", "get_or_default"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "List",
-                  params: [
-                    {
-                      kind: "Any",
-                      typeID: "$type1",
-                    },
-                  ],
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Integer",
-                  },
-                },
-                to: {
-                  kind: "Function",
-                  from: {
-                    kind: "Generic",
-                    name: "$3",
-                    of: {
-                      kind: "Any",
-                      typeID: "$type1",
-                    },
-                  },
-                  to: {
-                    kind: "Generic",
-                    name: "$4",
-                    of: {
-                      kind: "Any",
-                      typeID: "$type1",
-                    },
-                  },
-                },
-              },
+          type: "Function",
+          from: { type: "List", listType: { type: "Any", typeID: 1 } },
+          to: {
+            type: "Function",
+            from: {
+              type: "Integer",
             },
-          ],
+            to: {
+              type: "Function",
+              from: { type: "Any", typeID: 1 },
+              to: { type: "Any", typeID: 1 },
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "get_or_default",
@@ -2984,46 +1785,17 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "List",
-                  params: [
-                    {
-                      kind: "Any",
-                      typeID: "$type1",
-                    },
-                  ],
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Any",
-                    typeID: "$type1",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Boolean",
-                  },
-                },
-              },
+          type: "Function",
+          from: { type: "List", listType: { type: "Any", typeID: 1 } },
+          to: {
+            type: "Function",
+            from: { type: "Any", typeID: 1 },
+            to: {
+              type: "Boolean",
             },
-          ],
+          },
         },
+
         globalMap
       ),
       symbol: "contains",
@@ -3039,66 +1811,23 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["listContainsP"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "List",
-                  params: [
-                    {
-                      kind: "Any",
-                      typeID: "$type1",
-                    },
-                  ],
-                },
-              },
+          type: "Function",
+          from: { type: "List", listType: { type: "Any", typeID: 1 } },
+          to: {
+            type: "Function",
+            from: {
+              type: "Function",
+              from: { type: "Any", typeID: 1 },
               to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Operator",
-                    args: [
-                      {
-                        kind: "Function",
-                        from: {
-                          kind: "Generic",
-                          name: "$3",
-                          of: {
-                            kind: "Any",
-                            typeID: "$type1",
-                          },
-                        },
-                        to: {
-                          kind: "Generic",
-                          name: "$4",
-                          of: {
-                            kind: "Concrete",
-                            name: "Boolean",
-                          },
-                        },
-                      },
-                    ],
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$5",
-                  of: {
-                    kind: "Concrete",
-                    name: "Boolean",
-                  },
-                },
+                type: "Boolean",
               },
             },
-          ],
+            to: {
+              type: "Boolean",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "contains_p",
@@ -3114,47 +1843,17 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "List",
-                  params: [
-                    {
-                      kind: "Any",
-                      typeID: "$type1",
-                    },
-                  ],
-                },
-              },
-              to: {
-                kind: "Function",
-                name: "$2",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Any",
-                    typeID: "$type1",
-                  },
-                  to: {
-                    kind: "Generic",
-                    name: "$3",
-                    of: {
-                      kind: "Concrete",
-                      name: "Integer",
-                    },
-                  },
-                },
-              },
+          type: "Function",
+          from: { type: "List", listType: { type: "Any", typeID: 1 } },
+          to: {
+            type: "Function",
+            from: { type: "Any", typeID: 1 },
+            to: {
+              type: "Integer",
             },
-          ],
+          },
         },
+
         globalMap
       ),
       symbol: "count",
@@ -3170,66 +1869,23 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "List",
-                  params: [
-                    {
-                      kind: "Any",
-                      typeID: "$type1",
-                    },
-                  ],
-                },
-              },
+          type: "Function",
+          from: { type: "List", listType: { type: "Any", typeID: 1 } },
+          to: {
+            type: "Function",
+            from: {
+              type: "Function",
+              from: { type: "Any", typeID: 1 },
               to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Operator",
-                    args: [
-                      {
-                        kind: "Function",
-                        from: {
-                          kind: "Generic",
-                          name: "$3",
-                          of: {
-                            kind: "Any",
-                            typeID: "$type1",
-                          },
-                        },
-                        to: {
-                          kind: "Generic",
-                          name: "$4",
-                          of: {
-                            kind: "Concrete",
-                            name: "Boolean",
-                          },
-                        },
-                      },
-                    ],
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$5",
-                  of: {
-                    kind: "Concrete",
-                    name: "Integer",
-                  },
-                },
+                type: "Boolean",
               },
             },
-          ],
+            to: {
+              type: "Integer",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "count_p",
@@ -3245,52 +1901,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["listAppend"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "List",
-                  params: [
-                    {
-                      kind: "Any",
-                      typeID: "$type1",
-                    },
-                  ],
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Any",
-                    typeID: "$type1",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "List",
-                    params: [
-                      {
-                        kind: "Any",
-                        typeID: "$type1",
-                      },
-                    ],
-                  },
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: { type: "List", listType: { type: "Any", typeID: 1 } },
+          to: {
+            type: "Function",
+            from: { type: "Any", typeID: 1 },
+            to: { type: "List", listType: { type: "Any", typeID: 1 } },
+          },
         },
+
         globalMap
       ),
       symbol: "append",
@@ -3306,58 +1925,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "List",
-                  params: [
-                    {
-                      kind: "Any",
-                      typeID: "$type1",
-                    },
-                  ],
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "List",
-                    params: [
-                      {
-                        kind: "Any",
-                        typeID: "$type1",
-                      },
-                    ],
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "List",
-                    params: [
-                      {
-                        kind: "Any",
-                        typeID: "$type1",
-                      },
-                    ],
-                  },
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: { type: "List", listType: { type: "Any", typeID: 1 } },
+          to: {
+            type: "Function",
+            from: { type: "List", listType: { type: "Any", typeID: 1 } },
+            to: { type: "List", listType: { type: "Any", typeID: 1 } },
+          },
         },
+
         globalMap
       ),
       symbol: "concat",
@@ -3373,88 +1949,26 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["listLazybuilt"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Any",
-                  typeID: "$type1",
-                },
-              },
+          type: "Function",
+          from: { type: "Any", typeID: 1 },
+          to: {
+            type: "Function",
+            from: {
+              type: "Function",
+              from: { type: "Any", typeID: 1 },
               to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Operator",
-                    args: [
-                      {
-                        kind: "Function",
-                        from: {
-                          kind: "Generic",
-                          name: "$3",
-                          of: {
-                            kind: "Concrete",
-                            name: "Any",
-                            typeID: "$type1",
-                          },
-                        },
-                        to: {
-                          kind: "Function",
-                          from: {
-                            kind: "Generic",
-                            name: "$4",
-                            of: {
-                              kind: "Concrete",
-                              name: "Any",
-                              typeID: "$type1",
-                            },
-                          },
-                          to: {
-                            kind: "Generic",
-                            name: "$5",
-                            of: {
-                              kind: "Concrete",
-                              name: "List",
-                              params: [
-                                {
-                                  kind: "Concrete",
-                                  name: "Any",
-                                  typeID: "$type1",
-                                },
-                              ],
-                            },
-                          },
-                        },
-                      },
-                    ],
-                  },
-                },
+                type: "Function",
+                from: { type: "Any", typeID: 1 },
                 to: {
-                  kind: "Generic",
-                  name: "$6",
-                  of: {
-                    kind: "Concrete",
-                    name: "List",
-                    params: [
-                      {
-                        kind: "Concrete",
-                        name: "Any",
-                        typeID: "$type1",
-                      },
-                    ],
-                  },
+                  type: "List",
+                  listType: { type: "Any", typeID: 1 },
                 },
               },
             },
-          ],
+            to: { type: "List", listType: { type: "Any", typeID: 1 } },
+          },
         },
+
         globalMap
       ),
       symbol: "lazybuilt",
@@ -3470,36 +1984,11 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["listHead"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "List",
-                  params: [
-                    {
-                      kind: "Any",
-                      typeID: "$type1",
-                    },
-                  ],
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Any",
-                  typeID: "$type1",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: { type: "List", listType: { type: "Any", typeID: 1 } },
+          to: { type: "Any", typeID: 1 },
         },
+
         globalMap
       ),
       symbol: "head",
@@ -3516,41 +2005,11 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["listTail"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "List",
-                  params: [
-                    {
-                      kind: "Any",
-                      typeID: "$type1",
-                    },
-                  ],
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "List",
-                  params: [
-                    {
-                      kind: "Any",
-                      typeID: "$type1",
-                    },
-                  ],
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: { type: "List", listType: { type: "Any", typeID: 1 } },
+          to: { type: "List", listType: { type: "Any", typeID: 1 } },
         },
+
         globalMap
       ),
       symbol: "tail",
@@ -3567,85 +2026,25 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "List",
-                  params: [
-                    {
-                      kind: "Any",
-                      typeID: "$type1",
-                    },
-                  ],
-                },
-              },
+          type: "Function",
+          from: { type: "List", listType: { type: "Any", typeID: 1 } },
+          to: {
+            type: "Function",
+            from: {
+              type: "Function",
+              from: { type: "Any", typeID: 1 },
               to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Operator",
-                    args: [
-                      {
-                        kind: "Function",
-                        from: {
-                          kind: "Generic",
-                          name: "$3",
-                          of: {
-                            kind: "Any",
-                            typeID: "$type1",
-                          },
-                        },
-                        to: {
-                          kind: "Function",
-                          name: "$4",
-                          from: {
-                            kind: "Generic",
-                            name: "$5",
-                            of: {
-                              kind: "Concrete",
-                              name: "Any",
-                              typeID: "$type1",
-                            },
-                            to: {
-                              kind: "Generic",
-                              name: "$6",
-                              of: {
-                                kind: "Concrete",
-                                name: "Boolean",
-                              },
-                            },
-                          },
-                        },
-                      },
-                    ],
-                  },
-                },
+                type: "Function",
+                from: { type: "Any", typeID: 1 },
                 to: {
-                  kind: "Generic",
-                  name: "$7",
-                  of: {
-                    kind: "Concrete",
-                    name: "List",
-                    params: [
-                      {
-                        kind: "Any",
-                        typeID: "$type1",
-                      },
-                    ],
-                  },
+                  type: "Boolean",
                 },
               },
             },
-          ],
+            to: { type: "List", listType: { type: "Any", typeID: 1 } },
+          },
         },
+
         globalMap
       ),
       symbol: "uniq_p",
@@ -3670,41 +2069,11 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "List",
-                  params: [
-                    {
-                      kind: "Any",
-                      typeID: "$type1",
-                    },
-                  ],
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "List",
-                  params: [
-                    {
-                      kind: "Any",
-                      typeID: "$type1",
-                    },
-                  ],
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: { type: "List", listType: { type: "Any", typeID: 1 } },
+          to: { type: "List", listType: { type: "Any", typeID: 1 } },
         },
+
         globalMap
       ),
       symbol: "uniq",
@@ -3726,63 +2095,23 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["listSlice"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "List",
-                  params: [
-                    {
-                      kind: "Any",
-                      typeID: "$type1",
-                    },
-                  ],
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Integer",
-                  },
-                },
-                to: {
-                  kind: "Function",
-                  from: {
-                    kind: "Generic",
-                    name: "$3",
-                    of: {
-                      kind: "Concrete",
-                      name: "Integer",
-                    },
-                  },
-                  to: {
-                    kind: "Generic",
-                    name: "$4",
-                    of: {
-                      kind: "Concrete",
-                      name: "List",
-                      params: [
-                        {
-                          kind: "Any",
-                          typeID: "$type1",
-                        },
-                      ],
-                    },
-                  },
-                },
-              },
+          type: "Function",
+          from: { type: "List", listType: { type: "Any", typeID: 1 } },
+          to: {
+            type: "Function",
+            from: {
+              type: "Integer",
             },
-          ],
+            to: {
+              type: "Function",
+              from: {
+                type: "Integer",
+              },
+              to: { type: "List", listType: { type: "Any", typeID: 1 } },
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "slice",
@@ -3805,58 +2134,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["listIntersection"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "List",
-                  params: [
-                    {
-                      kind: "Any",
-                      typeID: "$type1",
-                    },
-                  ],
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "List",
-                    params: [
-                      {
-                        kind: "Any",
-                        typeID: "$type1",
-                      },
-                    ],
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "List",
-                    params: [
-                      {
-                        kind: "Any",
-                        typeID: "$type1",
-                      },
-                    ],
-                  },
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: { type: "List", listType: { type: "Any", typeID: 1 } },
+          to: {
+            type: "Function",
+            from: { type: "List", listType: { type: "Any", typeID: 1 } },
+            to: { type: "List", listType: { type: "Any", typeID: 1 } },
+          },
         },
+
         globalMap
       ),
       symbol: "∩",
@@ -3873,52 +2159,17 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["listEqualsSet"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "List",
-                  params: [
-                    {
-                      kind: "Any",
-                      typeID: "$type1",
-                    },
-                  ],
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "List",
-                    params: [
-                      {
-                        kind: "Any",
-                        typeID: "$type1",
-                      },
-                    ],
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Boolean",
-                  },
-                },
-              },
+          type: "Function",
+          from: { type: "List", listType: { type: "Any", typeID: 1 } },
+          to: {
+            type: "Function",
+            from: { type: "List", listType: { type: "Any", typeID: 1 } },
+            to: {
+              type: "Boolean",
             },
-          ],
+          },
         },
+
         globalMap
       ),
       symbol: "=set=",
@@ -3936,52 +2187,17 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["listEqualsMultiset"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "List",
-                  params: [
-                    {
-                      kind: "Any",
-                      typeID: "$type1",
-                    },
-                  ],
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "List",
-                    params: [
-                      {
-                        kind: "Any",
-                        typeID: "$type1",
-                      },
-                    ],
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Boolean",
-                  },
-                },
-              },
+          type: "Function",
+          from: { type: "List", listType: { type: "Any", typeID: 1 } },
+          to: {
+            type: "Function",
+            from: { type: "List", listType: { type: "Any", typeID: 1 } },
+            to: {
+              type: "Boolean",
             },
-          ],
+          },
         },
+
         globalMap
       ),
       symbol: "=multiset=",
@@ -4014,29 +2230,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["BlockOpaque"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Block",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Boolean",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Block",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
+
         globalMap
       ),
       symbol: "opaque",
@@ -4055,29 +2257,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Block",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Item",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Block",
+          },
+          to: {
+            type: "Item",
+          },
         },
+
         globalMap
       ),
       symbol: "itemstack",
@@ -4091,29 +2279,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["BlockModname", "block_mod", "blockMod", "block_modname"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Block",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "String",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Block",
+          },
+          to: {
+            type: "String",
+          },
         },
+
         globalMap
       ),
       symbol: "mod",
@@ -4127,29 +2301,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["BlockBreaksound", "block_break_sound", "blockBreakSound"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Block",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "String",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Block",
+          },
+          to: {
+            type: "String",
+          },
         },
+
         globalMap
       ),
       symbol: "break_sound",
@@ -4163,29 +2323,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["BlockPlacesound", "blockPlaceSound", "block_place_sound"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Block",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "String",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Block",
+          },
+          to: {
+            type: "String",
+          },
         },
+
         globalMap
       ),
       symbol: "place_sound",
@@ -4199,29 +2345,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["BlockStepsound", "blockStepSound", "block_step_sound"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Block",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "String",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Block",
+          },
+          to: {
+            type: "String",
+          },
         },
+
         globalMap
       ),
       symbol: "step_sound",
@@ -4235,29 +2367,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["BlockIsshearable", "block_is_shearable", "blockIsShearable"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Block",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Boolean",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Block",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
+
         globalMap
       ),
       symbol: "is_shearable",
@@ -4271,29 +2389,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["BlockPlantage", "block_plant_age", "blockPlantAge"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Block",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Integer",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Block",
+          },
+          to: {
+            type: "Integer",
+          },
         },
+
         globalMap
       ),
       symbol: "plant_age",
@@ -4307,29 +2411,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["BlockByName", "block_by_name"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "String",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Block",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: {
+            type: "Block",
+          },
         },
+
         globalMap
       ),
       symbol: "block_by_name",
@@ -4345,29 +2435,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["BlockProperties", "block_properties"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Block",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Block",
+          },
+          to: {
+            type: "NBT",
+          },
         },
+
         globalMap
       ),
       symbol: "block_props",
@@ -4381,40 +2457,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["BlockWithProperties", "block_with_properties"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Block",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "NBT",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Block",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Block",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "NBT",
             },
-          ],
+            to: {
+              type: "Block",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "block_with_props",
@@ -4430,29 +2487,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["BlockPossibleProperties", "block_possible_properties"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Block",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Block",
+          },
+          to: {
+            type: "NBT",
+          },
         },
+
         globalMap
       ),
       symbol: "block_all_props",
@@ -4468,35 +2511,13 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["BlockTag"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Block",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "List",
-                  params: [
-                    {
-                      kind: "Concrete",
-                      name: "String",
-                    },
-                  ],
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Block",
+          },
+          to: { type: "List", listType: { type: "String" } },
         },
+
         globalMap
       ),
       symbol: "block_tag_names",
@@ -4510,35 +2531,13 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["BlockTagStacks", "block_tag_stacks"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "String",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "List",
-                  params: [
-                    {
-                      kind: "Concrete",
-                      name: "Block",
-                    },
-                  ],
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: { type: "List", listType: { type: "Block" } },
         },
+
         globalMap
       ),
       symbol: "block_tag_values",
@@ -4554,29 +2553,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["ItemstackSize", "itemstack_size", "itemstackSize"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Item",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Integer",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "Integer",
+          },
         },
+
         globalMap
       ),
       symbol: "size",
@@ -4590,29 +2575,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["ItemstackMaxsize", "itemstack_max_size", "itemstackMaxSize"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Item",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Integer",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "Integer",
+          },
         },
+
         globalMap
       ),
       symbol: "maxsize",
@@ -4630,29 +2601,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Item",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Boolean",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
+
         globalMap
       ),
       symbol: "stackable",
@@ -4670,29 +2627,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Item",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Boolean",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
+
         globalMap
       ),
       symbol: "damageable",
@@ -4706,29 +2649,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["ItemstackDamage", "itemstack_damage", "itemstackDamage"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Item",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Integer",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "Integer",
+          },
         },
+
         globalMap
       ),
       symbol: "damage",
@@ -4746,29 +2675,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Item",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Integer",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "Integer",
+          },
         },
+
         globalMap
       ),
       symbol: "max_damage",
@@ -4787,29 +2702,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Item",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Boolean",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
+
         globalMap
       ),
       symbol: "enchanted",
@@ -4828,29 +2729,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Item",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Boolean",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
+
         globalMap
       ),
       symbol: "enchantable",
@@ -4868,29 +2755,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Item",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Integer",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "Integer",
+          },
         },
+
         globalMap
       ),
       symbol: "repair_cost",
@@ -4904,29 +2777,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["ItemstackRarity", "itemstack_rarity", "itemstackRarity"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Item",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "String",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "String",
+          },
         },
+
         globalMap
       ),
       symbol: "rarity",
@@ -4944,40 +2803,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Item",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Block",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Double",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Block",
             },
-          ],
+            to: {
+              type: "Double",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "strength",
@@ -4997,40 +2837,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Item",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Block",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Boolean",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Block",
             },
-          ],
+            to: {
+              type: "Boolean",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "can_harvest",
@@ -5046,29 +2867,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["ItemstackBlock", "itemstack_block", "itemstackBlock"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Item",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Block",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "Block",
+          },
         },
+
         globalMap
       ),
       symbol: "block",
@@ -5087,29 +2894,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Item",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Boolean",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
+
         globalMap
       ),
       symbol: "is_fluidstack",
@@ -5133,29 +2926,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Item",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Fluid",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "Fluid",
+          },
         },
+
         globalMap
       ),
       symbol: "fluidstack",
@@ -5177,29 +2956,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Item",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Integer",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "Integer",
+          },
         },
+
         globalMap
       ),
       symbol: "fluidstack_capacity",
@@ -5217,40 +2982,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Item",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Item",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Boolean",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Item",
             },
-          ],
+            to: {
+              type: "Boolean",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "=NBT=",
@@ -5272,40 +3018,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Item",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Item",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Boolean",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Item",
             },
-          ],
+            to: {
+              type: "Boolean",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "=NoNBT=",
@@ -5328,40 +3055,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Item",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Item",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Boolean",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Item",
             },
-          ],
+            to: {
+              type: "Boolean",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "=Raw=",
@@ -5377,29 +3085,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["ItemstackModname", "item_mod", "itemModname"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Item",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "String",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "String",
+          },
         },
+
         globalMap
       ),
       symbol: "mod",
@@ -5417,29 +3111,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Item",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Integer",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "Integer",
+          },
         },
+
         globalMap
       ),
       symbol: "burn_time",
@@ -5459,29 +3139,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Item",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Boolean",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
+
         globalMap
       ),
       symbol: "can_burn",
@@ -5500,35 +3166,13 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Item",
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "List",
-                    params: [
-                      {
-                        kind: "Concrete",
-                        name: "String",
-                      },
-                    ],
-                  },
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: { type: "List", listType: { type: "String" } },
         },
+
         globalMap
       ),
       symbol: "item_tag_names",
@@ -5547,35 +3191,13 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "String",
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "List",
-                    params: [
-                      {
-                        kind: "Concrete",
-                        name: "Item",
-                      },
-                    ],
-                  },
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: { type: "List", listType: { type: "Item" } },
         },
+
         globalMap
       ),
       symbol: "item_tag_values",
@@ -5596,40 +3218,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Item",
-                },
-                to: {
-                  kind: "Function",
-                  from: {
-                    kind: "Generic",
-                    name: "$2",
-                    of: {
-                      kind: "Concrete",
-                      name: "Integer",
-                    },
-                  },
-                  to: {
-                    kind: "Generic",
-                    name: "$3",
-                    of: {
-                      kind: "Concrete",
-                      name: "Item",
-                    },
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Integer",
             },
-          ],
+            to: {
+              type: "Item",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "with_size",
@@ -5651,29 +3254,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Item",
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Boolean",
-                  },
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
+
         globalMap
       ),
       symbol: "is_fe_container",
@@ -5693,29 +3282,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Item",
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Integer",
-                  },
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "Integer",
+          },
         },
+
         globalMap
       ),
       symbol: "stored_fe",
@@ -5735,29 +3310,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Item",
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Integer",
-                  },
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "Integer",
+          },
         },
+
         globalMap
       ),
       symbol: "capacity_fe",
@@ -5777,29 +3338,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Item",
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Boolean",
-                  },
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
+
         globalMap
       ),
       symbol: "has_inventory",
@@ -5819,29 +3366,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Item",
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Integer",
-                  },
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "Integer",
+          },
         },
+
         globalMap
       ),
       symbol: "inventory_size",
@@ -5860,35 +3393,13 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Item",
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "List",
-                    params: [
-                      {
-                        kind: "Concrete",
-                        name: "Item",
-                      },
-                    ],
-                  },
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: { type: "List", listType: { type: "Item" } },
         },
+
         globalMap
       ),
       symbol: "inventory",
@@ -5907,29 +3418,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "String",
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Item",
-                  },
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: {
+            type: "Item",
+          },
         },
+
         globalMap
       ),
       symbol: "item_by_name",
@@ -5950,43 +3447,20 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "List",
-                },
-                params: [
-                  {
-                    kind: "Concrete",
-                    name: "Item",
-                  },
-                ],
-                to: {
-                  kind: "Function",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Item",
-                  },
-                  to: {
-                    kind: "Generic",
-                    name: "$3",
-                    of: {
-                      kind: "Concrete",
-                      name: "Integer",
-                    },
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "List",
+            listType: { type: "Item" },
+          },
+          to: {
+            type: "Function",
+            from: { type: "Item" },
+            to: {
+              type: "Integer",
             },
-          ],
+          },
         },
+
         globalMap
       ),
       symbol: "item_list_count",
@@ -6014,29 +3488,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Item",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "NBT",
+          },
         },
+
         globalMap
       ),
       symbol: "NBT()",
@@ -6056,29 +3516,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Item",
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Boolean",
-                  },
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
+
         globalMap
       ),
       symbol: "has_nbt",
@@ -6098,35 +3544,13 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Item",
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "List",
-                    params: [
-                      {
-                        kind: "Concrete",
-                        name: "String",
-                      },
-                    ],
-                  },
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: { type: "List", listType: { type: "String" } },
         },
+
         globalMap
       ),
       symbol: "data_keys",
@@ -6152,32 +3576,22 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Item",
-                },
-                to: {
-                  kind: "Function",
-                  from: {
-                    kind: "Generic",
-                    name: "$2",
-                    of: {
-                      kind: "Concrete",
-                      name: "NBT",
-                    },
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "NBT",
             },
-          ],
+            to: {
+              type: "Any",
+              typeID: 1,
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "data_value",
@@ -6203,40 +3617,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Item",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "String",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "NBT",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
             },
-          ],
+            to: {
+              type: "NBT",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "with_data",
@@ -6261,35 +3656,13 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Item",
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "List",
-                    params: [
-                      {
-                        kind: "Concrete",
-                        name: "String",
-                      },
-                    ],
-                  },
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: { type: "List", listType: { type: "String" } },
         },
+
         globalMap
       ),
       symbol: "tooltip",
@@ -6308,46 +3681,19 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Entity",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Item",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "List",
-                    params: [
-                      {
-                        kind: "Concrete",
-                        name: "String",
-                      },
-                    ],
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Item",
             },
-          ],
+            to: { type: "List", listType: { type: "String" } },
+          },
         },
+
         globalMap
       ),
       symbol: "entity_item_tooltip",
@@ -6366,29 +3712,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["EntityIsmob", "entity_is_mob", "entityIsMob"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Entity",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Boolean",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
+
         globalMap
       ),
       symbol: "is_mob",
@@ -6402,29 +3734,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["EntityIsanimal", "entity_is_animal", "entityIsAnimal"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Entity",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Boolean",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
+
         globalMap
       ),
       symbol: "is_animal",
@@ -6438,29 +3756,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["EntityIsitem", "entity_is_item", "entityIsItem"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Entity",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Boolean",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
+
         globalMap
       ),
       symbol: "is_item",
@@ -6474,29 +3778,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["EntityIsplayer", "entity_is_player", "entityIsPlayer"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Entity",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Boolean",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
+
         globalMap
       ),
       symbol: "is_player",
@@ -6510,29 +3800,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["EntityIsminecart", "entity_is_minecart", "entityIsMinecart"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Entity",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Boolean",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
+
         globalMap
       ),
       symbol: "is_minecart",
@@ -6553,29 +3829,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Entity",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Item",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Item",
+          },
         },
+
         globalMap
       ),
       symbol: "item",
@@ -6598,29 +3860,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Entity",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Double",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Double",
+          },
         },
+
         globalMap
       ),
       symbol: "health",
@@ -6634,29 +3882,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["EntityWidth", "entity_width"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Entity",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Double",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Double",
+          },
         },
+
         globalMap
       ),
       symbol: "width",
@@ -6670,29 +3904,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["EntityHeight", "entity_height"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Entity",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Double",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Double",
+          },
         },
+
         globalMap
       ),
       symbol: "height",
@@ -6706,29 +3926,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["EntityIsburning", "entity_is_burning", "entityIsBurning"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Entity",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Boolean",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
+
         globalMap
       ),
       symbol: "is_burning",
@@ -6742,29 +3948,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["EntityIswet", "entity_is_wet", "entityIsWet"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Entity",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Boolean",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
+
         globalMap
       ),
       symbol: "is_wet",
@@ -6782,29 +3974,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Entity",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Boolean",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
+
         globalMap
       ),
       symbol: "is_crouching",
@@ -6818,29 +3996,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["EntityIseating", "entity_is_eating", "entityIsEating"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Entity",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Boolean",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
+
         globalMap
       ),
       symbol: "is_eating",
@@ -6859,35 +4023,13 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Entity",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "List",
-                  params: [
-                    {
-                      kind: "Concrete",
-                      name: "Item",
-                    },
-                  ],
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: { type: "List", listType: { type: "Item" } },
         },
+
         globalMap
       ),
       symbol: "armor_inventory",
@@ -6907,35 +4049,13 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Entity",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "List",
-                  params: [
-                    {
-                      kind: "Concrete",
-                      name: "Item",
-                    },
-                  ],
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: { type: "List", listType: { type: "Item" } },
         },
+
         globalMap
       ),
       symbol: "inventory",
@@ -6949,29 +4069,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["EntityModname", "entity_mod_name", "entityModName"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Entity",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "String",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "String",
+          },
         },
+
         globalMap
       ),
       symbol: "mod",
@@ -6985,29 +4091,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["PlayerTargetblock", "player_target_block"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Entity",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Block",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Block",
+          },
         },
+
         globalMap
       ),
       symbol: "target_block",
@@ -7021,29 +4113,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["PlayerTargetentity", "player_target_entity"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Entity",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Entity",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Entity",
+          },
         },
+
         globalMap
       ),
       symbol: "target_entity",
@@ -7057,29 +4135,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["PlayerHasguiopen", "player_has_gui_open"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Entity",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Boolean",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
+
         globalMap
       ),
       symbol: "has_gui_open",
@@ -7097,29 +4161,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Entity",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Item",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Item",
+          },
         },
+
         globalMap
       ),
       symbol: "held_item_1",
@@ -7137,29 +4187,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Entity",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Item",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Item",
+          },
         },
+
         globalMap
       ),
       symbol: "held_item_2",
@@ -7173,35 +4209,13 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["EntityMounted", "entitys_mounted"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Entity",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "List",
-                  params: [
-                    {
-                      kind: "Concrete",
-                      name: "Entity",
-                    },
-                  ],
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: { type: "List", listType: { type: "Entity" } },
         },
+
         globalMap
       ),
       symbol: "mounted",
@@ -7220,29 +4234,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Entity",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Item",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Item",
+          },
         },
+
         globalMap
       ),
       symbol: "itemframe_contents",
@@ -7265,29 +4265,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Entity",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Integer",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Integer",
+          },
         },
+
         globalMap
       ),
       symbol: "itemframe_rotation",
@@ -7305,29 +4291,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["EntityHurtsound", "entity_hurt_sound"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Entity",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "String",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "String",
+          },
         },
+
         globalMap
       ),
       symbol: "hurtsound",
@@ -7341,29 +4313,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["EntityDeathsound", "entity_death_sound"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Entity",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "String",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "String",
+          },
         },
+
         globalMap
       ),
       symbol: "deathsound",
@@ -7377,29 +4335,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["EntityAge", "entity_age"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Entity",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Integer",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Integer",
+          },
         },
+
         globalMap
       ),
       symbol: "age",
@@ -7413,29 +4357,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["EntityIschild", "entity_is_child", "entityIsChild"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Entity",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Boolean",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
+
         globalMap
       ),
       symbol: "is_child",
@@ -7449,29 +4379,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["EntityCanbreed", "entity_can_breed", "entityCanBreed"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Entity",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Boolean",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
+
         globalMap
       ),
       symbol: "canbreed",
@@ -7485,29 +4401,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["EntityIsinlove", "entity_is_in_love", "entityIsInLove"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Entity",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Boolean",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
+
         globalMap
       ),
       symbol: "is_in_love",
@@ -7525,40 +4427,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Entity",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Entity",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Boolean",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Entity",
             },
-          ],
+            to: {
+              type: "Boolean",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "can_breed_with",
@@ -7576,29 +4459,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Entity",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Boolean",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
+
         globalMap
       ),
       symbol: "is_shearable",
@@ -7612,29 +4481,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["EntityNbt", "entity_nbt"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Entity",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "NBT",
+          },
         },
+
         globalMap
       ),
       symbol: "NBT()",
@@ -7648,29 +4503,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["EntityType", "entity_type"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Entity",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "String",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "String",
+          },
         },
+
         globalMap
       ),
       symbol: "entity_type",
@@ -7689,35 +4530,13 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Entity",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "List",
-                  params: [
-                    {
-                      kind: "Concrete",
-                      name: "Item",
-                    },
-                  ],
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: { type: "List", listType: { type: "Item" } },
         },
+
         globalMap
       ),
       symbol: "entity_items",
@@ -7731,35 +4550,13 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["EntityFluids", "entity_fluids"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Entity",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "List",
-                  params: [
-                    {
-                      kind: "Concrete",
-                      name: "Fluid",
-                    },
-                  ],
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: { type: "List", listType: { type: "Fluid" } },
         },
+
         globalMap
       ),
       symbol: "entity_fluids",
@@ -7773,29 +4570,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["EntityEnergyStored", "entity_energy_stored"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Entity",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Integer",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Integer",
+          },
         },
+
         globalMap
       ),
       symbol: "entity_stored_fe",
@@ -7809,29 +4592,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["EntityEnergyCapacity", "entity_energy_capacity"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Entity",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Integer",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Integer",
+          },
         },
+
         globalMap
       ),
       symbol: "entity_capacity_fe",
@@ -7852,29 +4621,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Fluid",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Integer",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Fluid",
+          },
+          to: {
+            type: "Integer",
+          },
         },
+
         globalMap
       ),
       symbol: "amount",
@@ -7895,29 +4650,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Fluid",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Block",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Fluid",
+          },
+          to: {
+            type: "Block",
+          },
         },
+
         globalMap
       ),
       symbol: "block",
@@ -7938,29 +4679,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Fluid",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Integer",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Fluid",
+          },
+          to: {
+            type: "Integer",
+          },
         },
+
         globalMap
       ),
       symbol: "light_level",
@@ -7981,29 +4708,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Fluid",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Integer",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Fluid",
+          },
+          to: {
+            type: "Integer",
+          },
         },
+
         globalMap
       ),
       symbol: "density",
@@ -8024,29 +4737,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Fluid",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Integer",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Fluid",
+          },
+          to: {
+            type: "Integer",
+          },
         },
+
         globalMap
       ),
       symbol: "temperature",
@@ -8067,29 +4766,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Fluid",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Integer",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Fluid",
+          },
+          to: {
+            type: "Integer",
+          },
         },
+
         globalMap
       ),
       symbol: "viscosity",
@@ -8111,29 +4796,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Fluid",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Boolean",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Fluid",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
+
         globalMap
       ),
       symbol: "lighter_than_air",
@@ -8154,29 +4825,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Fluid",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "String",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Fluid",
+          },
+          to: {
+            type: "String",
+          },
         },
+
         globalMap
       ),
       symbol: "rarity",
@@ -8197,29 +4854,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Fluid",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "String",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Fluid",
+          },
+          to: {
+            type: "String",
+          },
         },
+
         globalMap
       ),
       symbol: "sound_bucket_empty",
@@ -8240,29 +4883,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Fluid",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "String",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Fluid",
+          },
+          to: {
+            type: "String",
+          },
         },
+
         globalMap
       ),
       symbol: "sound_fluid_vaporize",
@@ -8283,29 +4912,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Fluid",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "String",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Fluid",
+          },
+          to: {
+            type: "String",
+          },
         },
+
         globalMap
       ),
       symbol: "sound_bucket_fill",
@@ -8326,29 +4941,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Fluid",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Item",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Fluid",
+          },
+          to: {
+            type: "Item",
+          },
         },
+
         globalMap
       ),
       symbol: "bucket",
@@ -8370,40 +4971,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Fluid",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Fluid",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Boolean",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Fluid",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Fluid",
             },
-          ],
+            to: {
+              type: "Boolean",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "=Raw=",
@@ -8432,29 +5014,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Fluid",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "String",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Fluid",
+          },
+          to: {
+            type: "String",
+          },
         },
+
         globalMap
       ),
       symbol: "mod",
@@ -8481,29 +5049,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Fluid",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Fluid",
+          },
+          to: {
+            type: "NBT",
+          },
         },
+
         globalMap
       ),
       symbol: "NBT()",
@@ -8524,40 +5078,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Fluid",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Integer",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Fluid",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Fluid",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Integer",
             },
-          ],
+            to: {
+              type: "Fluid",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "with_amount",
@@ -8586,35 +5121,13 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Fluid",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "List",
-                  params: [
-                    {
-                      kind: "Concrete",
-                      name: "String",
-                    },
-                  ],
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Fluid",
+          },
+          to: { type: "List", listType: { type: "String" } },
         },
+
         globalMap
       ),
       symbol: "data_keys",
@@ -8647,40 +5160,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Fluid",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "String",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "NBT",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Fluid",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
             },
-          ],
+            to: {
+              type: "NBT",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "data_value",
@@ -8707,24 +5201,14 @@ let operatorRegistry: TypeOperatorRegistry = {
         {
           kind: "Operator",
           args: {
-            kind: "Function",
+            type: "Function",
             from: {
-              kind: "Generic",
-              name: "$1",
-              of: {
-                kind: "Concrete",
-                name: "Fluid",
-              },
+              type: "Fluid",
             },
             to: {
-              kind: "Function",
+              type: "Function",
               from: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
+                type: "NBT",
               },
               to: {
                 kind: "Concrete",
@@ -8757,35 +5241,13 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Fluid",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "List",
-                  params: [
-                    {
-                      kind: "Concrete",
-                      name: "String",
-                    },
-                  ],
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Fluid",
+          },
+          to: { type: "List", listType: { type: "String" } },
         },
+
         globalMap
       ),
       symbol: "fluid_tag_names",
@@ -8803,35 +5265,13 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "String",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "List",
-                  params: [
-                    {
-                      kind: "Concrete",
-                      name: "Fluid",
-                    },
-                  ],
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: { type: "List", listType: { type: "Fluid" } },
         },
+
         globalMap
       ),
       symbol: "fluid_tag_values",
@@ -8847,47 +5287,23 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["operatorApply"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Function",
-                  from: {
-                    kind: "Generic",
-                    name: "$2",
-                    of: {
-                      kind: "Any",
-                      typeID: "$type1",
-                    },
-                  },
-                  to: {
-                    kind: "Generic",
-                    name: "$3",
-                    of: {
-                      kind: "Any",
-                      typeID: "$type2",
-                    },
-                  },
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Function",
+            from: { type: "Any", typeID: 1 },
+            to: { type: "Any", typeID: 2 },
+          },
+          to: {
+            type: "Function",
+            from: {
+              kind: "Generic",
             },
-          ],
+            to: {
+              kind: "Generic",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "apply",
@@ -8909,65 +5325,33 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["operatorApply_2"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
+          type: "Function",
+          from: {
+            type: "Function",
+            from: { type: "Any", typeID: 1 },
+            to: {
+              type: "Function",
+              from: { type: "Any", typeID: 2 },
+              to: { type: "Any", typeID: 3 },
+            },
+          },
+          to: {
+            type: "Function",
+            from: {
+              kind: "Generic",
+            },
+            to: {
+              type: "Function",
               from: {
                 kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Function",
-                  from: {
-                    kind: "Generic",
-                    name: "$2",
-                    of: {
-                      kind: "Any",
-                      typeID: "$type1",
-                    },
-                  },
-                  to: {
-                    kind: "Function",
-                    from: {
-                      kind: "Generic",
-                      name: "$3",
-                      of: {
-                        kind: "Any",
-                        typeID: "$type2",
-                      },
-                    },
-                    to: {
-                      kind: "Generic",
-                      name: "$4",
-                      of: {
-                        kind: "Any",
-                        typeID: "$type3",
-                      },
-                    },
-                  },
-                },
               },
               to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                },
-                to: {
-                  kind: "Function",
-                  from: {
-                    kind: "Generic",
-                    name: "$3",
-                  },
-                  to: {
-                    kind: "Generic",
-                    name: "$4",
-                  },
-                },
+                kind: "Generic",
               },
             },
-          ],
+          },
         },
+
         globalMap
       ),
       symbol: "apply2",
@@ -8989,83 +5373,43 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["operatorApply_3"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
+          type: "Function",
+          from: {
+            type: "Function",
+            from: { type: "Any", typeID: 1 },
+            to: {
+              type: "Function",
+              from: { type: "Any", typeID: 2 },
+              to: {
+                type: "Function",
+                from: { type: "Any", typeID: 3 },
+                to: { type: "Any", typeID: 4 },
+              },
+            },
+          },
+          to: {
+            type: "Function",
+            from: {
+              kind: "Generic",
+            },
+            to: {
+              type: "Function",
               from: {
                 kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Function",
-                  from: {
-                    kind: "Generic",
-                    name: "$2",
-                    of: {
-                      kind: "Any",
-                      typeID: "$type1",
-                    },
-                  },
-                  to: {
-                    kind: "Function",
-                    from: {
-                      kind: "Generic",
-                      name: "$3",
-                      of: {
-                        kind: "Any",
-                        typeID: "$type2",
-                      },
-                    },
-                    to: {
-                      kind: "Function",
-                      from: {
-                        kind: "Generic",
-                        name: "$4",
-                        of: {
-                          kind: "Any",
-                          typeID: "$type3",
-                        },
-                      },
-                      to: {
-                        kind: "Generic",
-                        name: "$5",
-                        of: {
-                          kind: "Any",
-                          typeID: "$type4",
-                        },
-                      },
-                    },
-                  },
-                },
               },
               to: {
-                kind: "Function",
+                type: "Function",
                 from: {
                   kind: "Generic",
-                  name: "$2",
                 },
                 to: {
-                  kind: "Function",
-                  from: {
-                    kind: "Generic",
-                    name: "$3",
-                  },
-                  to: {
-                    kind: "Function",
-                    from: {
-                      kind: "Generic",
-                      name: "$4",
-                    },
-                    to: {
-                      kind: "Generic",
-                      name: "$5",
-                    },
-                  },
+                  kind: "Generic",
                 },
               },
             },
-          ],
+          },
         },
+
         globalMap
       ),
       symbol: "apply3",
@@ -9099,61 +5443,27 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["operatorApplyN"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Function",
-                  from: {
-                    kind: "Generic",
-                    name: "$2",
-                    of: {
-                      kind: "Any",
-                      typeID: "$type1",
-                    },
-                  },
-                  to: {
-                    kind: "Generic",
-                    name: "$3",
-                    of: {
-                      kind: "Any",
-                      typeID: "$type2",
-                    },
-                  },
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
+          type: "Function",
+          from: {
+            type: "Function",
+            from: { type: "Any", typeID: 1 },
+            to: { type: "Any", typeID: 2 },
+          },
+          to: {
+            type: "Function",
+            from: {
+              kind: "Concrete",
+              name: "List",
+              params: [
+                {
                   kind: "Generic",
-                  name: "$4",
-                  of: {
-                    kind: "Concrete",
-                    name: "List",
-                    params: [
-                      {
-                        kind: "Generic",
-                        name: "$2",
-                      },
-                    ],
-                  },
                 },
-                to: {
-                  kind: "Generic",
-                  name: "$5",
-                  of: {
-                    kind: "Any",
-                    typeID: "$type3",
-                  },
-                },
-              },
+              ],
             },
-          ],
+            to: { type: "Any", typeID: 3 },
+          },
         },
+
         globalMap
       ),
       symbol: "apply_n",
@@ -9182,31 +5492,14 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["operatorApply_0"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Generic",
-              name: "$1",
-              of: {
-                kind: "Operator",
-                args: [
-                  {
-                    kind: "Any",
-                    typeID: "$type1",
-                  },
-                ],
-              },
-            },
-            {
-              kind: "Generic",
-              name: "$2",
-              of: {
-                kind: "Any",
-                typeID: "$type1",
-              },
-            },
-          ],
+          kind: "Generic",
+          of: {
+            kind: "Operator",
+            args: [{ type: "Any", typeID: 1 }],
+          },
         },
+        { type: "Any", typeID: 1 },
+
         globalMap
       ),
       symbol: "apply0",
@@ -9223,68 +5516,35 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["operatorMap"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Operator",
-                args: [
-                  {
-                    kind: "Function",
-                    from: {
-                      kind: "Generic",
-                      name: "$1",
-                      of: {
-                        kind: "Any",
-                        typeID: "$type1",
-                      },
-                    },
-                    to: {
-                      kind: "Generic",
-                      name: "$2",
-                      of: {
-                        kind: "Any",
-                        typeID: "$type2",
-                      },
-                    },
-                  },
-                ],
-              },
-              to: {
-                kind: "Function",
-                from: {
+          type: "Function",
+          from: {
+            type: "Function",
+            from: { type: "Any", typeID: 1 },
+            to: { type: "Any", typeID: 2 },
+          },
+          to: {
+            type: "Function",
+            from: {
+              kind: "Concrete",
+              name: "List",
+              params: [
+                {
                   kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "List",
-                    params: [
-                      {
-                        kind: "Generic",
-                        name: "$1",
-                      },
-                    ],
-                  },
                 },
-                to: {
-                  kind: "Generic",
-                  name: "$4",
-                  of: {
-                    kind: "Concrete",
-                    name: "List",
-                    params: [
-                      {
-                        kind: "Generic",
-                        name: "$2",
-                      },
-                    ],
-                  },
-                },
-              },
+              ],
             },
-          ],
+            to: {
+              kind: "Concrete",
+              name: "List",
+              params: [
+                {
+                  kind: "Generic",
+                },
+              ],
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "map",
@@ -9300,68 +5560,37 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["operatorFilter"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Predicate",
-                args: [
-                  {
-                    kind: "Function",
-                    from: {
-                      kind: "Generic",
-                      name: "$1",
-                      of: {
-                        kind: "Any",
-                        typeID: "$type1",
-                      },
-                    },
-                    to: {
-                      kind: "Generic",
-                      name: "$2",
-                      of: {
-                        kind: "Concrete",
-                        name: "Boolean",
-                      },
-                    },
-                  },
-                ],
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "List",
-                    params: [
-                      {
-                        kind: "Generic",
-                        name: "$1",
-                      },
-                    ],
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$4",
-                  of: {
-                    kind: "Concrete",
-                    name: "List",
-                    params: [
-                      {
-                        kind: "Generic",
-                        name: "$1",
-                      },
-                    ],
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Function",
+            from: { type: "Any", typeID: 1 },
+            to: {
+              type: "Boolean",
             },
-          ],
+          },
+          to: {
+            type: "Function",
+            from: {
+              kind: "Concrete",
+              name: "List",
+              params: [
+                {
+                  kind: "Generic",
+                },
+              ],
+            },
+            to: {
+              kind: "Concrete",
+              name: "List",
+              params: [
+                {
+                  kind: "Generic",
+                },
+              ],
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "filter",
@@ -9377,88 +5606,33 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["operatorConjunction"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Predicate",
-                args: [
-                  {
-                    kind: "Function",
-                    from: {
-                      kind: "Generic",
-                      name: "$1",
-                      of: {
-                        kind: "Any",
-                        typeID: "$type1",
-                      },
-                    },
-                    to: {
-                      kind: "Generic",
-                      name: "$2",
-                      of: {
-                        kind: "Concrete",
-                        name: "Boolean",
-                      },
-                    },
-                  },
-                ],
-              },
+          type: "Function",
+          from: {
+            type: "Function",
+            from: { type: "Any", typeID: 1 },
+            to: {
+              type: "Boolean",
+            },
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Function",
+              from: { type: "Any", typeID: 1 },
               to: {
-                kind: "Function",
-                from: {
-                  kind: "Predicate",
-                  args: [
-                    {
-                      kind: "Function",
-                      from: {
-                        kind: "Generic",
-                        name: "$1",
-                        of: {
-                          kind: "Any",
-                          typeID: "$type1",
-                        },
-                      },
-                      to: {
-                        kind: "Generic",
-                        name: "$2",
-                        of: {
-                          kind: "Concrete",
-                          name: "Boolean",
-                        },
-                      },
-                    },
-                  ],
-                },
-                to: {
-                  kind: "Predicate",
-                  args: [
-                    {
-                      kind: "Function",
-                      from: {
-                        kind: "Generic",
-                        name: "$1",
-                        of: {
-                          kind: "Any",
-                          typeID: "$type1",
-                        },
-                      },
-                      to: {
-                        kind: "Generic",
-                        name: "$2",
-                        of: {
-                          kind: "Concrete",
-                          name: "Boolean",
-                        },
-                      },
-                    },
-                  ],
-                },
+                type: "Boolean",
               },
             },
-          ],
+            to: {
+              type: "Function",
+              from: { type: "Any", typeID: 1 },
+              to: {
+                type: "Boolean",
+              },
+            },
+          },
         },
+
         globalMap
       ),
       symbol: ".&&.",
@@ -9476,88 +5650,33 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["operatorDisjunction"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Predicate",
-                args: [
-                  {
-                    kind: "Function",
-                    from: {
-                      kind: "Generic",
-                      name: "$1",
-                      of: {
-                        kind: "Any",
-                        typeID: "$type1",
-                      },
-                    },
-                    to: {
-                      kind: "Generic",
-                      name: "$2",
-                      of: {
-                        kind: "Concrete",
-                        name: "Boolean",
-                      },
-                    },
-                  },
-                ],
-              },
+          type: "Function",
+          from: {
+            type: "Function",
+            from: { type: "Any", typeID: 1 },
+            to: {
+              type: "Boolean",
+            },
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Function",
+              from: { type: "Any", typeID: 1 },
               to: {
-                kind: "Function",
-                from: {
-                  kind: "Predicate",
-                  args: [
-                    {
-                      kind: "Function",
-                      from: {
-                        kind: "Generic",
-                        name: "$1",
-                        of: {
-                          kind: "Any",
-                          typeID: "$type1",
-                        },
-                      },
-                      to: {
-                        kind: "Generic",
-                        name: "$2",
-                        of: {
-                          kind: "Concrete",
-                          name: "Boolean",
-                        },
-                      },
-                    },
-                  ],
-                },
-                to: {
-                  kind: "Predicate",
-                  args: [
-                    {
-                      kind: "Function",
-                      from: {
-                        kind: "Generic",
-                        name: "$1",
-                        of: {
-                          kind: "Any",
-                          typeID: "$type1",
-                        },
-                      },
-                      to: {
-                        kind: "Generic",
-                        name: "$2",
-                        of: {
-                          kind: "Concrete",
-                          name: "Boolean",
-                        },
-                      },
-                    },
-                  ],
-                },
+                type: "Boolean",
               },
             },
-          ],
+            to: {
+              type: "Function",
+              from: { type: "Any", typeID: 1 },
+              to: {
+                type: "Boolean",
+              },
+            },
+          },
         },
+
         globalMap
       ),
       symbol: ".||.",
@@ -9575,61 +5694,23 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["operatorNegation"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Predicate",
-                args: [
-                  {
-                    kind: "Function",
-                    from: {
-                      kind: "Generic",
-                      name: "$1",
-                      of: {
-                        kind: "Any",
-                        typeID: "$type1",
-                      },
-                    },
-                    to: {
-                      kind: "Generic",
-                      name: "$2",
-                      of: {
-                        kind: "Concrete",
-                        name: "Boolean",
-                      },
-                    },
-                  },
-                ],
-              },
-              to: {
-                kind: "Predicate",
-                args: [
-                  {
-                    kind: "Function",
-                    from: {
-                      kind: "Generic",
-                      name: "$1",
-                      of: {
-                        kind: "Any",
-                        typeID: "$type1",
-                      },
-                    },
-                    to: {
-                      kind: "Generic",
-                      name: "$2",
-                      of: {
-                        kind: "Concrete",
-                        name: "Boolean",
-                      },
-                    },
-                  },
-                ],
-              },
+          type: "Function",
+          from: {
+            type: "Function",
+            from: { type: "Any", typeID: 1 },
+            to: {
+              type: "Boolean",
             },
-          ],
+          },
+          to: {
+            type: "Function",
+            from: { type: "Any", typeID: 1 },
+            to: {
+              type: "Boolean",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "!.",
@@ -9645,100 +5726,27 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["operatorPipe"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Operator",
-                  args: [
-                    {
-                      kind: "Function",
-                      from: {
-                        kind: "Generic",
-                        name: "$4",
-                        of: {
-                          kind: "Any",
-                          typeID: "$type1",
-                        },
-                      },
-                      to: {
-                        kind: "Generic",
-                        name: "$5",
-                        of: {
-                          kind: "Any",
-                          typeID: "$type2",
-                        },
-                      },
-                    },
-                  ],
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Operator",
-                    args: [
-                      {
-                        kind: "Function",
-                        from: {
-                          kind: "Generic",
-                          name: "$5",
-                          of: {
-                            kind: "Any",
-                            typeID: "$type2",
-                          },
-                        },
-                        to: {
-                          kind: "Generic",
-                          name: "$6",
-                          of: {
-                            kind: "Any",
-                            typeID: "$type3",
-                          },
-                        },
-                      },
-                    ],
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Operator",
-                    args: [
-                      {
-                        kind: "Function",
-                        from: {
-                          kind: "Generic",
-                          name: "$4",
-                          of: {
-                            kind: "Any",
-                            typeID: "$type1",
-                          },
-                        },
-                        to: {
-                          kind: "Generic",
-                          name: "$6",
-                          of: {
-                            kind: "Any",
-                            typeID: "$type3",
-                          },
-                        },
-                      },
-                    ],
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Function",
+            from: { type: "Any", typeID: 1 },
+            to: { type: "Any", typeID: 2 },
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Function",
+              from: { type: "Any", typeID: 2 },
+              to: { type: "Any", typeID: 3 },
             },
-          ],
+            to: {
+              type: "Function",
+              from: { type: "Any", typeID: 1 },
+              to: { type: "Any", typeID: 3 },
+            },
+          },
         },
+
         globalMap
       ),
       symbol: ".",
@@ -9758,126 +5766,39 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["operatorPipe2", "pipe2"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
+          type: "Function",
+          from: {
+            type: "Function",
+            from: { type: "Any", typeID: 1 },
+            to: { type: "Any", typeID: 2 },
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Function",
+              from: { type: "Any", typeID: 1 },
+              to: { type: "Any", typeID: 3 },
+            },
+            to: {
+              type: "Function",
               from: {
-                kind: "Operator",
-                args: [
-                  {
-                    kind: "Function",
-                    from: {
-                      kind: "Generic",
-                      name: "$1",
-                      of: {
-                        kind: "Any",
-                        typeID: "$type1",
-                      },
-                    },
-                    to: {
-                      kind: "Generic",
-                      name: "$2",
-                      of: {
-                        kind: "Any",
-                        typeID: "$type2",
-                      },
-                    },
-                  },
-                ],
+                type: "Function",
+                from: { type: "Any", typeID: 2 },
+                to: {
+                  type: "Function",
+                  from: { type: "Any", typeID: 3 },
+                  to: { type: "Any", typeID: 4 },
+                },
               },
               to: {
-                kind: "Function",
-                from: {
-                  kind: "Operator",
-                  args: [
-                    {
-                      kind: "Function",
-                      from: {
-                        kind: "Generic",
-                        name: "$1",
-                        of: {
-                          kind: "Any",
-                          typeID: "$type1",
-                        },
-                      },
-                      to: {
-                        kind: "Generic",
-                        name: "$3",
-                        of: {
-                          kind: "Any",
-                          typeID: "$type3",
-                        },
-                      },
-                    },
-                  ],
-                },
-                to: {
-                  kind: "Function",
-                  from: {
-                    kind: "Operator",
-                    args: [
-                      {
-                        kind: "Function",
-                        from: {
-                          kind: "Generic",
-                          name: "$2",
-                          of: {
-                            kind: "Any",
-                            typeID: "$type2",
-                          },
-                        },
-                        to: {
-                          kind: "Function",
-                          from: {
-                            kind: "Generic",
-                            name: "$3",
-                            of: {
-                              kind: "Any",
-                              typeID: "$type3",
-                            },
-                          },
-                          to: {
-                            kind: "Generic",
-                            name: "$4",
-                            of: {
-                              kind: "Any",
-                              typeID: "$type4",
-                            },
-                          },
-                        },
-                      },
-                    ],
-                  },
-                  to: {
-                    kind: "Operator",
-                    args: [
-                      {
-                        kind: "Function",
-                        from: {
-                          kind: "Generic",
-                          name: "$1",
-                          of: {
-                            kind: "Any",
-                            typeID: "$type1",
-                          },
-                        },
-                        to: {
-                          kind: "Generic",
-                          name: "$4",
-                          of: {
-                            kind: "Any",
-                            typeID: "$type4",
-                          },
-                        },
-                      },
-                    ],
-                  },
-                },
+                type: "Function",
+                from: { type: "Any", typeID: 1 },
+                to: { type: "Any", typeID: 4 },
               },
             },
-          ],
+          },
         },
+
         globalMap
       ),
       symbol: ".2",
@@ -9907,91 +5828,27 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["operatorFlip"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Operator",
-                  args: [
-                    {
-                      kind: "Function",
-                      from: {
-                        kind: "Generic",
-                        name: "$2",
-                        of: {
-                          kind: "Any",
-                          typeID: "$type1",
-                        },
-                      },
-                      to: {
-                        kind: "Function",
-                        from: {
-                          kind: "Generic",
-                          name: "$3",
-                          of: {
-                            kind: "Any",
-                            typeID: "$type2",
-                          },
-                        },
-                        to: {
-                          kind: "Generic",
-                          name: "$4",
-                          of: {
-                            kind: "Any",
-                            typeID: "$type3",
-                          },
-                        },
-                      },
-                    },
-                  ],
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$5",
-                of: {
-                  kind: "Operator",
-                  args: [
-                    {
-                      kind: "Function",
-                      from: {
-                        kind: "Generic",
-                        name: "$3",
-                        of: {
-                          kind: "Any",
-                          typeID: "$type2",
-                        },
-                      },
-                      to: {
-                        kind: "Function",
-                        from: {
-                          kind: "Generic",
-                          name: "$2",
-                          of: {
-                            kind: "Any",
-                            typeID: "$type1",
-                          },
-                        },
-                        to: {
-                          kind: "Generic",
-                          name: "$4",
-                          of: {
-                            kind: "Any",
-                            typeID: "$type3",
-                          },
-                        },
-                      },
-                    },
-                  ],
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Function",
+            from: { type: "Any", typeID: 1 },
+            to: {
+              type: "Function",
+              from: { type: "Any", typeID: 2 },
+              to: { type: "Any", typeID: 3 },
             },
-          ],
+          },
+          to: {
+            type: "Function",
+            from: { type: "Any", typeID: 2 },
+            to: {
+              type: "Function",
+              from: { type: "Any", typeID: 1 },
+              to: { type: "Any", typeID: 3 },
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "flip",
@@ -10010,76 +5867,27 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["operatorReduce"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Operator",
-                  args: [
-                    {
-                      kind: "Function",
-                      from: {
-                        kind: "Any",
-                        typeID: "$type1",
-                      },
-                      to: {
-                        kind: "Function",
-                        from: {
-                          kind: "Any",
-                          typeID: "$type1",
-                        },
-                        to: {
-                          kind: "Any",
-                          typeID: "$type1",
-                        },
-                      },
-                    },
-                  ],
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "List",
-                    params: [
-                      {
-                        kind: "Any",
-                        typeID: "$type1",
-                      },
-                    ],
-                  },
-                },
-                to: {
-                  kind: "Function",
-                  from: {
-                    kind: "Generic",
-                    name: "$3",
-                    of: {
-                      kind: "Any",
-                      typeID: "$type1",
-                    },
-                  },
-                  to: {
-                    kind: "Generic",
-                    name: "$4",
-                    of: {
-                      kind: "Any",
-                      typeID: "$type1",
-                    },
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Function",
+            from: { type: "Any", typeID: 1 },
+            to: {
+              type: "Function",
+              from: { type: "Any", typeID: 1 },
+              to: { type: "Any", typeID: 1 },
             },
-          ],
+          },
+          to: {
+            type: "Function",
+            from: { type: "List", listType: { type: "Any", typeID: 1 } },
+            to: {
+              type: "Function",
+              from: { type: "Any", typeID: 1 },
+              to: { type: "Any", typeID: 1 },
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "reduce",
@@ -10101,65 +5909,23 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["operatorReduce1"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Operator",
-                  args: [
-                    {
-                      kind: "Function",
-                      from: {
-                        kind: "Any",
-                        typeID: "$type1",
-                      },
-                      to: {
-                        kind: "Function",
-                        from: {
-                          kind: "Any",
-                          typeID: "$type1",
-                        },
-                        to: {
-                          kind: "Any",
-                          typeID: "$type1",
-                        },
-                      },
-                    },
-                  ],
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "List",
-                    params: [
-                      {
-                        kind: "Any",
-                        typeID: "$type1",
-                      },
-                    ],
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Any",
-                    typeID: "$type1",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Function",
+            from: { type: "Any", typeID: 1 },
+            to: {
+              type: "Function",
+              from: { type: "Any", typeID: 1 },
+              to: { type: "Any", typeID: 1 },
             },
-          ],
+          },
+          to: {
+            type: "Function",
+            from: { type: "List", listType: { type: "Any", typeID: 1 } },
+            to: { type: "Any", typeID: 1 },
+          },
         },
+
         globalMap
       ),
       symbol: "reduce1",
@@ -10180,41 +5946,17 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["operatorByName"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "String",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Operator",
-                  args: [
-                    {
-                      kind: "Function",
-                      from: {
-                        kind: "Any",
-                        typeID: "$type1",
-                      },
-                      to: {
-                        kind: "Any",
-                        typeID: "$type2",
-                      },
-                    },
-                  ],
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: {
+            type: "Function",
+            from: { type: "Any", typeID: 1 },
+            to: { type: "Any", typeID: 2 },
+          },
         },
+
         globalMap
       ),
       symbol: "op_by_name",
@@ -10230,29 +5972,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["nbtCompoundSize"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Integer",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "Integer",
+          },
         },
+
         globalMap
       ),
       symbol: "NBT{}.size",
@@ -10266,35 +5994,13 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["nbtCompoundKeys"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "List",
-                  params: [
-                    {
-                      kind: "Concrete",
-                      name: "String",
-                    },
-                  ],
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: { type: "List", listType: { type: "String" } },
         },
+
         globalMap
       ),
       symbol: "NBT{}.keys",
@@ -10308,40 +6014,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["nbtCompoundHaskey"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "String",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Boolean",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
             },
-          ],
+            to: {
+              type: "Boolean",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "NBT{}.has_key",
@@ -10357,40 +6044,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["nbtCompoundValueType"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "String",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "String",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
             },
-          ],
+            to: {
+              type: "String",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "NBT{}.type",
@@ -10408,40 +6076,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["nbtCompoundValueTag"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "String",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "NBT",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
             },
-          ],
+            to: {
+              type: "NBT",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "NBT{}.get_tag",
@@ -10457,40 +6106,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["nbtCompoundValueBoolean"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "String",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Boolean",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
             },
-          ],
+            to: {
+              type: "Boolean",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "NBT{}.get_boolean",
@@ -10506,40 +6136,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["nbtCompoundValueInteger"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "String",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Integer",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
             },
-          ],
+            to: {
+              type: "Integer",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "NBT{}.get_integer",
@@ -10559,40 +6170,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["nbtCompoundValueLong"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "String",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Long",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
             },
-          ],
+            to: {
+              type: "Long",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "NBT{}.get_long",
@@ -10612,40 +6204,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["nbtCompoundValueDouble"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "String",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Double",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
             },
-          ],
+            to: {
+              type: "Double",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "NBT{}.get_double",
@@ -10665,40 +6238,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["nbtCompoundValueString"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "String",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "String",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
             },
-          ],
+            to: {
+              type: "String",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "NBT{}.get_string",
@@ -10714,40 +6268,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["nbtCompoundValueCompound"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "String",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "NBT",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
             },
-          ],
+            to: {
+              type: "NBT",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "NBT{}.get_compound",
@@ -10763,46 +6298,19 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["nbtCompoundValueListTag", "nbtCompoundValueList"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "String",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "List",
-                    params: [
-                      {
-                        kind: "Concrete",
-                        name: "NBT",
-                      },
-                    ],
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
             },
-          ],
+            to: { type: "List", listType: { type: "NBT" } },
+          },
         },
+
         globalMap
       ),
       symbol: "NBT{}.get_list_tag",
@@ -10824,46 +6332,19 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["nbtCompoundValueListByte"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "String",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "List",
-                    params: [
-                      {
-                        kind: "Concrete",
-                        name: "Integer",
-                      },
-                    ],
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
             },
-          ],
+            to: { type: "List", listType: { type: "Integer" } },
+          },
         },
+
         globalMap
       ),
       symbol: "NBT{}.get_list_byte",
@@ -10885,46 +6366,19 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["nbtCompoundValueListInt"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "String",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "List",
-                    params: [
-                      {
-                        kind: "Concrete",
-                        name: "Integer",
-                      },
-                    ],
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
             },
-          ],
+            to: { type: "List", listType: { type: "Integer" } },
+          },
         },
+
         globalMap
       ),
       symbol: "NBT{}.get_list_int",
@@ -10946,46 +6400,19 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["nbtCompoundValueListLong"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "String",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "List",
-                    params: [
-                      {
-                        kind: "Concrete",
-                        name: "Long",
-                      },
-                    ],
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
             },
-          ],
+            to: { type: "List", listType: { type: "Long" } },
+          },
         },
+
         globalMap
       ),
       symbol: "NBT{}.get_list_long",
@@ -11007,40 +6434,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["nbtCompoundWithout"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "String",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "NBT",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
             },
-          ],
+            to: {
+              type: "NBT",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "NBT{}.without",
@@ -11056,51 +6464,27 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["nbtCompoundWithBoolean"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Function",
               from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
+                type: "Boolean",
               },
               to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "String",
-                  },
-                },
-                to: {
-                  kind: "Function",
-                  from: {
-                    kind: "Generic",
-                    name: "$3",
-                    of: {
-                      kind: "Concrete",
-                      name: "Boolean",
-                    },
-                  },
-                  to: {
-                    kind: "Generic",
-                    name: "$4",
-                    of: {
-                      kind: "Concrete",
-                      name: "NBT",
-                    },
-                  },
-                },
+                type: "NBT",
               },
             },
-          ],
+          },
         },
+
         globalMap
       ),
       symbol: "NBT{}.with_boolean",
@@ -11111,51 +6495,27 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["nbtCompoundWithShort"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Function",
               from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
+                type: "Integer",
               },
               to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "String",
-                  },
-                },
-                to: {
-                  kind: "Function",
-                  from: {
-                    kind: "Generic",
-                    name: "$3",
-                    of: {
-                      kind: "Concrete",
-                      name: "Integer",
-                    },
-                  },
-                  to: {
-                    kind: "Generic",
-                    name: "$4",
-                    of: {
-                      kind: "Concrete",
-                      name: "NBT",
-                    },
-                  },
-                },
+                type: "NBT",
               },
             },
-          ],
+          },
         },
+
         globalMap
       ),
       symbol: "NBT{}.with_short",
@@ -11166,51 +6526,27 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["nbtCompoundWithInteger"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Function",
               from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
+                type: "Integer",
               },
               to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "String",
-                  },
-                },
-                to: {
-                  kind: "Function",
-                  from: {
-                    kind: "Generic",
-                    name: "$3",
-                    of: {
-                      kind: "Concrete",
-                      name: "Integer",
-                    },
-                  },
-                  to: {
-                    kind: "Generic",
-                    name: "$4",
-                    of: {
-                      kind: "Concrete",
-                      name: "NBT",
-                    },
-                  },
-                },
+                type: "NBT",
               },
             },
-          ],
+          },
         },
+
         globalMap
       ),
       symbol: "NBT{}.with_integer",
@@ -11221,51 +6557,27 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["nbtCompoundWithLong"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Function",
               from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
+                type: "Long",
               },
               to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "String",
-                  },
-                },
-                to: {
-                  kind: "Function",
-                  from: {
-                    kind: "Generic",
-                    name: "$3",
-                    of: {
-                      kind: "Concrete",
-                      name: "Long",
-                    },
-                  },
-                  to: {
-                    kind: "Generic",
-                    name: "$4",
-                    of: {
-                      kind: "Concrete",
-                      name: "NBT",
-                    },
-                  },
-                },
+                type: "NBT",
               },
             },
-          ],
+          },
         },
+
         globalMap
       ),
       symbol: "NBT{}.with_long",
@@ -11276,51 +6588,27 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["nbtCompoundWithDouble"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Function",
               from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
+                type: "Double",
               },
               to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "String",
-                  },
-                },
-                to: {
-                  kind: "Function",
-                  from: {
-                    kind: "Generic",
-                    name: "$3",
-                    of: {
-                      kind: "Concrete",
-                      name: "Double",
-                    },
-                  },
-                  to: {
-                    kind: "Generic",
-                    name: "$4",
-                    of: {
-                      kind: "Concrete",
-                      name: "NBT",
-                    },
-                  },
-                },
+                type: "NBT",
               },
             },
-          ],
+          },
         },
+
         globalMap
       ),
       symbol: "NBT{}.with_double",
@@ -11331,51 +6619,27 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["nbtCompoundWithFloat"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Function",
               from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
+                type: "Double",
               },
               to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "String",
-                  },
-                },
-                to: {
-                  kind: "Function",
-                  from: {
-                    kind: "Generic",
-                    name: "$3",
-                    of: {
-                      kind: "Concrete",
-                      name: "Double",
-                    },
-                  },
-                  to: {
-                    kind: "Generic",
-                    name: "$4",
-                    of: {
-                      kind: "Concrete",
-                      name: "NBT",
-                    },
-                  },
-                },
+                type: "NBT",
               },
             },
-          ],
+          },
         },
+
         globalMap
       ),
       symbol: "NBT{}.with_float",
@@ -11386,51 +6650,27 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["nbtCompoundWithString"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Function",
               from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
+                type: "String",
               },
               to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "String",
-                  },
-                },
-                to: {
-                  kind: "Function",
-                  from: {
-                    kind: "Generic",
-                    name: "$3",
-                    of: {
-                      kind: "Concrete",
-                      name: "String",
-                    },
-                  },
-                  to: {
-                    kind: "Generic",
-                    name: "$4",
-                    of: {
-                      kind: "Concrete",
-                      name: "NBT",
-                    },
-                  },
-                },
+                type: "NBT",
               },
             },
-          ],
+          },
         },
+
         globalMap
       ),
       symbol: "NBT{}.with_string",
@@ -11441,51 +6681,27 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["nbtCompoundWithCompound"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Function",
               from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
+                type: "NBT",
               },
               to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "String",
-                  },
-                },
-                to: {
-                  kind: "Function",
-                  from: {
-                    kind: "Generic",
-                    name: "$3",
-                    of: {
-                      kind: "Concrete",
-                      name: "NBT",
-                    },
-                  },
-                  to: {
-                    kind: "Generic",
-                    name: "$4",
-                    of: {
-                      kind: "Concrete",
-                      name: "NBT",
-                    },
-                  },
-                },
+                type: "NBT",
               },
             },
-          ],
+          },
         },
+
         globalMap
       ),
       symbol: "NBT{}.with_tag",
@@ -11496,57 +6712,25 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["nbtCompoundWithListTag"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Function",
+              from: { type: "List", listType: { type: "NBT" } },
               to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "String",
-                  },
-                },
-                to: {
-                  kind: "Function",
-                  from: {
-                    kind: "Generic",
-                    name: "$3",
-                    of: {
-                      kind: "Concrete",
-                      name: "List",
-                      params: [
-                        {
-                          kind: "Concrete",
-                          name: "NBT",
-                        },
-                      ],
-                    },
-                  },
-                  to: {
-                    kind: "Generic",
-                    name: "$4",
-                    of: {
-                      kind: "Concrete",
-                      name: "NBT",
-                    },
-                  },
-                },
+                type: "NBT",
               },
             },
-          ],
+          },
         },
+
         globalMap
       ),
       symbol: "NBT{}.with_tag_list",
@@ -11557,57 +6741,25 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["nbtCompoundWithListByte"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Function",
+              from: { type: "List", listType: { type: "Integer" } },
               to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "String",
-                  },
-                },
-                to: {
-                  kind: "Function",
-                  from: {
-                    kind: "Generic",
-                    name: "$3",
-                    of: {
-                      kind: "Concrete",
-                      name: "List",
-                      params: [
-                        {
-                          kind: "Concrete",
-                          name: "Integer",
-                        },
-                      ],
-                    },
-                  },
-                  to: {
-                    kind: "Generic",
-                    name: "$4",
-                    of: {
-                      kind: "Concrete",
-                      name: "NBT",
-                    },
-                  },
-                },
+                type: "NBT",
               },
             },
-          ],
+          },
         },
+
         globalMap
       ),
       symbol: "NBT{}.with_byte_list",
@@ -11618,57 +6770,25 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["nbtCompoundWithListInt"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Function",
+              from: { type: "List", listType: { type: "Integer" } },
               to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "String",
-                  },
-                },
-                to: {
-                  kind: "Function",
-                  from: {
-                    kind: "Generic",
-                    name: "$3",
-                    of: {
-                      kind: "Concrete",
-                      name: "List",
-                      params: [
-                        {
-                          kind: "Concrete",
-                          name: "Integer",
-                        },
-                      ],
-                    },
-                  },
-                  to: {
-                    kind: "Generic",
-                    name: "$4",
-                    of: {
-                      kind: "Concrete",
-                      name: "NBT",
-                    },
-                  },
-                },
+                type: "NBT",
               },
             },
-          ],
+          },
         },
+
         globalMap
       ),
       symbol: "NBT{}.with_int_list",
@@ -11679,57 +6799,25 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["nbtCompoundWithListLong"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Function",
+              from: { type: "List", listType: { type: "Long" } },
               to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "String",
-                  },
-                },
-                to: {
-                  kind: "Function",
-                  from: {
-                    kind: "Generic",
-                    name: "$3",
-                    of: {
-                      kind: "Concrete",
-                      name: "List",
-                      params: [
-                        {
-                          kind: "Concrete",
-                          name: "Long",
-                        },
-                      ],
-                    },
-                  },
-                  to: {
-                    kind: "Generic",
-                    name: "$4",
-                    of: {
-                      kind: "Concrete",
-                      name: "NBT",
-                    },
-                  },
-                },
+                type: "NBT",
               },
             },
-          ],
+          },
         },
+
         globalMap
       ),
       symbol: "NBT{}.with_list_long",
@@ -11740,40 +6828,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["nbtCompoundSubset"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "NBT",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Boolean",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "NBT",
             },
-          ],
+            to: {
+              type: "Boolean",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "NBT{}.⊆",
@@ -11784,40 +6853,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["nbtCompoundUnion"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "NBT",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "NBT",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "NBT",
             },
-          ],
+            to: {
+              type: "NBT",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "NBT{}.∪",
@@ -11828,40 +6878,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["nbtCompoundIntersection"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "NBT",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "NBT",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "NBT",
             },
-          ],
+            to: {
+              type: "NBT",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "NBT{}.∩",
@@ -11872,40 +6903,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["nbtCompoundMinus"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "NBT",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "NBT",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "NBT",
             },
-          ],
+            to: {
+              type: "NBT",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "NBT{}.∖",
@@ -11916,29 +6928,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Boolean",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
+
         globalMap
       ),
       symbol: "NBT.as_boolean",
@@ -11949,29 +6947,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Integer",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "Integer",
+          },
         },
+
         globalMap
       ),
       symbol: "NBT.as_byte",
@@ -11982,29 +6966,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Integer",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "Integer",
+          },
         },
+
         globalMap
       ),
       symbol: "NBT.as_short",
@@ -12015,29 +6985,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Integer",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "Integer",
+          },
         },
+
         globalMap
       ),
       symbol: "NBT.as_int",
@@ -12048,29 +7004,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Long",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "Long",
+          },
         },
+
         globalMap
       ),
       symbol: "NBT.as_long",
@@ -12081,29 +7023,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Double",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "Double",
+          },
         },
+
         globalMap
       ),
       symbol: "NBT.as_double",
@@ -12114,29 +7042,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Double",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "Double",
+          },
         },
+
         globalMap
       ),
       symbol: "NBT.as_float",
@@ -12147,29 +7061,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "String",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "String",
+          },
         },
+
         globalMap
       ),
       symbol: "NBT.as_string",
@@ -12180,35 +7080,13 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "List",
-                  params: [
-                    {
-                      kind: "Concrete",
-                      name: "NBT",
-                    },
-                  ],
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: { type: "List", listType: { type: "NBT" } },
         },
+
         globalMap
       ),
       symbol: "NBT.as_tag_list",
@@ -12219,35 +7097,13 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "List",
-                  params: [
-                    {
-                      kind: "Concrete",
-                      name: "Integer",
-                    },
-                  ],
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: { type: "List", listType: { type: "Integer" } },
         },
+
         globalMap
       ),
       symbol: "NBT.as_byte_list",
@@ -12258,35 +7114,13 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "List",
-                  params: [
-                    {
-                      kind: "Concrete",
-                      name: "Integer",
-                    },
-                  ],
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: { type: "List", listType: { type: "Integer" } },
         },
+
         globalMap
       ),
       symbol: "NBT.as_int_list",
@@ -12297,35 +7131,13 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "List",
-                  params: [
-                    {
-                      kind: "Concrete",
-                      name: "Long",
-                    },
-                  ],
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: { type: "List", listType: { type: "Long" } },
         },
+
         globalMap
       ),
       symbol: "NBT.as_long_list",
@@ -12336,29 +7148,16 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "CHANGE ME",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            kind: "Concrete",
+            name: "CHANGE ME",
+          },
         },
+
         globalMap
       ),
       symbol: "NBT.from_boolean",
@@ -12369,29 +7168,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Integer",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Integer",
+          },
+          to: {
+            type: "NBT",
+          },
         },
+
         globalMap
       ),
       symbol: "NBT.from_short",
@@ -12402,29 +7187,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Integer",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Integer",
+          },
+          to: {
+            type: "NBT",
+          },
         },
+
         globalMap
       ),
       symbol: "NBT.from_byte",
@@ -12435,29 +7206,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Integer",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Integer",
+          },
+          to: {
+            type: "NBT",
+          },
         },
+
         globalMap
       ),
       symbol: "NBT.from_int",
@@ -12468,29 +7225,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Long",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Long",
+          },
+          to: {
+            type: "NBT",
+          },
         },
+
         globalMap
       ),
       symbol: "NBT.from_long",
@@ -12501,29 +7244,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Double",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Double",
+          },
+          to: {
+            type: "NBT",
+          },
         },
+
         globalMap
       ),
       symbol: "NBT.from_double",
@@ -12534,29 +7263,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Double",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Double",
+          },
+          to: {
+            type: "NBT",
+          },
         },
+
         globalMap
       ),
       symbol: "NBT.from_float",
@@ -12567,29 +7282,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "String",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: {
+            type: "NBT",
+          },
         },
+
         globalMap
       ),
       symbol: "NBT.from_string",
@@ -12600,35 +7301,13 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "List",
-                  params: [
-                    {
-                      kind: "Concrete",
-                      name: "NBT",
-                    },
-                  ],
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: { type: "List", listType: { type: "NBT" } },
+          to: {
+            type: "NBT",
+          },
         },
+
         globalMap
       ),
       symbol: "NBT.from_tag_list",
@@ -12639,35 +7318,13 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "List",
-                  params: [
-                    {
-                      kind: "Concrete",
-                      name: "Integer",
-                    },
-                  ],
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: { type: "List", listType: { type: "Integer" } },
+          to: {
+            type: "NBT",
+          },
         },
+
         globalMap
       ),
       symbol: "NBT.from_byte_list",
@@ -12678,35 +7335,13 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "List",
-                  params: [
-                    {
-                      kind: "Concrete",
-                      name: "Integer",
-                    },
-                  ],
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: { type: "List", listType: { type: "Integer" } },
+          to: {
+            type: "NBT",
+          },
         },
+
         globalMap
       ),
       symbol: "NBT.from_int_list",
@@ -12717,35 +7352,13 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "List",
-                  params: [
-                    {
-                      kind: "Concrete",
-                      name: "Long",
-                    },
-                  ],
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: { type: "List", listType: { type: "Long" } },
+          to: {
+            type: "NBT",
+          },
         },
+
         globalMap
       ),
       symbol: "NBT.from_long_list",
@@ -12756,40 +7369,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "String",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "NBT",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "NBT",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "NBT",
             },
-          ],
+            to: {
+              type: "NBT",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "NBT.path_match_first",
@@ -12800,46 +7394,19 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "String",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "NBT",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "List",
-                    params: [
-                      {
-                        kind: "Concrete",
-                        name: "NBT",
-                      },
-                    ],
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "NBT",
             },
-          ],
+            to: { type: "List", listType: { type: "NBT" } },
+          },
         },
+
         globalMap
       ),
       symbol: "NBT.path_match_all",
@@ -12850,40 +7417,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "String",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "NBT",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Boolean",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "NBT",
             },
-          ],
+            to: {
+              type: "Boolean",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "NBT.path_test",
@@ -12894,35 +7442,13 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Ingredients",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "List",
-                  params: [
-                    {
-                      kind: "Concrete",
-                      name: "Item",
-                    },
-                  ],
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Ingredients",
+          },
+          to: { type: "List", listType: { type: "Item" } },
         },
+
         globalMap
       ),
       symbol: "Ingr.items",
@@ -12933,35 +7459,13 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Ingredients",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "List",
-                  params: [
-                    {
-                      kind: "Concrete",
-                      name: "Fluid",
-                    },
-                  ],
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Ingredients",
+          },
+          to: { type: "List", listType: { type: "Fluid" } },
         },
+
         globalMap
       ),
       symbol: "Ingr.fluids",
@@ -12972,35 +7476,13 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Ingredients",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "List",
-                  params: [
-                    {
-                      kind: "Concrete",
-                      name: "Long",
-                    },
-                  ],
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Ingredients",
+          },
+          to: { type: "List", listType: { type: "Long" } },
         },
+
         globalMap
       ),
       symbol: "Ingr.energies",
@@ -13011,51 +7493,27 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              Kind: "Function",
+          type: "Function",
+          from: {
+            type: "Ingredients",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Integer",
+            },
+            to: {
+              type: "Function",
               from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Ingredients",
-                },
+                type: "Item",
               },
               to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Integer",
-                  },
-                },
-                to: {
-                  kind: "Function",
-                  from: {
-                    kind: "Generic",
-                    name: "$3",
-                    of: {
-                      kind: "Concrete",
-                      name: "Item",
-                    },
-                  },
-                  to: {
-                    kind: "Generic",
-                    name: "$4",
-                    of: {
-                      kind: "Concrete",
-                      name: "Ingredients",
-                    },
-                  },
-                },
+                type: "Ingredients",
               },
             },
-          ],
+          },
         },
+
         globalMap
       ),
       symbol: "Ingr.with_item",
@@ -13066,51 +7524,27 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              Kind: "Function",
+          type: "Function",
+          from: {
+            type: "Ingredients",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Integer",
+            },
+            to: {
+              type: "Function",
               from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Ingredients",
-                },
+                type: "Fluid",
               },
               to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Integer",
-                  },
-                },
-                to: {
-                  kind: "Function",
-                  from: {
-                    kind: "Generic",
-                    name: "$3",
-                    of: {
-                      kind: "Concrete",
-                      name: "Fluid",
-                    },
-                  },
-                  to: {
-                    kind: "Generic",
-                    name: "$4",
-                    of: {
-                      kind: "Concrete",
-                      name: "Ingredients",
-                    },
-                  },
-                },
+                type: "Ingredients",
               },
             },
-          ],
+          },
         },
+
         globalMap
       ),
       symbol: "Ingr.with_fluid",
@@ -13121,51 +7555,27 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              Kind: "Function",
+          type: "Function",
+          from: {
+            type: "Ingredients",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Integer",
+            },
+            to: {
+              type: "Function",
               from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Ingredients",
-                },
+                type: "Long",
               },
               to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Integer",
-                  },
-                },
-                to: {
-                  kind: "Function",
-                  from: {
-                    kind: "Generic",
-                    name: "$3",
-                    of: {
-                      kind: "Concrete",
-                      name: "Long",
-                    },
-                  },
-                  to: {
-                    kind: "Generic",
-                    name: "$4",
-                    of: {
-                      kind: "Concrete",
-                      name: "Ingredients",
-                    },
-                  },
-                },
+                type: "Ingredients",
               },
             },
-          ],
+          },
         },
+
         globalMap
       ),
       symbol: "Ingr.with_energy",
@@ -13176,57 +7586,25 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              Kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Ingredients",
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Ingredients",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Integer",
+            },
+            to: {
+              type: "Function",
+              from: { type: "List", listType: { type: "Item" } },
               to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Integer",
-                  },
-                },
-                to: {
-                  kind: "Function",
-                  from: {
-                    kind: "Generic",
-                    name: "$3",
-                    of: {
-                      kind: "Concrete",
-                      name: "List",
-                      params: [
-                        {
-                          kind: "Concrete",
-                          name: "Item",
-                        },
-                      ],
-                    },
-                  },
-                  to: {
-                    kind: "Generic",
-                    name: "$4",
-                    of: {
-                      kind: "Concrete",
-                      name: "Ingredients",
-                    },
-                  },
-                },
+                type: "Ingredients",
               },
             },
-          ],
+          },
         },
+
         globalMap
       ),
       symbol: "Ingr.with_items",
@@ -13237,57 +7615,25 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              Kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Ingredients",
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Ingredients",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Integer",
+            },
+            to: {
+              type: "Function",
+              from: { type: "List", listType: { type: "Fluid" } },
               to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Integer",
-                  },
-                },
-                to: {
-                  kind: "Function",
-                  from: {
-                    kind: "Generic",
-                    name: "$3",
-                    of: {
-                      kind: "Concrete",
-                      name: "List",
-                      params: [
-                        {
-                          kind: "Concrete",
-                          name: "Fluid",
-                        },
-                      ],
-                    },
-                  },
-                  to: {
-                    kind: "Generic",
-                    name: "$4",
-                    of: {
-                      kind: "Concrete",
-                      name: "Ingredients",
-                    },
-                  },
-                },
+                type: "Ingredients",
               },
             },
-          ],
+          },
         },
+
         globalMap
       ),
       symbol: "Ingr.with_fluids",
@@ -13298,57 +7644,25 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              Kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Ingredients",
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Ingredients",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Integer",
+            },
+            to: {
+              type: "Function",
+              from: { type: "List", listType: { type: "Long" } },
               to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Integer",
-                  },
-                },
-                to: {
-                  kind: "Function",
-                  from: {
-                    kind: "Generic",
-                    name: "$3",
-                    of: {
-                      kind: "Concrete",
-                      name: "List",
-                      params: [
-                        {
-                          kind: "Concrete",
-                          name: "Long",
-                        },
-                      ],
-                    },
-                  },
-                  to: {
-                    kind: "Generic",
-                    name: "$4",
-                    of: {
-                      kind: "Concrete",
-                      name: "Ingredients",
-                    },
-                  },
-                },
+                type: "Ingredients",
               },
             },
-          ],
+          },
         },
+
         globalMap
       ),
       symbol: "Ingr.with_energies",
@@ -13359,29 +7673,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Recipe",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Ingredients",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Recipe",
+          },
+          to: {
+            type: "Ingredients",
+          },
         },
+
         globalMap
       ),
       symbol: "recipe_in",
@@ -13392,29 +7692,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Recipe",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Ingredients",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Recipe",
+          },
+          to: {
+            type: "Ingredients",
+          },
         },
+
         globalMap
       ),
       symbol: "recipe_out",
@@ -13425,40 +7711,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Recipe",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Ingredients",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Recipe",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Recipe",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Ingredients",
             },
-          ],
+            to: {
+              type: "Recipe",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "Recipe.with_in",
@@ -13469,40 +7736,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Recipe",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Ingredients",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Recipe",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Recipe",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Ingredients",
             },
-          ],
+            to: {
+              type: "Recipe",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "Recipe.with_out",
@@ -13513,40 +7761,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Ingredients",
-                },
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Ingredients",
-                  },
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$3",
-                  of: {
-                    kind: "Concrete",
-                    name: "Recipe",
-                  },
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Ingredients",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Ingredients",
             },
-          ],
+            to: {
+              type: "Recipe",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "Recipe.with_io",
@@ -13558,30 +7787,16 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Any",
-                },
-                typeID: "$type1",
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Boolean",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Any",
+            typeID: "$type1",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
+
         globalMap
       ),
       symbol: "parse_boolean",
@@ -13593,30 +7808,16 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Any",
-                },
-                typeID: "$type1",
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Double",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Any",
+            typeID: "$type1",
+          },
+          to: {
+            type: "Double",
+          },
         },
+
         globalMap
       ),
       symbol: "parse_double",
@@ -13628,30 +7829,16 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Any",
-                },
-                typeID: "$type1",
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Integer",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Any",
+            typeID: "$type1",
+          },
+          to: {
+            type: "Integer",
+          },
         },
+
         globalMap
       ),
       symbol: "parse_integer",
@@ -13663,30 +7850,16 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Any",
-                },
-                typeID: "$type1",
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Long",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Any",
+            typeID: "$type1",
+          },
+          to: {
+            type: "Long",
+          },
         },
+
         globalMap
       ),
       symbol: "parse_long",
@@ -13698,30 +7871,16 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Any",
-                },
-                typeID: "$type1",
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "NBT",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Any",
+            typeID: "$type1",
+          },
+          to: {
+            type: "NBT",
+          },
         },
+
         globalMap
       ),
       symbol: "parse_nbt",
@@ -13732,54 +7891,30 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["generalChoice"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
+          type: "Function",
+          from: {
+            type: "Boolean",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Any",
+              typeID: "$type1",
+            },
+            to: {
+              type: "Function",
               from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Boolean",
-                },
+                type: "Any",
+                typeID: "$type1",
               },
               to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Any",
-                  },
-                  typeID: "$type1",
-                },
-                to: {
-                  kind: "Function",
-                  from: {
-                    kind: "Generic",
-                    name: "$3",
-                    of: {
-                      kind: "Concrete",
-                      name: "Any",
-                    },
-                    typeID: "$type1",
-                  },
-                  to: {
-                    kind: "Generic",
-                    name: "$4",
-                    of: {
-                      kind: "Concrete",
-                      name: "Any",
-                    },
-                    typeID: "$type1",
-                  },
-                },
+                type: "Any",
+                typeID: "$type1",
               },
             },
-          ],
+          },
         },
+
         globalMap
       ),
       symbol: "?",
@@ -13790,31 +7925,17 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Any",
-                },
-                typeID: "$type1",
-              },
-              to: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Any",
-                },
-                typeID: "$type1",
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Any",
+            typeID: "$type1",
+          },
+          to: {
+            type: "Any",
+            typeID: "$type1",
+          },
         },
+
         globalMap
       ),
       symbol: "id",
@@ -13825,43 +7946,24 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: [],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Any",
-                },
-                typeID: "$type1",
-              },
-              to: {
-                kind: "Function",
-                from: {
-                  kind: "Generic",
-                  name: "$2",
-                  of: {
-                    kind: "Concrete",
-                    name: "Any",
-                  },
-                  typeID: "$type2",
-                },
-                to: {
-                  kind: "Generic",
-                  name: "$1",
-                  of: {
-                    kind: "Concrete",
-                    name: "Any",
-                  },
-                  typeID: "$type1",
-                },
-              },
+          type: "Function",
+          from: {
+            type: "Any",
+            typeID: "$type1",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Any",
+              typeID: "$type2",
             },
-          ],
+            to: {
+              type: "Any",
+              typeID: "$type1",
+            },
+          },
         },
+
         globalMap
       ),
       symbol: "K",
@@ -13873,29 +7975,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["intToDouble", "integerDouble"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Integer",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Double",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Integer",
+          },
+          to: {
+            type: "Double",
+          },
         },
+
         globalMap
       ),
       symbol: "()",
@@ -13907,29 +7995,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["intToLong", "integerLong"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Integer",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Long",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Integer",
+          },
+          to: {
+            type: "Long",
+          },
         },
+
         globalMap
       ),
       symbol: "()",
@@ -13941,29 +8015,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["doubleToInt", "doubleInteger"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Double",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Integer",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Double",
+          },
+          to: {
+            type: "Integer",
+          },
         },
+
         globalMap
       ),
       symbol: "()",
@@ -13975,29 +8035,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["doubleToLong"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Double",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Long",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Double",
+          },
+          to: {
+            type: "Long",
+          },
         },
+
         globalMap
       ),
       symbol: "()",
@@ -14009,29 +8055,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["longToInt", "longInteger"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Long",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Integer",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Long",
+          },
+          to: {
+            type: "Integer",
+          },
         },
+
         globalMap
       ),
       symbol: "()",
@@ -14043,29 +8075,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["longToDouble", "longDouble"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: [
-            {
-              kind: "Function",
-              from: {
-                kind: "Generic",
-                name: "$1",
-                of: {
-                  kind: "Concrete",
-                  name: "Long",
-                },
-              },
-              to: {
-                kind: "Generic",
-                name: "$2",
-                of: {
-                  kind: "Concrete",
-                  name: "Double",
-                },
-              },
-            },
-          ],
+          type: "Function",
+          from: {
+            type: "Long",
+          },
+          to: {
+            type: "Double",
+          },
         },
+
         globalMap
       ),
       symbol: "()",

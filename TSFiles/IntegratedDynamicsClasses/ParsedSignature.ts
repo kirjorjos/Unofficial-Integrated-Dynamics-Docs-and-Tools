@@ -1,42 +1,20 @@
-import {
-  TypeOperator,
-  TypeFunction,
-  TypeConcrete,
-  TypeGeneric,
-  TypeAny,
-  TypeList,
-  TypeTypeMap,
-} from "../types";
+import { TypeRawSignatureAST, TypeTypeMap } from "../types";
 import { TypeMap } from "./TypeMap";
 
 export class ParsedSignature {
-  ast: TypeOperator | TypeFunction;
-  counter: number;
+  ast: TypeRawSignatureAST.RawSignatureFunction;
+  TypeIDCounter: number;
   typeMap: TypeMap;
-  args: (
-    | string
-    | TypeFunction
-    | TypeConcrete
-    | TypeGeneric
-    | TypeAny
-    | TypeList
-    | TypeOperator
-  )[];
+  flatArgs: (TypeRawSignatureAST.RawSignatureDefiniteValue["type"] | "Any")[];
 
   constructor(
-    ast:
-      | TypeOperator
-      | TypeList
-      | TypeAny
-      | TypeConcrete
-      | TypeFunction
-      | TypeGeneric,
+    ast: TypeRawSignatureAST.RawSignatureNode,
     typeMap: TypeMap = new TypeMap()
   ) {
-    this.ast = this._normalize(ast) as TypeOperator | TypeFunction;
-    this.counter = 1;
+    this.ast = this._normalize(ast) as TypeRawSignatureAST.RawSignatureFunction;
+    this.TypeIDCounter = 0;
     this.typeMap = typeMap;
-    this.args = this.toFlatSignature();
+    this.flatArgs = this.toFlatSignature();
   }
 
   getAST() {
@@ -44,106 +22,77 @@ export class ParsedSignature {
   }
 
   _normalize(
-    node:
-      | TypeOperator
-      | TypeConcrete
-      | TypeGeneric
-      | TypeAny
-      | TypeFunction
-      | TypeList,
-    argIndex = 1
-  ):
-    | TypeConcrete
-    | TypeGeneric
-    | TypeAny
-    | TypeFunction
-    | TypeList
-    | TypeOperator {
-    if (!node) return node;
+    node: TypeRawSignatureAST.RawSignatureNode
+  ): TypeRawSignatureAST.RawSignatureNode {
+    let baseIDs = new Set();
+    let toAdd = this.TypeIDCounter;
 
-    switch (node.kind) {
-      case "Any": {
+    function normalize(
+      node: TypeRawSignatureAST.RawSignatureNode
+    ): TypeRawSignatureAST.RawSignatureNode {
+      if (node.type === "Function") {
         return {
-          ...node,
-          typeID: `$type${this.counter++}`,
-          argName: node.argName || `arg${argIndex}`,
+          type: "Function",
+          from: normalize(node.from),
+          to: normalize(node.to),
         };
       }
 
-      case "Generic": {
+      if (node.type === "List") {
         return {
-          ...node,
-          name: `$${this.counter++}`,
-          argName: node.argName || `arg${argIndex}`,
+          type: "List",
+          listType: normalize(node.listType),
         };
       }
 
-      case "Function": {
+      if (node.type === "Any") {
+        baseIDs.add(node.typeID);
+        return {
+          type: "Any",
+          typeID: node.typeID + toAdd,
+        };
+      }
+
+      return node;
+    }
+
+    node = normalize(node);
+    this.TypeIDCounter += baseIDs.size;
+    return node;
+  }
+
+  rename(mapping: TypeTypeMap): ParsedSignature {
+    const renameNode = (
+      node: TypeRawSignatureAST.RawSignatureNode
+    ): TypeRawSignatureAST.RawSignatureNode => {
+      if (!node) return node;
+
+      if (node.type === "List") {
         return Object.assign({}, node, {
-          kind: "Function",
-          from: this._normalize(node.from, argIndex),
-          to: this._normalize(node.to, argIndex + 1),
+          listType: renameNode(node.listType),
         });
       }
 
-      case "Concrete": {
-        if (node.name === "List") {
-          return Object.assign({}, node, {
-            kind: "Concrete",
-            name: node.name,
-            params: node.params.map((p, i) => this._normalize(p, argIndex + i)),
-          });
-        }
-        return node;
-      }
-    }
-    return node.args[0];
-  }
-
-  renameArgs(mapping: TypeTypeMap) {
-    const rename = (
-      node:
-        | TypeList
-        | TypeAny
-        | TypeFunction
-        | TypeGeneric
-        | TypeConcrete
-        | TypeOperator
-    ): TypeList | TypeAny | TypeFunction | TypeGeneric | TypeConcrete => {
-      if (!node) return node;
-
-      if (node.kind === "Operator") return rename(node.args[0]);
-
-      if (node.kind === "Concrete" && node.name === "List") {
-        const listNode = node as TypeList;
-        const params = listNode.params.map(rename) as (
-          | TypeAny
-          | TypeConcrete
-          | TypeGeneric
-          | TypeFunction
-          | TypeList
-        )[];
-        return Object.assign({}, listNode, params) as TypeList;
-      }
-
-      if (node.kind === "Any" || node.kind === "Generic") {
-        const key = node.kind === "Any" ? node.typeID : node.name;
-        if (key && mapping[key]) {
-          return { ...node, argName: mapping[key] } as TypeAny | TypeGeneric;
+      if (node.type === "Any") {
+        const key = node.typeID;
+        if (mapping[key]) {
+          return {
+            type: mapping[key],
+          } as unknown as TypeRawSignatureAST.RawSignatureDefiniteValue;
         } else return node;
       }
 
-      if (node.kind === "Function") {
+      if (node.type === "Function") {
         return {
           ...node,
-          from: rename(node.from),
-          to: rename(node.to),
-        } as TypeFunction;
+          from: renameNode(node.from),
+          to: renameNode(node.to),
+        };
       }
 
       return node;
     };
-    return new ParsedSignature(rename(this.ast), this.typeMap);
+    return new ParsedSignature(renameNode(this.ast), this.typeMap);
   }
 
   clone() {
@@ -154,42 +103,23 @@ export class ParsedSignature {
   }
 
   getArity() {
-    if (this.ast.kind === "Function") {
+    if (this.ast.type === "Function") {
       let count = 0;
-      let current = this.ast as
-        | TypeFunction
-        | TypeGeneric
-        | TypeConcrete
-        | TypeAny
-        | TypeList;
-      while (current.kind === "Function") {
+      let current = this.ast as TypeRawSignatureAST.RawSignatureNode;
+      while (current.type === "Function") {
         count++;
         current = current.to;
       }
       return count;
     }
-    if ("args" in this.ast) {
-      return this.ast.args.length;
-    }
     return 0;
   }
-  getInput(index = 0) {
-    if (!("args" in this.ast)) {
-      throw new Error(
-        `Invalid signature: ${JSON.stringify(this.ast, null, 2)}`
-      );
-    }
-    if (!this.ast.args || index < 0 || index >= this.ast.args.length) {
-      throw new Error(
-        `Invalid input index ${index} for signature: ${JSON.stringify(this.ast, null, 2)}`
-      );
-    }
 
-    const funcNode = this.ast.args[0];
-    let current = funcNode;
+  getInput(index = 0) {
+    let current = this.ast as TypeRawSignatureAST.RawSignatureFunction;
 
     for (let i = 0; i < index; i++) {
-      if (current.to && current.to.kind === "Function") {
+      if (current.to && current.to.type === "Function") {
         current = current.to;
       } else {
         throw new Error(
@@ -201,15 +131,25 @@ export class ParsedSignature {
     return this.typeMap.resolve(current.from);
   }
 
-  getOutput() {
-    if (this.ast.kind === "Function") {
-      return this.ast.to;
+  getOutput(index = 0) {
+    let current = this.ast as TypeRawSignatureAST.RawSignatureFunction;
+
+    for (let i = 0; i < index; i++) {
+      if (current.to && current.to.type === "Function") {
+        current = current.to;
+      } else {
+        throw new Error(
+          `Expected index less than arity, got index ${index} and arity ${this.getArity()} in signature: ${JSON.stringify(this.ast, null, 2)}`
+        );
+      }
     }
-    return this.ast;
+
+    // TODO: understand resolve and maybe change this
+    return this.typeMap.resolve(current.to);
   }
 
   pipe(other: ParsedSignature) {
-    if (!this.args || other.args) {
+    if (this.ast.type !== "Function" || other.ast.type !== "Function") {
       throw new Error("Can only pipe operators, not values");
     }
     const out = this.getOutput();
@@ -218,30 +158,20 @@ export class ParsedSignature {
     this.typeMap.unify(out, input);
 
     const newAST = Object.assign({}, this.ast, {
-      kind: "Operator",
-      args: [
-        {
-          kind: "Function",
-          from:
-            this.ast.kind === "Function"
-              ? this.ast.from
-              : this.ast.args[0].from,
-          to: other.getOutput(),
-        },
-      ],
+      type: "Function",
+      from: this.ast.from,
+      to: other.getOutput(),
     });
 
     return new ParsedSignature(newAST, this.typeMap);
   }
 
-  apply(
-    argType: TypeFunction | TypeAny | TypeConcrete | TypeGeneric | TypeList
-  ): ParsedSignature {
-    if (this.ast.kind !== "Function") {
-      throw new Error("Cannot apply non-function");
+  apply(argType: TypeRawSignatureAST.RawSignatureNode): ParsedSignature {
+    if (this.ast.type !== "Function") {
+      throw new Error("Cannot apply to a value");
     }
 
-    const expected = this.getInput(0);
+    const expected = this.getInput();
     this.typeMap.unify(argType, expected);
 
     const newAst = this.typeMap.rewrite(this.ast.to);
@@ -249,7 +179,7 @@ export class ParsedSignature {
   }
 
   flip() {
-    if (this.ast.kind !== "Function" || this.ast.to.kind !== "Function") {
+    if (this.ast.type !== "Function" || this.ast.to.type !== "Function") {
       throw new Error('Flip needs 2 "inputs".');
     }
 
@@ -270,19 +200,14 @@ export class ParsedSignature {
     return new ParsedSignature(flipped, this.typeMap);
   }
 
-  toFlatSignature() {
+  toFlatSignature(): TypeRawSignatureAST.RawSignatureNode["type"][] {
     const arr = [];
-    let cur = this.ast as
-      | TypeFunction
-      | TypeAny
-      | TypeConcrete
-      | TypeGeneric
-      | TypeList;
-    while (cur.kind === "Function") {
-      arr.push(cur.from);
-      cur = cur.to;
+    let current = this.ast as TypeRawSignatureAST.RawSignatureNode;
+    while (current.type === "Function") {
+      arr.push(current.from.type);
+      current = current.to;
     }
-    arr.push(cur);
-    return arr;
+    arr.push(current.type);
+    return arr as TypeRawSignatureAST.RawSignatureNode["type"][];
   }
 }
