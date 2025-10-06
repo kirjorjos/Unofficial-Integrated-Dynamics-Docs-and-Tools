@@ -1,7 +1,7 @@
 import { TypeBit, TypeInt32, TypeInt64, TypeNumericString } from "../types";
 import { Double } from "./Double";
 import { Long } from "./Long";
-import { NumberBase } from "./NumberBase";
+import { NumberBase } from "../HelperClasses/NumberBase";
 
 export class Integer extends NumberBase {
   public constructor(data: TypeNumericString | TypeInt32) {

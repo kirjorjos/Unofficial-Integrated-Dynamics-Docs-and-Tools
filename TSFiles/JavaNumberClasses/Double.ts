@@ -1,7 +1,7 @@
 import { TypeInt64, TypeNumericString } from "../types";
 import { Integer } from "./Integer";
 import { Long } from "./Long";
-import { NumberBase } from "./NumberBase";
+import { NumberBase } from "../HelperClasses/NumberBase";
 
 export class Double extends NumberBase {
   value: number;

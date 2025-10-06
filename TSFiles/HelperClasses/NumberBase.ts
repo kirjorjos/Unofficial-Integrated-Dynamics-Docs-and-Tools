@@ -6,9 +6,9 @@ import {
   TypeNumber,
   TypeNumericString,
 } from "../types.ts";
-import { Double } from "./Double.ts";
-import { Integer } from "./Integer.ts";
-import { Long } from "./Long.ts";
+import { Double } from "../JavaNumberClasses/Double.ts";
+import { Integer } from "../JavaNumberClasses/Integer.ts";
+import { Long } from "../JavaNumberClasses/Long.ts";
 
 type TypeNumberClassName = "Integer" | "Long" | "Double";
 

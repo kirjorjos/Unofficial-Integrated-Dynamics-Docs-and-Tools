@@ -55,11 +55,23 @@ export namespace TypeRawSignatureAST {
           | "Block"
           | "Fluid"
           | "NBT"
-          | "Ingredients";
+          | "Ingredients"
+          | "UniquelyNamed"
+          | "Named";
       }
     | RawSignatureList
     | RawSignatureFunction
-    | RawSignatureRecipe;
+    | RawSignatureRecipe
+    | RawSignatureUniquelyNamed
+    | RawSignatureNamed;
+
+  export type RawSignatureUniquelyNamed = {
+    type: "UniquelyNamed";
+  };
+
+  export type RawSignatureNamed = {
+    type: "Named";
+  };
 
   export type RawSignatureRecipe = {
     type: "Recipe";

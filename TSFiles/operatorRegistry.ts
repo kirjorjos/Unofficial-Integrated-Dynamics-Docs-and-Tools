@@ -3,13 +3,20 @@
  * Test Map and pipe
  */
 
+import { InfiniteList } from "./HelperClasses/InfiniteList";
 import { Operator } from "./IntegratedDynamicsClasses/Operator";
 import { ParsedSignature } from "./IntegratedDynamicsClasses/ParsedSignature";
 import { TypeMap } from "./IntegratedDynamicsClasses/TypeMap";
 import { Double } from "./JavaNumberClasses/Double";
 import { Integer } from "./JavaNumberClasses/Integer";
 import { NumberBase } from "./JavaNumberClasses/NumberBase";
-import { TypeLambda, TypeNumber, TypeOperatorRegistry } from "./types";
+import {
+  TypeLambda,
+  TypeNumber,
+  TypeNumericString,
+  TypeOperatorRegistry,
+  TypeRawSignatureAST,
+} from "./types";
 
 let globalMap = new TypeMap();
 
@@ -34,7 +41,6 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "&&",
@@ -64,7 +70,6 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "||",
@@ -88,7 +93,6 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Boolean",
           },
         },
-
         globalMap
       ),
       symbol: "!",
@@ -116,7 +120,6 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "!&&",
@@ -152,7 +155,6 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "!||",
@@ -188,7 +190,6 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "+",
@@ -218,7 +219,6 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "-",
@@ -248,7 +248,6 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "*",
@@ -278,7 +277,6 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "/",
@@ -308,7 +306,6 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "max",
@@ -338,7 +335,6 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "min",
@@ -362,7 +358,6 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Number",
           },
         },
-
         globalMap
       ),
       symbol: "++",
@@ -384,7 +379,6 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Number",
           },
         },
-
         globalMap
       ),
       symbol: "--",
@@ -412,7 +406,6 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "%",
@@ -436,7 +429,6 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Double",
           },
         },
-
         globalMap
       ),
       symbol: "sqrt",
@@ -464,7 +456,6 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "pow",
@@ -490,7 +481,6 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "==",
@@ -524,7 +514,6 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: ">",
@@ -554,7 +543,6 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "<",
@@ -580,7 +568,6 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "!=",
@@ -614,7 +601,6 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: ">=",
@@ -644,7 +630,6 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "<=",
@@ -674,7 +659,6 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "&",
@@ -704,7 +688,6 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "|",
@@ -734,7 +717,6 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "^",
@@ -758,12 +740,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Integer",
           },
         },
-
         globalMap
       ),
       symbol: "~",
       interactName: "integerComplement",
-      function: (int: TypeNumber): TypeNumber => {
+      function: (int: Integer): Integer => {
         return int.complement();
       },
     }),
@@ -786,13 +767,12 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "<<",
       interactName: "integerLeftShift",
-      function: (int1: TypeNumber): TypeLambda<TypeNumber, TypeNumber> => {
-        return (int2: TypeNumber): TypeNumber => {
+      function: (int1: Integer): TypeLambda<Integer, Integer> => {
+        return (int2: Integer): Integer => {
           return int1.leftShift(int2);
         };
       },
@@ -816,13 +796,12 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: ">>",
       interactName: "integerRightShift",
-      function: (int1: TypeNumber): TypeLambda<TypeNumber, TypeNumber> => {
-        return (int2: TypeNumber): TypeNumber => {
+      function: (int1: Integer): TypeLambda<Integer, Integer> => {
+        return (int2: Integer): Integer => {
           return int1.rightShift(int2);
         };
       },
@@ -846,13 +825,12 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: ">>>",
       interactName: "integerUnsignedRightShift",
-      function: (int1: TypeNumber): TypeLambda<TypeNumber, TypeNumber> => {
-        return (int2: TypeNumber): TypeNumber => {
+      function: (int1: Integer): TypeLambda<Integer, Integer> => {
+        return (int2: Integer): Integer => {
           return int1.unsignedRightShift(int2);
         };
       },
@@ -870,13 +848,12 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Integer",
           },
         },
-
         globalMap
       ),
       symbol: "len",
       interactName: "stringLength",
       function: (str: string): TypeNumber => {
-        return new Number(`${str.length}`);
+        return new Integer(`${str.length}`);
       },
     }),
     stringConcat: new Operator({
@@ -898,7 +875,6 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "+",
@@ -928,7 +904,6 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "contains",
@@ -958,7 +933,6 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "contains_regex",
@@ -989,7 +963,6 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "matches_regex",
@@ -1022,14 +995,13 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "index_of",
       interactName: "stringIndexOf",
       function: (substring: string): TypeLambda<string, TypeNumber> => {
         return (fullString: string): TypeNumber => {
-          return new Number(`${fullString.indexOf(substring)}`);
+          return new Integer(`${fullString.indexOf(substring)}`);
         };
       },
     }),
@@ -1052,7 +1024,6 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "index_of_regex",
@@ -1060,7 +1031,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       function: (regexString: string): TypeLambda<string, TypeNumber> => {
         return (fullString: string): TypeNumber => {
           const regex = new RE2(regexString, "u");
-          return new Number(`${fullString.search(regex)}`);
+          return new Integer(`${fullString.search(regex)}`);
         };
       },
     }),
@@ -1083,7 +1054,6 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "starts_with",
@@ -1113,7 +1083,6 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "ends_with",
@@ -1141,7 +1110,6 @@ let operatorRegistry: TypeOperatorRegistry = {
             to: { type: "List", listType: { type: "String" } },
           },
         },
-
         globalMap
       ),
       symbol: "split_on",
@@ -1169,7 +1137,6 @@ let operatorRegistry: TypeOperatorRegistry = {
             to: { type: "List", listType: { type: "String" } },
           },
         },
-
         globalMap
       ),
       symbol: "split_on_regex",
@@ -1206,7 +1173,6 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "substring",
@@ -1217,8 +1183,8 @@ let operatorRegistry: TypeOperatorRegistry = {
         return (end: TypeNumber): TypeLambda<string, string> => {
           return (fullString: string): string => {
             return fullString.substring(
-              parseInt(start.number),
-              parseInt(end.number)
+              parseInt(start.toDecimal()),
+              parseInt(end.toDecimal())
             );
           };
         };
@@ -1249,7 +1215,6 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "regex_group",
@@ -1259,11 +1224,14 @@ let operatorRegistry: TypeOperatorRegistry = {
           return (fullString: string) => {
             const regex = new RE2(regexString, "u");
             const match = regex.exec(fullString);
-            if (match && match[parseInt(groupIndex.number)] !== undefined) {
-              return match[parseInt(groupIndex.number)];
+            if (
+              match &&
+              match[parseInt(groupIndex.toDecimal())] !== undefined
+            ) {
+              return match[parseInt(groupIndex.toDecimal())];
             } else {
               throw new Error(
-                `No match found for group index ${groupIndex.number} in regex "${regexString}" on string "${fullString}"`
+                `No match found for group index ${groupIndex.toDecimal()} in regex "${regexString}" on string "${fullString}"`
               );
             }
           };
@@ -1287,7 +1255,6 @@ let operatorRegistry: TypeOperatorRegistry = {
             to: { type: "List", listType: { type: "String" } },
           },
         },
-
         globalMap
       ),
       symbol: "regex_groups",
@@ -1300,7 +1267,7 @@ let operatorRegistry: TypeOperatorRegistry = {
             return match;
           } else {
             throw new Error(
-              `No match found for group index ${groupIndex} in regex "${regexString}" on string "${fullString}"`
+              `No match found for group in regex "${regexString}" on string "${fullString}"`
             );
           }
         };
@@ -1329,7 +1296,6 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "regex_scan",
@@ -1343,7 +1309,7 @@ let operatorRegistry: TypeOperatorRegistry = {
             regex.lastIndex = 0;
 
             while ((match = regex.exec(fullString)) !== null) {
-              const groupValue = match[parseInt(groupIndex.number)];
+              const groupValue = match[parseInt(groupIndex.toDecimal())];
               if (groupValue !== undefined && groupValue !== null) {
                 results.push(groupValue);
               }
@@ -1379,7 +1345,6 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "replace",
@@ -1419,14 +1384,13 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "replace_regex",
       interactName: "stringReplaceRegex",
       function: (regexString) => {
-        return (replacementString) => {
-          return (fullString) => {
+        return (replacementString: string): TypeLambda<string, string> => {
+          return (fullString: string): string => {
             const regex = new RE2(regexString, "u");
             return fullString.replace(regex, replacementString);
           };
@@ -1450,13 +1414,12 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "join",
       interactName: "stringJoin",
-      function: (delimiter) => {
-        return (stringList) => {
+      function: (delimiter: string): TypeLambda<Array<string>, string> => {
+        return (stringList: Array<string>): string => {
           if (stringList.some((item) => typeof item !== "string")) {
             throw new Error("stringJoin expects a list of strings");
           }
@@ -1477,12 +1440,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "String",
           },
         },
-
         globalMap
       ),
       symbol: "name",
       interactName: "namedName",
-      function: (named) => {
+      function: (named: TypeRawSignatureAST.RawSignatureNamed): string => {
         return named.toString();
       },
     }),
@@ -1499,12 +1461,13 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "String",
           },
         },
-
         globalMap
       ),
       symbol: "uname",
       interactName: "uniquely_namedUniqueName",
-      function: (uniquelyNamed) => {
+      function: (
+        uniquelyNamed: TypeRawSignatureAST.RawSignatureUniquelyNamed
+      ): string => {
         return uniquelyNamed.getUniqueName();
       },
     }),
@@ -1519,12 +1482,11 @@ let operatorRegistry: TypeOperatorRegistry = {
           },
           to: { type: "Any", typeID: 1 },
         },
-
         globalMap
       ),
       symbol: "error",
       interactName: "stringStringError",
-      function: (message) => {
+      function: (message: string): never => {
         throw new Error(`Error: ${message}`);
       },
     }),
@@ -1541,12 +1503,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Integer",
           },
         },
-
         globalMap
       ),
       symbol: "|| ||",
       interactName: "numberRound",
-      function: (number) => {
+      function: (number: TypeNumber): TypeNumber => {
         return number.round();
       },
     }),
@@ -1563,12 +1524,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Integer",
           },
         },
-
         globalMap
       ),
       symbol: "⌈ ⌉",
       interactName: "numberCeil",
-      function: (number) => {
+      function: (number: TypeNumber): TypeNumber => {
         return number.ceil();
       },
     }),
@@ -1585,12 +1545,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Integer",
           },
         },
-
         globalMap
       ),
       symbol: "⌊ ⌋",
       interactName: "numberFloor",
-      function: (number) => {
+      function: (number: TypeNumber): TypeNumber => {
         return number.floor();
       },
     }),
@@ -1607,13 +1566,12 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "String",
           },
         },
-
         globalMap
       ),
       symbol: "compact",
       interactName: "numberCompact",
-      function: (number) => {
-        return number.compact();
+      function: (number: TypeNumber): string => {
+        return number.toDecimal().toString();
       },
     }),
     isNull: new Operator({
@@ -1627,12 +1585,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Boolean",
           },
         },
-
         globalMap
       ),
       symbol: "o",
       interactName: "anyIsNull",
-      function: (value) => {
+      function: (value: any): boolean => {
         return value === null || value === undefined;
       },
     }),
@@ -1647,12 +1604,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Boolean",
           },
         },
-
         globalMap
       ),
       symbol: "∅",
       interactName: "anyIsNotNull",
-      function: (value) => {
+      function: (value: any): boolean => {
         return value !== null && value !== undefined;
       },
     }),
@@ -1667,7 +1623,6 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Integer",
           },
         },
-
         globalMap
       ),
       symbol: "| |",
@@ -1687,12 +1642,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Boolean",
           },
         },
-
         globalMap
       ),
       symbol: "∅",
       interactName: "listIsEmpty",
-      function: (list) => {
+      function: (list: Array<any>): boolean => {
         return list.length === 0;
       },
     }),
@@ -1707,12 +1661,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Boolean",
           },
         },
-
         globalMap
       ),
       symbol: "o",
       interactName: "listIsNotEmpty",
-      function: (list) => {
+      function: (list: Array<any>): boolean => {
         return list.length > 0;
       },
     }),
@@ -1731,19 +1684,18 @@ let operatorRegistry: TypeOperatorRegistry = {
             to: { type: "Any", typeID: 1 },
           },
         },
-
         globalMap
       ),
       symbol: "get",
       interactName: "listGet",
-      function: (index) => {
-        return (list) => {
-          if (index < 0 || index >= list.length) {
+      function: <T>(index: TypeNumber): TypeLambda<Array<T>, T> => {
+        return (list: Array<T>): T => {
+          if (index.toDecimal() < 0 || index.toDecimal() >= list.length) {
             throw new Error(
               `Index ${index} out of bounds for list of length ${list.length}`
             );
           }
-          return list[index];
+          return list[index.toDecimal()];
         };
       },
     }),
@@ -1766,17 +1718,20 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "get_or_default",
       interactName: "listGetOrDefault",
-      function: (index, defaultValue) => {
-        return (list) => {
-          if (index < 0 || index >= list.length) {
-            return defaultValue;
-          }
-          return list[index];
+      function: <T>(
+        list: Array<T>
+      ): TypeLambda<TypeNumber, TypeLambda<T, T>> => {
+        return (index: TypeNumber): TypeLambda<T, T> => {
+          return (defaultValue: T): T => {
+            if (NumberBase.lt(index, new Integer("0")) || NumberBase.gte(index, new Integer(list.length.toString() as TypeNumericString)) {
+              return defaultValue;
+            }
+            return list[index.toDecimal()];
+          };
         };
       },
     }),
@@ -1795,13 +1750,12 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "contains",
       interactName: "listContains",
-      function: (element) => {
-        return (list) => {
+      function: <T>(list: Array<T>): TypeLambda<T, boolean> => {
+        return (element: T): boolean => {
           return list.includes(element);
         };
       },
@@ -1827,13 +1781,12 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "contains_p",
       interactName: "listContainsPredicate",
-      function: (predicate) => {
-        return (list) => {
+      function: <T>(predicate: TypeLambda<any, boolean>): TypeLambda<Array<T>, boolean> => {
+        return (list: Array<T>): boolean => {
           return list.some((item) => predicate(item));
         };
       },
@@ -1853,14 +1806,13 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "count",
       interactName: "listCount",
-      function: (list) => {
-        return (element) => {
-          return list.filter((item) => item === element).length;
+      function: <T>(list: Array<T>): TypeLambda<T, Integer> => {
+        return (element: T): Integer => {
+          return new Integer(list.filter((item) => item === element).length.toString() as TypeNumericString);
         };
       },
     }),
@@ -1905,7 +1857,7 @@ let operatorRegistry: TypeOperatorRegistry = {
           from: { type: "List", listType: { type: "Any", typeID: 1 } },
           to: {
             type: "Function",
-            from: { type: "Any", typeID: 1 },
+            from: { "type": "Any", typeID: 1 },
             to: { type: "List", listType: { type: "Any", typeID: 1 } },
           },
         },
@@ -1933,13 +1885,12 @@ let operatorRegistry: TypeOperatorRegistry = {
             to: { type: "List", listType: { type: "Any", typeID: 1 } },
           },
         },
-
         globalMap
       ),
       symbol: "concat",
       interactName: "listConcat",
-      function: (list1) => {
-        return (list2) => {
+      function: <T>(list1: Array<T>): TypeLambda<Array<T>, Array<T>> => {
+        return (list2: Array<T>): Array<T> => {
           return [...list1, ...list2];
         };
       },
@@ -1968,14 +1919,13 @@ let operatorRegistry: TypeOperatorRegistry = {
             to: { type: "List", listType: { type: "Any", typeID: 1 } },
           },
         },
-
         globalMap
       ),
       symbol: "lazybuilt",
       interactName: "anyLazyBuilt",
-      function: (element) => {
-        return (builder) => {
-          return new InfiniteList(builder);
+      function: <T>(initial: T): TypeLambda<TypeLambda<T, T>, InfiniteList<T>> => {
+        return (builder: TypeLambda<T, T>): InfiniteList<T> => {
+          return new InfiniteList(initial, builder);
         };
       },
     }),
@@ -1988,7 +1938,6 @@ let operatorRegistry: TypeOperatorRegistry = {
           from: { type: "List", listType: { type: "Any", typeID: 1 } },
           to: { type: "Any", typeID: 1 },
         },
-
         globalMap
       ),
       symbol: "head",
