@@ -6,10 +6,11 @@
 import { InfiniteList } from "./HelperClasses/InfiniteList";
 import { Operator } from "./IntegratedDynamicsClasses/Operator";
 import { ParsedSignature } from "./IntegratedDynamicsClasses/ParsedSignature";
+import { Block } from "./IntegratedDynamicsClasses/Block";
 import { TypeMap } from "./IntegratedDynamicsClasses/TypeMap";
 import { Double } from "./JavaNumberClasses/Double";
 import { Integer } from "./JavaNumberClasses/Integer";
-import { NumberBase } from "./JavaNumberClasses/NumberBase";
+import { NumberBase } from "./HelperClasses/NumberBase";
 import {
   TypeLambda,
   TypeNumber,
@@ -1837,14 +1838,13 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "count_p",
       interactName: "listCountPredicate",
-      function: (list) => {
-        return (predicate) => {
-          return list.filter((item) => predicate(item)).length;
+      function: <T>(list: Array<T>): TypeLambda<TypeLambda<T, boolean>, Integer> => {
+        return (predicate: TypeLambda<T, boolean>): Integer => {
+          return new Integer(list.filter((item) => predicate(item)).length.toString() as TypeNumericString);
         };
       },
     }),
@@ -1861,13 +1861,12 @@ let operatorRegistry: TypeOperatorRegistry = {
             to: { type: "List", listType: { type: "Any", typeID: 1 } },
           },
         },
-
         globalMap
       ),
       symbol: "append",
       interactName: "listAppend",
-      function: (list) => {
-        return (element) => {
+      function: <T>(list: Array<T>): TypeLambda<T, Array<T>> => {
+        return (element: T): Array<T> => {
           return [...list, element];
         };
       },
@@ -1942,7 +1941,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "head",
       interactName: "listHead",
-      function: (list) => {
+      function: <T>(list: Array<T>): T => {
         if (list.length === 0) {
           throw new Error("head called on an empty list");
         }
@@ -1958,12 +1957,11 @@ let operatorRegistry: TypeOperatorRegistry = {
           from: { type: "List", listType: { type: "Any", typeID: 1 } },
           to: { type: "List", listType: { type: "Any", typeID: 1 } },
         },
-
         globalMap
       ),
       symbol: "tail",
       interactName: "listTail",
-      function: (list) => {
+      function: <T>(list: Array<T>): Array<T> => {
         if (list.length === 0) {
           throw new Error("tail called on an empty list");
         }
@@ -1993,13 +1991,12 @@ let operatorRegistry: TypeOperatorRegistry = {
             to: { type: "List", listType: { type: "Any", typeID: 1 } },
           },
         },
-
         globalMap
       ),
       symbol: "uniq_p",
       interactName: "listUniquePredicate",
-      function: (list) => {
-        return (predicate) => {
+      function: <T>(list: Array<T>): TypeLambda<TypeLambda<T, boolean>, Array<T>> => {
+        return (predicate: TypeLambda<T, boolean>): Array<T> => {
           const seen = new Set();
           return list.filter((item) => {
             const key = predicate(item);
@@ -2022,12 +2019,11 @@ let operatorRegistry: TypeOperatorRegistry = {
           from: { type: "List", listType: { type: "Any", typeID: 1 } },
           to: { type: "List", listType: { type: "Any", typeID: 1 } },
         },
-
         globalMap
       ),
       symbol: "uniq",
       interactName: "listUnique",
-      function: (list) => {
+      function: <T>(list: Array<T>): Array<T> => {
         const seen = new Set();
         return list.filter((item) => {
           if (seen.has(item)) {
@@ -2060,20 +2056,19 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "slice",
       interactName: "listSlice",
-      function: (list) => {
-        return (start) => {
-          return (end) => {
-            if (start < 0 || end > list.length || start > end) {
+      function: <T>(list: Array<T>): TypeLambda<TypeNumber, TypeLambda<TypeNumber, Array<T>>> => {
+        return (start: TypeNumber): TypeLambda<TypeNumber, Array<T>> => {
+          return (end: TypeNumber): Array<T> => {
+            if (NumberBase.lt(start, new Integer(0.["toString"]() as TypeNumericString)) || NumberBase.gt(end, new Integer(list.length.toString() as TypeNumericString)) || NumberBase.gt(start, end)) {
               throw new Error(
-                `Invalid slice range: [${start}, ${end}) for list of length ${list.length}`
+                `Invalid slice range: [${start.toDecimal()}, ${end.toDecimal()}) for list of length ${list.length}`
               );
             }
-            return list.slice(start, end);
+            return list.slice(start.toDecimal(), end.toDecimal());
           };
         };
       },
@@ -2091,13 +2086,12 @@ let operatorRegistry: TypeOperatorRegistry = {
             to: { type: "List", listType: { type: "Any", typeID: 1 } },
           },
         },
-
         globalMap
       ),
       symbol: "∩",
       interactName: "listIntersection",
-      function: (list1) => {
-        return (list2) => {
+      function: <T>(list1: Array<T>): TypeLambda<Array<T>, Array<T>> => {
+        return (list2: Array<T>): Array<T> => {
           const set1 = new Set(list1);
           return list2.filter((item) => set1.has(item));
         };
@@ -2118,13 +2112,12 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "=set=",
       interactName: "listEquals_set",
-      function: (list1) => {
-        return (list2) => {
+      function: <T>(list1: Array<T>): TypeLambda<Array<T>, boolean> => {
+        return (list2: Array<T>): boolean => {
           const set1 = new Set(list1);
           const set2 = new Set(list2);
           return set1.equals(set2);
@@ -2146,13 +2139,12 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "=multiset=",
       interactName: "listEquals_multiset",
-      function: (list1) => {
-        return (list2) => {
+      function: <T>(list1: Array<T>): TypeLambda<Array<T>, boolean> => {
+        return (list2: Array<T>): boolean => {
           const newList1 = [...list1].sort();
           const newList2 = [...list2].sort();
           if (newList1.length !== newList2.length) {
@@ -2187,12 +2179,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Boolean",
           },
         },
-
         globalMap
       ),
       symbol: "opaque",
       interactName: "blockIsOpaque",
-      function: (block) => {
+      function: (block: Block): boolean => {
         return block.isOpaque();
       },
     }),
@@ -2214,12 +2205,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Item",
           },
         },
-
         globalMap
       ),
       symbol: "itemstack",
       interactName: "blockItemStack",
-      function: (block) => {
+      function: (block: Block): Item => {
         return block.getItem();
       },
     }),
@@ -2236,12 +2226,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "String",
           },
         },
-
         globalMap
       ),
       symbol: "mod",
       interactName: "blockMod",
-      function: (block) => {
+      function: (block: Block): string => {
         return block.getModName();
       },
     }),
