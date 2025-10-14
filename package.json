@@ -1,9 +1,8 @@
 {
   "dependencies": {
     "chokidar": "^4.0.3",
-    "mojangson": "^2.0.4",
     "node-notifier": "^10.0.1",
-    "prismarine-nbt": "^2.7.0",
+    "re2": "^1.22.1",
     "re2-wasm": "^1.0.2"
   },
   "devDependencies": {

@@ -11,6 +11,7 @@ import { TypeMap } from "./IntegratedDynamicsClasses/TypeMap";
 import { Double } from "./JavaNumberClasses/Double";
 import { Integer } from "./JavaNumberClasses/Integer";
 import { NumberBase } from "./HelperClasses/NumberBase";
+import RE2 from "re2";
 import {
   TypeLambda,
   TypeNumber,
