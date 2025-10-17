@@ -1,6 +1,6 @@
-import { TypeLambda, TypeOperator } from "../types";
-import { ParsedSignature } from "./ParsedSignature";
-import { TypeMap } from "./TypeMap";
+import { IntegratedValue, TypeLambda, TypeRawSignatureAST } from "../types";
+import { ParsedSignature } from "../HelperClasses/ParsedSignature";
+import { TypeMap } from "../HelperClasses/TypeMap";
 
 export class Operator extends Function {
   fn: (...args: any[]) => any;
@@ -10,6 +10,7 @@ export class Operator extends Function {
   nicknames: string[];
   symbol: string;
   interactName: string;
+  serializer?: string;
 
   constructor({
     internalName,
@@ -19,14 +20,16 @@ export class Operator extends Function {
     symbol,
     interactName,
     function: fn,
+    serializer,
   }: {
     internalName: string;
     nicknames: string[];
     symbol: string;
     interactName: string;
     function: TypeLambda<any, any>;
+    serializer?: string;
   } & (
-    | { rawSignature: TypeOperator; parsedSignature?: never }
+    | { rawSignature: TypeRawSignatureAST.RawSignatureFunction; parsedSignature?: never }
     | { rawSignature?: never; parsedSignature: ParsedSignature }
   )) {
     super("...args", "return this.__call__(...args)");
@@ -41,20 +44,26 @@ export class Operator extends Function {
     this.nicknames = nicknames;
     this.symbol = symbol;
     this.interactName = interactName;
+    this.serializer = serializer;
   }
 
   __call__(...args: any[]) {
-    if (args.length !== this.parsedSignature.args.length) {
+    if (args.length !== this.parsedSignature.getArity()) {
       throw new Error(
-        `Operator expected ${this.parsedSignature.args.length} args, got ${args.length}`
+        `Operator expected ${this.parsedSignature.getArity()} args, got ${args.length}`
       );
     }
     return this.fn(...args);
   }
 
-  apply(arg: any) {
+  apply(arg: IntegratedValue): IntegratedValue {
     const parsedSignature = this.parsedSignature.apply(arg);
     const newFn = (...rest: any[]) => this.fn(arg, ...rest);
+
+  if (this.parsedSignature.getArity() === 1) {
+    return this.fn(arg);
+  }
+
     return new Operator({
       internalName: this.internalName,
       nicknames: this.nicknames,

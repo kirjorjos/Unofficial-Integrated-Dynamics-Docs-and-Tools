@@ -57,7 +57,8 @@ export namespace TypeRawSignatureAST {
           | "NBT"
           | "Ingredients"
           | "UniquelyNamed"
-          | "Named";
+          | "Named"
+          | "Entity";
       }
     | RawSignatureList
     | RawSignatureFunction
@@ -89,48 +90,163 @@ export interface TypeOperatorRegistry {
   };
 }
 
-export namespace SNBTTypes {
-  export type int = number & { __int: void };
+export namespace TypeSNBTValue {
+  export type GenericNBT =
+    | { string: GenericNBT }
+    | GenericNBT[]
+    | PrimitiveValue;
 
-  export interface OperatorWrapper<T = Operator> {
-    v: T;
+  export type ProxyValueType =
+    | "integrateddynamics:operator"
+    | "integrateddynamics:integer"
+    | "integrateddynamics:list";
+
+  export type ObjectValue =
+    | Serialized
+    | Operator
+    | Item
+    | Fluid
+    | Ingredients
+    | Recipe;
+
+  export interface Item {
+    id: string;
+    Count: number;
+    tag?: GenericNBT;
   }
 
-  export interface CombinedPipe {
-    serializer: "integrateddynamics:combined.pipe";
-    value: {
-      operators: OperatorWrapper<Operator>[];
+  export interface Fluid {
+    FluidName: string;
+    Amount: number;
+    tag?: GenericNBT;
+  }
+
+  export interface Ingredients {
+    "minecraft:fluidstack"?: Fluid[];
+    "minecraft:itemstack"?: Item[];
+    //energy
+  }
+
+  export interface Recipe {
+    input: {
+      "minecraft:itemstack"?: {
+        val: { prototype: Item; condition: number }[];
+        type: Byte;
+      }[];
+      "minecraft:fluidstack"?: {
+        val: { prototype: Fluid; condition: number }[];
+        type: Byte;
+      }[];
+      //energy
+    };
+    output: {
+      "minecraft:itemstack"?: Item[];
+      "minecraft:fluidstack"?: Fluid[];
+      //energy
+    };
+    inputReusable: {
+      "minecraft:itemstack"?: Byte[];
+      "minecraft:fluidstack"?: Byte[];
+      //energy
     };
   }
 
-  export interface CombinedFlip {
-    serializer: "integrateddynamics:combined.flip";
-    value: {
-      operators: OperatorWrapper<Operator>[];
-    };
+  export type Value = PrimitiveValue | ObjectValue;
+
+  export interface PrimitiveValue {
+    value: string | Byte | number | Long | Double;
   }
 
-  export interface Curry {
+  export type Byte = `${TypeNumericString}b`;
+
+  export type Long = `${TypeNumericString}L`;
+  export type Double = `${TypeNumericString}d`;
+
+  export type Serialized = Curried | Piped | Pip2ed | Flipped | Proxied;
+
+  export interface Curried {
     serializer: "integrateddynamics:curry";
     value: {
-      baseOperator: OperatorWrapper<Operator>;
-      values: {
-        value: Operator;
-        valueType: string;
-      }[];
+      baseOperator: Operator;
+      values: Value[];
     };
   }
 
-  export type Operator =
-    | CombinedPipe
-    | CombinedFlip
-    | Curry
-    | TypeOperatorInternalName;
+  export interface Piped {
+    serializer: "integrateddynamics:combined.pipe";
+    value: {
+      operators: [OperatorWrapper, OperatorWrapper];
+    };
+  }
 
-  export interface RootSNBT {
-    _id: int;
+  export interface Pip2ed {
+    serializer: "integrateddynamics:combined.pipe2";
+    value: {
+      operators: [OperatorWrapper, OperatorWrapper, OperatorWrapper];
+    };
+  }
+
+  export interface Flipped {
+    serializer: "integrateddynamics:combined.flip";
+    value: {
+      operators: [OperatorWrapper];
+    };
+  }
+
+  export interface Proxied {
+    value: {
+      proxyName: "integrateddynamics:lazybuilt";
+      serialized: SerializedProxy;
+    };
+  }
+
+  export interface OperatorWrapper {
+    v: Operator;
+  }
+
+  export type Operator = TypeOperatorInternalName | Serialized;
+
+  export interface SerializedProxy {
+    value: Value;
+    operator: Serialized;
+    valueType: ProxyValueType;
+  }
+
+  export interface Root {
+    _id: number;
     _type: "integrateddynamics:valuetype";
     typeName: string;
-    value: Operator;
+    value: Value;
   }
 }
+
+export namespace TypeAST {
+  export type Integer = { type: "Integer"; value: TypeNumericString };
+  export type Long = { type: "Long"; value: TypeNumericString };
+  export type Double = { type: "Double"; value: TypeNumericString };
+  export type String = { type: "String"; value: string };
+  export type Boolean = { type: "Boolean"; value: boolean };
+
+  export type Operator = {
+    type: "Operator";
+    value: TypeOperatorKey;
+    args?: AST[];
+  };
+
+  export type Flip = { seralizer: "flip"; args: [AST] };
+
+  export type Pipe = { seralizer: "pipe"; args: [AST, AST] };
+  export type Pipe2 = { seralizer: "pipe2"; args: [AST, AST, AST] };
+
+  export type Curried = { serializer: "curry"; args: AST[] };
+
+  export type Constant = Integer | Long | Double | String | Boolean | Operator;
+
+  export type AST = Flip | Pipe | Pipe2 | Curried | Constant | Operator;
+}
+
+export type IntegratedValue = (TypeRawSignatureAST.RawSignatureNode & { value?: IntegratedValue }) | Operator | boolean | string
+
+export type Predicate = Operator & {
+  fn: (...args: any[]) => boolean;
+};

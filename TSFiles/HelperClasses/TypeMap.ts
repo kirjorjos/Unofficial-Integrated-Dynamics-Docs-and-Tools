@@ -1,4 +1,5 @@
-import { TypeRawSignatureAST } from "../types";
+import { Operator } from "../IntegratedDynamicsClasses/Operator";
+import { IntegratedValue, TypeRawSignatureAST } from "../types";
 
 export class TypeMap {
   aliases: Map<any, any>;
@@ -33,45 +34,50 @@ export class TypeMap {
   }
 
   unify(
-    a: TypeRawSignatureAST.RawSignatureNode,
-    b: TypeRawSignatureAST.RawSignatureNode
+    a: IntegratedValue,
+    b: IntegratedValue
   ): void {
-    if (a.type === "Any" && b.type === "Any") {
-      this.aliases.set(this.find(a.typeID), this.find(b.typeID));
+
+    if (typeof a === "boolean" || typeof b === "boolean") {
       return;
+    };
+
+    if (!(a instanceof Operator && b instanceof Operator)) {
+        
+      if (a.type === "Any" && b.type === "Any") {
+        this.aliases.set(this.find(a.typeID), this.find(b.typeID));
+        return;
+      }
+
+      if (a.type === "Any" && b.type !== "Any") {
+        this.aliases.set(this.find(a.typeID), b);
+        return;
+      }
+      if (b.type === "Any" && a.type !== "Any") {
+        this.aliases.set(this.find(b.typeID), a);
+        return;
+      }
+
+      if (a.type === "List" && b.type === "List") {
+        if (typeof a.listType !== "string" && typeof b.listType !== "string")
+          this.unify(a.listType, b.listType);
+        return;
+      }
+
+      if (a.type !== b.type) {
+        throw new Error(`Type mismatch: ${a.type} vs ${b.type}`);
+      }
+
+      if (a.type === "Function" && b.type === "Function") {
+        this.unify(a.from, b.from);
+        this.unify(a.to, b.to);
+        return;
+      }
     }
 
-    if (a.type === "Any" && b.type !== "Any") {
-      this.aliases.set(this.find(a.typeID), b);
-      return;
+    if (a instanceof Operator && b instanceof Operator) {
+      return this.unify(a.parsedSignature.getAST(), b.parsedSignature.getAST());
     }
-    if (b.type === "Any" && a.type !== "Any") {
-      this.aliases.set(this.find(b.typeID), a);
-      return;
-    }
-
-    if (a.type === "Function" && b.type === "Function") {
-      this.unify(a.from, b.from);
-      this.unify(a.to, b.to);
-      return;
-    }
-
-    if (a.type === "List" && b.type === "List") {
-      if (typeof a.listType !== "string" && typeof b.listType !== "string")
-        this.unify(a.listType, b.listType);
-      return;
-    }
-
-    if (a.type === "Recipe" && b.type === "Recipe") {
-      this.unify(a.input, b.input);
-      this.unify(a.output, b.output);
-      return;
-    }
-
-    if (a.type !== b.type) {
-      throw new Error(`Type mismatch: ${a.type} vs ${b.type}`);
-    }
-
     throw new Error(
       `Unhandled unify case: ${JSON.stringify(a)} vs ${JSON.stringify(b)}`
     );

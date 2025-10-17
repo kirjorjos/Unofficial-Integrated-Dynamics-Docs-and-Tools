@@ -4,7 +4,7 @@ import { Long } from "./Long";
 import { NumberBase } from "../HelperClasses/NumberBase";
 
 export class Integer extends NumberBase {
-  public constructor(data: TypeNumericString | TypeInt32) {
+  public constructor(data: TypeNumericString | TypeInt32 | number) {
     super();
     if (!Array.isArray(data)) this.bits = this.initializeBits(data);
     if (Array.isArray(data)) this.bits = data;
@@ -12,7 +12,10 @@ export class Integer extends NumberBase {
     this.order = 0;
   }
 
-  protected initializeBits(decimal: TypeNumericString): TypeInt32 {
+  protected initializeBits(decimal: TypeNumericString | number): TypeInt32 {
+    if (typeof decimal === "number") {
+      decimal = decimal.toString() as TypeNumericString;
+    }
     const negative = decimal.startsWith("-");
     const abs = negative
       ? (decimal.slice(1) as TypeNumericString)

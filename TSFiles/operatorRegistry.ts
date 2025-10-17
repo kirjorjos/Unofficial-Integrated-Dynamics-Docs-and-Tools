@@ -5,20 +5,28 @@
 
 import { InfiniteList } from "./HelperClasses/InfiniteList";
 import { Operator } from "./IntegratedDynamicsClasses/Operator";
-import { ParsedSignature } from "./IntegratedDynamicsClasses/ParsedSignature";
+import { ParsedSignature } from "./HelperClasses/ParsedSignature";
 import { Block } from "./IntegratedDynamicsClasses/Block";
-import { TypeMap } from "./IntegratedDynamicsClasses/TypeMap";
+import { Item } from "./IntegratedDynamicsClasses/Item";
+import { TypeMap } from "./HelperClasses/TypeMap";
 import { Double } from "./JavaNumberClasses/Double";
 import { Integer } from "./JavaNumberClasses/Integer";
 import { NumberBase } from "./HelperClasses/NumberBase";
 import RE2 from "re2";
 import {
+  IntegratedValue,
+  Predicate,
+  TypeAST,
   TypeLambda,
   TypeNumber,
   TypeNumericString,
+  TypeOperatorInternalName,
   TypeOperatorRegistry,
   TypeRawSignatureAST,
 } from "./types";
+import { NBT } from "./IntegratedDynamicsClasses/NBT";
+import { Entity } from "./IntegratedDynamicsClasses/Entity";
+import { Fluid } from "./IntegratedDynamicsClasses/Fluid";
 
 let globalMap = new TypeMap();
 
@@ -128,11 +136,11 @@ let operatorRegistry: TypeOperatorRegistry = {
       interactName: "booleanNand",
       function: (
         func1: TypeLambda<boolean, boolean>
-      ): TypeLambda<TypeLambda<boolean, boolean>, TypeLambda<any, boolean>> => {
+      ): TypeLambda<TypeLambda<boolean, boolean>, TypeLambda<IntegratedValue, boolean>> => {
         return (
           func2: TypeLambda<boolean, boolean>
-        ): TypeLambda<any, boolean> => {
-          return (input: any): boolean => {
+        ): TypeLambda<IntegratedValue, boolean> => {
+          return (input: IntegratedValue): boolean => {
             return !(func1(input) && func2(input));
           };
         };
@@ -163,11 +171,11 @@ let operatorRegistry: TypeOperatorRegistry = {
       interactName: "booleanNor",
       function: (
         func1: TypeLambda<boolean, boolean>
-      ): TypeLambda<TypeLambda<boolean, boolean>, TypeLambda<any, boolean>> => {
+      ): TypeLambda<TypeLambda<boolean, boolean>, TypeLambda<IntegratedValue, boolean>> => {
         return (
           func2: TypeLambda<boolean, boolean>
-        ): TypeLambda<any, boolean> => {
-          return (input: any): boolean => {
+        ): TypeLambda<IntegratedValue, boolean> => {
+          return (input: IntegratedValue): boolean => {
             return !(func1(input) || func2(input));
           };
         };
@@ -365,7 +373,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       symbol: "++",
       interactName: "numberIncrement",
       function: (num1: TypeNumber): TypeNumber => {
-        return NumberBase.add(num1, new Integer("1"));
+        return NumberBase.add(num1, new Integer(1));
       },
     }),
     decrement: new Operator({
@@ -386,7 +394,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       symbol: "--",
       interactName: "numberDecrement",
       function: (num1: TypeNumber): TypeNumber => {
-        return NumberBase.subtract(num1, new Integer("1"));
+        return NumberBase.subtract(num1, new Integer(1));
       },
     }),
     modulus: new Operator({
@@ -487,8 +495,8 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "==",
       interactName: "anyEquals",
-      function: (value1: any): TypeLambda<any, boolean> => {
-        return (value2: any): boolean => {
+      function: (value1: IntegratedValue): TypeLambda<IntegratedValue, boolean> => {
+        return (value2: IntegratedValue): boolean => {
           try {
             return value1.equals(value2);
           } catch (e) {
@@ -574,8 +582,8 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "!=",
       interactName: "anyNotEquals",
-      function: (value1: any): TypeLambda<any, boolean> => {
-        return (value2: any): boolean => {
+      function: (value1: IntegratedValue): TypeLambda<IntegratedValue, boolean> => {
+        return (value2: IntegratedValue): boolean => {
           try {
             return !value1.equals(value2);
           } catch (e) {
@@ -855,7 +863,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       symbol: "len",
       interactName: "stringLength",
       function: (str: string): TypeNumber => {
-        return new Integer(`${str.length}`);
+        return new Integer(str.length);
       },
     }),
     stringConcat: new Operator({
@@ -1003,7 +1011,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       interactName: "stringIndexOf",
       function: (substring: string): TypeLambda<string, TypeNumber> => {
         return (fullString: string): TypeNumber => {
-          return new Integer(`${fullString.indexOf(substring)}`);
+          return new Integer(fullString.indexOf(substring));
         };
       },
     }),
@@ -1033,7 +1041,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       function: (regexString: string): TypeLambda<string, TypeNumber> => {
         return (fullString: string): TypeNumber => {
           const regex = new RE2(regexString, "u");
-          return new Integer(`${fullString.search(regex)}`);
+          return new Integer(fullString.search(regex));
         };
       },
     }),
@@ -1591,7 +1599,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "o",
       interactName: "anyIsNull",
-      function: (value: any): boolean => {
+      function: (value: IntegratedValue): boolean => {
         return value === null || value === undefined;
       },
     }),
@@ -1610,7 +1618,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "∅",
       interactName: "anyIsNotNull",
-      function: (value: any): boolean => {
+      function: (value: IntegratedValue): boolean => {
         return value !== null && value !== undefined;
       },
     }),
@@ -1648,7 +1656,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "∅",
       interactName: "listIsEmpty",
-      function: (list: Array<any>): boolean => {
+      function: (list: Array<IntegratedValue>): boolean => {
         return list.length === 0;
       },
     }),
@@ -1667,7 +1675,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "o",
       interactName: "listIsNotEmpty",
-      function: (list: Array<any>): boolean => {
+      function: (list: Array<IntegratedValue>): boolean => {
         return list.length > 0;
       },
     }),
@@ -1729,7 +1737,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       ): TypeLambda<TypeNumber, TypeLambda<T, T>> => {
         return (index: TypeNumber): TypeLambda<T, T> => {
           return (defaultValue: T): T => {
-            if (NumberBase.lt(index, new Integer("0")) || NumberBase.gte(index, new Integer(list.length.toString() as TypeNumericString)) {
+            if (NumberBase.lt(index, new Integer(0)) || NumberBase.gte(index, new Integer(list.length)) {
               return defaultValue;
             }
             return list[index.toDecimal()];
@@ -1787,9 +1795,9 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "contains_p",
       interactName: "listContainsPredicate",
-      function: <T>(predicate: TypeLambda<any, boolean>): TypeLambda<Array<T>, boolean> => {
+      function: <T>(predicate: Predicate): TypeLambda<Array<T>, boolean> => {
         return (list: Array<T>): boolean => {
-          return list.some((item) => predicate(item));
+          return list.some((item) => predicate.apply(item));
         };
       },
     }),
@@ -1814,7 +1822,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       interactName: "listCount",
       function: <T>(list: Array<T>): TypeLambda<T, Integer> => {
         return (element: T): Integer => {
-          return new Integer(list.filter((item) => item === element).length.toString() as TypeNumericString);
+          return new Integer(list.filter((item) => item === element).length);
         };
       },
     }),
@@ -1844,8 +1852,8 @@ let operatorRegistry: TypeOperatorRegistry = {
       symbol: "count_p",
       interactName: "listCountPredicate",
       function: <T>(list: Array<T>): TypeLambda<TypeLambda<T, boolean>, Integer> => {
-        return (predicate: TypeLambda<T, boolean>): Integer => {
-          return new Integer(list.filter((item) => predicate(item)).length.toString() as TypeNumericString);
+        return (predicate: Predicate): Integer => {
+          return new Integer(list.filter((item) => predicatea.apply(item)).length);
         };
       },
     }),
@@ -1997,10 +2005,10 @@ let operatorRegistry: TypeOperatorRegistry = {
       symbol: "uniq_p",
       interactName: "listUniquePredicate",
       function: <T>(list: Array<T>): TypeLambda<TypeLambda<T, boolean>, Array<T>> => {
-        return (predicate: TypeLambda<T, boolean>): Array<T> => {
+        return (predicate: Predicate): Array<T> => {
           const seen = new Set();
           return list.filter((item) => {
-            const key = predicate(item);
+            const key = predicate.apply(item);
             if (seen.has(key)) {
               return false;
             } else {
@@ -2064,7 +2072,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       function: <T>(list: Array<T>): TypeLambda<TypeNumber, TypeLambda<TypeNumber, Array<T>>> => {
         return (start: TypeNumber): TypeLambda<TypeNumber, Array<T>> => {
           return (end: TypeNumber): Array<T> => {
-            if (NumberBase.lt(start, new Integer(0.["toString"]() as TypeNumericString)) || NumberBase.gt(end, new Integer(list.length.toString() as TypeNumericString)) || NumberBase.gt(start, end)) {
+            if (NumberBase.lt(start, new Integer(0)) || NumberBase.gt(end, new Integer(list.length)) || NumberBase.gt(start, end)) {
               throw new Error(
                 `Invalid slice range: [${start.toDecimal()}, ${end.toDecimal()}) for list of length ${list.length}`
               );
@@ -2248,12 +2256,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "String",
           },
         },
-
         globalMap
       ),
       symbol: "break_sound",
       interactName: "blockBreakSound",
-      function: (block) => {
+      function: (block: Block): string => {
         return block.getBreakSound();
       },
     }),
@@ -2270,12 +2277,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "String",
           },
         },
-
         globalMap
       ),
       symbol: "place_sound",
       interactName: "blockPlaceSound",
-      function: (block) => {
+      function: (block: Block): string => {
         return block.getPlaceSound();
       },
     }),
@@ -2292,12 +2298,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "String",
           },
         },
-
         globalMap
       ),
       symbol: "step_sound",
       interactName: "blockStepSound",
-      function: (block) => {
+      function: (block: Block): string => {
         return block.getStepSound();
       },
     }),
@@ -2314,12 +2319,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Boolean",
           },
         },
-
         globalMap
       ),
       symbol: "is_shearable",
       interactName: "blockIsShearable",
-      function: (block) => {
+      function: (block: Block): boolean => {
         return block.isShearable();
       },
     }),
@@ -2336,12 +2340,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Integer",
           },
         },
-
         globalMap
       ),
       symbol: "plant_age",
       interactName: "blockPlantAge",
-      function: (block) => {
+      function: (block: Block): Integer => {
         return block.getPlantAge();
       },
     }),
@@ -2358,12 +2361,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Block",
           },
         },
-
         globalMap
       ),
       symbol: "block_by_name",
       interactName: "stringBlockByName",
-      function: (name) => {
+      function: (name: string): never => {
         throw new Error(
           "Block by name is infeasible without a registry. This is a placeholder function."
         );
@@ -2382,12 +2384,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "NBT",
           },
         },
-
         globalMap
       ),
       symbol: "block_props",
       interactName: "blockProperties",
-      function: (block) => {
+      function: (block: Block): NBT => {
         return block.getProperties();
       },
     }),
@@ -2410,13 +2411,12 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "block_with_props",
       interactName: "blockWithProperties",
-      function: (block) => {
-        return (properties) => {
+      function: (block: Block) => {
+        return (properties: NBT): Block => {
           return new Block({ properties }, block);
         };
       },
@@ -2434,12 +2434,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "NBT",
           },
         },
-
         globalMap
       ),
       symbol: "block_all_props",
       interactName: "blockPossibleProperties",
-      function: (block) => {
+      function: (block: Block): never => {
         throw new Error(
           "Block possible properties is infeasible without a registry. This is a placeholder function."
         );
@@ -2456,12 +2455,11 @@ let operatorRegistry: TypeOperatorRegistry = {
           },
           to: { type: "List", listType: { type: "String" } },
         },
-
         globalMap
       ),
       symbol: "block_tag_names",
       interactName: "blockTags",
-      function: (block) => {
+      function: (block: Block): string[] => {
         return block.getTagNames();
       },
     }),
@@ -2476,12 +2474,11 @@ let operatorRegistry: TypeOperatorRegistry = {
           },
           to: { type: "List", listType: { type: "Block" } },
         },
-
         globalMap
       ),
       symbol: "block_tag_values",
       interactName: "stringBlocksByTag",
-      function: (tag) => {
+      function: (tag: string): never => {
         throw new Error(
           "Block tag values is infeasible without a registry. This is a placeholder function."
         );
@@ -2500,12 +2497,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Integer",
           },
         },
-
         globalMap
       ),
       symbol: "size",
       interactName: "itemstackSize",
-      function: (item) => {
+      function: (item: Item): Integer => {
         return item.getSize();
       },
     }),
@@ -2522,12 +2518,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Integer",
           },
         },
-
         globalMap
       ),
       symbol: "maxsize",
       interactName: "itemstackMaxSize",
-      function: (item) => {
+      function: (item: Item): Integer => {
         return item.getMaxSize();
       },
     }),
@@ -2548,12 +2543,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Boolean",
           },
         },
-
         globalMap
       ),
       symbol: "stackable",
       interactName: "itemstackIsStackable",
-      function: (item) => {
+      function: (item: Item): boolean => {
         return item.getStackable();
       },
     }),
@@ -2574,12 +2568,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Boolean",
           },
         },
-
         globalMap
       ),
       symbol: "damageable",
       interactName: "itemstackIsDamageable",
-      function: (item) => {
+      function: (item: Item): boolean => {
         return item.getDamageable();
       },
     }),
@@ -2596,12 +2589,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Integer",
           },
         },
-
         globalMap
       ),
       symbol: "damage",
       interactName: "itemstackDamage",
-      function: (item) => {
+      function: (item: Item): Integer => {
         return item.getDamage();
       },
     }),
@@ -2622,12 +2614,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Integer",
           },
         },
-
         globalMap
       ),
       symbol: "max_damage",
       interactName: "itemstackMaxDamage",
-      function: (item) => {
+      function: (item: Item): Integer => {
         return item.getMaxDamage();
       },
     }),
@@ -2649,12 +2640,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Boolean",
           },
         },
-
         globalMap
       ),
       symbol: "enchanted",
       interactName: "itemstackIsEnchanted",
-      function: (item) => {
+      function: (item: Item): boolean => {
         return item.getEnchanted();
       },
     }),
@@ -2676,12 +2666,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Boolean",
           },
         },
-
         globalMap
       ),
       symbol: "enchantable",
       interactName: "itemstackIsEnchantable",
-      function: (item) => {
+      function: (item: Item): boolean => {
         return item.getEnchantable();
       },
     }),
@@ -2702,12 +2691,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Integer",
           },
         },
-
         globalMap
       ),
       symbol: "repair_cost",
       interactName: "itemstackRepairCost",
-      function: (item) => {
+      function: (item: Item): Integer => {
         return item.getRepairCost();
       },
     }),
@@ -2724,12 +2712,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "String",
           },
         },
-
         globalMap
       ),
       symbol: "rarity",
       interactName: "itemstackRarity",
-      function: (item) => {
+      function: (item: Item): string => {
         return item.getRarity();
       },
     }),
@@ -2756,13 +2743,12 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "strength",
       interactName: "itemstackStrength",
-      function: (item) => {
-        return (block) => {
+      function: (item: Item): TypeLambda<Block, Double> => {
+        return (block: Block): Double => {
           return item.getStrengthVsBlock(block);
         };
       },
@@ -2790,13 +2776,12 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "can_harvest",
       interactName: "itemstackCanHarvest",
-      function: (item) => {
-        return (block) => {
+      function: (item: Item): TypeLambda<Block, boolean> => {
+        return (block: Block): boolean => {
           return item.canHarvestBlock(block);
         };
       },
@@ -2814,12 +2799,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Block",
           },
         },
-
         globalMap
       ),
       symbol: "block",
       interactName: "itemstackBlock",
-      function: (item) => {
+      function: (item: Item): Block => {
         return new Block({}, item);
       },
     }),
@@ -2841,12 +2825,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Boolean",
           },
         },
-
         globalMap
       ),
       symbol: "is_fluidstack",
       interactName: "itemstackIsFluidStack",
-      function: (item) => {
+      function: (item: Item): boolean => {
         return item.getFluid() !== null;
       },
     }),
@@ -2873,12 +2856,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Fluid",
           },
         },
-
         globalMap
       ),
       symbol: "fluidstack",
       interactName: "itemstackFluidStack",
-      function: (item) => {
+      function: (item: Item): Fluid => {
         return item.getFluid();
       },
     }),
@@ -2903,12 +2885,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Integer",
           },
         },
-
         globalMap
       ),
       symbol: "fluidstack_capacity",
       interactName: "itemstackFluidCapacity",
-      function: (item) => {
+      function: (item: Item): Integer => {
         return item.getFluidCapacity();
       },
     }),
@@ -2935,16 +2916,13 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "=NBT=",
       interactName: "itemstackIsNbtEqual",
-      function: (item1) => {
-        return (item2) => {
-          return (
-            JSON.stringify(item1.getNBT()) === JSON.stringify(item2.getNBT())
-          );
+      function: (item1: Item): TypeLambda<Item, Boolean> => {
+        return (item2: Item): boolean => {
+          return item1.getNBT().equals(item2.getNBT());
         };
       },
     }),
@@ -2971,13 +2949,12 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "=NoNBT=",
       interactName: "itemstackIsEqualNonNbt",
-      function: (item1) => {
-        return (item2) => {
+      function: (item1: Item): TypeLambda<Item, boolean> => {
+        return (item2: Item): boolean => {
           return (
             item1.getUname() === item2.getUname() &&
             item1.getSize() === item2.getSize()
@@ -3008,13 +2985,12 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "=Raw=",
       interactName: "itemstackIsEqualRaw",
-      function: (item1) => {
-        return (item2) => {
+      function: (item1: Item): TypeLambda<Item, boolean> => {
+        return (item2: Item) => {
           return item1.getUname() === item2.getUname();
         };
       },
@@ -3032,12 +3008,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "String",
           },
         },
-
         globalMap
       ),
       symbol: "mod",
       interactName: "itemstackMod",
-      function: (item) => {
+      function: (item: Item): string => {
         return item.getModName();
       },
     }),
@@ -3058,12 +3033,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Integer",
           },
         },
-
         globalMap
       ),
       symbol: "burn_time",
       interactName: "itemstackBurnTime",
-      function: (item) => {
+      function: (item: Item): Integer => {
         return item.getFuelBurnTime();
       },
     }),
@@ -3086,12 +3060,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Boolean",
           },
         },
-
         globalMap
       ),
       symbol: "can_burn",
       interactName: "itemstackCanBurn",
-      function: (item) => {
+      function: (item: Item): boolean => {
         return item.getFuel();
       },
     }),
@@ -3111,12 +3084,11 @@ let operatorRegistry: TypeOperatorRegistry = {
           },
           to: { type: "List", listType: { type: "String" } },
         },
-
         globalMap
       ),
       symbol: "item_tag_names",
       interactName: "itemstackTags",
-      function: (item) => {
+      function: (item: Item): string => {
         return item.getTagNames();
       },
     }),
@@ -3136,12 +3108,11 @@ let operatorRegistry: TypeOperatorRegistry = {
           },
           to: { type: "List", listType: { type: "Item" } },
         },
-
         globalMap
       ),
       symbol: "item_tag_values",
       interactName: "stringItemsByTag",
-      function: (tag) => {
+      function: (tag: string): never => {
         throw new Error(
           "Item tag values is infeasible without a registry. This is a placeholder function."
         );
@@ -3171,13 +3142,12 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "with_size",
       interactName: "itemstackWithSize",
-      function: (item) => {
-        return (size) => {
+      function: (item: Item): TypeLambda<Integer, Item> => {
+        return (size: Integer): Item => {
           return new Item({ size }, item);
         };
       },
@@ -3201,12 +3171,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Boolean",
           },
         },
-
         globalMap
       ),
       symbol: "is_fe_container",
       interactName: "itemstackIsFeContainer",
-      function: (item) => {
+      function: (item: Item): boolean => {
         return item.getFeContainer();
       },
     }),
@@ -3229,12 +3198,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Integer",
           },
         },
-
         globalMap
       ),
       symbol: "stored_fe",
       interactName: "itemstackFeStored",
-      function: (item) => {
+      function: (item: Item): Integer => {
         return item.getFeStored();
       },
     }),
@@ -3257,12 +3225,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Integer",
           },
         },
-
         globalMap
       ),
       symbol: "capacity_fe",
       interactName: "itemstackFeCapacity",
-      function: (item) => {
+      function: (item: Item): Integer => {
         return item.getFeCapacity();
       },
     }),
@@ -3285,12 +3252,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Boolean",
           },
         },
-
         globalMap
       ),
       symbol: "has_inventory",
       interactName: "itemstackHasInventory",
-      function: (item) => {
+      function: (item: Item): boolean => {
         return item.getInventory() !== null;
       },
     }),
@@ -3313,12 +3279,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Integer",
           },
         },
-
         globalMap
       ),
       symbol: "inventory_size",
       interactName: "itemstackInventorySize",
-      function: (item) => {
+      function: (item: Item): Integer => {
         return item.getInventory().length || 0;
       },
     }),
@@ -3338,12 +3303,11 @@ let operatorRegistry: TypeOperatorRegistry = {
           },
           to: { type: "List", listType: { type: "Item" } },
         },
-
         globalMap
       ),
       symbol: "inventory",
       interactName: "itemstackInventory",
-      function: (item) => {
+      function: (item: Item): Array<Item> => {
         return item.getInventory();
       },
     }),
@@ -3365,12 +3329,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Item",
           },
         },
-
         globalMap
       ),
       symbol: "item_by_name",
       interactName: "stringItemByName",
-      function: (name) => {
+      function: (name: string): never => {
         throw new Error(
           "Item by name is infeasible without a registry. This is a placeholder function."
         );
@@ -3399,20 +3362,19 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "item_list_count",
       interactName: "listItemListCount",
-      function: (items) => {
-        return (item) => {
-          return items.filter((i) => {
+      function: (items: Array<Item>): TypeLambda<Item, Integer> => {
+        return (item: Item): Integer => {
+          return new Integer(items.filter((i) => {
             try {
               return i.equals(item);
             } catch (e) {
               return false;
             }
-          }).length;
+          }).length);
         };
       },
     }),
@@ -3435,12 +3397,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "NBT",
           },
         },
-
         globalMap
       ),
       symbol: "NBT()",
       interactName: "itemstackNbt",
-      function: (item) => {
+      function: (item: Item): NBT => {
         return item.getNBT();
       },
     }),
@@ -3463,12 +3424,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Boolean",
           },
         },
-
         globalMap
       ),
       symbol: "has_nbt",
       interactName: "itemstackHasNbt",
-      function: (item) => {
+      function: (item: Item): boolean => {
         return item.getNBT() !== null && item.getNBT() !== undefined;
       },
     }),
@@ -3489,12 +3449,11 @@ let operatorRegistry: TypeOperatorRegistry = {
           },
           to: { type: "List", listType: { type: "String" } },
         },
-
         globalMap
       ),
       symbol: "data_keys",
       interactName: "itemstackDataKeys",
-      function: (item) => {
+      function: (item: Item): Array<string> => {
         const nbt = item.getNBT();
         if (!nbt) {
           return [];
@@ -3522,24 +3481,22 @@ let operatorRegistry: TypeOperatorRegistry = {
           to: {
             type: "Function",
             from: {
-              type: "NBT",
+              type: "String",
             },
             to: {
-              type: "Any",
-              typeID: 1,
+              type: "NBT"
             },
           },
         },
-
         globalMap
       ),
       symbol: "data_value",
       interactName: "itemstackDataValue",
-      function: (item) => {
-        return (key) => {
+      function: (item: Item): TypeLambda<string, NBT> => {
+        return (key: string): NBT => {
           const nbt = item.getNBT();
           if (!nbt || !nbt.hasOwnProperty(key)) {
-            return null;
+            return new NBT(null);
           }
           return nbt[key];
         };
@@ -3566,21 +3523,26 @@ let operatorRegistry: TypeOperatorRegistry = {
               type: "String",
             },
             to: {
-              type: "NBT",
+              type: "Function",
+              from: {
+                type: "NBT"
+              },
+              to: {
+                type: "Item"
+              }
             },
           },
         },
-
         globalMap
       ),
       symbol: "with_data",
       interactName: "itemstackWithData",
-      function: (item) => {
-        return (key) => {
-          return (value) => {
+      function: (item: Item): TypeLambda<string, TypeLambda<NBT, Item>> => {
+        return (key: string): TypeLambda<NBT, Item> => {
+          return (value: NBT): Item => {
             const nbt = item.getNBT() || {};
             nbt[key] = value;
-            return new item({ nbt }, item);
+            return new Item({ nbt }, item);
           };
         };
       },
@@ -3601,12 +3563,11 @@ let operatorRegistry: TypeOperatorRegistry = {
           },
           to: { type: "List", listType: { type: "String" } },
         },
-
         globalMap
       ),
       symbol: "tooltip",
       interactName: "itemstackTooltip",
-      function: (item) => {
+      function: (item: Item): Array<string> => {
         return item.getTooltip();
       },
     }),
@@ -3632,13 +3593,12 @@ let operatorRegistry: TypeOperatorRegistry = {
             to: { type: "List", listType: { type: "String" } },
           },
         },
-
         globalMap
       ),
       symbol: "entity_item_tooltip",
       interactName: "entityEntityItemTooltip",
-      function: (entity) => {
-        return (item) => {
+      function: (entity: Entity): TypeLambda<Item, Array<string>> => {
+        return (item: Item): Array<string> => {
           console.warn(
             "Entity item tooltip is not fully supported. Returning item tooltip only."
           );
@@ -3659,12 +3619,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Boolean",
           },
         },
-
         globalMap
       ),
       symbol: "is_mob",
       interactName: "entityIsMob",
-      function: (entity) => {
+      function: (entity: Entity): boolean => {
         return entity.getMob();
       },
     }),
@@ -3681,12 +3640,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Boolean",
           },
         },
-
         globalMap
       ),
       symbol: "is_animal",
       interactName: "entityIsAnimal",
-      function: (entity) => {
+      function: (entity: Entity): boolean => {
         return entity.isAnimal();
       },
     }),
@@ -3703,12 +3661,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Boolean",
           },
         },
-
         globalMap
       ),
       symbol: "is_item",
       interactName: "entityIsItem",
-      function: (entity) => {
+      function: (entity: Entity): boolean => {
         return entity.isItem();
       },
     }),
@@ -3725,12 +3682,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Boolean",
           },
         },
-
         globalMap
       ),
       symbol: "is_player",
       interactName: "entityIsPlayer",
-      function: (entity) => {
+      function: (entity: Entity): boolean => {
         return entity.isPlayer();
       },
     }),
@@ -3747,12 +3703,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Boolean",
           },
         },
-
         globalMap
       ),
       symbol: "is_minecart",
       interactName: "entityIsMinecart",
-      function: (entity) => {
+      function: (entity: Entity): boolean => {
         return entity.isMinecart();
       },
     }),
@@ -3776,12 +3731,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Item",
           },
         },
-
         globalMap
       ),
       symbol: "item",
       interactName: "entityItem",
-      function: (entity) => {
+      function: (entity: Entity): Item => {
         if (entity.isItem()) {
           return entity.getItem();
         } else {
@@ -3807,12 +3761,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Double",
           },
         },
-
         globalMap
       ),
       symbol: "health",
       interactName: "entityHealth",
-      function: (entity) => {
+      function: (entity: Entity): Double => {
         return entity.getHealth();
       },
     }),
@@ -3829,12 +3782,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Double",
           },
         },
-
         globalMap
       ),
       symbol: "width",
       interactName: "entityWidth",
-      function: (entity) => {
+      function: (entity: Entity): Double => {
         return entity.getWidth();
       },
     }),
@@ -3851,12 +3803,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Double",
           },
         },
-
         globalMap
       ),
       symbol: "height",
       interactName: "entityHeight",
-      function: (entity) => {
+      function: (entity: Entity): Double => {
         return entity.getHeight();
       },
     }),
@@ -3873,12 +3824,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Boolean",
           },
         },
-
         globalMap
       ),
       symbol: "is_burning",
       interactName: "entityEntityIsBurning",
-      function: (entity) => {
+      function: (entity: Entity): boolean => {
         return entity.isBurning();
       },
     }),
@@ -3895,12 +3845,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Boolean",
           },
         },
-
         globalMap
       ),
       symbol: "is_wet",
       interactName: "entityIsWet",
-      function: (entity) => {
+      function: (entity: Entity): boolean => {
         return entity.isWet();
       },
     }),
@@ -3921,12 +3870,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Boolean",
           },
         },
-
         globalMap
       ),
       symbol: "is_crouching",
       interactName: "entityIsCrouching",
-      function: (entity) => {
+      function: (entity: Entity): boolean => {
         return entity.isCrouching();
       },
     }),
@@ -3943,12 +3891,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Boolean",
           },
         },
-
         globalMap
       ),
       symbol: "is_eating",
       interactName: "entityIsEating",
-      function: (entity) => {
+      function: (entity: Entity): boolean => {
         return entity.isEating();
       },
     }),
@@ -3968,12 +3915,11 @@ let operatorRegistry: TypeOperatorRegistry = {
           },
           to: { type: "List", listType: { type: "Item" } },
         },
-
         globalMap
       ),
       symbol: "armor_inventory",
       interactName: "entityArmorInventory",
-      function: (entity) => {
+      function: (entity: Entity): Array<Item> => {
         return entity.getArmorInventory();
       },
     }),
@@ -3994,12 +3940,11 @@ let operatorRegistry: TypeOperatorRegistry = {
           },
           to: { type: "List", listType: { type: "Item" } },
         },
-
         globalMap
       ),
       symbol: "inventory",
       interactName: "entityInventory",
-      function: (entity) => {
+      function: (entity: Entity): Array<Item> => {
         return entity.getInventory();
       },
     }),
@@ -4016,12 +3961,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "String",
           },
         },
-
         globalMap
       ),
       symbol: "mod",
       interactName: "entityMod",
-      function: (entity) => {
+      function: (entity: Entity): string => {
         return entity.getModName();
       },
     }),
@@ -4038,12 +3982,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Block",
           },
         },
-
         globalMap
       ),
       symbol: "target_block",
       interactName: "entityTargetBlock",
-      function: (entity) => {
+      function: (entity: Entity): Block => {
         return entity.getTargetBlock();
       },
     }),
@@ -4060,12 +4003,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Entity",
           },
         },
-
         globalMap
       ),
       symbol: "target_entity",
       interactName: "entityTargetEntity",
-      function: (entity) => {
+      function: (entity: Entity): Entity => {
         return entity.getTargetEntity();
       },
     }),
@@ -4082,12 +4024,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Boolean",
           },
         },
-
         globalMap
       ),
       symbol: "has_gui_open",
       interactName: "entityHasGuiOpen",
-      function: (entity) => {
+      function: (entity: Entity): boolean => {
         return entity.hasGuiOpen();
       },
     }),
@@ -4108,12 +4049,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Item",
           },
         },
-
         globalMap
       ),
       symbol: "held_item_1",
       interactName: "entityHeldItem",
-      function: (entity) => {
+      function: (entity: Entity): Item => {
         return entity.getHeldItemMain();
       },
     }),
@@ -4134,12 +4074,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Item",
           },
         },
-
         globalMap
       ),
       symbol: "held_item_2",
       interactName: "entityHeldItemOffHand",
-      function: (entity) => {
+      function: (entity: Entity): Item => {
         return entity.getHeldItemOffHand();
       },
     }),
@@ -4154,12 +4093,11 @@ let operatorRegistry: TypeOperatorRegistry = {
           },
           to: { type: "List", listType: { type: "Entity" } },
         },
-
         globalMap
       ),
       symbol: "mounted",
       interactName: "entityMounted",
-      function: (entity) => {
+      function: (entity: Entity): boolean => {
         return entity.isEntityMounted();
       },
     }),
@@ -4181,12 +4119,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Item",
           },
         },
-
         globalMap
       ),
       symbol: "itemframe_contents",
       interactName: "entityItemFrameContents",
-      function: (entity) => {
+      function: (entity: Entity): Item => {
         if (entity.isItemFrame()) {
           return entity.getItemFrameContents();
         } else {
@@ -4212,12 +4149,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Integer",
           },
         },
-
         globalMap
       ),
       symbol: "itemframe_rotation",
       interactName: "entityItemFrameRotation",
-      function: (entity) => {
+      function: (entity: Entity): Integer => {
         if (entity.isItemFrame()) {
           return entity.getItemFrameRotation();
         } else {
@@ -4238,12 +4174,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "String",
           },
         },
-
         globalMap
       ),
       symbol: "hurtsound",
       interactName: "entityHurtSound",
-      function: (entity) => {
+      function: (entity: Entity): string => {
         return entity.getHurtSound();
       },
     }),
@@ -4260,12 +4195,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "String",
           },
         },
-
         globalMap
       ),
       symbol: "deathsound",
       interactName: "entityDeathSound",
-      function: (entity) => {
+      function: (entity: Entity): string => {
         return entity.getDeathSound();
       },
     }),
@@ -4282,12 +4216,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Integer",
           },
         },
-
         globalMap
       ),
       symbol: "age",
       interactName: "entityAge",
-      function: (entity) => {
+      function: (entity: Entity): Integer => {
         return entity.getAge();
       },
     }),
@@ -4304,12 +4237,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Boolean",
           },
         },
-
         globalMap
       ),
       symbol: "is_child",
       interactName: "entityIsChild",
-      function: (entity) => {
+      function: (entity: Entity): boolean => {
         return entity.isChild();
       },
     }),
@@ -4326,12 +4258,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Boolean",
           },
         },
-
         globalMap
       ),
       symbol: "canbreed",
       interactName: "entityCanBreed",
-      function: (entity) => {
+      function: (entity: Entity): boolean => {
         return entity.canBreed();
       },
     }),
@@ -4348,12 +4279,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Boolean",
           },
         },
-
         globalMap
       ),
       symbol: "is_in_love",
       interactName: "entityIsInLove",
-      function: (entity) => {
+      function: (entity: Entity): boolean => {
         return entity.isInLove();
       },
     }),
@@ -4380,13 +4310,14 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "can_breed_with",
       interactName: "entityCanBreedWith",
-      function: (entity1, entity2) => {
-        return entity1.breadableList.includes(entity2);
+      function: (entity1: Entity): TypeLambda<Entity, boolean> => {
+        return (entity2: Entity): boolean => {
+          return entity1.getBreadableList().includes(entity2.getUname());
+        }
       },
     }),
     entityIsShearable: new Operator({
@@ -4406,12 +4337,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Boolean",
           },
         },
-
         globalMap
       ),
       symbol: "is_shearable",
       interactName: "entityIsShearable",
-      function: (entity) => {
+      function: (entity: Entity): boolean => {
         return entity.isShearable();
       },
     }),
@@ -4428,12 +4358,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "NBT",
           },
         },
-
         globalMap
       ),
       symbol: "NBT()",
       interactName: "entityNbt",
-      function: (entity) => {
+      function: (entity: Entity): NBT => {
         return entity.getNBT();
       },
     }),
@@ -4450,12 +4379,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "String",
           },
         },
-
         globalMap
       ),
       symbol: "entity_type",
       interactName: "entityType",
-      function: (entity) => {
+      function: (entity: Entity): string => {
         return entity.getEntityType();
       },
     }),
@@ -4475,12 +4403,11 @@ let operatorRegistry: TypeOperatorRegistry = {
           },
           to: { type: "List", listType: { type: "Item" } },
         },
-
         globalMap
       ),
       symbol: "entity_items",
       interactName: "entityItems",
-      function: (entity) => {
+      function: (entity: Entity): Array<Item> => {
         return entity.getItemList();
       },
     }),
@@ -4495,12 +4422,11 @@ let operatorRegistry: TypeOperatorRegistry = {
           },
           to: { type: "List", listType: { type: "Fluid" } },
         },
-
         globalMap
       ),
       symbol: "entity_fluids",
       interactName: "entityFluids",
-      function: (entity) => {
+      function: (entity: Entity): Array<Fluid> => {
         return entity.getFluids();
       },
     }),
@@ -4517,12 +4443,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Integer",
           },
         },
-
         globalMap
       ),
       symbol: "entity_stored_fe",
       interactName: "entityEnergy",
-      function: (entity) => {
+      function: (entity: Entity): Integer => {
         return entity.getEnergyStored();
       },
     }),
@@ -4539,12 +4464,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Integer",
           },
         },
-
         globalMap
       ),
       symbol: "entity_capacity_fe",
       interactName: "entityEnergyCapacity",
-      function: (entity) => {
+      function: (entity: Entity): Integer => {
         return entity.getEnergyCapacity();
       },
     }),
@@ -4568,12 +4492,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Integer",
           },
         },
-
         globalMap
       ),
       symbol: "amount",
       interactName: "fluidstackAmount",
-      function: (fluid) => {
+      function: (fluid: Fluid): Integer => {
         return fluid.getAmount();
       },
     }),
@@ -4597,12 +4520,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Block",
           },
         },
-
         globalMap
       ),
       symbol: "block",
       interactName: "fluidstackBlock",
-      function: (fluid) => {
+      function: (fluid: Fluid): Block => {
         return fluid.getBlock();
       },
     }),
@@ -4626,12 +4548,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Integer",
           },
         },
-
         globalMap
       ),
       symbol: "light_level",
       interactName: "fluidstackLightLevel",
-      function: (fluid) => {
+      function: (fluid: Fluid): Integer => {
         return fluid.getLightLevel();
       },
     }),
@@ -4655,12 +4576,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Integer",
           },
         },
-
         globalMap
       ),
       symbol: "density",
       interactName: "fluidstackDensity",
-      function: (fluid) => {
+      function: (fluid: Fluid): Integer => {
         return fluid.getDensity();
       },
     }),
@@ -4684,12 +4604,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Integer",
           },
         },
-
         globalMap
       ),
       symbol: "temperature",
       interactName: "fluidstackTemperature",
-      function: (fluid) => {
+      function: (fluid: Fluid): Integer => {
         return fluid.getTemperature();
       },
     }),
@@ -4713,12 +4632,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Integer",
           },
         },
-
         globalMap
       ),
       symbol: "viscosity",
       interactName: "fluidstackViscosity",
-      function: (fluid) => {
+      function: (fluid: Fluid): Integer => {
         return fluid.getViscosity();
       },
     }),
@@ -4743,12 +4661,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Boolean",
           },
         },
-
         globalMap
       ),
       symbol: "lighter_than_air",
       interactName: "fluidstackIsLighterThanAir",
-      function: (fluid) => {
+      function: (fluid: Fluid): boolean => {
         return fluid.getLighterThanAir();
       },
     }),
@@ -4772,12 +4689,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "String",
           },
         },
-
         globalMap
       ),
       symbol: "rarity",
       interactName: "fluidstackRarity",
-      function: (fluid) => {
+      function: (fluid: Fluid): string => {
         return fluid.getRarity();
       },
     }),
@@ -4801,12 +4717,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "String",
           },
         },
-
         globalMap
       ),
       symbol: "sound_bucket_empty",
       interactName: "fluidstackBucketEmptySound",
-      function: (fluid) => {
+      function: (fluid: Fluid): string => {
         return fluid.getBucketEmptySound();
       },
     }),
@@ -4830,12 +4745,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "String",
           },
         },
-
         globalMap
       ),
       symbol: "sound_fluid_vaporize",
       interactName: "fluidstackFluidVaporizeSound",
-      function: (fluid) => {
+      function: (fluid: Fluid): string => {
         return fluid.getFluidVaporizeSound();
       },
     }),
@@ -4859,12 +4773,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "String",
           },
         },
-
         globalMap
       ),
       symbol: "sound_bucket_fill",
       interactName: "fluidstackBucketFillSound",
-      function: (fluid) => {
+      function: (fluid: Fluid): string => {
         return fluid.getBucketFillSound();
       },
     }),
@@ -4888,12 +4801,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Item",
           },
         },
-
         globalMap
       ),
       symbol: "bucket",
       interactName: "fluidstackBucket",
-      function: (fluid) => {
+      function: (fluid: Fluid): Item => {
         return fluid.getBucket();
       },
     }),
@@ -4924,13 +4836,12 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "=Raw=",
       interactName: "fluidstackIsRawEqual",
-      function: (fluid1) => {
-        return (fluid2) => {
+      function: (fluid1: Fluid): TypeLambda<Fluid, boolean> => {
+        return (fluid2: Fluid): boolean => {
           return (
             fluid1
               .getUname()
@@ -4961,12 +4872,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "String",
           },
         },
-
         globalMap
       ),
       symbol: "mod",
       interactName: "fluidstackMod",
-      function: (fluid) => {
+      function: (fluid: Fluid): string => {
         return fluid.getModName();
       },
     }),
@@ -4996,12 +4906,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "NBT",
           },
         },
-
         globalMap
       ),
       symbol: "NBT()",
       interactName: "fluidstackNbt",
-      function: (fluid) => {
+      function: (fluid: Fluid): NBT => {
         return fluid.getNBT();
       },
     }),
@@ -5031,13 +4940,12 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "with_amount",
       interactName: "fluidstackWithAmount",
-      function: (fluid) => {
-        return (amount) => {
+      function: (fluid: Fluid): TypeLambda<Integer, Fluid> => {
+        return (amount: Integer): Fluid => {
           return new Fluid({ amount }, fluid);
         };
       },
@@ -5066,12 +4974,11 @@ let operatorRegistry: TypeOperatorRegistry = {
           },
           to: { type: "List", listType: { type: "String" } },
         },
-
         globalMap
       ),
       symbol: "data_keys",
       interactName: "fluidstackDataKeys",
-      function: (fluid) => {
+      function: (fluid: Fluid): Array<string> => {
         const nbt = fluid.getNBT();
         if (!nbt) {
           return [];
@@ -5113,16 +5020,15 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "data_value",
       interactName: "fluidstackDataValue",
-      function: (fluid) => {
-        return (key) => {
+      function: (fluid: Fluid): TypeLambda<string, NBT> => {
+        return (key: string): NBT => {
           const nbt = fluid.getNBT();
           if (!nbt || !nbt.hasOwnProperty(key)) {
-            return null;
+            return new NBT(null);
           }
           return nbt[key];
         };
@@ -5138,11 +5044,14 @@ let operatorRegistry: TypeOperatorRegistry = {
       ],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Operator",
-          args: {
+          type: "Function",
+          from: {
+            type: "Fluid",
+          },
+          to: {
             type: "Function",
             from: {
-              type: "Fluid",
+              type: "String"
             },
             to: {
               type: "Function",
@@ -5150,8 +5059,7 @@ let operatorRegistry: TypeOperatorRegistry = {
                 type: "NBT",
               },
               to: {
-                kind: "Concrete",
-                name: "Fluid",
+                type: "Fluid",
               },
             },
           },
@@ -5160,12 +5068,12 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "with_data",
       interactName: "fluidstackWithData",
-      function: (fluid) => {
-        return (key) => {
-          return (value) => {
+      function: (fluid: Fluid): TypeLambda<string, TypeLambda<NBT, Fluid>> => {
+        return (key: string): TypeLambda<NBT, Fluid> => {
+          return (value: NBT): Fluid => {
             const nbt = fluid.getNBT() || {};
             nbt[key] = value;
-            return new item({ nbt }, fluid);
+            return new Fluid({ nbt }, fluid);
           };
         };
       },
@@ -5186,12 +5094,11 @@ let operatorRegistry: TypeOperatorRegistry = {
           },
           to: { type: "List", listType: { type: "String" } },
         },
-
         globalMap
       ),
       symbol: "fluid_tag_names",
       interactName: "fluidstackTags",
-      function: (fluid) => {
+      function: (fluid: Fluid): Array<string> => {
         return fluid.getTagNames();
       },
     }),
@@ -5210,12 +5117,11 @@ let operatorRegistry: TypeOperatorRegistry = {
           },
           to: { type: "List", listType: { type: "Fluid" } },
         },
-
         globalMap
       ),
       symbol: "fluid_tag_values",
       interactName: "stringFluidsByTag",
-      function: (tag) => {
+      function: (tag: string): never => {
         throw new Error(
           "Fluid tag values is infeasible without a registry. This is a placeholder function."
         );
@@ -5234,27 +5140,21 @@ let operatorRegistry: TypeOperatorRegistry = {
           },
           to: {
             type: "Function",
-            from: {
-              kind: "Generic",
-            },
-            to: {
-              kind: "Generic",
-            },
+            from: { type: "Any", typeID: 1 },
+            to: { type: "Any", typeID: 2 },
           },
         },
-
         globalMap
       ),
       symbol: "apply",
       interactName: "operatorApply",
       serializer: "integrateddynamics:curry",
-      function: (op) => {
-        return (arg) => {
-          op.parsedSignature.typeMap.unify(
+      function: (op: Operator) => {
+        return (arg: IntegratedValue) => {
+          globalMap.unify(
             op.parsedSignature.getInput(0),
-            a?.parsedSignature ? a.parsedSignature.getOutput() : a
+            arg
           );
-
           return op.apply(arg);
         };
       },
@@ -5277,31 +5177,32 @@ let operatorRegistry: TypeOperatorRegistry = {
           to: {
             type: "Function",
             from: {
-              kind: "Generic",
+              type: "Any",
+              typeID: 1
             },
             to: {
               type: "Function",
               from: {
-                kind: "Generic",
+                type: "Any",
+                typeID: 2
               },
               to: {
-                kind: "Generic",
+                type: "Any",
+                typeID: 3
               },
             },
           },
         },
-
         globalMap
       ),
       symbol: "apply2",
       interactName: "operatorApply2",
       serializer: "integrateddynamics:curry",
-      function: (op) => {
-        return (arg1) => {
-          return (arg2) => {
-            op.parsedSignature.typeMap.unify(op.parsedSignature.getInput(0), a);
-            op.parsedSignature.typeMap.unify(op.parsedSignature.getInput(1), b);
-
+      function: (op: Operator): TypeLambda<IntegratedValue, TypeLambda<IntegratedValue, IntegratedValue>> => {
+        return (arg1: IntegratedValue): TypeLambda<IntegratedValue, IntegratedValue> => {
+          return (arg2: IntegratedValue): IntegratedValue => {
+            globalMap.unify(op.parsedSignature.getInput(0), arg1);
+            globalMap.unify(op.parsedSignature.getInput(1), arg2);
             return op.apply(arg1).apply(arg2);
           };
         };
@@ -5329,48 +5230,50 @@ let operatorRegistry: TypeOperatorRegistry = {
           to: {
             type: "Function",
             from: {
-              kind: "Generic",
+              type: "Any",
+              typeID: 1
             },
             to: {
               type: "Function",
               from: {
-                kind: "Generic",
+                type: "Any",
+                typeID: 2
               },
               to: {
                 type: "Function",
                 from: {
-                  kind: "Generic",
+                  type: "Any",
+                  typeID: 3
                 },
                 to: {
-                  kind: "Generic",
+                  type: "Any",
+                  typeID: 4
                 },
               },
             },
           },
         },
-
         globalMap
       ),
       symbol: "apply3",
       interactName: "operatorApply3",
       serializer: "integrateddynamics:curry",
-      function: (op) => {
-        return (arg1) => {
-          return (arg2) => {
-            return (arg3) => {
+      function: (op: Operator): TypeLambda<IntegratedValue, TypeLambda<IntegratedValue, TypeLambda<IntegratedValue, IntegratedValue>>> => {
+        return (arg1: IntegratedValue): TypeLambda<IntegratedValue, TypeLambda<IntegratedValue, IntegratedValue>> => {
+          return (arg2: IntegratedValue): TypeLambda<IntegratedValue, IntegratedValue> => {
+            return (arg3: IntegratedValue): IntegratedValue => {
               op.parsedSignature.typeMap.unify(
                 op.parsedSignature.getInput(0),
-                a
+                arg1
               );
               op.parsedSignature.typeMap.unify(
                 op.parsedSignature.getInput(1),
-                b
+                arg2
               );
               op.parsedSignature.typeMap.unify(
                 op.parsedSignature.getInput(2),
-                c
+                arg3
               );
-
               return op.apply(arg1).apply(arg2).apply(arg3);
             };
           };
@@ -5391,25 +5294,22 @@ let operatorRegistry: TypeOperatorRegistry = {
           to: {
             type: "Function",
             from: {
-              kind: "Concrete",
-              name: "List",
-              params: [
-                {
-                  kind: "Generic",
-                },
-              ],
+              type: "List",
+              listType: {
+                type: "Any",
+                typeID: 1
+              }
             },
             to: { type: "Any", typeID: 3 },
           },
         },
-
         globalMap
       ),
       symbol: "apply_n",
       interactName: "operatorApply_n",
       serializer: "integrateddynamics:curry",
-      function: (op) => {
-        return (args) => {
+      function: (op: Operator): TypeLambda<Array<IntegratedValue>, IntegratedValue> => {
+        return (args: Array<IntegratedValue>): IntegratedValue => {
           args.forEach((arg, i) => {
             if (arg === undefined || arg === null) {
               throw new Error(
@@ -5431,22 +5331,21 @@ let operatorRegistry: TypeOperatorRegistry = {
       nicknames: ["operatorApply_0"],
       parsedSignature: new ParsedSignature(
         {
-          kind: "Generic",
-          of: {
-            kind: "Operator",
-            args: [{ type: "Any", typeID: 1 }],
+          type: "Function",
+          from: {
+            type: "Any",
+            typeID: 1,
           },
+          to: { type: "Any", typeID: 1 },
         },
-        { type: "Any", typeID: 1 },
-
         globalMap
       ),
       symbol: "apply0",
       interactName: "operatorApply0",
       serializer: "integrateddynamics:curry",
-      function: (op) => {
+      function: (op: Operator): TypeLambda<undefined, IntegratedValue> => {
         return () => {
-          return op.apply();
+          return op.apply(undefined);
         };
       },
     }),
@@ -5464,32 +5363,21 @@ let operatorRegistry: TypeOperatorRegistry = {
           to: {
             type: "Function",
             from: {
-              kind: "Concrete",
-              name: "List",
-              params: [
-                {
-                  kind: "Generic",
-                },
-              ],
+              type: "List",
+              listType: { type: "Any", typeID: 1}
             },
             to: {
-              kind: "Concrete",
-              name: "List",
-              params: [
-                {
-                  kind: "Generic",
-                },
-              ],
+              type: "List",
+              listType: { type: "Any", typeID: 2}
             },
           },
         },
-
         globalMap
       ),
       symbol: "map",
       interactName: "operatorMap",
-      function: (op) => {
-        return (list) => {
+      function: (op: Operator): TypeLambda<Array<IntegratedValue>, Array<IntegratedValue>> => {
+        return (list: Array<IntegratedValue>): Array<IntegratedValue> => {
           return list.map((item) => op.apply(item));
         };
       },
@@ -5510,32 +5398,27 @@ let operatorRegistry: TypeOperatorRegistry = {
           to: {
             type: "Function",
             from: {
-              kind: "Concrete",
-              name: "List",
-              params: [
-                {
-                  kind: "Generic",
-                },
-              ],
+              type: "List",
+              listType: {
+                type: "Any",
+                typeID: 1
+              }
             },
             to: {
-              kind: "Concrete",
-              name: "List",
-              params: [
-                {
-                  kind: "Generic",
-                },
-              ],
+              type: "List",
+              listType: {
+                type: "Any",
+                typeID: 1
+              }
             },
           },
         },
-
         globalMap
       ),
       symbol: "filter",
       interactName: "operatorFilter",
-      function: (predicate) => {
-        return (list) => {
+      function: (predicate: Predicate): TypeLambda<Array<IntegratedValue>, Array<IntegratedValue>> => {
+        return (list: Array<IntegratedValue>): Array<IntegratedValue> => {
           return list.filter((item) => predicate.apply(item));
         };
       },
@@ -5571,15 +5454,14 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: ".&&.",
       interactName: "operatorConjunction",
-      function: (predicate1) => {
-        return (predicate2) => {
-          return (input) => {
-            return predicate1.apply(input) && predicate2.apply(input);
+      function: (predicate1: Predicate): TypeLambda<Predicate, TypeLambda<IntegratedValue, boolean>> => {
+        return (predicate2: Predicate): TypeLambda<IntegratedValue, boolean> => {
+          return (input: IntegratedValue): boolean => {
+            return (predicate1.apply(input) && predicate2.apply(input));
           };
         };
       },
@@ -5615,14 +5497,13 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: ".||.",
       interactName: "operatorDisjunction",
-      function: (predicate1) => {
-        return (predicate2) => {
-          return (input) => {
+      function: (predicate1: Predicate): TypeLambda<Predicate, TypeLambda<IntegratedValue, boolean>> => {
+        return (predicate2: Predicate): TypeLambda<IntegratedValue, boolean> => {
+          return (input: IntegratedValue): boolean => {
             return predicate1.apply(input) || predicate2.apply(input);
           };
         };
@@ -5649,13 +5530,12 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "!.",
       interactName: "operatorNegation",
-      function: (predicate) => {
-        return (input) => {
+      function: (predicate: Predicate): TypeLambda<IntegratedValue, boolean> => {
+        return (input: IntegratedValue): boolean => {
           return !predicate.apply(input);
         };
       },
@@ -5685,16 +5565,15 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: ".",
       interactName: "operatorPipe",
       serializer: "integrateddynamics:combined.pipe",
-      function: (f) => {
-        return (g) => {
+      function: (f: Operator): TypeLambda<Operator, TypeLambda<IntegratedValue, IntegratedValue>> => {
+        return (g: Operator): TypeLambda<IntegratedValue, IntegratedValue> => {
           f.parsedSignature.pipe(g.parsedSignature);
-          return (x) => {
+          return (x: IntegratedValue): IntegratedValue => {
             return g.apply(f.apply(x));
           };
         };
@@ -5737,15 +5616,14 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: ".2",
       interactName: "operatorPipe2",
       serializer: "integrateddynamics:combined.pipe",
-      function: (f) => {
-        return (g) => {
-          return (h) => {
+      function: (f: Operator): TypeLambda<Operator, TypeLambda<Operator, Operator>> => {
+        return (g: Operator): TypeLambda<Operator, Operator> => {
+          return (h: Operator): Operator => {
             f.parsedSignature.typeMap.unify(
               f.parsedSignature.getOutput(),
               h.parsedSignature.getInput(0)
@@ -5755,7 +5633,7 @@ let operatorRegistry: TypeOperatorRegistry = {
               h.parsedSignature.getInput(1)
             );
 
-            return (x) => {
+            return (x: IntegratedValue): IntegratedValue => {
               return h.apply(f.apply(x)).apply(g.apply(x));
             };
           };
@@ -5787,15 +5665,14 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "flip",
       interactName: "operatorFlip",
       serializer: "integrateddynamics:combined.flip",
-      function: (op) => {
-        return (arg1) => {
-          return (arg2) => {
+      function: (op: Operator): TypeLambda<IntegratedValue, TypeLambda<IntegratedValue, IntegratedValue>> => {
+        return (arg1: IntegratedValue): TypeLambda<IntegratedValue, IntegratedValue> => {
+          return (arg2: IntegratedValue): IntegratedValue => {
             return op.apply(arg2).apply(arg1);
           };
         };
@@ -5826,14 +5703,13 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "reduce",
       interactName: "operatorReduce",
-      function: (op) => {
-        return (list) => {
-          return (startingValue) => {
+      function: <T>(op: Operator): TypeLambda<Array<T>, TypeLambda<T, T>> => {
+        return (list: Array<T>): TypeLambda<T, T> => {
+          return (startingValue: T): T => {
             let result = startingValue;
             for (let item of list) {
               result = op.apply(result).apply(item);
@@ -5864,13 +5740,12 @@ let operatorRegistry: TypeOperatorRegistry = {
             to: { type: "Any", typeID: 1 },
           },
         },
-
         globalMap
       ),
       symbol: "reduce1",
       interactName: "operatorReduce1",
-      function: (op) => {
-        return (list) => {
+      function: <T>(op: Operator): TypeLambda<Array<T>, T> => {
+        return (list: Array<T>): T => {
           list = [...list];
           let result = list.shift();
           for (let item of list) {
@@ -5895,12 +5770,11 @@ let operatorRegistry: TypeOperatorRegistry = {
             to: { type: "Any", typeID: 2 },
           },
         },
-
         globalMap
       ),
       symbol: "op_by_name",
       interactName: "stringOperatorByName",
-      function: (name) => {
+      function: (name: TypeOperatorInternalName): Operator => {
         return operatorRegistry.baseOperators.find(
           (op) => op.internalName === name
         );
@@ -5919,13 +5793,12 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Integer",
           },
         },
-
         globalMap
       ),
       symbol: "NBT{}.size",
       interactName: "nbtSize",
-      function: (nbt) => {
-        return Object.keys(nbt).length;
+      function: (nbt: NBT): Integer => {
+        return new Integer(Object.keys(nbt).length);
       },
     }),
     NBTKeys: new Operator({
@@ -5939,12 +5812,11 @@ let operatorRegistry: TypeOperatorRegistry = {
           },
           to: { type: "List", listType: { type: "String" } },
         },
-
         globalMap
       ),
       symbol: "NBT{}.keys",
       interactName: "nbtKeys",
-      function: (nbt) => {
+      function: (nbt: NBT): Array<string> => {
         return Object.keys(nbt);
       },
     }),
@@ -5967,13 +5839,12 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "NBT{}.has_key",
       interactName: "nbtHasKey",
-      function: (nbt) => {
-        return (key) => {
+      function: (nbt: NBT): TypeLambda<string, boolean> => {
+        return (key: string): boolean => {
           return nbt.hasOwnProperty(key);
         };
       },
@@ -5997,16 +5868,16 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "NBT{}.type",
       interactName: "nbtType",
-      function: (nbt) => {
-        return (key) => {
+      function: (nbt: NBT): TypeLambda<string, string> => {
+        return (key: string): string => {
           if (!nbt.hasOwnProperty(key)) {
             throw new Error(`${key} does not exist in ${JSON.stringify(nbt)}`);
           }
+          return nbt.getKey(key).getType();
         };
       },
     }),
@@ -6029,14 +5900,13 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "NBT{}.get_tag",
       interactName: "nbtGetTag",
-      function: (nbt) => {
-        return (key) => {
-          return nbt[key];
+      function: (nbt: NBT): TypeLambda<string, NBT> => {
+        return (key: string): NBT => {
+          return nbt.getKey(key);
         };
       },
     }),
@@ -6059,14 +5929,13 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "NBT{}.get_boolean",
       interactName: "nbtGetBoolean",
-      function: (nbt) => {
-        return (key) => {
-          return nbt[key];
+      function: (nbt: NBT): TypeLambda<string, boolean> => {
+        return (key: string): boolean => {
+          return nbt.getKey(key).getRawValue();
         };
       },
     }),
@@ -6089,18 +5958,17 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "NBT{}.get_integer",
       interactName: "nbtGetInteger",
-      function: (nbt) => {
-        return (key) => {
-          let value = nbt[key];
-          if (value.type === "integer") {
-            return Integer(value.value);
+      function: (nbt: NBT): TypeLambda<string, Integer> => {
+        return (key: string): Integer => {
+          let value = nbt.getKey(key);
+          if (value.getType() === "Integer") {
+            return value.getRawValue();
           }
-          throw new Error(`${key} is not an integer in ${nbt.stringify()}`);
+          throw new Error(`${key} is not an integer in ${nbt.toJSON()}`);
         };
       },
     }),
@@ -6123,18 +5991,17 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "NBT{}.get_long",
       interactName: "nbtGetLong",
-      function: (nbt) => {
-        return (key) => {
-          let value = nbt[key];
-          if (value.type === "long") {
-            return new Long(value.value);
+      function: (nbt: NBT): TypeLambda<string, Long> => {
+        return (key: string): Long => {
+          let value = nbt.getKey(key);
+          if (value.getType() === "Long") {
+            return value.getRawValue();
           }
-          throw new Error(`${key} is not a long in ${nbt.stringify(nbt)}`);
+          throw new Error(`${key} is not a long in ${nbt.toJSON(nbt)}`);
         };
       },
     }),
@@ -6157,18 +6024,17 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "NBT{}.get_double",
       interactName: "nbtGetDouble",
-      function: (nbt) => {
-        return (key) => {
-          let value = nbt[key];
-          if (value.type === "double") {
-            return Double(value.value);
+      function: (nbt: NBT): TypeLambda<string, Double> => {
+        return (key: string): Double => {
+          let value = nbt.getKey(key);
+          if (value.getType() === "Double") {
+            return value.getRawValue();
           }
-          throw new Error(`${key} is not a double in ${nbt.stringify()}`);
+          throw new Error(`${key} is not a double in ${nbt.toJSON()}`);
         };
       },
     }),
@@ -6191,14 +6057,13 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "NBT{}.get_string",
       interactName: "nbtGetString",
-      function: (nbt) => {
-        return (key) => {
-          return nbt[key];
+      function: (nbt: NBT): TypeLambda<string, string> => {
+        return (key: string): string => {
+          return nbt.getKey(key);
         };
       },
     }),
@@ -6221,15 +6086,14 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "NBT{}.get_compound",
       interactName: "nbtGetCompound",
-      function: (nbt) => {
-        return (key) => {
-          return new NBT(nbt[key]);
-        };
+      function: (nbt: NBT): TypeLambda<string, NBT> => {
+        return (key: string): NBT => {
+          return nbt.getKey(string);
+        },
       },
     }),
     compoundValueListNBT: new Operator({
@@ -6249,20 +6113,19 @@ let operatorRegistry: TypeOperatorRegistry = {
             to: { type: "List", listType: { type: "NBT" } },
           },
         },
-
         globalMap
       ),
       symbol: "NBT{}.get_list_tag",
       interactName: "nbtGetListTag",
-      function: (nbt) => {
-        return (key) => {
-          let value = nbt[key];
-          let list = value.list;
-          if (value.ListType != "nbt")
+      function: (nbt: NBT): TypeLambda<string, Array<NBT>> => {
+        return (key: string): Array<NBT> => {
+          let value = nbt.getKey();
+          let list = value.getRawValue();
+          if (value.getType() != "Array<NBT>")
             throw new Error(
-              `${key} is not a list of NBT in ${nbt.stringify()}`
+              `${key} is not a list of NBT in ${nbt.toJSON()}`
             );
-          return list.map((v) => new NBT(v));
+          return list;
         };
       },
     }),
@@ -6283,20 +6146,19 @@ let operatorRegistry: TypeOperatorRegistry = {
             to: { type: "List", listType: { type: "Integer" } },
           },
         },
-
         globalMap
       ),
       symbol: "NBT{}.get_list_byte",
       interactName: "nbtGetListByte",
-      function: (nbt) => {
-        return (key) => {
-          let value = nbt[key];
-          let list = value.list;
-          if (value.ListType != "byte")
+      function: (nbt: NBT) => {
+        return (key: string): Integer => {
+          let value = nbt.getKey(key);
+          let list = value.getRawValue();
+          if (nbt.getType(key) != "Byte")
             throw new Error(
-              `${key} is not a list of byte in ${nbt.stringify()}`
+              `${key} is not a list of byte in ${nbt.toJSON()}`
             );
-          return list.map((v) => Integer(v));
+          return list;
         };
       },
     }),

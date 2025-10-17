@@ -1,3 +1,5 @@
+import { NBT } from "./NBT";
+
 export class Block {
   blockName?: string;
   static defaultProps = {
@@ -14,8 +16,8 @@ export class Block {
     blockName: "",
   };
 
-  constructor(newProps = {}, oldItem = {}) {
-    Object.assign(this, Block.defaultProps, oldItem, newProps);
+  constructor(newProps = new NBT({}), oldBlock = new Block(new NBT({}))) {
+    Object.assign(this, Block.defaultProps, oldBlock.toJSON(), newProps.toJSON());
 
     for (const key of Object.keys(Block.defaultProps)) {
       const capKey = key.charAt(0).toUpperCase() + key.slice(1);

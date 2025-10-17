@@ -2,7 +2,6 @@ import {
   TypeBit,
   TypeInt32,
   TypeInt64,
-  TypeLambda,
   TypeNumber,
   TypeNumericString,
 } from "../types.ts";
@@ -60,24 +59,6 @@ export abstract class NumberBase {
       }
     }
     return flipped as TypeInt64 | TypeInt32;
-  }
-
-  /**
-   * Add two non-negative decimal strings.
-   */
-  private static addDecimalStrings(a: string, b: string): string {
-    let carry = 0;
-    let result = "";
-    let i = a.length - 1,
-      j = b.length - 1;
-    while (i >= 0 || j >= 0 || carry > 0) {
-      const da = i >= 0 ? a.charCodeAt(i--) - 48 : 0;
-      const db = j >= 0 ? b.charCodeAt(j--) - 48 : 0;
-      const sum = da + db + carry;
-      result = String.fromCharCode(48 + (sum % 10)) + result;
-      carry = Math.floor(sum / 10);
-    }
-    return result.replace(/^0+/, "") || "0";
   }
 
   /**

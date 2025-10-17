@@ -29,8 +29,8 @@ export class Item {
     itemName: "",
   };
 
-  constructor(newProps = {}, oldItem = {}) {
-    Object.assign(this, Item.defaultProps, oldItem, newProps);
+  constructor(newProps = new NBT({}), oldItem = new Item((new NBT({})))) {
+    Object.assign(this, Item.defaultProps.toJSON(), oldItem.toJSON(), newProps);
 
     for (const key of Object.keys(Item.defaultProps)) {
       const capKey = key.charAt(0).toUpperCase() + key.slice(1);

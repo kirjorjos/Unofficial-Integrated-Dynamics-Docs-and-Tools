@@ -144,7 +144,6 @@ export class ParsedSignature {
       }
     }
 
-    // TODO: understand resolve and maybe change this
     return this.typeMap.resolve(current.to);
   }
 
