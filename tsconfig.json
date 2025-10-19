@@ -1,0 +1,55 @@
+{
+  "include": [
+    "TSFiles/**/*.ts",
+    "TSFiles/**/*.d.ts"
+  ],
+  "compilerOptions": {
+    "outDir": "docs",
+    "rootDir": "TSFiles",
+    "baseUrl": ".",
+    "paths": {
+      "*": [
+        "./TSFiles/*"
+      ]
+    },
+    "noEmit": false,
+    "noEmitOnError": true,
+    "removeComments": false,
+    "preserveConstEnums": true,
+    "importHelpers": true,
+    "emitBOM": false,
+    "newLine": "lf",
+    "downlevelIteration": false,
+    "module": "es2022",
+    "target": "es2022",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "allowImportingTsExtensions": false,
+    "lib": [
+      "es2022",
+      "dom"
+    ],
+    "typeRoots": [
+      "./TSFiles/types",
+      "./node_modules/@types"
+    ],
+    "types": [],
+    "skipLibCheck": true,
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "forceConsistentCasingInFileNames": true,
+    "disableSizeLimit": true,
+    "incremental": false,
+    "assumeChangesOnlyAffectDirectDependencies": false,
+    "useDefineForClassFields": true,
+    "noErrorTruncation": false,
+    "traceResolution": false
+  },
+  "compileOnSave": false
+}

@@ -1,4 +1,3 @@
-import { TypeRawSignatureAST, TypeTypeMap } from "../types";
 import { TypeMap } from "./TypeMap";
 
 export class ParsedSignature {

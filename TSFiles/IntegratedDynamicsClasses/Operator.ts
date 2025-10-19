@@ -1,4 +1,3 @@
-import { IntegratedValue, TypeLambda, TypeRawSignatureAST } from "../types";
 import { ParsedSignature } from "../HelperClasses/ParsedSignature";
 import { TypeMap } from "../HelperClasses/TypeMap";
 
@@ -56,7 +55,7 @@ export class Operator extends Function {
     return this.fn(...args);
   }
 
-  apply(arg: IntegratedValue): IntegratedValue {
+  override apply(arg: IntegratedValue): IntegratedValue {
     const parsedSignature = this.parsedSignature.apply(arg);
     const newFn = (...rest: any[]) => this.fn(arg, ...rest);
 

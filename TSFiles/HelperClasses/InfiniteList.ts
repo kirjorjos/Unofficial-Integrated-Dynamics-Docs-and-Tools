@@ -1,7 +1,5 @@
-import { TypeLambda } from "../types";
-
 export class InfiniteList<T> extends Array<T> {
-  private transforms: Array<TypeLambda<any, any>> = [];
+  transforms: Array<TypeLambda<any, any>> = [];
 
   constructor(
     public initial: T,
@@ -72,14 +70,14 @@ export class InfiniteList<T> extends Array<T> {
 
     while (target.length <= index) {
       const prev = target[target.length - 1];
-      target.push(func(prev));
+      target.push(func(prev as T));
     }
 
     let value = target[index];
     for (const f of transforms) {
       value = f(value);
     }
-    return value;
+    return value as T;
   }
 
   take(n: number): T[] {

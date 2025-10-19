@@ -1,43 +1,63 @@
-import { TypeInt64, TypeNumericString } from "../types";
-import { Integer } from "./Integer";
-import { Long } from "./Long";
-import { NumberBase } from "../HelperClasses/NumberBase";
+export class Double implements NumberBase<Double> {
 
-export class Double extends NumberBase {
   value: number;
 
-  public constructor(decimal: TypeNumericString) {
-    super();
-    this.value = parseInt(decimal, 2);
-    this.type = "Double";
-    this.order = 2;
+  constructor(decimal: TypeNumericString) {
+    this.value = parseInt(decimal);
+    this.initializeBits();
   }
 
-  protected initializeBits(decimal: string): TypeInt64 {
+  initializeBits(): TypeInt64 {
     return "".padStart(64, "0").split("") as unknown as TypeInt64;
   }
 
+  getBits(): TypeInt64 {
+    const buffer = new ArrayBuffer(8);
+    const view = new DataView(buffer);
+    view.setFloat64(0, this.value, false);
+  
+    const bits: number[] = [];
+    for (let byteIndex = 0; byteIndex < 8; byteIndex++) {
+      const byte = view.getUint8(byteIndex);
+      for (let bitIndex = 7; bitIndex >= 0; bitIndex--) {
+        bits.push((byte >> bitIndex) & 1);
+      }
+    }
+  
+    return bits as TypeInt64;
+  }
+
+  getType(): "Double" {
+    return "Double";
+  }
+
+  getOrder(): 2 {
+    return 2;
+  }
+
   // Double → Long
-  public toLong(): Long {
+  toLong(): Promise<Long> {
     const n = Math.trunc(this.value); // Java semantics: truncate toward zero
-    return new Long(n.toString() as TypeNumericString);
+    return import("./Long").then(obj => {return new obj.Long(n.toString() as TypeNumericString)});
   }
 
   // Double → Integer
-  public toInteger(): Integer {
+  toInteger(): Promise<Integer> {
     const n = Math.trunc(this.value); // safe for 32-bit
-    return new Integer(n.toString() as TypeNumericString);
+    return import("./Integer").then(obj => {return new obj.Integer(n.toString() as TypeNumericString)});
   }
 
-  public add(rawNum1: NumberBase, rawNum2: NumberBase): Double {
-    let num1 = rawNum1 as Double;
-    let num2 = rawNum2 as Double;
-    return new Double((num1.value + num2.value + "") as TypeNumericString);
+  toDouble(): Promise<Double> {
+    return new Promise(resolve =>
+      resolve(new Double(`${this.value}` as TypeNumericString))
+    )
   }
 
-  public subtract(rawNum1: NumberBase, rawNum2: NumberBase): Double {
-    let num1 = rawNum1 as Double;
-    let num2 = rawNum2 as Double;
-    return new Double((num1.value - num2.value + "") as TypeNumericString);
+  add(num: Double): Double {
+    return new Double((num.value + this.value + "") as TypeNumericString);
+  }
+
+  subtract(num: Double): Double {
+    return new Double((num.value - this.value + "") as TypeNumericString)
   }
 }
