@@ -1,4 +1,5 @@
 import { Block } from "./Block";
+import { NBT } from "./NBT";
 
 export class Item {
   itemName?: string;
@@ -30,7 +31,7 @@ export class Item {
   };
 
   constructor(newProps = new NBT({}), oldItem = new Item((new NBT({})))) {
-    Object.assign(this, Item.defaultProps.toJSON(), oldItem.toJSON(), newProps);
+    Object.assign(this, Item.defaultProps, oldItem.toJSON(), newProps);
 
     for (const key of Object.keys(Item.defaultProps)) {
       const capKey = key.charAt(0).toUpperCase() + key.slice(1);
@@ -48,14 +49,45 @@ export class Item {
     }
   }
 
-  getStrengthVsBlock(block: any) {
-    // Any because typescript is a b***h and won't see the block type
+  toJSON(): any {
+    const walk = (obj: any): any => {
+      if (
+        obj === null ||
+        typeof obj === "string" ||
+        typeof obj === "number" ||
+        typeof obj === "boolean"
+      ) {
+        return obj;
+      }
+
+      if (obj instanceof NBT) {
+        return obj.toJSON();
+      }
+
+      if (Array.isArray(obj)) {
+        return obj.map(v => walk(v));
+      }
+
+      if (typeof obj === "object") {
+        const result: Record<string, any> = {};
+        for (const [key, value] of Object.entries(obj)) {
+          result[key] = walk(value);
+        }
+        return result;
+      }
+
+      return undefined;
+    };
+
+    return walk(this);
+  }
+
+  getStrengthVsBlock(block: Block) {
     if (!(block instanceof Block)) throw new Error("block is not a Block");
     throw new Error("getStrengthVsBlock method not implemented");
   }
 
-  canHarvestBlock(block: any) {
-    // Any because typescript is a b***h and won't see the block type
+  canHarvestBlock() {
     throw new Error("canHarvestBlock method not implemented");
   }
 

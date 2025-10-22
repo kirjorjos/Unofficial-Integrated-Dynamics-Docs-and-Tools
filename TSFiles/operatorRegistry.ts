@@ -3,19 +3,22 @@
  * Test Map and pipe
  */
 
-import { InfiniteList } from "./HelperClasses/InfiniteList";
-import { Operator } from "./IntegratedDynamicsClasses/Operator";
-import { ParsedSignature } from "./HelperClasses/ParsedSignature";
-import { Block } from "./IntegratedDynamicsClasses/Block";
-import { Item } from "./IntegratedDynamicsClasses/Item";
-import { TypeMap } from "./HelperClasses/TypeMap";
-import { Double } from "./JavaNumberClasses/Double";
-import { Integer } from "./JavaNumberClasses/Integer";
-import { JavaMath } from "./HelperClasses/Math";
-import RE2 from "re2";
-import { NBT } from "./IntegratedDynamicsClasses/NBT";
-import { Entity } from "./IntegratedDynamicsClasses/Entity";
-import { Fluid } from "./IntegratedDynamicsClasses/Fluid";
+import { InfiniteList } from "HelperClasses/InfiniteList";
+import { Operator } from "IntegratedDynamicsClasses/Operator";
+import { ParsedSignature } from "HelperClasses/ParsedSignature";
+import { Block } from "IntegratedDynamicsClasses/Block";
+import { Item } from "IntegratedDynamicsClasses/Item";
+import { TypeMap } from "HelperClasses/TypeMap";
+import { Double } from "JavaNumberClasses/Double";
+import { Integer } from "JavaNumberClasses/Integer";
+import { NBT } from "IntegratedDynamicsClasses/NBT";
+import { Entity } from "IntegratedDynamicsClasses/Entity";
+import { Fluid } from "IntegratedDynamicsClasses/Fluid";
+import { JavaMath } from "HelperClasses/Math";
+import { RE2 } from "re2-wasm";
+import { Long } from "JavaNumberClasses/Long";
+import { Ingredients } from "IntegratedDynamicsClasses/Ingredients";
+import { Recipe } from "IntegratedDynamicsClasses/Recipe";
 
 let globalMap = new TypeMap();
 
@@ -193,8 +196,8 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "+",
       interactName: "numberAdd",
-      function: (num1: TypeNumber): TypeLambda<TypeNumber, TypeNumber> => {
-        return (num2: TypeNumber): TypeNumber => {
+      function: async (num1: TypeNumber): Promise<TypeLambda<TypeNumber, Promise<TypeNumber>>> => {
+        return async (num2: TypeNumber): Promise<TypeNumber> => {
           return JavaMath.add(num1, num2);
         };
       },
@@ -222,8 +225,8 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "-",
       interactName: "numberSubtract",
-      function: (num1: TypeNumber): TypeLambda<TypeNumber, TypeNumber> => {
-        return (num2: TypeNumber): TypeNumber => {
+      function: (num1: TypeNumber): TypeLambda<TypeNumber, Promise<TypeNumber>> => {
+        return (num2: TypeNumber): Promise<TypeNumber> => {
           return JavaMath.subtract(num1, num2);
         };
       },
@@ -361,7 +364,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "++",
       interactName: "numberIncrement",
-      function: (num1: TypeNumber): TypeNumber => {
+      function: async (num1: TypeNumber): Promise<TypeNumber> => {
         return JavaMath.add(num1, new Integer(1));
       },
     }),
@@ -382,7 +385,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "--",
       interactName: "numberDecrement",
-      function: (num1: TypeNumber): TypeNumber => {
+      function: async (num1: TypeNumber): Promise<TypeNumber> => {
         return JavaMath.subtract(num1, new Integer(1));
       },
     }),
@@ -1143,7 +1146,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       function: (regexString: string): TypeLambda<string, Array<string>> => {
         return (fullString: string): Array<string> => {
           const regex = new RE2(regexString, "u");
-          return fullString.split(regex);
+          return regex.split(fullString) as string[];
         };
       },
     }),
@@ -1263,7 +1266,7 @@ let operatorRegistry: TypeOperatorRegistry = {
           const regex = new RE2(regexString, "u");
           const match = regex.exec(fullString);
           if (match) {
-            return match;
+            return match as Array<string>;
           } else {
             throw new Error(
               `No match found for group in regex "${regexString}" on string "${fullString}"`
@@ -1694,7 +1697,7 @@ let operatorRegistry: TypeOperatorRegistry = {
               `Index ${index} out of bounds for list of length ${list.length}`
             );
           }
-          return list[index.toDecimal()];
+          return list[index.toDecimal()] as T;
         };
       },
     }),
@@ -1729,7 +1732,7 @@ let operatorRegistry: TypeOperatorRegistry = {
             if (JavaMath.lt(index, new Integer(0)) || JavaMath.gte(index, new Integer(list.length))) {
               return defaultValue;
             }
-            return list[index.toDecimal()];
+            return list[index.toDecimal()] as T;
           };
         };
       },
@@ -1842,7 +1845,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       interactName: "listCountPredicate",
       function: <T>(list: Array<T>): TypeLambda<TypeLambda<T, boolean>, Integer> => {
         return (predicate: Predicate): Integer => {
-          return new Integer(list.filter((item) => predicatea.apply(item)).length);
+          return new Integer(list.filter((item) => predicate.apply(item)).length);
         };
       },
     }),
@@ -1943,7 +1946,7 @@ let operatorRegistry: TypeOperatorRegistry = {
         if (list.length === 0) {
           throw new Error("head called on an empty list");
         }
-        return list[0];
+        return list[0] as T;
       },
     }),
     tail: new Operator({
@@ -2141,7 +2144,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "=multiset=",
       interactName: "listEquals_multiset",
-      function: <T>(list1: Array<T>): TypeLambda<Array<T>, boolean> => {
+      function: <T extends { equals: Function | undefined }>(list1: Array<T>): TypeLambda<Array<T>, boolean> => {
         return (list2: Array<T>): boolean => {
           const newList1 = [...list1].sort();
           const newList2 = [...list2].sort();
@@ -2149,11 +2152,13 @@ let operatorRegistry: TypeOperatorRegistry = {
             return false;
           }
           for (let i = 0; i < newList1.length; i++) {
-            if (
-              Object.keys(newList1[i]).includes("equals") &&
-              typeof newList1[i].equals === "function"
+            if (!newList1[i] || !newList2[i]) {
+              return false;
+            } else if (
+              "equals" in (newList1[i] as T) &&
+              typeof (newList1[i] as T).equals === "function"
             ) {
-              if (!newList1[i].equals(newList2[i])) {
+              if (!((newList1[i] as T).equals as Function)(newList2[i])) {
                 return false;
               }
             } else if (newList1[i] !== newList2[i]) {
@@ -2354,7 +2359,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "block_by_name",
       interactName: "stringBlockByName",
-      function: (name: string): never => {
+      function: (): never => {
         throw new Error(
           "Block by name is infeasible without a registry. This is a placeholder function."
         );
@@ -2406,7 +2411,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       interactName: "blockWithProperties",
       function: (block: Block) => {
         return (properties: NBT): Block => {
-          return new Block({ properties }, block);
+          return new Block(properties, block);
         };
       },
     }),
@@ -2427,7 +2432,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "block_all_props",
       interactName: "blockPossibleProperties",
-      function: (block: Block): never => {
+      function: (): never => {
         throw new Error(
           "Block possible properties is infeasible without a registry. This is a placeholder function."
         );
@@ -2467,7 +2472,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "block_tag_values",
       interactName: "stringBlocksByTag",
-      function: (tag: string): never => {
+      function: (): never => {
         throw new Error(
           "Block tag values is infeasible without a registry. This is a placeholder function."
         );
@@ -2736,8 +2741,8 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "strength",
       interactName: "itemstackStrength",
-      function: (item: Item): TypeLambda<Block, Double> => {
-        return (block: Block): Double => {
+      function: (item: Item): TypeLambda<Block, void> => {
+        return (block: Block): void => {
           return item.getStrengthVsBlock(block);
         };
       },
@@ -2769,9 +2774,9 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "can_harvest",
       interactName: "itemstackCanHarvest",
-      function: (item: Item): TypeLambda<Block, boolean> => {
-        return (block: Block): boolean => {
-          return item.canHarvestBlock(block);
+      function: (item: Item): TypeLambda<Block, void> => {
+        return (): void => {
+          return item.canHarvestBlock();
         };
       },
     }),
@@ -2793,7 +2798,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       symbol: "block",
       interactName: "itemstackBlock",
       function: (item: Item): Block => {
-        return new Block({}, item);
+        return new Block(new NBT({}), item.getBlock());
       },
     }),
     isFluidstack: new Operator({
@@ -3101,7 +3106,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "item_tag_values",
       interactName: "stringItemsByTag",
-      function: (tag: string): never => {
+      function: (): never => {
         throw new Error(
           "Item tag values is infeasible without a registry. This is a placeholder function."
         );
@@ -3137,7 +3142,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       interactName: "itemstackWithSize",
       function: (item: Item): TypeLambda<Integer, Item> => {
         return (size: Integer): Item => {
-          return new Item({ size }, item);
+          return new Item(new NBT({ size }), item);
         };
       },
     }),
@@ -3322,7 +3327,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "item_by_name",
       interactName: "stringItemByName",
-      function: (name: string): never => {
+      function: (): never => {
         throw new Error(
           "Item by name is infeasible without a registry. This is a placeholder function."
         );
@@ -3531,7 +3536,7 @@ let operatorRegistry: TypeOperatorRegistry = {
           return (value: NBT): Item => {
             const nbt = item.getNBT() || {};
             nbt[key] = value;
-            return new Item({ nbt }, item);
+            return new Item(new NBT({ nbt }), item);
           };
         };
       },
@@ -3586,7 +3591,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "entity_item_tooltip",
       interactName: "entityEntityItemTooltip",
-      function: (entity: Entity): TypeLambda<Item, Array<string>> => {
+      function: (): TypeLambda<Item, Array<string>> => {
         return (item: Item): Array<string> => {
           console.warn(
             "Entity item tooltip is not fully supported. Returning item tooltip only."
@@ -4935,7 +4940,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       interactName: "fluidstackWithAmount",
       function: (fluid: Fluid): TypeLambda<Integer, Fluid> => {
         return (amount: Integer): Fluid => {
-          return new Fluid({ amount }, fluid);
+          return new Fluid(new NBT({ amount }), fluid);
         };
       },
     }),
@@ -5110,7 +5115,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "fluid_tag_values",
       interactName: "stringFluidsByTag",
-      function: (tag: string): never => {
+      function: (): never => {
         throw new Error(
           "Fluid tag values is infeasible without a registry. This is a placeholder function."
         );
@@ -5610,9 +5615,9 @@ let operatorRegistry: TypeOperatorRegistry = {
       symbol: ".2",
       interactName: "operatorPipe2",
       serializer: "integrateddynamics:combined.pipe",
-      function: (f: Operator): TypeLambda<Operator, TypeLambda<Operator, Operator>> => {
-        return (g: Operator): TypeLambda<Operator, Operator> => {
-          return (h: Operator): Operator => {
+      function: (f: Operator): TypeLambda<Operator, TypeLambda<Operator, TypeLambda<IntegratedValue, IntegratedValue>>> => {
+        return (g: Operator): TypeLambda<Operator, TypeLambda<IntegratedValue, IntegratedValue>> => {
+          return (h: Operator): TypeLambda<IntegratedValue, IntegratedValue> => {
             f.parsedSignature.typeMap.unify(
               f.parsedSignature.getOutput(),
               h.parsedSignature.getInput(0)
@@ -5740,7 +5745,7 @@ let operatorRegistry: TypeOperatorRegistry = {
           for (let item of list) {
             result = op.apply(result).apply(item);
           }
-          return result;
+          return result as T;
         };
       },
     }),
@@ -5764,8 +5769,8 @@ let operatorRegistry: TypeOperatorRegistry = {
       symbol: "op_by_name",
       interactName: "stringOperatorByName",
       function: (name: TypeOperatorInternalName): Operator => {
-        return operatorRegistry.baseOperators.find(
-          (op) => op.internalName === name
+        return operatorRegistry.baseOperators["find"](
+          (op: Operator) => op.internalName === name
         );
       },
     }),
@@ -6080,7 +6085,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       symbol: "NBT{}.get_compound",
       interactName: "nbtGetCompound",
       function: (nbt: NBT): TypeLambda<string, NBT> => {
-        return (key: string): NBT => {
+        return (string: string): NBT => {
           return nbt.getValue(string);
         };
       },
@@ -6205,15 +6210,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT{}.get_list_long",
       interactName: "nbtGetListLong",
-      function: (nbt) => {
-        return (key) => {
-          let value = nbt[key];
+      function: (nbt: NBT): TypeLambda<string, Long> => {
+        return (key: string): Long => {
+          let value = nbt.getValue(key);
           let list = value.list;
           if (value.ListType != "long")
             throw new Error(
-              `${key} is not a list of long in ${nbt.stringify()}`
+              `${key} is not a list of long in ${nbt.toJSON()}`
             );
-          return list.map((v) => new Long(v));
+          return list;
         };
       },
     }),
@@ -6236,13 +6241,12 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "NBT{}.without",
       interactName: "nbtWithout",
-      function: (nbt) => {
-        return (key) => {
+      function: (nbt: NBT): TypeLambda<string, NBT> => {
+        return (key: string): NBT => {
           return nbt.remove(key);
         };
       },
@@ -6272,11 +6276,17 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "NBT{}.with_boolean",
       interactName: "nbtWithBoolean",
+      function: (nbt: NBT): TypeLambda<string, TypeLambda<boolean, NBT>> => {
+        return (key: string): TypeLambda<boolean, NBT> => {
+          return (value: boolean): NBT => {
+            return nbt.setValue(key, value);
+          }
+        }
+      }
     }),
     NBTWithShort: new Operator({
       internalName: "integrateddynamics:nbt_compound_with_short",
@@ -6303,11 +6313,17 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "NBT{}.with_short",
       interactName: "nbtWithShort",
+      function: (nbt: NBT): TypeLambda<string, TypeLambda<Integer, NBT>> => {
+        return (key: string): TypeLambda<Integer, NBT> => {
+          return (value: Integer): NBT => {
+            return nbt.setValue(key, value);
+          }
+        }
+      }
     }),
     NBTWithInteger: new Operator({
       internalName: "integrateddynamics:nbt_compound_with_integer",
@@ -6334,11 +6350,17 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "NBT{}.with_integer",
       interactName: "nbtWithInteger",
+      function: (nbt: NBT): TypeLambda<string, TypeLambda<Integer, NBT>> => {
+        return (key: string): TypeLambda<Integer, NBT> => {
+          return (value: Integer): NBT => {
+            return nbt.setValue(key, value);
+          }
+        }
+      }
     }),
     NBTWithLong: new Operator({
       internalName: "integrateddynamics:nbt_compound_with_long",
@@ -6365,11 +6387,17 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "NBT{}.with_long",
       interactName: "nbtWithLong",
+      function: (nbt: NBT): TypeLambda<string, TypeLambda<Long, NBT>> => {
+        return (key: string): TypeLambda<Long, NBT> => {
+          return (value: Long): NBT => {
+            return nbt.setValue(key, value);
+          }
+        }
+      }
     }),
     NBTWithDouble: new Operator({
       internalName: "integrateddynamics:nbt_compound_with_double",
@@ -6396,11 +6424,17 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "NBT{}.with_double",
       interactName: "nbtWithDouble",
+      function: (nbt: NBT): TypeLambda<string, TypeLambda<Double, NBT>> => {
+        return (key: string): TypeLambda<Double, NBT> => {
+          return (value: Double): NBT => {
+            return nbt.setValue(key, value);
+          }
+        }
+      }
     }),
     NBTWithFloat: new Operator({
       internalName: "integrateddynamics:nbt_compound_with_float",
@@ -6427,11 +6461,17 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "NBT{}.with_float",
       interactName: "nbtWithFloat",
+      function: (nbt: NBT): TypeLambda<string, TypeLambda<Double, NBT>> => {
+        return (key: string): TypeLambda<Double, NBT> => {
+          return (value: Double): NBT => {
+            return nbt.setValue(key, value);
+          }
+        }
+      }
     }),
     NBTWithString: new Operator({
       internalName: "integrateddynamics:nbt_compound_with_string",
@@ -6458,11 +6498,17 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "NBT{}.with_string",
       interactName: "nbtWithString",
+      function: (nbt: NBT): TypeLambda<string, TypeLambda<string, NBT>> => {
+        return (key: string): TypeLambda<string, NBT> => {
+          return (value: string): NBT => {
+            return nbt.setValue(key, value);
+          }
+        }
+      }
     }),
     NBTWithNBT: new Operator({
       internalName: "integrateddynamics:nbt_compound_with_tag",
@@ -6489,11 +6535,17 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "NBT{}.with_tag",
       interactName: "nbtWithTag",
+      function: (nbt: NBT): TypeLambda<string, TypeLambda<NBT, NBT>> => {
+        return (key: string): TypeLambda<NBT, NBT> => {
+          return (value: NBT): NBT => {
+            return nbt.setValue(key, value);
+          }
+        }
+      }
     }),
     NBTWithNBTList: new Operator({
       internalName: "integrateddynamics:nbt_compound_with_list_tag",
@@ -6518,11 +6570,17 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "NBT{}.with_tag_list",
       interactName: "nbtWithTagList",
+      function: (nbt: NBT): TypeLambda<string, TypeLambda<Array<NBT>, NBT>> => {
+        return (key: string): TypeLambda<Array<NBT>, NBT> => {
+          return (value: Array<NBT>): NBT => {
+            return nbt.setValue(key, value);
+          }
+        }
+      }
     }),
     NBTWithByteList: new Operator({
       internalName: "integrateddynamics:nbt_compound_with_list_byte",
@@ -6547,11 +6605,17 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "NBT{}.with_byte_list",
       interactName: "nbtWithByteList",
+      function: (nbt: NBT): TypeLambda<string, TypeLambda<Array<Integer>, NBT>> => {
+        return (key: string): TypeLambda<Array<Integer>, NBT> => {
+          return (value: Array<Integer>): NBT => {
+            return nbt.setValue(key, value);
+          }
+        }
+      }
     }),
     NBTWithIntegerList: new Operator({
       internalName: "integrateddynamics:nbt_compound_with_list_int",
@@ -6576,11 +6640,17 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "NBT{}.with_int_list",
       interactName: "nbtWithIntList",
+      function: (nbt: NBT): TypeLambda<string, TypeLambda<Array<Integer>, NBT>> => {
+        return (key: string): TypeLambda<Array<Integer>, NBT> => {
+          return (value: Array<Integer>): NBT => {
+            return nbt.setValue(key, value);
+          }
+        }
+      }
     }),
     NBTWithLongList: new Operator({
       internalName: "integrateddynamics:nbt_compound_with_list_long",
@@ -6605,11 +6675,17 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "NBT{}.with_list_long",
       interactName: "nbtWithListLong",
+      function: (nbt: NBT): TypeLambda<string, TypeLambda<Array<Long>, NBT>> => {
+        return (key: string): TypeLambda<Array<Long>, NBT> => {
+          return (value: Array<Long>): NBT => {
+            return nbt.setValue(key, value);
+          }
+        }
+      }
     }),
     NBTSubset: new Operator({
       internalName: "integrateddynamics:nbt_compound_subset",
@@ -6630,11 +6706,15 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "NBT{}.⊆",
       interactName: "nbtIsSubset",
+      function: (subSet: NBT): TypeLambda<NBT, boolean> => {
+        return (superSet: NBT): boolean => {
+          return superSet.compoundSubset(subSet);
+        }
+      }
     }),
     NBTUnion: new Operator({
       internalName: "integrateddynamics:nbt_compound_union",
@@ -6655,11 +6735,15 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "NBT{}.∪",
       interactName: "nbtUnion",
+      function: (nbt1: NBT): TypeLambda<NBT, NBT> => {
+        return (nbt2: NBT): NBT => {
+          return nbt1.compoundUnion(nbt2);
+        }
+      }
     }),
     NBTIntersection: new Operator({
       internalName: "integrateddynamics:nbt_compound_intersection",
@@ -6680,11 +6764,15 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "NBT{}.∩",
       interactName: "nbtIntersection",
+      function: (nbt1: NBT) => {
+        return (nbt2: NBT) => {
+          return nbt1.compoundIntersection(nbt2);
+        }
+      }
     }),
     NBTMinus: new Operator({
       internalName: "integrateddynamics:nbt_compound_minus",
@@ -6705,11 +6793,15 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "NBT{}.∖",
       interactName: "nbtMinus",
+      function: (nbt1: NBT) => {
+        return (nbt2: NBT) => {
+          return nbt1.compoundMinus(nbt2);
+        }
+      }
     }),
     nbtAsBoolean: new Operator({
       internalName: "integrateddynamics:nbt_as_boolean",
@@ -6724,11 +6816,17 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Boolean",
           },
         },
-
         globalMap
       ),
       symbol: "NBT.as_boolean",
       interactName: "nbtAsBoolean",
+      function: (nbt: NBT): boolean => {
+        if (nbt.getType() === "boolean") {
+          return nbt.getRawvalue();
+        } else {
+          return false;
+        }
+      }
     }),
     nbtAsByte: new Operator({
       internalName: "integrateddynamics:nbt_as_byte",
@@ -6743,11 +6841,17 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Integer",
           },
         },
-
         globalMap
       ),
       symbol: "NBT.as_byte",
       interactName: "nbtAsByte",
+      function: (nbt: NBT): Integer => {
+        if (nbt.getType() === "Integer") {
+          return nbt.getRawValue();
+        } else {
+          return new Integer(0);
+        }
+      }
     }),
     nbtAsShort: new Operator({
       internalName: "integrateddynamics:nbt_as_short",
@@ -6762,11 +6866,17 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Integer",
           },
         },
-
         globalMap
       ),
       symbol: "NBT.as_short",
       interactName: "nbtAsShort",
+      function: (nbt: NBT): Integer => {
+        if (nbt.getType() === "Integer") {
+          return nbt.getRawValue();
+        } else {
+          return new Integer(0);
+        }
+      }
     }),
     nbtAsInt: new Operator({
       internalName: "integrateddynamics:nbt_as_int",
@@ -6781,11 +6891,17 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Integer",
           },
         },
-
         globalMap
       ),
       symbol: "NBT.as_int",
       interactName: "nbtAsInt",
+      function: (nbt: NBT): Integer => {
+        if (nbt.getType() === "Integer") {
+          return nbt.getRawValue();
+        } else {
+          return new Integer(0);
+        }
+      }
     }),
     nbtAsLong: new Operator({
       internalName: "integrateddynamics:nbt_as_long",
@@ -6800,11 +6916,17 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Long",
           },
         },
-
         globalMap
       ),
       symbol: "NBT.as_long",
       interactName: "nbtAsLong",
+      function: (nbt: NBT): Long => {
+        if (nbt.getType() === "Long") {
+          return nbt.getRawValue();
+        } else {
+          return new Long(0);
+        }
+      }
     }),
     nbtAsDouble: new Operator({
       internalName: "integrateddynamics:nbt_as_double",
@@ -6819,11 +6941,17 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Double",
           },
         },
-
         globalMap
       ),
       symbol: "NBT.as_double",
       interactName: "nbtAsDouble",
+      function: (nbt: NBT): Double => {
+        if (nbt.getType() === "Double") {
+          return nbt.getRawValue();
+        } else {
+          return new Double(0);
+        }
+      }
     }),
     nbtAsFloat: new Operator({
       internalName: "integrateddynamics:nbt_as_float",
@@ -6838,11 +6966,17 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Double",
           },
         },
-
         globalMap
       ),
       symbol: "NBT.as_float",
       interactName: "nbtAsFloat",
+      function: (nbt: NBT): Double => {
+        if (nbt.getType() === "Double") {
+          return nbt.getRawValue();
+        } else {
+          return new Double(0);
+        }
+      }
     }),
     nbtAsString: new Operator({
       internalName: "integrateddynamics:nbt_as_string",
@@ -6857,11 +6991,17 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "String",
           },
         },
-
         globalMap
       ),
       symbol: "NBT.as_string",
       interactName: "nbtAsString",
+      function: (nbt: NBT): string => {
+        if (nbt.getType() === "string") {
+          return nbt.getRawValue();
+        } else {
+          return "";
+        }
+      }
     }),
     nbtAsTagList: new Operator({
       internalName: "integrateddynamics:nbt_as_tag_list",
@@ -6874,11 +7014,17 @@ let operatorRegistry: TypeOperatorRegistry = {
           },
           to: { type: "List", listType: { type: "NBT" } },
         },
-
         globalMap
       ),
       symbol: "NBT.as_tag_list",
       interactName: "nbtAsTagList",
+      function: (nbt: NBT): Array<NBT> => {
+        if (nbt.getType() === "Array<NBT>") {
+          return nbt.getRawValue();
+        } else {
+          return new Array<NBT>();
+        }
+      }
     }),
     nbtAsByteList: new Operator({
       internalName: "integrateddynamics:nbt_as_byte_list",
@@ -6891,11 +7037,17 @@ let operatorRegistry: TypeOperatorRegistry = {
           },
           to: { type: "List", listType: { type: "Integer" } },
         },
-
         globalMap
       ),
       symbol: "NBT.as_byte_list",
       interactName: "nbtAsByteList",
+      function: (nbt: NBT): Array<Integer> => {
+        if (nbt.getType() === "Array<Integer>") {
+          return nbt.getRawValue();
+        } else {
+          return new Array<Integer>();
+        }
+      }
     }),
     nbtAsIntList: new Operator({
       internalName: "integrateddynamics:nbt_as_int_list",
@@ -6913,6 +7065,13 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT.as_int_list",
       interactName: "nbtAsIntList",
+      function: (nbt: NBT): Array<Integer> => {
+        if (nbt.getType() === "Array<Integer>") {
+          return nbt.getRawValue();
+        } else {
+          return new Array<Integer>();
+        }
+      }
     }),
     nbtAsLongList: new Operator({
       internalName: "integrateddynamics:nbt_as_long_list",
@@ -6925,11 +7084,17 @@ let operatorRegistry: TypeOperatorRegistry = {
           },
           to: { type: "List", listType: { type: "Long" } },
         },
-
         globalMap
       ),
       symbol: "NBT.as_long_list",
       interactName: "nbtAsLongList",
+      function: (nbt: NBT): Array<Long> => {
+        if (nbt.getType() === "Array<Long>") {
+          return nbt.getRawValue();
+        } else {
+          return new Array<Long>();
+        }
+      }
     }),
     nbtFromBoolean: new Operator({
       internalName: "integrateddynamics:nbt_from_boolean",
@@ -6938,18 +7103,19 @@ let operatorRegistry: TypeOperatorRegistry = {
         {
           type: "Function",
           from: {
-            type: "NBT",
+            type: "Boolean",
           },
           to: {
-            kind: "Concrete",
-            name: "CHANGE ME",
+            type: "NBT",
           },
         },
-
         globalMap
       ),
       symbol: "NBT.from_boolean",
       interactName: "booleanAsNbt",
+      function: (bool: boolean): NBT => {
+        return new NBT(bool);
+      }
     }),
     nbtFromShort: new Operator({
       internalName: "integrateddynamics:nbt_from_short",
@@ -6964,11 +7130,13 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "NBT",
           },
         },
-
         globalMap
       ),
       symbol: "NBT.from_short",
       interactName: "shortAsNbt",
+      function: (short: Integer): NBT => {
+        return new NBT(short);
+      }
     }),
     nbtFromByte: new Operator({
       internalName: "integrateddynamics:nbt_from_byte",
@@ -6983,11 +7151,13 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "NBT",
           },
         },
-
         globalMap
       ),
       symbol: "NBT.from_byte",
       interactName: "byteAsNbt",
+      function: (byte: Integer): NBT => {
+        return new NBT(byte);
+      }
     }),
     nbtFromInt: new Operator({
       internalName: "integrateddynamics:nbt_from_int",
@@ -7002,11 +7172,13 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "NBT",
           },
         },
-
         globalMap
       ),
       symbol: "NBT.from_int",
       interactName: "integerAsNbt",
+      function: (int: Integer): NBT => {
+        return new NBT(int);
+      }
     }),
     nbtFromLong: new Operator({
       internalName: "integrateddynamics:nbt_from_long",
@@ -7021,11 +7193,13 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "NBT",
           },
         },
-
         globalMap
       ),
       symbol: "NBT.from_long",
       interactName: "longAsNbt",
+      function: (long: Long): NBT => {
+        return new NBT(long);
+      }
     }),
     nbtFromDouble: new Operator({
       internalName: "integrateddynamics:nbt_from_double",
@@ -7045,6 +7219,9 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT.from_double",
       interactName: "doubleAsNbt",
+      function: (double: Double): NBT => {
+        return new NBT(double);
+      }
     }),
     nbtFromFloat: new Operator({
       internalName: "integrateddynamics:nbt_from_float",
@@ -7059,11 +7236,13 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "NBT",
           },
         },
-
         globalMap
       ),
       symbol: "NBT.from_float",
       interactName: "floatAsNbt",
+      function: (float: Double): NBT => {
+        return new NBT(float);
+      }
     }),
     nbtFromString: new Operator({
       internalName: "integrateddynamics:nbt_from_string",
@@ -7078,11 +7257,13 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "NBT",
           },
         },
-
         globalMap
       ),
       symbol: "NBT.from_string",
       interactName: "stringAsNbt",
+      function: (str: string): NBT => {
+        return new NBT(str);
+      }
     }),
     nbtFromTagList: new Operator({
       internalName: "integrateddynamics:nbt_from_tag_list",
@@ -7095,11 +7276,13 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "NBT",
           },
         },
-
         globalMap
       ),
       symbol: "NBT.from_tag_list",
       interactName: "tagListAsNbt",
+      function: (tagList: Array<NBT>): NBT => {
+        return new NBT(tagList);
+      }
     }),
     nbtFromByteList: new Operator({
       internalName: "integrateddynamics:nbt_from_byte_list",
@@ -7112,11 +7295,13 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "NBT",
           },
         },
-
         globalMap
       ),
       symbol: "NBT.from_byte_list",
       interactName: "byteListAsNbt",
+      function: (byteList: Array<Integer>): NBT => {
+        return new NBT(byteList);
+      }
     }),
     nbtFromIntList: new Operator({
       internalName: "integrateddynamics:nbt_from_int_list",
@@ -7129,11 +7314,13 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "NBT",
           },
         },
-
         globalMap
       ),
       symbol: "NBT.from_int_list",
       interactName: "intListAsNbt",
+      function: (intList: Array<Integer>): NBT => {
+        return new NBT(intList);
+      }
     }),
     nbtFromLongList: new Operator({
       internalName: "integrateddynamics:nbt_from_long_list",
@@ -7146,11 +7333,13 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "NBT",
           },
         },
-
         globalMap
       ),
       symbol: "NBT.from_long_list",
       interactName: "longListAsNbt",
+      function: (longList: Array<Long>): NBT => {
+        return new NBT(longList);
+      }
     }),
     nbtPathMatchFirst: new Operator({
       internalName: "integrateddynamics:nbt_path_match_first",
@@ -7171,11 +7360,15 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "NBT.path_match_first",
       interactName: "stringNbtPathMatchFirst",
+      function: (path: string): TypeLambda<NBT, NBT> => {
+        return (nbt: NBT): NBT => {
+          return nbt.matchFirstPath(path);
+        }
+      }
     }),
     nbtPathMatchAll: new Operator({
       internalName: "integrateddynamics:nbt_path_match_all",
@@ -7194,11 +7387,15 @@ let operatorRegistry: TypeOperatorRegistry = {
             to: { type: "List", listType: { type: "NBT" } },
           },
         },
-
         globalMap
       ),
       symbol: "NBT.path_match_all",
       interactName: "stringNbtPathMatchAll",
+      function: (path: string): TypeLambda<NBT, Array<NBT>> => {
+        return (nbt: NBT): Array<NBT> => {
+          return nbt.matchFirstAll(path);
+        }
+      }
     }),
     NBTPathTest: new Operator({
       internalName: "integrateddynamics:nbt_path_test",
@@ -7219,11 +7416,15 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "NBT.path_test",
       interactName: "stringNbtPathTest",
+      function: (path: string): TypeLambda<NBT, boolean> => {
+        return (nbt: NBT): boolean => {
+          return nbt.testPath(path);
+        }
+      }
     }),
     ingredientsItems: new Operator({
       internalName: "integrateddynamics:ingredients_items",
@@ -7236,11 +7437,13 @@ let operatorRegistry: TypeOperatorRegistry = {
           },
           to: { type: "List", listType: { type: "Item" } },
         },
-
         globalMap
       ),
       symbol: "Ingr.items",
       interactName: "ingredientsItems",
+      function: (ingredients: Ingredients): Array<Item> => {
+        return ingredients.getItems();
+      }
     }),
     ingredientsFluids: new Operator({
       internalName: "integrateddynamics:ingredients_fluids",
@@ -7253,11 +7456,13 @@ let operatorRegistry: TypeOperatorRegistry = {
           },
           to: { type: "List", listType: { type: "Fluid" } },
         },
-
         globalMap
       ),
       symbol: "Ingr.fluids",
       interactName: "ingredientsFluids",
+      function: (ingredients: Ingredients): Array<Fluid> => {
+        return ingredients.getFluids();
+      }
     }),
     ingredientsEnergies: new Operator({
       internalName: "integrateddynamics:ingredients_energies",
@@ -7270,11 +7475,13 @@ let operatorRegistry: TypeOperatorRegistry = {
           },
           to: { type: "List", listType: { type: "Long" } },
         },
-
         globalMap
       ),
       symbol: "Ingr.energies",
       interactName: "ingredientsEnergies",
+      function: (ingredients: Ingredients): Array<Long> => {
+        return ingredients.getEnergies();
+      }
     }),
     ingredientsWithItem: new Operator({
       internalName: "integrateddynamics:ingredients_with_item",
@@ -7301,11 +7508,17 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "Ingr.with_item",
       interactName: "ingredientsWithItem",
+      function: (ingredients: Ingredients): TypeLambda<Integer, TypeLambda<Item, Ingredients>> => {
+        return (index: Integer): TypeLambda<Item, Ingredients> => {
+          return (item: Item): Ingredients => {
+            return ingredients.setItem(index, item);
+          }
+        }
+      }
     }),
     ingredientsWithFluid: new Operator({
       internalName: "integrateddynamics:ingredients_with_fluid",
@@ -7332,11 +7545,17 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "Ingr.with_fluid",
       interactName: "ingredientsWithFluid",
+      function: (ingredients: Ingredients): TypeLambda<Integer, TypeLambda<Fluid, Ingredients>> => {
+        return (index: Integer): TypeLambda<Fluid, Ingredients> => {
+          return (fluid: Fluid): Ingredients => {
+            return ingredients.setFluid(index, fluid);
+          }
+        }
+      }
     }),
     ingredientsWithEnergy: new Operator({
       internalName: "integrateddynamics:ingredients_with_energy",
@@ -7363,11 +7582,17 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "Ingr.with_energy",
       interactName: "ingredientsWithEnergy",
+      function: (ingredients: Ingredients): TypeLambda<Integer, TypeLambda<Long, Ingredients>> => {
+        return (index: Integer): TypeLambda<Long, Ingredients> => {
+          return (energy: Long): Ingredients => {
+            return ingredients.setEnergy(index, energy);
+          }
+        }
+      }
     }),
     ingredientsWithItems: new Operator({
       internalName: "integrateddynamics:ingredients_with_items",
@@ -7380,23 +7605,21 @@ let operatorRegistry: TypeOperatorRegistry = {
           },
           to: {
             type: "Function",
-            from: {
-              type: "Integer",
-            },
+            from: { type: "List", listType: { type: "Item" } },
             to: {
-              type: "Function",
-              from: { type: "List", listType: { type: "Item" } },
-              to: {
-                type: "Ingredients",
-              },
+              type: "Ingredients",
             },
           },
         },
-
         globalMap
       ),
       symbol: "Ingr.with_items",
       interactName: "ingredientsWithItems",
+      function: (ingredients: Ingredients): TypeLambda<Array<Item>, Ingredients> => {
+        return (itemList: Array<Item>): Ingredients => {
+          return ingredients.appendItems(itemList);
+        }
+      }
     }),
     ingredientsWithFluids: new Operator({
       internalName: "integrateddynamics:ingredients_with_fluids",
@@ -7409,23 +7632,21 @@ let operatorRegistry: TypeOperatorRegistry = {
           },
           to: {
             type: "Function",
-            from: {
-              type: "Integer",
-            },
+            from: { type: "List", listType: { type: "Fluid" } },
             to: {
-              type: "Function",
-              from: { type: "List", listType: { type: "Fluid" } },
-              to: {
-                type: "Ingredients",
-              },
+              type: "Ingredients",
             },
           },
         },
-
         globalMap
       ),
       symbol: "Ingr.with_fluids",
       interactName: "ingredientsWithFluids",
+      function: (ingredients: Ingredients): TypeLambda<Array<Fluid>, Ingredients> => {
+        return (fluidList: Array<Fluid>): Ingredients => {
+          return ingredients.appendFluids(fluidList);
+        }
+      }
     }),
     ingredientsWithEnergies: new Operator({
       internalName: "integrateddynamics:ingredients_with_energies",
@@ -7438,23 +7659,21 @@ let operatorRegistry: TypeOperatorRegistry = {
           },
           to: {
             type: "Function",
-            from: {
-              type: "Integer",
-            },
+            from: { type: "List", listType: { type: "Long" } },
             to: {
-              type: "Function",
-              from: { type: "List", listType: { type: "Long" } },
-              to: {
-                type: "Ingredients",
-              },
+              type: "Ingredients",
             },
           },
         },
-
         globalMap
       ),
       symbol: "Ingr.with_energies",
       interactName: "ingredientsWithEnergies",
+      function: (ingredients: Ingredients): TypeLambda<Array<Long>, Ingredients> => {
+        return (energyList: Array<Long>): Ingredients => {
+          return ingredients.appendEnergies(energyList);
+        }
+      }
     }),
     recipeInput: new Operator({
       internalName: "integrateddynamics:recipe_input",
@@ -7469,11 +7688,13 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Ingredients",
           },
         },
-
         globalMap
       ),
       symbol: "recipe_in",
       interactName: "recipeInput",
+      function: (recipe: Recipe): Ingredients => {
+        return recipe.getInput();
+      }
     }),
     recipeOutput: new Operator({
       internalName: "integrateddynamics:recipe_output",
@@ -7488,11 +7709,13 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Ingredients",
           },
         },
-
         globalMap
       ),
       symbol: "recipe_out",
       interactName: "recipeOutput",
+      function: (recipe: Recipe): Ingredients => {
+        return recipe.getOutput();
+      }
     }),
     recipeWithInput: new Operator({
       internalName: "integrateddynamics:recipe_with_input",
@@ -7513,11 +7736,15 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "Recipe.with_in",
       interactName: "recipeWithInput",
+      function: (recipe: Recipe): TypeLambda<Ingredients, Recipe> => {
+        return (ingredients: Ingredients): Recipe => {
+          return recipe.setInput(ingredients);
+        }
+      }
     }),
     recipeWithOutput: new Operator({
       internalName: "integrateddynamics:recipe_with_output",
@@ -7538,11 +7765,15 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "Recipe.with_out",
       interactName: "recipeWithOutput",
+      function: (recipe: Recipe): TypeLambda<Ingredients, Recipe> => {
+        return (ingredients: Ingredients): Recipe => {
+          return recipe.setOutput(ingredients);
+        }
+      }
     }),
     recipeWithInputOutput: new Operator({
       internalName: "integrateddynamics:recipe_with_input_output",
@@ -7563,11 +7794,15 @@ let operatorRegistry: TypeOperatorRegistry = {
             },
           },
         },
-
         globalMap
       ),
       symbol: "Recipe.with_io",
       interactName: "ingredientsWithInputOutput",
+      function: (input: Ingredients): TypeLambda<Ingredients, Recipe> => {
+        return (output: Ingredients): Recipe => {
+          return new Recipe(input, output);
+        }
+      }
     }),
     parseBoolean: new Operator({
       internalName:
@@ -7577,18 +7812,20 @@ let operatorRegistry: TypeOperatorRegistry = {
         {
           type: "Function",
           from: {
-            type: "Any",
-            typeID: "$type1",
+            type: "String",
           },
           to: {
             type: "Boolean",
           },
         },
-
         globalMap
       ),
       symbol: "parse_boolean",
       interactName: "stringParseAsBoolean",
+      function: (value: string): boolean => {
+        const matchArr = new RE2("(F(alse)?|[+-]?(0x|#)?0+|)", "i").match(value) ?? [];
+        return !!matchArr[0];
+      }
     }),
     parseDouble: new Operator({
       internalName:
@@ -7599,17 +7836,23 @@ let operatorRegistry: TypeOperatorRegistry = {
           type: "Function",
           from: {
             type: "Any",
-            typeID: "$type1",
+            typeID: 1,
           },
           to: {
             type: "Double",
           },
         },
-
         globalMap
       ),
       symbol: "parse_double",
       interactName: "stringParseAsDouble",
+      function: (data: IntegratedValue): Double => {
+        try {
+          return new Double(data);
+        } catch(e) {
+          return new Double(0);
+        }
+      }
     }),
     parseInteger: new Operator({
       internalName:
@@ -7620,17 +7863,23 @@ let operatorRegistry: TypeOperatorRegistry = {
           type: "Function",
           from: {
             type: "Any",
-            typeID: "$type1",
+            typeID: 1,
           },
           to: {
             type: "Integer",
           },
         },
-
         globalMap
       ),
       symbol: "parse_integer",
       interactName: "stringParseAsInteger",
+      function: (data: IntegratedValue): Integer => {
+        try {
+          return new Integer(data);
+        } catch(e) {
+          return new Integer(0);
+        }
+      }
     }),
     parseLong: new Operator({
       internalName:
@@ -7641,17 +7890,23 @@ let operatorRegistry: TypeOperatorRegistry = {
           type: "Function",
           from: {
             type: "Any",
-            typeID: "$type1",
+            typeID: 1,
           },
           to: {
             type: "Long",
           },
         },
-
         globalMap
       ),
       symbol: "parse_long",
       interactName: "stringParseAsLong",
+      function: (data: IntegratedValue): Long => {
+        try {
+          return new Long(data);
+        } catch(e) {
+          return new Long(0);
+        }
+      }
     }),
     parseNBT: new Operator({
       internalName:
@@ -7662,17 +7917,23 @@ let operatorRegistry: TypeOperatorRegistry = {
           type: "Function",
           from: {
             type: "Any",
-            typeID: "$type1",
+            typeID: 1,
           },
           to: {
             type: "NBT",
           },
         },
-
         globalMap
       ),
       symbol: "parse_nbt",
       interactName: "stringParseAsNbt",
+      function: (data: IntegratedValue): NBT => {
+        try {
+          return new NBT(data);
+        } catch(e) {
+          return new NBT(0);
+        }
+      }
     }),
     choice: new Operator({
       internalName: "integrateddynamics:general_choice",
@@ -7687,26 +7948,32 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Function",
             from: {
               type: "Any",
-              typeID: "$type1",
+              typeID: 1,
             },
             to: {
               type: "Function",
               from: {
                 type: "Any",
-                typeID: "$type1",
+                typeID: 1,
               },
               to: {
                 type: "Any",
-                typeID: "$type1",
+                typeID: 1,
               },
             },
           },
         },
-
         globalMap
       ),
       symbol: "?",
       interactName: "booleanChoice",
+      function: <T>(bool: boolean): TypeLambda<T, TypeLambda<T, T>> => {
+        return (trueValue: T): TypeLambda<T, T> => {
+          return (falseValue: T): T => {
+            return bool ? trueValue : falseValue;
+          }
+        }
+      }
     }),
     generalIdentity: new Operator({
       internalName: "integrateddynamics:general_identity",
@@ -7716,18 +7983,20 @@ let operatorRegistry: TypeOperatorRegistry = {
           type: "Function",
           from: {
             type: "Any",
-            typeID: "$type1",
+            typeID: 1,
           },
           to: {
             type: "Any",
-            typeID: "$type1",
+            typeID: 1,
           },
         },
-
         globalMap
       ),
       symbol: "id",
       interactName: "anyIdentity",
+      function: (value: IntegratedValue): IntegratedValue => {
+        return value;
+      }
     }),
     generalConstant: new Operator({
       internalName: "integrateddynamics:general_constant",
@@ -7737,25 +8006,29 @@ let operatorRegistry: TypeOperatorRegistry = {
           type: "Function",
           from: {
             type: "Any",
-            typeID: "$type1",
+            typeID: 1,
           },
           to: {
             type: "Function",
             from: {
               type: "Any",
-              typeID: "$type2",
+              typeID: 2,
             },
             to: {
               type: "Any",
-              typeID: "$type1",
+              typeID: 1,
             },
           },
         },
-
         globalMap
       ),
       symbol: "K",
       interactName: "anyConstant",
+      function: (value: IntegratedValue): TypeLambda<void, IntegratedValue> => {
+        return () => {
+          return value;
+        }
+      }
     }),
     integerToDouble: new Operator({
       internalName:
@@ -7771,11 +8044,13 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Double",
           },
         },
-
         globalMap
       ),
       symbol: "()",
       interactName: "integerIntegerToDouble",
+      function: (int: Integer): Promise<Double> => {
+        return int.toDouble();
+      }
     }),
     integerToLong: new Operator({
       internalName:
@@ -7791,11 +8066,13 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Long",
           },
         },
-
         globalMap
       ),
       symbol: "()",
       interactName: "integerIntegerToLong",
+      function: (int: Integer): Promise<Long> => {
+        return int.toLong();
+      }
     }),
     doubleToInteger: new Operator({
       internalName:
@@ -7811,11 +8088,13 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Integer",
           },
         },
-
         globalMap
       ),
       symbol: "()",
       interactName: "doubleDoubleToInteger",
+      function: (double: Double): Promise<Integer> => {
+        return double.toInteger();
+      }
     }),
     doubleToLong: new Operator({
       internalName:
@@ -7831,11 +8110,13 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Long",
           },
         },
-
         globalMap
       ),
       symbol: "()",
       interactName: "doubleDoubleToLong",
+      function: (double: Double): Promise<Long> => {
+        return double.toLong();
+      }
     }),
     longToInteger: new Operator({
       internalName:
@@ -7851,11 +8132,13 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Integer",
           },
         },
-
         globalMap
       ),
       symbol: "()",
       interactName: "longLongToInteger",
+      function: (long: Long): Promise<Integer> => {
+        return long.toInteger();
+      }
     }),
     longToDouble: new Operator({
       internalName:
@@ -7871,11 +8154,13 @@ let operatorRegistry: TypeOperatorRegistry = {
             type: "Double",
           },
         },
-
         globalMap
       ),
       symbol: "()",
       interactName: "longLongToDouble",
+      function: (long: Long): Promise<Double> => {
+        return long.toDouble();
+      }
     }),
   },
   typeSerializers: {

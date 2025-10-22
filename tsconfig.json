@@ -23,8 +23,6 @@
     "module": "es2022",
     "target": "es2022",
     "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "allowImportingTsExtensions": false,
     "lib": [
       "es2022",
       "dom"

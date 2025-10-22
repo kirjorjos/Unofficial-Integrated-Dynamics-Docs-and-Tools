@@ -32,13 +32,13 @@ namespace TypeRawSignatureAST {
 					| "Fluid"
 					| "NBT"
 					| "Ingredients"
+					| "Recipe"
 					| "UniquelyNamed"
 					| "Named"
 					| "Entity";
 			}
 		| RawSignatureList
 		| RawSignatureFunction
-		| RawSignatureRecipe
 		| RawSignatureUniquelyNamed
 		| RawSignatureNamed;
 
@@ -48,11 +48,5 @@ namespace TypeRawSignatureAST {
 
 	type RawSignatureNamed = {
 		type: "Named";
-	};
-
-	type RawSignatureRecipe = {
-		type: "Recipe";
-		input: { type: "Ingredients" };
-		output: { type: "Ingredients" };
 	};
 }

@@ -35,11 +35,44 @@ export class Block {
     }
   }
 
-  getStrengthVsBlock(block: Block) {
+  toJSON(): any {
+    const walk = (obj: any): any => {
+      if (
+        obj === null ||
+        typeof obj === "string" ||
+        typeof obj === "number" ||
+        typeof obj === "boolean"
+      ) {
+        return obj;
+      }
+
+      if (obj instanceof NBT) {
+        return obj.toJSON();
+      }
+
+      if (Array.isArray(obj)) {
+        return obj.map(v => walk(v));
+      }
+
+      if (typeof obj === "object") {
+        const result: Record<string, any> = {};
+        for (const [key, value] of Object.entries(obj)) {
+          result[key] = walk(value);
+        }
+        return result;
+      }
+
+      return undefined;
+    };
+
+    return walk(this);
+  }
+
+  getStrengthVsBlock() {
     throw new Error("getStrengthVsBlock method not implemented");
   }
 
-  canHarvestBlock(block: Block) {
+  canHarvestBlock() {
     throw new Error("canHarvestBlock method not implemented");
   }
 

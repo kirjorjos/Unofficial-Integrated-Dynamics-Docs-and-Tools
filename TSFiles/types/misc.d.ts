@@ -10,7 +10,7 @@ declare global {
   type TypeOperatorNicknames =
     (typeof operatorRegistry)["baseOperators"][TypeOperatorKey]["nicknames"][number];
   type TypeOperatorInternalName =
-    (typeof operatorRegistry)["baseOperators"][TypeOperatorKey]["internalName"];
+    (typeof operatorRegistry)["baseOperators"][TypeOperatorKey]["internalName"] & string;
   type TypeDigitString = `${0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9}`
   type TypeBit = 0 | 1;
   type TypeInt4 = [TypeBit, TypeBit, TypeBit, TypeBit];
