@@ -4,25 +4,13 @@ export class Long implements NumberBase<Long> {
 
   bits!: TypeInt64;
 
-  constructor(data: TypeNumericString | TypeInt64) {
+  constructor(data: TypeNumericString | TypeInt64 | number) {
     if (!Array.isArray(data)) this.bits = this.initializeBits(data);
     if (Array.isArray(data)) this.bits = data;
   }
 
-  initializeBits(decimal: string): TypeInt64 {
-    const negative = decimal.startsWith("-");
-    const abs = negative
-      ? (decimal.slice(1) as TypeNumericString)
-      : (decimal as TypeNumericString);
-
-    let bin = JavaMath.decimalToBinary(abs).padStart(64, "0");
-    if (bin.length > 64) bin = bin.slice(-64);
-
-    let bits = bin.split("").map((d) => (d === "1" ? 1 : 0)) as TypeInt64;
-
-    if (negative) bits = JavaMath.twosComplement(bits) as TypeInt64;
-
-    return bits;
+  initializeBits(decimal: TypeNumericString | number): TypeInt64 {
+    return JavaMath.decimalToBinary(`${decimal}`, 64) as TypeInt64;
   }
 
   getBits(): TypeInt64 {
@@ -45,8 +33,8 @@ export class Long implements NumberBase<Long> {
 
   // Long → Double
   toDouble(): Promise<Double> {
-    const n = JavaMath.bitsToSignedDecimal(this.bits) as TypeNumericString;
-    return import("./Double").then(obj => {return new obj.Double(n)});
+    const num = JavaMath.toDecimal(this.bits);
+    return import("./Double").then(obj => {return new obj.Double(num)});
   }
 
   toLong(): Promise<Long> {
@@ -58,32 +46,19 @@ export class Long implements NumberBase<Long> {
   add(num: Long): Long {
     const a = num.getBits() as TypeInt64;
     const b = this.getBits() as TypeInt64;
-    const result = Long.bitwiseAdd(a, b);
+    const result = JavaMath.bitwiseAdd(a, b);
     return new Long(result);
-  }
-
-  private static bitwiseAdd(a: TypeInt64, b: TypeInt64): TypeInt64 {
-    const result: TypeBit[] = new Array(64).fill(0);
-
-    let carry = 0;
-    for (let i = 63; i >= 0; i--) {
-      const sum = (a[i] as TypeBit) + (b[i] as TypeBit) + carry;
-      result[i] = (sum & 1) as TypeBit;
-      carry = sum >> 1;
-    }
-
-    return result as TypeInt64;
   }
 
   subtract(num: Long): Long {
     const a = num.getBits() as TypeInt64;
     let b = this.getBits() as TypeInt64;
     b = b.map((x: number) => x ^ 1) as TypeInt64;
-    const bPlus1 = Long.bitwiseAdd(b, [
+    const bPlus1 = JavaMath.bitwiseAdd(b, [
       ...Array(31).fill(0),
       1,
     ] as unknown as TypeInt64);
-    return new Long(Long.bitwiseAdd(a, bPlus1));
+    return new Long(JavaMath.bitwiseAdd(a, bPlus1));
   }
 }
 

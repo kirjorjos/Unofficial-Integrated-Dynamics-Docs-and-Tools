@@ -2,8 +2,12 @@ export class Double implements NumberBase<Double> {
 
   value: number;
 
-  constructor(decimal: TypeNumericString) {
-    this.value = parseInt(decimal);
+  constructor(decimal: TypeNumericString | number) {
+    if (typeof decimal === "number") {
+      this.value = decimal;
+    } else {
+      this.value = parseInt(decimal);
+    }
     this.initializeBits();
   }
 
@@ -51,6 +55,10 @@ export class Double implements NumberBase<Double> {
     return new Promise(resolve =>
       resolve(new Double(`${this.value}` as TypeNumericString))
     )
+  }
+
+  toDecimal(): number {
+    return this.value;
   }
 
   add(num: Double): Double {
