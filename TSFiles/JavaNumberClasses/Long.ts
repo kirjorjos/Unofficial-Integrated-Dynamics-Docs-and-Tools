@@ -1,3 +1,4 @@
+import { IntLongMath } from "HelperClasses/IntLongMath";
 import { JavaMath } from "HelperClasses/Math";
 
 export class Long implements NumberBase<Long> {
@@ -52,51 +53,51 @@ export class Long implements NumberBase<Long> {
   }
 
   add(num: Long): Long {
-    const a = num.getBits() as TypeInt64;
-    const b = this.getBits() as TypeInt64;
-    const result = JavaMath.bitwiseAdd(a, b);
-    return new Long(result);
+    return IntLongMath.add(this, num);
   }
 
   subtract(num: Long): Long {
-    const a = num.getBits() as TypeInt64;
-    let b = this.getBits() as TypeInt64;
-    b = b.map((x: number) => x ^ 1) as TypeInt64;
-    const bPlus1 = JavaMath.bitwiseAdd(b, [
-      ...Array(31).fill(0),
-      1,
-    ] as unknown as TypeInt64);
-    return new Long(JavaMath.bitwiseAdd(a, bPlus1));
+    return IntLongMath.subtract(this, num);
   }
 
-  // Booth's algorithm
   multiply(num: Long): Long {
-    let a = [...this.bits] as TypeInt64;
-    let b = [...num.getBits()] as TypeInt64;
-    const sign = a[0]! ^ b[0]!;
+    return IntLongMath.multiply(this, num);
+  }
 
-    if (a[0]) {
-      a = a.map(x => (x ^ 1) as TypeBit) as TypeInt64;
-      a = JavaMath.bitwiseAdd(a, [...Array(63).fill(0), 1] as TypeInt64);
-    }
-    if (b[0]) {
-      b = b.map(x => (x ^ 1) as TypeBit) as TypeInt64;
-      b = JavaMath.bitwiseAdd(b, [...Array(63).fill(0), 1] as TypeInt64);
-    }
+  divide(num: Long): Long {
+    return IntLongMath.divide(this, num);
+  }
+  
+  mod(num: Long): Long {
+    return IntLongMath.mod(this, num);
+  }
 
-    let result = new Array(128).fill(0) as TypeInt128;
-    for (let i = 63; i >= 0; i--) {
-      if (b[i]) {
-        result = JavaMath.bitwiseAdd(result, (JavaMath.leftShift([...Array(64).fill(a[0]) as TypeInt64, ...a], 63-i)));
-      }
-    }
-    
-    if (sign) {
-      result = result.map(x => (x ^ 1) as TypeBit) as TypeInt128;
-      result = JavaMath.bitwiseAdd(result, [...Array(127).fill(0), 1] as TypeInt128);
-    }
+  async max(num: Long): Promise<Long> {
+    return ((await this.gt(num) ? this : num));
+  }
 
-    return new Long(result);
+  async min(num: Long): Promise<Long> {
+    return ((await this.lt(num) ? this : num));
+  }
+
+  async lt(num: Long): Promise<boolean> {
+    return IntLongMath.lt(this, num);
+  }
+
+  async lte(num: Long): Promise<boolean> {
+    return IntLongMath.lte(this, num);
+  }
+
+  async gt(num: Long): Promise<boolean> {
+    return IntLongMath.gt(this, num);
+  }
+
+  async gte(num: Long): Promise<boolean> {
+    return IntLongMath.gte(this, num);
+  }
+
+  equals(num: Long): boolean {
+    return (num.getBits().every((bit, i) => bit === this.bits[i]));
   }
 }
 

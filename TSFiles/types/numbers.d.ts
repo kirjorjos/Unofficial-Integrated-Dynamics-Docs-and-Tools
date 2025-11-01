@@ -21,13 +21,14 @@ declare global {
     subtract(num: Self): Self;
     multiply(num: Self): Self;
     divide(num: Self): Self;
-    max(num: Self): Self;
-    min(num: Self): Self;
+    max(num: Self): Promise<Self>;
+    min(num: Self): Promise<Self>;
     mod(num: Self): Self;
-    gt(num: Self): boolean;
-    lt(num: Self): boolean;
-    gte(num: Self): boolean;
-    lte(num: Self): boolean;
+    gt(num: Self): Promise<boolean>;
+    lt(num: Self): Promise<boolean>;
+    gte(num: Self): Promise<boolean>;
+    lte(num: Self): Promise<boolean>;
+    equals(num: Self): boolean;
 	}
 
   type TypeNumber =

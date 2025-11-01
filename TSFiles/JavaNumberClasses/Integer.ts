@@ -1,10 +1,11 @@
+import { IntLongMath } from "HelperClasses/IntLongMath";
 import { JavaMath } from "HelperClasses/Math";
 
 export class Integer implements NumberBase<Integer> {
 
   private bits!: TypeInt32;
 
-  constructor(data: TypeNumericString | TypeInt32 | TypeInt64 | number) {
+  constructor(data: TypeNumericString | TypeInt32 | TypeInt64 | TypeInt128 | number) {
     if (!Array.isArray(data)) this.bits = this.initializeBits(data);
     if (Array.isArray(data)) this.bits = data.slice(-32) as TypeInt32;
   }
@@ -55,50 +56,50 @@ export class Integer implements NumberBase<Integer> {
   }
 
   add(num: Integer): Integer {
-    const a = num.getBits() as TypeInt32;
-    const b = this.getBits() as TypeInt32;
-    const result = JavaMath.bitwiseAdd(a, b);
-    return new Integer(result);
+    return IntLongMath.add(this, num);
   }
 
   subtract(num: Integer): Integer {
-    const a = num.getBits() as TypeInt32;
-    let b = this.getBits() as TypeInt32;
-    b = b.map((x: number) => x ^ 1) as TypeInt32;
-    const bPlus1 = JavaMath.bitwiseAdd(b, [
-      ...Array(31).fill(0),
-      1,
-    ] as unknown as TypeInt32);
-    return new Integer(JavaMath.bitwiseAdd(a, bPlus1));
+    return IntLongMath.subtract(this, num);
   }
 
-  // Booth's algorithm
   multiply(num: Integer): Integer {
-    let a = [...this.bits] as TypeInt32;
-    let b = [...num.getBits()] as TypeInt32;
-    const sign = a[0]! ^ b[0]!;
+    return IntLongMath.multiply(this, num);
+  }
 
-    if (a[0]) {
-      a = a.map(x => (x ^ 1) as TypeBit) as TypeInt32;
-      a = JavaMath.bitwiseAdd(a, [...Array(31).fill(0), 1] as TypeInt32);
-    }
-    if (b[0]) {
-      b = b.map(x => (x ^ 1) as TypeBit) as TypeInt32;
-      b = JavaMath.bitwiseAdd(b, [...Array(31).fill(0), 1] as TypeInt32);
-    }
+  divide(num: Integer): Integer {
+    return IntLongMath.divide(this, num);
+  }
+  
+  mod(num: Integer): Integer {
+    return IntLongMath.mod(this, num);
+  }
 
-    let result = new Array(64).fill(0) as TypeInt64;
-    for (let i = 31; i >= 0; i--) {
-      if (b[i]) {
-        result = JavaMath.bitwiseAdd(result, (JavaMath.leftShift([...Array(32).fill(a[0]) as TypeInt32, ...a], 31-i)));
-      }
-    }
-    
-    if (sign) {
-      result = result.map(x => (x ^ 1) as TypeBit) as TypeInt64;
-      result = JavaMath.bitwiseAdd(result, [...Array(63).fill(0), 1] as TypeInt64);
-    }
+  async max(num: Integer): Promise<Integer> {
+    return ((await this.gt(num) ? this : num));
+  }
 
-    return new Integer(result);
+  async min(num: Integer): Promise<Integer> {
+    return ((await this.lt(num) ? this : num));
+  }
+
+  async lt(num: Integer): Promise<boolean> {
+    return IntLongMath.lt(this, num);
+  }
+
+  async lte(num: Integer): Promise<boolean> {
+    return IntLongMath.lte(this, num);
+  }
+
+  async gt(num: Integer): Promise<boolean> {
+    return IntLongMath.gt(this, num);
+  }
+
+  async gte(num: Integer): Promise<boolean> {
+    return IntLongMath.gte(this, num);
+  }
+
+  equals(num: Integer): boolean {
+    return (num.getBits().every((bit, i) => bit === this.bits[i]));
   }
 }

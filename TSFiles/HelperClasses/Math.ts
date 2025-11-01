@@ -2,7 +2,7 @@ export namespace JavaMath {
 
   const bitMap32 = ["1073741824","536870912","268435456","134217728","67108864","33554432","16777216","8388608","4194304","2097152","1048576","524288","262144","131072","65536","32768","16384","8192","4096","2048","1024","512","256","128","64","32","16","8","4","2","1"];
   const bitMap64 = ["4611686018427387904","2305843009213693952","1152921504606846976","576460752303423488","288230376151711744","144115188075855872","72057594037927936","36028797018963968","18014398509481984","9007199254740992","4503599627370496","2251799813685248","1125899906842624","562949953421312","281474976710656","140737488355328","70368744177664","35184372088832","17592186044416","8796093022208","4398046511104","2199023255552","1099511627776","549755813888","274877906944","137438953472","68719476736","34359738368","17179869184","8589934592","4294967296","2147483648","1073741824","536870912","268435456","134217728","67108864","33554432","16777216","8388608","4194304","2097152","1048576","524288","262144","131072","65536","32768","16384","8192","4096","2048","1024","512","256","128","64","32","16","8","4","2","1"];
-  type methodList = ["add", "subtract", "multiply", "divide", "max", "min", "mod", "gt", "lt", "gte", "lte"];
+  type methodList = ["add", "subtract", "multiply", "divide", "max", "min", "mod", "gt", "lt", "gte", "lte", "equals"];
 
 
   function stringGt(a: TypeNumericString, b: TypeNumericString): boolean {
@@ -128,46 +128,50 @@ export namespace JavaMath {
   }
 
   export async function add(num1: TypeNumber, num2: TypeNumber): Promise<TypeNumber> {
-    return dispatchMethod(num1, num2, "add");
+    return dispatchMethod(num1, num2, "add") as Promise<TypeNumber>;;
   }
 
   export async function subtract(num1: TypeNumber, num2: TypeNumber): Promise<TypeNumber> {
-    return dispatchMethod(num1, num2, "add");
+    return dispatchMethod(num1, num2, "subtract") as Promise<TypeNumber>;;
   }
 
   export async function multiply(num1: TypeNumber, num2: TypeNumber): Promise<TypeNumber> {
-    return dispatchMethod(num1, num2, "multiply");
+    return dispatchMethod(num1, num2, "multiply") as Promise<TypeNumber>;;
   }
 
   export async function divide(num1: TypeNumber, num2: TypeNumber): Promise<TypeNumber> {
-    return dispatchMethod(num1, num2, "divide");
+    return dispatchMethod(num1, num2, "divide") as Promise<TypeNumber>;;
   }
 
   export async function max(num1: TypeNumber, num2: TypeNumber): Promise<TypeNumber> {
-    return dispatchMethod(num1, num2, "max");
+    return dispatchMethod(num1, num2, "max") as Promise<TypeNumber>;;
   }
 
   export async function min(num1: TypeNumber, num2: TypeNumber): Promise<TypeNumber> {
-    return dispatchMethod(num1, num2, "min");
+    return dispatchMethod(num1, num2, "min") as Promise<TypeNumber>;;
   }
 
   export async function mod(num1: TypeNumber, num2: TypeNumber): Promise<TypeNumber> {
-    return dispatchMethod(num1, num2, "mod");
+    return dispatchMethod(num1, num2, "mod") as Promise<TypeNumber>;
   }
 
   export async function gt(num1: TypeNumber, num2: TypeNumber): Promise<boolean> {
-    return dispatchMethod(num1, num2, "gt");
+    return dispatchMethod(num1, num2, "gt") as Promise<boolean>;
   }
 
   export async function lt(num1: TypeNumber, num2: TypeNumber): Promise<boolean> {
-    return dispatchMethod(num1, num2, "lt");
+    return dispatchMethod(num1, num2, "lt") as Promise<boolean>;
   }
 
   export async function gte(num1: TypeNumber, num2: TypeNumber): Promise<boolean> {
-    return dispatchMethod(num1, num2, "gte");
+    return dispatchMethod(num1, num2, "gte") as Promise<boolean>;
   }
 
   export async function lte(num1: TypeNumber, num2: TypeNumber): Promise<boolean> {
-    return dispatchMethod(num1, num2, "lte");
+    return dispatchMethod(num1, num2, "lte") as Promise<boolean>;
   }
+
+  export async function equals(num1: TypeNumber, num2: TypeNumber): Promise<boolean> {
+    return dispatchMethod(num1, num2, "equals") as Promise<boolean>;
+  }  
 }
