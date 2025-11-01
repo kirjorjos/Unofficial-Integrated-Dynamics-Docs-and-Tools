@@ -18,6 +18,7 @@ declare global {
   type TypeInt16 = [...TypeInt8, ...TypeInt8];
   type TypeInt32 = [...TypeInt16, ...TypeInt16];
   type TypeInt64 = [...TypeInt32, ...TypeInt32];
+  type TypeInt128 = [...TypeInt64, ...TypeInt64];
 
   interface TypeOperatorRegistry {
     baseOperators: {

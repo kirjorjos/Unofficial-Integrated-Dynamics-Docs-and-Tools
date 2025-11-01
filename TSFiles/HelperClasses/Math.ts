@@ -2,6 +2,8 @@ export namespace JavaMath {
 
   const bitMap32 = ["1073741824","536870912","268435456","134217728","67108864","33554432","16777216","8388608","4194304","2097152","1048576","524288","262144","131072","65536","32768","16384","8192","4096","2048","1024","512","256","128","64","32","16","8","4","2","1"];
   const bitMap64 = ["4611686018427387904","2305843009213693952","1152921504606846976","576460752303423488","288230376151711744","144115188075855872","72057594037927936","36028797018963968","18014398509481984","9007199254740992","4503599627370496","2251799813685248","1125899906842624","562949953421312","281474976710656","140737488355328","70368744177664","35184372088832","17592186044416","8796093022208","4398046511104","2199023255552","1099511627776","549755813888","274877906944","137438953472","68719476736","34359738368","17179869184","8589934592","4294967296","2147483648","1073741824","536870912","268435456","134217728","67108864","33554432","16777216","8388608","4194304","2097152","1048576","524288","262144","131072","65536","32768","16384","8192","4096","2048","1024","512","256","128","64","32","16","8","4","2","1"];
+  type methodList = ["add", "subtract", "multiply", "divide", "max", "min", "mod", "gt", "lt", "gte", "lte"];
+
 
   function stringGt(a: TypeNumericString, b: TypeNumericString): boolean {
     const maxLength = Math.max(a.length, b.length);
@@ -63,7 +65,7 @@ export namespace JavaMath {
     return bits;
   }
 
-  export function bitwiseAdd<T extends TypeInt32 | TypeInt64>(a: T, b: T): T {
+  export function bitwiseAdd<T extends TypeInt32 | TypeInt64 | TypeInt128>(a: T, b: T): T {
     const result: TypeBit[] = new Array(a.length).fill(0);
 
     let carry = 0;
@@ -96,41 +98,76 @@ export namespace JavaMath {
     }
   }
 
-  export async function add(num1: TypeNumber, num2: TypeNumber): Promise<TypeNumber> {
+  export function leftShift<T extends TypeInt32 | TypeInt64 | TypeInt128>(a: T, num: number): T {
+    let result = new Array(a.length).fill(0) as T;
+
+    for (let i = 0; i < a.length; i++) {
+      result[i] = (((i + num) < a.length) ? a[i+num]! : 0);
+    }
+
+    return result;
+  }
+
+  async function dispatchMethod(num1: TypeNumber, num2: TypeNumber, method: methodList[number]) {
     const higherOrderNum =
       num1.getOrder() < num2.getOrder() ? num2 : num1;
     switch(higherOrderNum.getType()) {
       case "Integer":
         num1 = await num1.toInteger();
         num2 = await num2.toInteger();
-        return num1.add(num2);
+        return (num1[method])(num2);
       case "Long":
         num1 = await num1.toLong();
         num2 = await num2.toLong();
-        return num1.add(num2);
+        return num1[method](num2);
       case "Double":
         num1 = await num1.toDouble();
         num2 = await num2.toDouble();
-        return num1.add(num2);
+        return num1[method](num2);
     }
   }
 
+  export async function add(num1: TypeNumber, num2: TypeNumber): Promise<TypeNumber> {
+    return dispatchMethod(num1, num2, "add");
+  }
+
   export async function subtract(num1: TypeNumber, num2: TypeNumber): Promise<TypeNumber> {
-    const higherOrderNum =
-      num1.getOrder() < num2.getOrder() ? num2 : num1;
-    switch(higherOrderNum.getType()) {
-      case "Integer":
-        num1 = await num1.toInteger();
-        num2 = await num2.toInteger();
-        return num1.subtract(num2);
-      case "Long":
-        num1 = await num1.toLong();
-        num2 = await num2.toLong();
-        return num1.subtract(num2);
-      case "Double":
-        num1 = await num1.toDouble();
-        num2 = await num2.toDouble();
-        return num1.subtract(num2);
-    }
+    return dispatchMethod(num1, num2, "add");
+  }
+
+  export async function multiply(num1: TypeNumber, num2: TypeNumber): Promise<TypeNumber> {
+    return dispatchMethod(num1, num2, "multiply");
+  }
+
+  export async function divide(num1: TypeNumber, num2: TypeNumber): Promise<TypeNumber> {
+    return dispatchMethod(num1, num2, "divide");
+  }
+
+  export async function max(num1: TypeNumber, num2: TypeNumber): Promise<TypeNumber> {
+    return dispatchMethod(num1, num2, "max");
+  }
+
+  export async function min(num1: TypeNumber, num2: TypeNumber): Promise<TypeNumber> {
+    return dispatchMethod(num1, num2, "min");
+  }
+
+  export async function mod(num1: TypeNumber, num2: TypeNumber): Promise<TypeNumber> {
+    return dispatchMethod(num1, num2, "mod");
+  }
+
+  export async function gt(num1: TypeNumber, num2: TypeNumber): Promise<boolean> {
+    return dispatchMethod(num1, num2, "gt");
+  }
+
+  export async function lt(num1: TypeNumber, num2: TypeNumber): Promise<boolean> {
+    return dispatchMethod(num1, num2, "lt");
+  }
+
+  export async function gte(num1: TypeNumber, num2: TypeNumber): Promise<boolean> {
+    return dispatchMethod(num1, num2, "gte");
+  }
+
+  export async function lte(num1: TypeNumber, num2: TypeNumber): Promise<boolean> {
+    return dispatchMethod(num1, num2, "lte");
   }
 }

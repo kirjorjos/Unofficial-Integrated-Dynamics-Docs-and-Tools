@@ -2,11 +2,11 @@ import { JavaMath } from "HelperClasses/Math";
 
 export class Long implements NumberBase<Long> {
 
-  bits!: TypeInt64;
+  private bits!: TypeInt64;
 
-  constructor(data: TypeNumericString | TypeInt64 | number) {
+  constructor(data: TypeNumericString | TypeInt64 | TypeInt128 | number) {
     if (!Array.isArray(data)) this.bits = this.initializeBits(data);
-    if (Array.isArray(data)) this.bits = data;
+    if (Array.isArray(data)) this.bits = data.slice(-64) as TypeInt64;
   }
 
   initializeBits(decimal: TypeNumericString | number): TypeInt64 {
@@ -43,6 +43,14 @@ export class Long implements NumberBase<Long> {
     )
   }
 
+  toDecimal(): TypeNumericString {
+    return JavaMath.toDecimal(this.bits);
+  }
+
+  leftShift(num: Integer): Long {
+    return new Long(JavaMath.leftShift(this.bits, parseInt(num.toDecimal())))
+  }
+
   add(num: Long): Long {
     const a = num.getBits() as TypeInt64;
     const b = this.getBits() as TypeInt64;
@@ -59,6 +67,36 @@ export class Long implements NumberBase<Long> {
       1,
     ] as unknown as TypeInt64);
     return new Long(JavaMath.bitwiseAdd(a, bPlus1));
+  }
+
+  // Booth's algorithm
+  multiply(num: Long): Long {
+    let a = [...this.bits] as TypeInt64;
+    let b = [...num.getBits()] as TypeInt64;
+    const sign = a[0]! ^ b[0]!;
+
+    if (a[0]) {
+      a = a.map(x => (x ^ 1) as TypeBit) as TypeInt64;
+      a = JavaMath.bitwiseAdd(a, [...Array(63).fill(0), 1] as TypeInt64);
+    }
+    if (b[0]) {
+      b = b.map(x => (x ^ 1) as TypeBit) as TypeInt64;
+      b = JavaMath.bitwiseAdd(b, [...Array(63).fill(0), 1] as TypeInt64);
+    }
+
+    let result = new Array(128).fill(0) as TypeInt128;
+    for (let i = 63; i >= 0; i--) {
+      if (b[i]) {
+        result = JavaMath.bitwiseAdd(result, (JavaMath.leftShift([...Array(64).fill(a[0]) as TypeInt64, ...a], 63-i)));
+      }
+    }
+    
+    if (sign) {
+      result = result.map(x => (x ^ 1) as TypeBit) as TypeInt128;
+      result = JavaMath.bitwiseAdd(result, [...Array(127).fill(0), 1] as TypeInt128);
+    }
+
+    return new Long(result);
   }
 }
 
