@@ -99,5 +99,17 @@ export class Long implements NumberBase<Long> {
   equals(num: Long): boolean {
     return (num.getBits().every((bit, i) => bit === this.bits[i]));
   }
+
+  round(): Promise<Integer> {
+    return this.toInteger();
+  }
+
+  ceil(): Promise<Integer> {
+    return this.toInteger();
+  }
+
+  floor(): Promise<Integer> {
+    return this.toInteger();
+  }
 }
 

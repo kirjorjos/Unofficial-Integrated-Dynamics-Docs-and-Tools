@@ -29,6 +29,9 @@ declare global {
     gte(num: Self): Promise<boolean>;
     lte(num: Self): Promise<boolean>;
     equals(num: Self): boolean;
+    round(): Promise<Integer>
+    ceil(): Promise<Integer>
+    floor(): Promise<Integer>
 	}
 
   type TypeNumber =

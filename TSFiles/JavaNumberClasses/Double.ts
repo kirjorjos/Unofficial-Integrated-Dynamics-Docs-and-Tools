@@ -1,3 +1,5 @@
+import { Integer } from "./Integer";
+
 export class Double implements NumberBase<Double> {
 
   value: number;
@@ -85,6 +87,14 @@ export class Double implements NumberBase<Double> {
     return new Double(this.value % parseInt(num.toDecimal()));
   }
 
+  sqrt(): Double {
+    return new Double(Math.sqrt(this.value))
+  }
+
+  pow(exponent: Double): Double {
+    return new Double(Math.pow(this.value, parseInt(exponent.toDecimal())))
+  }
+
   async max(num: Double): Promise<Double> {
     return ((await this.gt(num) ? this : num));
   }
@@ -111,5 +121,17 @@ export class Double implements NumberBase<Double> {
 
   equals(num: Double): boolean {
     return (`${this.value}` === num.toDecimal());
+  }
+
+  async round(): Promise<Integer> {
+    return new Integer(Math.round(this.value));
+  }
+
+  async ceil(): Promise<Integer> {
+    return new Integer(Math.ceil(this.value));
+  }
+
+  async floor(): Promise<Integer> {
+    return new Integer(Math.floor(this.value));
   }
 }

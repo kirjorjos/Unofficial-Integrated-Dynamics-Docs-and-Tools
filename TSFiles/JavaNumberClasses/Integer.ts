@@ -75,6 +75,30 @@ export class Integer implements NumberBase<Integer> {
     return IntLongMath.mod(this, num);
   }
 
+  binaryAnd(num: Integer): Integer {
+    return IntLongMath.binaryAnd(this, num);
+  }
+
+  binaryOr(num: Integer): Integer {
+    return IntLongMath.binaryOr(this, num);
+  }
+
+  binaryXor(num: Integer): Integer {
+    return IntLongMath.binaryXor(this, num);
+  }
+
+  binaryComplement(): Integer {
+    return IntLongMath.binaryComplement(this);
+  }
+
+  rightShift(places: Integer) {
+    return IntLongMath.rightShift(this, places);
+  }
+
+  unsignedRightShift(places: Integer) {
+    return IntLongMath.unsignedRightShift(this.bits, places);
+  }
+
   async max(num: Integer): Promise<Integer> {
     return ((await this.gt(num) ? this : num));
   }
@@ -101,5 +125,17 @@ export class Integer implements NumberBase<Integer> {
 
   equals(num: Integer): boolean {
     return (num.getBits().every((bit, i) => bit === this.bits[i]));
+  }
+
+  round(): Promise<Integer> {
+    return this.toInteger();
+  }
+
+  ceil(): Promise<Integer> {
+    return this.toInteger();
+  }
+
+  floor(): Promise<Integer> {
+    return this.toInteger();
   }
 }

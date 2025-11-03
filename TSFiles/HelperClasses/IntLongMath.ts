@@ -114,6 +114,81 @@ export namespace IntLongMath {
 		return subtract(num1, product);
 	}
 
+	export function binaryAnd<T extends Integer | Long>(num1: T, num2: T): T {
+		let temp = num1.getBits();
+		type workingType = typeof temp;
+		const length = temp.length;
+		let a = [...temp] as workingType;
+		let b = [...num2.getBits()] as workingType;
+
+		let result = new Array(length).fill(0) as workingType;
+		for (let i = 0; i < length; i++) {
+			result[i] = (a[i]! & b[i]!) as TypeBit;
+		}
+		const classConstructor = (num1.constructor as { new(bits: workingType): T });
+		return new classConstructor(result);
+	}
+
+	export function binaryOr<T extends Integer | Long>(num1: T, num2: T): T {
+		let temp = num1.getBits();
+		type workingType = typeof temp;
+		const length = temp.length;
+		let a = [...temp] as workingType;
+		let b = [...num2.getBits()] as workingType;
+
+		let result = new Array(length).fill(0) as workingType;
+		for (let i = 0; i < length; i++) {
+			result[i] = (a[i]! | b[i]!) as TypeBit;
+		}
+		const classConstructor = (num1.constructor as { new(bits: workingType): T });
+		return new classConstructor(result);
+	}
+
+	export function binaryXor<T extends Integer | Long>(num1: T, num2: T): T {
+		let temp = num1.getBits();
+		type workingType = typeof temp;
+		const length = temp.length;
+		let a = [...temp] as workingType;
+		let b = [...num2.getBits()] as workingType;
+
+		let result = new Array(length).fill(0) as workingType;
+		for (let i = 0; i < length; i++) {
+			result[i] = (a[i]! ^ b[i]!) as TypeBit;
+		}
+		const classConstructor = (num1.constructor as { new(bits: workingType): T });
+		return new classConstructor(result);
+	}
+
+	export function binaryComplement<T extends Integer | Long>(num: T): T {
+		let temp = num.getBits();
+		type workingType = typeof temp;
+		const length = temp.length;
+		let a = [...temp] as workingType;
+
+		let result = new Array(length).fill(0) as workingType;
+		for (let i = 0; i < length; i++) {
+			result[i] = (a[i]! ^ 1) as TypeBit;
+		}
+
+		const classConstructor = (num.constructor as { new(bits: workingType): T });
+		return new classConstructor(result);
+	}
+
+	export function rightShift<T extends Integer | Long>(num: T, places: Integer): T {
+		const bits = num.getBits();
+		type workingType = typeof bits;
+		const sign = bits[0];
+		let result = unsignedRightShift(bits, places);
+		result[0] = sign;
+
+		const classConstructor = (num.constructor as { new(bits: workingType): T });
+		return new classConstructor(result);
+	}
+
+	export function unsignedRightShift<T extends TypeInt32 | TypeInt64>(bits: T, places: Integer): T {
+		return ([...bits, ...Array(parseInt(places.toDecimal())).fill(0)].slice(-bits.length)) as T;
+	}	
+
 	export async function lt<T extends Integer | Long>(num1: T, num2: T): Promise<boolean> {
 		const a = num1.getBits();
 		const b = num2.getBits();
