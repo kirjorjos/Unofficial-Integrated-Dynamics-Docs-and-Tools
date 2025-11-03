@@ -1,0 +1,45 @@
+GNU LESSER GENERAL PUBLIC LICENSE
+Version 3, 29 June 2007
+
+Copyright (C) 2025 Kirjorjos
+<Project Name TBD>
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 3 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with this library; if not, see <https://www.gnu.org/licenses/>.
+
+---
+
+TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
+
+0. Definitions.
+
+   "This License" refers to version 3 of the GNU Lesser General Public License.
+
+   "Library" refers to a covered work governed by this License.
+
+   "You" refers to the licensee of the Library.
+
+1. Source Code. The source code for the Library must be made available when distributing the Library, in accordance with the terms of this License.
+
+2. Modification. You may modify your copy of the Library, but you must license your modifications under the same terms as the original Library.
+
+3. Combining with Other Code. You may combine the Library with other code not governed by this License, as long as the Library itself remains under LGPL v3.
+
+4. Distribution. When distributing the Library or derivatives, you must provide a copy of this License along with it.
+
+5. Notices. You must keep all copyright, patent, and license notices intact.
+
+6. Disclaimer. The Library is provided "as is", without any warranty of any kind, either express or implied.
+
+For the full text of the GNU Lesser General Public License, Version 3, visit:
+<https://www.gnu.org/licenses/lgpl-3.0.html>
