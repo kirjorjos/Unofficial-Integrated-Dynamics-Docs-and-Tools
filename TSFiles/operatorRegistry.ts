@@ -2952,7 +2952,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       function: (item1: Item): TypeLambda<Item, boolean> => {
         return (item2: Item): boolean => {
           return (
-            item1.getUname() === item2.getUname() &&
+            item1.getUniqueName() === item2.getUniqueName() &&
             item1.getSize() === item2.getSize()
           );
         };
@@ -2987,7 +2987,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       interactName: "itemstackIsEqualRaw",
       function: (item1: Item): TypeLambda<Item, boolean> => {
         return (item2: Item) => {
-          return item1.getUname() === item2.getUname();
+          return item1.getUniqueName() === item2.getUniqueName();
         };
       },
     }),
@@ -3620,7 +3620,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       symbol: "is_mob",
       interactName: "entityIsMob",
       function: (entity: Entity): boolean => {
-        return entity.getMob();
+        return entity.isMob();
       },
     }),
     isAnimal: new Operator({
@@ -4312,7 +4312,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       interactName: "entityCanBreedWith",
       function: (entity1: Entity): TypeLambda<Entity, boolean> => {
         return (entity2: Entity): boolean => {
-          return entity1.getBreadableList().includes(entity2.getUname());
+          return entity1.getBreadableList().includes(entity2.getUniqueName());
         }
       },
     }),
