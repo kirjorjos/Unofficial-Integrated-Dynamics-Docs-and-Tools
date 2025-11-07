@@ -1,9 +1,10 @@
 import { Integer } from "JavaNumberClasses/Integer";
+import { UniquelyNamed } from "./UniquelyNamed";
 import { Block } from "./Block";
 import { Fluid } from "./Fluid";
 import { NBT } from "./NBT";
 
-export class Item {
+export class Item implements UniquelyNamed {
   size!: Integer;
   maxSize!: Integer;
   stackable!: boolean;
@@ -114,7 +115,7 @@ export class Item {
     return this.NBT;
   }
 
-  getUname(): string {
+  getUniqueName(): string {
     return this.uname;
   }
 
