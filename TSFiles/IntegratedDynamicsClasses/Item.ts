@@ -1,52 +1,165 @@
+import { Integer } from "JavaNumberClasses/Integer";
 import { Block } from "./Block";
+import { Fluid } from "./Fluid";
 import { NBT } from "./NBT";
 
 export class Item {
-  itemName?: string;
+  size!: Integer;
+  maxSize!: Integer;
+  stackable!: boolean;
+  damageable!: boolean;
+  damage!: Integer;
+  maxDamage!: Integer;
+  enchanted!: boolean;
+  enchantable!: boolean;
+  repairCost!: Integer;
+  rarity!: string;
+  fluid!: Fluid;
+  fluidCapacity!: Integer;
+  NBT!: NBT;
+  uname!: string;
+  modName!: string;
+  fuelBurnTime!: Integer;
+  fuel!: boolean;
+  tagNames!: Array<string>;
+  feContainer!: boolean;
+  feStored!: Integer;
+  feCapacity!: Integer;
+  inventory!: Array<IntegratedValue>;
+  tooltip!: Array<string>;
+  itemName!: string;
+  block!: Block;
+
   static defaultProps = {
-    size: 1,
-    maxSize: 64,
+    size: new Integer(1),
+    maxSize: new Integer(64),
     stackable: true,
     damageable: false,
-    damage: 0,
-    maxDamage: 0,
+    damage: new Integer(0),
+    maxDamage: new Integer(0),
     enchanted: false,
     enchantable: false,
-    repairCost: 0,
+    repairCost: new Integer(0),
     rarity: "",
-    NBT: null,
-    fluid: null,
-    fluidCapacity: 0,
+    fluid: new Fluid(),
+    fluidCapacity: new Integer(0),
+    NBT: new NBT(null),
     uname: "",
     modName: "",
-    fuelBurnTime: 0,
+    fuelBurnTime: new Integer(0),
     fuel: false,
-    tagNames: [],
+    tagNames: [] as Array<string>,
     feContainer: false,
-    feCapacity: 0,
-    feStored: 0,
-    inventory: null,
-    tooltip: [],
+    feStored: new Integer(0),
+    feCapacity: new Integer(0),
+    inventory: [] as Array<IntegratedValue>,
+    tooltip: [] as Array<string>,
     itemName: "",
+    block: new Block()
   };
 
   constructor(newProps = new NBT({}), oldItem = new Item((new NBT({})))) {
     Object.assign(this, Item.defaultProps, oldItem.toJSON(), newProps);
+  }
 
-    for (const key of Object.keys(Item.defaultProps)) {
-      const capKey = key.charAt(0).toUpperCase() + key.slice(1);
+  getSize(): Integer {
+    return this.size;
+  }
 
-      if (!this.constructor.prototype[`get${capKey}`]) {
-        this.constructor.prototype[`get${capKey}`] = function () {
-          return this[key];
-        };
-      }
-      if (!this.constructor.prototype[`set${capKey}`]) {
-        this.constructor.prototype[`set${capKey}`] = function (value: any) {
-          this[key] = value;
-        };
-      }
-    }
+  getMaxSize(): Integer {
+    return this.maxSize;
+  }
+
+  isStackable(): boolean {
+    return this.stackable;
+  }
+
+  isDamageable(): boolean {
+    return this.damageable;
+  }
+
+  getDamage(): Integer {
+    return this.damage;
+  }
+
+  getMaxDamage(): Integer {
+    return this.maxDamage;
+  }
+
+  isEnchanted(): boolean {
+    return this.enchanted;
+  }
+
+  isEnchantable(): boolean {
+    return this.enchantable;
+  }
+
+  getRepairCost(): Integer {
+    return this.repairCost;
+  }
+
+  getRarity(): string {
+    return this.rarity;
+  }
+
+  getFluid(): Fluid {
+    return this.fluid;
+  }
+
+  getFluidCapacity(): Integer {
+    return this.fluidCapacity;
+  }
+
+  getNBT(): NBT {
+    return this.NBT;
+  }
+
+  getUname(): string {
+    return this.uname;
+  }
+
+  getModName(): string {
+    return this.modName;
+  }
+
+  getFuelBurnTime(): Integer {
+    return this.fuelBurnTime;
+  }
+
+  isFuel(): boolean {
+    return this.fuel;
+  }
+
+  getTagNames(): Array<string> {
+    return this.tagNames;
+  }
+
+  isFeContainer(): boolean {
+    return this.feContainer;
+  }
+
+  getFeStored(): Integer {
+    return this.feStored;
+  }
+
+  getFeCapacity(): Integer {
+    return this.feCapacity;
+  }
+
+  getInventory(): Array<IntegratedValue> {
+    return this.inventory || [];
+  }
+
+  getTooltip(): Array<string> {
+    return this.tooltip;
+  }
+
+  getItemName(): string {
+    return this.itemName;
+  }
+
+  getBlock(): Block {
+    return this.block;
   }
 
   toJSON(): any {

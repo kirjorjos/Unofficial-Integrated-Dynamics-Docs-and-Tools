@@ -19,6 +19,7 @@ import { RE2 } from "re2-wasm";
 import { Long } from "JavaNumberClasses/Long";
 import { Ingredients } from "IntegratedDynamicsClasses/Ingredients";
 import { Recipe } from "IntegratedDynamicsClasses/Recipe";
+import { UniquelyNamed } from "IntegratedDynamicsClasses/UniquelyNamed";
 
 let globalMap = new TypeMap();
 
@@ -254,8 +255,8 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "*",
       interactName: "numberMultiply",
-      function: (num1: TypeNumber): TypeLambda<TypeNumber, TypeNumber> => {
-        return (num2: TypeNumber): TypeNumber => {
+      function: (num1: TypeNumber): TypeLambda<TypeNumber, Promise<TypeNumber>> => {
+        return (num2: TypeNumber): Promise<TypeNumber> => {
           return JavaMath.multiply(num1, num2);
         };
       },
@@ -283,8 +284,8 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "/",
       interactName: "numberDivide",
-      function: (num1: TypeNumber): TypeLambda<TypeNumber, TypeNumber> => {
-        return (num2: TypeNumber): TypeNumber => {
+      function: (num1: TypeNumber): TypeLambda<TypeNumber, Promise<TypeNumber>> => {
+        return (num2: TypeNumber): Promise<TypeNumber> => {
           return JavaMath.divide(num1, num2);
         };
       },
@@ -312,8 +313,8 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "max",
       interactName: "numberMax",
-      function: (num1: TypeNumber): TypeLambda<TypeNumber, TypeNumber> => {
-        return (num2: TypeNumber): TypeNumber => {
+      function: (num1: TypeNumber): TypeLambda<TypeNumber, Promise<TypeNumber>> => {
+        return (num2: TypeNumber): Promise<TypeNumber> => {
           return JavaMath.max(num1, num2);
         };
       },
@@ -341,8 +342,8 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "min",
       interactName: "numberMin",
-      function: (num1: TypeNumber): TypeLambda<TypeNumber, TypeNumber> => {
-        return (num2: TypeNumber): TypeNumber => {
+      function: (num1: TypeNumber): TypeLambda<TypeNumber, Promise<TypeNumber>> => {
+        return (num2: TypeNumber): Promise<TypeNumber> => {
           return JavaMath.min(num1, num2);
         };
       },
@@ -412,8 +413,8 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "%",
       interactName: "numberModulus",
-      function: (num1: TypeNumber): TypeLambda<TypeNumber, TypeNumber> => {
-        return (num2: TypeNumber): TypeNumber => {
+      function: (num1: TypeNumber): TypeLambda<TypeNumber, Promise<TypeNumber>> => {
+        return (num2: TypeNumber): Promise<TypeNumber> => {
           return JavaMath.mod(num1, num2);
         };
       },
@@ -435,8 +436,8 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "sqrt",
       interactName: "doubleSqrt",
-      function: (double: TypeNumber): TypeNumber => {
-        return Double.sqrt(double);
+      function: (double: Double): Double => {
+        return double.sqrt();
       },
     }),
     doublePow: new Operator({
@@ -462,9 +463,9 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "pow",
       interactName: "doublePow",
-      function: (base: TypeNumber): TypeLambda<TypeNumber, TypeNumber> => {
-        return (exponent: TypeNumber): TypeNumber => {
-          return Double.pow(base, exponent);
+      function: (base: Double): TypeLambda<Double, Double> => {
+        return (exponent: Double): Double => {
+          return base.pow(exponent);
         };
       },
     }),
@@ -520,8 +521,8 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: ">",
       interactName: "numberGreaterThan",
-      function: (num1: TypeNumber): TypeLambda<TypeNumber, boolean> => {
-        return (num2: TypeNumber): boolean => {
+      function: (num1: TypeNumber): TypeLambda<TypeNumber, Promise<boolean>> => {
+        return (num2: TypeNumber): Promise<boolean> => {
           return JavaMath.gt(num1, num2);
         };
       },
@@ -549,8 +550,8 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "<",
       interactName: "numberLessThan",
-      function: (num1: TypeNumber): TypeLambda<TypeNumber, boolean> => {
-        return (num2: TypeNumber): boolean => {
+      function: (num1: TypeNumber): TypeLambda<TypeNumber, Promise<boolean>> => {
+        return (num2: TypeNumber): Promise<boolean> => {
           return JavaMath.lt(num1, num2);
         };
       },
@@ -607,8 +608,8 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: ">=",
       interactName: "anyGreaterThanOrEquals",
-      function: (num1: TypeNumber): TypeLambda<TypeNumber, boolean> => {
-        return (num2: TypeNumber): boolean => {
+      function: (num1: TypeNumber): TypeLambda<TypeNumber, Promise<boolean>> => {
+        return (num2: TypeNumber): Promise<boolean> => {
           return JavaMath.gte(num1, num2);
         };
       },
@@ -636,8 +637,8 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "<=",
       interactName: "anyLessThanOrEquals",
-      function: (num1: TypeNumber): TypeLambda<TypeNumber, boolean> => {
-        return (num2: TypeNumber): boolean => {
+      function: (num1: TypeNumber): TypeLambda<TypeNumber, Promise<boolean>> => {
+        return (num2: TypeNumber): Promise<boolean> => {
           return JavaMath.lte(num1, num2);
         };
       },
@@ -665,9 +666,9 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "&",
       interactName: "integerBinaryAnd",
-      function: (int1: TypeNumber): TypeLambda<TypeNumber, TypeNumber> => {
-        return (int2: TypeNumber): TypeNumber => {
-          return Integer.binaryAnd(int1, int2);
+      function: (int1: Integer): TypeLambda<Integer, Integer> => {
+        return (int2: Integer): Integer => {
+          return int1.binaryAnd(int2);
         };
       },
     }),
@@ -694,8 +695,8 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "|",
       interactName: "integerBinaryOr",
-      function: (int1: TypeNumber): TypeLambda<TypeNumber, TypeNumber> => {
-        return (int2: TypeNumber): TypeNumber => {
+      function: (int1: Integer): TypeLambda<Integer, Integer> => {
+        return (int2: Integer): Integer => {
           return int1.binaryOr(int2);
         };
       },
@@ -723,9 +724,9 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "^",
       interactName: "integerXor",
-      function: (int1: TypeNumber): TypeLambda<TypeNumber, TypeNumber> => {
-        return (int2: TypeNumber): TypeNumber => {
-          return int1.xor(int2);
+      function: (int1: Integer): TypeLambda<Integer, Integer> => {
+        return (int2: Integer): Integer => {
+          return int1.binaryXor(int2);
         };
       },
     }),
@@ -747,7 +748,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       symbol: "~",
       interactName: "integerComplement",
       function: (int: Integer): Integer => {
-        return int.complement();
+        return int.binaryComplement();
       },
     }),
     "<<": new Operator({
@@ -833,7 +834,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       interactName: "integerUnsignedRightShift",
       function: (int1: Integer): TypeLambda<Integer, Integer> => {
         return (int2: Integer): Integer => {
-          return int1.unsignedRightShift(int2);
+          return new Integer(int1.unsignedRightShift(int2));
         };
       },
     }),
@@ -1468,7 +1469,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       symbol: "uname",
       interactName: "uniquely_namedUniqueName",
       function: (
-        uniquelyNamed: TypeRawSignatureAST.RawSignatureUniquelyNamed
+        uniquelyNamed: UniquelyNamed
       ): string => {
         return uniquelyNamed.getUniqueName();
       },
@@ -1509,7 +1510,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "|| ||",
       interactName: "numberRound",
-      function: (number: TypeNumber): TypeNumber => {
+      function: (number: TypeNumber): Promise<Integer> => {
         return number.round();
       },
     }),
@@ -1530,7 +1531,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "⌈ ⌉",
       interactName: "numberCeil",
-      function: (number: TypeNumber): TypeNumber => {
+      function: (number: TypeNumber): Promise<Integer> => {
         return number.ceil();
       },
     }),
@@ -1551,7 +1552,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "⌊ ⌋",
       interactName: "numberFloor",
-      function: (number: TypeNumber): TypeNumber => {
+      function: (number: TypeNumber): Promise<Integer> => {
         return number.floor();
       },
     }),
@@ -1690,14 +1691,14 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "get",
       interactName: "listGet",
-      function: <T>(index: TypeNumber): TypeLambda<Array<T>, T> => {
-        return (list: Array<T>): T => {
-          if (index.toDecimal() < 0 || index.toDecimal() >= list.length) {
+      function: <T>(index: Integer): TypeLambda<Array<T>, Promise<T>> => {
+        return async (list: Array<T>): Promise<T> => {
+          if (await index.lt(new Integer(0)) || await index.lte(new Integer(list.length))) {
             throw new Error(
               `Index ${index} out of bounds for list of length ${list.length}`
             );
           }
-          return list[index.toDecimal()] as T;
+          return list[parseInt(index.toDecimal())] as T;
         };
       },
     }),
@@ -1724,15 +1725,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "get_or_default",
       interactName: "listGetOrDefault",
-      function: <T>(
+      function: async <T>(
         list: Array<T>
-      ): TypeLambda<TypeNumber, TypeLambda<T, T>> => {
-        return (index: TypeNumber): TypeLambda<T, T> => {
-          return (defaultValue: T): T => {
-            if (JavaMath.lt(index, new Integer(0)) || JavaMath.gte(index, new Integer(list.length))) {
+      ): Promise<TypeLambda<Integer, Promise<TypeLambda<T, Promise<T>>>>> => {
+        return async (index: Integer): Promise<TypeLambda<T, Promise<T>>> => {
+          return async (defaultValue: T): Promise<T> => {
+            if (await JavaMath.lt(index, new Integer(0)) || await JavaMath.gte(index, new Integer(list.length))) {
               return defaultValue;
             }
-            return list[index.toDecimal()] as T;
+            return list[parseInt(index.toDecimal())] as T;
           };
         };
       },
@@ -2061,15 +2062,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "slice",
       interactName: "listSlice",
-      function: <T>(list: Array<T>): TypeLambda<TypeNumber, TypeLambda<TypeNumber, Array<T>>> => {
-        return (start: TypeNumber): TypeLambda<TypeNumber, Array<T>> => {
-          return (end: TypeNumber): Array<T> => {
-            if (JavaMath.lt(start, new Integer(0)) || JavaMath.gt(end, new Integer(list.length)) || JavaMath.gt(start, end)) {
+      function: async <T>(list: Array<T>): Promise<TypeLambda<Integer, Promise<TypeLambda<Integer, Promise<Array<T>>>>>> => {
+        return async (start: Integer): Promise<TypeLambda<Integer, Promise<Array<T>>>> => {
+          return async (end: Integer): Promise<Array<T>> => {
+            if (await JavaMath.lt(start, new Integer(0)) || await JavaMath.gt(end, new Integer(list.length)) || await JavaMath.gt(start, end)) {
               throw new Error(
                 `Invalid slice range: [${start.toDecimal()}, ${end.toDecimal()}) for list of length ${list.length}`
               );
             }
-            return list.slice(start.toDecimal(), end.toDecimal());
+            return list.slice(parseInt(start.toDecimal()), parseInt(end.toDecimal()));
           };
         };
       },
@@ -2117,11 +2118,12 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "=set=",
       interactName: "listEquals_set",
-      function: <T>(list1: Array<T>): TypeLambda<Array<T>, boolean> => {
+      function: <T extends IntegratedValue>(list1: Array<T>): TypeLambda<Array<T>, boolean> => {
         return (list2: Array<T>): boolean => {
           const set1 = new Set(list1);
           const set2 = new Set(list2);
-          return set1.equals(set2);
+          if (set1.size !== set2.size || (set1.size !== (new Set([...set1, ...set2]).size))) return false;
+          return true;
         };
       },
     }),
@@ -2542,7 +2544,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       symbol: "stackable",
       interactName: "itemstackIsStackable",
       function: (item: Item): boolean => {
-        return item.getStackable();
+        return item.isStackable();
       },
     }),
     isDamageable: new Operator({
@@ -2567,7 +2569,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       symbol: "damageable",
       interactName: "itemstackIsDamageable",
       function: (item: Item): boolean => {
-        return item.getDamageable();
+        return item.isDamageable();
       },
     }),
     damage: new Operator({
@@ -2639,7 +2641,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       symbol: "enchanted",
       interactName: "itemstackIsEnchanted",
       function: (item: Item): boolean => {
-        return item.getEnchanted();
+        return item.isEnchanted();
       },
     }),
     enchantable: new Operator({
@@ -2665,7 +2667,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       symbol: "enchantable",
       interactName: "itemstackIsEnchantable",
       function: (item: Item): boolean => {
-        return item.getEnchantable();
+        return item.isEnchantable();
       },
     }),
     repairCost: new Operator({
@@ -3059,7 +3061,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       symbol: "can_burn",
       interactName: "itemstackCanBurn",
       function: (item: Item): boolean => {
-        return item.getFuel();
+        return item.isFuel();
       },
     }),
     itemTagNames: new Operator({
@@ -3082,7 +3084,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "item_tag_names",
       interactName: "itemstackTags",
-      function: (item: Item): string => {
+      function: (item: Item): string[] => {
         return item.getTagNames();
       },
     }),
@@ -3170,7 +3172,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       symbol: "is_fe_container",
       interactName: "itemstackIsFeContainer",
       function: (item: Item): boolean => {
-        return item.getFeContainer();
+        return item.isFeContainer();
       },
     }),
     storedFe: new Operator({
@@ -3278,7 +3280,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       symbol: "inventory_size",
       interactName: "itemstackInventorySize",
       function: (item: Item): Integer => {
-        return item.getInventory().length || 0;
+        return new Integer(item.getInventory()?.length || 0);
       },
     }),
     itemInventory: new Operator({
@@ -3301,7 +3303,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "inventory",
       interactName: "itemstackInventory",
-      function: (item: Item): Array<Item> => {
+      function: (item: Item): Array<IntegratedValue> => {
         return item.getInventory();
       },
     }),
@@ -5067,7 +5069,7 @@ let operatorRegistry: TypeOperatorRegistry = {
           return (value: NBT): Fluid => {
             const nbt = fluid.getNBT() || {};
             nbt[key] = value;
-            return new Fluid({ nbt }, fluid);
+            return new Fluid(new NBT({ nbt }), fluid);
           };
         };
       },
@@ -5871,7 +5873,7 @@ let operatorRegistry: TypeOperatorRegistry = {
           if (!nbt.hasOwnProperty(key)) {
             throw new Error(`${key} does not exist in ${JSON.stringify(nbt)}`);
           }
-          return nbt.getValue(key).getType();
+          return nbt.getRawValue(key).getType();
         };
       },
     }),
@@ -5900,7 +5902,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       interactName: "nbtGetTag",
       function: (nbt: NBT): TypeLambda<string, NBT> => {
         return (key: string): NBT => {
-          return nbt.getValue(key);
+          return nbt.getRawValue(key);
         };
       },
     }),
@@ -5929,7 +5931,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       interactName: "nbtGetBoolean",
       function: (nbt: NBT): TypeLambda<string, boolean> => {
         return (key: string): boolean => {
-          return nbt.getValue(key).getRawValue();
+          return nbt.getRawValue(key).getRawValue();
         };
       },
     }),
@@ -5958,11 +5960,11 @@ let operatorRegistry: TypeOperatorRegistry = {
       interactName: "nbtGetInteger",
       function: (nbt: NBT): TypeLambda<string, Integer> => {
         return (key: string): Integer => {
-          let value = nbt.getValue(key);
+          let value = nbt.getRawValue(key);
           if (value.getType() === "Integer") {
             return value.getRawValue();
           }
-          throw new Error(`${key} is not an integer in ${nbt.toJSON()}`);
+          throw new Error(`${key} is not an integer in ${JSON.stringify(nbt.toJSON())}`);
         };
       },
     }),
@@ -5991,11 +5993,11 @@ let operatorRegistry: TypeOperatorRegistry = {
       interactName: "nbtGetLong",
       function: (nbt: NBT): TypeLambda<string, Long> => {
         return (key: string): Long => {
-          let value = nbt.getValue(key);
+          let value = nbt.getRawValue(key);
           if (value.getType() === "Long") {
             return value.getRawValue();
           }
-          throw new Error(`${key} is not a long in ${nbt.toJSON(nbt)}`);
+          throw new Error(`${key} is not a long in ${JSON.stringify(nbt.toJSON())}`);
         };
       },
     }),
@@ -6024,11 +6026,11 @@ let operatorRegistry: TypeOperatorRegistry = {
       interactName: "nbtGetDouble",
       function: (nbt: NBT): TypeLambda<string, Double> => {
         return (key: string): Double => {
-          let value = nbt.getValue(key);
+          let value = nbt.getRawValue(key);
           if (value.getType() === "Double") {
             return value.getRawValue();
           }
-          throw new Error(`${key} is not a double in ${nbt.toJSON()}`);
+          throw new Error(`${key} is not a double in ${JSON.stringify(nbt.toJSON())}`);
         };
       },
     }),
@@ -6057,7 +6059,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       interactName: "nbtGetString",
       function: (nbt: NBT): TypeLambda<string, string> => {
         return (key: string): string => {
-          return nbt.getValue(key);
+          return nbt.getRawValue(key);
         };
       },
     }),
@@ -6086,7 +6088,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       interactName: "nbtGetCompound",
       function: (nbt: NBT): TypeLambda<string, NBT> => {
         return (string: string): NBT => {
-          return nbt.getValue(string);
+          return nbt.getRawValue(string);
         };
       },
     }),
@@ -6113,11 +6115,11 @@ let operatorRegistry: TypeOperatorRegistry = {
       interactName: "nbtGetListTag",
       function: (nbt: NBT): TypeLambda<string, Array<NBT>> => {
         return (key: string): Array<NBT> => {
-          let value = nbt.getValue();
+          let value = nbt.getRawValue();
           let list = value.getRawValue();
           if (value.getType() != "Array<NBT>")
             throw new Error(
-              `${key} is not a list of NBT in ${nbt.toJSON()}`
+              `${key} is not a list of NBT in ${JSON.stringify(nbt.toJSON())}`
             );
           return list;
         };
@@ -6146,11 +6148,11 @@ let operatorRegistry: TypeOperatorRegistry = {
       interactName: "nbtGetListByte",
       function: (nbt: NBT) => {
         return (key: string): Integer => {
-          let value = nbt.getValue(key);
+          let value = nbt.getRawValue(key);
           let list = value.getRawValue();
           if (nbt.getType(key) != "Byte")
             throw new Error(
-              `${key} is not a list of byte in ${nbt.toJSON()}`
+              `${key} is not a list of byte in ${JSON.stringify(nbt.toJSON())}`
             );
           return list;
         };
@@ -6179,11 +6181,11 @@ let operatorRegistry: TypeOperatorRegistry = {
       interactName: "nbtGetListInt",
       function: (nbt: NBT): TypeLambda<string, Array<Integer>> => {
         return (key: string): Array<Integer> => {
-          let value = nbt.getValue(key);
+          let value = nbt.getRawValue(key);
           let list = value.getRawValue();
-          if (value.getValueType(key) != "Array<Integer>")
+          if (value.getType(key) != "Array<Integer>")
             throw new Error(
-              `${key} is not a list of int in ${nbt.toJSON()}`
+              `${key} is not a list of int in ${JSON.stringify(nbt.toJSON())}`
             );
           return list;
         };
@@ -6212,11 +6214,11 @@ let operatorRegistry: TypeOperatorRegistry = {
       interactName: "nbtGetListLong",
       function: (nbt: NBT): TypeLambda<string, Long> => {
         return (key: string): Long => {
-          let value = nbt.getValue(key);
+          let value = nbt.getRawValue(key);
           let list = value.list;
           if (value.ListType != "long")
             throw new Error(
-              `${key} is not a list of long in ${nbt.toJSON()}`
+              `${key} is not a list of long in ${JSON.stringify(nbt.toJSON())}`
             );
           return list;
         };
@@ -7515,7 +7517,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       function: (ingredients: Ingredients): TypeLambda<Integer, TypeLambda<Item, Ingredients>> => {
         return (index: Integer): TypeLambda<Item, Ingredients> => {
           return (item: Item): Ingredients => {
-            return ingredients.setItem(index, item);
+            return ingredients.setItem(item, index);
           }
         }
       }
@@ -7552,7 +7554,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       function: (ingredients: Ingredients): TypeLambda<Integer, TypeLambda<Fluid, Ingredients>> => {
         return (index: Integer): TypeLambda<Fluid, Ingredients> => {
           return (fluid: Fluid): Ingredients => {
-            return ingredients.setFluid(index, fluid);
+            return ingredients.setFluid(fluid, index);
           }
         }
       }
@@ -7589,7 +7591,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       function: (ingredients: Ingredients): TypeLambda<Integer, TypeLambda<Long, Ingredients>> => {
         return (index: Integer): TypeLambda<Long, Ingredients> => {
           return (energy: Long): Ingredients => {
-            return ingredients.setEnergy(index, energy);
+            return ingredients.setEnergy(energy, index);
           }
         }
       }

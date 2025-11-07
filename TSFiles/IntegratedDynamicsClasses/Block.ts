@@ -1,38 +1,123 @@
+import { Integer } from "JavaNumberClasses/Integer";
+import { Fluid } from "./Fluid";
+import { Item } from "./Item";
 import { NBT } from "./NBT";
 
 export class Block {
-  blockName?: string;
+  opaque!: boolean;
+  item!: Item;
+  modName!: string;
+  breakSound!: string;
+  placeSound!: string;
+  stepSound!: string;
+  shearable!: boolean;
+  plantAge!: Integer;
+  properties!: NBT;
+  fluid!: Fluid;
+  fluidCapacity!: Integer;
+  uname!: string;
+  tagNames!: Array<string>;
+  feContainer!: boolean;
+  feCapacity!: Integer;
+  feStored!: Integer;
+  inventory!: Array<Item> | null;
+  blockName!: string;
+
   static defaultProps = {
-    NBT: null,
-    fluid: null,
-    fluidCapacity: 0,
-    uname: "",
+    opaque: true,
+    item: new Item(),
     modName: "",
-    tagNames: [],
+    breakSound: "",
+    placeSound: "",
+    stepSound: "",
+    shearable: false,
+    plantAge: new Integer(-1),
+    properties: new NBT(null),
+    fluid: new Fluid(),
+    fluidCapacity: new Integer(0),
+    uname: "",
+    tagNames: [] as Array<string>,
     feContainer: false,
-    feCapacity: 0,
-    feStored: 0,
-    inventory: null,
+    feCapacity: new Integer(0),
+    feStored: new Integer(0),
+    inventory: null as Array<Item> | null,
     blockName: "",
   };
 
   constructor(newProps = new NBT({}), oldBlock = new Block(new NBT({}))) {
     Object.assign(this, Block.defaultProps, oldBlock.toJSON(), newProps.toJSON());
+  }
 
-    for (const key of Object.keys(Block.defaultProps)) {
-      const capKey = key.charAt(0).toUpperCase() + key.slice(1);
+  isOpaque(): boolean {
+    return this.opaque;
+  }
 
-      if (!this.constructor.prototype[`get${capKey}`]) {
-        this.constructor.prototype[`get${capKey}`] = function () {
-          return this[key];
-        };
-      }
-      if (!this.constructor.prototype[`set${capKey}`]) {
-        this.constructor.prototype[`set${capKey}`] = function (value: any) {
-          this[key] = value;
-        };
-      }
-    }
+  getItem(): Item {
+    return this.item;
+  }
+
+  getModName(): string {
+    return this.modName;
+  }
+
+  getBreakSound(): string {
+    return this.breakSound;
+  }
+
+  getPlaceSound(): string {
+    return this.placeSound;
+  }
+
+  getStepSound(): string {
+    return this.stepSound;
+  }
+
+  isShearable(): boolean {
+    return this.shearable;
+  }
+
+  getPlantAge(): Integer {
+    return this.plantAge;
+  }
+
+  getProperties(): NBT {
+    return this.properties;
+  }
+
+  getFluid(): Fluid {
+    return this.fluid;
+  }
+
+  getFluidCapacity(): Integer {
+    return this.fluidCapacity;
+  }
+
+  getUname(): string {
+    return this.uname;
+  }
+
+  getTagNames(): Array<string> {
+    return this.tagNames;
+  }
+
+  isFeContainer(): boolean {
+    return this.feContainer;
+  }
+
+  getFeCapacity(): Integer {
+    return this.feCapacity;
+  }
+
+  getFeStored(): Integer {
+    return this.feStored;
+  }
+
+  getInventory(): Array<Item> | null {
+    return this.inventory;
+  }
+
+  getBlockName(): string {
+    return this.blockName;
   }
 
   toJSON(): any {
