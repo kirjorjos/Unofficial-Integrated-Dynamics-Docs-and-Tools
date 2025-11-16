@@ -1,60 +1,18 @@
 import { UniquelyNamed } from "./UniquelyNamed";
-import { NBT } from "./NBT";
 import { Integer } from "../JavaNumberClasses/Integer";
-import { Item } from "./Item";
-import { Block } from "./Block";
-import { Fluid } from "./Fluid";
 import { Double } from "../JavaNumberClasses/Double";
+import { Properties } from "./Properties";
+import { CompoundTag } from "./NBTFunctions/MinecraftClasses/CompoundTag";
 
 export class Entity implements UniquelyNamed {
-  uname!: string;
-  mob!: boolean;
-  animal!: boolean;
-  player!: boolean;
-  minecart!: boolean;
-  item!: Item;
-  health!: Integer;
-  width!: Integer;
-  height!: Integer;
-  burning!: boolean;
-  wet!: boolean;
-  crouching!: boolean;
-  eating!: boolean;
-  armorInventory!: Array<Item>;
-  inventory!: Array<Item>;
-  modName!: string;
-  targetBlock!: Block;
-  targetEntity!: Entity;
-  guiOpen!: boolean;
-  heldItemMain!: Item;
-  heldItemOffHand!: Item;
-  entityMounted!: boolean;
-  itemFrame!: boolean;
-  itemFrameContents!: Item;
-  itemFrameRotation!: Integer;
-  hurtSound!: string;
-  deathSound!: string;
-  age!: Integer;
-  child!: boolean;
-  breedable!: boolean;
-  inLove!: boolean;
-  shearable!: boolean;
-  breedableList!: Array<string>;
-  NBT!: NBT;
-  entityType!: string;
-  itemList!: Array<Item>;
-  fluids!: Array<Fluid>;
-  energyStored!: Integer;
-  energyCapacity!: Integer;
 
-
-  static defaultProps = {
+  static defaultProps = new Properties({
     uname: "",
     mob: false,
     animal: false,
     player: false,
     minecart: false,
-    item: new Item(),
+    isItem: false,
     health: new Integer(0),
     width: new Integer(0),
     height: new Integer(0),
@@ -65,14 +23,14 @@ export class Entity implements UniquelyNamed {
     armorInventory: [] as Array<Item>,
     inventory: [] as Array<Item>,
     modName: "",
-    targetBlock: new Block(),
-    targetEntity: new Entity(),
+    // targetBlock: new Block(),
+    targetEntity: new Entity(new Properties({})),
     guiOpen: false,
-    heldItemMain: new Item(),
-    heldItemOffHand: new Item(),
+    // heldItemMain: new Item(),
+    // heldItemOffHand: new Item(),
     entityMounted: false,
     itemFrame: false,
-    itemFrameContents: new Item(),
+    // itemFrameContents: new Item(),
     itemFrameRotation: new Integer(0),
     hurtSound: "",
     deathSound: "",
@@ -82,212 +40,190 @@ export class Entity implements UniquelyNamed {
     inLove: false,
     shearable: false,
     breedableList: [] as Array<string>,
-    NBT: new NBT(null),
+    NBT: null,
     entityType: "",
     itemList: [] as Array<Item>,
     fluids: [] as Array<Fluid>,
     energyStored: new Integer(0),
     energyCapacity: new Integer(0),
-  };
+  });
 
-  constructor(newProps = new NBT({}), oldEntity = new Entity()) {
-    Object.assign(this, Entity.defaultProps, oldEntity.toJSON(), newProps.toJSON());
+  props: Properties;
+
+  constructor(newProps: Properties, oldEntity?: Entity) {
+    let props = Entity.defaultProps;
+    props.setAll(newProps);
+    if (oldEntity) props.setAll(oldEntity.getProperties());
+    Promise.all([import("./Item"), import("./Block")]).then((values => {
+      if (!props.has("heldItemMain")) props.set("heldItemMain", new values[0].Item(new Properties({})));
+      if (!props.has("helpItemOffHand")) props.set("helpItemOffHand", new values[0].Item(new Properties({})));
+      if (!props.has("itemFrameContents")) props.set("itemFrameContents", new values[0].Item(new Properties({})));
+      if (!props.has("targetBlock")) props.set("targetBlock", new values[1].Block(new Properties({})));
+    }))
+    this.props = props;
   }
 
   getUniqueName(): string {
-    return this.uname;
+    return this.props.get("uname");
   }
 
   isMob(): boolean {
-    return this.mob;
+    return this.props.get("mob");
   }
 
   isAnimal(): boolean {
-    return this.animal;
+    return this.props.get("animal");
   }
 
   isItem(): boolean {
-    return !this.item.equals(new Item());
-  }
-
-  getIsItem(): boolean {
-    return this.item.equals(new Item());
+    return !this.props.get("isItem");
   }
 
   isPlayer(): boolean {
-    return this.player;
+    return this.props.get("player");
   }
 
   isMinecart(): boolean {
-    return this.minecart;
+    return this.props.get("minecart");
   }
 
   getItem(): Item {
-    return this.item;
+    return this.props.get("item");
   }
 
   getHealth(): Double {
-    return new Double(this.health.toDecimal());
+    return new Double(this.props.get("health").toDecimal());
   }
 
   getWidth(): Double {
-    return new Double(this.width.toDecimal());
+    return new Double(this.props.get("width").toDecimal());
   }
 
   getHeight(): Double {
-    return new Double(this.height.toDecimal());
+    return new Double(this.props.get("height").toDecimal());
   }
 
   isBurning(): boolean {
-    return this.burning;
+    return this.props.get("burning");
   }
 
   isWet(): boolean {
-    return this.wet;
+    return this.props.get("wet");
   }
 
   isCrouching(): boolean {
-    return this.crouching;
+    return this.props.get("crouching");
   }
 
   isEating(): boolean {
-    return this.eating;
+    return this.props.get("eating");
   }
 
   getArmorInventory(): Array<Item> {
-    return this.armorInventory;
+    return this.props.get("armorInventory");
   }
 
   getInventory(): Array<Item> {
-    return this.inventory;
+    return this.props.get("inventory");
   }
 
   getModName(): string {
-    return this.modName;
+    return this.props.get("modName");
   }
 
   getTargetBlock(): Block {
-    return this.targetBlock;
+    return this.props.get("targetBlock");
   }
 
   getTargetEntity(): Entity {
-    return this.targetEntity;
+    return this.props.get("targetEntity");
   }
 
   hasGuiOpen(): boolean {
-    return this.guiOpen;
+    return this.props.get("guiOpen");
   }
 
   getHeldItemMain(): Item {
-    return this.heldItemMain;
+    return this.props.get("heldItemMain");
   }
 
   getHeldItemOffHand(): Item {
-    return this.heldItemOffHand;
+    return this.props.get("heldItemOffHand");
   }
 
   isEntityMounted(): boolean {
-    return this.entityMounted;
+    return this.props.get("entityMounted");
   }
 
   isItemFrame(): boolean {
-    return this.itemFrame;
+    return this.props.get("itemFrame");
   }
 
   getItemFrameContents(): Item {
-    return this.itemFrameContents;
+    return this.props.get("itemFrameContents");
   }
 
   getItemFrameRotation(): Integer {
-    return this.itemFrameRotation;
+    return this.props.get("itemFrameRotation");
   }
 
   getHurtSound(): string {
-    return this.hurtSound;
+    return this.props.get("hurtSound");
   }
 
   getDeathSound(): string {
-    return this.deathSound;
+    return this.props.get("deathSound");
   }
 
   getAge(): Integer {
-    return this.age;
+    return this.props.get("age");
   }
 
   isChild(): boolean {
-    return this.child;
+    return this.props.get("child");
   }
 
   canBreed(): boolean {
-    return this.breedable;
+    return this.props.get("breedable");
   }
 
   isInLove(): boolean {
-    return this.inLove;
+    return this.props.get("inLove");
   }
 
   isShearable(): boolean {
-    return this.shearable;
+    return this.props.get("shearable");
   }
 
   getBreadableList(): Array<string> {
-    return [...this.breedableList, this.uname];
+    return [...this.props.get("breedableList"), this.props.get("uname")];
   }
 
-  getNBT(): NBT {
-    return this.NBT;
+  getNBT(): CompoundTag {
+    return this.props.get("NBT");
   }
 
   getEntityType(): string {
-    return this.entityType;
+    return this.props.get("entityType");
   }
 
   getItemList(): Array<Item> {
-    return this.itemList;
+    return this.props.get("itemList");
   }
 
   getFluids(): Array<Fluid> {
-    return this.fluids;
+    return this.props.get("fluids");
   }
 
   getEnergyStored(): Integer {
-    return this.energyStored;
+    return this.props.get("energyStored");
   }
 
   getEnergyCapacity(): Integer {
-    return this.energyCapacity;
+    return this.props.get("energyCapacity");
   }
 
-  toJSON(): any {
-    const walk = (obj: any): any => {
-      if (
-        obj === null ||
-        typeof obj === "string" ||
-        typeof obj === "number" ||
-        typeof obj === "boolean"
-      ) {
-        return obj;
-      }
-
-      if (obj instanceof NBT) {
-        return obj.toJSON();
-      }
-
-      if (Array.isArray(obj)) {
-        return obj.map(v => walk(v));
-      }
-
-      if (typeof obj === "object") {
-        const result: Record<string, any> = {};
-        for (const [key, value] of Object.entries(obj)) {
-          result[key] = walk(value);
-        }
-        return result;
-      }
-
-      return undefined;
-    };
-
-    return walk(this);
+  getProperties(): Properties {
+    return this.props;
   }
 }

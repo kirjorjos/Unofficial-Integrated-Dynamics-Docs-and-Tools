@@ -1,40 +1,19 @@
 import { UniquelyNamed } from "./UniquelyNamed";
 import { Integer } from "JavaNumberClasses/Integer";
-import { Fluid } from "./Fluid";
-import { Item } from "./Item";
-import { NBT } from "./NBT";
+import { Properties } from "./Properties";
 
 export class Block implements UniquelyNamed {
-  opaque!: boolean;
-  item!: Item;
-  modName!: string;
-  breakSound!: string;
-  placeSound!: string;
-  stepSound!: string;
-  shearable!: boolean;
-  plantAge!: Integer;
-  properties!: NBT;
-  fluid!: Fluid;
-  fluidCapacity!: Integer;
-  uname!: string;
-  tagNames!: Array<string>;
-  feContainer!: boolean;
-  feCapacity!: Integer;
-  feStored!: Integer;
-  inventory!: Array<Item> | null;
-  blockName!: string;
 
-  static defaultProps = {
+  static defaultProps = new Properties({
     opaque: true,
-    item: new Item(),
+    // item: new Item(),
     modName: "",
     breakSound: "",
     placeSound: "",
     stepSound: "",
     shearable: false,
     plantAge: new Integer(-1),
-    properties: new NBT(null),
-    fluid: new Fluid(),
+    // fluid: new Fluid(),
     fluidCapacity: new Integer(0),
     uname: "",
     tagNames: [] as Array<string>,
@@ -43,115 +22,90 @@ export class Block implements UniquelyNamed {
     feStored: new Integer(0),
     inventory: null as Array<Item> | null,
     blockName: "",
-  };
+  });
+  props: Properties;
 
-  constructor(newProps = new NBT({}), oldBlock = new Block(new NBT({}))) {
-    Object.assign(this, Block.defaultProps, oldBlock.toJSON(), newProps.toJSON());
+  constructor(newProps: Properties, oldBlock?: Block) {
+    let props = Block.defaultProps;
+    props.setAll(newProps);
+    if (oldBlock) props.setAll(oldBlock.getProperties());
+    Promise.all([import("./Item"), import("./Fluid")]).then((values => {
+      if (!props.has("item")) props.set("item", new values[0].Item(new Properties({})));
+      if (!props.has("fluid")) props.set("fluid", new values[1].Fluid(new Properties({})));
+    }))
+    this.props = props;
   }
 
   isOpaque(): boolean {
-    return this.opaque;
+    return this.props.get("opaque");
   }
 
   getItem(): Item {
-    return this.item;
+    return this.props.get("item");
   }
 
   getModName(): string {
-    return this.modName;
+    return this.props.get("modName");
   }
 
   getBreakSound(): string {
-    return this.breakSound;
+    return this.props.get("breakSound");
   }
 
   getPlaceSound(): string {
-    return this.placeSound;
+    return this.props.get("placeSound");
   }
 
   getStepSound(): string {
-    return this.stepSound;
+    return this.props.get("stepSound");
   }
 
   isShearable(): boolean {
-    return this.shearable;
+    return this.props.get("shearable");
   }
 
   getPlantAge(): Integer {
-    return this.plantAge;
+    return this.props.get("plantAge");
   }
 
-  getProperties(): NBT {
-    return this.properties;
+  getProperties(): Properties {
+    return this.props;
   }
 
   getFluid(): Fluid {
-    return this.fluid;
+    return this.props.get("fluid");
   }
 
   getFluidCapacity(): Integer {
-    return this.fluidCapacity;
+    return this.props.get("fluidCapacity");
   }
 
   getUniqueName(): string {
-    return this.uname;
+    return this.props.get("uname");
   }
 
   getTagNames(): Array<string> {
-    return this.tagNames;
+    return this.props.get("tagNames");
   }
 
   isFeContainer(): boolean {
-    return this.feContainer;
+    return this.props.get("feContainer");
   }
 
   getFeCapacity(): Integer {
-    return this.feCapacity;
+    return this.props.get("feCapacity");
   }
 
   getFeStored(): Integer {
-    return this.feStored;
+    return this.props.get("feStored");
   }
 
   getInventory(): Array<Item> | null {
-    return this.inventory;
+    return this.props.get("inventory");
   }
 
   getBlockName(): string {
-    return this.blockName;
-  }
-
-  toJSON(): any {
-    const walk = (obj: any): any => {
-      if (
-        obj === null ||
-        typeof obj === "string" ||
-        typeof obj === "number" ||
-        typeof obj === "boolean"
-      ) {
-        return obj;
-      }
-
-      if (obj instanceof NBT) {
-        return obj.toJSON();
-      }
-
-      if (Array.isArray(obj)) {
-        return obj.map(v => walk(v));
-      }
-
-      if (typeof obj === "object") {
-        const result: Record<string, any> = {};
-        for (const [key, value] of Object.entries(obj)) {
-          result[key] = walk(value);
-        }
-        return result;
-      }
-
-      return undefined;
-    };
-
-    return walk(this);
+    return this.props.get("blockName");
   }
 
   getStrengthVsBlock() {
@@ -167,6 +121,6 @@ export class Block implements UniquelyNamed {
   }
 
   toString() {
-    return this.blockName;
+    return this.props.get("blockName");
   }
 }

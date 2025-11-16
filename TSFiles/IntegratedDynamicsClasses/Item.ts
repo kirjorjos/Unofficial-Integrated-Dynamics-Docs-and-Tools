@@ -1,37 +1,13 @@
 import { Integer } from "JavaNumberClasses/Integer";
 import { UniquelyNamed } from "./UniquelyNamed";
-import { Block } from "./Block";
-import { Fluid } from "./Fluid";
-import { NBT } from "./NBT";
+import { Properties } from "./Properties";
+import { CompoundTag } from "./NBTFunctions/MinecraftClasses/CompoundTag";
 
 export class Item implements UniquelyNamed {
-  size!: Integer;
-  maxSize!: Integer;
-  stackable!: boolean;
-  damageable!: boolean;
-  damage!: Integer;
-  maxDamage!: Integer;
-  enchanted!: boolean;
-  enchantable!: boolean;
-  repairCost!: Integer;
-  rarity!: string;
-  fluid!: Fluid;
-  fluidCapacity!: Integer;
-  NBT!: NBT;
-  uname!: string;
-  modName!: string;
-  fuelBurnTime!: Integer;
-  fuel!: boolean;
-  tagNames!: Array<string>;
-  feContainer!: boolean;
-  feStored!: Integer;
-  feCapacity!: Integer;
-  inventory!: Array<IntegratedValue>;
-  tooltip!: Array<string>;
-  itemName!: string;
-  block!: Block;
-
-  static defaultProps = {
+  
+  props: Properties;
+  
+  static defaultProps = new Properties({
     size: new Integer(1),
     maxSize: new Integer(64),
     stackable: true,
@@ -42,9 +18,9 @@ export class Item implements UniquelyNamed {
     enchantable: false,
     repairCost: new Integer(0),
     rarity: "",
-    fluid: new Fluid(),
+    // fluid: new Fluid(),
     fluidCapacity: new Integer(0),
-    NBT: new NBT(null),
+    NBT: null,
     uname: "",
     modName: "",
     fuelBurnTime: new Integer(0),
@@ -56,147 +32,126 @@ export class Item implements UniquelyNamed {
     inventory: [] as Array<IntegratedValue>,
     tooltip: [] as Array<string>,
     itemName: "",
-    block: new Block()
-  };
+    // block: new Block()
+  });
 
-  constructor(newProps = new NBT({}), oldItem = new Item((new NBT({})))) {
-    Object.assign(this, Item.defaultProps, oldItem.toJSON(), newProps);
-  }
+  constructor(newProps: Properties, oldItem?: Item) {
+        let props = Item.defaultProps;
+        props.setAll(newProps);
+        if (oldItem) props.setAll(oldItem.getProperties());
+        Promise.all([import("./Block"), import("./Fluid")]).then((values => {
+          if (!props.has("block")) props.set("block", new values[0].Block(new Properties({})));
+          if (!props.has("fluid")) props.set("fluid", new values[1].Fluid(new Properties({})));
+        }))
+        this.props = props;
+      }
 
   getSize(): Integer {
-    return this.size;
+    return this.props.get("size");
   }
 
   getMaxSize(): Integer {
-    return this.maxSize;
+    return this.props.get("maxSize");
   }
 
   isStackable(): boolean {
-    return this.stackable;
+    return this.props.get("stackable");
   }
 
   isDamageable(): boolean {
-    return this.damageable;
+    return this.props.get("damageable");
   }
 
   getDamage(): Integer {
-    return this.damage;
+    return this.props.get("damage");
   }
 
   getMaxDamage(): Integer {
-    return this.maxDamage;
+    return this.props.get("maxDamage");
   }
 
   isEnchanted(): boolean {
-    return this.enchanted;
+    return this.props.get("enchanted");
   }
 
   isEnchantable(): boolean {
-    return this.enchantable;
+    return this.props.get("enchantable");
   }
 
   getRepairCost(): Integer {
-    return this.repairCost;
+    return this.props.get("repairCost");
   }
 
   getRarity(): string {
-    return this.rarity;
+    return this.props.get("rarity");
   }
 
   getFluid(): Fluid {
-    return this.fluid;
+    return this.props.get("fluid");
   }
 
   getFluidCapacity(): Integer {
-    return this.fluidCapacity;
+    return this.props.get("fluidCapacity");
   }
 
-  getNBT(): NBT {
-    return this.NBT;
+  getNBT(): CompoundTag {
+    return this.props.get("NBT");
   }
 
   getUniqueName(): string {
-    return this.uname;
+    return this.props.get("uname");
   }
 
   getModName(): string {
-    return this.modName;
+    return this.props.get("modName");
   }
 
   getFuelBurnTime(): Integer {
-    return this.fuelBurnTime;
+    return this.props.get("fuelBurnTime");
   }
 
   isFuel(): boolean {
-    return this.fuel;
+    return this.props.get("fuel");
   }
 
   getTagNames(): Array<string> {
-    return this.tagNames;
+    return this.props.get("tagNames");
   }
 
   isFeContainer(): boolean {
-    return this.feContainer;
+    return this.props.get("feContainer");
   }
 
   getFeStored(): Integer {
-    return this.feStored;
+    return this.props.get("feStored");
   }
 
   getFeCapacity(): Integer {
-    return this.feCapacity;
+    return this.props.get("feCapacity");
   }
 
   getInventory(): Array<IntegratedValue> {
-    return this.inventory || [];
+    return this.props.get("inventory") || [];
   }
 
   getTooltip(): Array<string> {
-    return this.tooltip;
+    return this.props.get("tooltip");
   }
 
   getItemName(): string {
-    return this.itemName;
+    return this.props.get("itemName");
   }
 
   getBlock(): Block {
-    return this.block;
+    return this.props.get("block");
   }
 
-  toJSON(): any {
-    const walk = (obj: any): any => {
-      if (
-        obj === null ||
-        typeof obj === "string" ||
-        typeof obj === "number" ||
-        typeof obj === "boolean"
-      ) {
-        return obj;
-      }
-
-      if (obj instanceof NBT) {
-        return obj.toJSON();
-      }
-
-      if (Array.isArray(obj)) {
-        return obj.map(v => walk(v));
-      }
-
-      if (typeof obj === "object") {
-        const result: Record<string, any> = {};
-        for (const [key, value] of Object.entries(obj)) {
-          result[key] = walk(value);
-        }
-        return result;
-      }
-
-      return undefined;
-    };
-
-    return walk(this);
+  getProperties(): Properties {
+    return this.props;
   }
 
-  getStrengthVsBlock(block: Block) {
+  async getStrengthVsBlock(block: Block) {
+    let { Block } = await import("./Block");
     if (!(block instanceof Block)) throw new Error("block is not a Block");
     throw new Error("getStrengthVsBlock method not implemented");
   }
@@ -211,6 +166,6 @@ export class Item implements UniquelyNamed {
   }
 
   toString() {
-    return this.itemName;
+    return this.props.get("itemName");
   }
 }

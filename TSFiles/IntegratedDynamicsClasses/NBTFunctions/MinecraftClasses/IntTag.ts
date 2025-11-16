@@ -26,6 +26,10 @@ export class IntTag extends NumericTag {
         return parseInt(this.data.toDecimal());
     }
 
+    getTypeAsString(): string {
+        return "IntTag";
+    }
+
     equals(tag: Tag<IntegratedValue>) {
         if (tag.getType() != Tag.TAG_BYTE) return false;
         return (this.valueOf() == tag.valueOf());

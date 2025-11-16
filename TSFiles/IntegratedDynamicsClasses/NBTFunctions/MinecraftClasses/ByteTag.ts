@@ -26,6 +26,10 @@ export class ByteTag extends NumericTag {
 		return parseInt(this.data.toDecimal());
 	}
 
+	override getTypeAsString(): string {
+		return "ByteTag";
+	}
+
 	equals(tag: Tag<IntegratedValue>) {
 		if (tag.getType() != Tag.TAG_BYTE) return false;
 		return (this.valueOf() == tag.valueOf());

@@ -26,6 +26,10 @@ export class DoubleTag extends NumericTag {
 		return parseInt(this.data.toDecimal());
 	}
 
+	override getTypeAsString(): string {
+		return "DoubleTag";
+	}
+
 	equals(tag: Tag<IntegratedValue>): boolean {
 		if (tag.getType() != Tag.TAG_DOUBLE) return false;
 		return this.getAsDouble() == (tag as DoubleTag).getAsDouble();

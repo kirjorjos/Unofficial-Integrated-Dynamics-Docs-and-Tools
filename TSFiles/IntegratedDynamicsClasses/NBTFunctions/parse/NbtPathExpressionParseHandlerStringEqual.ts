@@ -74,7 +74,7 @@ class Expression extends INbtPathExpression {
                         let tag = nbt as StringTag;
                         return new NbtPathExpressionExecutionContext(
                                 (ByteTag.valueOf(
-                                    new Integer(+(this.getTargetString() == tag.getAsString())))
+                                    new Integer(+(this.getTargetString() == tag.valueOf())))
                                 ),
                                 executionContext
                             )

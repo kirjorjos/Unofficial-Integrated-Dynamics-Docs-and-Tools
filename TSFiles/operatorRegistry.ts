@@ -11,7 +11,6 @@ import { Item } from "IntegratedDynamicsClasses/Item";
 import { TypeMap } from "HelperClasses/TypeMap";
 import { Double } from "JavaNumberClasses/Double";
 import { Integer } from "JavaNumberClasses/Integer";
-import { NBT } from "IntegratedDynamicsClasses/NBT";
 import { Entity } from "IntegratedDynamicsClasses/Entity";
 import { Fluid } from "IntegratedDynamicsClasses/Fluid";
 import { JavaMath } from "HelperClasses/Math";
@@ -20,6 +19,17 @@ import { Long } from "JavaNumberClasses/Long";
 import { Ingredients } from "IntegratedDynamicsClasses/Ingredients";
 import { Recipe } from "IntegratedDynamicsClasses/Recipe";
 import { UniquelyNamed } from "IntegratedDynamicsClasses/UniquelyNamed";
+import { Properties } from "IntegratedDynamicsClasses/Properties";
+import { Tag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/Tag";
+import { NullTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/NullTag";
+import { CompoundTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
+import { IntTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/IntTag";
+import { ListTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ListTag";
+import { LongTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/LongTag";
+import { ByteTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ByteTag";
+import { DoubleTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/DoubleTag";
+import { StringTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/StringTag";
+import { NbtPath } from "IntegratedDynamicsClasses/NBTFunctions/NbtPath";
 
 let globalMap = new TypeMap();
 
@@ -2384,7 +2394,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "block_props",
       interactName: "blockProperties",
-      function: (block: Block): NBT => {
+      function: (block: Block): Properties => {
         return block.getProperties();
       },
     }),
@@ -2412,7 +2422,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       symbol: "block_with_props",
       interactName: "blockWithProperties",
       function: (block: Block) => {
-        return (properties: NBT): Block => {
+        return (properties: Properties): Block => {
           return new Block(properties, block);
         };
       },
@@ -2743,8 +2753,8 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "strength",
       interactName: "itemstackStrength",
-      function: (item: Item): TypeLambda<Block, void> => {
-        return (block: Block): void => {
+      function: (item: Item): TypeLambda<Block, Promise<void>> => {
+        return (block: Block): Promise<void> => {
           return item.getStrengthVsBlock(block);
         };
       },
@@ -2800,7 +2810,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       symbol: "block",
       interactName: "itemstackBlock",
       function: (item: Item): Block => {
-        return new Block(new NBT({}), item.getBlock());
+        return new Block(new Properties({}), item.getBlock());
       },
     }),
     isFluidstack: new Operator({
@@ -3144,7 +3154,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       interactName: "itemstackWithSize",
       function: (item: Item): TypeLambda<Integer, Item> => {
         return (size: Integer): Item => {
-          return new Item(new NBT({ size }), item);
+          return new Item(new Properties({ size }), item);
         };
       },
     }),
@@ -3397,7 +3407,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT()",
       interactName: "itemstackNbt",
-      function: (item: Item): NBT => {
+      function: (item: Item): Tag<IntegratedValue> => {
         return item.getNBT();
       },
     }),
@@ -3455,7 +3465,7 @@ let operatorRegistry: TypeOperatorRegistry = {
           return [];
         }
         return Object.keys(nbt).filter(
-          (key) => nbt[key] !== undefined && nbt[key] !== null
+          (key) => nbt.has(key)
         );
       },
     }),
@@ -3488,13 +3498,13 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "data_value",
       interactName: "itemstackDataValue",
-      function: (item: Item): TypeLambda<string, NBT> => {
-        return (key: string): NBT => {
+      function: (item: Item): TypeLambda<string, Tag<IntegratedValue>> => {
+        return (key: string): Tag<IntegratedValue> => {
           const nbt = item.getNBT();
-          if (!nbt || !nbt.hasOwnProperty(key)) {
-            return new NBT(null);
+          if (!nbt || !nbt.has(key)) {
+            return new NullTag();
           }
-          return nbt[key];
+          return nbt.get(key);
         };
       },
     }),
@@ -3533,12 +3543,12 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "with_data",
       interactName: "itemstackWithData",
-      function: (item: Item): TypeLambda<string, TypeLambda<NBT, Item>> => {
-        return (key: string): TypeLambda<NBT, Item> => {
-          return (value: NBT): Item => {
-            const nbt = item.getNBT() || {};
-            nbt[key] = value;
-            return new Item(new NBT({ nbt }), item);
+      function: (item: Item): TypeLambda<string, TypeLambda<CompoundTag, Item>> => {
+        return (key: string): TypeLambda<CompoundTag, Item> => {
+          return (value: CompoundTag): Item => {
+            let nbt = item.getNBT() || {};
+            nbt = nbt.set(key, value);
+            return new Item(new Properties({ nbt }), item);
           };
         };
       },
@@ -4358,7 +4368,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT()",
       interactName: "entityNbt",
-      function: (entity: Entity): NBT => {
+      function: (entity: Entity): CompoundTag => {
         return entity.getNBT();
       },
     }),
@@ -4906,7 +4916,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT()",
       interactName: "fluidstackNbt",
-      function: (fluid: Fluid): NBT => {
+      function: (fluid: Fluid): CompoundTag => {
         return fluid.getNBT();
       },
     }),
@@ -4942,7 +4952,7 @@ let operatorRegistry: TypeOperatorRegistry = {
       interactName: "fluidstackWithAmount",
       function: (fluid: Fluid): TypeLambda<Integer, Fluid> => {
         return (amount: Integer): Fluid => {
-          return new Fluid(new NBT({ amount }), fluid);
+          return new Fluid(new Properties({ amount }), fluid);
         };
       },
     }),
@@ -4980,7 +4990,7 @@ let operatorRegistry: TypeOperatorRegistry = {
           return [];
         }
         return Object.keys(nbt).filter(
-          (key) => nbt[key] !== undefined && nbt[key] !== null
+          (key) => nbt.has(key)
         );
       },
     }),
@@ -5020,13 +5030,13 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "data_value",
       interactName: "fluidstackDataValue",
-      function: (fluid: Fluid): TypeLambda<string, NBT> => {
-        return (key: string): NBT => {
+      function: (fluid: Fluid): TypeLambda<string, Tag<IntegratedValue>> => {
+        return (key: string): Tag<IntegratedValue> => {
           const nbt = fluid.getNBT();
           if (!nbt || !nbt.hasOwnProperty(key)) {
-            return new NBT(null);
+            return new NullTag;
           }
-          return nbt[key];
+          return nbt.get(key);
         };
       },
     }),
@@ -5064,12 +5074,12 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "with_data",
       interactName: "fluidstackWithData",
-      function: (fluid: Fluid): TypeLambda<string, TypeLambda<NBT, Fluid>> => {
-        return (key: string): TypeLambda<NBT, Fluid> => {
-          return (value: NBT): Fluid => {
-            const nbt = fluid.getNBT() || {};
-            nbt[key] = value;
-            return new Fluid(new NBT({ nbt }), fluid);
+      function: (fluid: Fluid): TypeLambda<string, TypeLambda<CompoundTag, Fluid>> => {
+        return (key: string): TypeLambda<CompoundTag, Fluid> => {
+          return (value: CompoundTag): Fluid => {
+            let nbt = fluid.getNBT() || {};
+            nbt = nbt.set(key, value);
+            return new Fluid(new Properties({ nbt }), fluid);
           };
         };
       },
@@ -5793,8 +5803,8 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT{}.size",
       interactName: "nbtSize",
-      function: (nbt: NBT): Integer => {
-        return new Integer(Object.keys(nbt).length);
+      function: (nbt: CompoundTag): Integer => {
+        return new Integer(nbt.getAllKeys().length);
       },
     }),
     NBTKeys: new Operator({
@@ -5812,8 +5822,8 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT{}.keys",
       interactName: "nbtKeys",
-      function: (nbt: NBT): Array<string> => {
-        return Object.keys(nbt);
+      function: (nbt: CompoundTag): Array<string> => {
+        return nbt.getAllKeys();
       },
     }),
     NBTHasKey: new Operator({
@@ -5839,9 +5849,9 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT{}.has_key",
       interactName: "nbtHasKey",
-      function: (nbt: NBT): TypeLambda<string, boolean> => {
+      function: (nbt: CompoundTag): TypeLambda<string, boolean> => {
         return (key: string): boolean => {
-          return nbt.hasOwnProperty(key);
+          return nbt.has(key);
         };
       },
     }),
@@ -5868,12 +5878,12 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT{}.type",
       interactName: "nbtType",
-      function: (nbt: NBT): TypeLambda<string, string> => {
+      function: (nbt: CompoundTag): TypeLambda<string, string> => {
         return (key: string): string => {
-          if (!nbt.hasOwnProperty(key)) {
+          if (!nbt.has(key)) {
             throw new Error(`${key} does not exist in ${JSON.stringify(nbt)}`);
           }
-          return nbt.getRawValue(key).getType();
+          return nbt.get(key).getTypeAsString();
         };
       },
     }),
@@ -5900,9 +5910,9 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT{}.get_tag",
       interactName: "nbtGetTag",
-      function: (nbt: NBT): TypeLambda<string, NBT> => {
-        return (key: string): NBT => {
-          return nbt.getRawValue(key);
+      function: (nbt: CompoundTag): TypeLambda<string, Tag<IntegratedValue>> => {
+        return (key: string): Tag<IntegratedValue> => {
+          return nbt.get(key);
         };
       },
     }),
@@ -5929,9 +5939,9 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT{}.get_boolean",
       interactName: "nbtGetBoolean",
-      function: (nbt: NBT): TypeLambda<string, boolean> => {
+      function: (nbt: CompoundTag): TypeLambda<string, boolean> => {
         return (key: string): boolean => {
-          return nbt.getRawValue(key).getRawValue();
+          return nbt.get(key).valueOf();
         };
       },
     }),
@@ -5958,13 +5968,11 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT{}.get_integer",
       interactName: "nbtGetInteger",
-      function: (nbt: NBT): TypeLambda<string, Integer> => {
+      function: (nbt: CompoundTag): TypeLambda<string, Integer> => {
         return (key: string): Integer => {
-          let value = nbt.getRawValue(key);
-          if (value.getType() === "Integer") {
-            return value.getRawValue();
-          }
-          throw new Error(`${key} is not an integer in ${JSON.stringify(nbt.toJSON())}`);
+          let value = nbt.get(key);
+          if (value.getType() != Tag.TAG_INT) throw new Error(`${key} is not an integer in ${JSON.stringify(nbt.toJSON())}`);
+          return (value as IntTag).valueOf();
         };
       },
     }),
@@ -5991,11 +5999,11 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT{}.get_long",
       interactName: "nbtGetLong",
-      function: (nbt: NBT): TypeLambda<string, Long> => {
+      function: (nbt: CompoundTag): TypeLambda<string, Long> => {
         return (key: string): Long => {
-          let value = nbt.getRawValue(key);
-          if (value.getType() === "Long") {
-            return value.getRawValue();
+          let value = nbt.get(key);
+          if (value.getType() === Tag.TAG_LONG) {
+            return value.valueOf();
           }
           throw new Error(`${key} is not a long in ${JSON.stringify(nbt.toJSON())}`);
         };
@@ -6024,11 +6032,11 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT{}.get_double",
       interactName: "nbtGetDouble",
-      function: (nbt: NBT): TypeLambda<string, Double> => {
+      function: (nbt: CompoundTag): TypeLambda<string, Double> => {
         return (key: string): Double => {
-          let value = nbt.getRawValue(key);
-          if (value.getType() === "Double") {
-            return value.getRawValue();
+          let value = nbt.get(key);
+          if (value.getType() === Tag.TAG_DOUBLE) {
+            return value.valueOf();
           }
           throw new Error(`${key} is not a double in ${JSON.stringify(nbt.toJSON())}`);
         };
@@ -6057,9 +6065,13 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT{}.get_string",
       interactName: "nbtGetString",
-      function: (nbt: NBT): TypeLambda<string, string> => {
+      function: (nbt: CompoundTag): TypeLambda<string, string> => {
         return (key: string): string => {
-          return nbt.getRawValue(key);
+          let value = nbt.get(key);
+          if (value.getType() === Tag.TAG_STRING) {
+            return value.valueOf();
+          }
+          throw new Error(`${key} is not a string in ${JSON.stringify(nbt.toJSON())}`);
         };
       },
     }),
@@ -6086,9 +6098,13 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT{}.get_compound",
       interactName: "nbtGetCompound",
-      function: (nbt: NBT): TypeLambda<string, NBT> => {
-        return (string: string): NBT => {
-          return nbt.getRawValue(string);
+      function: (nbt: CompoundTag): TypeLambda<string, CompoundTag> => {
+        return (key: string): CompoundTag => {
+          let value = nbt.get(key);
+          if (value.getType() === Tag.TAG_COMPOUND) {
+            return value.valueOf();
+          }
+          throw new Error(`${key} is not a Compound in ${JSON.stringify(nbt.toJSON())}`);
         };
       },
     }),
@@ -6113,15 +6129,13 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT{}.get_list_tag",
       interactName: "nbtGetListTag",
-      function: (nbt: NBT): TypeLambda<string, Array<NBT>> => {
-        return (key: string): Array<NBT> => {
-          let value = nbt.getRawValue();
-          let list = value.getRawValue();
-          if (value.getType() != "Array<NBT>")
-            throw new Error(
-              `${key} is not a list of NBT in ${JSON.stringify(nbt.toJSON())}`
-            );
-          return list;
+      function: (nbt: CompoundTag): TypeLambda<string, Tag<IntegratedValue>[]> => {
+        return (key: string): Tag<IntegratedValue>[] => {
+          if (!nbt.has(key)) throw new Error(`${key} is not a list of NBT in ${JSON.stringify(nbt.toJSON())}`);
+          let listTag = nbt.get(key);
+          if (listTag.getType() != Tag.TAG_LIST)
+            throw new Error(`${key} is not a list of NBT in ${JSON.stringify(nbt.toJSON())}`);
+          return (listTag as ListTag).getArray();
         };
       },
     }),
@@ -6146,14 +6160,11 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT{}.get_list_byte",
       interactName: "nbtGetListByte",
-      function: (nbt: NBT) => {
+      function: (nbt: CompoundTag) => {
         return (key: string): Integer => {
-          let value = nbt.getRawValue(key);
-          let list = value.getRawValue();
-          if (nbt.getType(key) != "Byte")
-            throw new Error(
-              `${key} is not a list of byte in ${JSON.stringify(nbt.toJSON())}`
-            );
+          let value = nbt.get(key);
+          let list = value.valueOf();
+          if (value.getType() != Tag.TAG_BYTE) throw new Error(`${key} is not a list of byte in ${JSON.stringify(nbt.toJSON())}`);
           return list;
         };
       },
@@ -6179,15 +6190,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT{}.get_list_int",
       interactName: "nbtGetListInt",
-      function: (nbt: NBT): TypeLambda<string, Array<Integer>> => {
+      function: (nbt: CompoundTag): TypeLambda<string, Array<Integer>> => {
         return (key: string): Array<Integer> => {
-          let value = nbt.getRawValue(key);
-          let list = value.getRawValue();
-          if (value.getType(key) != "Array<Integer>")
-            throw new Error(
-              `${key} is not a list of int in ${JSON.stringify(nbt.toJSON())}`
-            );
-          return list;
+          let value = nbt.get(key);
+          if (value.getType() != Tag.TAG_LIST) throw new Error(`${key} is not a list of int in ${JSON.stringify(nbt.toJSON())}`);
+          let list = (value as ListTag).getArray();
+          return list.map(e => {
+            if (e.getType() != Tag.TAG_INT) throw new Error(`${key} is not a list of int in ${JSON.stringify(nbt.toJSON())}`);
+            return (e as IntTag).valueOf();
+          });
         };
       },
     }),
@@ -6212,15 +6223,15 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT{}.get_list_long",
       interactName: "nbtGetListLong",
-      function: (nbt: NBT): TypeLambda<string, Long> => {
-        return (key: string): Long => {
-          let value = nbt.getRawValue(key);
-          let list = value.list;
-          if (value.ListType != "long")
-            throw new Error(
-              `${key} is not a list of long in ${JSON.stringify(nbt.toJSON())}`
-            );
-          return list;
+      function: (nbt: CompoundTag): TypeLambda<string, Long[]> => {
+        return (key: string): Long[] => {
+          let value = nbt.get(key);
+          if (value.getType() != Tag.TAG_LIST) throw new Error(`${key} is not a list of long in ${JSON.stringify(nbt.toJSON())}`);
+          let list = (value as ListTag).getArray();
+          return list.map(e => {
+            if (e.getType() != Tag.TAG_LONG) throw new Error(`${key} is not a list of long in ${JSON.stringify(nbt.toJSON())}`);
+            return (e as LongTag).valueOf();
+          });
         };
       },
     }),
@@ -6247,9 +6258,9 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT{}.without",
       interactName: "nbtWithout",
-      function: (nbt: NBT): TypeLambda<string, NBT> => {
-        return (key: string): NBT => {
-          return nbt.remove(key);
+      function: (nbt: CompoundTag): TypeLambda<string, CompoundTag> => {
+        return (key: string): CompoundTag => {
+          return nbt.without(key);
         };
       },
     }),
@@ -6282,10 +6293,10 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT{}.with_boolean",
       interactName: "nbtWithBoolean",
-      function: (nbt: NBT): TypeLambda<string, TypeLambda<boolean, NBT>> => {
-        return (key: string): TypeLambda<boolean, NBT> => {
-          return (value: boolean): NBT => {
-            return nbt.setValue(key, value);
+      function: (nbt: CompoundTag): TypeLambda<string, TypeLambda<boolean, CompoundTag>> => {
+        return (key: string): TypeLambda<boolean, CompoundTag> => {
+          return (value: boolean): CompoundTag => {
+            return nbt.set(key, new ByteTag(new Integer(+value)));
           }
         }
       }
@@ -6319,10 +6330,10 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT{}.with_short",
       interactName: "nbtWithShort",
-      function: (nbt: NBT): TypeLambda<string, TypeLambda<Integer, NBT>> => {
-        return (key: string): TypeLambda<Integer, NBT> => {
-          return (value: Integer): NBT => {
-            return nbt.setValue(key, value);
+      function: (nbt: CompoundTag): TypeLambda<string, TypeLambda<Integer, CompoundTag>> => {
+        return (key: string): TypeLambda<Integer, CompoundTag> => {
+          return (value: Integer): CompoundTag => {
+            return nbt.set(key, value);
           }
         }
       }
@@ -6356,10 +6367,10 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT{}.with_integer",
       interactName: "nbtWithInteger",
-      function: (nbt: NBT): TypeLambda<string, TypeLambda<Integer, NBT>> => {
-        return (key: string): TypeLambda<Integer, NBT> => {
-          return (value: Integer): NBT => {
-            return nbt.setValue(key, value);
+      function: (nbt: CompoundTag): TypeLambda<string, TypeLambda<Integer, CompoundTag>> => {
+        return (key: string): TypeLambda<Integer, CompoundTag> => {
+          return (value: Integer): CompoundTag => {
+            return nbt.set(key, value);
           }
         }
       }
@@ -6393,10 +6404,10 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT{}.with_long",
       interactName: "nbtWithLong",
-      function: (nbt: NBT): TypeLambda<string, TypeLambda<Long, NBT>> => {
-        return (key: string): TypeLambda<Long, NBT> => {
-          return (value: Long): NBT => {
-            return nbt.setValue(key, value);
+      function: (nbt: CompoundTag): TypeLambda<string, TypeLambda<Long, CompoundTag>> => {
+        return (key: string): TypeLambda<Long, CompoundTag> => {
+          return (value: Long): CompoundTag => {
+            return nbt.set(key, value);
           }
         }
       }
@@ -6430,10 +6441,10 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT{}.with_double",
       interactName: "nbtWithDouble",
-      function: (nbt: NBT): TypeLambda<string, TypeLambda<Double, NBT>> => {
-        return (key: string): TypeLambda<Double, NBT> => {
-          return (value: Double): NBT => {
-            return nbt.setValue(key, value);
+      function: (nbt: CompoundTag): TypeLambda<string, TypeLambda<Double, CompoundTag>> => {
+        return (key: string): TypeLambda<Double, CompoundTag> => {
+          return (value: Double): CompoundTag => {
+            return nbt.set(key, value);
           }
         }
       }
@@ -6467,10 +6478,10 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT{}.with_float",
       interactName: "nbtWithFloat",
-      function: (nbt: NBT): TypeLambda<string, TypeLambda<Double, NBT>> => {
-        return (key: string): TypeLambda<Double, NBT> => {
-          return (value: Double): NBT => {
-            return nbt.setValue(key, value);
+      function: (nbt: CompoundTag): TypeLambda<string, TypeLambda<Double, CompoundTag>> => {
+        return (key: string): TypeLambda<Double, CompoundTag> => {
+          return (value: Double): CompoundTag => {
+            return nbt.set(key, value);
           }
         }
       }
@@ -6504,10 +6515,10 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT{}.with_string",
       interactName: "nbtWithString",
-      function: (nbt: NBT): TypeLambda<string, TypeLambda<string, NBT>> => {
-        return (key: string): TypeLambda<string, NBT> => {
-          return (value: string): NBT => {
-            return nbt.setValue(key, value);
+      function: (nbt: CompoundTag): TypeLambda<string, TypeLambda<string, CompoundTag>> => {
+        return (key: string): TypeLambda<string, CompoundTag> => {
+          return (value: string): CompoundTag => {
+            return nbt.set(key, value);
           }
         }
       }
@@ -6541,10 +6552,10 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT{}.with_tag",
       interactName: "nbtWithTag",
-      function: (nbt: NBT): TypeLambda<string, TypeLambda<NBT, NBT>> => {
-        return (key: string): TypeLambda<NBT, NBT> => {
-          return (value: NBT): NBT => {
-            return nbt.setValue(key, value);
+      function: (nbt: CompoundTag): TypeLambda<string, TypeLambda<CompoundTag, CompoundTag>> => {
+        return (key: string): TypeLambda<CompoundTag, CompoundTag> => {
+          return (value: CompoundTag): CompoundTag => {
+            return nbt.set(key, value);
           }
         }
       }
@@ -6576,10 +6587,10 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT{}.with_tag_list",
       interactName: "nbtWithTagList",
-      function: (nbt: NBT): TypeLambda<string, TypeLambda<Array<NBT>, NBT>> => {
-        return (key: string): TypeLambda<Array<NBT>, NBT> => {
-          return (value: Array<NBT>): NBT => {
-            return nbt.setValue(key, value);
+      function: (nbt: CompoundTag): TypeLambda<string, TypeLambda<ListTag, CompoundTag>> => {
+        return (key: string): TypeLambda<ListTag, CompoundTag> => {
+          return (value: ListTag): CompoundTag => {
+            return nbt.set(key, value);
           }
         }
       }
@@ -6611,10 +6622,10 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT{}.with_byte_list",
       interactName: "nbtWithByteList",
-      function: (nbt: NBT): TypeLambda<string, TypeLambda<Array<Integer>, NBT>> => {
-        return (key: string): TypeLambda<Array<Integer>, NBT> => {
-          return (value: Array<Integer>): NBT => {
-            return nbt.setValue(key, value);
+      function: (nbt: CompoundTag): TypeLambda<string, TypeLambda<ListTag, CompoundTag>> => {
+        return (key: string): TypeLambda<ListTag, CompoundTag> => {
+          return (value: ListTag): CompoundTag => {
+            return nbt.set(key, value);
           }
         }
       }
@@ -6646,10 +6657,10 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT{}.with_int_list",
       interactName: "nbtWithIntList",
-      function: (nbt: NBT): TypeLambda<string, TypeLambda<Array<Integer>, NBT>> => {
-        return (key: string): TypeLambda<Array<Integer>, NBT> => {
-          return (value: Array<Integer>): NBT => {
-            return nbt.setValue(key, value);
+      function: (nbt: CompoundTag): TypeLambda<string, TypeLambda<ListTag, CompoundTag>> => {
+        return (key: string): TypeLambda<ListTag, CompoundTag> => {
+          return (value: ListTag): CompoundTag => {
+            return nbt.set(key, value);
           }
         }
       }
@@ -6681,10 +6692,10 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT{}.with_list_long",
       interactName: "nbtWithListLong",
-      function: (nbt: NBT): TypeLambda<string, TypeLambda<Array<Long>, NBT>> => {
-        return (key: string): TypeLambda<Array<Long>, NBT> => {
-          return (value: Array<Long>): NBT => {
-            return nbt.setValue(key, value);
+      function: (nbt: CompoundTag): TypeLambda<string, TypeLambda<ListTag, CompoundTag>> => {
+        return (key: string): TypeLambda<ListTag, CompoundTag> => {
+          return (value: ListTag): CompoundTag => {
+            return nbt.set(key, value);
           }
         }
       }
@@ -6712,8 +6723,8 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT{}.⊆",
       interactName: "nbtIsSubset",
-      function: (subSet: NBT): TypeLambda<NBT, boolean> => {
-        return (superSet: NBT): boolean => {
+      function: (subSet: CompoundTag): TypeLambda<CompoundTag, boolean> => {
+        return (superSet: CompoundTag): boolean => {
           return superSet.compoundSubset(subSet);
         }
       }
@@ -6741,8 +6752,8 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT{}.∪",
       interactName: "nbtUnion",
-      function: (nbt1: NBT): TypeLambda<NBT, NBT> => {
-        return (nbt2: NBT): NBT => {
+      function: (nbt1: CompoundTag): TypeLambda<CompoundTag, CompoundTag> => {
+        return (nbt2: CompoundTag): CompoundTag => {
           return nbt1.compoundUnion(nbt2);
         }
       }
@@ -6770,8 +6781,8 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT{}.∩",
       interactName: "nbtIntersection",
-      function: (nbt1: NBT) => {
-        return (nbt2: NBT) => {
+      function: (nbt1: CompoundTag) => {
+        return (nbt2: CompoundTag) => {
           return nbt1.compoundIntersection(nbt2);
         }
       }
@@ -6799,8 +6810,8 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT{}.∖",
       interactName: "nbtMinus",
-      function: (nbt1: NBT) => {
-        return (nbt2: NBT) => {
+      function: (nbt1: CompoundTag) => {
+        return (nbt2: CompoundTag) => {
           return nbt1.compoundMinus(nbt2);
         }
       }
@@ -6822,9 +6833,9 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT.as_boolean",
       interactName: "nbtAsBoolean",
-      function: (nbt: NBT): boolean => {
-        if (nbt.getType() === "boolean") {
-          return nbt.getRawvalue();
+      function: (nbt: ByteTag): boolean => {
+        if (nbt.getType() === Tag.TAG_BYTE) {
+          return !!parseInt(nbt.valueOf().toDecimal());
         } else {
           return false;
         }
@@ -6847,9 +6858,9 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT.as_byte",
       interactName: "nbtAsByte",
-      function: (nbt: NBT): Integer => {
-        if (nbt.getType() === "Integer") {
-          return nbt.getRawValue();
+      function: (nbt: IntTag): Integer => {
+        if (nbt.getType() === Tag.TAG_INT) {
+          return nbt.valueOf();
         } else {
           return new Integer(0);
         }
@@ -6872,9 +6883,9 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT.as_short",
       interactName: "nbtAsShort",
-      function: (nbt: NBT): Integer => {
-        if (nbt.getType() === "Integer") {
-          return nbt.getRawValue();
+      function: (nbt: IntTag): Integer => {
+        if (nbt.getType() === Tag.TAG_INT) {
+          return nbt.valueOf();
         } else {
           return new Integer(0);
         }
@@ -6897,9 +6908,9 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT.as_int",
       interactName: "nbtAsInt",
-      function: (nbt: NBT): Integer => {
-        if (nbt.getType() === "Integer") {
-          return nbt.getRawValue();
+      function: (nbt: IntTag): Integer => {
+        if (nbt.getType() === Tag.TAG_INT) {
+          return nbt.valueOf();
         } else {
           return new Integer(0);
         }
@@ -6922,9 +6933,9 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT.as_long",
       interactName: "nbtAsLong",
-      function: (nbt: NBT): Long => {
-        if (nbt.getType() === "Long") {
-          return nbt.getRawValue();
+      function: (nbt: LongTag): Long => {
+        if (nbt.getType() === Tag.TAG_LONG) {
+          return nbt.valueOf();
         } else {
           return new Long(0);
         }
@@ -6947,9 +6958,9 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT.as_double",
       interactName: "nbtAsDouble",
-      function: (nbt: NBT): Double => {
-        if (nbt.getType() === "Double") {
-          return nbt.getRawValue();
+      function: (nbt: DoubleTag): Double => {
+        if (nbt.getType() === Tag.TAG_DOUBLE) {
+          return nbt.valueOf();
         } else {
           return new Double(0);
         }
@@ -6972,9 +6983,9 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT.as_float",
       interactName: "nbtAsFloat",
-      function: (nbt: NBT): Double => {
-        if (nbt.getType() === "Double") {
-          return nbt.getRawValue();
+      function: (nbt: DoubleTag): Double => {
+        if (nbt.getType() === Tag.TAG_DOUBLE) {
+          return nbt.valueOf();
         } else {
           return new Double(0);
         }
@@ -6997,9 +7008,9 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT.as_string",
       interactName: "nbtAsString",
-      function: (nbt: NBT): string => {
-        if (nbt.getType() === "string") {
-          return nbt.getRawValue();
+      function: (nbt: StringTag): string => {
+        if (nbt.getType() === Tag.TAG_STRING) {
+          return nbt.valueOf();
         } else {
           return "";
         }
@@ -7020,11 +7031,11 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT.as_tag_list",
       interactName: "nbtAsTagList",
-      function: (nbt: NBT): Array<NBT> => {
-        if (nbt.getType() === "Array<NBT>") {
-          return nbt.getRawValue();
+      function: (nbt: ListTag): Array<Tag<IntegratedValue>> => {
+        if (nbt.getType() === Tag.TAG_LIST) {
+          return nbt.valueOf();
         } else {
-          return new Array<NBT>();
+          return new Array<Tag<any>>();
         }
       }
     }),
@@ -7043,9 +7054,11 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT.as_byte_list",
       interactName: "nbtAsByteList",
-      function: (nbt: NBT): Array<Integer> => {
-        if (nbt.getType() === "Array<Integer>") {
-          return nbt.getRawValue();
+      function: (nbt: ListTag): Array<Integer> => {
+        if (nbt.getType() === Tag.TAG_LIST) {
+          const list = nbt.valueOf();
+          if (!list.every(e => (e.getType() == Tag.TAG_INT))) return new Array<Integer>();
+          return list.map(e => e.valueOf());
         } else {
           return new Array<Integer>();
         }
@@ -7067,9 +7080,11 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT.as_int_list",
       interactName: "nbtAsIntList",
-      function: (nbt: NBT): Array<Integer> => {
-        if (nbt.getType() === "Array<Integer>") {
-          return nbt.getRawValue();
+      function: (nbt: ListTag): Array<Integer> => {
+        if (nbt.getType() === Tag.TAG_LIST) {
+          const list = nbt.valueOf();
+          if (!list.every(e => (e.getType() == Tag.TAG_INT))) return new Array<Integer>();
+          return list.map(e => e.valueOf());
         } else {
           return new Array<Integer>();
         }
@@ -7090,9 +7105,11 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT.as_long_list",
       interactName: "nbtAsLongList",
-      function: (nbt: NBT): Array<Long> => {
-        if (nbt.getType() === "Array<Long>") {
-          return nbt.getRawValue();
+      function: (nbt: ListTag): Array<Long> => {
+        if (nbt.getType() === Tag.TAG_LIST) {
+          const list = nbt.valueOf();
+          if (!list.every(e => (e.getType() == Tag.TAG_LONG))) return new Array<Long>();
+          return list.map(e => e.valueOf());
         } else {
           return new Array<Long>();
         }
@@ -7115,8 +7132,8 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT.from_boolean",
       interactName: "booleanAsNbt",
-      function: (bool: boolean): NBT => {
-        return new NBT(bool);
+      function: (bool: boolean): ByteTag => {
+        return new ByteTag(new Integer(+bool));
       }
     }),
     nbtFromShort: new Operator({
@@ -7136,8 +7153,8 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT.from_short",
       interactName: "shortAsNbt",
-      function: (short: Integer): NBT => {
-        return new NBT(short);
+      function: (short: Integer): IntTag => {
+        return new IntTag(short);
       }
     }),
     nbtFromByte: new Operator({
@@ -7157,8 +7174,8 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT.from_byte",
       interactName: "byteAsNbt",
-      function: (byte: Integer): NBT => {
-        return new NBT(byte);
+      function: (byte: Integer): IntTag => {
+        return new IntTag(byte);
       }
     }),
     nbtFromInt: new Operator({
@@ -7178,8 +7195,8 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT.from_int",
       interactName: "integerAsNbt",
-      function: (int: Integer): NBT => {
-        return new NBT(int);
+      function: (int: Integer): IntTag => {
+        return new IntTag(int);
       }
     }),
     nbtFromLong: new Operator({
@@ -7199,8 +7216,8 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT.from_long",
       interactName: "longAsNbt",
-      function: (long: Long): NBT => {
-        return new NBT(long);
+      function: (long: Long): LongTag => {
+        return new LongTag(long);
       }
     }),
     nbtFromDouble: new Operator({
@@ -7221,8 +7238,8 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT.from_double",
       interactName: "doubleAsNbt",
-      function: (double: Double): NBT => {
-        return new NBT(double);
+      function: (double: Double): DoubleTag => {
+        return new DoubleTag(double);
       }
     }),
     nbtFromFloat: new Operator({
@@ -7242,8 +7259,8 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT.from_float",
       interactName: "floatAsNbt",
-      function: (float: Double): NBT => {
-        return new NBT(float);
+      function: (float: Double): DoubleTag => {
+        return new DoubleTag(float);
       }
     }),
     nbtFromString: new Operator({
@@ -7263,8 +7280,8 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT.from_string",
       interactName: "stringAsNbt",
-      function: (str: string): NBT => {
-        return new NBT(str);
+      function: (str: string): StringTag => {
+        return new StringTag(str);
       }
     }),
     nbtFromTagList: new Operator({
@@ -7282,8 +7299,8 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT.from_tag_list",
       interactName: "tagListAsNbt",
-      function: (tagList: Array<NBT>): NBT => {
-        return new NBT(tagList);
+      function: (tagList: Array<CompoundTag>): ListTag => {
+        return new ListTag(tagList);
       }
     }),
     nbtFromByteList: new Operator({
@@ -7301,8 +7318,8 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT.from_byte_list",
       interactName: "byteListAsNbt",
-      function: (byteList: Array<Integer>): NBT => {
-        return new NBT(byteList);
+      function: (byteList: Array<Integer>): ListTag => {
+        return new ListTag(byteList.map(e => new IntTag(e)));
       }
     }),
     nbtFromIntList: new Operator({
@@ -7320,8 +7337,8 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT.from_int_list",
       interactName: "intListAsNbt",
-      function: (intList: Array<Integer>): NBT => {
-        return new NBT(intList);
+      function: (intList: Array<Integer>): ListTag => {
+        return new ListTag(intList.map(e => new IntTag(e)));
       }
     }),
     nbtFromLongList: new Operator({
@@ -7339,8 +7356,8 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT.from_long_list",
       interactName: "longListAsNbt",
-      function: (longList: Array<Long>): NBT => {
-        return new NBT(longList);
+      function: (longList: Array<Long>): ListTag => {
+        return new ListTag(longList.map(e => new LongTag(e)));
       }
     }),
     nbtPathMatchFirst: new Operator({
@@ -7366,9 +7383,11 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT.path_match_first",
       interactName: "stringNbtPathMatchFirst",
-      function: (path: string): TypeLambda<NBT, NBT> => {
-        return (nbt: NBT): NBT => {
-          return nbt.matchFirstPath(path);
+      function: (path: string): TypeLambda<CompoundTag, Tag<IntegratedValue>> => {
+        return (nbt: CompoundTag): Tag<IntegratedValue> => {
+          let expression = NbtPath.parse(path);
+          if (!expression) throw new Error(`Invalid path: ${path}`);
+          return expression.match(nbt).getMatches()[0] ?? new NullTag();
         }
       }
     }),
@@ -7393,9 +7412,11 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT.path_match_all",
       interactName: "stringNbtPathMatchAll",
-      function: (path: string): TypeLambda<NBT, Array<NBT>> => {
-        return (nbt: NBT): Array<NBT> => {
-          return nbt.matchFirstAll(path);
+      function: (path: string): TypeLambda<CompoundTag, Array<Tag<IntegratedValue>>> => {
+        return (nbt: CompoundTag): Array<Tag<IntegratedValue>> => {
+          let expression = NbtPath.parse(path);
+          if (!expression) throw new Error(`Invalid path: ${path}`);
+          return expression.match(nbt).getMatches();
         }
       }
     }),
@@ -7422,9 +7443,11 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "NBT.path_test",
       interactName: "stringNbtPathTest",
-      function: (path: string): TypeLambda<NBT, boolean> => {
-        return (nbt: NBT): boolean => {
-          return nbt.testPath(path);
+      function: (path: string): TypeLambda<CompoundTag, boolean> => {
+        return (nbt: CompoundTag): boolean => {
+          let expression = NbtPath.parse(path);
+          if (!expression) throw new Error(`Invalid path: ${path}`);
+          return expression.test(nbt);
         }
       }
     }),
@@ -7918,8 +7941,7 @@ let operatorRegistry: TypeOperatorRegistry = {
         {
           type: "Function",
           from: {
-            type: "Any",
-            typeID: 1,
+            type: "String",
           },
           to: {
             type: "NBT",
@@ -7929,12 +7951,8 @@ let operatorRegistry: TypeOperatorRegistry = {
       ),
       symbol: "parse_nbt",
       interactName: "stringParseAsNbt",
-      function: (data: IntegratedValue): NBT => {
-        try {
-          return new NBT(data);
-        } catch(e) {
-          return new NBT(0);
-        }
+      function: (data: string): CompoundTag => {
+        return CompoundTag.fromJSON(data);
       }
     }),
     choice: new Operator({

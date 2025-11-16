@@ -36,6 +36,10 @@ export class ListTag extends Tag<IntegratedValue> {
 		this.data.push(tag);
 	}
 
+	override getTypeAsString(): string {
+		return "ListTag";
+	}
+
 	equals(tag: Tag<IntegratedValue>): boolean {
 		if (tag.getType() != Tag.TAG_LIST) return false;
 		for (const [i, e] of Object.entries((tag as ListTag).getArray())) {

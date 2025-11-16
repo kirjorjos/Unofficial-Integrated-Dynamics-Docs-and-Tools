@@ -1,4 +1,7 @@
 import type { operatorRegistry } from "./operatorRegistry";
+import type { Block as BlockType } from "IntegratedDynamicsClasses/Block"
+import type { Item as ItemType } from "IntegratedDynamicsClasses/Item";
+import type { Fluid as FluidType } from "IntegratedDynamicsClasses/Fluid";
 
 declare global {
   type TypeTypeMap = {
@@ -34,4 +37,8 @@ declare global {
   type Predicate = Operator & {
     fn: (...args: any[]) => boolean;
   };
+
+  interface Block extends BlockType {}; 
+  interface Item extends ItemType {};
+  interface Fluid extends FluidType {};
 }

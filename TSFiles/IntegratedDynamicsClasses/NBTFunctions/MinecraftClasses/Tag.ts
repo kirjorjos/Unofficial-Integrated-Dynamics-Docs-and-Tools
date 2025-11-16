@@ -5,6 +5,9 @@ export abstract class Tag<T extends IntegratedValue> {
 	static TAG_NUMERIC = 3;
 	static TAG_BYTE = 4;
 	static TAG_DOUBLE = 5;
+	static TAG_NULL = 6;
+	static TAG_INT = 7;
+	static TAG_LONG = 7;
 
 	protected constructor() {}
 
@@ -13,4 +16,6 @@ export abstract class Tag<T extends IntegratedValue> {
 	abstract valueOf(): T;
 
 	abstract equals(tag: Tag<T>): boolean;
+
+	abstract getTypeAsString(): string
 }
