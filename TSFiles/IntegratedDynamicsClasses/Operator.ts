@@ -15,7 +15,6 @@ export class Operator extends Function {
     internalName,
     nicknames,
     parsedSignature,
-    rawSignature,
     symbol,
     interactName,
     function: fn,
@@ -25,20 +24,14 @@ export class Operator extends Function {
     nicknames: string[];
     symbol: string;
     interactName: string;
+    parsedSignature: ParsedSignature
     function: TypeLambda<any, any>;
     serializer?: string;
-  } & (
-    | { rawSignature: TypeRawSignatureAST.RawSignatureFunction; parsedSignature?: never }
-    | { rawSignature?: never; parsedSignature: ParsedSignature }
-  )) {
+  }) {
     super("...args", "return this.__call__(...args)");
     this.fn = fn;
-    this.typeMap = rawSignature
-      ? new TypeMap(rawSignature)
-      : new TypeMap(parsedSignature.getAST());
-    this.parsedSignature = rawSignature
-      ? new ParsedSignature(rawSignature)
-      : parsedSignature;
+    this.typeMap = new TypeMap(parsedSignature.getAST());
+    this.parsedSignature = parsedSignature;
     this.internalName = internalName;
     this.nicknames = nicknames;
     this.symbol = symbol;
