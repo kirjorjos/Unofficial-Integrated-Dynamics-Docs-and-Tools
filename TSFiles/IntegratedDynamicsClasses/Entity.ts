@@ -5,7 +5,6 @@ import { Properties } from "./Properties";
 import { CompoundTag } from "./NBTFunctions/MinecraftClasses/CompoundTag";
 
 export class Entity implements UniquelyNamed {
-
   static defaultProps = new Properties({
     uname: "",
     mob: false,
@@ -54,12 +53,16 @@ export class Entity implements UniquelyNamed {
     let props = Entity.defaultProps;
     props.setAll(newProps);
     if (oldEntity) props.setAll(oldEntity.getProperties());
-    Promise.all([import("./Item"), import("./Block")]).then((values => {
-      if (!props.has("heldItemMain")) props.set("heldItemMain", new values[0].Item(new Properties({})));
-      if (!props.has("helpItemOffHand")) props.set("helpItemOffHand", new values[0].Item(new Properties({})));
-      if (!props.has("itemFrameContents")) props.set("itemFrameContents", new values[0].Item(new Properties({})));
-      if (!props.has("targetBlock")) props.set("targetBlock", new values[1].Block(new Properties({})));
-    }))
+    Promise.all([import("./Item"), import("./Block")]).then((values) => {
+      if (!props.has("heldItemMain"))
+        props.set("heldItemMain", new values[0].Item(new Properties({})));
+      if (!props.has("helpItemOffHand"))
+        props.set("helpItemOffHand", new values[0].Item(new Properties({})));
+      if (!props.has("itemFrameContents"))
+        props.set("itemFrameContents", new values[0].Item(new Properties({})));
+      if (!props.has("targetBlock"))
+        props.set("targetBlock", new values[1].Block(new Properties({})));
+    });
     this.props = props;
   }
 

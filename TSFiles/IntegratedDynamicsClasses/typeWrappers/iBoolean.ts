@@ -1,11 +1,11 @@
 export class iBoolean {
-	bool: boolean;
+  bool: boolean;
 
-	constructor(bool: boolean) {
-		this.bool = bool;
-	}
+  constructor(bool: boolean) {
+    this.bool = bool;
+  }
 
-	valueOf(): boolean {
-		return this.bool;
-	}
+  valueOf(): boolean {
+    return this.bool;
+  }
 }

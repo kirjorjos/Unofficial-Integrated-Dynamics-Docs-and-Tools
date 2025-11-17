@@ -8,9 +8,7 @@
  * An exception that can be thrown during the parsing of NBT path expressions.
  */
 export class NbtParseException extends Error {
-
-    constructor(msg: string) {
-        super(msg);
-    }
-    
+  constructor(msg: string) {
+    super(msg);
+  }
 }

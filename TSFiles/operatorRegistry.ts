@@ -39,20 +39,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:logical_and",
     nicknames: ["logicalAnd"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Boolean",
+      },
+      to: {
         type: "Function",
         from: {
           type: "Boolean",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "Boolean",
-          },
-          to: {
-            type: "Boolean",
-          },
+          type: "Boolean",
         },
       },
+    },
     symbol: "&&",
     interactName: "booleanAnd",
     function: (bool1: boolean): TypeLambda<boolean, boolean> => {
@@ -65,20 +65,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:logical_or",
     nicknames: ["logicalOr"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Boolean",
+      },
+      to: {
         type: "Function",
         from: {
           type: "Boolean",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "Boolean",
-          },
-          to: {
-            type: "Boolean",
-          },
+          type: "Boolean",
         },
       },
+    },
     symbol: "||",
     interactName: "booleanOr",
     function: (bool1: boolean): TypeLambda<boolean, boolean> => {
@@ -91,14 +91,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:logical_not",
     nicknames: ["logicalNot"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Boolean",
-        },
-        to: {
-          type: "Boolean",
-        },
+      type: "Function",
+      from: {
+        type: "Boolean",
       },
+      to: {
+        type: "Boolean",
+      },
+    },
     symbol: "!",
     interactName: "booleanNot",
     function: (bool: boolean): boolean => {
@@ -109,25 +109,28 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:logical_nand",
     nicknames: ["logicalNand"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Boolean",
+      },
+      to: {
         type: "Function",
         from: {
           type: "Boolean",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "Boolean",
-          },
-          to: {
-            type: "Boolean",
-          },
+          type: "Boolean",
         },
       },
+    },
     symbol: "!&&",
     interactName: "booleanNand",
     function: (
       func1: TypeLambda<boolean, boolean>
-    ): TypeLambda<TypeLambda<boolean, boolean>, TypeLambda<IntegratedValue, boolean>> => {
+    ): TypeLambda<
+      TypeLambda<boolean, boolean>,
+      TypeLambda<IntegratedValue, boolean>
+    > => {
       return (
         func2: TypeLambda<boolean, boolean>
       ): TypeLambda<IntegratedValue, boolean> => {
@@ -141,25 +144,28 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:logical_nor",
     nicknames: ["logicalNor"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Boolean",
+      },
+      to: {
         type: "Function",
         from: {
           type: "Boolean",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "Boolean",
-          },
-          to: {
-            type: "Boolean",
-          },
+          type: "Boolean",
         },
       },
+    },
     symbol: "!||",
     interactName: "booleanNor",
     function: (
       func1: TypeLambda<boolean, boolean>
-    ): TypeLambda<TypeLambda<boolean, boolean>, TypeLambda<IntegratedValue, boolean>> => {
+    ): TypeLambda<
+      TypeLambda<boolean, boolean>,
+      TypeLambda<IntegratedValue, boolean>
+    > => {
       return (
         func2: TypeLambda<boolean, boolean>
       ): TypeLambda<IntegratedValue, boolean> => {
@@ -173,23 +179,25 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:arithmetic_addition",
     nicknames: ["arithmeticAddition"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Number",
+      },
+      to: {
         type: "Function",
         from: {
           type: "Number",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "Number",
-          },
-          to: {
-            type: "Number",
-          },
+          type: "Number",
         },
       },
+    },
     symbol: "+",
     interactName: "numberAdd",
-    function: async (num1: TypeNumber): Promise<TypeLambda<TypeNumber, Promise<TypeNumber>>> => {
+    function: async (
+      num1: TypeNumber
+    ): Promise<TypeLambda<TypeNumber, Promise<TypeNumber>>> => {
       return async (num2: TypeNumber): Promise<TypeNumber> => {
         return JavaMath.add(num1, num2);
       };
@@ -199,23 +207,25 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:arithmetic_subtraction",
     nicknames: ["arithmeticSubtraction"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Number",
+      },
+      to: {
         type: "Function",
         from: {
           type: "Number",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "Number",
-          },
-          to: {
-            type: "Number",
-          },
+          type: "Number",
         },
       },
+    },
     symbol: "-",
     interactName: "numberSubtract",
-    function: (num1: TypeNumber): TypeLambda<TypeNumber, Promise<TypeNumber>> => {
+    function: (
+      num1: TypeNumber
+    ): TypeLambda<TypeNumber, Promise<TypeNumber>> => {
       return (num2: TypeNumber): Promise<TypeNumber> => {
         return JavaMath.subtract(num1, num2);
       };
@@ -225,23 +235,25 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:arithmetic_multiplication",
     nicknames: ["arithmeticMultiplication"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Number",
+      },
+      to: {
         type: "Function",
         from: {
           type: "Number",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "Number",
-          },
-          to: {
-            type: "Number",
-          },
+          type: "Number",
         },
       },
+    },
     symbol: "*",
     interactName: "numberMultiply",
-    function: (num1: TypeNumber): TypeLambda<TypeNumber, Promise<TypeNumber>> => {
+    function: (
+      num1: TypeNumber
+    ): TypeLambda<TypeNumber, Promise<TypeNumber>> => {
       return (num2: TypeNumber): Promise<TypeNumber> => {
         return JavaMath.multiply(num1, num2);
       };
@@ -251,23 +263,25 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:arithmetic_division",
     nicknames: ["arithmeticDivision"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Number",
+      },
+      to: {
         type: "Function",
         from: {
           type: "Number",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "Number",
-          },
-          to: {
-            type: "Number",
-          },
+          type: "Number",
         },
       },
+    },
     symbol: "/",
     interactName: "numberDivide",
-    function: (num1: TypeNumber): TypeLambda<TypeNumber, Promise<TypeNumber>> => {
+    function: (
+      num1: TypeNumber
+    ): TypeLambda<TypeNumber, Promise<TypeNumber>> => {
       return (num2: TypeNumber): Promise<TypeNumber> => {
         return JavaMath.divide(num1, num2);
       };
@@ -277,23 +291,25 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:arithmetic_maximum",
     nicknames: ["arithmeticMaximum"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Number",
+      },
+      to: {
         type: "Function",
         from: {
           type: "Number",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "Number",
-          },
-          to: {
-            type: "Number",
-          },
+          type: "Number",
         },
       },
+    },
     symbol: "max",
     interactName: "numberMax",
-    function: (num1: TypeNumber): TypeLambda<TypeNumber, Promise<TypeNumber>> => {
+    function: (
+      num1: TypeNumber
+    ): TypeLambda<TypeNumber, Promise<TypeNumber>> => {
       return (num2: TypeNumber): Promise<TypeNumber> => {
         return JavaMath.max(num1, num2);
       };
@@ -303,23 +319,25 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:arithmetic_minimum",
     nicknames: ["arithmeticMinimum"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Number",
+      },
+      to: {
         type: "Function",
         from: {
           type: "Number",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "Number",
-          },
-          to: {
-            type: "Number",
-          },
+          type: "Number",
         },
       },
+    },
     symbol: "min",
     interactName: "numberMin",
-    function: (num1: TypeNumber): TypeLambda<TypeNumber, Promise<TypeNumber>> => {
+    function: (
+      num1: TypeNumber
+    ): TypeLambda<TypeNumber, Promise<TypeNumber>> => {
       return (num2: TypeNumber): Promise<TypeNumber> => {
         return JavaMath.min(num1, num2);
       };
@@ -329,14 +347,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:arithmetic_increment",
     nicknames: ["arithmeticIncrement"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Number",
-        },
-        to: {
-          type: "Number",
-        },
+      type: "Function",
+      from: {
+        type: "Number",
       },
+      to: {
+        type: "Number",
+      },
+    },
     symbol: "++",
     interactName: "numberIncrement",
     function: async (num1: TypeNumber): Promise<TypeNumber> => {
@@ -347,14 +365,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:arithmetic_decrement",
     nicknames: ["arithmeticDecrement"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Number",
-        },
-        to: {
-          type: "Number",
-        },
+      type: "Function",
+      from: {
+        type: "Number",
       },
+      to: {
+        type: "Number",
+      },
+    },
     symbol: "--",
     interactName: "numberDecrement",
     function: async (num1: TypeNumber): Promise<TypeNumber> => {
@@ -365,23 +383,25 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:arithmetic_modulus",
     nicknames: ["arithmeticModulus"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Number",
+      },
+      to: {
         type: "Function",
         from: {
           type: "Number",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "Number",
-          },
-          to: {
-            type: "Number",
-          },
+          type: "Number",
         },
       },
+    },
     symbol: "%",
     interactName: "numberModulus",
-    function: (num1: TypeNumber): TypeLambda<TypeNumber, Promise<TypeNumber>> => {
+    function: (
+      num1: TypeNumber
+    ): TypeLambda<TypeNumber, Promise<TypeNumber>> => {
       return (num2: TypeNumber): Promise<TypeNumber> => {
         return JavaMath.mod(num1, num2);
       };
@@ -391,14 +411,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:double_sqrt",
     nicknames: [],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Double",
-        },
-        to: {
-          type: "Double",
-        },
+      type: "Function",
+      from: {
+        type: "Double",
       },
+      to: {
+        type: "Double",
+      },
+    },
     symbol: "sqrt",
     interactName: "doubleSqrt",
     function: (double: Double): Double => {
@@ -409,20 +429,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:double_pow",
     nicknames: ["doublePow"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Double",
+      },
+      to: {
         type: "Function",
         from: {
           type: "Double",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "Double",
-          },
-          to: {
-            type: "Double",
-          },
+          type: "Double",
         },
       },
+    },
     symbol: "pow",
     interactName: "doublePow",
     function: (base: Double): TypeLambda<Double, Double> => {
@@ -435,19 +455,21 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:relational_equals",
     nicknames: ["relationalEquals"],
     parsedSignature: {
+      type: "Function",
+      from: { type: "Any", typeID: 1 },
+      to: {
         type: "Function",
         from: { type: "Any", typeID: 1 },
         to: {
-          type: "Function",
-          from: { type: "Any", typeID: 1 },
-          to: {
-            type: "Boolean",
-          },
+          type: "Boolean",
         },
       },
+    },
     symbol: "==",
     interactName: "anyEquals",
-    function: (value1: IntegratedValue): TypeLambda<IntegratedValue, boolean> => {
+    function: (
+      value1: IntegratedValue
+    ): TypeLambda<IntegratedValue, boolean> => {
       return (value2: IntegratedValue): boolean => {
         try {
           return value1.equals(value2);
@@ -461,20 +483,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:relational_gt",
     nicknames: ["relationalGt"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Number",
+      },
+      to: {
         type: "Function",
         from: {
           type: "Number",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "Number",
-          },
-          to: {
-            type: "Boolean",
-          },
+          type: "Boolean",
         },
       },
+    },
     symbol: ">",
     interactName: "numberGreaterThan",
     function: (num1: TypeNumber): TypeLambda<TypeNumber, Promise<boolean>> => {
@@ -487,20 +509,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:relational_lt",
     nicknames: ["relationalLt"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Number",
+      },
+      to: {
         type: "Function",
         from: {
           type: "Number",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "Number",
-          },
-          to: {
-            type: "Boolean",
-          },
+          type: "Boolean",
         },
       },
+    },
     symbol: "<",
     interactName: "numberLessThan",
     function: (num1: TypeNumber): TypeLambda<TypeNumber, Promise<boolean>> => {
@@ -513,19 +535,21 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:relational_notequals",
     nicknames: ["relationalNotequals"],
     parsedSignature: {
+      type: "Function",
+      from: { type: "Any", typeID: 1 },
+      to: {
         type: "Function",
         from: { type: "Any", typeID: 1 },
         to: {
-          type: "Function",
-          from: { type: "Any", typeID: 1 },
-          to: {
-            type: "Boolean",
-          },
+          type: "Boolean",
         },
       },
+    },
     symbol: "!=",
     interactName: "anyNotEquals",
-    function: (value1: IntegratedValue): TypeLambda<IntegratedValue, boolean> => {
+    function: (
+      value1: IntegratedValue
+    ): TypeLambda<IntegratedValue, boolean> => {
       return (value2: IntegratedValue): boolean => {
         try {
           return !value1.equals(value2);
@@ -539,20 +563,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:relational_ge",
     nicknames: ["relationalGe"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Number",
+      },
+      to: {
         type: "Function",
         from: {
           type: "Number",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "Number",
-          },
-          to: {
-            type: "Boolean",
-          },
+          type: "Boolean",
         },
       },
+    },
     symbol: ">=",
     interactName: "anyGreaterThanOrEquals",
     function: (num1: TypeNumber): TypeLambda<TypeNumber, Promise<boolean>> => {
@@ -565,20 +589,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:relational_le",
     nicknames: ["relationalLe"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Number",
+      },
+      to: {
         type: "Function",
         from: {
           type: "Number",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "Number",
-          },
-          to: {
-            type: "Boolean",
-          },
+          type: "Boolean",
         },
       },
+    },
     symbol: "<=",
     interactName: "anyLessThanOrEquals",
     function: (num1: TypeNumber): TypeLambda<TypeNumber, Promise<boolean>> => {
@@ -591,20 +615,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:binary_and",
     nicknames: [],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Integer",
+      },
+      to: {
         type: "Function",
         from: {
           type: "Integer",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "Integer",
-          },
-          to: {
-            type: "Integer",
-          },
+          type: "Integer",
         },
       },
+    },
     symbol: "&",
     interactName: "integerBinaryAnd",
     function: (int1: Integer): TypeLambda<Integer, Integer> => {
@@ -617,20 +641,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:binary_or",
     nicknames: [],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Integer",
+      },
+      to: {
         type: "Function",
         from: {
           type: "Integer",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "Integer",
-          },
-          to: {
-            type: "Integer",
-          },
+          type: "Integer",
         },
       },
+    },
     symbol: "|",
     interactName: "integerBinaryOr",
     function: (int1: Integer): TypeLambda<Integer, Integer> => {
@@ -643,20 +667,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:binary_xor",
     nicknames: [],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Integer",
+      },
+      to: {
         type: "Function",
         from: {
           type: "Integer",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "Integer",
-          },
-          to: {
-            type: "Integer",
-          },
+          type: "Integer",
         },
       },
+    },
     symbol: "^",
     interactName: "integerXor",
     function: (int1: Integer): TypeLambda<Integer, Integer> => {
@@ -669,14 +693,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:binary_complement",
     nicknames: [],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Integer",
-        },
-        to: {
-          type: "Integer",
-        },
+      type: "Function",
+      from: {
+        type: "Integer",
       },
+      to: {
+        type: "Integer",
+      },
+    },
     symbol: "~",
     interactName: "integerComplement",
     function: (int: Integer): Integer => {
@@ -687,20 +711,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:binary_lshift",
     nicknames: ["binaryLshift"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Integer",
+      },
+      to: {
         type: "Function",
         from: {
           type: "Integer",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "Integer",
-          },
-          to: {
-            type: "Integer",
-          },
+          type: "Integer",
         },
       },
+    },
     symbol: "<<",
     interactName: "integerLeftShift",
     function: (int1: Integer): TypeLambda<Integer, Integer> => {
@@ -713,20 +737,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:binary_rshift",
     nicknames: ["binaryRshift"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Integer",
+      },
+      to: {
         type: "Function",
         from: {
           type: "Integer",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "Integer",
-          },
-          to: {
-            type: "Integer",
-          },
+          type: "Integer",
         },
       },
+    },
     symbol: ">>",
     interactName: "integerRightShift",
     function: (int1: Integer): TypeLambda<Integer, Integer> => {
@@ -739,20 +763,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:binary_rzshift",
     nicknames: ["binaryRzshift"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Integer",
+      },
+      to: {
         type: "Function",
         from: {
           type: "Integer",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "Integer",
-          },
-          to: {
-            type: "Integer",
-          },
+          type: "Integer",
         },
       },
+    },
     symbol: ">>>",
     interactName: "integerUnsignedRightShift",
     function: (int1: Integer): TypeLambda<Integer, Integer> => {
@@ -765,14 +789,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:string_length",
     nicknames: [],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
-          type: "Integer",
-        },
+      type: "Function",
+      from: {
+        type: "String",
       },
+      to: {
+        type: "Integer",
+      },
+    },
     symbol: "len",
     interactName: "stringLength",
     function: (str: string): TypeNumber => {
@@ -783,20 +807,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:string_concat",
     nicknames: [],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "String",
+      },
+      to: {
         type: "Function",
         from: {
           type: "String",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "String",
-          },
+          type: "String",
         },
       },
+    },
     symbol: "+",
     interactName: "stringConcat",
     function: (str1: string): TypeLambda<string, string> => {
@@ -809,20 +833,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:string_contains",
     nicknames: [],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "String",
+      },
+      to: {
         type: "Function",
         from: {
           type: "String",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "Boolean",
-          },
+          type: "Boolean",
         },
       },
+    },
     symbol: "contains",
     interactName: "stringContains",
     function: (substring: string): TypeLambda<string, boolean> => {
@@ -835,20 +859,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:string_contains_regex",
     nicknames: [],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "String",
+      },
+      to: {
         type: "Function",
         from: {
           type: "String",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "Boolean",
-          },
+          type: "Boolean",
         },
       },
+    },
     symbol: "contains_regex",
     interactName: "stringContainsRegex",
     function: (regexString: string): TypeLambda<string, boolean> => {
@@ -862,20 +886,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:string_matches_regex",
     nicknames: [],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "String",
+      },
+      to: {
         type: "Function",
         from: {
           type: "String",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "Boolean",
-          },
+          type: "Boolean",
         },
       },
+    },
     symbol: "matches_regex",
     interactName: "stringMatchesRegex",
     function: (regexString: string): TypeLambda<string, boolean> => {
@@ -891,20 +915,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:string_index_of",
     nicknames: [],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "String",
+      },
+      to: {
         type: "Function",
         from: {
           type: "String",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "Integer",
-          },
+          type: "Integer",
         },
       },
+    },
     symbol: "index_of",
     interactName: "stringIndexOf",
     function: (substring: string): TypeLambda<string, TypeNumber> => {
@@ -917,20 +941,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:string_index_of_regex",
     nicknames: ["stringIndexOfRegex"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "String",
+      },
+      to: {
         type: "Function",
         from: {
           type: "String",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "Integer",
-          },
+          type: "Integer",
         },
       },
+    },
     symbol: "index_of_regex",
     interactName: "stringIndexOfRegex",
     function: (regexString: string): TypeLambda<string, TypeNumber> => {
@@ -944,20 +968,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:string_starts_with",
     nicknames: ["stringStartsWith"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "String",
+      },
+      to: {
         type: "Function",
         from: {
           type: "String",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "Boolean",
-          },
+          type: "Boolean",
         },
       },
+    },
     symbol: "starts_with",
     interactName: "stringStartsWith",
     function: (substring: string): TypeLambda<string, boolean> => {
@@ -970,20 +994,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:string_ends_with",
     nicknames: ["stringEndsWith"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "String",
+      },
+      to: {
         type: "Function",
         from: {
           type: "String",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "Boolean",
-          },
+          type: "Boolean",
         },
       },
+    },
     symbol: "ends_with",
     interactName: "stringEndsWith",
     function: (substring: string): TypeLambda<string, boolean> => {
@@ -996,18 +1020,18 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:string_split_on",
     nicknames: [],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "String",
+      },
+      to: {
         type: "Function",
         from: {
           type: "String",
         },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: { type: "List", listType: { type: "String" } },
-        },
+        to: { type: "List", listType: { type: "String" } },
       },
+    },
     symbol: "split_on",
     interactName: "stringSplitOn",
     function: (delimiter: string): TypeLambda<string, Array<string>> => {
@@ -1020,18 +1044,18 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:string_split_on_regex",
     nicknames: [],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "String",
+      },
+      to: {
         type: "Function",
         from: {
           type: "String",
         },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: { type: "List", listType: { type: "String" } },
-        },
+        to: { type: "List", listType: { type: "String" } },
       },
+    },
     symbol: "split_on_regex",
     interactName: "stringSplitOnRegex",
     function: (regexString: string): TypeLambda<string, Array<string>> => {
@@ -1045,6 +1069,11 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:string_substring",
     nicknames: ["stringSubstring"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Integer",
+      },
+      to: {
         type: "Function",
         from: {
           type: "Integer",
@@ -1052,19 +1081,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
         to: {
           type: "Function",
           from: {
-            type: "Integer",
+            type: "String",
           },
           to: {
-            type: "Function",
-            from: {
-              type: "String",
-            },
-            to: {
-              type: "String",
-            },
+            type: "String",
           },
         },
       },
+    },
     symbol: "substring",
     interactName: "integerSubstring",
     function: (
@@ -1084,26 +1108,26 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:string_regex_group",
     nicknames: [],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "String",
+      },
+      to: {
         type: "Function",
         from: {
-          type: "String",
+          type: "Integer",
         },
         to: {
           type: "Function",
           from: {
-            type: "Integer",
+            type: "String",
           },
           to: {
-            type: "Function",
-            from: {
-              type: "String",
-            },
-            to: {
-              type: "String",
-            },
+            type: "String",
           },
         },
       },
+    },
     symbol: "regex_group",
     interactName: "stringRegexGroup",
     function: (regexString: string) => {
@@ -1111,10 +1135,7 @@ let operatorRegistryRawData: iOperatorRegistry = {
         return (fullString: string) => {
           const regex = new RE2(regexString, "u");
           const match = regex.exec(fullString);
-          if (
-            match &&
-            match[parseInt(groupIndex.toDecimal())] !== undefined
-          ) {
+          if (match && match[parseInt(groupIndex.toDecimal())] !== undefined) {
             return match[parseInt(groupIndex.toDecimal())];
           } else {
             throw new Error(
@@ -1129,18 +1150,18 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:string_regex_groups",
     nicknames: [],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "String",
+      },
+      to: {
         type: "Function",
         from: {
           type: "String",
         },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: { type: "List", listType: { type: "String" } },
-        },
+        to: { type: "List", listType: { type: "String" } },
       },
+    },
     symbol: "regex_groups",
     interactName: "stringRegexGroups",
     function: (regexString: string): TypeLambda<string, Array<string>> => {
@@ -1161,24 +1182,24 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:string_regex_scan",
     nicknames: [],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "String",
+      },
+      to: {
         type: "Function",
         from: {
-          type: "String",
+          type: "Integer",
         },
         to: {
           type: "Function",
           from: {
-            type: "Integer",
+            type: "String",
           },
-          to: {
-            type: "Function",
-            from: {
-              type: "String",
-            },
-            to: { type: "List", listType: { type: "String" } },
-          },
+          to: { type: "List", listType: { type: "String" } },
         },
       },
+    },
     symbol: "regex_scan",
     interactName: "stringRegexScan",
     function: (regexString: string) => {
@@ -1205,6 +1226,11 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:string_replace",
     nicknames: [],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "String",
+      },
+      to: {
         type: "Function",
         from: {
           type: "String",
@@ -1215,16 +1241,11 @@ let operatorRegistryRawData: iOperatorRegistry = {
             type: "String",
           },
           to: {
-            type: "Function",
-            from: {
-              type: "String",
-            },
-            to: {
-              type: "String",
-            },
+            type: "String",
           },
         },
       },
+    },
     symbol: "replace",
     interactName: "stringReplace",
     function: (
@@ -1241,6 +1262,11 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:string_replace_regex",
     nicknames: [],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "String",
+      },
+      to: {
         type: "Function",
         from: {
           type: "String",
@@ -1251,16 +1277,11 @@ let operatorRegistryRawData: iOperatorRegistry = {
             type: "String",
           },
           to: {
-            type: "Function",
-            from: {
-              type: "String",
-            },
-            to: {
-              type: "String",
-            },
+            type: "String",
           },
         },
       },
+    },
     symbol: "replace_regex",
     interactName: "stringReplaceRegex",
     function: (regexString: string) => {
@@ -1276,18 +1297,18 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:string_join",
     nicknames: [],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "String",
+      },
+      to: {
         type: "Function",
-        from: {
+        from: { type: "List", listType: { type: "String" } },
+        to: {
           type: "String",
         },
-        to: {
-          type: "Function",
-          from: { type: "List", listType: { type: "String" } },
-          to: {
-            type: "String",
-          },
-        },
       },
+    },
     symbol: "join",
     interactName: "stringJoin",
     function: (delimiter: string): TypeLambda<Array<string>, string> => {
@@ -1303,14 +1324,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:string_name",
     nicknames: ["namedName", "toString"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Named",
-        },
-        to: {
-          type: "String",
-        },
+      type: "Function",
+      from: {
+        type: "Named",
       },
+      to: {
+        type: "String",
+      },
+    },
     symbol: "name",
     interactName: "namedName",
     function: (named: TypeRawSignatureAST.RawSignatureNamed): string => {
@@ -1321,19 +1342,17 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:string_unique_name",
     nicknames: ["uniquelynamedUniquename"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "UniquelyNamed",
-        },
-        to: {
-          type: "String",
-        },
+      type: "Function",
+      from: {
+        type: "UniquelyNamed",
       },
+      to: {
+        type: "String",
+      },
+    },
     symbol: "uname",
     interactName: "uniquely_namedUniqueName",
-    function: (
-      uniquelyNamed: UniquelyNamed
-    ): string => {
+    function: (uniquelyNamed: UniquelyNamed): string => {
       return uniquelyNamed.getUniqueName();
     },
   },
@@ -1341,12 +1360,12 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:string_string_error",
     nicknames: ["string_error"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: { type: "Any", typeID: 1 },
+      type: "Function",
+      from: {
+        type: "String",
       },
+      to: { type: "Any", typeID: 1 },
+    },
     symbol: "error",
     interactName: "stringStringError",
     function: (message: string): never => {
@@ -1357,14 +1376,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:number_round",
     nicknames: ["numberRound"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Number",
-        },
-        to: {
-          type: "Integer",
-        },
+      type: "Function",
+      from: {
+        type: "Number",
       },
+      to: {
+        type: "Integer",
+      },
+    },
     symbol: "|| ||",
     interactName: "numberRound",
     function: (number: TypeNumber): Promise<Integer> => {
@@ -1375,14 +1394,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:number_ceil",
     nicknames: ["numberCeil"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Number",
-        },
-        to: {
-          type: "Integer",
-        },
+      type: "Function",
+      from: {
+        type: "Number",
       },
+      to: {
+        type: "Integer",
+      },
+    },
     symbol: "⌈ ⌉",
     interactName: "numberCeil",
     function: (number: TypeNumber): Promise<Integer> => {
@@ -1393,14 +1412,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:number_floor",
     nicknames: ["numberFloor"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Number",
-        },
-        to: {
-          type: "Integer",
-        },
+      type: "Function",
+      from: {
+        type: "Number",
       },
+      to: {
+        type: "Integer",
+      },
+    },
     symbol: "⌊ ⌋",
     interactName: "numberFloor",
     function: (number: TypeNumber): Promise<Integer> => {
@@ -1411,14 +1430,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:number_compact",
     nicknames: ["numberCompact"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Number",
-        },
-        to: {
-          type: "String",
-        },
+      type: "Function",
+      from: {
+        type: "Number",
       },
+      to: {
+        type: "String",
+      },
+    },
     symbol: "compact",
     interactName: "numberCompact",
     function: (number: TypeNumber): string => {
@@ -1429,12 +1448,12 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:general_isnull",
     nicknames: ["nullableIsnull"],
     parsedSignature: {
-        type: "Function",
-        from: { type: "Any", typeID: 1 },
-        to: {
-          type: "Boolean",
-        },
+      type: "Function",
+      from: { type: "Any", typeID: 1 },
+      to: {
+        type: "Boolean",
       },
+    },
     symbol: "o",
     interactName: "anyIsNull",
     function: (value: IntegratedValue): boolean => {
@@ -1445,12 +1464,12 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:general_isnotnull",
     nicknames: ["nullableIsnotnull"],
     parsedSignature: {
-        type: "Function",
-        from: { type: "Any", typeID: 1 },
-        to: {
-          type: "Boolean",
-        },
+      type: "Function",
+      from: { type: "Any", typeID: 1 },
+      to: {
+        type: "Boolean",
       },
+    },
     symbol: "∅",
     interactName: "anyIsNotNull",
     function: (value: IntegratedValue): boolean => {
@@ -1461,12 +1480,12 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:list_length",
     nicknames: [],
     parsedSignature: {
-        type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: {
-          type: "Integer",
-        },
+      type: "Function",
+      from: { type: "List", listType: { type: "Any", typeID: 1 } },
+      to: {
+        type: "Integer",
       },
+    },
     symbol: "| |",
     interactName: "listLength",
     function: (list: Array<IntegratedValue>) => {
@@ -1477,12 +1496,12 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:list_empty",
     nicknames: [],
     parsedSignature: {
-        type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: {
-          type: "Boolean",
-        },
+      type: "Function",
+      from: { type: "List", listType: { type: "Any", typeID: 1 } },
+      to: {
+        type: "Boolean",
       },
+    },
     symbol: "∅",
     interactName: "listIsEmpty",
     function: (list: Array<IntegratedValue>): boolean => {
@@ -1493,12 +1512,12 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:list_notempty",
     nicknames: [],
     parsedSignature: {
-        type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: {
-          type: "Boolean",
-        },
+      type: "Function",
+      from: { type: "List", listType: { type: "Any", typeID: 1 } },
+      to: {
+        type: "Boolean",
       },
+    },
     symbol: "o",
     interactName: "listIsNotEmpty",
     function: (list: Array<IntegratedValue>): boolean => {
@@ -1509,21 +1528,24 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:list_get",
     nicknames: ["listElement"],
     parsedSignature: {
+      type: "Function",
+      from: { type: "List", listType: { type: "Any", typeID: 1 } },
+      to: {
         type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: {
-          type: "Function",
-          from: {
-            type: "Integer",
-          },
-          to: { type: "Any", typeID: 1 },
+        from: {
+          type: "Integer",
         },
+        to: { type: "Any", typeID: 1 },
       },
+    },
     symbol: "get",
     interactName: "listGet",
     function: <T>(index: Integer): TypeLambda<Array<T>, Promise<T>> => {
       return async (list: Array<T>): Promise<T> => {
-        if (await index.lt(new Integer(0)) || await index.lte(new Integer(list.length))) {
+        if (
+          (await index.lt(new Integer(0))) ||
+          (await index.lte(new Integer(list.length)))
+        ) {
           throw new Error(
             `Index ${index} out of bounds for list of length ${list.length}`
           );
@@ -1536,20 +1558,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:list_get_or_default",
     nicknames: ["listElementDefault", "get_or_default"],
     parsedSignature: {
+      type: "Function",
+      from: { type: "List", listType: { type: "Any", typeID: 1 } },
+      to: {
         type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
+        from: {
+          type: "Integer",
+        },
         to: {
           type: "Function",
-          from: {
-            type: "Integer",
-          },
-          to: {
-            type: "Function",
-            from: { type: "Any", typeID: 1 },
-            to: { type: "Any", typeID: 1 },
-          },
+          from: { type: "Any", typeID: 1 },
+          to: { type: "Any", typeID: 1 },
         },
       },
+    },
     symbol: "get_or_default",
     interactName: "listGetOrDefault",
     function: async <T>(
@@ -1557,7 +1579,10 @@ let operatorRegistryRawData: iOperatorRegistry = {
     ): Promise<TypeLambda<Integer, Promise<TypeLambda<T, Promise<T>>>>> => {
       return async (index: Integer): Promise<TypeLambda<T, Promise<T>>> => {
         return async (defaultValue: T): Promise<T> => {
-          if (await JavaMath.lt(index, new Integer(0)) || await JavaMath.gte(index, new Integer(list.length))) {
+          if (
+            (await JavaMath.lt(index, new Integer(0))) ||
+            (await JavaMath.gte(index, new Integer(list.length)))
+          ) {
             return defaultValue;
           }
           return list[parseInt(index.toDecimal())] as T;
@@ -1569,16 +1594,16 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:list_contains",
     nicknames: [],
     parsedSignature: {
+      type: "Function",
+      from: { type: "List", listType: { type: "Any", typeID: 1 } },
+      to: {
         type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
+        from: { type: "Any", typeID: 1 },
         to: {
-          type: "Function",
-          from: { type: "Any", typeID: 1 },
-          to: {
-            type: "Boolean",
-          },
+          type: "Boolean",
         },
       },
+    },
     symbol: "contains",
     interactName: "listContains",
     function: <T>(list: Array<T>): TypeLambda<T, boolean> => {
@@ -1591,22 +1616,22 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:list_contains_p",
     nicknames: ["listContainsP"],
     parsedSignature: {
+      type: "Function",
+      from: { type: "List", listType: { type: "Any", typeID: 1 } },
+      to: {
         type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: {
+        from: {
           type: "Function",
-          from: {
-            type: "Function",
-            from: { type: "Any", typeID: 1 },
-            to: {
-              type: "Boolean",
-            },
-          },
+          from: { type: "Any", typeID: 1 },
           to: {
             type: "Boolean",
           },
         },
+        to: {
+          type: "Boolean",
+        },
       },
+    },
     symbol: "contains_p",
     interactName: "listContainsPredicate",
     function: <T>(predicate: Predicate): TypeLambda<Array<T>, boolean> => {
@@ -1619,16 +1644,16 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:list_count",
     nicknames: [],
     parsedSignature: {
+      type: "Function",
+      from: { type: "List", listType: { type: "Any", typeID: 1 } },
+      to: {
         type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
+        from: { type: "Any", typeID: 1 },
         to: {
-          type: "Function",
-          from: { type: "Any", typeID: 1 },
-          to: {
-            type: "Integer",
-          },
+          type: "Integer",
         },
       },
+    },
     symbol: "count",
     interactName: "listCount",
     function: <T>(list: Array<T>): TypeLambda<T, Integer> => {
@@ -1641,25 +1666,27 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:list_count_p",
     nicknames: [],
     parsedSignature: {
+      type: "Function",
+      from: { type: "List", listType: { type: "Any", typeID: 1 } },
+      to: {
         type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: {
+        from: {
           type: "Function",
-          from: {
-            type: "Function",
-            from: { type: "Any", typeID: 1 },
-            to: {
-              type: "Boolean",
-            },
-          },
+          from: { type: "Any", typeID: 1 },
           to: {
-            type: "Integer",
+            type: "Boolean",
           },
         },
+        to: {
+          type: "Integer",
+        },
       },
+    },
     symbol: "count_p",
     interactName: "listCountPredicate",
-    function: <T>(list: Array<T>): TypeLambda<TypeLambda<T, boolean>, Integer> => {
+    function: <T>(
+      list: Array<T>
+    ): TypeLambda<TypeLambda<T, boolean>, Integer> => {
       return (predicate: Predicate): Integer => {
         return new Integer(list.filter((item) => predicate.apply(item)).length);
       };
@@ -1669,14 +1696,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:list_append",
     nicknames: ["listAppend"],
     parsedSignature: {
+      type: "Function",
+      from: { type: "List", listType: { type: "Any", typeID: 1 } },
+      to: {
         type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: {
-          type: "Function",
-          from: { "type": "Any", typeID: 1 },
-          to: { type: "List", listType: { type: "Any", typeID: 1 } },
-        },
+        from: { type: "Any", typeID: 1 },
+        to: { type: "List", listType: { type: "Any", typeID: 1 } },
       },
+    },
     symbol: "append",
     interactName: "listAppend",
     function: <T>(list: Array<T>): TypeLambda<T, Array<T>> => {
@@ -1689,14 +1716,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:list_concat",
     nicknames: [],
     parsedSignature: {
+      type: "Function",
+      from: { type: "List", listType: { type: "Any", typeID: 1 } },
+      to: {
         type: "Function",
         from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: {
-          type: "Function",
-          from: { type: "List", listType: { type: "Any", typeID: 1 } },
-          to: { type: "List", listType: { type: "Any", typeID: 1 } },
-        },
+        to: { type: "List", listType: { type: "Any", typeID: 1 } },
       },
+    },
     symbol: "concat",
     interactName: "listConcat",
     function: <T>(list1: Array<T>): TypeLambda<Array<T>, Array<T>> => {
@@ -1709,28 +1736,30 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:list_lazybuilt",
     nicknames: ["listLazybuilt"],
     parsedSignature: {
+      type: "Function",
+      from: { type: "Any", typeID: 1 },
+      to: {
         type: "Function",
-        from: { type: "Any", typeID: 1 },
-        to: {
+        from: {
           type: "Function",
-          from: {
+          from: { type: "Any", typeID: 1 },
+          to: {
             type: "Function",
             from: { type: "Any", typeID: 1 },
             to: {
-              type: "Function",
-              from: { type: "Any", typeID: 1 },
-              to: {
-                type: "List",
-                listType: { type: "Any", typeID: 1 },
-              },
+              type: "List",
+              listType: { type: "Any", typeID: 1 },
             },
           },
-          to: { type: "List", listType: { type: "Any", typeID: 1 } },
         },
+        to: { type: "List", listType: { type: "Any", typeID: 1 } },
       },
+    },
     symbol: "lazybuilt",
     interactName: "anyLazyBuilt",
-    function: <T>(initial: T): TypeLambda<TypeLambda<T, T>, InfiniteList<T>> => {
+    function: <T>(
+      initial: T
+    ): TypeLambda<TypeLambda<T, T>, InfiniteList<T>> => {
       return (builder: TypeLambda<T, T>): InfiniteList<T> => {
         return new InfiniteList(initial, builder);
       };
@@ -1740,10 +1769,10 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:list_head",
     nicknames: ["listHead"],
     parsedSignature: {
-        type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: { type: "Any", typeID: 1 },
-      },
+      type: "Function",
+      from: { type: "List", listType: { type: "Any", typeID: 1 } },
+      to: { type: "Any", typeID: 1 },
+    },
     symbol: "head",
     interactName: "listHead",
     function: <T>(list: Array<T>): T => {
@@ -1757,10 +1786,10 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:list_tail",
     nicknames: ["listTail"],
     parsedSignature: {
-        type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: { type: "List", listType: { type: "Any", typeID: 1 } },
-      },
+      type: "Function",
+      from: { type: "List", listType: { type: "Any", typeID: 1 } },
+      to: { type: "List", listType: { type: "Any", typeID: 1 } },
+    },
     symbol: "tail",
     interactName: "listTail",
     function: <T>(list: Array<T>): Array<T> => {
@@ -1774,27 +1803,29 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:list_uniq_p",
     nicknames: [],
     parsedSignature: {
+      type: "Function",
+      from: { type: "List", listType: { type: "Any", typeID: 1 } },
+      to: {
         type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: {
+        from: {
           type: "Function",
-          from: {
+          from: { type: "Any", typeID: 1 },
+          to: {
             type: "Function",
             from: { type: "Any", typeID: 1 },
             to: {
-              type: "Function",
-              from: { type: "Any", typeID: 1 },
-              to: {
-                type: "Boolean",
-              },
+              type: "Boolean",
             },
           },
-          to: { type: "List", listType: { type: "Any", typeID: 1 } },
         },
+        to: { type: "List", listType: { type: "Any", typeID: 1 } },
       },
+    },
     symbol: "uniq_p",
     interactName: "listUniquePredicate",
-    function: <T>(list: Array<T>): TypeLambda<TypeLambda<T, boolean>, Array<T>> => {
+    function: <T>(
+      list: Array<T>
+    ): TypeLambda<TypeLambda<T, boolean>, Array<T>> => {
       return (predicate: Predicate): Array<T> => {
         const seen = new Set();
         return list.filter((item) => {
@@ -1813,10 +1844,10 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:list_uniq",
     nicknames: [],
     parsedSignature: {
-        type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: { type: "List", listType: { type: "Any", typeID: 1 } },
-      },
+      type: "Function",
+      from: { type: "List", listType: { type: "Any", typeID: 1 } },
+      to: { type: "List", listType: { type: "Any", typeID: 1 } },
+    },
     symbol: "uniq",
     interactName: "listUnique",
     function: <T>(list: Array<T>): Array<T> => {
@@ -1835,33 +1866,46 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:list_slice",
     nicknames: ["listSlice"],
     parsedSignature: {
+      type: "Function",
+      from: { type: "List", listType: { type: "Any", typeID: 1 } },
+      to: {
         type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
+        from: {
+          type: "Integer",
+        },
         to: {
           type: "Function",
           from: {
             type: "Integer",
           },
-          to: {
-            type: "Function",
-            from: {
-              type: "Integer",
-            },
-            to: { type: "List", listType: { type: "Any", typeID: 1 } },
-          },
+          to: { type: "List", listType: { type: "Any", typeID: 1 } },
         },
       },
+    },
     symbol: "slice",
     interactName: "listSlice",
-    function: async <T>(list: Array<T>): Promise<TypeLambda<Integer, Promise<TypeLambda<Integer, Promise<Array<T>>>>>> => {
-      return async (start: Integer): Promise<TypeLambda<Integer, Promise<Array<T>>>> => {
+    function: async <T>(
+      list: Array<T>
+    ): Promise<
+      TypeLambda<Integer, Promise<TypeLambda<Integer, Promise<Array<T>>>>>
+    > => {
+      return async (
+        start: Integer
+      ): Promise<TypeLambda<Integer, Promise<Array<T>>>> => {
         return async (end: Integer): Promise<Array<T>> => {
-          if (await JavaMath.lt(start, new Integer(0)) || await JavaMath.gt(end, new Integer(list.length)) || await JavaMath.gt(start, end)) {
+          if (
+            (await JavaMath.lt(start, new Integer(0))) ||
+            (await JavaMath.gt(end, new Integer(list.length))) ||
+            (await JavaMath.gt(start, end))
+          ) {
             throw new Error(
               `Invalid slice range: [${start.toDecimal()}, ${end.toDecimal()}) for list of length ${list.length}`
             );
           }
-          return list.slice(parseInt(start.toDecimal()), parseInt(end.toDecimal()));
+          return list.slice(
+            parseInt(start.toDecimal()),
+            parseInt(end.toDecimal())
+          );
         };
       };
     },
@@ -1870,14 +1914,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:list_intersection",
     nicknames: ["listIntersection"],
     parsedSignature: {
+      type: "Function",
+      from: { type: "List", listType: { type: "Any", typeID: 1 } },
+      to: {
         type: "Function",
         from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: {
-          type: "Function",
-          from: { type: "List", listType: { type: "Any", typeID: 1 } },
-          to: { type: "List", listType: { type: "Any", typeID: 1 } },
-        },
+        to: { type: "List", listType: { type: "Any", typeID: 1 } },
       },
+    },
     symbol: "∩",
     interactName: "listIntersection",
     function: <T>(list1: Array<T>): TypeLambda<Array<T>, Array<T>> => {
@@ -1891,23 +1935,29 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:list_equals_set",
     nicknames: ["listEqualsSet"],
     parsedSignature: {
+      type: "Function",
+      from: { type: "List", listType: { type: "Any", typeID: 1 } },
+      to: {
         type: "Function",
         from: { type: "List", listType: { type: "Any", typeID: 1 } },
         to: {
-          type: "Function",
-          from: { type: "List", listType: { type: "Any", typeID: 1 } },
-          to: {
-            type: "Boolean",
-          },
+          type: "Boolean",
         },
       },
+    },
     symbol: "=set=",
     interactName: "listEquals_set",
-    function: <T extends IntegratedValue>(list1: Array<T>): TypeLambda<Array<T>, boolean> => {
+    function: <T extends IntegratedValue>(
+      list1: Array<T>
+    ): TypeLambda<Array<T>, boolean> => {
       return (list2: Array<T>): boolean => {
         const set1 = new Set(list1);
         const set2 = new Set(list2);
-        if (set1.size !== set2.size || (set1.size !== (new Set([...set1, ...set2]).size))) return false;
+        if (
+          set1.size !== set2.size ||
+          set1.size !== new Set([...set1, ...set2]).size
+        )
+          return false;
         return true;
       };
     },
@@ -1916,19 +1966,21 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:list_equals_multiset",
     nicknames: ["listEqualsMultiset"],
     parsedSignature: {
+      type: "Function",
+      from: { type: "List", listType: { type: "Any", typeID: 1 } },
+      to: {
         type: "Function",
         from: { type: "List", listType: { type: "Any", typeID: 1 } },
         to: {
-          type: "Function",
-          from: { type: "List", listType: { type: "Any", typeID: 1 } },
-          to: {
-            type: "Boolean",
-          },
+          type: "Boolean",
         },
       },
+    },
     symbol: "=multiset=",
     interactName: "listEquals_multiset",
-    function: <T extends { equals: Function | undefined }>(list1: Array<T>): TypeLambda<Array<T>, boolean> => {
+    function: <T extends { equals: Function | undefined }>(
+      list1: Array<T>
+    ): TypeLambda<Array<T>, boolean> => {
       return (list2: Array<T>): boolean => {
         const newList1 = [...list1].sort();
         const newList2 = [...list2].sort();
@@ -1957,14 +2009,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:block_opaque",
     nicknames: ["BlockOpaque"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Block",
-        },
-        to: {
-          type: "Boolean",
-        },
+      type: "Function",
+      from: {
+        type: "Block",
       },
+      to: {
+        type: "Boolean",
+      },
+    },
     symbol: "opaque",
     interactName: "blockIsOpaque",
     function: (block: Block): boolean => {
@@ -1980,14 +2032,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "block_itemstack",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Block",
-        },
-        to: {
-          type: "Item",
-        },
+      type: "Function",
+      from: {
+        type: "Block",
       },
+      to: {
+        type: "Item",
+      },
+    },
     symbol: "itemstack",
     interactName: "blockItemStack",
     function: (block: Block): Item => {
@@ -1998,14 +2050,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:block_mod",
     nicknames: ["BlockModname", "block_mod", "blockMod", "block_modname"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Block",
-        },
-        to: {
-          type: "String",
-        },
+      type: "Function",
+      from: {
+        type: "Block",
       },
+      to: {
+        type: "String",
+      },
+    },
     symbol: "mod",
     interactName: "blockMod",
     function: (block: Block): string => {
@@ -2016,14 +2068,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:block_breaksound",
     nicknames: ["BlockBreaksound", "block_break_sound", "blockBreakSound"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Block",
-        },
-        to: {
-          type: "String",
-        },
+      type: "Function",
+      from: {
+        type: "Block",
       },
+      to: {
+        type: "String",
+      },
+    },
     symbol: "break_sound",
     interactName: "blockBreakSound",
     function: (block: Block): string => {
@@ -2034,14 +2086,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:block_placesound",
     nicknames: ["BlockPlacesound", "blockPlaceSound", "block_place_sound"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Block",
-        },
-        to: {
-          type: "String",
-        },
+      type: "Function",
+      from: {
+        type: "Block",
       },
+      to: {
+        type: "String",
+      },
+    },
     symbol: "place_sound",
     interactName: "blockPlaceSound",
     function: (block: Block): string => {
@@ -2052,14 +2104,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:block_stepsound",
     nicknames: ["BlockStepsound", "blockStepSound", "block_step_sound"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Block",
-        },
-        to: {
-          type: "String",
-        },
+      type: "Function",
+      from: {
+        type: "Block",
       },
+      to: {
+        type: "String",
+      },
+    },
     symbol: "step_sound",
     interactName: "blockStepSound",
     function: (block: Block): string => {
@@ -2070,14 +2122,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:block_isshearable",
     nicknames: ["BlockIsshearable", "block_is_shearable", "blockIsShearable"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Block",
-        },
-        to: {
-          type: "Boolean",
-        },
+      type: "Function",
+      from: {
+        type: "Block",
       },
+      to: {
+        type: "Boolean",
+      },
+    },
     symbol: "is_shearable",
     interactName: "blockIsShearable",
     function: (block: Block): boolean => {
@@ -2088,14 +2140,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:block_plantage",
     nicknames: ["BlockPlantage", "block_plant_age", "blockPlantAge"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Block",
-        },
-        to: {
-          type: "Integer",
-        },
+      type: "Function",
+      from: {
+        type: "Block",
       },
+      to: {
+        type: "Integer",
+      },
+    },
     symbol: "plant_age",
     interactName: "blockPlantAge",
     function: (block: Block): Integer => {
@@ -2106,14 +2158,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:block_blockbyname",
     nicknames: ["BlockByName", "block_by_name"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
-          type: "Block",
-        },
+      type: "Function",
+      from: {
+        type: "String",
       },
+      to: {
+        type: "Block",
+      },
+    },
     symbol: "block_by_name",
     interactName: "stringBlockByName",
     function: (): never => {
@@ -2126,14 +2178,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:block_blockproperties",
     nicknames: ["BlockProperties", "block_properties"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Block",
-        },
-        to: {
-          type: "NBT",
-        },
+      type: "Function",
+      from: {
+        type: "Block",
       },
+      to: {
+        type: "NBT",
+      },
+    },
     symbol: "block_props",
     interactName: "blockProperties",
     function: (block: Block): Properties => {
@@ -2144,20 +2196,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:block_blockfromproperties",
     nicknames: ["BlockWithProperties", "block_with_properties"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Block",
+      },
+      to: {
         type: "Function",
         from: {
-          type: "Block",
+          type: "NBT",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "NBT",
-          },
-          to: {
-            type: "Block",
-          },
+          type: "Block",
         },
       },
+    },
     symbol: "block_with_props",
     interactName: "blockWithProperties",
     function: (block: Block) => {
@@ -2170,14 +2222,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:block_blockpossibleproperties",
     nicknames: ["BlockPossibleProperties", "block_possible_properties"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Block",
-        },
-        to: {
-          type: "NBT",
-        },
+      type: "Function",
+      from: {
+        type: "Block",
       },
+      to: {
+        type: "NBT",
+      },
+    },
     symbol: "block_all_props",
     interactName: "blockPossibleProperties",
     function: (): never => {
@@ -2190,12 +2242,12 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:block_tag",
     nicknames: ["BlockTag"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Block",
-        },
-        to: { type: "List", listType: { type: "String" } },
+      type: "Function",
+      from: {
+        type: "Block",
       },
+      to: { type: "List", listType: { type: "String" } },
+    },
     symbol: "block_tag_names",
     interactName: "blockTags",
     function: (block: Block): string[] => {
@@ -2206,12 +2258,12 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:string_blocktag",
     nicknames: ["BlockTagStacks", "block_tag_stacks"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: { type: "List", listType: { type: "Block" } },
+      type: "Function",
+      from: {
+        type: "String",
       },
+      to: { type: "List", listType: { type: "Block" } },
+    },
     symbol: "block_tag_values",
     interactName: "stringBlocksByTag",
     function: (): never => {
@@ -2224,14 +2276,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:itemstack_size",
     nicknames: ["ItemstackSize", "itemstack_size", "itemstackSize"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Integer",
-        },
+      type: "Function",
+      from: {
+        type: "Item",
       },
+      to: {
+        type: "Integer",
+      },
+    },
     symbol: "size",
     interactName: "itemstackSize",
     function: (item: Item): Integer => {
@@ -2242,14 +2294,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:itemstack_maxsize",
     nicknames: ["ItemstackMaxsize", "itemstack_max_size", "itemstackMaxSize"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Integer",
-        },
+      type: "Function",
+      from: {
+        type: "Item",
       },
+      to: {
+        type: "Integer",
+      },
+    },
     symbol: "maxsize",
     interactName: "itemstackMaxSize",
     function: (item: Item): Integer => {
@@ -2264,14 +2316,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "itemstackIsStackable",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Boolean",
-        },
+      type: "Function",
+      from: {
+        type: "Item",
       },
+      to: {
+        type: "Boolean",
+      },
+    },
     symbol: "stackable",
     interactName: "itemstackIsStackable",
     function: (item: Item): boolean => {
@@ -2286,14 +2338,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "itemstackIsDamageable",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Boolean",
-        },
+      type: "Function",
+      from: {
+        type: "Item",
       },
+      to: {
+        type: "Boolean",
+      },
+    },
     symbol: "damageable",
     interactName: "itemstackIsDamageable",
     function: (item: Item): boolean => {
@@ -2304,14 +2356,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:itemstack_damage",
     nicknames: ["ItemstackDamage", "itemstack_damage", "itemstackDamage"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Integer",
-        },
+      type: "Function",
+      from: {
+        type: "Item",
       },
+      to: {
+        type: "Integer",
+      },
+    },
     symbol: "damage",
     interactName: "itemstackDamage",
     function: (item: Item): Integer => {
@@ -2326,14 +2378,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "itemstackMaxDamage",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Integer",
-        },
+      type: "Function",
+      from: {
+        type: "Item",
       },
+      to: {
+        type: "Integer",
+      },
+    },
     symbol: "max_damage",
     interactName: "itemstackMaxDamage",
     function: (item: Item): Integer => {
@@ -2349,14 +2401,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "isEnchanted",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Boolean",
-        },
+      type: "Function",
+      from: {
+        type: "Item",
       },
+      to: {
+        type: "Boolean",
+      },
+    },
     symbol: "enchanted",
     interactName: "itemstackIsEnchanted",
     function: (item: Item): boolean => {
@@ -2372,14 +2424,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "isEnchantable",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Boolean",
-        },
+      type: "Function",
+      from: {
+        type: "Item",
       },
+      to: {
+        type: "Boolean",
+      },
+    },
     symbol: "enchantable",
     interactName: "itemstackIsEnchantable",
     function: (item: Item): boolean => {
@@ -2394,14 +2446,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "itemstackRepairCost",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Integer",
-        },
+      type: "Function",
+      from: {
+        type: "Item",
       },
+      to: {
+        type: "Integer",
+      },
+    },
     symbol: "repair_cost",
     interactName: "itemstackRepairCost",
     function: (item: Item): Integer => {
@@ -2412,14 +2464,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:itemstack_rarity",
     nicknames: ["ItemstackRarity", "itemstack_rarity", "itemstackRarity"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "String",
-        },
+      type: "Function",
+      from: {
+        type: "Item",
       },
+      to: {
+        type: "String",
+      },
+    },
     symbol: "rarity",
     interactName: "itemstackRarity",
     function: (item: Item): string => {
@@ -2434,20 +2486,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "itemstackStrengthVsBlock",
     ],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Item",
+      },
+      to: {
         type: "Function",
         from: {
-          type: "Item",
+          type: "Block",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "Block",
-          },
-          to: {
-            type: "Double",
-          },
+          type: "Double",
         },
       },
+    },
     symbol: "strength",
     interactName: "itemstackStrength",
     function: (item: Item): TypeLambda<Block, Promise<void>> => {
@@ -2464,20 +2516,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "itemstackCanHarvestBlock",
     ],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Item",
+      },
+      to: {
         type: "Function",
         from: {
-          type: "Item",
+          type: "Block",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "Block",
-          },
-          to: {
-            type: "Boolean",
-          },
+          type: "Boolean",
         },
       },
+    },
     symbol: "can_harvest",
     interactName: "itemstackCanHarvest",
     function: (item: Item): TypeLambda<Block, void> => {
@@ -2490,14 +2542,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:itemstack_block",
     nicknames: ["ItemstackBlock", "itemstack_block", "itemstackBlock"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Block",
-        },
+      type: "Function",
+      from: {
+        type: "Item",
       },
+      to: {
+        type: "Block",
+      },
+    },
     symbol: "block",
     interactName: "itemstackBlock",
     function: (item: Item): Block => {
@@ -2513,14 +2565,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "itemHasFluid",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Boolean",
-        },
+      type: "Function",
+      from: {
+        type: "Item",
       },
+      to: {
+        type: "Boolean",
+      },
+    },
     symbol: "is_fluidstack",
     interactName: "itemstackIsFluidStack",
     function: (item: Item): boolean => {
@@ -2541,14 +2593,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "itemstackFluid",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Fluid",
-        },
+      type: "Function",
+      from: {
+        type: "Item",
       },
+      to: {
+        type: "Fluid",
+      },
+    },
     symbol: "fluidstack",
     interactName: "itemstackFluidStack",
     function: (item: Item): Fluid => {
@@ -2567,14 +2619,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "itemFluidstackCapacity",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Integer",
-        },
+      type: "Function",
+      from: {
+        type: "Item",
       },
+      to: {
+        type: "Integer",
+      },
+    },
     symbol: "fluidstack_capacity",
     interactName: "itemstackFluidCapacity",
     function: (item: Item): Integer => {
@@ -2589,20 +2641,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "itemstackIsDataequal",
     ],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Item",
+      },
+      to: {
         type: "Function",
         from: {
           type: "Item",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "Item",
-          },
-          to: {
-            type: "Boolean",
-          },
+          type: "Boolean",
         },
       },
+    },
     symbol: "=NBT=",
     interactName: "itemstackIsNbtEqual",
     function: (item1: Item): TypeLambda<Item, Boolean> => {
@@ -2619,20 +2671,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "itemstackIsItemequalnodata",
     ],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Item",
+      },
+      to: {
         type: "Function",
         from: {
           type: "Item",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "Item",
-          },
-          to: {
-            type: "Boolean",
-          },
+          type: "Boolean",
         },
       },
+    },
     symbol: "=NoNBT=",
     interactName: "itemstackIsEqualNonNbt",
     function: (item1: Item): TypeLambda<Item, boolean> => {
@@ -2652,20 +2704,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "itemstackIsRawitemequal",
     ],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Item",
+      },
+      to: {
         type: "Function",
         from: {
           type: "Item",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "Item",
-          },
-          to: {
-            type: "Boolean",
-          },
+          type: "Boolean",
         },
       },
+    },
     symbol: "=Raw=",
     interactName: "itemstackIsEqualRaw",
     function: (item1: Item): TypeLambda<Item, boolean> => {
@@ -2678,14 +2730,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:itemstack_mod",
     nicknames: ["ItemstackModname", "item_mod", "itemModname"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "String",
-        },
+      type: "Function",
+      from: {
+        type: "Item",
       },
+      to: {
+        type: "String",
+      },
+    },
     symbol: "mod",
     interactName: "itemstackMod",
     function: (item: Item): string => {
@@ -2700,14 +2752,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "itemFuelBurnTime",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Integer",
-        },
+      type: "Function",
+      from: {
+        type: "Item",
       },
+      to: {
+        type: "Integer",
+      },
+    },
     symbol: "burn_time",
     interactName: "itemstackBurnTime",
     function: (item: Item): Integer => {
@@ -2724,14 +2776,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "itemIsFuel",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Boolean",
-        },
+      type: "Function",
+      from: {
+        type: "Item",
       },
+      to: {
+        type: "Boolean",
+      },
+    },
     symbol: "can_burn",
     interactName: "itemstackCanBurn",
     function: (item: Item): boolean => {
@@ -2747,12 +2799,12 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "item_tag_names",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: { type: "List", listType: { type: "String" } },
+      type: "Function",
+      from: {
+        type: "Item",
       },
+      to: { type: "List", listType: { type: "String" } },
+    },
     symbol: "item_tag_names",
     interactName: "itemstackTags",
     function: (item: Item): string[] => {
@@ -2768,12 +2820,12 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "item_tag_values",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: { type: "List", listType: { type: "Item" } },
+      type: "Function",
+      from: {
+        type: "String",
       },
+      to: { type: "List", listType: { type: "Item" } },
+    },
     symbol: "item_tag_values",
     interactName: "stringItemsByTag",
     function: (): never => {
@@ -2791,20 +2843,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "item_with_size",
     ],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Item",
+      },
+      to: {
         type: "Function",
         from: {
-          type: "Item",
+          type: "Integer",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "Integer",
-          },
-          to: {
-            type: "Item",
-          },
+          type: "Item",
         },
       },
+    },
     symbol: "with_size",
     interactName: "itemstackWithSize",
     function: (item: Item): TypeLambda<Integer, Item> => {
@@ -2823,14 +2875,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "itemIsFecontainer",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Boolean",
-        },
+      type: "Function",
+      from: {
+        type: "Item",
       },
+      to: {
+        type: "Boolean",
+      },
+    },
     symbol: "is_fe_container",
     interactName: "itemstackIsFeContainer",
     function: (item: Item): boolean => {
@@ -2847,14 +2899,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "itemStoredFe",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Integer",
-        },
+      type: "Function",
+      from: {
+        type: "Item",
       },
+      to: {
+        type: "Integer",
+      },
+    },
     symbol: "stored_fe",
     interactName: "itemstackFeStored",
     function: (item: Item): Integer => {
@@ -2871,14 +2923,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "itemFeCapacity",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Integer",
-        },
+      type: "Function",
+      from: {
+        type: "Item",
       },
+      to: {
+        type: "Integer",
+      },
+    },
     symbol: "capacity_fe",
     interactName: "itemstackFeCapacity",
     function: (item: Item): Integer => {
@@ -2895,14 +2947,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "itemHasInventory",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Boolean",
-        },
+      type: "Function",
+      from: {
+        type: "Item",
       },
+      to: {
+        type: "Boolean",
+      },
+    },
     symbol: "has_inventory",
     interactName: "itemstackHasInventory",
     function: (item: Item): boolean => {
@@ -2919,14 +2971,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "itemInventorySize",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Integer",
-        },
+      type: "Function",
+      from: {
+        type: "Item",
       },
+      to: {
+        type: "Integer",
+      },
+    },
     symbol: "inventory_size",
     interactName: "itemstackInventorySize",
     function: (item: Item): Integer => {
@@ -2942,12 +2994,12 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "item_inventory",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: { type: "List", listType: { type: "Item" } },
+      type: "Function",
+      from: {
+        type: "Item",
       },
+      to: { type: "List", listType: { type: "Item" } },
+    },
     symbol: "inventory",
     interactName: "itemstackInventory",
     function: (item: Item): Array<IntegratedValue> => {
@@ -2963,14 +3015,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "item_by_name",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
-          type: "Item",
-        },
+      type: "Function",
+      from: {
+        type: "String",
       },
+      to: {
+        type: "Item",
+      },
+    },
     symbol: "item_by_name",
     interactName: "stringItemByName",
     function: (): never => {
@@ -2988,30 +3040,32 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "item_list_count",
     ],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "List",
+        listType: { type: "Item" },
+      },
+      to: {
         type: "Function",
-        from: {
-          type: "List",
-          listType: { type: "Item" },
-        },
+        from: { type: "Item" },
         to: {
-          type: "Function",
-          from: { type: "Item" },
-          to: {
-            type: "Integer",
-          },
+          type: "Integer",
         },
       },
+    },
     symbol: "item_list_count",
     interactName: "listItemListCount",
     function: (items: Array<Item>): TypeLambda<Item, Integer> => {
       return (item: Item): Integer => {
-        return new Integer(items.filter((i) => {
-          try {
-            return i.equals(item);
-          } catch (e) {
-            return false;
-          }
-        }).length);
+        return new Integer(
+          items.filter((i) => {
+            try {
+              return i.equals(item);
+            } catch (e) {
+              return false;
+            }
+          }).length
+        );
       };
     },
   },
@@ -3025,14 +3079,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "itemData",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "NBT",
-        },
+      type: "Function",
+      from: {
+        type: "Item",
       },
+      to: {
+        type: "NBT",
+      },
+    },
     symbol: "NBT()",
     interactName: "itemstackNbt",
     function: (item: Item): Tag<IntegratedValue> => {
@@ -3049,14 +3103,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "itemHasData",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Boolean",
-        },
+      type: "Function",
+      from: {
+        type: "Item",
       },
+      to: {
+        type: "Boolean",
+      },
+    },
     symbol: "has_nbt",
     interactName: "itemstackHasNbt",
     function: (item: Item): boolean => {
@@ -3073,12 +3127,12 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "itemDataKeys",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: { type: "List", listType: { type: "String" } },
+      type: "Function",
+      from: {
+        type: "Item",
       },
+      to: { type: "List", listType: { type: "String" } },
+    },
     symbol: "data_keys",
     interactName: "itemstackDataKeys",
     function: (item: Item): Array<string> => {
@@ -3086,9 +3140,7 @@ let operatorRegistryRawData: iOperatorRegistry = {
       if (!nbt) {
         return [];
       }
-      return Object.keys(nbt).filter(
-        (key) => nbt.has(key)
-      );
+      return Object.keys(nbt).filter((key) => nbt.has(key));
     },
   },
   itemNBTValue: {
@@ -3101,20 +3153,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "itemDataValue",
     ],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Item",
+      },
+      to: {
         type: "Function",
         from: {
-          type: "Item",
+          type: "String",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "NBT"
-          },
+          type: "NBT",
         },
       },
+    },
     symbol: "data_value",
     interactName: "itemstackDataValue",
     function: (item: Item): TypeLambda<string, Tag<IntegratedValue>> => {
@@ -3137,29 +3189,31 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "itemWithData",
     ],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Item",
+      },
+      to: {
         type: "Function",
         from: {
-          type: "Item",
+          type: "String",
         },
         to: {
           type: "Function",
           from: {
-            type: "String",
+            type: "NBT",
           },
           to: {
-            type: "Function",
-            from: {
-              type: "NBT"
-            },
-            to: {
-              type: "Item"
-            }
+            type: "Item",
           },
         },
       },
+    },
     symbol: "with_data",
     interactName: "itemstackWithData",
-    function: (item: Item): TypeLambda<string, TypeLambda<CompoundTag, Item>> => {
+    function: (
+      item: Item
+    ): TypeLambda<string, TypeLambda<CompoundTag, Item>> => {
       return (key: string): TypeLambda<CompoundTag, Item> => {
         return (value: CompoundTag): Item => {
           let nbt = item.getNBT() || {};
@@ -3178,12 +3232,12 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "item_tooltip",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: { type: "List", listType: { type: "String" } },
+      type: "Function",
+      from: {
+        type: "Item",
       },
+      to: { type: "List", listType: { type: "String" } },
+    },
     symbol: "tooltip",
     interactName: "itemstackTooltip",
     function: (item: Item): Array<string> => {
@@ -3199,18 +3253,18 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "item_entity_tooltip",
     ],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Entity",
+      },
+      to: {
         type: "Function",
         from: {
-          type: "Entity",
+          type: "Item",
         },
-        to: {
-          type: "Function",
-          from: {
-            type: "Item",
-          },
-          to: { type: "List", listType: { type: "String" } },
-        },
+        to: { type: "List", listType: { type: "String" } },
       },
+    },
     symbol: "entity_item_tooltip",
     interactName: "entityEntityItemTooltip",
     function: (): TypeLambda<Item, Array<string>> => {
@@ -3226,14 +3280,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:entity_ismob",
     nicknames: ["EntityIsmob", "entity_is_mob", "entityIsMob"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Boolean",
-        },
+      type: "Function",
+      from: {
+        type: "Entity",
       },
+      to: {
+        type: "Boolean",
+      },
+    },
     symbol: "is_mob",
     interactName: "entityIsMob",
     function: (entity: Entity): boolean => {
@@ -3244,14 +3298,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:entity_isanimal",
     nicknames: ["EntityIsanimal", "entity_is_animal", "entityIsAnimal"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Boolean",
-        },
+      type: "Function",
+      from: {
+        type: "Entity",
       },
+      to: {
+        type: "Boolean",
+      },
+    },
     symbol: "is_animal",
     interactName: "entityIsAnimal",
     function: (entity: Entity): boolean => {
@@ -3262,14 +3316,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:entity_isitem",
     nicknames: ["EntityIsitem", "entity_is_item", "entityIsItem"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Boolean",
-        },
+      type: "Function",
+      from: {
+        type: "Entity",
       },
+      to: {
+        type: "Boolean",
+      },
+    },
     symbol: "is_item",
     interactName: "entityIsItem",
     function: (entity: Entity): boolean => {
@@ -3280,14 +3334,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:entity_isplayer",
     nicknames: ["EntityIsplayer", "entity_is_player", "entityIsPlayer"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Boolean",
-        },
+      type: "Function",
+      from: {
+        type: "Entity",
       },
+      to: {
+        type: "Boolean",
+      },
+    },
     symbol: "is_player",
     interactName: "entityIsPlayer",
     function: (entity: Entity): boolean => {
@@ -3298,14 +3352,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:entity_isminecart",
     nicknames: ["EntityIsminecart", "entity_is_minecart", "entityIsMinecart"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Boolean",
-        },
+      type: "Function",
+      from: {
+        type: "Entity",
       },
+      to: {
+        type: "Boolean",
+      },
+    },
     symbol: "is_minecart",
     interactName: "entityIsMinecart",
     function: (entity: Entity): boolean => {
@@ -3323,14 +3377,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "entity_item",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Item",
-        },
+      type: "Function",
+      from: {
+        type: "Entity",
       },
+      to: {
+        type: "Item",
+      },
+    },
     symbol: "item",
     interactName: "entityItem",
     function: (entity: Entity): Item => {
@@ -3350,14 +3404,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "entityHealthValue",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Double",
-        },
+      type: "Function",
+      from: {
+        type: "Entity",
       },
+      to: {
+        type: "Double",
+      },
+    },
     symbol: "health",
     interactName: "entityHealth",
     function: (entity: Entity): Double => {
@@ -3368,14 +3422,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:entity_width",
     nicknames: ["EntityWidth", "entity_width"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Double",
-        },
+      type: "Function",
+      from: {
+        type: "Entity",
       },
+      to: {
+        type: "Double",
+      },
+    },
     symbol: "width",
     interactName: "entityWidth",
     function: (entity: Entity): Double => {
@@ -3386,14 +3440,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:entity_height",
     nicknames: ["EntityHeight", "entity_height"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Double",
-        },
+      type: "Function",
+      from: {
+        type: "Entity",
       },
+      to: {
+        type: "Double",
+      },
+    },
     symbol: "height",
     interactName: "entityHeight",
     function: (entity: Entity): Double => {
@@ -3404,14 +3458,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:entity_isburning",
     nicknames: ["EntityIsburning", "entity_is_burning", "entityIsBurning"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Boolean",
-        },
+      type: "Function",
+      from: {
+        type: "Entity",
       },
+      to: {
+        type: "Boolean",
+      },
+    },
     symbol: "is_burning",
     interactName: "entityEntityIsBurning",
     function: (entity: Entity): boolean => {
@@ -3422,14 +3476,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:entity_iswet",
     nicknames: ["EntityIswet", "entity_is_wet", "entityIsWet"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Boolean",
-        },
+      type: "Function",
+      from: {
+        type: "Entity",
       },
+      to: {
+        type: "Boolean",
+      },
+    },
     symbol: "is_wet",
     interactName: "entityIsWet",
     function: (entity: Entity): boolean => {
@@ -3444,14 +3498,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "entityIsCrouching",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Boolean",
-        },
+      type: "Function",
+      from: {
+        type: "Entity",
       },
+      to: {
+        type: "Boolean",
+      },
+    },
     symbol: "is_crouching",
     interactName: "entityIsCrouching",
     function: (entity: Entity): boolean => {
@@ -3462,14 +3516,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:entity_iseating",
     nicknames: ["EntityIseating", "entity_is_eating", "entityIsEating"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Boolean",
-        },
+      type: "Function",
+      from: {
+        type: "Entity",
       },
+      to: {
+        type: "Boolean",
+      },
+    },
     symbol: "is_eating",
     interactName: "entityIsEating",
     function: (entity: Entity): boolean => {
@@ -3485,12 +3539,12 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "entity_armor",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: { type: "List", listType: { type: "Item" } },
+      type: "Function",
+      from: {
+        type: "Entity",
       },
+      to: { type: "List", listType: { type: "Item" } },
+    },
     symbol: "armor_inventory",
     interactName: "entityArmorInventory",
     function: (entity: Entity): Array<Item> => {
@@ -3507,12 +3561,12 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "entityInventoryContents",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: { type: "List", listType: { type: "Item" } },
+      type: "Function",
+      from: {
+        type: "Entity",
       },
+      to: { type: "List", listType: { type: "Item" } },
+    },
     symbol: "inventory",
     interactName: "entityInventory",
     function: (entity: Entity): Array<Item> => {
@@ -3523,14 +3577,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:entity_mod",
     nicknames: ["EntityModname", "entity_mod_name", "entityModName"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "String",
-        },
+      type: "Function",
+      from: {
+        type: "Entity",
       },
+      to: {
+        type: "String",
+      },
+    },
     symbol: "mod",
     interactName: "entityMod",
     function: (entity: Entity): string => {
@@ -3541,14 +3595,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:entity_targetblock",
     nicknames: ["PlayerTargetblock", "player_target_block"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Block",
-        },
+      type: "Function",
+      from: {
+        type: "Entity",
       },
+      to: {
+        type: "Block",
+      },
+    },
     symbol: "target_block",
     interactName: "entityTargetBlock",
     function: (entity: Entity): Block => {
@@ -3559,14 +3613,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:entity_targetentity",
     nicknames: ["PlayerTargetentity", "player_target_entity"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Entity",
-        },
+      type: "Function",
+      from: {
+        type: "Entity",
       },
+      to: {
+        type: "Entity",
+      },
+    },
     symbol: "target_entity",
     interactName: "entityTargetEntity",
     function: (entity: Entity): Entity => {
@@ -3577,14 +3631,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:entity_hasguiopen",
     nicknames: ["PlayerHasguiopen", "player_has_gui_open"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Boolean",
-        },
+      type: "Function",
+      from: {
+        type: "Entity",
       },
+      to: {
+        type: "Boolean",
+      },
+    },
     symbol: "has_gui_open",
     interactName: "entityHasGuiOpen",
     function: (entity: Entity): boolean => {
@@ -3599,14 +3653,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "entityHeldItemMain",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Item",
-        },
+      type: "Function",
+      from: {
+        type: "Entity",
       },
+      to: {
+        type: "Item",
+      },
+    },
     symbol: "held_item_1",
     interactName: "entityHeldItem",
     function: (entity: Entity): Item => {
@@ -3621,14 +3675,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "entityHeldItemOff",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Item",
-        },
+      type: "Function",
+      from: {
+        type: "Entity",
       },
+      to: {
+        type: "Item",
+      },
+    },
     symbol: "held_item_2",
     interactName: "entityHeldItemOffHand",
     function: (entity: Entity): Item => {
@@ -3639,12 +3693,12 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:entity_mounted",
     nicknames: ["EntityMounted", "entitys_mounted"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: { type: "List", listType: { type: "Entity" } },
+      type: "Function",
+      from: {
+        type: "Entity",
       },
+      to: { type: "List", listType: { type: "Entity" } },
+    },
     symbol: "mounted",
     interactName: "entityMounted",
     function: (entity: Entity): boolean => {
@@ -3660,14 +3714,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "item_frame_contents",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Item",
-        },
+      type: "Function",
+      from: {
+        type: "Entity",
       },
+      to: {
+        type: "Item",
+      },
+    },
     symbol: "itemframe_contents",
     interactName: "entityItemFrameContents",
     function: (entity: Entity): Item => {
@@ -3687,14 +3741,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "item_frame_rotation",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Integer",
-        },
+      type: "Function",
+      from: {
+        type: "Entity",
       },
+      to: {
+        type: "Integer",
+      },
+    },
     symbol: "itemframe_rotation",
     interactName: "entityItemFrameRotation",
     function: (entity: Entity): Integer => {
@@ -3709,14 +3763,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:entity_hurtsound",
     nicknames: ["EntityHurtsound", "entity_hurt_sound"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "String",
-        },
+      type: "Function",
+      from: {
+        type: "Entity",
       },
+      to: {
+        type: "String",
+      },
+    },
     symbol: "hurtsound",
     interactName: "entityHurtSound",
     function: (entity: Entity): string => {
@@ -3727,14 +3781,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:entity_deathsound",
     nicknames: ["EntityDeathsound", "entity_death_sound"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "String",
-        },
+      type: "Function",
+      from: {
+        type: "Entity",
       },
+      to: {
+        type: "String",
+      },
+    },
     symbol: "deathsound",
     interactName: "entityDeathSound",
     function: (entity: Entity): string => {
@@ -3745,14 +3799,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:entity_age",
     nicknames: ["EntityAge", "entity_age"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Integer",
-        },
+      type: "Function",
+      from: {
+        type: "Entity",
       },
+      to: {
+        type: "Integer",
+      },
+    },
     symbol: "age",
     interactName: "entityAge",
     function: (entity: Entity): Integer => {
@@ -3763,14 +3817,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:entity_ischild",
     nicknames: ["EntityIschild", "entity_is_child", "entityIsChild"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Boolean",
-        },
+      type: "Function",
+      from: {
+        type: "Entity",
       },
+      to: {
+        type: "Boolean",
+      },
+    },
     symbol: "is_child",
     interactName: "entityIsChild",
     function: (entity: Entity): boolean => {
@@ -3781,14 +3835,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:entity_canbreed",
     nicknames: ["EntityCanbreed", "entity_can_breed", "entityCanBreed"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Boolean",
-        },
+      type: "Function",
+      from: {
+        type: "Entity",
       },
+      to: {
+        type: "Boolean",
+      },
+    },
     symbol: "canbreed",
     interactName: "entityCanBreed",
     function: (entity: Entity): boolean => {
@@ -3799,14 +3853,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:entity_isinlove",
     nicknames: ["EntityIsinlove", "entity_is_in_love", "entityIsInLove"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Boolean",
-        },
+      type: "Function",
+      from: {
+        type: "Entity",
       },
+      to: {
+        type: "Boolean",
+      },
+    },
     symbol: "is_in_love",
     interactName: "entityIsInLove",
     function: (entity: Entity): boolean => {
@@ -3821,26 +3875,26 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "entityCanBreedWith",
     ],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Entity",
+      },
+      to: {
         type: "Function",
         from: {
           type: "Entity",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "Entity",
-          },
-          to: {
-            type: "Boolean",
-          },
+          type: "Boolean",
         },
       },
+    },
     symbol: "can_breed_with",
     interactName: "entityCanBreedWith",
     function: (entity1: Entity): TypeLambda<Entity, boolean> => {
       return (entity2: Entity): boolean => {
         return entity1.getBreadableList().includes(entity2.getUniqueName());
-      }
+      };
     },
   },
   entityIsShearable: {
@@ -3851,14 +3905,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "entityIsShearable",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Boolean",
-        },
+      type: "Function",
+      from: {
+        type: "Entity",
       },
+      to: {
+        type: "Boolean",
+      },
+    },
     symbol: "is_shearable",
     interactName: "entityIsShearable",
     function: (entity: Entity): boolean => {
@@ -3869,14 +3923,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:entity_nbt",
     nicknames: ["EntityNbt", "entity_nbt"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "NBT",
-        },
+      type: "Function",
+      from: {
+        type: "Entity",
       },
+      to: {
+        type: "NBT",
+      },
+    },
     symbol: "NBT()",
     interactName: "entityNbt",
     function: (entity: Entity): CompoundTag => {
@@ -3887,14 +3941,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:entity_entitytype",
     nicknames: ["EntityType", "entity_type"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "String",
-        },
+      type: "Function",
+      from: {
+        type: "Entity",
       },
+      to: {
+        type: "String",
+      },
+    },
     symbol: "entity_type",
     interactName: "entityType",
     function: (entity: Entity): string => {
@@ -3910,12 +3964,12 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "entity_item_list",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: { type: "List", listType: { type: "Item" } },
+      type: "Function",
+      from: {
+        type: "Entity",
       },
+      to: { type: "List", listType: { type: "Item" } },
+    },
     symbol: "entity_items",
     interactName: "entityItems",
     function: (entity: Entity): Array<Item> => {
@@ -3926,12 +3980,12 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:entity_entityfluids",
     nicknames: ["EntityFluids", "entity_fluids"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: { type: "List", listType: { type: "Fluid" } },
+      type: "Function",
+      from: {
+        type: "Entity",
       },
+      to: { type: "List", listType: { type: "Fluid" } },
+    },
     symbol: "entity_fluids",
     interactName: "entityFluids",
     function: (entity: Entity): Array<Fluid> => {
@@ -3942,14 +3996,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:entity_entityenergystored",
     nicknames: ["EntityEnergyStored", "entity_energy_stored"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Integer",
-        },
+      type: "Function",
+      from: {
+        type: "Entity",
       },
+      to: {
+        type: "Integer",
+      },
+    },
     symbol: "entity_stored_fe",
     interactName: "entityEnergy",
     function: (entity: Entity): Integer => {
@@ -3960,14 +4014,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:entity_entityenergycapacity",
     nicknames: ["EntityEnergyCapacity", "entity_energy_capacity"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Integer",
-        },
+      type: "Function",
+      from: {
+        type: "Entity",
       },
+      to: {
+        type: "Integer",
+      },
+    },
     symbol: "entity_capacity_fe",
     interactName: "entityEnergyCapacity",
     function: (entity: Entity): Integer => {
@@ -3985,14 +4039,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "fluid_amount",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Fluid",
-        },
-        to: {
-          type: "Integer",
-        },
+      type: "Function",
+      from: {
+        type: "Fluid",
       },
+      to: {
+        type: "Integer",
+      },
+    },
     symbol: "amount",
     interactName: "fluidstackAmount",
     function: (fluid: Fluid): Integer => {
@@ -4010,14 +4064,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "fluid_block",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Fluid",
-        },
-        to: {
-          type: "Block",
-        },
+      type: "Function",
+      from: {
+        type: "Fluid",
       },
+      to: {
+        type: "Block",
+      },
+    },
     symbol: "block",
     interactName: "fluidstackBlock",
     function: (fluid: Fluid): Block => {
@@ -4035,14 +4089,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "fluid_light_level",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Fluid",
-        },
-        to: {
-          type: "Integer",
-        },
+      type: "Function",
+      from: {
+        type: "Fluid",
       },
+      to: {
+        type: "Integer",
+      },
+    },
     symbol: "light_level",
     interactName: "fluidstackLightLevel",
     function: (fluid: Fluid): Integer => {
@@ -4060,14 +4114,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "fluid_density",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Fluid",
-        },
-        to: {
-          type: "Integer",
-        },
+      type: "Function",
+      from: {
+        type: "Fluid",
       },
+      to: {
+        type: "Integer",
+      },
+    },
     symbol: "density",
     interactName: "fluidstackDensity",
     function: (fluid: Fluid): Integer => {
@@ -4085,14 +4139,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "fluid_temperature",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Fluid",
-        },
-        to: {
-          type: "Integer",
-        },
+      type: "Function",
+      from: {
+        type: "Fluid",
       },
+      to: {
+        type: "Integer",
+      },
+    },
     symbol: "temperature",
     interactName: "fluidstackTemperature",
     function: (fluid: Fluid): Integer => {
@@ -4110,14 +4164,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "fluid_viscosity",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Fluid",
-        },
-        to: {
-          type: "Integer",
-        },
+      type: "Function",
+      from: {
+        type: "Fluid",
       },
+      to: {
+        type: "Integer",
+      },
+    },
     symbol: "viscosity",
     interactName: "fluidstackViscosity",
     function: (fluid: Fluid): Integer => {
@@ -4136,14 +4190,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "fluidIsLighterThanAir",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Fluid",
-        },
-        to: {
-          type: "Boolean",
-        },
+      type: "Function",
+      from: {
+        type: "Fluid",
       },
+      to: {
+        type: "Boolean",
+      },
+    },
     symbol: "lighter_than_air",
     interactName: "fluidstackIsLighterThanAir",
     function: (fluid: Fluid): boolean => {
@@ -4161,14 +4215,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "fluid_rarity",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Fluid",
-        },
-        to: {
-          type: "String",
-        },
+      type: "Function",
+      from: {
+        type: "Fluid",
       },
+      to: {
+        type: "String",
+      },
+    },
     symbol: "rarity",
     interactName: "fluidstackRarity",
     function: (fluid: Fluid): string => {
@@ -4186,14 +4240,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "fluid_sound_bucket_empty",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Fluid",
-        },
-        to: {
-          type: "String",
-        },
+      type: "Function",
+      from: {
+        type: "Fluid",
       },
+      to: {
+        type: "String",
+      },
+    },
     symbol: "sound_bucket_empty",
     interactName: "fluidstackBucketEmptySound",
     function: (fluid: Fluid): string => {
@@ -4211,14 +4265,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "fluid_sound_fluid_vaporize",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Fluid",
-        },
-        to: {
-          type: "String",
-        },
+      type: "Function",
+      from: {
+        type: "Fluid",
       },
+      to: {
+        type: "String",
+      },
+    },
     symbol: "sound_fluid_vaporize",
     interactName: "fluidstackFluidVaporizeSound",
     function: (fluid: Fluid): string => {
@@ -4236,14 +4290,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "fluid_sound_bucket_fill",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Fluid",
-        },
-        to: {
-          type: "String",
-        },
+      type: "Function",
+      from: {
+        type: "Fluid",
       },
+      to: {
+        type: "String",
+      },
+    },
     symbol: "sound_bucket_fill",
     interactName: "fluidstackBucketFillSound",
     function: (fluid: Fluid): string => {
@@ -4261,14 +4315,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "fluid_bucket",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Fluid",
-        },
-        to: {
-          type: "Item",
-        },
+      type: "Function",
+      from: {
+        type: "Fluid",
       },
+      to: {
+        type: "Item",
+      },
+    },
     symbol: "bucket",
     interactName: "fluidstackBucket",
     function: (fluid: Fluid): Item => {
@@ -4287,20 +4341,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "isRawFluidEqual",
     ],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Fluid",
+      },
+      to: {
         type: "Function",
         from: {
           type: "Fluid",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "Fluid",
-          },
-          to: {
-            type: "Boolean",
-          },
+          type: "Boolean",
         },
       },
+    },
     symbol: "=Raw=",
     interactName: "fluidstackIsRawEqual",
     function: (fluid1: Fluid): TypeLambda<Fluid, boolean> => {
@@ -4326,14 +4380,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "fluid_mod_name",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Fluid",
-        },
-        to: {
-          type: "String",
-        },
+      type: "Function",
+      from: {
+        type: "Fluid",
       },
+      to: {
+        type: "String",
+      },
+    },
     symbol: "mod",
     interactName: "fluidstackMod",
     function: (fluid: Fluid): string => {
@@ -4357,14 +4411,14 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "fluidstackNBT",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Fluid",
-        },
-        to: {
-          type: "NBT",
-        },
+      type: "Function",
+      from: {
+        type: "Fluid",
       },
+      to: {
+        type: "NBT",
+      },
+    },
     symbol: "NBT()",
     interactName: "fluidstackNbt",
     function: (fluid: Fluid): CompoundTag => {
@@ -4382,20 +4436,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "fluid_with_amount",
     ],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Fluid",
+      },
+      to: {
         type: "Function",
         from: {
-          type: "Fluid",
+          type: "Integer",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "Integer",
-          },
-          to: {
-            type: "Fluid",
-          },
+          type: "Fluid",
         },
       },
+    },
     symbol: "with_amount",
     interactName: "fluidstackWithAmount",
     function: (fluid: Fluid): TypeLambda<Integer, Fluid> => {
@@ -4421,12 +4475,12 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "fluidstackNBTKeys",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Fluid",
-        },
-        to: { type: "List", listType: { type: "String" } },
+      type: "Function",
+      from: {
+        type: "Fluid",
       },
+      to: { type: "List", listType: { type: "String" } },
+    },
     symbol: "data_keys",
     interactName: "fluidstackDataKeys",
     function: (fluid: Fluid): Array<string> => {
@@ -4434,9 +4488,7 @@ let operatorRegistryRawData: iOperatorRegistry = {
       if (!nbt) {
         return [];
       }
-      return Object.keys(nbt).filter(
-        (key) => nbt.has(key)
-      );
+      return Object.keys(nbt).filter((key) => nbt.has(key));
     },
   },
   fluidNBTValue: {
@@ -4456,27 +4508,27 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "fluidstackNBTValue",
     ],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Fluid",
+      },
+      to: {
         type: "Function",
         from: {
-          type: "Fluid",
+          type: "String",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "NBT",
-          },
+          type: "NBT",
         },
       },
+    },
     symbol: "data_value",
     interactName: "fluidstackDataValue",
     function: (fluid: Fluid): TypeLambda<string, Tag<IntegratedValue>> => {
       return (key: string): Tag<IntegratedValue> => {
         const nbt = fluid.getNBT();
         if (!nbt || !nbt.hasOwnProperty(key)) {
-          return new NullTag;
+          return new NullTag();
         }
         return nbt.get(key);
       };
@@ -4491,29 +4543,31 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "fluidStackWithData",
     ],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Fluid",
+      },
+      to: {
         type: "Function",
         from: {
-          type: "Fluid",
+          type: "String",
         },
         to: {
           type: "Function",
           from: {
-            type: "String"
+            type: "NBT",
           },
           to: {
-            type: "Function",
-            from: {
-              type: "NBT",
-            },
-            to: {
-              type: "Fluid",
-            },
+            type: "Fluid",
           },
         },
       },
+    },
     symbol: "with_data",
     interactName: "fluidstackWithData",
-    function: (fluid: Fluid): TypeLambda<string, TypeLambda<CompoundTag, Fluid>> => {
+    function: (
+      fluid: Fluid
+    ): TypeLambda<string, TypeLambda<CompoundTag, Fluid>> => {
       return (key: string): TypeLambda<CompoundTag, Fluid> => {
         return (value: CompoundTag): Fluid => {
           let nbt = fluid.getNBT() || {};
@@ -4532,12 +4586,12 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "fluidstackTagStack",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Fluid",
-        },
-        to: { type: "List", listType: { type: "String" } },
+      type: "Function",
+      from: {
+        type: "Fluid",
       },
+      to: { type: "List", listType: { type: "String" } },
+    },
     symbol: "fluid_tag_names",
     interactName: "fluidstackTags",
     function: (fluid: Fluid): Array<string> => {
@@ -4552,12 +4606,12 @@ let operatorRegistryRawData: iOperatorRegistry = {
       "fluid_stack_tag_stacks",
     ],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: { type: "List", listType: { type: "Fluid" } },
+      type: "Function",
+      from: {
+        type: "String",
       },
+      to: { type: "List", listType: { type: "Fluid" } },
+    },
     symbol: "fluid_tag_values",
     interactName: "stringFluidsByTag",
     function: (): never => {
@@ -4570,27 +4624,24 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:operator_apply",
     nicknames: ["operatorApply"],
     parsedSignature: {
+      type: "Function",
+      from: {
         type: "Function",
-        from: {
-          type: "Function",
-          from: { type: "Any", typeID: 1 },
-          to: { type: "Any", typeID: 2 },
-        },
-        to: {
-          type: "Function",
-          from: { type: "Any", typeID: 1 },
-          to: { type: "Any", typeID: 2 },
-        },
+        from: { type: "Any", typeID: 1 },
+        to: { type: "Any", typeID: 2 },
       },
+      to: {
+        type: "Function",
+        from: { type: "Any", typeID: 1 },
+        to: { type: "Any", typeID: 2 },
+      },
+    },
     symbol: "apply",
     interactName: "operatorApply",
     serializer: "integrateddynamics:curry",
     function: (op: Operator) => {
       return (arg: IntegratedValue) => {
-        globalMap.unify(
-          op.parsedSignature.getInput(0),
-          arg
-        );
+        globalMap.unify(op.parsedSignature.getInput(0), arg);
         return op.apply(arg);
       };
     },
@@ -4599,40 +4650,47 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:operator_apply2",
     nicknames: ["operatorApply_2"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Function",
+        from: { type: "Any", typeID: 1 },
+        to: {
+          type: "Function",
+          from: { type: "Any", typeID: 2 },
+          to: { type: "Any", typeID: 3 },
+        },
+      },
+      to: {
         type: "Function",
         from: {
-          type: "Function",
-          from: { type: "Any", typeID: 1 },
-          to: {
-            type: "Function",
-            from: { type: "Any", typeID: 2 },
-            to: { type: "Any", typeID: 3 },
-          },
+          type: "Any",
+          typeID: 1,
         },
         to: {
           type: "Function",
           from: {
             type: "Any",
-            typeID: 1
+            typeID: 2,
           },
           to: {
-            type: "Function",
-            from: {
-              type: "Any",
-              typeID: 2
-            },
-            to: {
-              type: "Any",
-              typeID: 3
-            },
+            type: "Any",
+            typeID: 3,
           },
         },
       },
+    },
     symbol: "apply2",
     interactName: "operatorApply2",
     serializer: "integrateddynamics:curry",
-    function: (op: Operator): TypeLambda<IntegratedValue, TypeLambda<IntegratedValue, IntegratedValue>> => {
-      return (arg1: IntegratedValue): TypeLambda<IntegratedValue, IntegratedValue> => {
+    function: (
+      op: Operator
+    ): TypeLambda<
+      IntegratedValue,
+      TypeLambda<IntegratedValue, IntegratedValue>
+    > => {
+      return (
+        arg1: IntegratedValue
+      ): TypeLambda<IntegratedValue, IntegratedValue> => {
         return (arg2: IntegratedValue): IntegratedValue => {
           globalMap.unify(op.parsedSignature.getInput(0), arg1);
           globalMap.unify(op.parsedSignature.getInput(1), arg2);
@@ -4645,52 +4703,64 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:operator_apply3",
     nicknames: ["operatorApply_3"],
     parsedSignature: {
+      type: "Function",
+      from: {
         type: "Function",
-        from: {
+        from: { type: "Any", typeID: 1 },
+        to: {
           type: "Function",
-          from: { type: "Any", typeID: 1 },
+          from: { type: "Any", typeID: 2 },
           to: {
             type: "Function",
-            from: { type: "Any", typeID: 2 },
-            to: {
-              type: "Function",
-              from: { type: "Any", typeID: 3 },
-              to: { type: "Any", typeID: 4 },
-            },
+            from: { type: "Any", typeID: 3 },
+            to: { type: "Any", typeID: 4 },
           },
+        },
+      },
+      to: {
+        type: "Function",
+        from: {
+          type: "Any",
+          typeID: 1,
         },
         to: {
           type: "Function",
           from: {
             type: "Any",
-            typeID: 1
+            typeID: 2,
           },
           to: {
             type: "Function",
             from: {
               type: "Any",
-              typeID: 2
+              typeID: 3,
             },
             to: {
-              type: "Function",
-              from: {
-                type: "Any",
-                typeID: 3
-              },
-              to: {
-                type: "Any",
-                typeID: 4
-              },
+              type: "Any",
+              typeID: 4,
             },
           },
         },
       },
+    },
     symbol: "apply3",
     interactName: "operatorApply3",
     serializer: "integrateddynamics:curry",
-    function: (op: Operator): TypeLambda<IntegratedValue, TypeLambda<IntegratedValue, TypeLambda<IntegratedValue, IntegratedValue>>> => {
-      return (arg1: IntegratedValue): TypeLambda<IntegratedValue, TypeLambda<IntegratedValue, IntegratedValue>> => {
-        return (arg2: IntegratedValue): TypeLambda<IntegratedValue, IntegratedValue> => {
+    function: (
+      op: Operator
+    ): TypeLambda<
+      IntegratedValue,
+      TypeLambda<IntegratedValue, TypeLambda<IntegratedValue, IntegratedValue>>
+    > => {
+      return (
+        arg1: IntegratedValue
+      ): TypeLambda<
+        IntegratedValue,
+        TypeLambda<IntegratedValue, IntegratedValue>
+      > => {
+        return (
+          arg2: IntegratedValue
+        ): TypeLambda<IntegratedValue, IntegratedValue> => {
           return (arg3: IntegratedValue): IntegratedValue => {
             op.parsedSignature.typeMap.unify(
               op.parsedSignature.getInput(0),
@@ -4714,28 +4784,30 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:operator_apply_n",
     nicknames: ["operatorApplyN"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Function",
+        from: { type: "Any", typeID: 1 },
+        to: { type: "Any", typeID: 2 },
+      },
+      to: {
         type: "Function",
         from: {
-          type: "Function",
-          from: { type: "Any", typeID: 1 },
-          to: { type: "Any", typeID: 2 },
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "List",
-            listType: {
-              type: "Any",
-              typeID: 1
-            }
+          type: "List",
+          listType: {
+            type: "Any",
+            typeID: 1,
           },
-          to: { type: "Any", typeID: 3 },
         },
+        to: { type: "Any", typeID: 3 },
       },
+    },
     symbol: "apply_n",
     interactName: "operatorApply_n",
     serializer: "integrateddynamics:curry",
-    function: (op: Operator): TypeLambda<Array<IntegratedValue>, IntegratedValue> => {
+    function: (
+      op: Operator
+    ): TypeLambda<Array<IntegratedValue>, IntegratedValue> => {
       return (args: Array<IntegratedValue>): IntegratedValue => {
         args.forEach((arg, i) => {
           if (arg === undefined || arg === null) {
@@ -4743,10 +4815,7 @@ let operatorRegistryRawData: iOperatorRegistry = {
               "applyn requires all arguments to be defined and non-null."
             );
           }
-          op.parsedSignature.typeMap.unify(
-            op.parsedSignature.getInput(i),
-            arg
-          );
+          op.parsedSignature.typeMap.unify(op.parsedSignature.getInput(i), arg);
           op = op.apply(arg);
         });
         return op;
@@ -4757,13 +4826,13 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:operator_apply0",
     nicknames: ["operatorApply_0"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Any",
-          typeID: 1,
-        },
-        to: { type: "Any", typeID: 1 },
+      type: "Function",
+      from: {
+        type: "Any",
+        typeID: 1,
       },
+      to: { type: "Any", typeID: 1 },
+    },
     symbol: "apply0",
     interactName: "operatorApply0",
     serializer: "integrateddynamics:curry",
@@ -4777,27 +4846,29 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:operator_map",
     nicknames: ["operatorMap"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Function",
+        from: { type: "Any", typeID: 1 },
+        to: { type: "Any", typeID: 2 },
+      },
+      to: {
         type: "Function",
         from: {
-          type: "Function",
-          from: { type: "Any", typeID: 1 },
-          to: { type: "Any", typeID: 2 },
+          type: "List",
+          listType: { type: "Any", typeID: 1 },
         },
         to: {
-          type: "Function",
-          from: {
-            type: "List",
-            listType: { type: "Any", typeID: 1}
-          },
-          to: {
-            type: "List",
-            listType: { type: "Any", typeID: 2}
-          },
+          type: "List",
+          listType: { type: "Any", typeID: 2 },
         },
       },
+    },
     symbol: "map",
     interactName: "operatorMap",
-    function: (op: Operator): TypeLambda<Array<IntegratedValue>, Array<IntegratedValue>> => {
+    function: (
+      op: Operator
+    ): TypeLambda<Array<IntegratedValue>, Array<IntegratedValue>> => {
       return (list: Array<IntegratedValue>): Array<IntegratedValue> => {
         return list.map((item) => op.apply(item));
       };
@@ -4807,35 +4878,37 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:operator_filter",
     nicknames: ["operatorFilter"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Function",
+        from: { type: "Any", typeID: 1 },
+        to: {
+          type: "Boolean",
+        },
+      },
+      to: {
         type: "Function",
         from: {
-          type: "Function",
-          from: { type: "Any", typeID: 1 },
-          to: {
-            type: "Boolean",
+          type: "List",
+          listType: {
+            type: "Any",
+            typeID: 1,
           },
         },
         to: {
-          type: "Function",
-          from: {
-            type: "List",
-            listType: {
-              type: "Any",
-              typeID: 1
-            }
-          },
-          to: {
-            type: "List",
-            listType: {
-              type: "Any",
-              typeID: 1
-            }
+          type: "List",
+          listType: {
+            type: "Any",
+            typeID: 1,
           },
         },
       },
+    },
     symbol: "filter",
     interactName: "operatorFilter",
-    function: (predicate: Predicate): TypeLambda<Array<IntegratedValue>, Array<IntegratedValue>> => {
+    function: (
+      predicate: Predicate
+    ): TypeLambda<Array<IntegratedValue>, Array<IntegratedValue>> => {
       return (list: Array<IntegratedValue>): Array<IntegratedValue> => {
         return list.filter((item) => predicate.apply(item));
       };
@@ -4845,6 +4918,15 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:operator_conjunction",
     nicknames: ["operatorConjunction"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Function",
+        from: { type: "Any", typeID: 1 },
+        to: {
+          type: "Boolean",
+        },
+      },
+      to: {
         type: "Function",
         from: {
           type: "Function",
@@ -4855,28 +4937,21 @@ let operatorRegistryRawData: iOperatorRegistry = {
         },
         to: {
           type: "Function",
-          from: {
-            type: "Function",
-            from: { type: "Any", typeID: 1 },
-            to: {
-              type: "Boolean",
-            },
-          },
+          from: { type: "Any", typeID: 1 },
           to: {
-            type: "Function",
-            from: { type: "Any", typeID: 1 },
-            to: {
-              type: "Boolean",
-            },
+            type: "Boolean",
           },
         },
       },
+    },
     symbol: ".&&.",
     interactName: "operatorConjunction",
-    function: (predicate1: Predicate): TypeLambda<Predicate, TypeLambda<IntegratedValue, boolean>> => {
+    function: (
+      predicate1: Predicate
+    ): TypeLambda<Predicate, TypeLambda<IntegratedValue, boolean>> => {
       return (predicate2: Predicate): TypeLambda<IntegratedValue, boolean> => {
         return (input: IntegratedValue): boolean => {
-          return (predicate1.apply(input) && predicate2.apply(input));
+          return predicate1.apply(input) && predicate2.apply(input);
         };
       };
     },
@@ -4885,6 +4960,15 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:operator_disjunction",
     nicknames: ["operatorDisjunction"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Function",
+        from: { type: "Any", typeID: 1 },
+        to: {
+          type: "Boolean",
+        },
+      },
+      to: {
         type: "Function",
         from: {
           type: "Function",
@@ -4895,25 +4979,18 @@ let operatorRegistryRawData: iOperatorRegistry = {
         },
         to: {
           type: "Function",
-          from: {
-            type: "Function",
-            from: { type: "Any", typeID: 1 },
-            to: {
-              type: "Boolean",
-            },
-          },
+          from: { type: "Any", typeID: 1 },
           to: {
-            type: "Function",
-            from: { type: "Any", typeID: 1 },
-            to: {
-              type: "Boolean",
-            },
+            type: "Boolean",
           },
         },
       },
+    },
     symbol: ".||.",
     interactName: "operatorDisjunction",
-    function: (predicate1: Predicate): TypeLambda<Predicate, TypeLambda<IntegratedValue, boolean>> => {
+    function: (
+      predicate1: Predicate
+    ): TypeLambda<Predicate, TypeLambda<IntegratedValue, boolean>> => {
       return (predicate2: Predicate): TypeLambda<IntegratedValue, boolean> => {
         return (input: IntegratedValue): boolean => {
           return predicate1.apply(input) || predicate2.apply(input);
@@ -4925,22 +5002,22 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:operator_negation",
     nicknames: ["operatorNegation"],
     parsedSignature: {
+      type: "Function",
+      from: {
         type: "Function",
-        from: {
-          type: "Function",
-          from: { type: "Any", typeID: 1 },
-          to: {
-            type: "Boolean",
-          },
-        },
+        from: { type: "Any", typeID: 1 },
         to: {
-          type: "Function",
-          from: { type: "Any", typeID: 1 },
-          to: {
-            type: "Boolean",
-          },
+          type: "Boolean",
         },
       },
+      to: {
+        type: "Function",
+        from: { type: "Any", typeID: 1 },
+        to: {
+          type: "Boolean",
+        },
+      },
+    },
     symbol: "!.",
     interactName: "operatorNegation",
     function: (predicate: Predicate): TypeLambda<IntegratedValue, boolean> => {
@@ -4953,30 +5030,32 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:operator_pipe",
     nicknames: ["operatorPipe"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Function",
+        from: { type: "Any", typeID: 1 },
+        to: { type: "Any", typeID: 2 },
+      },
+      to: {
         type: "Function",
         from: {
           type: "Function",
-          from: { type: "Any", typeID: 1 },
-          to: { type: "Any", typeID: 2 },
+          from: { type: "Any", typeID: 2 },
+          to: { type: "Any", typeID: 3 },
         },
         to: {
           type: "Function",
-          from: {
-            type: "Function",
-            from: { type: "Any", typeID: 2 },
-            to: { type: "Any", typeID: 3 },
-          },
-          to: {
-            type: "Function",
-            from: { type: "Any", typeID: 1 },
-            to: { type: "Any", typeID: 3 },
-          },
+          from: { type: "Any", typeID: 1 },
+          to: { type: "Any", typeID: 3 },
         },
       },
+    },
     symbol: ".",
     interactName: "operatorPipe",
     serializer: "integrateddynamics:combined.pipe",
-    function: (f: Operator): TypeLambda<Operator, TypeLambda<IntegratedValue, IntegratedValue>> => {
+    function: (
+      f: Operator
+    ): TypeLambda<Operator, TypeLambda<IntegratedValue, IntegratedValue>> => {
       return (g: Operator): TypeLambda<IntegratedValue, IntegratedValue> => {
         f.parsedSignature.pipe(g.parsedSignature);
         return (x: IntegratedValue): IntegratedValue => {
@@ -4989,43 +5068,50 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:operator_pipe2",
     nicknames: ["operatorPipe2", "pipe2"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Function",
+        from: { type: "Any", typeID: 1 },
+        to: { type: "Any", typeID: 2 },
+      },
+      to: {
         type: "Function",
         from: {
           type: "Function",
           from: { type: "Any", typeID: 1 },
-          to: { type: "Any", typeID: 2 },
+          to: { type: "Any", typeID: 3 },
         },
         to: {
           type: "Function",
           from: {
             type: "Function",
-            from: { type: "Any", typeID: 1 },
-            to: { type: "Any", typeID: 3 },
-          },
-          to: {
-            type: "Function",
-            from: {
-              type: "Function",
-              from: { type: "Any", typeID: 2 },
-              to: {
-                type: "Function",
-                from: { type: "Any", typeID: 3 },
-                to: { type: "Any", typeID: 4 },
-              },
-            },
+            from: { type: "Any", typeID: 2 },
             to: {
               type: "Function",
-              from: { type: "Any", typeID: 1 },
+              from: { type: "Any", typeID: 3 },
               to: { type: "Any", typeID: 4 },
             },
           },
+          to: {
+            type: "Function",
+            from: { type: "Any", typeID: 1 },
+            to: { type: "Any", typeID: 4 },
+          },
         },
       },
+    },
     symbol: ".2",
     interactName: "operatorPipe2",
     serializer: "integrateddynamics:combined.pipe",
-    function: (f: Operator): TypeLambda<Operator, TypeLambda<Operator, TypeLambda<IntegratedValue, IntegratedValue>>> => {
-      return (g: Operator): TypeLambda<Operator, TypeLambda<IntegratedValue, IntegratedValue>> => {
+    function: (
+      f: Operator
+    ): TypeLambda<
+      Operator,
+      TypeLambda<Operator, TypeLambda<IntegratedValue, IntegratedValue>>
+    > => {
+      return (
+        g: Operator
+      ): TypeLambda<Operator, TypeLambda<IntegratedValue, IntegratedValue>> => {
         return (h: Operator): TypeLambda<IntegratedValue, IntegratedValue> => {
           f.parsedSignature.typeMap.unify(
             f.parsedSignature.getOutput(),
@@ -5047,31 +5133,38 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:operator_flip",
     nicknames: ["operatorFlip"],
     parsedSignature: {
+      type: "Function",
+      from: {
         type: "Function",
-        from: {
-          type: "Function",
-          from: { type: "Any", typeID: 1 },
-          to: {
-            type: "Function",
-            from: { type: "Any", typeID: 2 },
-            to: { type: "Any", typeID: 3 },
-          },
-        },
+        from: { type: "Any", typeID: 1 },
         to: {
           type: "Function",
           from: { type: "Any", typeID: 2 },
-          to: {
-            type: "Function",
-            from: { type: "Any", typeID: 1 },
-            to: { type: "Any", typeID: 3 },
-          },
+          to: { type: "Any", typeID: 3 },
         },
       },
+      to: {
+        type: "Function",
+        from: { type: "Any", typeID: 2 },
+        to: {
+          type: "Function",
+          from: { type: "Any", typeID: 1 },
+          to: { type: "Any", typeID: 3 },
+        },
+      },
+    },
     symbol: "flip",
     interactName: "operatorFlip",
     serializer: "integrateddynamics:combined.flip",
-    function: (op: Operator): TypeLambda<IntegratedValue, TypeLambda<IntegratedValue, IntegratedValue>> => {
-      return (arg1: IntegratedValue): TypeLambda<IntegratedValue, IntegratedValue> => {
+    function: (
+      op: Operator
+    ): TypeLambda<
+      IntegratedValue,
+      TypeLambda<IntegratedValue, IntegratedValue>
+    > => {
+      return (
+        arg1: IntegratedValue
+      ): TypeLambda<IntegratedValue, IntegratedValue> => {
         return (arg2: IntegratedValue): IntegratedValue => {
           return op.apply(arg2).apply(arg1);
         };
@@ -5082,26 +5175,26 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:operator_reduce",
     nicknames: ["operatorReduce"],
     parsedSignature: {
+      type: "Function",
+      from: {
         type: "Function",
-        from: {
-          type: "Function",
-          from: { type: "Any", typeID: 1 },
-          to: {
-            type: "Function",
-            from: { type: "Any", typeID: 1 },
-            to: { type: "Any", typeID: 1 },
-          },
-        },
+        from: { type: "Any", typeID: 1 },
         to: {
           type: "Function",
-          from: { type: "List", listType: { type: "Any", typeID: 1 } },
-          to: {
-            type: "Function",
-            from: { type: "Any", typeID: 1 },
-            to: { type: "Any", typeID: 1 },
-          },
+          from: { type: "Any", typeID: 1 },
+          to: { type: "Any", typeID: 1 },
         },
       },
+      to: {
+        type: "Function",
+        from: { type: "List", listType: { type: "Any", typeID: 1 } },
+        to: {
+          type: "Function",
+          from: { type: "Any", typeID: 1 },
+          to: { type: "Any", typeID: 1 },
+        },
+      },
+    },
     symbol: "reduce",
     interactName: "operatorReduce",
     function: <T>(op: Operator): TypeLambda<Array<T>, TypeLambda<T, T>> => {
@@ -5120,22 +5213,22 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:operator_reduce1",
     nicknames: ["operatorReduce1"],
     parsedSignature: {
+      type: "Function",
+      from: {
         type: "Function",
-        from: {
-          type: "Function",
-          from: { type: "Any", typeID: 1 },
-          to: {
-            type: "Function",
-            from: { type: "Any", typeID: 1 },
-            to: { type: "Any", typeID: 1 },
-          },
-        },
+        from: { type: "Any", typeID: 1 },
         to: {
           type: "Function",
-          from: { type: "List", listType: { type: "Any", typeID: 1 } },
+          from: { type: "Any", typeID: 1 },
           to: { type: "Any", typeID: 1 },
         },
       },
+      to: {
+        type: "Function",
+        from: { type: "List", listType: { type: "Any", typeID: 1 } },
+        to: { type: "Any", typeID: 1 },
+      },
+    },
     symbol: "reduce1",
     interactName: "operatorReduce1",
     function: <T>(op: Operator): TypeLambda<Array<T>, T> => {
@@ -5153,36 +5246,34 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:operator_by_name",
     nicknames: ["operatorByName"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
-          type: "Function",
-          from: { type: "Any", typeID: 1 },
-          to: { type: "Any", typeID: 2 },
-        },
+      type: "Function",
+      from: {
+        type: "String",
       },
+      to: {
+        type: "Function",
+        from: { type: "Any", typeID: 1 },
+        to: { type: "Any", typeID: 2 },
+      },
+    },
     symbol: "op_by_name",
     interactName: "stringOperatorByName",
     function: (name: TypeOperatorInternalName): Operator => {
-      return operatorRegistry.find(
-        (op: Operator) => op.internalName === name
-      );
+      return operatorRegistry.find((op: Operator) => op.internalName === name);
     },
   },
   NBTSize: {
     internalName: "integrateddynamics:nbt_compound_size",
     nicknames: ["nbtCompoundSize"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Integer",
-        },
+      type: "Function",
+      from: {
+        type: "NBT",
       },
+      to: {
+        type: "Integer",
+      },
+    },
     symbol: "NBT{}.size",
     interactName: "nbtSize",
     function: (nbt: CompoundTag): Integer => {
@@ -5193,12 +5284,12 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:nbt_compound_keys",
     nicknames: ["nbtCompoundKeys"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: { type: "List", listType: { type: "String" } },
+      type: "Function",
+      from: {
+        type: "NBT",
       },
+      to: { type: "List", listType: { type: "String" } },
+    },
     symbol: "NBT{}.keys",
     interactName: "nbtKeys",
     function: (nbt: CompoundTag): Array<string> => {
@@ -5209,20 +5300,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:nbt_compound_haskey",
     nicknames: ["nbtCompoundHaskey"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "NBT",
+      },
+      to: {
         type: "Function",
         from: {
-          type: "NBT",
+          type: "String",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "Boolean",
-          },
+          type: "Boolean",
         },
       },
+    },
     symbol: "NBT{}.has_key",
     interactName: "nbtHasKey",
     function: (nbt: CompoundTag): TypeLambda<string, boolean> => {
@@ -5235,20 +5326,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:nbt_compound_type",
     nicknames: ["nbtCompoundValueType"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "NBT",
+      },
+      to: {
         type: "Function",
         from: {
-          type: "NBT",
+          type: "String",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "String",
-          },
+          type: "String",
         },
       },
+    },
     symbol: "NBT{}.type",
     interactName: "nbtType",
     function: (nbt: CompoundTag): TypeLambda<string, string> => {
@@ -5264,20 +5355,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:nbt_compound_value_tag",
     nicknames: ["nbtCompoundValueTag"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "NBT",
+      },
+      to: {
         type: "Function",
         from: {
-          type: "NBT",
+          type: "String",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "NBT",
-          },
+          type: "NBT",
         },
       },
+    },
     symbol: "NBT{}.get_tag",
     interactName: "nbtGetTag",
     function: (nbt: CompoundTag): TypeLambda<string, Tag<IntegratedValue>> => {
@@ -5290,20 +5381,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:nbt_compound_value_boolean",
     nicknames: ["nbtCompoundValueBoolean"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "NBT",
+      },
+      to: {
         type: "Function",
         from: {
-          type: "NBT",
+          type: "String",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "Boolean",
-          },
+          type: "Boolean",
         },
       },
+    },
     symbol: "NBT{}.get_boolean",
     interactName: "nbtGetBoolean",
     function: (nbt: CompoundTag): TypeLambda<string, boolean> => {
@@ -5316,26 +5407,29 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:nbt_compound_value_integer",
     nicknames: ["nbtCompoundValueInteger"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "NBT",
+      },
+      to: {
         type: "Function",
         from: {
-          type: "NBT",
+          type: "String",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "Integer",
-          },
+          type: "Integer",
         },
       },
+    },
     symbol: "NBT{}.get_integer",
     interactName: "nbtGetInteger",
     function: (nbt: CompoundTag): TypeLambda<string, Integer> => {
       return (key: string): Integer => {
         let value = nbt.get(key);
-        if (value.getType() != Tag.TAG_INT) throw new Error(`${key} is not an integer in ${JSON.stringify(nbt.toJSON())}`);
+        if (value.getType() != Tag.TAG_INT)
+          throw new Error(
+            `${key} is not an integer in ${JSON.stringify(nbt.toJSON())}`
+          );
         return (value as IntTag).valueOf();
       };
     },
@@ -5344,20 +5438,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:nbt_compound_value_long",
     nicknames: ["nbtCompoundValueLong"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "NBT",
+      },
+      to: {
         type: "Function",
         from: {
-          type: "NBT",
+          type: "String",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "Long",
-          },
+          type: "Long",
         },
       },
+    },
     symbol: "NBT{}.get_long",
     interactName: "nbtGetLong",
     function: (nbt: CompoundTag): TypeLambda<string, Long> => {
@@ -5366,7 +5460,9 @@ let operatorRegistryRawData: iOperatorRegistry = {
         if (value.getType() === Tag.TAG_LONG) {
           return value.valueOf();
         }
-        throw new Error(`${key} is not a long in ${JSON.stringify(nbt.toJSON())}`);
+        throw new Error(
+          `${key} is not a long in ${JSON.stringify(nbt.toJSON())}`
+        );
       };
     },
   },
@@ -5374,20 +5470,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:nbt_compound_value_double",
     nicknames: ["nbtCompoundValueDouble"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "NBT",
+      },
+      to: {
         type: "Function",
         from: {
-          type: "NBT",
+          type: "String",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "Double",
-          },
+          type: "Double",
         },
       },
+    },
     symbol: "NBT{}.get_double",
     interactName: "nbtGetDouble",
     function: (nbt: CompoundTag): TypeLambda<string, Double> => {
@@ -5396,7 +5492,9 @@ let operatorRegistryRawData: iOperatorRegistry = {
         if (value.getType() === Tag.TAG_DOUBLE) {
           return value.valueOf();
         }
-        throw new Error(`${key} is not a double in ${JSON.stringify(nbt.toJSON())}`);
+        throw new Error(
+          `${key} is not a double in ${JSON.stringify(nbt.toJSON())}`
+        );
       };
     },
   },
@@ -5404,20 +5502,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:nbt_compound_value_string",
     nicknames: ["nbtCompoundValueString"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "NBT",
+      },
+      to: {
         type: "Function",
         from: {
-          type: "NBT",
+          type: "String",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "String",
-          },
+          type: "String",
         },
       },
+    },
     symbol: "NBT{}.get_string",
     interactName: "nbtGetString",
     function: (nbt: CompoundTag): TypeLambda<string, string> => {
@@ -5426,7 +5524,9 @@ let operatorRegistryRawData: iOperatorRegistry = {
         if (value.getType() === Tag.TAG_STRING) {
           return value.valueOf();
         }
-        throw new Error(`${key} is not a string in ${JSON.stringify(nbt.toJSON())}`);
+        throw new Error(
+          `${key} is not a string in ${JSON.stringify(nbt.toJSON())}`
+        );
       };
     },
   },
@@ -5434,20 +5534,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:nbt_compound_value_compound",
     nicknames: ["nbtCompoundValueCompound"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "NBT",
+      },
+      to: {
         type: "Function",
         from: {
-          type: "NBT",
+          type: "String",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "NBT",
-          },
+          type: "NBT",
         },
       },
+    },
     symbol: "NBT{}.get_compound",
     interactName: "nbtGetCompound",
     function: (nbt: CompoundTag): TypeLambda<string, CompoundTag> => {
@@ -5456,7 +5556,9 @@ let operatorRegistryRawData: iOperatorRegistry = {
         if (value.getType() === Tag.TAG_COMPOUND) {
           return value.valueOf();
         }
-        throw new Error(`${key} is not a Compound in ${JSON.stringify(nbt.toJSON())}`);
+        throw new Error(
+          `${key} is not a Compound in ${JSON.stringify(nbt.toJSON())}`
+        );
       };
     },
   },
@@ -5464,26 +5566,33 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:nbt_compound_value_list_tag",
     nicknames: ["nbtCompoundValueListTag", "nbtCompoundValueList"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "NBT",
+      },
+      to: {
         type: "Function",
         from: {
-          type: "NBT",
+          type: "String",
         },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: { type: "List", listType: { type: "NBT" } },
-        },
+        to: { type: "List", listType: { type: "NBT" } },
       },
+    },
     symbol: "NBT{}.get_list_tag",
     interactName: "nbtGetListTag",
-    function: (nbt: CompoundTag): TypeLambda<string, Tag<IntegratedValue>[]> => {
+    function: (
+      nbt: CompoundTag
+    ): TypeLambda<string, Tag<IntegratedValue>[]> => {
       return (key: string): Tag<IntegratedValue>[] => {
-        if (!nbt.has(key)) throw new Error(`${key} is not a list of NBT in ${JSON.stringify(nbt.toJSON())}`);
+        if (!nbt.has(key))
+          throw new Error(
+            `${key} is not a list of NBT in ${JSON.stringify(nbt.toJSON())}`
+          );
         let listTag = nbt.get(key);
         if (listTag.getType() != Tag.TAG_LIST)
-          throw new Error(`${key} is not a list of NBT in ${JSON.stringify(nbt.toJSON())}`);
+          throw new Error(
+            `${key} is not a list of NBT in ${JSON.stringify(nbt.toJSON())}`
+          );
         return (listTag as ListTag).getArray();
       };
     },
@@ -5492,25 +5601,28 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:nbt_compound_value_list_byte",
     nicknames: ["nbtCompoundValueListByte"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "NBT",
+      },
+      to: {
         type: "Function",
         from: {
-          type: "NBT",
+          type: "String",
         },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: { type: "List", listType: { type: "Integer" } },
-        },
+        to: { type: "List", listType: { type: "Integer" } },
       },
+    },
     symbol: "NBT{}.get_list_byte",
     interactName: "nbtGetListByte",
     function: (nbt: CompoundTag) => {
       return (key: string): Integer => {
         let value = nbt.get(key);
         let list = value.valueOf();
-        if (value.getType() != Tag.TAG_BYTE) throw new Error(`${key} is not a list of byte in ${JSON.stringify(nbt.toJSON())}`);
+        if (value.getType() != Tag.TAG_BYTE)
+          throw new Error(
+            `${key} is not a list of byte in ${JSON.stringify(nbt.toJSON())}`
+          );
         return list;
       };
     },
@@ -5519,27 +5631,33 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:nbt_compound_value_list_int",
     nicknames: ["nbtCompoundValueListInt"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "NBT",
+      },
+      to: {
         type: "Function",
         from: {
-          type: "NBT",
+          type: "String",
         },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: { type: "List", listType: { type: "Integer" } },
-        },
+        to: { type: "List", listType: { type: "Integer" } },
       },
+    },
     symbol: "NBT{}.get_list_int",
     interactName: "nbtGetListInt",
     function: (nbt: CompoundTag): TypeLambda<string, Array<Integer>> => {
       return (key: string): Array<Integer> => {
         let value = nbt.get(key);
-        if (value.getType() != Tag.TAG_LIST) throw new Error(`${key} is not a list of int in ${JSON.stringify(nbt.toJSON())}`);
+        if (value.getType() != Tag.TAG_LIST)
+          throw new Error(
+            `${key} is not a list of int in ${JSON.stringify(nbt.toJSON())}`
+          );
         let list = (value as ListTag).getArray();
-        return list.map(e => {
-          if (e.getType() != Tag.TAG_INT) throw new Error(`${key} is not a list of int in ${JSON.stringify(nbt.toJSON())}`);
+        return list.map((e) => {
+          if (e.getType() != Tag.TAG_INT)
+            throw new Error(
+              `${key} is not a list of int in ${JSON.stringify(nbt.toJSON())}`
+            );
           return (e as IntTag).valueOf();
         });
       };
@@ -5549,27 +5667,33 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:nbt_compound_value_list_long",
     nicknames: ["nbtCompoundValueListLong"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "NBT",
+      },
+      to: {
         type: "Function",
         from: {
-          type: "NBT",
+          type: "String",
         },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: { type: "List", listType: { type: "Long" } },
-        },
+        to: { type: "List", listType: { type: "Long" } },
       },
+    },
     symbol: "NBT{}.get_list_long",
     interactName: "nbtGetListLong",
     function: (nbt: CompoundTag): TypeLambda<string, Long[]> => {
       return (key: string): Long[] => {
         let value = nbt.get(key);
-        if (value.getType() != Tag.TAG_LIST) throw new Error(`${key} is not a list of long in ${JSON.stringify(nbt.toJSON())}`);
+        if (value.getType() != Tag.TAG_LIST)
+          throw new Error(
+            `${key} is not a list of long in ${JSON.stringify(nbt.toJSON())}`
+          );
         let list = (value as ListTag).getArray();
-        return list.map(e => {
-          if (e.getType() != Tag.TAG_LONG) throw new Error(`${key} is not a list of long in ${JSON.stringify(nbt.toJSON())}`);
+        return list.map((e) => {
+          if (e.getType() != Tag.TAG_LONG)
+            throw new Error(
+              `${key} is not a list of long in ${JSON.stringify(nbt.toJSON())}`
+            );
           return (e as LongTag).valueOf();
         });
       };
@@ -5579,20 +5703,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:nbt_compound_without",
     nicknames: ["nbtCompoundWithout"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "NBT",
+      },
+      to: {
         type: "Function",
         from: {
-          type: "NBT",
+          type: "String",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "NBT",
-          },
+          type: "NBT",
         },
       },
+    },
     symbol: "NBT{}.without",
     interactName: "nbtWithout",
     function: (nbt: CompoundTag): TypeLambda<string, CompoundTag> => {
@@ -5605,213 +5729,230 @@ let operatorRegistryRawData: iOperatorRegistry = {
     internalName: "integrateddynamics:nbt_compound_with_boolean",
     nicknames: ["nbtCompoundWithBoolean"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "NBT",
+      },
+      to: {
         type: "Function",
         from: {
-          type: "NBT",
+          type: "String",
         },
         to: {
           type: "Function",
           from: {
-            type: "String",
+            type: "Boolean",
           },
           to: {
-            type: "Function",
-            from: {
-              type: "Boolean",
-            },
-            to: {
-              type: "NBT",
-            },
+            type: "NBT",
           },
         },
       },
+    },
     symbol: "NBT{}.with_boolean",
     interactName: "nbtWithBoolean",
-    function: (nbt: CompoundTag): TypeLambda<string, TypeLambda<boolean, CompoundTag>> => {
+    function: (
+      nbt: CompoundTag
+    ): TypeLambda<string, TypeLambda<boolean, CompoundTag>> => {
       return (key: string): TypeLambda<boolean, CompoundTag> => {
         return (value: boolean): CompoundTag => {
           return nbt.set(key, new ByteTag(new Integer(+value)));
-        }
-      }
-    }
+        };
+      };
+    },
   },
   NBTWithShort: {
     internalName: "integrateddynamics:nbt_compound_with_short",
     nicknames: ["nbtCompoundWithShort"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "NBT",
+      },
+      to: {
         type: "Function",
         from: {
-          type: "NBT",
+          type: "String",
         },
         to: {
           type: "Function",
           from: {
-            type: "String",
+            type: "Integer",
           },
           to: {
-            type: "Function",
-            from: {
-              type: "Integer",
-            },
-            to: {
-              type: "NBT",
-            },
+            type: "NBT",
           },
         },
       },
+    },
     symbol: "NBT{}.with_short",
     interactName: "nbtWithShort",
-    function: (nbt: CompoundTag): TypeLambda<string, TypeLambda<Integer, CompoundTag>> => {
+    function: (
+      nbt: CompoundTag
+    ): TypeLambda<string, TypeLambda<Integer, CompoundTag>> => {
       return (key: string): TypeLambda<Integer, CompoundTag> => {
         return (value: Integer): CompoundTag => {
           return nbt.set(key, value);
-        }
-      }
-    }
+        };
+      };
+    },
   },
   NBTWithInteger: {
     internalName: "integrateddynamics:nbt_compound_with_integer",
     nicknames: ["nbtCompoundWithInteger"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "NBT",
+      },
+      to: {
         type: "Function",
         from: {
-          type: "NBT",
+          type: "String",
         },
         to: {
           type: "Function",
           from: {
-            type: "String",
+            type: "Integer",
           },
           to: {
-            type: "Function",
-            from: {
-              type: "Integer",
-            },
-            to: {
-              type: "NBT",
-            },
+            type: "NBT",
           },
         },
       },
+    },
     symbol: "NBT{}.with_integer",
     interactName: "nbtWithInteger",
-    function: (nbt: CompoundTag): TypeLambda<string, TypeLambda<Integer, CompoundTag>> => {
+    function: (
+      nbt: CompoundTag
+    ): TypeLambda<string, TypeLambda<Integer, CompoundTag>> => {
       return (key: string): TypeLambda<Integer, CompoundTag> => {
         return (value: Integer): CompoundTag => {
           return nbt.set(key, value);
-        }
-      }
-    }
+        };
+      };
+    },
   },
   NBTWithLong: {
     internalName: "integrateddynamics:nbt_compound_with_long",
     nicknames: ["nbtCompoundWithLong"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "NBT",
+      },
+      to: {
         type: "Function",
         from: {
-          type: "NBT",
+          type: "String",
         },
         to: {
           type: "Function",
           from: {
-            type: "String",
+            type: "Long",
           },
           to: {
-            type: "Function",
-            from: {
-              type: "Long",
-            },
-            to: {
-              type: "NBT",
-            },
+            type: "NBT",
           },
         },
       },
+    },
     symbol: "NBT{}.with_long",
     interactName: "nbtWithLong",
-    function: (nbt: CompoundTag): TypeLambda<string, TypeLambda<Long, CompoundTag>> => {
+    function: (
+      nbt: CompoundTag
+    ): TypeLambda<string, TypeLambda<Long, CompoundTag>> => {
       return (key: string): TypeLambda<Long, CompoundTag> => {
         return (value: Long): CompoundTag => {
           return nbt.set(key, value);
-        }
-      }
-    }
+        };
+      };
+    },
   },
   NBTWithDouble: {
     internalName: "integrateddynamics:nbt_compound_with_double",
     nicknames: ["nbtCompoundWithDouble"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "NBT",
+      },
+      to: {
         type: "Function",
         from: {
-          type: "NBT",
+          type: "String",
         },
         to: {
           type: "Function",
           from: {
-            type: "String",
+            type: "Double",
           },
           to: {
-            type: "Function",
-            from: {
-              type: "Double",
-            },
-            to: {
-              type: "NBT",
-            },
+            type: "NBT",
           },
         },
       },
+    },
     symbol: "NBT{}.with_double",
     interactName: "nbtWithDouble",
-    function: (nbt: CompoundTag): TypeLambda<string, TypeLambda<Double, CompoundTag>> => {
+    function: (
+      nbt: CompoundTag
+    ): TypeLambda<string, TypeLambda<Double, CompoundTag>> => {
       return (key: string): TypeLambda<Double, CompoundTag> => {
         return (value: Double): CompoundTag => {
           return nbt.set(key, value);
-        }
-      }
-    }
+        };
+      };
+    },
   },
   NBTWithFloat: {
     internalName: "integrateddynamics:nbt_compound_with_float",
     nicknames: ["nbtCompoundWithFloat"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "NBT",
+      },
+      to: {
         type: "Function",
         from: {
-          type: "NBT",
+          type: "String",
         },
         to: {
           type: "Function",
           from: {
-            type: "String",
+            type: "Double",
           },
           to: {
-            type: "Function",
-            from: {
-              type: "Double",
-            },
-            to: {
-              type: "NBT",
-            },
+            type: "NBT",
           },
         },
       },
+    },
     symbol: "NBT{}.with_float",
     interactName: "nbtWithFloat",
-    function: (nbt: CompoundTag): TypeLambda<string, TypeLambda<Double, CompoundTag>> => {
+    function: (
+      nbt: CompoundTag
+    ): TypeLambda<string, TypeLambda<Double, CompoundTag>> => {
       return (key: string): TypeLambda<Double, CompoundTag> => {
         return (value: Double): CompoundTag => {
           return nbt.set(key, value);
-        }
-      }
-    }
+        };
+      };
+    },
   },
   NBTWithString: {
     internalName: "integrateddynamics:nbt_compound_with_string",
     nicknames: ["nbtCompoundWithString"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "NBT",
+      },
+      to: {
         type: "Function",
         from: {
-          type: "NBT",
+          type: "String",
         },
         to: {
           type: "Function",
@@ -5819,296 +5960,204 @@ let operatorRegistryRawData: iOperatorRegistry = {
             type: "String",
           },
           to: {
-            type: "Function",
-            from: {
-              type: "String",
-            },
-            to: {
-              type: "NBT",
-            },
+            type: "NBT",
           },
         },
       },
+    },
     symbol: "NBT{}.with_string",
     interactName: "nbtWithString",
-    function: (nbt: CompoundTag): TypeLambda<string, TypeLambda<string, CompoundTag>> => {
+    function: (
+      nbt: CompoundTag
+    ): TypeLambda<string, TypeLambda<string, CompoundTag>> => {
       return (key: string): TypeLambda<string, CompoundTag> => {
         return (value: string): CompoundTag => {
           return nbt.set(key, value);
-        }
-      }
-    }
+        };
+      };
+    },
   },
   NBTWithNBT: {
     internalName: "integrateddynamics:nbt_compound_with_tag",
     nicknames: ["nbtCompoundWithCompound"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "NBT",
+      },
+      to: {
         type: "Function",
         from: {
-          type: "NBT",
+          type: "String",
         },
         to: {
           type: "Function",
           from: {
-            type: "String",
+            type: "NBT",
           },
           to: {
-            type: "Function",
-            from: {
-              type: "NBT",
-            },
-            to: {
-              type: "NBT",
-            },
+            type: "NBT",
           },
         },
       },
+    },
     symbol: "NBT{}.with_tag",
     interactName: "nbtWithTag",
-    function: (nbt: CompoundTag): TypeLambda<string, TypeLambda<CompoundTag, CompoundTag>> => {
+    function: (
+      nbt: CompoundTag
+    ): TypeLambda<string, TypeLambda<CompoundTag, CompoundTag>> => {
       return (key: string): TypeLambda<CompoundTag, CompoundTag> => {
         return (value: CompoundTag): CompoundTag => {
           return nbt.set(key, value);
-        }
-      }
-    }
+        };
+      };
+    },
   },
   NBTWithNBTList: {
     internalName: "integrateddynamics:nbt_compound_with_list_tag",
     nicknames: ["nbtCompoundWithListTag"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "NBT",
+      },
+      to: {
         type: "Function",
         from: {
-          type: "NBT",
+          type: "String",
         },
         to: {
           type: "Function",
-          from: {
-            type: "String",
-          },
+          from: { type: "List", listType: { type: "NBT" } },
           to: {
-            type: "Function",
-            from: { type: "List", listType: { type: "NBT" } },
-            to: {
-              type: "NBT",
-            },
+            type: "NBT",
           },
         },
       },
+    },
     symbol: "NBT{}.with_tag_list",
     interactName: "nbtWithTagList",
-    function: (nbt: CompoundTag): TypeLambda<string, TypeLambda<ListTag, CompoundTag>> => {
+    function: (
+      nbt: CompoundTag
+    ): TypeLambda<string, TypeLambda<ListTag, CompoundTag>> => {
       return (key: string): TypeLambda<ListTag, CompoundTag> => {
         return (value: ListTag): CompoundTag => {
           return nbt.set(key, value);
-        }
-      }
-    }
+        };
+      };
+    },
   },
   NBTWithByteList: {
     internalName: "integrateddynamics:nbt_compound_with_list_byte",
     nicknames: ["nbtCompoundWithListByte"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "NBT",
+      },
+      to: {
         type: "Function",
         from: {
-          type: "NBT",
+          type: "String",
         },
         to: {
           type: "Function",
-          from: {
-            type: "String",
-          },
+          from: { type: "List", listType: { type: "Integer" } },
           to: {
-            type: "Function",
-            from: { type: "List", listType: { type: "Integer" } },
-            to: {
-              type: "NBT",
-            },
+            type: "NBT",
           },
         },
       },
+    },
     symbol: "NBT{}.with_byte_list",
     interactName: "nbtWithByteList",
-    function: (nbt: CompoundTag): TypeLambda<string, TypeLambda<ListTag, CompoundTag>> => {
+    function: (
+      nbt: CompoundTag
+    ): TypeLambda<string, TypeLambda<ListTag, CompoundTag>> => {
       return (key: string): TypeLambda<ListTag, CompoundTag> => {
         return (value: ListTag): CompoundTag => {
           return nbt.set(key, value);
-        }
-      }
-    }
+        };
+      };
+    },
   },
   NBTWithIntegerList: {
     internalName: "integrateddynamics:nbt_compound_with_list_int",
     nicknames: ["nbtCompoundWithListInt"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "NBT",
+      },
+      to: {
         type: "Function",
         from: {
-          type: "NBT",
+          type: "String",
         },
         to: {
           type: "Function",
-          from: {
-            type: "String",
-          },
+          from: { type: "List", listType: { type: "Integer" } },
           to: {
-            type: "Function",
-            from: { type: "List", listType: { type: "Integer" } },
-            to: {
-              type: "NBT",
-            },
+            type: "NBT",
           },
         },
       },
+    },
     symbol: "NBT{}.with_int_list",
     interactName: "nbtWithIntList",
-    function: (nbt: CompoundTag): TypeLambda<string, TypeLambda<ListTag, CompoundTag>> => {
+    function: (
+      nbt: CompoundTag
+    ): TypeLambda<string, TypeLambda<ListTag, CompoundTag>> => {
       return (key: string): TypeLambda<ListTag, CompoundTag> => {
         return (value: ListTag): CompoundTag => {
           return nbt.set(key, value);
-        }
-      }
-    }
+        };
+      };
+    },
   },
   NBTWithLongList: {
     internalName: "integrateddynamics:nbt_compound_with_list_long",
     nicknames: ["nbtCompoundWithListLong"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "NBT",
+      },
+      to: {
         type: "Function",
         from: {
-          type: "NBT",
+          type: "String",
         },
         to: {
           type: "Function",
-          from: {
-            type: "String",
-          },
+          from: { type: "List", listType: { type: "Long" } },
           to: {
-            type: "Function",
-            from: { type: "List", listType: { type: "Long" } },
-            to: {
-              type: "NBT",
-            },
+            type: "NBT",
           },
         },
       },
+    },
     symbol: "NBT{}.with_list_long",
     interactName: "nbtWithListLong",
-    function: (nbt: CompoundTag): TypeLambda<string, TypeLambda<ListTag, CompoundTag>> => {
+    function: (
+      nbt: CompoundTag
+    ): TypeLambda<string, TypeLambda<ListTag, CompoundTag>> => {
       return (key: string): TypeLambda<ListTag, CompoundTag> => {
         return (value: ListTag): CompoundTag => {
           return nbt.set(key, value);
-        }
-      }
-    }
+        };
+      };
+    },
   },
   NBTSubset: {
     internalName: "integrateddynamics:nbt_compound_subset",
     nicknames: ["nbtCompoundSubset"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "NBT",
-          },
-          to: {
-            type: "Boolean",
-          },
-        },
+      type: "Function",
+      from: {
+        type: "NBT",
       },
-    symbol: "NBT{}.⊆",
-    interactName: "nbtIsSubset",
-    function: (subSet: CompoundTag): TypeLambda<CompoundTag, boolean> => {
-      return (superSet: CompoundTag): boolean => {
-        return superSet.compoundSubset(subSet);
-      }
-    }
-  },
-  NBTUnion: {
-    internalName: "integrateddynamics:nbt_compound_union",
-    nicknames: ["nbtCompoundUnion"],
-    parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "NBT",
-          },
-          to: {
-            type: "NBT",
-          },
-        },
-      },
-    symbol: "NBT{}.∪",
-    interactName: "nbtUnion",
-    function: (nbt1: CompoundTag): TypeLambda<CompoundTag, CompoundTag> => {
-      return (nbt2: CompoundTag): CompoundTag => {
-        return nbt1.compoundUnion(nbt2);
-      }
-    }
-  },
-  NBTIntersection: {
-    internalName: "integrateddynamics:nbt_compound_intersection",
-    nicknames: ["nbtCompoundIntersection"],
-    parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "NBT",
-          },
-          to: {
-            type: "NBT",
-          },
-        },
-      },
-    symbol: "NBT{}.∩",
-    interactName: "nbtIntersection",
-    function: (nbt1: CompoundTag) => {
-      return (nbt2: CompoundTag) => {
-        return nbt1.compoundIntersection(nbt2);
-      }
-    }
-  },
-  NBTMinus: {
-    internalName: "integrateddynamics:nbt_compound_minus",
-    nicknames: ["nbtCompoundMinus"],
-    parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "NBT",
-          },
-          to: {
-            type: "NBT",
-          },
-        },
-      },
-    symbol: "NBT{}.∖",
-    interactName: "nbtMinus",
-    function: (nbt1: CompoundTag) => {
-      return (nbt2: CompoundTag) => {
-        return nbt1.compoundMinus(nbt2);
-      }
-    }
-  },
-  nbtAsBoolean: {
-    internalName: "integrateddynamics:nbt_as_boolean",
-    nicknames: [],
-    parsedSignature: {
+      to: {
         type: "Function",
         from: {
           type: "NBT",
@@ -6117,6 +6166,105 @@ let operatorRegistryRawData: iOperatorRegistry = {
           type: "Boolean",
         },
       },
+    },
+    symbol: "NBT{}.⊆",
+    interactName: "nbtIsSubset",
+    function: (subSet: CompoundTag): TypeLambda<CompoundTag, boolean> => {
+      return (superSet: CompoundTag): boolean => {
+        return superSet.compoundSubset(subSet);
+      };
+    },
+  },
+  NBTUnion: {
+    internalName: "integrateddynamics:nbt_compound_union",
+    nicknames: ["nbtCompoundUnion"],
+    parsedSignature: {
+      type: "Function",
+      from: {
+        type: "NBT",
+      },
+      to: {
+        type: "Function",
+        from: {
+          type: "NBT",
+        },
+        to: {
+          type: "NBT",
+        },
+      },
+    },
+    symbol: "NBT{}.∪",
+    interactName: "nbtUnion",
+    function: (nbt1: CompoundTag): TypeLambda<CompoundTag, CompoundTag> => {
+      return (nbt2: CompoundTag): CompoundTag => {
+        return nbt1.compoundUnion(nbt2);
+      };
+    },
+  },
+  NBTIntersection: {
+    internalName: "integrateddynamics:nbt_compound_intersection",
+    nicknames: ["nbtCompoundIntersection"],
+    parsedSignature: {
+      type: "Function",
+      from: {
+        type: "NBT",
+      },
+      to: {
+        type: "Function",
+        from: {
+          type: "NBT",
+        },
+        to: {
+          type: "NBT",
+        },
+      },
+    },
+    symbol: "NBT{}.∩",
+    interactName: "nbtIntersection",
+    function: (nbt1: CompoundTag) => {
+      return (nbt2: CompoundTag) => {
+        return nbt1.compoundIntersection(nbt2);
+      };
+    },
+  },
+  NBTMinus: {
+    internalName: "integrateddynamics:nbt_compound_minus",
+    nicknames: ["nbtCompoundMinus"],
+    parsedSignature: {
+      type: "Function",
+      from: {
+        type: "NBT",
+      },
+      to: {
+        type: "Function",
+        from: {
+          type: "NBT",
+        },
+        to: {
+          type: "NBT",
+        },
+      },
+    },
+    symbol: "NBT{}.∖",
+    interactName: "nbtMinus",
+    function: (nbt1: CompoundTag) => {
+      return (nbt2: CompoundTag) => {
+        return nbt1.compoundMinus(nbt2);
+      };
+    },
+  },
+  nbtAsBoolean: {
+    internalName: "integrateddynamics:nbt_as_boolean",
+    nicknames: [],
+    parsedSignature: {
+      type: "Function",
+      from: {
+        type: "NBT",
+      },
+      to: {
+        type: "Boolean",
+      },
+    },
     symbol: "NBT.as_boolean",
     interactName: "nbtAsBoolean",
     function: (nbt: ByteTag): boolean => {
@@ -6125,20 +6273,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
       } else {
         return false;
       }
-    }
+    },
   },
   nbtAsByte: {
     internalName: "integrateddynamics:nbt_as_byte",
     nicknames: [],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Integer",
-        },
+      type: "Function",
+      from: {
+        type: "NBT",
       },
+      to: {
+        type: "Integer",
+      },
+    },
     symbol: "NBT.as_byte",
     interactName: "nbtAsByte",
     function: (nbt: IntTag): Integer => {
@@ -6147,20 +6295,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
       } else {
         return new Integer(0);
       }
-    }
+    },
   },
   nbtAsShort: {
     internalName: "integrateddynamics:nbt_as_short",
     nicknames: [],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Integer",
-        },
+      type: "Function",
+      from: {
+        type: "NBT",
       },
+      to: {
+        type: "Integer",
+      },
+    },
     symbol: "NBT.as_short",
     interactName: "nbtAsShort",
     function: (nbt: IntTag): Integer => {
@@ -6169,20 +6317,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
       } else {
         return new Integer(0);
       }
-    }
+    },
   },
   nbtAsInt: {
     internalName: "integrateddynamics:nbt_as_int",
     nicknames: [],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Integer",
-        },
+      type: "Function",
+      from: {
+        type: "NBT",
       },
+      to: {
+        type: "Integer",
+      },
+    },
     symbol: "NBT.as_int",
     interactName: "nbtAsInt",
     function: (nbt: IntTag): Integer => {
@@ -6191,20 +6339,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
       } else {
         return new Integer(0);
       }
-    }
+    },
   },
   nbtAsLong: {
     internalName: "integrateddynamics:nbt_as_long",
     nicknames: [],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Long",
-        },
+      type: "Function",
+      from: {
+        type: "NBT",
       },
+      to: {
+        type: "Long",
+      },
+    },
     symbol: "NBT.as_long",
     interactName: "nbtAsLong",
     function: (nbt: LongTag): Long => {
@@ -6213,20 +6361,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
       } else {
         return new Long(0);
       }
-    }
+    },
   },
   nbtAsDouble: {
     internalName: "integrateddynamics:nbt_as_double",
     nicknames: [],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Double",
-        },
+      type: "Function",
+      from: {
+        type: "NBT",
       },
+      to: {
+        type: "Double",
+      },
+    },
     symbol: "NBT.as_double",
     interactName: "nbtAsDouble",
     function: (nbt: DoubleTag): Double => {
@@ -6235,20 +6383,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
       } else {
         return new Double(0);
       }
-    }
+    },
   },
   nbtAsFloat: {
     internalName: "integrateddynamics:nbt_as_float",
     nicknames: [],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Double",
-        },
+      type: "Function",
+      from: {
+        type: "NBT",
       },
+      to: {
+        type: "Double",
+      },
+    },
     symbol: "NBT.as_float",
     interactName: "nbtAsFloat",
     function: (nbt: DoubleTag): Double => {
@@ -6257,20 +6405,20 @@ let operatorRegistryRawData: iOperatorRegistry = {
       } else {
         return new Double(0);
       }
-    }
+    },
   },
   nbtAsString: {
     internalName: "integrateddynamics:nbt_as_string",
     nicknames: [],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "String",
-        },
+      type: "Function",
+      from: {
+        type: "NBT",
       },
+      to: {
+        type: "String",
+      },
+    },
     symbol: "NBT.as_string",
     interactName: "nbtAsString",
     function: (nbt: StringTag): string => {
@@ -6279,18 +6427,18 @@ let operatorRegistryRawData: iOperatorRegistry = {
       } else {
         return "";
       }
-    }
+    },
   },
   nbtAsTagList: {
     internalName: "integrateddynamics:nbt_as_tag_list",
     nicknames: [],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: { type: "List", listType: { type: "NBT" } },
+      type: "Function",
+      from: {
+        type: "NBT",
       },
+      to: { type: "List", listType: { type: "NBT" } },
+    },
     symbol: "NBT.as_tag_list",
     interactName: "nbtAsTagList",
     function: (nbt: ListTag): Array<Tag<IntegratedValue>> => {
@@ -6299,300 +6447,303 @@ let operatorRegistryRawData: iOperatorRegistry = {
       } else {
         return new Array<Tag<any>>();
       }
-    }
+    },
   },
   nbtAsByteList: {
     internalName: "integrateddynamics:nbt_as_byte_list",
     nicknames: [],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: { type: "List", listType: { type: "Integer" } },
+      type: "Function",
+      from: {
+        type: "NBT",
       },
+      to: { type: "List", listType: { type: "Integer" } },
+    },
     symbol: "NBT.as_byte_list",
     interactName: "nbtAsByteList",
     function: (nbt: ListTag): Array<Integer> => {
       if (nbt.getType() === Tag.TAG_LIST) {
         const list = nbt.valueOf();
-        if (!list.every(e => (e.getType() == Tag.TAG_INT))) return new Array<Integer>();
-        return list.map(e => e.valueOf());
+        if (!list.every((e) => e.getType() == Tag.TAG_INT))
+          return new Array<Integer>();
+        return list.map((e) => e.valueOf());
       } else {
         return new Array<Integer>();
       }
-    }
+    },
   },
   nbtAsIntList: {
     internalName: "integrateddynamics:nbt_as_int_list",
     nicknames: [],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: { type: "List", listType: { type: "Integer" } },
+      type: "Function",
+      from: {
+        type: "NBT",
       },
+      to: { type: "List", listType: { type: "Integer" } },
+    },
     symbol: "NBT.as_int_list",
     interactName: "nbtAsIntList",
     function: (nbt: ListTag): Array<Integer> => {
       if (nbt.getType() === Tag.TAG_LIST) {
         const list = nbt.valueOf();
-        if (!list.every(e => (e.getType() == Tag.TAG_INT))) return new Array<Integer>();
-        return list.map(e => e.valueOf());
+        if (!list.every((e) => e.getType() == Tag.TAG_INT))
+          return new Array<Integer>();
+        return list.map((e) => e.valueOf());
       } else {
         return new Array<Integer>();
       }
-    }
+    },
   },
   nbtAsLongList: {
     internalName: "integrateddynamics:nbt_as_long_list",
     nicknames: [],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: { type: "List", listType: { type: "Long" } },
+      type: "Function",
+      from: {
+        type: "NBT",
       },
+      to: { type: "List", listType: { type: "Long" } },
+    },
     symbol: "NBT.as_long_list",
     interactName: "nbtAsLongList",
     function: (nbt: ListTag): Array<Long> => {
       if (nbt.getType() === Tag.TAG_LIST) {
         const list = nbt.valueOf();
-        if (!list.every(e => (e.getType() == Tag.TAG_LONG))) return new Array<Long>();
-        return list.map(e => e.valueOf());
+        if (!list.every((e) => e.getType() == Tag.TAG_LONG))
+          return new Array<Long>();
+        return list.map((e) => e.valueOf());
       } else {
         return new Array<Long>();
       }
-    }
+    },
   },
   nbtFromBoolean: {
     internalName: "integrateddynamics:nbt_from_boolean",
     nicknames: [],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Boolean",
-        },
-        to: {
-          type: "NBT",
-        },
+      type: "Function",
+      from: {
+        type: "Boolean",
       },
+      to: {
+        type: "NBT",
+      },
+    },
     symbol: "NBT.from_boolean",
     interactName: "booleanAsNbt",
     function: (bool: boolean): ByteTag => {
       return new ByteTag(new Integer(+bool));
-    }
+    },
   },
   nbtFromShort: {
     internalName: "integrateddynamics:nbt_from_short",
     nicknames: [],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Integer",
-        },
-        to: {
-          type: "NBT",
-        },
+      type: "Function",
+      from: {
+        type: "Integer",
       },
+      to: {
+        type: "NBT",
+      },
+    },
     symbol: "NBT.from_short",
     interactName: "shortAsNbt",
     function: (short: Integer): IntTag => {
       return new IntTag(short);
-    }
+    },
   },
   nbtFromByte: {
     internalName: "integrateddynamics:nbt_from_byte",
     nicknames: [],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Integer",
-        },
-        to: {
-          type: "NBT",
-        },
+      type: "Function",
+      from: {
+        type: "Integer",
       },
+      to: {
+        type: "NBT",
+      },
+    },
     symbol: "NBT.from_byte",
     interactName: "byteAsNbt",
     function: (byte: Integer): IntTag => {
       return new IntTag(byte);
-    }
+    },
   },
   nbtFromInt: {
     internalName: "integrateddynamics:nbt_from_int",
     nicknames: [],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Integer",
-        },
-        to: {
-          type: "NBT",
-        },
+      type: "Function",
+      from: {
+        type: "Integer",
       },
+      to: {
+        type: "NBT",
+      },
+    },
     symbol: "NBT.from_int",
     interactName: "integerAsNbt",
     function: (int: Integer): IntTag => {
       return new IntTag(int);
-    }
+    },
   },
   nbtFromLong: {
     internalName: "integrateddynamics:nbt_from_long",
     nicknames: [],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Long",
-        },
-        to: {
-          type: "NBT",
-        },
+      type: "Function",
+      from: {
+        type: "Long",
       },
+      to: {
+        type: "NBT",
+      },
+    },
     symbol: "NBT.from_long",
     interactName: "longAsNbt",
     function: (long: Long): LongTag => {
       return new LongTag(long);
-    }
+    },
   },
   nbtFromDouble: {
     internalName: "integrateddynamics:nbt_from_double",
     nicknames: [],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Double",
-        },
-        to: {
-          type: "NBT",
-        },
+      type: "Function",
+      from: {
+        type: "Double",
       },
+      to: {
+        type: "NBT",
+      },
+    },
     symbol: "NBT.from_double",
     interactName: "doubleAsNbt",
     function: (double: Double): DoubleTag => {
       return new DoubleTag(double);
-    }
+    },
   },
   nbtFromFloat: {
     internalName: "integrateddynamics:nbt_from_float",
     nicknames: [],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Double",
-        },
-        to: {
-          type: "NBT",
-        },
+      type: "Function",
+      from: {
+        type: "Double",
       },
+      to: {
+        type: "NBT",
+      },
+    },
     symbol: "NBT.from_float",
     interactName: "floatAsNbt",
     function: (float: Double): DoubleTag => {
       return new DoubleTag(float);
-    }
+    },
   },
   nbtFromString: {
     internalName: "integrateddynamics:nbt_from_string",
     nicknames: [],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
-          type: "NBT",
-        },
+      type: "Function",
+      from: {
+        type: "String",
       },
+      to: {
+        type: "NBT",
+      },
+    },
     symbol: "NBT.from_string",
     interactName: "stringAsNbt",
     function: (str: string): StringTag => {
       return new StringTag(str);
-    }
+    },
   },
   nbtFromTagList: {
     internalName: "integrateddynamics:nbt_from_tag_list",
     nicknames: [],
     parsedSignature: {
-        type: "Function",
-        from: { type: "List", listType: { type: "NBT" } },
-        to: {
-          type: "NBT",
-        },
+      type: "Function",
+      from: { type: "List", listType: { type: "NBT" } },
+      to: {
+        type: "NBT",
       },
+    },
     symbol: "NBT.from_tag_list",
     interactName: "tagListAsNbt",
     function: (tagList: Array<CompoundTag>): ListTag => {
       return new ListTag(tagList);
-    }
+    },
   },
   nbtFromByteList: {
     internalName: "integrateddynamics:nbt_from_byte_list",
     nicknames: [],
     parsedSignature: {
-        type: "Function",
-        from: { type: "List", listType: { type: "Integer" } },
-        to: {
-          type: "NBT",
-        },
+      type: "Function",
+      from: { type: "List", listType: { type: "Integer" } },
+      to: {
+        type: "NBT",
       },
+    },
     symbol: "NBT.from_byte_list",
     interactName: "byteListAsNbt",
     function: (byteList: Array<Integer>): ListTag => {
-      return new ListTag(byteList.map(e => new IntTag(e)));
-    }
+      return new ListTag(byteList.map((e) => new IntTag(e)));
+    },
   },
   nbtFromIntList: {
     internalName: "integrateddynamics:nbt_from_int_list",
     nicknames: [],
     parsedSignature: {
-        type: "Function",
-        from: { type: "List", listType: { type: "Integer" } },
-        to: {
-          type: "NBT",
-        },
+      type: "Function",
+      from: { type: "List", listType: { type: "Integer" } },
+      to: {
+        type: "NBT",
       },
+    },
     symbol: "NBT.from_int_list",
     interactName: "intListAsNbt",
     function: (intList: Array<Integer>): ListTag => {
-      return new ListTag(intList.map(e => new IntTag(e)));
-    }
+      return new ListTag(intList.map((e) => new IntTag(e)));
+    },
   },
   nbtFromLongList: {
     internalName: "integrateddynamics:nbt_from_long_list",
     nicknames: [],
     parsedSignature: {
-        type: "Function",
-        from: { type: "List", listType: { type: "Long" } },
-        to: {
-          type: "NBT",
-        },
+      type: "Function",
+      from: { type: "List", listType: { type: "Long" } },
+      to: {
+        type: "NBT",
       },
+    },
     symbol: "NBT.from_long_list",
     interactName: "longListAsNbt",
     function: (longList: Array<Long>): ListTag => {
-      return new ListTag(longList.map(e => new LongTag(e)));
-    }
+      return new ListTag(longList.map((e) => new LongTag(e)));
+    },
   },
   nbtPathMatchFirst: {
     internalName: "integrateddynamics:nbt_path_match_first",
     nicknames: [],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "String",
+      },
+      to: {
         type: "Function",
         from: {
-          type: "String",
+          type: "NBT",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "NBT",
-          },
-          to: {
-            type: "NBT",
-          },
+          type: "NBT",
         },
       },
+    },
     symbol: "NBT.path_match_first",
     interactName: "stringNbtPathMatchFirst",
     function: (path: string): TypeLambda<CompoundTag, Tag<IntegratedValue>> => {
@@ -6600,53 +6751,55 @@ let operatorRegistryRawData: iOperatorRegistry = {
         let expression = NbtPath.parse(path);
         if (!expression) throw new Error(`Invalid path: ${path}`);
         return expression.match(nbt).getMatches()[0] ?? new NullTag();
-      }
-    }
+      };
+    },
   },
   nbtPathMatchAll: {
     internalName: "integrateddynamics:nbt_path_match_all",
     nicknames: [],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "String",
+      },
+      to: {
         type: "Function",
         from: {
-          type: "String",
+          type: "NBT",
         },
-        to: {
-          type: "Function",
-          from: {
-            type: "NBT",
-          },
-          to: { type: "List", listType: { type: "NBT" } },
-        },
+        to: { type: "List", listType: { type: "NBT" } },
       },
+    },
     symbol: "NBT.path_match_all",
     interactName: "stringNbtPathMatchAll",
-    function: (path: string): TypeLambda<CompoundTag, Array<Tag<IntegratedValue>>> => {
+    function: (
+      path: string
+    ): TypeLambda<CompoundTag, Array<Tag<IntegratedValue>>> => {
       return (nbt: CompoundTag): Array<Tag<IntegratedValue>> => {
         let expression = NbtPath.parse(path);
         if (!expression) throw new Error(`Invalid path: ${path}`);
         return expression.match(nbt).getMatches();
-      }
-    }
+      };
+    },
   },
   NBTPathTest: {
     internalName: "integrateddynamics:nbt_path_test",
     nicknames: [],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "String",
+      },
+      to: {
         type: "Function",
         from: {
-          type: "String",
+          type: "NBT",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "NBT",
-          },
-          to: {
-            type: "Boolean",
-          },
+          type: "Boolean",
         },
       },
+    },
     symbol: "NBT.path_test",
     interactName: "stringNbtPathTest",
     function: (path: string): TypeLambda<CompoundTag, boolean> => {
@@ -6654,463 +6807,482 @@ let operatorRegistryRawData: iOperatorRegistry = {
         let expression = NbtPath.parse(path);
         if (!expression) throw new Error(`Invalid path: ${path}`);
         return expression.test(nbt);
-      }
-    }
+      };
+    },
   },
   ingredientsItems: {
     internalName: "integrateddynamics:ingredients_items",
     nicknames: [],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Ingredients",
-        },
-        to: { type: "List", listType: { type: "Item" } },
+      type: "Function",
+      from: {
+        type: "Ingredients",
       },
+      to: { type: "List", listType: { type: "Item" } },
+    },
     symbol: "Ingr.items",
     interactName: "ingredientsItems",
     function: (ingredients: Ingredients): Array<Item> => {
       return ingredients.getItems();
-    }
+    },
   },
   ingredientsFluids: {
     internalName: "integrateddynamics:ingredients_fluids",
     nicknames: [],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Ingredients",
-        },
-        to: { type: "List", listType: { type: "Fluid" } },
+      type: "Function",
+      from: {
+        type: "Ingredients",
       },
+      to: { type: "List", listType: { type: "Fluid" } },
+    },
     symbol: "Ingr.fluids",
     interactName: "ingredientsFluids",
     function: (ingredients: Ingredients): Array<Fluid> => {
       return ingredients.getFluids();
-    }
+    },
   },
   ingredientsEnergies: {
     internalName: "integrateddynamics:ingredients_energies",
     nicknames: [],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Ingredients",
-        },
-        to: { type: "List", listType: { type: "Long" } },
+      type: "Function",
+      from: {
+        type: "Ingredients",
       },
+      to: { type: "List", listType: { type: "Long" } },
+    },
     symbol: "Ingr.energies",
     interactName: "ingredientsEnergies",
     function: (ingredients: Ingredients): Array<Long> => {
       return ingredients.getEnergies();
-    }
+    },
   },
   ingredientsWithItem: {
     internalName: "integrateddynamics:ingredients_with_item",
     nicknames: [],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Ingredients",
+      },
+      to: {
         type: "Function",
         from: {
-          type: "Ingredients",
+          type: "Integer",
         },
         to: {
           type: "Function",
           from: {
-            type: "Integer",
+            type: "Item",
           },
           to: {
-            type: "Function",
-            from: {
-              type: "Item",
-            },
-            to: {
-              type: "Ingredients",
-            },
+            type: "Ingredients",
           },
         },
       },
+    },
     symbol: "Ingr.with_item",
     interactName: "ingredientsWithItem",
-    function: (ingredients: Ingredients): TypeLambda<Integer, TypeLambda<Item, Ingredients>> => {
+    function: (
+      ingredients: Ingredients
+    ): TypeLambda<Integer, TypeLambda<Item, Ingredients>> => {
       return (index: Integer): TypeLambda<Item, Ingredients> => {
         return (item: Item): Ingredients => {
           return ingredients.setItem(item, index);
-        }
-      }
-    }
+        };
+      };
+    },
   },
   ingredientsWithFluid: {
     internalName: "integrateddynamics:ingredients_with_fluid",
     nicknames: [],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Ingredients",
+      },
+      to: {
         type: "Function",
         from: {
-          type: "Ingredients",
+          type: "Integer",
         },
         to: {
           type: "Function",
           from: {
-            type: "Integer",
+            type: "Fluid",
           },
           to: {
-            type: "Function",
-            from: {
-              type: "Fluid",
-            },
-            to: {
-              type: "Ingredients",
-            },
+            type: "Ingredients",
           },
         },
       },
+    },
     symbol: "Ingr.with_fluid",
     interactName: "ingredientsWithFluid",
-    function: (ingredients: Ingredients): TypeLambda<Integer, TypeLambda<Fluid, Ingredients>> => {
+    function: (
+      ingredients: Ingredients
+    ): TypeLambda<Integer, TypeLambda<Fluid, Ingredients>> => {
       return (index: Integer): TypeLambda<Fluid, Ingredients> => {
         return (fluid: Fluid): Ingredients => {
           return ingredients.setFluid(fluid, index);
-        }
-      }
-    }
+        };
+      };
+    },
   },
   ingredientsWithEnergy: {
     internalName: "integrateddynamics:ingredients_with_energy",
     nicknames: [],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Ingredients",
+      },
+      to: {
         type: "Function",
         from: {
-          type: "Ingredients",
+          type: "Integer",
         },
         to: {
           type: "Function",
           from: {
-            type: "Integer",
+            type: "Long",
           },
           to: {
-            type: "Function",
-            from: {
-              type: "Long",
-            },
-            to: {
-              type: "Ingredients",
-            },
+            type: "Ingredients",
           },
         },
       },
+    },
     symbol: "Ingr.with_energy",
     interactName: "ingredientsWithEnergy",
-    function: (ingredients: Ingredients): TypeLambda<Integer, TypeLambda<Long, Ingredients>> => {
+    function: (
+      ingredients: Ingredients
+    ): TypeLambda<Integer, TypeLambda<Long, Ingredients>> => {
       return (index: Integer): TypeLambda<Long, Ingredients> => {
         return (energy: Long): Ingredients => {
           return ingredients.setEnergy(energy, index);
-        }
-      }
-    }
+        };
+      };
+    },
   },
   ingredientsWithItems: {
     internalName: "integrateddynamics:ingredients_with_items",
     nicknames: [],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Ingredients",
+      },
+      to: {
         type: "Function",
-        from: {
+        from: { type: "List", listType: { type: "Item" } },
+        to: {
           type: "Ingredients",
         },
-        to: {
-          type: "Function",
-          from: { type: "List", listType: { type: "Item" } },
-          to: {
-            type: "Ingredients",
-          },
-        },
       },
+    },
     symbol: "Ingr.with_items",
     interactName: "ingredientsWithItems",
-    function: (ingredients: Ingredients): TypeLambda<Array<Item>, Ingredients> => {
+    function: (
+      ingredients: Ingredients
+    ): TypeLambda<Array<Item>, Ingredients> => {
       return (itemList: Array<Item>): Ingredients => {
         return ingredients.appendItems(itemList);
-      }
-    }
+      };
+    },
   },
   ingredientsWithFluids: {
     internalName: "integrateddynamics:ingredients_with_fluids",
     nicknames: [],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Ingredients",
+      },
+      to: {
         type: "Function",
-        from: {
+        from: { type: "List", listType: { type: "Fluid" } },
+        to: {
           type: "Ingredients",
         },
-        to: {
-          type: "Function",
-          from: { type: "List", listType: { type: "Fluid" } },
-          to: {
-            type: "Ingredients",
-          },
-        },
       },
+    },
     symbol: "Ingr.with_fluids",
     interactName: "ingredientsWithFluids",
-    function: (ingredients: Ingredients): TypeLambda<Array<Fluid>, Ingredients> => {
+    function: (
+      ingredients: Ingredients
+    ): TypeLambda<Array<Fluid>, Ingredients> => {
       return (fluidList: Array<Fluid>): Ingredients => {
         return ingredients.appendFluids(fluidList);
-      }
-    }
+      };
+    },
   },
   ingredientsWithEnergies: {
     internalName: "integrateddynamics:ingredients_with_energies",
     nicknames: [],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Ingredients",
+      },
+      to: {
         type: "Function",
-        from: {
+        from: { type: "List", listType: { type: "Long" } },
+        to: {
           type: "Ingredients",
         },
-        to: {
-          type: "Function",
-          from: { type: "List", listType: { type: "Long" } },
-          to: {
-            type: "Ingredients",
-          },
-        },
       },
+    },
     symbol: "Ingr.with_energies",
     interactName: "ingredientsWithEnergies",
-    function: (ingredients: Ingredients): TypeLambda<Array<Long>, Ingredients> => {
+    function: (
+      ingredients: Ingredients
+    ): TypeLambda<Array<Long>, Ingredients> => {
       return (energyList: Array<Long>): Ingredients => {
         return ingredients.appendEnergies(energyList);
-      }
-    }
+      };
+    },
   },
   recipeInput: {
     internalName: "integrateddynamics:recipe_input",
     nicknames: [],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Recipe",
-        },
-        to: {
-          type: "Ingredients",
-        },
+      type: "Function",
+      from: {
+        type: "Recipe",
       },
+      to: {
+        type: "Ingredients",
+      },
+    },
     symbol: "recipe_in",
     interactName: "recipeInput",
     function: (recipe: Recipe): Ingredients => {
       return recipe.getInput();
-    }
+    },
   },
   recipeOutput: {
     internalName: "integrateddynamics:recipe_output",
     nicknames: [],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Recipe",
-        },
-        to: {
-          type: "Ingredients",
-        },
+      type: "Function",
+      from: {
+        type: "Recipe",
       },
+      to: {
+        type: "Ingredients",
+      },
+    },
     symbol: "recipe_out",
     interactName: "recipeOutput",
     function: (recipe: Recipe): Ingredients => {
       return recipe.getOutput();
-    }
+    },
   },
   recipeWithInput: {
     internalName: "integrateddynamics:recipe_with_input",
     nicknames: [],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Recipe",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Ingredients",
-          },
-          to: {
-            type: "Recipe",
-          },
-        },
+      type: "Function",
+      from: {
+        type: "Recipe",
       },
-    symbol: "Recipe.with_in",
-    interactName: "recipeWithInput",
-    function: (recipe: Recipe): TypeLambda<Ingredients, Recipe> => {
-      return (ingredients: Ingredients): Recipe => {
-        return recipe.setInput(ingredients);
-      }
-    }
-  },
-  recipeWithOutput: {
-    internalName: "integrateddynamics:recipe_with_output",
-    nicknames: [],
-    parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Recipe",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Ingredients",
-          },
-          to: {
-            type: "Recipe",
-          },
-        },
-      },
-    symbol: "Recipe.with_out",
-    interactName: "recipeWithOutput",
-    function: (recipe: Recipe): TypeLambda<Ingredients, Recipe> => {
-      return (ingredients: Ingredients): Recipe => {
-        return recipe.setOutput(ingredients);
-      }
-    }
-  },
-  recipeWithInputOutput: {
-    internalName: "integrateddynamics:recipe_with_input_output",
-    nicknames: [],
-    parsedSignature: {
+      to: {
         type: "Function",
         from: {
           type: "Ingredients",
         },
         to: {
-          type: "Function",
-          from: {
-            type: "Ingredients",
-          },
-          to: {
-            type: "Recipe",
-          },
+          type: "Recipe",
         },
       },
+    },
+    symbol: "Recipe.with_in",
+    interactName: "recipeWithInput",
+    function: (recipe: Recipe): TypeLambda<Ingredients, Recipe> => {
+      return (ingredients: Ingredients): Recipe => {
+        return recipe.setInput(ingredients);
+      };
+    },
+  },
+  recipeWithOutput: {
+    internalName: "integrateddynamics:recipe_with_output",
+    nicknames: [],
+    parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Recipe",
+      },
+      to: {
+        type: "Function",
+        from: {
+          type: "Ingredients",
+        },
+        to: {
+          type: "Recipe",
+        },
+      },
+    },
+    symbol: "Recipe.with_out",
+    interactName: "recipeWithOutput",
+    function: (recipe: Recipe): TypeLambda<Ingredients, Recipe> => {
+      return (ingredients: Ingredients): Recipe => {
+        return recipe.setOutput(ingredients);
+      };
+    },
+  },
+  recipeWithInputOutput: {
+    internalName: "integrateddynamics:recipe_with_input_output",
+    nicknames: [],
+    parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Ingredients",
+      },
+      to: {
+        type: "Function",
+        from: {
+          type: "Ingredients",
+        },
+        to: {
+          type: "Recipe",
+        },
+      },
+    },
     symbol: "Recipe.with_io",
     interactName: "ingredientsWithInputOutput",
     function: (input: Ingredients): TypeLambda<Ingredients, Recipe> => {
       return (output: Ingredients): Recipe => {
         return new Recipe(input, output);
-      }
-    }
+      };
+    },
   },
   parseBoolean: {
     internalName:
       "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.boolean",
     nicknames: [],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
-          type: "Boolean",
-        },
+      type: "Function",
+      from: {
+        type: "String",
       },
+      to: {
+        type: "Boolean",
+      },
+    },
     symbol: "parse_boolean",
     interactName: "stringParseAsBoolean",
     function: (value: string): boolean => {
-      const matchArr = new RE2("(F(alse)?|[+-]?(0x|#)?0+|)", "i").match(value) ?? [];
+      const matchArr =
+        new RE2("(F(alse)?|[+-]?(0x|#)?0+|)", "i").match(value) ?? [];
       return !!matchArr[0];
-    }
+    },
   },
   parseDouble: {
     internalName:
       "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.double",
     nicknames: [],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Any",
-          typeID: 1,
-        },
-        to: {
-          type: "Double",
-        },
+      type: "Function",
+      from: {
+        type: "Any",
+        typeID: 1,
       },
+      to: {
+        type: "Double",
+      },
+    },
     symbol: "parse_double",
     interactName: "stringParseAsDouble",
     function: (data: IntegratedValue): Double => {
       try {
         return new Double(data);
-      } catch(e) {
+      } catch (e) {
         return new Double(0);
       }
-    }
+    },
   },
   parseInteger: {
     internalName:
       "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.integer",
     nicknames: [],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Any",
-          typeID: 1,
-        },
-        to: {
-          type: "Integer",
-        },
+      type: "Function",
+      from: {
+        type: "Any",
+        typeID: 1,
       },
+      to: {
+        type: "Integer",
+      },
+    },
     symbol: "parse_integer",
     interactName: "stringParseAsInteger",
     function: (data: IntegratedValue): Integer => {
       try {
         return new Integer(data);
-      } catch(e) {
+      } catch (e) {
         return new Integer(0);
       }
-    }
+    },
   },
   parseLong: {
     internalName:
       "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.long",
     nicknames: [],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Any",
-          typeID: 1,
-        },
-        to: {
-          type: "Long",
-        },
+      type: "Function",
+      from: {
+        type: "Any",
+        typeID: 1,
       },
+      to: {
+        type: "Long",
+      },
+    },
     symbol: "parse_long",
     interactName: "stringParseAsLong",
     function: (data: IntegratedValue): Long => {
       try {
         return new Long(data);
-      } catch(e) {
+      } catch (e) {
         return new Long(0);
       }
-    }
+    },
   },
   parseNBT: {
     internalName:
       "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.nbt",
     nicknames: [],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
-          type: "NBT",
-        },
+      type: "Function",
+      from: {
+        type: "String",
       },
+      to: {
+        type: "NBT",
+      },
+    },
     symbol: "parse_nbt",
     interactName: "stringParseAsNbt",
     function: (data: string): CompoundTag => {
       return CompoundTag.fromJSON(data);
-    }
+    },
   },
   choice: {
     internalName: "integrateddynamics:general_choice",
     nicknames: ["generalChoice"],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Boolean",
+      },
+      to: {
         type: "Function",
         from: {
-          type: "Boolean",
+          type: "Any",
+          typeID: 1,
         },
         to: {
           type: "Function",
@@ -7119,190 +7291,184 @@ let operatorRegistryRawData: iOperatorRegistry = {
             typeID: 1,
           },
           to: {
-            type: "Function",
-            from: {
-              type: "Any",
-              typeID: 1,
-            },
-            to: {
-              type: "Any",
-              typeID: 1,
-            },
+            type: "Any",
+            typeID: 1,
           },
         },
       },
+    },
     symbol: "?",
     interactName: "booleanChoice",
     function: <T>(bool: boolean): TypeLambda<T, TypeLambda<T, T>> => {
       return (trueValue: T): TypeLambda<T, T> => {
         return (falseValue: T): T => {
           return bool ? trueValue : falseValue;
-        }
-      }
-    }
+        };
+      };
+    },
   },
   generalIdentity: {
     internalName: "integrateddynamics:general_identity",
     nicknames: [],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Any",
-          typeID: 1,
-        },
-        to: {
-          type: "Any",
-          typeID: 1,
-        },
+      type: "Function",
+      from: {
+        type: "Any",
+        typeID: 1,
       },
+      to: {
+        type: "Any",
+        typeID: 1,
+      },
+    },
     symbol: "id",
     interactName: "anyIdentity",
     function: (value: IntegratedValue): IntegratedValue => {
       return value;
-    }
+    },
   },
   generalConstant: {
     internalName: "integrateddynamics:general_constant",
     nicknames: [],
     parsedSignature: {
+      type: "Function",
+      from: {
+        type: "Any",
+        typeID: 1,
+      },
+      to: {
         type: "Function",
         from: {
           type: "Any",
-          typeID: 1,
+          typeID: 2,
         },
         to: {
-          type: "Function",
-          from: {
-            type: "Any",
-            typeID: 2,
-          },
-          to: {
-            type: "Any",
-            typeID: 1,
-          },
+          type: "Any",
+          typeID: 1,
         },
       },
+    },
     symbol: "K",
     interactName: "anyConstant",
     function: (value: IntegratedValue): TypeLambda<void, IntegratedValue> => {
       return () => {
         return value;
-      }
-    }
+      };
+    },
   },
   integerToDouble: {
     internalName:
       "integrateddynamics:operator.integrateddynamics.castintegrateddynamics_integer__integrateddynamics_double",
     nicknames: ["intToDouble", "integerDouble"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Integer",
-        },
-        to: {
-          type: "Double",
-        },
+      type: "Function",
+      from: {
+        type: "Integer",
       },
+      to: {
+        type: "Double",
+      },
+    },
     symbol: "()",
     interactName: "integerIntegerToDouble",
     function: (int: Integer): Promise<Double> => {
       return int.toDouble();
-    }
+    },
   },
   integerToLong: {
     internalName:
       "integrateddynamics:operator.integrateddynamics.castintegrateddynamics_integer__integrateddynamics_long",
     nicknames: ["intToLong", "integerLong"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Integer",
-        },
-        to: {
-          type: "Long",
-        },
+      type: "Function",
+      from: {
+        type: "Integer",
       },
+      to: {
+        type: "Long",
+      },
+    },
     symbol: "()",
     interactName: "integerIntegerToLong",
     function: (int: Integer): Promise<Long> => {
       return int.toLong();
-    }
+    },
   },
   doubleToInteger: {
     internalName:
       "integrateddynamics:operator.integrateddynamics.castintegrateddynamics_double__integrateddynamics_integer",
     nicknames: ["doubleToInt", "doubleInteger"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Double",
-        },
-        to: {
-          type: "Integer",
-        },
+      type: "Function",
+      from: {
+        type: "Double",
       },
+      to: {
+        type: "Integer",
+      },
+    },
     symbol: "()",
     interactName: "doubleDoubleToInteger",
     function: (double: Double): Promise<Integer> => {
       return double.toInteger();
-    }
+    },
   },
   doubleToLong: {
     internalName:
       "integrateddynamics:operator.integrateddynamics.castintegrateddynamics_double__integrateddynamics_long",
     nicknames: ["doubleToLong"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Double",
-        },
-        to: {
-          type: "Long",
-        },
+      type: "Function",
+      from: {
+        type: "Double",
       },
+      to: {
+        type: "Long",
+      },
+    },
     symbol: "()",
     interactName: "doubleDoubleToLong",
     function: (double: Double): Promise<Long> => {
       return double.toLong();
-    }
+    },
   },
   longToInteger: {
     internalName:
       "integrateddynamics:operator.integrateddynamics.castintegrateddynamics_long__integrateddynamics_integer",
     nicknames: ["longToInt", "longInteger"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Long",
-        },
-        to: {
-          type: "Integer",
-        },
+      type: "Function",
+      from: {
+        type: "Long",
       },
+      to: {
+        type: "Integer",
+      },
+    },
     symbol: "()",
     interactName: "longLongToInteger",
     function: (long: Long): Promise<Integer> => {
       return long.toInteger();
-    }
+    },
   },
   longToDouble: {
     internalName:
       "integrateddynamics:operator.integrateddynamics.castintegrateddynamics_long__integrateddynamics_double",
     nicknames: ["longToDouble", "longDouble"],
     parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Long",
-        },
-        to: {
-          type: "Double",
-        },
+      type: "Function",
+      from: {
+        type: "Long",
       },
+      to: {
+        type: "Double",
+      },
+    },
     symbol: "()",
     interactName: "longLongToDouble",
     function: (long: Long): Promise<Double> => {
       return long.toDouble();
-    }
+    },
   },
 } as const;
 
@@ -7310,3 +7476,4 @@ const operatorRegistry = new OperatorRegistry();
 for (const [k, v] of Object.entries(operatorRegistryRawData)) {
   operatorRegistry.register(k, v, globalMap);
 }
+export { operatorRegistry };

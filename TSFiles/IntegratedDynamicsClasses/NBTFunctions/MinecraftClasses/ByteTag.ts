@@ -2,36 +2,35 @@ import { NumericTag } from "./NumericTag";
 import { Tag } from "./Tag";
 
 export class ByteTag extends NumericTag {
+  protected data: Integer;
 
-	protected data: Integer;
-	
-	constructor(data: Integer) {
-		super();
-		this.data = data;
-	}
+  constructor(data: Integer) {
+    super();
+    this.data = data;
+  }
 
-	override getType(): number {
-		return Tag.TAG_BYTE;
-	}
-	
-	static override valueOf(value: Integer): ByteTag {
-		return new ByteTag(value);
-	}
+  override getType(): number {
+    return Tag.TAG_BYTE;
+  }
 
-	override valueOf(): Integer {
-		return this.data;
-	}
+  static override valueOf(value: Integer): ByteTag {
+    return new ByteTag(value);
+  }
 
-	getAsDouble(): number {
-		return parseInt(this.data.toDecimal());
-	}
+  override valueOf(): Integer {
+    return this.data;
+  }
 
-	override getTypeAsString(): string {
-		return "ByteTag";
-	}
+  getAsDouble(): number {
+    return parseInt(this.data.toDecimal());
+  }
 
-	equals(tag: Tag<IntegratedValue>) {
-		if (tag.getType() != Tag.TAG_BYTE) return false;
-		return (this.valueOf() == tag.valueOf());
-	}
+  override getTypeAsString(): string {
+    return "ByteTag";
+  }
+
+  equals(tag: Tag<IntegratedValue>) {
+    if (tag.getType() != Tag.TAG_BYTE) return false;
+    return this.valueOf() == tag.valueOf();
+  }
 }

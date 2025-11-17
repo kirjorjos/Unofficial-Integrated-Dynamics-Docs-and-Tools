@@ -3,7 +3,6 @@ import { Integer } from "JavaNumberClasses/Integer";
 import { Properties } from "./Properties";
 
 export class Block implements UniquelyNamed {
-
   static defaultProps = new Properties({
     opaque: true,
     // item: new Item(),
@@ -29,10 +28,12 @@ export class Block implements UniquelyNamed {
     let props = Block.defaultProps;
     props.setAll(newProps);
     if (oldBlock) props.setAll(oldBlock.getProperties());
-    Promise.all([import("./Item"), import("./Fluid")]).then((values => {
-      if (!props.has("item")) props.set("item", new values[0].Item(new Properties({})));
-      if (!props.has("fluid")) props.set("fluid", new values[1].Fluid(new Properties({})));
-    }))
+    Promise.all([import("./Item"), import("./Fluid")]).then((values) => {
+      if (!props.has("item"))
+        props.set("item", new values[0].Item(new Properties({})));
+      if (!props.has("fluid"))
+        props.set("fluid", new values[1].Fluid(new Properties({})));
+    });
     this.props = props;
   }
 

@@ -12,25 +12,25 @@ import { NbtPathExpressionExecutionContext } from "./parse/NBTPathExecutionConte
  * an NBT path expression against an NBT tag.
  */
 export class NbtPathExpressionMatches {
+  EMPTY = NbtPathExpressionMatches.forAll();
 
-    EMPTY = NbtPathExpressionMatches.forAll();
+  private matches: Array<NbtPathExpressionExecutionContext>;
 
-    private matches: Array<NbtPathExpressionExecutionContext>;
+  constructor(matches: Array<NbtPathExpressionExecutionContext>) {
+    this.matches = matches;
+  }
 
-    constructor(matches: Array<NbtPathExpressionExecutionContext>) {
-        this.matches = matches;
-    }
+  getContexts(): Array<NbtPathExpressionExecutionContext> {
+    return this.matches;
+  }
 
-    getContexts(): Array<NbtPathExpressionExecutionContext> {
-        return this.matches;
-    }
+  getMatches(): Array<Tag<IntegratedValue>> {
+    return this.getContexts().map((e) => e.getCurrentTag());
+  }
 
-    getMatches(): Array<Tag<IntegratedValue>> {
-        return this.getContexts().map(e => e.getCurrentTag());
-    }
-
-    static forAll(...nbts: NbtPathExpressionExecutionContext[]): NbtPathExpressionMatches {
-        return new NbtPathExpressionMatches(nbts);
-    }
-
+  static forAll(
+    ...nbts: NbtPathExpressionExecutionContext[]
+  ): NbtPathExpressionMatches {
+    return new NbtPathExpressionMatches(nbts);
+  }
 }

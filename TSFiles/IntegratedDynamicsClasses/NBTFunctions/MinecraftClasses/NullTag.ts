@@ -1,25 +1,23 @@
 import { Tag } from "./Tag";
 
 export class NullTag extends Tag<null> {
+  constructor() {
+    super();
+  }
 
-	constructor() {
-		super();
-	}
-	
-	override getType(): number {
-		return Tag.TAG_NULL;
-	}
+  override getType(): number {
+    return Tag.TAG_NULL;
+  }
 
-	override valueOf(): null {
-		return null;
-	}
+  override valueOf(): null {
+    return null;
+  }
 
-	override getTypeAsString(): string {
-		return "NullTag";
-	}
+  override getTypeAsString(): string {
+    return "NullTag";
+  }
 
-	override equals(tag: Tag<null>): boolean {
-		return tag.getType() == Tag.TAG_NULL;
-	}
-	
+  override equals(tag: Tag<null>): boolean {
+    return tag.getType() == Tag.TAG_NULL;
+  }
 }

@@ -1,16 +1,11 @@
 {
-  "include": [
-    "TSFiles/**/*.ts",
-    "TSFiles/**/*.d.ts"
-  ],
+  "include": ["TSFiles/**/*.ts", "TSFiles/**/*.d.ts"],
   "compilerOptions": {
     "outDir": "docs",
     "rootDir": "TSFiles",
     "baseUrl": ".",
     "paths": {
-      "*": [
-        "./TSFiles/*"
-      ]
+      "*": ["./TSFiles/*"]
     },
     "noEmit": false,
     "noEmitOnError": true,
@@ -23,14 +18,8 @@
     "module": "es2022",
     "target": "es2022",
     "moduleResolution": "bundler",
-    "lib": [
-      "es2022",
-      "dom"
-    ],
-    "typeRoots": [
-      "./TSFiles/types",
-      "./node_modules/@types"
-    ],
+    "lib": ["es2022", "dom"],
+    "typeRoots": ["./TSFiles/types", "./node_modules/@types"],
     "types": [],
     "skipLibCheck": true,
     "strict": true,

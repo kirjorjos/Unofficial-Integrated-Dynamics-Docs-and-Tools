@@ -10,16 +10,15 @@ import { INbtPathNavigation } from "./INbtPathNavigation";
  * A navigation leaf that matches with all keys.
  */
 export class NbtPathNavigationLeafWildcard implements INbtPathNavigation {
+  static INSTANCE = new NbtPathNavigationLeafWildcard();
 
-    static INSTANCE = new NbtPathNavigationLeafWildcard();
+  private constructor() {}
 
-    private constructor() { }
+  isLeafKey(_key: string): boolean {
+    return true;
+  }
 
-    isLeafKey(_key: string): boolean {
-        return true;
-    }
-
-    getNext(_key: string): INbtPathNavigation | undefined {
-        return undefined;
-    }
+  getNext(_key: string): INbtPathNavigation | undefined {
+    return undefined;
+  }
 }

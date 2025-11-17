@@ -1,21 +1,21 @@
 export abstract class Tag<T extends IntegratedValue> {
-	static TAG_LIST = 0;
-	static TAG_COMPOUND = 1;
-	static TAG_STRING = 2;
-	static TAG_NUMERIC = 3;
-	static TAG_BYTE = 4;
-	static TAG_DOUBLE = 5;
-	static TAG_NULL = 6;
-	static TAG_INT = 7;
-	static TAG_LONG = 7;
+  static TAG_LIST = 0;
+  static TAG_COMPOUND = 1;
+  static TAG_STRING = 2;
+  static TAG_NUMERIC = 3;
+  static TAG_BYTE = 4;
+  static TAG_DOUBLE = 5;
+  static TAG_NULL = 6;
+  static TAG_INT = 7;
+  static TAG_LONG = 7;
 
-	protected constructor() {}
+  protected constructor() {}
 
-	abstract getType(): number;
+  abstract getType(): number;
 
-	abstract valueOf(): T;
+  abstract valueOf(): T;
 
-	abstract equals(tag: Tag<T>): boolean;
+  abstract equals(tag: Tag<T>): boolean;
 
-	abstract getTypeAsString(): string
+  abstract getTypeAsString(): string;
 }

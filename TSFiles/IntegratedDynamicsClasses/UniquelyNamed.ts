@@ -1,3 +1,3 @@
 export interface UniquelyNamed {
-    getUniqueName(): string;
+  getUniqueName(): string;
 }

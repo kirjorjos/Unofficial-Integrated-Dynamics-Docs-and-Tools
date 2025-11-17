@@ -10,12 +10,11 @@ import { NbtPathExpressionParseHandlerBooleanRelationalAdapter } from "./NbtPath
  * A handler that handles boolean expressions in the form of " &le; 10".
  */
 export class NbtPathExpressionParseHandlerBooleanRelationalLessThanOrEqual extends NbtPathExpressionParseHandlerBooleanRelationalAdapter {
+  constructor() {
+    super("<=");
+  }
 
-    constructor() {
-        super("<=");
-    }
-
-    override getRelationalValue(left: number, right: number): boolean {
-        return left <= right;
-    }
+  override getRelationalValue(left: number, right: number): boolean {
+    return left <= right;
+  }
 }

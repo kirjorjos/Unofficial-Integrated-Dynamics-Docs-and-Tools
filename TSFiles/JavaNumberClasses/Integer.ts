@@ -2,10 +2,11 @@ import { IntLongMath } from "HelperClasses/IntLongMath";
 import { JavaMath } from "HelperClasses/Math";
 
 export class Integer implements NumberBase<Integer> {
-
   private bits!: TypeInt32;
 
-  constructor(data: TypeNumericString | TypeInt32 | TypeInt64 | TypeInt128 | number) {
+  constructor(
+    data: TypeNumericString | TypeInt32 | TypeInt64 | TypeInt128 | number
+  ) {
     if (!Array.isArray(data)) this.bits = this.initializeBits(data);
     if (Array.isArray(data)) this.bits = data.slice(-32) as TypeInt32;
   }
@@ -19,7 +20,7 @@ export class Integer implements NumberBase<Integer> {
   }
 
   getType(): "Integer" {
-    return "Integer"
+    return "Integer";
   }
 
   getOrder(): 0 {
@@ -32,19 +33,23 @@ export class Integer implements NumberBase<Integer> {
     const longBits = Array(32)
       .fill(sign as 0 | 1)
       .concat(this.bits) as TypeInt64;
-    return import("./Long").then(obj => {return new obj.Long(longBits)});
+    return import("./Long").then((obj) => {
+      return new obj.Long(longBits);
+    });
   }
 
   // Integer → Double
   toDouble(): Promise<Double> {
     const num = JavaMath.toDecimal(this.bits);
-    return import("./Double").then(obj => {return new obj.Double(num)});
+    return import("./Double").then((obj) => {
+      return new obj.Double(num);
+    });
   }
 
   toInteger(): Promise<Integer> {
-    return new Promise(resolve => 
+    return new Promise((resolve) =>
       resolve(new Integer(this.bits as TypeInt32))
-    )
+    );
   }
 
   toDecimal(): TypeNumericString {
@@ -52,7 +57,9 @@ export class Integer implements NumberBase<Integer> {
   }
 
   leftShift(num: Integer): Integer {
-    return new Integer(JavaMath.leftShift(this.bits, parseInt(num.toDecimal())))
+    return new Integer(
+      JavaMath.leftShift(this.bits, parseInt(num.toDecimal()))
+    );
   }
 
   add(num: Integer): Integer {
@@ -70,7 +77,7 @@ export class Integer implements NumberBase<Integer> {
   divide(num: Integer): Integer {
     return IntLongMath.divide(this, num);
   }
-  
+
   mod(num: Integer): Integer {
     return IntLongMath.mod(this, num);
   }
@@ -100,11 +107,11 @@ export class Integer implements NumberBase<Integer> {
   }
 
   async max(num: Integer): Promise<Integer> {
-    return ((await this.gt(num) ? this : num));
+    return (await this.gt(num)) ? this : num;
   }
 
   async min(num: Integer): Promise<Integer> {
-    return ((await this.lt(num) ? this : num));
+    return (await this.lt(num)) ? this : num;
   }
 
   async lt(num: Integer): Promise<boolean> {
@@ -124,7 +131,7 @@ export class Integer implements NumberBase<Integer> {
   }
 
   equals(num: Integer): boolean {
-    return (num.getBits().every((bit, i) => bit === this.bits[i]));
+    return num.getBits().every((bit, i) => bit === this.bits[i]);
   }
 
   round(): Promise<Integer> {

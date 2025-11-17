@@ -1,11 +1,11 @@
 export class iString {
-	str: string;
+  str: string;
 
-	constructor(str: string) {
-		this.str = str;
-	}
+  constructor(str: string) {
+    this.str = str;
+  }
 
-	valueOf(): string {
-		return this.str;
-	}
+  valueOf(): string {
+    return this.str;
+  }
 }

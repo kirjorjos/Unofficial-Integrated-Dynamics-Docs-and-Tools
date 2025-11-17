@@ -1,50 +1,50 @@
 import { Tag } from "./Tag";
 
 export class ListTag extends Tag<IntegratedValue> {
-	data: Tag<IntegratedValue>[];
+  data: Tag<IntegratedValue>[];
 
-	constructor(data: Tag<IntegratedValue>[]) {
-		super();
-		this.data = data;
-	}
-	
-	getType(): number {
-		return Tag.TAG_LIST;
-	}
-	
-	static override valueOf(value: Tag<IntegratedValue>[]): ListTag {
-		return new ListTag(value);
-	}
+  constructor(data: Tag<IntegratedValue>[]) {
+    super();
+    this.data = data;
+  }
 
-	valueOf(): Tag<IntegratedValue>[] {
-		return this.data;
-	}
+  getType(): number {
+    return Tag.TAG_LIST;
+  }
 
-	size(): number {
-		return this.data.length;
-	}
+  static override valueOf(value: Tag<IntegratedValue>[]): ListTag {
+    return new ListTag(value);
+  }
 
-	get(index: number): IntegratedValue {
-		return this.data[index];
-	}
+  valueOf(): Tag<IntegratedValue>[] {
+    return this.data;
+  }
 
-	getArray(): Tag<IntegratedValue>[] {
-		return [...this.data];
-	}
+  size(): number {
+    return this.data.length;
+  }
 
-	add(tag: Tag<IntegratedValue>) {
-		this.data.push(tag);
-	}
+  get(index: number): IntegratedValue {
+    return this.data[index];
+  }
 
-	override getTypeAsString(): string {
-		return "ListTag";
-	}
+  getArray(): Tag<IntegratedValue>[] {
+    return [...this.data];
+  }
 
-	equals(tag: Tag<IntegratedValue>): boolean {
-		if (tag.getType() != Tag.TAG_LIST) return false;
-		for (const [i, e] of Object.entries((tag as ListTag).getArray())) {
-			if (!e.equals(this.get(parseInt(i)))) return false;
-		}
-		return true;
-	}
+  add(tag: Tag<IntegratedValue>) {
+    this.data.push(tag);
+  }
+
+  override getTypeAsString(): string {
+    return "ListTag";
+  }
+
+  equals(tag: Tag<IntegratedValue>): boolean {
+    if (tag.getType() != Tag.TAG_LIST) return false;
+    for (const [i, e] of Object.entries((tag as ListTag).getArray())) {
+      if (!e.equals(this.get(parseInt(i)))) return false;
+    }
+    return true;
+  }
 }

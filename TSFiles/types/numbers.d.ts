@@ -1,12 +1,11 @@
-import type { Integer } from "JavaNumberClasses/Integer"
-import type { Long } from "JavaNumberClasses/Long"
-import type { Double } from "JavaNumberClasses/Double"
+import type { Integer } from "JavaNumberClasses/Integer";
+import type { Long } from "JavaNumberClasses/Long";
+import type { Double } from "JavaNumberClasses/Double";
 
 declare global {
-
-	type Integer = InstanceType<typeof Integer>
-	type Long = InstanceType<typeof Long>
-	type Double = InstanceType<typeof Double>
+  type Integer = InstanceType<typeof Integer>;
+  type Long = InstanceType<typeof Long>;
+  type Double = InstanceType<typeof Double>;
 
   interface NumberBase<Self extends NumberBase<Self>> {
     getType(): "Integer" | "Long" | "Double";
@@ -29,13 +28,10 @@ declare global {
     gte(num: Self): Promise<boolean>;
     lte(num: Self): Promise<boolean>;
     equals(num: Self): boolean;
-    round(): Promise<Integer>
-    ceil(): Promise<Integer>
-    floor(): Promise<Integer>
-	}
+    round(): Promise<Integer>;
+    ceil(): Promise<Integer>;
+    floor(): Promise<Integer>;
+  }
 
-  type TypeNumber =
-    | Integer
-    | Long
-    | Double;
+  type TypeNumber = Integer | Long | Double;
 }

@@ -1,8 +1,5 @@
 namespace TypeSNBTValue {
-  type GenericNBT =
-    | { string: GenericNBT }
-    | GenericNBT[]
-    | PrimitiveValue;
+  type GenericNBT = { string: GenericNBT } | GenericNBT[] | PrimitiveValue;
 
   type ProxyValueType =
     | "integrateddynamics:operator"

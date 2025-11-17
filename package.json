@@ -6,6 +6,7 @@
     "re2-wasm": "^1.0.2"
   },
   "devDependencies": {
+    "esbuild": "^0.27.0",
     "jest": "^30.0.5",
     "live-server": "^1.2.2",
     "nodemon": "^3.1.10",
@@ -15,7 +16,8 @@
   "scripts": {
     "test": "jest",
     "watch:test": "node tests/run-matching-tests.js",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "build": "esbuild TSFiles/index.ts --bundle --outfile=docs/index.js --platform=browser --loader:.wasm=file --external:fs --external:path"
   },
   "prettier": {
     "tabWidth": 2,

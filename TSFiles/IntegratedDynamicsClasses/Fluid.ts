@@ -4,7 +4,6 @@ import { Properties } from "./Properties";
 import { CompoundTag } from "./NBTFunctions/MinecraftClasses/CompoundTag";
 
 export class Fluid implements UniquelyNamed {
-
   static defaultProps = new Properties({
     uname: "",
     amount: new Integer(0),
@@ -26,15 +25,17 @@ export class Fluid implements UniquelyNamed {
   props: Properties;
 
   constructor(newProps: Properties, oldFluid?: Fluid) {
-      let props = Fluid.defaultProps;
-      props.setAll(newProps);
-      if (oldFluid) props.setAll(oldFluid.getProperties());
-      Promise.all([import("./Item"), import("./Fluid")]).then((values => {
-        if (!props.has("item")) props.set("item", new values[0].Item(new Properties({})));
-        if (!props.has("fluid")) props.set("fluid", new values[1].Fluid(new Properties({})));
-      }))
-      this.props = props;
-    }
+    let props = Fluid.defaultProps;
+    props.setAll(newProps);
+    if (oldFluid) props.setAll(oldFluid.getProperties());
+    Promise.all([import("./Item"), import("./Fluid")]).then((values) => {
+      if (!props.has("item"))
+        props.set("item", new values[0].Item(new Properties({})));
+      if (!props.has("fluid"))
+        props.set("fluid", new values[1].Fluid(new Properties({})));
+    });
+    this.props = props;
+  }
 
   getUniqueName(): string {
     return this.props.get("uname");

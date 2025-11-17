@@ -6,7 +6,10 @@
 
 import { INbtPathExpression } from "./INbtPathExpression";
 import { NbtPathExpressionList } from "./NbtPathExpressionList";
-import { HandleResult, INbtPathExpressionParseHandler } from "./parse/INbtPathExpressionParseHandler";
+import {
+  HandleResult,
+  INbtPathExpressionParseHandler,
+} from "./parse/INbtPathExpressionParseHandler";
 import { NbtPathExpressionParseHandlerAllChildren } from "./parse/NbtPathExpressionParseHandlerAllChildren";
 import { NbtPathExpressionParseHandlerBooleanRelationalEqual } from "./parse/NbtPathExpressionParseHandlerBooleanRelationalEqual";
 import { NbtPathExpressionParseHandlerBooleanRelationalGreaterThan } from "./parse/NbtPathExpressionParseHandlerBooleanRelationalGreaterThan";
@@ -26,56 +29,59 @@ import { NbtPathExpressionParseHandlerStringEqual } from "./parse/NbtPathExpress
 import { NbtPathExpressionParseHandlerUnion } from "./parse/NBTPathExpressionParseHandlerUnion";
 
 export class NbtPath {
+  private static PARSE_HANDLERS: Array<INbtPathExpressionParseHandler> = [
+    new NbtPathExpressionParseHandlerRoot(),
+    new NbtPathExpressionParseHandlerLength(),
+    new NbtPathExpressionParseHandlerChild(),
+    new NbtPathExpressionParseHandlerChildBrackets(),
+    new NbtPathExpressionParseHandlerParent(),
+    new NbtPathExpressionParseHandlerAllChildren(),
+    new NbtPathExpressionParseHandlerCurrent(),
+    new NbtPathExpressionParseHandlerListElement(),
+    new NbtPathExpressionParseHandlerListSlice(),
+    new NbtPathExpressionParseHandlerUnion(),
+    new NbtPathExpressionParseHandlerBooleanRelationalLessThan(),
+    new NbtPathExpressionParseHandlerBooleanRelationalLessThanOrEqual(),
+    new NbtPathExpressionParseHandlerBooleanRelationalGreaterThan(),
+    new NbtPathExpressionParseHandlerBooleanRelationalGreaterThanOrEqual(),
+    new NbtPathExpressionParseHandlerBooleanRelationalEqual(),
+    new NbtPathExpressionParseHandlerStringEqual(),
+    new NbtPathExpressionParseHandlerFilterExpression(),
+  ];
 
-    private static PARSE_HANDLERS: Array<INbtPathExpressionParseHandler> = [
-            new NbtPathExpressionParseHandlerRoot(),
-            new NbtPathExpressionParseHandlerLength(),
-            new NbtPathExpressionParseHandlerChild(),
-            new NbtPathExpressionParseHandlerChildBrackets(),
-            new NbtPathExpressionParseHandlerParent(),
-            new NbtPathExpressionParseHandlerAllChildren(),
-            new NbtPathExpressionParseHandlerCurrent(),
-            new NbtPathExpressionParseHandlerListElement(),
-            new NbtPathExpressionParseHandlerListSlice(),
-            new NbtPathExpressionParseHandlerUnion(),
-            new NbtPathExpressionParseHandlerBooleanRelationalLessThan(),
-            new NbtPathExpressionParseHandlerBooleanRelationalLessThanOrEqual(),
-            new NbtPathExpressionParseHandlerBooleanRelationalGreaterThan(),
-            new NbtPathExpressionParseHandlerBooleanRelationalGreaterThanOrEqual(),
-            new NbtPathExpressionParseHandlerBooleanRelationalEqual(),
-            new NbtPathExpressionParseHandlerStringEqual(),
-            new NbtPathExpressionParseHandlerFilterExpression()
-    ];
+  /**
+   * Parse an NBT path expression string into an in-memory representation.
+   * @param nbtPathExpression An NBT path expression string
+   * @return An in-memory representation of the given expression.
+   * @throws NbtParseException An exception that can be thrown if parsing failed.
+   */
+  static parse(nbtPathExpression: string): INbtPathExpression | undefined {
+    let expressions = [] as Array<INbtPathExpression>;
 
-    /**
-     * Parse an NBT path expression string into an in-memory representation.
-     * @param nbtPathExpression An NBT path expression string
-     * @return An in-memory representation of the given expression.
-     * @throws NbtParseException An exception that can be thrown if parsing failed.
-     */
-    static parse(nbtPathExpression: string): INbtPathExpression | undefined {
-        let expressions = [] as Array<INbtPathExpression>;
-
-        let pos = 0;
-        while (pos < nbtPathExpression.length) {
-            let handled = false;
-            for (const parseHandler of NbtPath.PARSE_HANDLERS) {
-                let handleResult = parseHandler.handlePrefixOf(nbtPathExpression, pos) as HandleResult;
-                if (handleResult.isValid()) {
-                    pos += handleResult.getConsumedExpressionLength();
-                    expressions.push(handleResult.getPrefixExpression()!);
-                    handled = true;
-                    break;
-                }
-            }
-
-            if (!handled) {
-                throw new Error(`Failed to parse expression at pos '${pos}': ${nbtPathExpression}`)
-            }
-
-            return new NbtPathExpressionList(...expressions);
+    let pos = 0;
+    while (pos < nbtPathExpression.length) {
+      let handled = false;
+      for (const parseHandler of NbtPath.PARSE_HANDLERS) {
+        let handleResult = parseHandler.handlePrefixOf(
+          nbtPathExpression,
+          pos
+        ) as HandleResult;
+        if (handleResult.isValid()) {
+          pos += handleResult.getConsumedExpressionLength();
+          expressions.push(handleResult.getPrefixExpression()!);
+          handled = true;
+          break;
         }
-        return undefined;
-	}
+      }
 
+      if (!handled) {
+        throw new Error(
+          `Failed to parse expression at pos '${pos}': ${nbtPathExpression}`
+        );
+      }
+
+      return new NbtPathExpressionList(...expressions);
+    }
+    return undefined;
+  }
 }

@@ -24,7 +24,7 @@ export class Operator extends Function {
     nicknames: string[];
     symbol: string;
     interactName: string;
-    parsedSignature: ParsedSignature
+    parsedSignature: ParsedSignature;
     function: TypeLambda<any, any>;
     serializer?: string;
   }) {
@@ -52,9 +52,9 @@ export class Operator extends Function {
     const parsedSignature = this.parsedSignature.apply(arg);
     const newFn = (...rest: any[]) => this.fn(arg, ...rest);
 
-  if (this.parsedSignature.getArity() === 1) {
-    return this.fn(arg);
-  }
+    if (this.parsedSignature.getArity() === 1) {
+      return this.fn(arg);
+    }
 
     return new Operator({
       internalName: this.internalName,

@@ -10,12 +10,11 @@ import { NbtPathExpressionParseHandlerBooleanRelationalAdapter } from "./NbtPath
  * A handler that handles boolean expressions in the form of " == 10".
  */
 export class NbtPathExpressionParseHandlerBooleanRelationalEqual extends NbtPathExpressionParseHandlerBooleanRelationalAdapter {
+  public constructor() {
+    super("==");
+  }
 
-    public constructor() {
-        super("==");
-    }
-
-    public getRelationalValue(left: number, right: number): boolean {
-        return left == right;
-    }
+  public getRelationalValue(left: number, right: number): boolean {
+    return left == right;
+  }
 }

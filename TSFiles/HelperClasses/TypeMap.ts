@@ -30,19 +30,14 @@ export class TypeMap {
     return typeID;
   }
 
-  async unify(
-    a: IntegratedValue,
-    b: IntegratedValue
-  ): Promise<void> {
-
+  async unify(a: IntegratedValue, b: IntegratedValue): Promise<void> {
     const { Operator } = await import("../IntegratedDynamicsClasses/Operator");
 
     if (typeof a === "boolean" || typeof b === "boolean") {
       return;
-    };
+    }
 
     if (!(a instanceof Operator && b instanceof Operator)) {
-        
       if (a.type === "Any" && b.type === "Any") {
         this.aliases.set(this.find(a.typeID), this.find(b.typeID));
         return;

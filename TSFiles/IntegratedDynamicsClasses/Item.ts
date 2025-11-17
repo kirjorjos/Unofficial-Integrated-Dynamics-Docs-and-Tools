@@ -4,9 +4,8 @@ import { Properties } from "./Properties";
 import { CompoundTag } from "./NBTFunctions/MinecraftClasses/CompoundTag";
 
 export class Item implements UniquelyNamed {
-  
   props: Properties;
-  
+
   static defaultProps = new Properties({
     size: new Integer(1),
     maxSize: new Integer(64),
@@ -36,15 +35,17 @@ export class Item implements UniquelyNamed {
   });
 
   constructor(newProps: Properties, oldItem?: Item) {
-        let props = Item.defaultProps;
-        props.setAll(newProps);
-        if (oldItem) props.setAll(oldItem.getProperties());
-        Promise.all([import("./Block"), import("./Fluid")]).then((values => {
-          if (!props.has("block")) props.set("block", new values[0].Block(new Properties({})));
-          if (!props.has("fluid")) props.set("fluid", new values[1].Fluid(new Properties({})));
-        }))
-        this.props = props;
-      }
+    let props = Item.defaultProps;
+    props.setAll(newProps);
+    if (oldItem) props.setAll(oldItem.getProperties());
+    Promise.all([import("./Block"), import("./Fluid")]).then((values) => {
+      if (!props.has("block"))
+        props.set("block", new values[0].Block(new Properties({})));
+      if (!props.has("fluid"))
+        props.set("fluid", new values[1].Fluid(new Properties({})));
+    });
+    this.props = props;
+  }
 
   getSize(): Integer {
     return this.props.get("size");

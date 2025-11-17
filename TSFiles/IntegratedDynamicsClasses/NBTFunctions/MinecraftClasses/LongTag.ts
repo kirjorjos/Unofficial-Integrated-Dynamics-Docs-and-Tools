@@ -2,36 +2,35 @@ import { NumericTag } from "./NumericTag";
 import { Tag } from "./Tag";
 
 export class LongTag extends NumericTag {
+  protected data: Long;
 
-		protected data: Long;
-		
-		constructor(data: Long) {
-				super();
-				this.data = data;
-		}
+  constructor(data: Long) {
+    super();
+    this.data = data;
+  }
 
-		override getType(): number {
-				return Tag.TAG_BYTE;
-		}
-		
-		static override valueOf(value: Long): LongTag {
-				return new LongTag(value);
-		}
+  override getType(): number {
+    return Tag.TAG_BYTE;
+  }
 
-		override valueOf(): Long {
-				return this.data;
-		}
+  static override valueOf(value: Long): LongTag {
+    return new LongTag(value);
+  }
 
-		getAsDouble(): number {
-				return parseInt(this.data.toDecimal());
-		}
+  override valueOf(): Long {
+    return this.data;
+  }
 
-		getTypeAsString(): string {
-				return "LongTag";
-		}
+  getAsDouble(): number {
+    return parseInt(this.data.toDecimal());
+  }
 
-		equals(tag: Tag<IntegratedValue>) {
-				if (tag.getType() != Tag.TAG_BYTE) return false;
-				return (this.valueOf() == tag.valueOf());
-		}
+  getTypeAsString(): string {
+    return "LongTag";
+  }
+
+  equals(tag: Tag<IntegratedValue>) {
+    if (tag.getType() != Tag.TAG_BYTE) return false;
+    return this.valueOf() == tag.valueOf();
+  }
 }
