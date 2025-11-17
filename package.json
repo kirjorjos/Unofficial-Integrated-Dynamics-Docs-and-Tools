@@ -17,7 +17,8 @@
     "test": "jest",
     "watch:test": "node tests/run-matching-tests.js",
     "format": "prettier --write .",
-    "build": "esbuild TSFiles/index.ts --bundle --outfile=docs/index.js --platform=browser --loader:.wasm=file --external:fs --external:path"
+    "bundle": "esbuild TSFiles/index.ts --bundle --outfile=docs/index.js --platform=browser --loader:.wasm=file --external:fs --external:path",
+    "build": "npm run bundle && npm run format"
   },
   "prettier": {
     "tabWidth": 2,
