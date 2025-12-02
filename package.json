@@ -6,6 +6,7 @@
     "re2-wasm": "^1.0.2"
   },
   "devDependencies": {
+    "@types/jest": "^30.0.0",
     "esbuild": "^0.27.0",
     "jest": "^30.0.5",
     "live-server": "^1.2.2",
@@ -14,11 +15,12 @@
     "typescript": "^5.9.3"
   },
   "scripts": {
-    "test": "jest",
-    "watch:test": "node tests/run-matching-tests.js",
+    "test:build": "",
+    "test:run": "jest",
+    "test": "npm run test:build && npm run test:run",
     "format": "prettier --write .",
     "bundle": "esbuild TSFiles/index.ts --bundle --outfile=docs/index.js --platform=browser --loader:.wasm=file --external:fs --external:path",
-    "build": "npm run bundle && npm run format"
+    "build": "npm run bundle && npm run format && npm run test"
   },
   "prettier": {
     "tabWidth": 2,
