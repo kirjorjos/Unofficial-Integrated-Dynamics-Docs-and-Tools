@@ -1,4 +1,6 @@
+import { IntegratedValue } from "IntegratedDynamicsClasses/operators/Operator";
 import { Tag } from "./Tag";
+import { NullTag } from "./NullTag";
 
 export class ListTag extends Tag<IntegratedValue> {
   data: Tag<IntegratedValue>[];
@@ -24,8 +26,8 @@ export class ListTag extends Tag<IntegratedValue> {
     return this.data.length;
   }
 
-  get(index: number): IntegratedValue {
-    return this.data[index];
+  get(index: number): Tag<IntegratedValue> {
+    return this.data[index] ?? new NullTag;
   }
 
   getArray(): Tag<IntegratedValue>[] {

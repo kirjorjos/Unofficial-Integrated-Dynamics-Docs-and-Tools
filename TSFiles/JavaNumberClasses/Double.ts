@@ -1,9 +1,11 @@
+import { IntegratedValue } from "IntegratedDynamicsClasses/operators/Operator";
 import { Integer } from "./Integer";
 
 export class Double implements NumberBase<Double> {
   value: number;
 
-  constructor(decimal: TypeNumericString | number) {
+  constructor(decimal: TypeNumericString | number | Double) {
+    if (decimal instanceof Double) decimal = decimal.toDecimal();
     if (typeof decimal === "number") {
       this.value = decimal;
     } else {
@@ -122,7 +124,8 @@ export class Double implements NumberBase<Double> {
     return this.value >= parseInt(num.toDecimal());
   }
 
-  equals(num: Double): boolean {
+  equals(num: IntegratedValue): boolean {
+    if (!(num instanceof Double)) return false;
     return `${this.value}` === num.toDecimal();
   }
 
@@ -136,5 +139,9 @@ export class Double implements NumberBase<Double> {
 
   async floor(): Promise<Integer> {
     return new Integer(Math.floor(this.value));
+  }
+
+  getSignatureNode(): { type: "Double" } {
+    return { type: "Double"};
   }
 }

@@ -31,6 +31,7 @@ declare global {
     round(): Promise<Integer>;
     ceil(): Promise<Integer>;
     floor(): Promise<Integer>;
+    getSignatureNode(): { type: "Integer" | "Long" | "Double" }
   }
 
   type TypeNumber = Integer | Long | Double;

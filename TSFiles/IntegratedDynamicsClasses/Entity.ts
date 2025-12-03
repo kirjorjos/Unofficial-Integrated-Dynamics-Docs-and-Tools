@@ -3,41 +3,42 @@ import { Integer } from "../JavaNumberClasses/Integer";
 import { Double } from "../JavaNumberClasses/Double";
 import { Properties } from "./Properties";
 import { CompoundTag } from "./NBTFunctions/MinecraftClasses/CompoundTag";
+import { iBoolean } from "./typeWrappers/iBoolean";
 
 export class Entity implements UniquelyNamed {
   static defaultProps = new Properties({
     uname: "",
-    mob: false,
-    animal: false,
-    player: false,
-    minecart: false,
-    isItem: false,
+    mob: new iBoolean(false),
+    animal: new iBoolean(false),
+    player: new iBoolean(false),
+    minecart: new iBoolean(false),
+    isItem: new iBoolean(false),
     health: new Integer(0),
     width: new Integer(0),
     height: new Integer(0),
-    burning: false,
-    wet: false,
-    crouching: false,
-    eating: false,
+    burning: new iBoolean(false),
+    wet: new iBoolean(false),
+    crouching: new iBoolean(false),
+    eating: new iBoolean(false),
     armorInventory: [] as Array<Item>,
     inventory: [] as Array<Item>,
     modName: "",
     // targetBlock: new Block(),
     targetEntity: new Entity(new Properties({})),
-    guiOpen: false,
+    guiOpen: new iBoolean(false),
     // heldItemMain: new Item(),
     // heldItemOffHand: new Item(),
-    entityMounted: false,
-    itemFrame: false,
+    entityMounted: new iBoolean(false),
+    itemFrame: new iBoolean(false),
     // itemFrameContents: new Item(),
     itemFrameRotation: new Integer(0),
     hurtSound: "",
     deathSound: "",
     age: new Integer(0),
-    child: false,
-    breedable: false,
-    inLove: false,
-    shearable: false,
+    child: new iBoolean(false),
+    breedable: new iBoolean(false),
+    inLove: new iBoolean(false),
+    shearable: new iBoolean(false),
     breedableList: [] as Array<string>,
     NBT: null,
     entityType: "",
@@ -70,23 +71,23 @@ export class Entity implements UniquelyNamed {
     return this.props.get("uname");
   }
 
-  isMob(): boolean {
+  isMob(): iBoolean {
     return this.props.get("mob");
   }
 
-  isAnimal(): boolean {
+  isAnimal(): iBoolean {
     return this.props.get("animal");
   }
 
-  isItem(): boolean {
-    return !this.props.get("isItem");
+  isItem(): iBoolean {
+    return new iBoolean(!this.props.get("isItem").valueOf());
   }
 
-  isPlayer(): boolean {
+  isPlayer(): iBoolean {
     return this.props.get("player");
   }
 
-  isMinecart(): boolean {
+  isMinecart(): iBoolean {
     return this.props.get("minecart");
   }
 
@@ -106,19 +107,19 @@ export class Entity implements UniquelyNamed {
     return new Double(this.props.get("height").toDecimal());
   }
 
-  isBurning(): boolean {
+  isBurning(): iBoolean {
     return this.props.get("burning");
   }
 
-  isWet(): boolean {
+  isWet(): iBoolean {
     return this.props.get("wet");
   }
 
-  isCrouching(): boolean {
+  isCrouching(): iBoolean {
     return this.props.get("crouching");
   }
 
-  isEating(): boolean {
+  isEating(): iBoolean {
     return this.props.get("eating");
   }
 
@@ -142,7 +143,7 @@ export class Entity implements UniquelyNamed {
     return this.props.get("targetEntity");
   }
 
-  hasGuiOpen(): boolean {
+  hasGuiOpen(): iBoolean {
     return this.props.get("guiOpen");
   }
 
@@ -154,11 +155,11 @@ export class Entity implements UniquelyNamed {
     return this.props.get("heldItemOffHand");
   }
 
-  isEntityMounted(): boolean {
+  isEntityMounted(): iBoolean {
     return this.props.get("entityMounted");
   }
 
-  isItemFrame(): boolean {
+  isItemFrame(): iBoolean {
     return this.props.get("itemFrame");
   }
 
@@ -182,19 +183,19 @@ export class Entity implements UniquelyNamed {
     return this.props.get("age");
   }
 
-  isChild(): boolean {
+  isChild(): iBoolean {
     return this.props.get("child");
   }
 
-  canBreed(): boolean {
+  canBreed(): iBoolean {
     return this.props.get("breedable");
   }
 
-  isInLove(): boolean {
+  isInLove(): iBoolean {
     return this.props.get("inLove");
   }
 
-  isShearable(): boolean {
+  isShearable(): iBoolean {
     return this.props.get("shearable");
   }
 

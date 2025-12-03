@@ -1,6 +1,7 @@
+import { iNull } from "IntegratedDynamicsClasses/typeWrappers/iNull";
 import { Tag } from "./Tag";
 
-export class NullTag extends Tag<null> {
+export class NullTag extends Tag<iNull> {
   constructor() {
     super();
   }
@@ -9,15 +10,15 @@ export class NullTag extends Tag<null> {
     return Tag.TAG_NULL;
   }
 
-  override valueOf(): null {
-    return null;
+  override valueOf(): iNull {
+    return new iNull();
   }
 
   override getTypeAsString(): string {
     return "NullTag";
   }
 
-  override equals(tag: Tag<null>): boolean {
+  override equals(tag: Tag<iNull>): boolean {
     return tag.getType() == Tag.TAG_NULL;
   }
 }

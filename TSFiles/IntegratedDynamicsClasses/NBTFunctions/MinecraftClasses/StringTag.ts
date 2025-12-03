@@ -1,9 +1,10 @@
+import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 import { Tag } from "./Tag";
 
-export class StringTag extends Tag<string> {
-  protected data: string;
+export class StringTag extends Tag<iString> {
+  protected data: iString;
 
-  constructor(data: string) {
+  constructor(data: iString) {
     super();
     this.data = data;
   }
@@ -12,7 +13,7 @@ export class StringTag extends Tag<string> {
     return Tag.TAG_STRING;
   }
 
-  valueOf(): string {
+  valueOf(): iString {
     return this.data;
   }
 

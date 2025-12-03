@@ -2,6 +2,7 @@ import { UniquelyNamed } from "./UniquelyNamed";
 import { Integer } from "../JavaNumberClasses/Integer";
 import { Properties } from "./Properties";
 import { CompoundTag } from "./NBTFunctions/MinecraftClasses/CompoundTag";
+import { iBoolean } from "./typeWrappers/iBoolean";
 
 export class Fluid implements UniquelyNamed {
   static defaultProps = new Properties({
@@ -12,7 +13,7 @@ export class Fluid implements UniquelyNamed {
     density: new Integer(0),
     temperature: new Integer(0),
     viscosity: new Integer(0),
-    lighterThanAir: false,
+    lighterThanAir: new iBoolean(false),
     rarity: "",
     bucketEmptySound: "",
     fluidVaporizeSound: "",
@@ -65,7 +66,7 @@ export class Fluid implements UniquelyNamed {
     return this.props.get("viscosity");
   }
 
-  getLighterThanAir(): boolean {
+  isLighterThanAir(): iBoolean {
     return this.props.get("lighterThanAir");
   }
 

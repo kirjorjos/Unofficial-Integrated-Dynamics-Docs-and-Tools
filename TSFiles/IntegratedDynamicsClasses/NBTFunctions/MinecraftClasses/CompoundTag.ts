@@ -7,6 +7,8 @@ import { Long } from "JavaNumberClasses/Long";
 import { LongTag } from "./LongTag";
 import { Double } from "JavaNumberClasses/Double";
 import { DoubleTag } from "./DoubleTag";
+import { IntegratedValue } from "IntegratedDynamicsClasses/operators/Operator";
+import { NullTag } from "./NullTag";
 
 export class CompoundTag extends Tag<IntegratedValue> {
   data: Record<string, Tag<IntegratedValue>>;
@@ -35,14 +37,14 @@ export class CompoundTag extends Tag<IntegratedValue> {
   }
 
   get(key: string): Tag<IntegratedValue> {
-    return this.data[key]!;
+    return this.data[key] ?? new NullTag();
   }
 
   has(key: string): boolean {
     return key in this.data;
   }
 
-  set(key: string, value: IntegratedValue) {
+  set(key: string, value: Tag<IntegratedValue>) {
     let data = { ...this.data };
     data[key] = value;
     return new CompoundTag(data);
@@ -56,7 +58,7 @@ export class CompoundTag extends Tag<IntegratedValue> {
     let data = { ...this.data };
     for (let i = 0; i < keys.length; i++) {
       let key = keys[i] as string;
-      let value = values[i] as IntegratedValue;
+      let value = values[i] as Tag<IntegratedValue>;
       data[key] = value;
     }
     return new CompoundTag(data);
@@ -91,13 +93,13 @@ export class CompoundTag extends Tag<IntegratedValue> {
 
     for (const [key, value] of Object.entries(this.data)) {
       if (!(value instanceof CompoundTag || value instanceof ListTag)) {
-        let innerValue = value.valueOf();
+        let innerValue = value.valueOf() as IntegratedValue;
         findBase: while (
           innerValue instanceof Object &&
           innerValue.constructor.name != "Object"
         ) {
           if (!("toJSON" in innerValue)) break findBase;
-          innerValue = (innerValue["toJSON"] as Function)();
+          innerValue = ((innerValue)["toJSON"] as Function)();
         }
         obj[key] = innerValue;
       } else if (value instanceof CompoundTag) obj[key] = value.toJSON();
@@ -224,7 +226,7 @@ export class CompoundTag extends Tag<IntegratedValue> {
     const result: Record<string, Tag<IntegratedValue>> = {};
 
     for (const key of this.getAllKeys()) {
-      const thisValue = this.get(key);
+      const thisValue = this.get(key)!;
       const otherValue = other.get(key);
 
       if (
@@ -233,7 +235,7 @@ export class CompoundTag extends Tag<IntegratedValue> {
       ) {
         const sub = thisValue.compoundIntersection(otherValue);
         if (sub.getAllKeys().length > 0) result[key] = sub;
-      } else if (thisValue.equals(otherValue)) {
+      } else if (thisValue.equals(otherValue ?? new CompoundTag({}))) {
         result[key] = thisValue;
       }
     }
@@ -245,7 +247,7 @@ export class CompoundTag extends Tag<IntegratedValue> {
     const result: Record<string, any> = {};
 
     for (const key of this.getAllKeys()) {
-      const thisValue = this.get(key);
+      const thisValue = this.get(key)!;
       const otherValue = other.get(key);
 
       if (
@@ -254,7 +256,7 @@ export class CompoundTag extends Tag<IntegratedValue> {
       ) {
         const sub = thisValue.compoundMinus(otherValue);
         if (sub.getAllKeys().length > 0) result[key] = sub;
-      } else if (!thisValue.equals(otherValue)) {
+      } else if (!thisValue.equals(otherValue ?? new CompoundTag({}))) {
         result[key] = thisValue;
       }
     }

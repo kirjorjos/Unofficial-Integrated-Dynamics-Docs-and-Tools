@@ -1,22 +1,23 @@
 import { UniquelyNamed } from "./UniquelyNamed";
 import { Integer } from "JavaNumberClasses/Integer";
 import { Properties } from "./Properties";
+import { iBoolean } from "./typeWrappers/iBoolean";
 
 export class Block implements UniquelyNamed {
   static defaultProps = new Properties({
-    opaque: true,
+    opaque: new iBoolean(true),
     // item: new Item(),
     modName: "",
     breakSound: "",
     placeSound: "",
     stepSound: "",
-    shearable: false,
+    shearable: new iBoolean(false),
     plantAge: new Integer(-1),
     // fluid: new Fluid(),
     fluidCapacity: new Integer(0),
     uname: "",
     tagNames: [] as Array<string>,
-    feContainer: false,
+    feContainer: new iBoolean(false),
     feCapacity: new Integer(0),
     feStored: new Integer(0),
     inventory: null as Array<Item> | null,
@@ -37,7 +38,7 @@ export class Block implements UniquelyNamed {
     this.props = props;
   }
 
-  isOpaque(): boolean {
+  isOpaque(): iBoolean {
     return this.props.get("opaque");
   }
 
@@ -61,7 +62,7 @@ export class Block implements UniquelyNamed {
     return this.props.get("stepSound");
   }
 
-  isShearable(): boolean {
+  isShearable(): iBoolean {
     return this.props.get("shearable");
   }
 
@@ -89,7 +90,7 @@ export class Block implements UniquelyNamed {
     return this.props.get("tagNames");
   }
 
-  isFeContainer(): boolean {
+  isFeContainer(): iBoolean {
     return this.props.get("feContainer");
   }
 

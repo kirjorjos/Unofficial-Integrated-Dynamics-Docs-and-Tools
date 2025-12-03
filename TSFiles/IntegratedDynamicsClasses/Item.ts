@@ -2,6 +2,8 @@ import { Integer } from "JavaNumberClasses/Integer";
 import { UniquelyNamed } from "./UniquelyNamed";
 import { Properties } from "./Properties";
 import { CompoundTag } from "./NBTFunctions/MinecraftClasses/CompoundTag";
+import { iBoolean } from "./typeWrappers/iBoolean";
+import { IntegratedValue } from "./operators/Operator";
 
 export class Item implements UniquelyNamed {
   props: Properties;
@@ -9,12 +11,12 @@ export class Item implements UniquelyNamed {
   static defaultProps = new Properties({
     size: new Integer(1),
     maxSize: new Integer(64),
-    stackable: true,
-    damageable: false,
+    stackable: new iBoolean(true),
+    damageable: new iBoolean(false),
     damage: new Integer(0),
     maxDamage: new Integer(0),
-    enchanted: false,
-    enchantable: false,
+    enchanted: new iBoolean(false),
+    enchantable: new iBoolean(false),
     repairCost: new Integer(0),
     rarity: "",
     // fluid: new Fluid(),
@@ -23,9 +25,9 @@ export class Item implements UniquelyNamed {
     uname: "",
     modName: "",
     fuelBurnTime: new Integer(0),
-    fuel: false,
+    fuel: new iBoolean(false),
     tagNames: [] as Array<string>,
-    feContainer: false,
+    feContainer: new iBoolean(false),
     feStored: new Integer(0),
     feCapacity: new Integer(0),
     inventory: [] as Array<IntegratedValue>,
@@ -55,11 +57,11 @@ export class Item implements UniquelyNamed {
     return this.props.get("maxSize");
   }
 
-  isStackable(): boolean {
+  isStackable(): iBoolean {
     return this.props.get("stackable");
   }
 
-  isDamageable(): boolean {
+  isDamageable(): iBoolean {
     return this.props.get("damageable");
   }
 
@@ -71,11 +73,11 @@ export class Item implements UniquelyNamed {
     return this.props.get("maxDamage");
   }
 
-  isEnchanted(): boolean {
+  isEnchanted(): iBoolean {
     return this.props.get("enchanted");
   }
 
-  isEnchantable(): boolean {
+  isEnchantable(): iBoolean {
     return this.props.get("enchantable");
   }
 
@@ -111,7 +113,7 @@ export class Item implements UniquelyNamed {
     return this.props.get("fuelBurnTime");
   }
 
-  isFuel(): boolean {
+  isFuel(): iBoolean {
     return this.props.get("fuel");
   }
 
@@ -119,7 +121,7 @@ export class Item implements UniquelyNamed {
     return this.props.get("tagNames");
   }
 
-  isFeContainer(): boolean {
+  isFeContainer(): iBoolean {
     return this.props.get("feContainer");
   }
 
@@ -135,7 +137,7 @@ export class Item implements UniquelyNamed {
     return this.props.get("inventory") || [];
   }
 
-  getTooltip(): Array<string> {
+  getTooltip(_player?: Entity): Array<string> {
     return this.props.get("tooltip");
   }
 
@@ -157,7 +159,7 @@ export class Item implements UniquelyNamed {
     throw new Error("getStrengthVsBlock method not implemented");
   }
 
-  canHarvestBlock() {
+  canHarvestBlock(_block: Block) {
     throw new Error("canHarvestBlock method not implemented");
   }
 

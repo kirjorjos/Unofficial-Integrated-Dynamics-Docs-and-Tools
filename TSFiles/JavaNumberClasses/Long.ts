@@ -1,10 +1,12 @@
 import { IntLongMath } from "HelperClasses/IntLongMath";
 import { JavaMath } from "HelperClasses/Math";
+import { IntegratedValue } from "IntegratedDynamicsClasses/operators/Operator";
 
 export class Long implements NumberBase<Long> {
   private bits!: TypeInt64;
 
-  constructor(data: TypeNumericString | TypeInt64 | TypeInt128 | number) {
+  constructor(data: TypeNumericString | TypeInt64 | TypeInt128 | number | Long) {
+    if (data instanceof Long) data = data.bits;
     if (!Array.isArray(data)) this.bits = this.initializeBits(data);
     if (Array.isArray(data)) this.bits = data.slice(-64) as TypeInt64;
   }
@@ -97,7 +99,8 @@ export class Long implements NumberBase<Long> {
     return IntLongMath.gte(this, num);
   }
 
-  equals(num: Long): boolean {
+  equals(num: IntegratedValue): boolean {
+    if (!(num instanceof Long)) return false;
     return num.getBits().every((bit, i) => bit === this.bits[i]);
   }
 
@@ -111,5 +114,9 @@ export class Long implements NumberBase<Long> {
 
   floor(): Promise<Integer> {
     return this.toInteger();
+  }
+
+  getSignatureNode(): { type: "Long" } {
+    return { type: "Long"};
   }
 }

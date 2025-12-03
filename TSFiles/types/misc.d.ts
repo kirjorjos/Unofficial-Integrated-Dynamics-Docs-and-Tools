@@ -2,7 +2,8 @@ import type { operatorRegistry } from "./operatorRegistry";
 import type { Block as BlockType } from "IntegratedDynamicsClasses/Block";
 import type { Item as ItemType } from "IntegratedDynamicsClasses/Item";
 import type { Fluid as FluidType } from "IntegratedDynamicsClasses/Fluid";
-import type { iOperatorRegistry } from "HelperClasses/iOperatorRegistry";
+import type { Entity as EntityType } from "IntegratedDynamicsClasses/Entity"
+import type { iOperatorRegistry } from "IntegratedDynamicsClasses/operators/iOperatorRegistry";
 
 declare global {
   type TypeTypeMap = {
@@ -11,10 +12,8 @@ declare global {
   type TypeLambda<P, R> = (...args: [P]) => R;
   type TypeNumericString = `${number}` | `-${number}`;
   type TypeOperatorKey = keyof iOperatorRegistry;
-  type TypeOperatorNicknames =
-    iOperatorRegistry[TypeOperatorKey]["nicknames"][number];
   type TypeOperatorInternalName =
-    iOperatorRegistry[TypeOperatorKey]["internalName"];
+  ReturnType<InstanceType<iOperatorRegistry[keyof iOperatorRegistry]>["getInternalName"]>
   type TypeDigitString = `${0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9}`;
   type TypeBit = 0 | 1;
   type TypeInt4 = [TypeBit, TypeBit, TypeBit, TypeBit];
@@ -24,12 +23,6 @@ declare global {
   type TypeInt64 = [...TypeInt32, ...TypeInt32];
   type TypeInt128 = [...TypeInt64, ...TypeInt64];
 
-  type IntegratedValue =
-    | (TypeRawSignatureAST.RawSignatureNode & { value?: IntegratedValue })
-    | Operator
-    | boolean
-    | string;
-
   type Predicate = Operator & {
     fn: (...args: any[]) => boolean;
   };
@@ -37,4 +30,5 @@ declare global {
   interface Block extends BlockType {}
   interface Item extends ItemType {}
   interface Fluid extends FluidType {}
+  interface Entity extends EntityType {}
 }

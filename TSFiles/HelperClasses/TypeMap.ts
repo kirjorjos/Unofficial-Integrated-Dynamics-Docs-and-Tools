@@ -1,3 +1,5 @@
+import { IntegratedValue } from "../IntegratedDynamicsClasses/operators/Operator";
+
 export class TypeMap {
   aliases: Map<any, any>;
   constructor(ast?: TypeRawSignatureAST.RawSignatureNode) {
@@ -31,7 +33,7 @@ export class TypeMap {
   }
 
   async unify(a: IntegratedValue, b: IntegratedValue): Promise<void> {
-    const { Operator } = await import("../IntegratedDynamicsClasses/Operator");
+    const { Operator } = await import("../IntegratedDynamicsClasses/operators/Operator");
 
     if (typeof a === "boolean" || typeof b === "boolean") {
       return;

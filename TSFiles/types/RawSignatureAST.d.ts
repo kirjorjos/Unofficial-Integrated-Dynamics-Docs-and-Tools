@@ -35,7 +35,8 @@ namespace TypeRawSignatureAST {
           | "Recipe"
           | "UniquelyNamed"
           | "Named"
-          | "Entity";
+          | "Entity"
+          | "Null"/*Shouldn't ever be used, added for iNull compatablity*/;
       }
     | RawSignatureList
     | RawSignatureFunction
