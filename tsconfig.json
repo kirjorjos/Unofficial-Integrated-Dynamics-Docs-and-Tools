@@ -20,7 +20,7 @@
     "moduleResolution": "bundler",
     "lib": ["es2022", "dom"],
     "typeRoots": ["./TSFiles/types", "./node_modules/@types"],
-    "types": [],
+    "types": ["jest"],
     "skipLibCheck": true,
     "strict": true,
     "noUncheckedIndexedAccess": true,
