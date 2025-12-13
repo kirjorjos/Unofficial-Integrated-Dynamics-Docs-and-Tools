@@ -1,5 +1,7 @@
 import { iNull } from "IntegratedDynamicsClasses/typeWrappers/iNull";
 import { Tag } from "./Tag";
+import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
+import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 
 export class NullTag extends Tag<iNull> {
   constructor() {
@@ -14,11 +16,11 @@ export class NullTag extends Tag<iNull> {
     return new iNull();
   }
 
-  override getTypeAsString(): string {
-    return "NullTag";
+  override getTypeAsString(): iString {
+    return new iString("NullTag");
   }
 
-  override equals(tag: Tag<iNull>): boolean {
-    return tag.getType() == Tag.TAG_NULL;
+  override equals(tag: Tag<iNull>): iBoolean {
+    return new iBoolean(tag.getType() == Tag.TAG_NULL);
   }
 }

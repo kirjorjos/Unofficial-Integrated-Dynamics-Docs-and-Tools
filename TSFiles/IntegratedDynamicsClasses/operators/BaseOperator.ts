@@ -1,6 +1,6 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
-import { IntegratedValue, Operator } from "./Operator";
 import { TypeMap } from "HelperClasses/TypeMap";
+import { Operator } from "./Operator";
 
 export class BaseOperator<I extends IntegratedValue, O extends IntegratedValue> extends Operator<I, O> {
 	

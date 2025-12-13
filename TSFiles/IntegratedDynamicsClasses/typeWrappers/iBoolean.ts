@@ -1,6 +1,4 @@
-import { IntegratedValue } from "IntegratedDynamicsClasses/operators/Operator";
-
-export class iBoolean {
+export class iBoolean implements IntegratedValue {
   bool: boolean;
 
   constructor(bool: boolean) {
@@ -16,8 +14,8 @@ export class iBoolean {
 	}
 
   equals(other: IntegratedValue) {
-    if (!(other instanceof iBoolean)) return false;
-    return (this.bool == other.valueOf());
+    if (!(other instanceof iBoolean)) return new iBoolean(false);
+    return new iBoolean(this.bool == other.valueOf());
   }
   
 }

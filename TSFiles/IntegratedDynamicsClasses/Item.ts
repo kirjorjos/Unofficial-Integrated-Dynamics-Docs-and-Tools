@@ -3,7 +3,6 @@ import { UniquelyNamed } from "./UniquelyNamed";
 import { Properties } from "./Properties";
 import { CompoundTag } from "./NBTFunctions/MinecraftClasses/CompoundTag";
 import { iBoolean } from "./typeWrappers/iBoolean";
-import { IntegratedValue } from "./operators/Operator";
 
 export class Item implements UniquelyNamed {
   props: Properties;

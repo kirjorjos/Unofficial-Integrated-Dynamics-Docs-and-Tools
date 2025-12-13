@@ -1,4 +1,4 @@
-import { IntegratedValue } from "IntegratedDynamicsClasses/operators/Operator";
+import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { Integer } from "./Integer";
 
 export class Double implements NumberBase<Double> {
@@ -124,9 +124,9 @@ export class Double implements NumberBase<Double> {
     return this.value >= parseInt(num.toDecimal());
   }
 
-  equals(num: IntegratedValue): boolean {
-    if (!(num instanceof Double)) return false;
-    return `${this.value}` === num.toDecimal();
+  equals(num: IntegratedValue): iBoolean {
+    if (!(num instanceof Double)) return new iBoolean(false);
+    return new iBoolean(`${this.value}` === num.toDecimal());
   }
 
   async round(): Promise<Integer> {

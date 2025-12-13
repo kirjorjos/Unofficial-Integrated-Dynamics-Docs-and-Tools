@@ -28,7 +28,7 @@ import { ByteTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses
 import { DoubleTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/DoubleTag";
 import { StringTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/StringTag";
 import { NbtPath } from "IntegratedDynamicsClasses/NBTFunctions/NbtPath";
-import { IntegratedValue, Operator } from "./Operator";
+import { Operator } from "./Operator";
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { BaseOperator } from "./BaseOperator";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
@@ -474,7 +474,7 @@ let operatorRegistryRawData = {
       value1: IntegratedValue
     ): TypeLambda<IntegratedValue, iBoolean> => {
       return (value2: IntegratedValue): iBoolean => {
-        return new iBoolean(value1.equals(value2));
+        return value1.equals(value2);
       };
     },
   },
@@ -1628,8 +1628,8 @@ let operatorRegistryRawData = {
     },
     symbol: "contains_p",
     interactName: "listContainsPredicate",
-    function: <T>(predicate: Predicate): TypeLambda<Array<T>, iBoolean> => {
-      return (list: Array<T>): iBoolean => {
+    function: (predicate: Predicate): TypeLambda<Array<IntegratedValue>, iBoolean> => {
+      return (list: Array<IntegratedValue>): iBoolean => {
         return new iBoolean(list.some((item) => predicate.apply(item).valueOf()));
       };
     },
@@ -1678,9 +1678,9 @@ let operatorRegistryRawData = {
     },
     symbol: "count_p",
     interactName: "listCountPredicate",
-    function: <T>(
-      list: Array<T>
-    ): TypeLambda<TypeLambda<T, iBoolean>, Integer> => {
+    function: (
+      list: Array<IntegratedValue>
+    ): TypeLambda<TypeLambda<IntegratedValue, iBoolean>, Integer> => {
       return (predicate: Predicate): Integer => {
         return new Integer(list.filter((item) => predicate.apply(item)).length);
       };
@@ -1817,10 +1817,10 @@ let operatorRegistryRawData = {
     },
     symbol: "uniq_p",
     interactName: "listUniquePredicate",
-    function: <T>(
-      list: Array<T>
-    ): TypeLambda<TypeLambda<T, iBoolean>, Array<T>> => {
-      return (predicate: Predicate): Array<T> => {
+    function: (
+      list: Array<IntegratedValue>
+    ): TypeLambda<TypeLambda<IntegratedValue, iBoolean>, Array<IntegratedValue>> => {
+      return (predicate: Predicate): Array<IntegratedValue> => {
         const seen = new Set();
         return list.filter((item) => {
           const key = predicate.apply(item);
@@ -2661,7 +2661,7 @@ let operatorRegistryRawData = {
     interactName: "itemstackIsNbtEqual",
     function: (item1: Item): TypeLambda<Item, Boolean> => {
       return (item2: Item): iBoolean => {
-        return new iBoolean(item1.getNBT().equals(item2.getNBT()));
+        return item1.getNBT().equals(item2.getNBT());
       };
     },
   },
@@ -3168,7 +3168,7 @@ let operatorRegistryRawData = {
     },
     symbol: "data_keys",
     interactName: "itemStackDataKeys",
-    function: (item: Item): Array<string> => {
+    function: (item: Item): Array<iString> => {
       return item.getNBT().getAllKeys();
     },
   },
@@ -3199,8 +3199,8 @@ let operatorRegistryRawData = {
     },
     symbol: "data_value",
     interactName: "itemstackDataValue",
-    function: (item: Item): TypeLambda<string, Tag<IntegratedValue>> => {
-      return (key: string): Tag<IntegratedValue> => {
+    function: (item: Item): TypeLambda<iString, Tag<IntegratedValue>> => {
+      return (key: iString): Tag<IntegratedValue> => {
         const nbt = item.getNBT();
         if (!nbt || !nbt.has(key)) {
           return new NullTag();
@@ -4602,7 +4602,7 @@ let operatorRegistryRawData = {
       };
     },
   },
-  OBJECT_FLUIDSTACK_DATA: {
+  OBJECT_FLUIDSTACK_DATAKEYS: {
     internalName: "integrateddynamics:fluidstack_datakeys",
     nicknames: [
       "FluidstackDataKeys",
@@ -4628,12 +4628,12 @@ let operatorRegistryRawData = {
     },
     symbol: "data_keys",
     interactName: "fluidstackDataKeys",
-    function: (fluid: Fluid): Array<string> => {
+    function: (fluid: Fluid): Array<iString> => {
       const nbt = fluid.getNBT();
       if (!nbt) {
         return [];
       }
-      return Object.keys(nbt).filter((key) => nbt.has(key));
+      return Object.keys(nbt).map(e => new iString(e)).filter((key) => nbt.has(key));
     },
   },
   OBJECT_FLUIDSTACK_DATA_VALUE: {
@@ -4670,10 +4670,10 @@ let operatorRegistryRawData = {
     },
     symbol: "data_value",
     interactName: "fluidstackDataValue",
-    function: (fluid: Fluid): TypeLambda<string, Tag<IntegratedValue>> => {
-      return (key: string): Tag<IntegratedValue> => {
+    function: (fluid: Fluid): TypeLambda<iString, Tag<IntegratedValue>> => {
+      return (key: iString): Tag<IntegratedValue> => {
         const nbt = fluid.getNBT();
-        if (!nbt || !nbt.hasOwnProperty(key)) {
+        if (!nbt || !nbt.has(key)) {
           return new NullTag();
         }
         return nbt.get(key);
@@ -5419,7 +5419,7 @@ let operatorRegistryRawData = {
       };
     },
   },
-  OPERATOR_APPLY: {
+  OPERATOR_BY_NAME: {
     internalName: "integrateddynamics:operator_by_name",
     nicknames: ["operatorByName", "opByName"],
     parsedSignature: {
@@ -5469,7 +5469,7 @@ let operatorRegistryRawData = {
     },
     symbol: "NBT{}.keys",
     interactName: "nbtKeys",
-    function: (nbt: CompoundTag): Array<string> => {
+    function: (nbt: CompoundTag): Array<iString> => {
       return nbt.getAllKeys();
     },
   },
@@ -5493,8 +5493,8 @@ let operatorRegistryRawData = {
     },
     symbol: "NBT{}.has_key",
     interactName: "nbtHasKey",
-    function: (nbt: CompoundTag): TypeLambda<string, iBoolean> => {
-      return (key: string): iBoolean => {
+    function: (nbt: CompoundTag): TypeLambda<iString, iBoolean> => {
+      return (key: iString): iBoolean => {
         return new iBoolean(nbt.has(key));
       };
     },
@@ -5519,8 +5519,8 @@ let operatorRegistryRawData = {
     },
     symbol: "NBT{}.type",
     interactName: "nbtType",
-    function: (nbt: CompoundTag): TypeLambda<string, string> => {
-      return (key: string): string => {
+    function: (nbt: CompoundTag): TypeLambda<iString, iString> => {
+      return (key: iString): iString => {
         if (!nbt.has(key)) {
           throw new Error(`${key} does not exist in ${JSON.stringify(nbt)}`);
         }
@@ -5548,8 +5548,8 @@ let operatorRegistryRawData = {
     },
     symbol: "NBT{}.get_tag",
     interactName: "nbtGetTag",
-    function: (nbt: CompoundTag): TypeLambda<string, Tag<IntegratedValue>> => {
-      return (key: string): Tag<IntegratedValue> => {
+    function: (nbt: CompoundTag): TypeLambda<iString, Tag<IntegratedValue>> => {
+      return (key: iString): Tag<IntegratedValue> => {
         return nbt.get(key);
       };
     },
@@ -5574,8 +5574,8 @@ let operatorRegistryRawData = {
     },
     symbol: "NBT{}.get_iBoolean",
     interactName: "nbtGetBoolean",
-    function: (nbt: CompoundTag): TypeLambda<string, iBoolean> => {
-      return (key: string): iBoolean => {
+    function: (nbt: CompoundTag): TypeLambda<iString, iBoolean> => {
+      return (key: iString): iBoolean => {
         const result = nbt.get(key).valueOf();
         if (!(result instanceof iBoolean)) return new iBoolean(false);
         return result;
@@ -5602,8 +5602,8 @@ let operatorRegistryRawData = {
     },
     symbol: "NBT{}.get_integer",
     interactName: "nbtGetInteger",
-    function: (nbt: CompoundTag): TypeLambda<string, Integer> => {
-      return (key: string): Integer => {
+    function: (nbt: CompoundTag): TypeLambda<iString, Integer> => {
+      return (key: iString): Integer => {
         let value = nbt.get(key);
         if (value.getType() != Tag.TAG_INT)
           throw new Error(
@@ -5633,8 +5633,8 @@ let operatorRegistryRawData = {
     },
     symbol: "NBT{}.get_long",
     interactName: "nbtGetLong",
-    function: (nbt: CompoundTag): TypeLambda<string, Long> => {
-      return (key: string): Long => {
+    function: (nbt: CompoundTag): TypeLambda<iString, Long> => {
+      return (key: iString): Long => {
         let value = nbt.get(key);
         if (value.getType() === Tag.TAG_LONG) {
           return value.valueOf() as Long;
@@ -5665,8 +5665,8 @@ let operatorRegistryRawData = {
     },
     symbol: "NBT{}.get_double",
     interactName: "nbtGetDouble",
-    function: (nbt: CompoundTag): TypeLambda<string, Double> => {
-      return (key: string): Double => {
+    function: (nbt: CompoundTag): TypeLambda<iString, Double> => {
+      return (key: iString): Double => {
         let value = nbt.get(key);
         if (value.getType() === Tag.TAG_DOUBLE) {
           return value.valueOf() as Double;
@@ -5699,9 +5699,9 @@ let operatorRegistryRawData = {
     interactName: "nbtGetString",
     function: (nbt: CompoundTag): TypeLambda<iString, iString> => {
       return (key: iString): iString => {
-        let value = nbt.get(key.valueOf());
+        let value = nbt.get(key);
         if (value.getType() === Tag.TAG_STRING) {
-          return value.valueOf() as iString;
+          return (value as StringTag).valueOf() as iString;
         }
         throw new Error(
           `${key} is not a string in ${JSON.stringify(nbt.toJSON())}`
@@ -5729,8 +5729,8 @@ let operatorRegistryRawData = {
     },
     symbol: "NBT{}.get_compound",
     interactName: "nbtGetCompound",
-    function: (nbt: CompoundTag): TypeLambda<string, Tag<IntegratedValue>> => {
-      return (key: string): Tag<IntegratedValue> => {
+    function: (nbt: CompoundTag): TypeLambda<iString, Tag<IntegratedValue>> => {
+      return (key: iString): Tag<IntegratedValue> => {
         let value = nbt.get(key);
         if (value.getType() === Tag.TAG_COMPOUND) {
           return value;
@@ -5761,8 +5761,8 @@ let operatorRegistryRawData = {
     interactName: "nbtGetListTag",
     function: (
       nbt: CompoundTag
-    ): TypeLambda<string, Tag<IntegratedValue>[]> => {
-      return (key: string): Tag<IntegratedValue>[] => {
+    ): TypeLambda<iString, Tag<IntegratedValue>[]> => {
+      return (key: iString): Tag<IntegratedValue>[] => {
         if (!nbt.has(key))
           throw new Error(
             `${key} is not a list of NBT in ${JSON.stringify(nbt.toJSON())}`
@@ -5795,7 +5795,7 @@ let operatorRegistryRawData = {
     symbol: "NBT{}.get_list_byte",
     interactName: "nbtGetListByte",
     function: (nbt: CompoundTag) => {
-      return (key: string): Integer[] => {
+      return (key: iString): Integer[] => {
         let value = nbt.get(key) as ListTag;
         if (value.getType() !== Tag.TAG_LIST) return [new Integer(0)]
         let list = value.valueOf() as ByteTag[];
@@ -5821,8 +5821,8 @@ let operatorRegistryRawData = {
     },
     symbol: "NBT{}.get_list_int",
     interactName: "nbtGetListInt",
-    function: (nbt: CompoundTag): TypeLambda<string, Array<Integer>> => {
-      return (key: string): Array<Integer> => {
+    function: (nbt: CompoundTag): TypeLambda<iString, Array<Integer>> => {
+      return (key: iString): Array<Integer> => {
         let value = nbt.get(key);
         if (value.getType() != Tag.TAG_LIST)
           throw new Error(
@@ -5857,8 +5857,8 @@ let operatorRegistryRawData = {
     },
     symbol: "NBT{}.get_list_long",
     interactName: "nbtGetListLong",
-    function: (nbt: CompoundTag): TypeLambda<string, Long[]> => {
-      return (key: string): Long[] => {
+    function: (nbt: CompoundTag): TypeLambda<iString, Long[]> => {
+      return (key: iString): Long[] => {
         let value = nbt.get(key);
         if (value.getType() != Tag.TAG_LIST)
           throw new Error(
@@ -7256,7 +7256,7 @@ let operatorRegistryRawData = {
       return recipe.getOutput();
     },
   },
-  RECIPE_INPUT: {
+  RECIPE_WITH_INPUT: {
     internalName: "integrateddynamics:recipe_with_input",
     nicknames: [, "recipeWithInput"],
     parsedSignature: {

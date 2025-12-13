@@ -1,13 +1,9 @@
-import { iNull } from "IntegratedDynamicsClasses/typeWrappers/iNull";
+import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { ParsedSignature } from "../../HelperClasses/ParsedSignature";
 import { TypeMap } from "../../HelperClasses/TypeMap";
-import type { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
-import type { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
-
-export type IntegratedValue = Operator<IntegratedValue, IntegratedValue> | iBoolean | iString | iNull | TypeNumber;
 
 
-export class Operator<I extends IntegratedValue, O extends IntegratedValue | Promise<IntegratedValue>> {
+export class Operator<I extends IntegratedValue, O extends IntegratedValue | Promise<IntegratedValue>> implements IntegratedValue {
   fn: (arg: I) => O;
   parsedSignature: ParsedSignature;
   typeMap: TypeMap;
@@ -28,7 +24,7 @@ export class Operator<I extends IntegratedValue, O extends IntegratedValue | Pro
     const parsedSignature = this.parsedSignature.apply(arg.getSignatureNode());
 
     let newOp = this.fn(arg);
-    if ("_setSignature" in newOp) newOp._setSignature(parsedSignature);
+    if ("_setSignature" in newOp) (newOp._setSignature as Function)(parsedSignature);
     return newOp;
   }
 
@@ -45,7 +41,7 @@ export class Operator<I extends IntegratedValue, O extends IntegratedValue | Pro
   }
 
   equals(other: IntegratedValue) {
-    if (!(other instanceof Operator)) return false;
-    return (this.fn.toString() == other.getFn().toString())
+    if (!(other instanceof Operator)) return new iBoolean(false);
+    return new iBoolean(this.fn.toString() == other.getFn().toString())
   }
 }

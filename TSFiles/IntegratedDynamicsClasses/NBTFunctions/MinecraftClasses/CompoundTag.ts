@@ -7,8 +7,9 @@ import { Long } from "JavaNumberClasses/Long";
 import { LongTag } from "./LongTag";
 import { Double } from "JavaNumberClasses/Double";
 import { DoubleTag } from "./DoubleTag";
-import { IntegratedValue } from "IntegratedDynamicsClasses/operators/Operator";
 import { NullTag } from "./NullTag";
+import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
+import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 
 export class CompoundTag extends Tag<IntegratedValue> {
   data: Record<string, Tag<IntegratedValue>>;
@@ -32,16 +33,16 @@ export class CompoundTag extends Tag<IntegratedValue> {
     return this.data;
   }
 
-  getAllKeys(): string[] {
-    return Object.keys(this.data);
+  getAllKeys(): iString[] {
+    return Object.keys(this.data).map(e => new iString(e));
   }
 
-  get(key: string): Tag<IntegratedValue> {
-    return this.data[key] ?? new NullTag();
+  get(key: iString): Tag<IntegratedValue> {
+    return this.data[key.valueOf()] ?? new NullTag();
   }
 
-  has(key: string): boolean {
-    return key in this.data;
+  has(key: iString): boolean {
+    return key.valueOf() in this.data;
   }
 
   set(key: string, value: Tag<IntegratedValue>) {
@@ -50,16 +51,16 @@ export class CompoundTag extends Tag<IntegratedValue> {
     return new CompoundTag(data);
   }
 
-  setAll(keys: string[], values: Tag<IntegratedValue>[]): CompoundTag {
+  setAll(keys: iString[], values: Tag<IntegratedValue>[]): CompoundTag {
     if (keys.length != values.length)
       throw new Error(
         `Keys (length ${keys.length}) is not the same as values (${values.length})`
       );
     let data = { ...this.data };
     for (let i = 0; i < keys.length; i++) {
-      let key = keys[i] as string;
+      let key = keys[i] as iString;
       let value = values[i] as Tag<IntegratedValue>;
-      data[key] = value;
+      data[key.valueOf()] = value;
     }
     return new CompoundTag(data);
   }
@@ -70,8 +71,8 @@ export class CompoundTag extends Tag<IntegratedValue> {
     return new CompoundTag(data);
   }
 
-  getTypeAsString(): string {
-    return "CompoundTag";
+  getTypeAsString(): iString {
+    return new iString("CompoundTag");
   }
 
   toJSON(): any {
@@ -200,7 +201,7 @@ export class CompoundTag extends Tag<IntegratedValue> {
   }
 
   public compoundUnion(other: CompoundTag): CompoundTag {
-    const keys: string[] = [];
+    const keys: iString[] = [];
     const values: any[] = [];
 
     for (const key of other.getAllKeys()) {
@@ -234,9 +235,9 @@ export class CompoundTag extends Tag<IntegratedValue> {
         otherValue instanceof CompoundTag
       ) {
         const sub = thisValue.compoundIntersection(otherValue);
-        if (sub.getAllKeys().length > 0) result[key] = sub;
+        if (sub.getAllKeys().length > 0) result[key.valueOf()] = sub;
       } else if (thisValue.equals(otherValue ?? new CompoundTag({}))) {
-        result[key] = thisValue;
+        result[key.valueOf()] = thisValue;
       }
     }
 
@@ -255,23 +256,23 @@ export class CompoundTag extends Tag<IntegratedValue> {
         otherValue instanceof CompoundTag
       ) {
         const sub = thisValue.compoundMinus(otherValue);
-        if (sub.getAllKeys().length > 0) result[key] = sub;
+        if (sub.getAllKeys().length > 0) result[key.valueOf()] = sub;
       } else if (!thisValue.equals(otherValue ?? new CompoundTag({}))) {
-        result[key] = thisValue;
+        result[key.valueOf()] = thisValue;
       }
     }
 
     return new CompoundTag(result);
   }
 
-  equals(tag: Tag<IntegratedValue>): boolean {
-    if (tag.getType() != Tag.TAG_COMPOUND) return false;
+  equals(tag: Tag<IntegratedValue>): iBoolean {
+    if (tag.getType() != Tag.TAG_COMPOUND) return new iBoolean(false);
     let compoundTag = tag as CompoundTag;
     for (const key of Object.values(
       new Set([...this.getAllKeys(), ...compoundTag.getAllKeys()])
     )) {
-      if (this.get(key) !== compoundTag.get(key)) return false;
+      if (this.get(key) !== compoundTag.get(key)) return new iBoolean(false);
     }
-    return true;
+    return new iBoolean(true);
   }
 }

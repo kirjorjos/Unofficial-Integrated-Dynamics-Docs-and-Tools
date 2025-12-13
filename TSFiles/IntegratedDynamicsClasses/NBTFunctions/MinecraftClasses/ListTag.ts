@@ -1,6 +1,7 @@
-import { IntegratedValue } from "IntegratedDynamicsClasses/operators/Operator";
 import { Tag } from "./Tag";
 import { NullTag } from "./NullTag";
+import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
+import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 
 export class ListTag extends Tag<IntegratedValue> {
   data: Tag<IntegratedValue>[];
@@ -38,15 +39,15 @@ export class ListTag extends Tag<IntegratedValue> {
     this.data.push(tag);
   }
 
-  override getTypeAsString(): string {
-    return "ListTag";
+  override getTypeAsString(): iString {
+    return new iString("ListTag");
   }
 
-  equals(tag: Tag<IntegratedValue>): boolean {
-    if (tag.getType() != Tag.TAG_LIST) return false;
+  equals(tag: Tag<IntegratedValue>): iBoolean {
+    if (tag.getType() != Tag.TAG_LIST) return new iBoolean(false);
     for (const [i, e] of Object.entries((tag as ListTag).getArray())) {
-      if (!e.equals(this.get(parseInt(i)))) return false;
+      if (!e.equals(this.get(parseInt(i)))) return new iBoolean(false);
     }
-    return true;
+    return new iBoolean(true);
   }
 }

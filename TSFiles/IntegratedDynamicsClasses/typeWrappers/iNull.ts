@@ -1,6 +1,6 @@
-import { IntegratedValue } from "IntegratedDynamicsClasses/operators/Operator";
+import { iBoolean } from "./iBoolean";
 
-export class iNull {
+export class iNull implements IntegratedValue {
 
 	constructor() {}
 
@@ -13,8 +13,8 @@ export class iNull {
 	}
 
 	equals(other: IntegratedValue) {
-		if (!(other instanceof iNull)) return false;
-		return (null === other.valueOf());
+		if (!(other instanceof iNull)) return new iBoolean(false);
+		return new iBoolean(null === other.valueOf());
 	}
 	
 }

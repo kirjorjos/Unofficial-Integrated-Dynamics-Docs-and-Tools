@@ -4,6 +4,7 @@
  * Original Author: rubensworks
  */
 
+import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 import { INbtPathExpression } from "../INbtPathExpression";
 import { CompoundTag } from "../MinecraftClasses/CompoundTag";
 import { Tag } from "../MinecraftClasses/Tag";
@@ -40,22 +41,22 @@ export class NbtPathExpressionParseHandlerChild
       return HandleResult.INVALID;
     }
 
-    let childName = match[0];
-    return new HandleResult(new Expression(childName), 1 + childName.length);
+    let childName = new iString(match[0]);
+    return new HandleResult(new Expression(childName), 1 + childName.length());
   }
 
   static Expression: typeof Expression;
 }
 
 class Expression extends INbtPathExpression {
-  private childName: string;
+  private childName: iString;
 
-  public constructor(childName: string) {
+  public constructor(childName: iString) {
     super();
     this.childName = childName;
   }
 
-  getChildName(): string {
+  getChildName(): iString {
     return this.childName;
   }
 

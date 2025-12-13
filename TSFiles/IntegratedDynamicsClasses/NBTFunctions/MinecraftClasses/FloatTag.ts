@@ -1,6 +1,7 @@
-import { IntegratedValue } from "IntegratedDynamicsClasses/operators/Operator";
+import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 import { NumericTag } from "./NumericTag";
 import { Tag } from "./Tag";
+import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 
 export class FloatTag extends NumericTag {
 	protected data: Double;
@@ -26,12 +27,12 @@ export class FloatTag extends NumericTag {
 		return parseInt(this.data.toDecimal());
 	}
 
-	override getTypeAsString(): string {
-		return "FloatTag";
+	override getTypeAsString(): iString {
+		return new iString("FloatTag");
 	}
 
-	equals(tag: Tag<IntegratedValue>): boolean {
-		if (tag.getType() != Tag.TAG_FLOAT) return false;
-		return this.getAsDouble() == (tag as FloatTag).getAsDouble();
+	equals(tag: Tag<IntegratedValue>): iBoolean {
+		if (tag.getType() != Tag.TAG_FLOAT) return new iBoolean(false);
+		return new iBoolean(this.getAsDouble() == (tag as FloatTag).getAsDouble());
 	}
 }

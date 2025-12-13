@@ -16,6 +16,7 @@ import {
 import { NbtPathExpressionExecutionContext } from "./NBTPathExecutionContext";
 import { NbtPathStringParser } from "./NbtPathStringParser";
 import { StringTag } from "../MinecraftClasses/StringTag";
+import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 
 /**
  * A handler that handles boolean expressions in the form of " == "abc"".
@@ -70,14 +71,14 @@ export class NbtPathExpressionParseHandlerStringEqual
 }
 
 class Expression extends INbtPathExpression {
-  private targetString: string;
+  private targetString: iString;
 
-  constructor(targetString: string) {
+  constructor(targetString: iString) {
     super();
     this.targetString = targetString;
   }
 
-  getTargetString(): string {
+  getTargetString(): iString {
     return this.targetString;
   }
 
@@ -91,7 +92,7 @@ class Expression extends INbtPathExpression {
           let tag = nbt as StringTag;
           return new NbtPathExpressionExecutionContext(
             ByteTag.valueOf(
-              new Integer(+(this.getTargetString() == tag.valueOf()))
+              new Integer(+(this.getTargetString().equals(tag.valueOf())))
             ),
             executionContext
           );

@@ -1,6 +1,6 @@
 import { IntLongMath } from "HelperClasses/IntLongMath";
 import { JavaMath } from "HelperClasses/Math";
-import { IntegratedValue } from "IntegratedDynamicsClasses/operators/Operator";
+import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 
 export class Long implements NumberBase<Long> {
   private bits!: TypeInt64;
@@ -99,9 +99,9 @@ export class Long implements NumberBase<Long> {
     return IntLongMath.gte(this, num);
   }
 
-  equals(num: IntegratedValue): boolean {
-    if (!(num instanceof Long)) return false;
-    return num.getBits().every((bit, i) => bit === this.bits[i]);
+  equals(num: IntegratedValue): iBoolean {
+    if (!(num instanceof Long)) return new iBoolean(false);
+    return new iBoolean(num.getBits().every((bit, i) => bit === this.bits[i]));
   }
 
   round(): Promise<Integer> {

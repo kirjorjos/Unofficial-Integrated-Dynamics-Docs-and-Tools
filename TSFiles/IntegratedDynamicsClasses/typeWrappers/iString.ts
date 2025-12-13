@@ -1,6 +1,6 @@
-import { IntegratedValue } from "IntegratedDynamicsClasses/operators/Operator";
+import { iBoolean } from "./iBoolean";
 
-export class iString {
+export class iString implements IntegratedValue {
   str: string;
 
   constructor(str: string) {
@@ -16,8 +16,16 @@ export class iString {
 	}
 
   equals(other: IntegratedValue) {
-    if (!(other instanceof iString)) return false;
-    return (this.str == other.valueOf());
+    if (!(other instanceof iString)) return new iBoolean(false);
+    return new iBoolean(this.str == other.valueOf());
+  }
+  
+  add(other: String) {
+    return new iString(this.str + other);
+  }
+
+  length() {
+    return this.str.length;
   }
 
 }

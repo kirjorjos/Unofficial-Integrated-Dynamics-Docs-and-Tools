@@ -1,5 +1,7 @@
+import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { NumericTag } from "./NumericTag";
 import { Tag } from "./Tag";
+import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 
 export class ByteTag extends NumericTag {
   protected data: Integer;
@@ -25,12 +27,12 @@ export class ByteTag extends NumericTag {
     return parseInt(this.data.toDecimal());
   }
 
-  override getTypeAsString(): string {
-    return "ByteTag";
+  override getTypeAsString(): iString {
+    return new iString("ByteTag");
   }
 
   equals(tag: Tag<IntegratedValue>) {
-    if (tag.getType() != Tag.TAG_BYTE) return false;
-    return this.valueOf() == tag.valueOf();
+    if (tag.getType() != Tag.TAG_BYTE) return new iBoolean(false);
+    return new iBoolean(this.valueOf() == tag.valueOf());
   }
 }

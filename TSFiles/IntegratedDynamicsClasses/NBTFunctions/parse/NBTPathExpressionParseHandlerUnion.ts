@@ -16,6 +16,7 @@ import {
 } from "./INbtPathExpressionParseHandler";
 import { NbtPathExpressionExecutionContext } from "./NBTPathExecutionContext";
 import { NbtPathNavigationAdapter } from "../navigate/NbtPathNavigationAdapter";
+import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 
 /**
  * A handler that handles union expressions in the form of "[10,12]" or "[10,]" or "[,12]",
@@ -34,7 +35,7 @@ export class NbtPathExpressionParseHandlerUnion
 
     let contents = (match[1] as string).split(",");
 
-    let childNames = [] as string[];
+    let childNames = [] as iString[];
     let childIndexes = [] as number[];
     let expressionLength = 1;
     for (const match of contents) {
@@ -45,7 +46,7 @@ export class NbtPathExpressionParseHandlerUnion
           return HandleResult.INVALID;
         }
       } catch (e) {
-        childNames.push(match);
+        childNames.push(new iString(match));
         if (!(childIndexes.length == 0)) {
           return HandleResult.INVALID;
         }
@@ -61,16 +62,16 @@ export class NbtPathExpressionParseHandlerUnion
 }
 
 class Expression extends INbtPathExpression {
-  private childNames: Array<string>;
+  private childNames: Array<iString>;
   private childIndexes: Array<number>;
 
-  constructor(childNames: Array<string>, childIndexes: Array<number>) {
+  constructor(childNames: Array<iString>, childIndexes: Array<number>) {
     super();
     this.childNames = childNames;
     this.childIndexes = childIndexes;
   }
 
-  getChildNames(): Array<string> {
+  getChildNames(): Array<iString> {
     return this.childNames;
   }
 
@@ -92,7 +93,7 @@ class Expression extends INbtPathExpression {
             let tag = nbt as ListTag;
             return this.getChildIndexes()
               .map((i) => tag.get(i))
-              .filter((subTag) => subTag.getId() != 0)
+              .filter((subTag) => subTag.getType() == Tag.TAG_COMPOUND)
               .map(
                 (subTag) =>
                   new NbtPathExpressionExecutionContext(

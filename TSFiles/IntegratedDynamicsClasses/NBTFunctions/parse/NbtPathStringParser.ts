@@ -4,6 +4,8 @@
  * Original Author: rubensworks
  */
 
+import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
+
 /**
  * A parser for strings within NBT path expressions in the form of "ab\"c".
  */
@@ -12,13 +14,13 @@ export class NbtPathStringParser {
     private static FAIL = new StringParseResult(
       false,
       0,
-      ""
+      new iString("")
     ) as StringParseResult;
     private successVal: boolean;
     private consumed: number;
-    private result: string;
+    private result: iString;
 
-    public constructor(success: boolean, consumed: number, result: string) {
+    public constructor(success: boolean, consumed: number, result: iString) {
       this.successVal = success;
       this.consumed = consumed;
       this.result = result;
@@ -32,11 +34,11 @@ export class NbtPathStringParser {
       return this.consumed;
     }
 
-    getResult(): string {
+    getResult(): iString {
       return this.result;
     }
 
-    static success(consumed: number, result: string): StringParseResult {
+    static success(consumed: number, result: iString): StringParseResult {
       return new StringParseResult(true, consumed, result);
     }
 
@@ -59,7 +61,7 @@ export class NbtPathStringParser {
     if (pos >= source.length || source.charAt(pos) != '"') {
       return this.StringParseResult.fail();
     }
-    let resultBuilder = "";
+    let resultBuilder = new iString("");
     let currentPos = pos + 1; // Skip the first double quote
     // This loop is terminated by finding another unescaped double quote.
     while (true) {
@@ -79,7 +81,7 @@ export class NbtPathStringParser {
           switch (escapeName) {
             case "\\": // For \\
             case '"': // For \"
-              resultBuilder + escapeName;
+              resultBuilder.add(escapeName);
               continue;
             default:
               return this.StringParseResult.fail();
@@ -92,7 +94,7 @@ export class NbtPathStringParser {
             resultBuilder
           );
         default:
-          resultBuilder + character;
+          resultBuilder.add(character);
       }
     }
   }

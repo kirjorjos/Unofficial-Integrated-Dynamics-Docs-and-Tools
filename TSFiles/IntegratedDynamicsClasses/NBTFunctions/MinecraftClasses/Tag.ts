@@ -1,4 +1,5 @@
-import { IntegratedValue } from "IntegratedDynamicsClasses/operators/Operator";
+import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
+import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 
 export abstract class Tag<T extends IntegratedValue> {
   static TAG_LIST = 0;
@@ -19,7 +20,7 @@ export abstract class Tag<T extends IntegratedValue> {
 
   abstract valueOf(): T | Record<string, Tag<T>> | Tag<T>[];
 
-  abstract equals(tag: Tag<T>): boolean;
+  abstract equals(tag: Tag<T>): iBoolean;
 
-  abstract getTypeAsString(): string;
+  abstract getTypeAsString(): iString;
 }
