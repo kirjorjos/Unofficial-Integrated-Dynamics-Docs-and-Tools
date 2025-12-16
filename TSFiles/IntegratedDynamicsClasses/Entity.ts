@@ -4,10 +4,13 @@ import { Double } from "../JavaNumberClasses/Double";
 import { Properties } from "./Properties";
 import { CompoundTag } from "./NBTFunctions/MinecraftClasses/CompoundTag";
 import { iBoolean } from "./typeWrappers/iBoolean";
+import { iString } from "./typeWrappers/iString";
+import { iNull } from "./typeWrappers/iNull";
+import { iArray } from "./typeWrappers/iArray";
 
-export class Entity implements UniquelyNamed {
+export class Entity implements UniquelyNamed, IntegratedValue {
   static defaultProps = new Properties({
-    uname: "",
+    uname: new iString(""),
     mob: new iBoolean(false),
     animal: new iBoolean(false),
     player: new iBoolean(false),
@@ -20,9 +23,9 @@ export class Entity implements UniquelyNamed {
     wet: new iBoolean(false),
     crouching: new iBoolean(false),
     eating: new iBoolean(false),
-    armorInventory: [] as Array<Item>,
+    armorInventory: new iArray<Item>([]),
     inventory: [] as Array<Item>,
-    modName: "",
+    modName: new iString(""),
     // targetBlock: new Block(),
     targetEntity: new Entity(new Properties({})),
     guiOpen: new iBoolean(false),
@@ -32,18 +35,18 @@ export class Entity implements UniquelyNamed {
     itemFrame: new iBoolean(false),
     // itemFrameContents: new Item(),
     itemFrameRotation: new Integer(0),
-    hurtSound: "",
-    deathSound: "",
+    hurtSound: new iString(""),
+    deathSound: new iString(""),
     age: new Integer(0),
     child: new iBoolean(false),
     breedable: new iBoolean(false),
     inLove: new iBoolean(false),
     shearable: new iBoolean(false),
-    breedableList: [] as Array<string>,
-    NBT: null,
-    entityType: "",
-    itemList: [] as Array<Item>,
-    fluids: [] as Array<Fluid>,
+    breedableList: new iArray<iString>([]),
+    NBT: new iNull(),
+    entityType: new iString(""),
+    itemList: new iArray<Item>([]),
+    fluids: new iArray<Fluid>([]),
     energyStored: new Integer(0),
     energyCapacity: new Integer(0),
   });
@@ -67,7 +70,7 @@ export class Entity implements UniquelyNamed {
     this.props = props;
   }
 
-  getUniqueName(): string {
+  getUniqueName(): iString {
     return this.props.get("uname");
   }
 
@@ -131,7 +134,7 @@ export class Entity implements UniquelyNamed {
     return this.props.get("inventory");
   }
 
-  getModName(): string {
+  getModName(): iString {
     return this.props.get("modName");
   }
 
@@ -171,11 +174,11 @@ export class Entity implements UniquelyNamed {
     return this.props.get("itemFrameRotation");
   }
 
-  getHurtSound(): string {
+  getHurtSound(): iString {
     return this.props.get("hurtSound");
   }
 
-  getDeathSound(): string {
+  getDeathSound(): iString {
     return this.props.get("deathSound");
   }
 
@@ -199,7 +202,7 @@ export class Entity implements UniquelyNamed {
     return this.props.get("shearable");
   }
 
-  getBreadableList(): Array<string> {
+  getBreadableList(): Array<iString> {
     return [...this.props.get("breedableList"), this.props.get("uname")];
   }
 
@@ -207,7 +210,7 @@ export class Entity implements UniquelyNamed {
     return this.props.get("NBT");
   }
 
-  getEntityType(): string {
+  getEntityType(): iString {
     return this.props.get("entityType");
   }
 
@@ -229,5 +232,27 @@ export class Entity implements UniquelyNamed {
 
   getProperties(): Properties {
     return this.props;
+  }
+
+  getSignatureNode(): TypeRawSignatureAST.RawSignatureNode {
+    return {
+      type: "Entity",
+    };
+  }
+
+  equals(other: IntegratedValue) {
+    if (!(other instanceof Entity)) return new iBoolean(false);
+    else {
+      for (const key of Object.keys(this) as Array<keyof Entity>) {
+        if (key == "equals") continue; // prevent recursion
+        if (this[key] instanceof Function) {
+          const thisResult = (this[key] as Function)() as IntegratedValue;
+          const otherResult = (other[key] as Function)() as IntegratedValue;
+          if (!thisResult.equals(otherResult).valueOf())
+            return new iBoolean(false);
+        }
+      }
+      return new iBoolean(true);
+    }
   }
 }
