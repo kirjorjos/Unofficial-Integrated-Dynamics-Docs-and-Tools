@@ -12,14 +12,14 @@ export class iString implements IntegratedValue {
   }
 
   getSignatureNode(): TypeRawSignatureAST.RawSignatureDefiniteValue {
-		return { type: "String" };
-	}
+    return { type: "String" };
+  }
 
   equals(other: IntegratedValue) {
     if (!(other instanceof iString)) return new iBoolean(false);
     return new iBoolean(this.str == other.valueOf());
   }
-  
+
   add(other: String) {
     return new iString(this.str + other);
   }
@@ -27,5 +27,4 @@ export class iString implements IntegratedValue {
   length() {
     return this.str.length;
   }
-
 }

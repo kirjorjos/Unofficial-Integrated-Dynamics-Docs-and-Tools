@@ -5,7 +5,9 @@ import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 export class Long implements NumberBase<Long> {
   private bits!: TypeInt64;
 
-  constructor(data: TypeNumericString | TypeInt64 | TypeInt128 | number | Long) {
+  constructor(
+    data: TypeNumericString | TypeInt64 | TypeInt128 | number | Long
+  ) {
     if (data instanceof Long) data = data.bits;
     if (!Array.isArray(data)) this.bits = this.initializeBits(data);
     if (Array.isArray(data)) this.bits = data.slice(-64) as TypeInt64;
@@ -117,6 +119,6 @@ export class Long implements NumberBase<Long> {
   }
 
   getSignatureNode(): { type: "Long" } {
-    return { type: "Long"};
+    return { type: "Long" };
   }
 }

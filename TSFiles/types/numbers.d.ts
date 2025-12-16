@@ -7,7 +7,7 @@ declare global {
   type Long = InstanceType<typeof Long>;
   type Double = InstanceType<typeof Double>;
 
-  interface NumberBase<Self extends NumberBase<Self>> implements IntegratedValue {
+  interface NumberBase<Self extends NumberBase<Self>> extends IntegratedValue {
     getType(): "Integer" | "Long" | "Double";
     getOrder(): 0 | 1 | 2;
     getBits(): TypeInt32 | TypeInt64;
@@ -31,7 +31,7 @@ declare global {
     round(): Promise<Integer>;
     ceil(): Promise<Integer>;
     floor(): Promise<Integer>;
-    getSignatureNode(): { type: "Integer" | "Long" | "Double" }
+    getSignatureNode(): { type: "Integer" | "Long" | "Double" };
   }
 
   type TypeNumber = Integer | Long | Double;

@@ -10,12 +10,11 @@ export class iBoolean implements IntegratedValue {
   }
 
   getSignatureNode(): TypeRawSignatureAST.RawSignatureDefiniteValue {
-		return { type: "Boolean" };
-	}
+    return { type: "Boolean" };
+  }
 
   equals(other: IntegratedValue) {
     if (!(other instanceof iBoolean)) return new iBoolean(false);
     return new iBoolean(this.bool == other.valueOf());
   }
-  
 }

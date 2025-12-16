@@ -36,7 +36,7 @@ namespace TypeRawSignatureAST {
           | "UniquelyNamed"
           | "Named"
           | "Entity"
-          | "Null"/*Shouldn't ever be used, added for iNull compatablity*/;
+          | "Null" /*Shouldn't ever be used, added for iNull compatablity*/;
       }
     | RawSignatureList
     | RawSignatureFunction

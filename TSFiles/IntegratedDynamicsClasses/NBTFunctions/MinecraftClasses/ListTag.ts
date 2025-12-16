@@ -28,7 +28,7 @@ export class ListTag extends Tag<IntegratedValue> {
   }
 
   get(index: number): Tag<IntegratedValue> {
-    return this.data[index] ?? new NullTag;
+    return this.data[index] ?? new NullTag();
   }
 
   getArray(): Tag<IntegratedValue>[] {

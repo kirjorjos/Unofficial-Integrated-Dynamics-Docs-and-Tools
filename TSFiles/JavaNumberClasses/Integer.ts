@@ -6,7 +6,13 @@ export class Integer implements NumberBase<Integer> {
   private bits!: TypeInt32;
 
   constructor(
-    data: TypeNumericString | TypeInt32 | TypeInt64 | TypeInt128 | number | Integer
+    data:
+      | TypeNumericString
+      | TypeInt32
+      | TypeInt64
+      | TypeInt128
+      | number
+      | Integer
   ) {
     if (data instanceof Integer) data = data.bits;
     if (!Array.isArray(data)) this.bits = this.initializeBits(data);
@@ -150,6 +156,6 @@ export class Integer implements NumberBase<Integer> {
   }
 
   getSignatureNode(): { type: "Integer" } {
-    return { type: "Integer"};
+    return { type: "Integer" };
   }
 }

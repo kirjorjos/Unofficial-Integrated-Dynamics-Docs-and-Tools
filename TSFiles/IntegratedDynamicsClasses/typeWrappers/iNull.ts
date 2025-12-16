@@ -1,20 +1,18 @@
 import { iBoolean } from "./iBoolean";
 
 export class iNull implements IntegratedValue {
+  constructor() {}
 
-	constructor() {}
+  valueOf(): null {
+    return null;
+  }
 
-	valueOf(): null {
-		return null;
-	}
+  getSignatureNode(): TypeRawSignatureAST.RawSignatureDefiniteValue {
+    return { type: "Null" };
+  }
 
-	getSignatureNode(): TypeRawSignatureAST.RawSignatureDefiniteValue {
-		return { type: "Null" };
-	}
-
-	equals(other: IntegratedValue) {
-		if (!(other instanceof iNull)) return new iBoolean(false);
-		return new iBoolean(null === other.valueOf());
-	}
-	
+  equals(other: IntegratedValue) {
+    if (!(other instanceof iNull)) return new iBoolean(false);
+    return new iBoolean(null === other.valueOf());
+  }
 }

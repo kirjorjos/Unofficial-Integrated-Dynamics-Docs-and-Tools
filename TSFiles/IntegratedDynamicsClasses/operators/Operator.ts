@@ -2,15 +2,18 @@ import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { ParsedSignature } from "../../HelperClasses/ParsedSignature";
 import { TypeMap } from "../../HelperClasses/TypeMap";
 
-
-export class Operator<I extends IntegratedValue, O extends IntegratedValue | Promise<IntegratedValue>> implements IntegratedValue {
+export class Operator<
+  I extends IntegratedValue,
+  O extends IntegratedValue | Promise<IntegratedValue>,
+> implements IntegratedValue
+{
   fn: (arg: I) => O;
   parsedSignature: ParsedSignature;
   typeMap: TypeMap;
 
   constructor({
     parsedSignature,
-    function: fn
+    function: fn,
   }: {
     parsedSignature: ParsedSignature;
     function: TypeLambda<I, O>;
@@ -24,7 +27,8 @@ export class Operator<I extends IntegratedValue, O extends IntegratedValue | Pro
     const parsedSignature = this.parsedSignature.apply(arg.getSignatureNode());
 
     let newOp = this.fn(arg);
-    if ("_setSignature" in newOp) (newOp._setSignature as Function)(parsedSignature);
+    if ("_setSignature" in newOp)
+      (newOp._setSignature as Function)(parsedSignature);
     return newOp;
   }
 
@@ -42,6 +46,6 @@ export class Operator<I extends IntegratedValue, O extends IntegratedValue | Pro
 
   equals(other: IntegratedValue) {
     if (!(other instanceof Operator)) return new iBoolean(false);
-    return new iBoolean(this.fn.toString() == other.getFn().toString())
+    return new iBoolean(this.fn.toString() == other.getFn().toString());
   }
 }

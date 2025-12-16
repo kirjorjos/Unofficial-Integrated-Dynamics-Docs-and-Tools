@@ -142,6 +142,6 @@ export class Double implements NumberBase<Double> {
   }
 
   getSignatureNode(): { type: "Double" } {
-    return { type: "Double"};
+    return { type: "Double" };
   }
 }

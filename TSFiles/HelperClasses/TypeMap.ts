@@ -33,7 +33,9 @@ export class TypeMap {
   }
 
   async unify(a: IntegratedValue, b: IntegratedValue): Promise<void> {
-    const { Operator } = await import("../IntegratedDynamicsClasses/operators/Operator");
+    const { Operator } = await import(
+      "../IntegratedDynamicsClasses/operators/Operator"
+    );
 
     if (typeof a === "boolean" || typeof b === "boolean") {
       return;

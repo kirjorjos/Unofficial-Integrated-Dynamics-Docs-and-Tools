@@ -34,7 +34,7 @@ export class CompoundTag extends Tag<IntegratedValue> {
   }
 
   getAllKeys(): iString[] {
-    return Object.keys(this.data).map(e => new iString(e));
+    return Object.keys(this.data).map((e) => new iString(e));
   }
 
   get(key: iString): Tag<IntegratedValue> {
@@ -100,7 +100,7 @@ export class CompoundTag extends Tag<IntegratedValue> {
           innerValue.constructor.name != "Object"
         ) {
           if (!("toJSON" in innerValue)) break findBase;
-          innerValue = ((innerValue)["toJSON"] as Function)();
+          innerValue = (innerValue["toJSON"] as Function)();
         }
         obj[key] = innerValue;
       } else if (value instanceof CompoundTag) obj[key] = value.toJSON();

@@ -11,8 +11,8 @@ export abstract class Tag<T extends IntegratedValue> {
   static TAG_NULL = 6;
   static TAG_INT = 7;
   static TAG_LONG = 7;
-	static TAG_FLOAT = 8;
-	static TAG_Short = 9;
+  static TAG_FLOAT = 8;
+  static TAG_Short = 9;
 
   protected constructor() {}
 
