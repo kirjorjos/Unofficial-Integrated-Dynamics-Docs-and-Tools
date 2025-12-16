@@ -1,18 +1,29 @@
-DOUBLE_SQRT: {
-    internalName: "integrateddynamics:double_sqrt",
-    nicknames: ["doubleSqrt"],
-    parsedSignature: {
-      type: "Function",
-      from: {
-        type: "Double",
+import { ParsedSignature } from "HelperClasses/ParsedSignature";
+import { TypeMap } from "HelperClasses/TypeMap";
+import { BaseOperator } from "../BaseOperator";
+
+export class OPERATOR_DOUBLE_SQRT extends BaseOperator<Double, Double> {
+  constructor(globalMap: TypeMap) {
+    super({
+      internalName: "integrateddynamics:double_sqrt",
+      nicknames: ["doubleSqrt", "sqrt"],
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Double",
+          },
+          to: {
+            type: "Double",
+          },
+        },
+        globalMap
+      ),
+      symbol: "sqrt",
+      interactName: "doubleSqrt",
+      function: (double: Double): Double => {
+        return double.sqrt();
       },
-      to: {
-        type: "Double",
-      },
-    },
-    symbol: "sqrt",
-    interactName: "doubleSqrt",
-    function: (double: Double): Double => {
-      return double.sqrt();
-    },
-  },
+    });
+  }
+}
