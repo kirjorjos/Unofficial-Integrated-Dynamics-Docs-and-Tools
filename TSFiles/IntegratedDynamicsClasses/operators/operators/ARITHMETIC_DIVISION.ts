@@ -1,28 +1,44 @@
-ARITHMETIC_DIVISION: {
-    internalName: "integrateddynamics:arithmetic_division",
-    nicknames: ["divide", "arithmeticDivision"],
-    parsedSignature: {
-      type: "Function",
-      from: {
-        type: "Number",
-      },
-      to: {
-        type: "Function",
-        from: {
-          type: "Number",
+import { JavaMath } from "HelperClasses/Math";
+import { TypeMap } from "HelperClasses/TypeMap";
+import { BaseOperator } from "../BaseOperator";
+import { Operator } from "../Operator";
+import { ParsedSignature } from "HelperClasses/ParsedSignature";
+
+export class OPERATOR_ARITHMETIC_DIVISION extends BaseOperator<
+  TypeNumber,
+  Operator<TypeNumber, TypeNumber>
+> {
+  constructor(globalMap: TypeMap) {
+    super({
+      internalName: "integrateddynamics:arithmetic_division",
+      nicknames: ["divide", "arithmeticDivision", "/", "numberDivide"],
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Number",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Number",
+            },
+            to: {
+              type: "Number",
+            },
+          },
         },
-        to: {
-          type: "Number",
-        },
+        globalMap
+      ),
+      symbol: "/",
+      interactName: "numberDivide",
+      function: (
+        num1: TypeNumber
+      ): TypeLambda<TypeNumber, Promise<TypeNumber>> => {
+        return (num2: TypeNumber): Promise<TypeNumber> => {
+          return JavaMath.divide(num1, num2);
+        };
       },
-    },
-    symbol: "/",
-    interactName: "numberDivide",
-    function: (
-      num1: TypeNumber
-    ): TypeLambda<TypeNumber, Promise<TypeNumber>> => {
-      return (num2: TypeNumber): Promise<TypeNumber> => {
-        return JavaMath.divide(num1, num2);
-      };
-    },
-  },
+    });
+  }
+}

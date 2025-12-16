@@ -1,18 +1,34 @@
-ARITHMETIC_INCREMENT: {
-    internalName: "integrateddynamics:arithmetic_increment",
-    nicknames: ["increment", "arithmeticIncrement"],
-    parsedSignature: {
-      type: "Function",
-      from: {
-        type: "Number",
+import { JavaMath } from "HelperClasses/Math";
+import { ParsedSignature } from "HelperClasses/ParsedSignature";
+import { TypeMap } from "HelperClasses/TypeMap";
+import { Integer } from "JavaNumberClasses/Integer";
+import { BaseOperator } from "../BaseOperator";
+
+export class OPERATOR_ARITHMETIC_INCREMENT extends BaseOperator<
+  TypeNumber,
+  TypeNumber
+> {
+  constructor(globalMap: TypeMap) {
+    super({
+      internalName: "integrateddynamics:arithmetic_increment",
+      nicknames: ["increment", "arithmeticIncrement", "++", "numberIncrement"],
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Number",
+          },
+          to: {
+            type: "Number",
+          },
+        },
+        globalMap
+      ),
+      symbol: "++",
+      interactName: "numberIncrement",
+      function: async (num1: TypeNumber): Promise<TypeNumber> => {
+        return JavaMath.add(num1, new Integer(1));
       },
-      to: {
-        type: "Number",
-      },
-    },
-    symbol: "++",
-    interactName: "numberIncrement",
-    function: async (num1: TypeNumber): Promise<TypeNumber> => {
-      return JavaMath.add(num1, new Integer(1));
-    },
-  },
+    });
+  }
+}
