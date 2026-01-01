@@ -1,4 +1,4 @@
-import { IntegratedValue } from "../IntegratedDynamicsClasses/operators/Operator";
+import { Operator } from "../IntegratedDynamicsClasses/operators/Operator";
 
 export class TypeMap {
   aliases: Map<any, any>;
@@ -32,11 +32,7 @@ export class TypeMap {
     return typeID;
   }
 
-  async unify(a: IntegratedValue, b: IntegratedValue): Promise<void> {
-    const { Operator } = await import(
-      "../IntegratedDynamicsClasses/operators/Operator"
-    );
-
+  unify(a: IntegratedValue, b: IntegratedValue): void {
     if (typeof a === "boolean" || typeof b === "boolean") {
       return;
     }

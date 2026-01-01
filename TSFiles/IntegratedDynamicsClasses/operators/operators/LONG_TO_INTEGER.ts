@@ -13,7 +13,7 @@ LONG_TO_INTEGER: {
     },
     symbol: "()",
     interactName: "longLongToInteger",
-    function: (long: Long): Promise<Integer> => {
+    function: (long: Long): Integer => {
       return long.toInteger();
     },
   },

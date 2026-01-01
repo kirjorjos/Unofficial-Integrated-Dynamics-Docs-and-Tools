@@ -37,10 +37,8 @@ export class OPERATOR_ARITHMETIC_MULTIPLICATION extends BaseOperator<
       ),
       symbol: "*",
       interactName: "numberMultiply",
-      function: (
-        num1: TypeNumber
-      ): TypeLambda<TypeNumber, Promise<TypeNumber>> => {
-        return (num2: TypeNumber): Promise<TypeNumber> => {
+      function: (num1: TypeNumber): TypeLambda<TypeNumber, TypeNumber> => {
+        return (num2: TypeNumber): TypeNumber => {
           return JavaMath.multiply(num1, num2);
         };
       },

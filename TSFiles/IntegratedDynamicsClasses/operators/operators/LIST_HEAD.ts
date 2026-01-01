@@ -1,17 +1,33 @@
-LIST_HEAD: {
-    internalName: "integrateddynamics:list_head",
-    nicknames: ["listHead", "head"],
-    parsedSignature: {
-      type: "Function",
-      from: { type: "List", listType: { type: "Any", typeID: 1 } },
-      to: { type: "Any", typeID: 1 },
-    },
-    symbol: "head",
-    interactName: "listHead",
-    function: <T>(list: Array<T>): T => {
-      if (list.length === 0) {
-        throw new Error("head called on an empty list");
-      }
-      return list[0] as T;
-    },
-  },
+import { TypeMap } from "HelperClasses/TypeMap";
+import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
+import { BaseOperator } from "../BaseOperator";
+import { ParsedSignature } from "HelperClasses/ParsedSignature";
+import { Integer } from "JavaNumberClasses/Integer";
+
+export class OPERATOR_LIST_HEAD extends BaseOperator<
+  iArray<IntegratedValue>,
+  IntegratedValue
+> {
+  constructor(globalMap: TypeMap) {
+    super({
+      internalName: "integrateddynamics:list_head",
+      nicknames: ["listHead", "head"],
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: { type: "List", listType: { type: "Any", typeID: 1 } },
+          to: { type: "Any", typeID: 1 },
+        },
+        globalMap
+      ),
+      symbol: "head",
+      interactName: "listHead",
+      function: (list: iArray<IntegratedValue>): IntegratedValue => {
+        if (list.size().equals(new Integer(0))) {
+          throw new Error("head called on an empty list");
+        }
+        return list.get(new Integer(0));
+      },
+    });
+  }
+}

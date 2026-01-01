@@ -11,26 +11,26 @@ declare global {
     getType(): "Integer" | "Long" | "Double";
     getOrder(): 0 | 1 | 2;
     getBits(): TypeInt32 | TypeInt64;
-    toInteger(): Promise<Integer>;
-    toLong(): Promise<Long>;
-    toDouble(): Promise<Double>;
+    toInteger(): Integer;
+    toLong(): Long;
+    toDouble(): Double;
     toDecimal(): TypeNumericString;
     leftShift(num: Integer): Self;
     add(num: Self): Self;
     subtract(num: Self): Self;
     multiply(num: Self): Self;
     divide(num: Self): Self;
-    max(num: Self): Promise<Self>;
-    min(num: Self): Promise<Self>;
+    max(num: Self): Self;
+    min(num: Self): Self;
     mod(num: Self): Self;
-    gt(num: Self): Promise<boolean>;
-    lt(num: Self): Promise<boolean>;
-    gte(num: Self): Promise<boolean>;
-    lte(num: Self): Promise<boolean>;
+    gt(num: Self): boolean;
+    lt(num: Self): boolean;
+    gte(num: Self): boolean;
+    lte(num: Self): boolean;
     equals(num: Self): iBoolean;
-    round(): Promise<Integer>;
-    ceil(): Promise<Integer>;
-    floor(): Promise<Integer>;
+    round(): Integer;
+    ceil(): Integer;
+    floor(): Integer;
     getSignatureNode(): { type: "Integer" | "Long" | "Double" };
   }
 

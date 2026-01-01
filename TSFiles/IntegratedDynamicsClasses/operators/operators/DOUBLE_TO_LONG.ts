@@ -22,7 +22,7 @@ export class OPERATOR_DOUBLE_TO_LONG extends BaseOperator<Double, Long> {
       ),
       symbol: "()",
       interactName: "doubleDoubleToLong",
-      function: (double: Double): Promise<Long> => {
+      function: (double: Double): Long => {
         return double.toLong();
       },
     });

@@ -5,6 +5,9 @@ import { CompoundTag } from "./NBTFunctions/MinecraftClasses/CompoundTag";
 import { iBoolean } from "./typeWrappers/iBoolean";
 import { iString } from "./typeWrappers/iString";
 import { NullTag } from "./NBTFunctions/MinecraftClasses/NullTag";
+import { iArrayEager } from "./typeWrappers/iArrayEager";
+import { Block } from "./Block";
+import { Fluid } from "./Fluid";
 import { iArray } from "./typeWrappers/iArray";
 
 export class Item implements UniquelyNamed, IntegratedValue {
@@ -28,12 +31,12 @@ export class Item implements UniquelyNamed, IntegratedValue {
     modName: new iString(""),
     fuelBurnTime: new Integer(0),
     fuel: new iBoolean(false),
-    tagNames: new iArray<iString>([]),
+    tagNames: new iArrayEager<iString>([]),
     feContainer: new iBoolean(false),
     feStored: new Integer(0),
     feCapacity: new Integer(0),
-    inventory: new iArray<IntegratedValue>([]),
-    tooltip: new iArray<iString>([]),
+    inventory: new iArrayEager<IntegratedValue>([]),
+    tooltip: new iArrayEager<iString>([]),
     itemName: new iString(""),
     // block: new Block()
   });
@@ -42,12 +45,8 @@ export class Item implements UniquelyNamed, IntegratedValue {
     let props = Item.defaultProps;
     props.setAll(newProps);
     if (oldItem) props.setAll(oldItem.getProperties());
-    Promise.all([import("./Block"), import("./Fluid")]).then((values) => {
-      if (!props.has("block"))
-        props.set("block", new values[0].Block(new Properties({})));
-      if (!props.has("fluid"))
-        props.set("fluid", new values[1].Fluid(new Properties({})));
-    });
+    if (!props.has("block")) props.set("block", new Block(new Properties({})));
+    if (!props.has("fluid")) props.set("fluid", new Fluid(new Properties({})));
     this.props = props;
   }
 
@@ -155,8 +154,7 @@ export class Item implements UniquelyNamed, IntegratedValue {
     return this.props;
   }
 
-  async getStrengthVsBlock(block: Block) {
-    let { Block } = await import("./Block");
+  getStrengthVsBlock(block: Block) {
     if (!(block instanceof Block)) throw new Error("block is not a Block");
     throw new Error("getStrengthVsBlock method not implemented");
   }

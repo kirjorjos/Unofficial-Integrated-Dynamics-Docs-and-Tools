@@ -26,7 +26,7 @@ export class OPERATOR_ARITHMETIC_INCREMENT extends BaseOperator<
       ),
       symbol: "++",
       interactName: "numberIncrement",
-      function: async (num1: TypeNumber): Promise<TypeNumber> => {
+      function: (num1: TypeNumber): TypeNumber => {
         return JavaMath.add(num1, new Integer(1));
       },
     });

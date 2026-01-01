@@ -7,6 +7,11 @@ namespace TypeRawSignatureAST {
     to: RawSignatureNode;
   };
 
+  type RawSignatureOperator = {
+    type: "Operator";
+    obscured: RawSignatureFunction;
+  };
+
   type RawSignatureList = {
     type: "List";
     listType: RawSignatureDefiniteValue | RawSignatureAny;
@@ -40,6 +45,7 @@ namespace TypeRawSignatureAST {
       }
     | RawSignatureList
     | RawSignatureFunction
+    | RawSignatureOperator
     | RawSignatureUniquelyNamed
     | RawSignatureNamed;
 

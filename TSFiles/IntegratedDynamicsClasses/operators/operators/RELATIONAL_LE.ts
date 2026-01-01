@@ -18,9 +18,9 @@ RELATIONAL_LE: {
     },
     symbol: "<=",
     interactName: "anyLessThanOrEquals",
-    function: (num1: TypeNumber): TypeLambda<TypeNumber, Promise<iBoolean>> => {
-      return async (num2: TypeNumber): Promise<iBoolean> => {
-        return new iBoolean(await JavaMath.lte(num1, num2));
+    function: (num1: TypeNumber): TypeLambda<TypeNumber, iBoolean> => {
+      return (num2: TypeNumber): iBoolean => {
+        return new iBoolean(JavaMath.lte(num1, num2));
       };
     },
   },

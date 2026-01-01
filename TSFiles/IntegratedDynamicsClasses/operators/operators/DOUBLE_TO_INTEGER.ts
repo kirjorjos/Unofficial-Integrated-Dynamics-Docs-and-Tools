@@ -22,7 +22,7 @@ export class OPERATOR_DOUBLE_TO_INTEGER extends BaseOperator<Double, Integer> {
       ),
       symbol: "()",
       interactName: "doubleDoubleToInteger",
-      function: (double: Double): Promise<Integer> => {
+      function: (double: Double): Integer => {
         return double.toInteger();
       },
     });

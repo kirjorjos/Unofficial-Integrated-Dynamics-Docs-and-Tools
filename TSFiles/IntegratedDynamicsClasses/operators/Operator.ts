@@ -2,14 +2,13 @@ import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { ParsedSignature } from "../../HelperClasses/ParsedSignature";
 import { TypeMap } from "../../HelperClasses/TypeMap";
 
-export class Operator<
-  I extends IntegratedValue,
-  O extends IntegratedValue | Promise<IntegratedValue>,
-> implements IntegratedValue
+export class Operator<I extends IntegratedValue, O extends IntegratedValue>
+  implements IntegratedValue
 {
   fn: (arg: I) => O;
   parsedSignature: ParsedSignature;
   typeMap: TypeMap;
+  readonly _output!: O;
 
   constructor({
     parsedSignature,
@@ -30,6 +29,17 @@ export class Operator<
     if ("_setSignature" in newOp)
       (newOp._setSignature as Function)(parsedSignature);
     return newOp;
+  }
+
+  pipe<V extends IntegratedValue>(otherOp: Operator<O, V>) {
+    const newFn = (x: I): V => {
+      return otherOp.apply(this.apply(x));
+    };
+    const newSignature = this.parsedSignature.pipe(otherOp.parsedSignature);
+    return new Operator<I, V>({
+      parsedSignature: newSignature,
+      function: newFn,
+    });
   }
 
   getFn(): TypeLambda<I, O> {

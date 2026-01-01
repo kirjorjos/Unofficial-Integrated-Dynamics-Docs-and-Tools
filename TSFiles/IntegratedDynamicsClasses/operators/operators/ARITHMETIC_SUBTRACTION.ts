@@ -32,10 +32,8 @@ export class OPERATOR_ARITHMETIC_SUBTRACTION extends BaseOperator<
       ),
       symbol: "-",
       interactName: "numberSubtract",
-      function: (
-        num1: TypeNumber
-      ): TypeLambda<TypeNumber, Promise<TypeNumber>> => {
-        return (num2: TypeNumber): Promise<TypeNumber> => {
+      function: (num1: TypeNumber): TypeLambda<TypeNumber, TypeNumber> => {
+        return (num2: TypeNumber): TypeNumber => {
           return JavaMath.subtract(num1, num2);
         };
       },

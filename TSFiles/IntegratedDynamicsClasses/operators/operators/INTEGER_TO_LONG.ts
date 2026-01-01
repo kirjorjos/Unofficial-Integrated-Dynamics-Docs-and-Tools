@@ -22,7 +22,7 @@ export class OPERATOR_INTEGER_TO_LONG extends BaseOperator<Integer, Long> {
       ),
       symbol: "()",
       interactName: "integerIntegerToLong",
-      function: (int: Integer): Promise<Long> => {
+      function: (int: Integer): Long => {
         return int.toLong();
       },
     });

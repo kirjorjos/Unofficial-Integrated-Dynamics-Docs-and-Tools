@@ -18,9 +18,9 @@ RELATIONAL_GT: {
     },
     symbol: ">",
     interactName: "numberGreaterThan",
-    function: (num1: TypeNumber): TypeLambda<TypeNumber, Promise<iBoolean>> => {
-      return async (num2: TypeNumber): Promise<iBoolean> => {
-        return new iBoolean(await JavaMath.gt(num1, num2));
+    function: (num1: TypeNumber): TypeLambda<TypeNumber, iBoolean> => {
+      return (num2: TypeNumber): iBoolean => {
+        return new iBoolean(JavaMath.gt(num1, num2));
       };
     },
   },

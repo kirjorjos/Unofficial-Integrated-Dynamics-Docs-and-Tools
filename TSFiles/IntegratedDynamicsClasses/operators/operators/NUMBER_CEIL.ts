@@ -12,7 +12,7 @@ NUMBER_CEIL: {
     },
     symbol: "⌈ ⌉",
     interactName: "numberCeil",
-    function: (number: TypeNumber): Promise<Integer> => {
+    function: (number: TypeNumber): Integer => {
       return number.ceil();
     },
   },

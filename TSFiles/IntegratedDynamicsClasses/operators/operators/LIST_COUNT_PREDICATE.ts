@@ -1,30 +1,51 @@
-LIST_COUNT_PREDICATE: {
-    internalName: "integrateddynamics:list_count_p",
-    nicknames: ["listCountPredicate"],
-    parsedSignature: {
-      type: "Function",
-      from: { type: "List", listType: { type: "Any", typeID: 1 } },
-      to: {
-        type: "Function",
-        from: {
+import { TypeMap } from "HelperClasses/TypeMap";
+import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
+import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
+import { Integer } from "JavaNumberClasses/Integer";
+import { BaseOperator } from "../BaseOperator";
+import { Operator } from "../Operator";
+import { ParsedSignature } from "HelperClasses/ParsedSignature";
+
+export class OPERATOR_LIST_COUNT_PREDICATE extends BaseOperator<
+  iArray<IntegratedValue>,
+  Operator<Operator<IntegratedValue, iBoolean>, Integer>
+> {
+  constructor(globalMap: TypeMap) {
+    super({
+      internalName: "integrateddynamics:list_count_p",
+      nicknames: ["listCountPredicate", "listCountP"],
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
-          from: { type: "Any", typeID: 1 },
+          from: { type: "List", listType: { type: "Any", typeID: 1 } },
           to: {
-            type: "Boolean",
+            type: "Function",
+            from: {
+              type: "Operator",
+              obscured: {
+                type: "Function",
+                from: { type: "Any", typeID: 1 },
+                to: {
+                  type: "Boolean",
+                },
+              },
+            },
+            to: {
+              type: "Integer",
+            },
           },
         },
-        to: {
-          type: "Integer",
-        },
+        globalMap
+      ),
+      symbol: "count_p",
+      interactName: "listCountPredicate",
+      function: (
+        list: iArray<IntegratedValue>
+      ): TypeLambda<Predicate, Integer> => {
+        return (predicate: Predicate): Integer => {
+          return list.filter((item) => predicate.apply(item)).size();
+        };
       },
-    },
-    symbol: "count_p",
-    interactName: "listCountPredicate",
-    function: (
-      list: Array<IntegratedValue>
-    ): TypeLambda<TypeLambda<IntegratedValue, iBoolean>, Integer> => {
-      return (predicate: Predicate): Integer => {
-        return new Integer(list.filter((item) => predicate.apply(item)).length);
-      };
-    },
-  },
+    });
+  }
+}

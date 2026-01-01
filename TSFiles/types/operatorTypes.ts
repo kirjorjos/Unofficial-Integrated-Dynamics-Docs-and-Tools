@@ -7,7 +7,7 @@ declare global {
     InstanceType<iOperatorRegistry[keyof iOperatorRegistry]>["getInternalName"]
   >;
 
-  type Predicate = Operator<IntegratedValue, iBoolean> & {
+  type Predicate<T extends IntegratedValue> = Operator<T, iBoolean> & {
     fn: (...args: any[]) => boolean;
   };
 

@@ -247,7 +247,7 @@ export namespace JavaMath {
     return result;
   }
 
-  async function dispatchMethod(
+  function dispatchMethod(
     num1: TypeNumber,
     num2: TypeNumber,
     method: methodList[number]
@@ -255,101 +255,65 @@ export namespace JavaMath {
     const higherOrderNum = num1.getOrder() < num2.getOrder() ? num2 : num1;
     switch (higherOrderNum.getType()) {
       case "Integer":
-        num1 = await num1.toInteger();
-        num2 = await num2.toInteger();
+        num1 = num1.toInteger();
+        num2 = num2.toInteger();
         return num1[method](num2);
       case "Long":
-        num1 = await num1.toLong();
-        num2 = await num2.toLong();
+        num1 = num1.toLong();
+        num2 = num2.toLong();
         return num1[method](num2);
       case "Double":
-        num1 = await num1.toDouble();
-        num2 = await num2.toDouble();
+        num1 = num1.toDouble();
+        num2 = num2.toDouble();
         return num1[method](num2);
     }
   }
 
-  export async function add(
-    num1: TypeNumber,
-    num2: TypeNumber
-  ): Promise<TypeNumber> {
-    return dispatchMethod(num1, num2, "add") as Promise<TypeNumber>;
+  export function add(num1: TypeNumber, num2: TypeNumber): TypeNumber {
+    return dispatchMethod(num1, num2, "add") as TypeNumber;
   }
 
-  export async function subtract(
-    num1: TypeNumber,
-    num2: TypeNumber
-  ): Promise<TypeNumber> {
-    return dispatchMethod(num1, num2, "subtract") as Promise<TypeNumber>;
+  export function subtract(num1: TypeNumber, num2: TypeNumber): TypeNumber {
+    return dispatchMethod(num1, num2, "subtract") as TypeNumber;
   }
 
-  export async function multiply(
-    num1: TypeNumber,
-    num2: TypeNumber
-  ): Promise<TypeNumber> {
-    return dispatchMethod(num1, num2, "multiply") as Promise<TypeNumber>;
+  export function multiply(num1: TypeNumber, num2: TypeNumber): TypeNumber {
+    return dispatchMethod(num1, num2, "multiply") as TypeNumber;
   }
 
-  export async function divide(
-    num1: TypeNumber,
-    num2: TypeNumber
-  ): Promise<TypeNumber> {
-    return dispatchMethod(num1, num2, "divide") as Promise<TypeNumber>;
+  export function divide(num1: TypeNumber, num2: TypeNumber): TypeNumber {
+    return dispatchMethod(num1, num2, "divide") as TypeNumber;
   }
 
-  export async function max(
-    num1: TypeNumber,
-    num2: TypeNumber
-  ): Promise<TypeNumber> {
-    return dispatchMethod(num1, num2, "max") as Promise<TypeNumber>;
+  export function max(num1: TypeNumber, num2: TypeNumber): TypeNumber {
+    return dispatchMethod(num1, num2, "max") as TypeNumber;
   }
 
-  export async function min(
-    num1: TypeNumber,
-    num2: TypeNumber
-  ): Promise<TypeNumber> {
-    return dispatchMethod(num1, num2, "min") as Promise<TypeNumber>;
+  export function min(num1: TypeNumber, num2: TypeNumber): TypeNumber {
+    return dispatchMethod(num1, num2, "min") as TypeNumber;
   }
 
-  export async function mod(
-    num1: TypeNumber,
-    num2: TypeNumber
-  ): Promise<TypeNumber> {
-    return dispatchMethod(num1, num2, "mod") as Promise<TypeNumber>;
+  export function mod(num1: TypeNumber, num2: TypeNumber): TypeNumber {
+    return dispatchMethod(num1, num2, "mod") as TypeNumber;
   }
 
-  export async function gt(
-    num1: TypeNumber,
-    num2: TypeNumber
-  ): Promise<boolean> {
-    return dispatchMethod(num1, num2, "gt") as Promise<boolean>;
+  export function gt(num1: TypeNumber, num2: TypeNumber): boolean {
+    return dispatchMethod(num1, num2, "gt") as boolean;
   }
 
-  export async function lt(
-    num1: TypeNumber,
-    num2: TypeNumber
-  ): Promise<boolean> {
-    return dispatchMethod(num1, num2, "lt") as Promise<boolean>;
+  export function lt(num1: TypeNumber, num2: TypeNumber): boolean {
+    return dispatchMethod(num1, num2, "lt") as boolean;
   }
 
-  export async function gte(
-    num1: TypeNumber,
-    num2: TypeNumber
-  ): Promise<boolean> {
-    return dispatchMethod(num1, num2, "gte") as Promise<boolean>;
+  export function gte(num1: TypeNumber, num2: TypeNumber): boolean {
+    return dispatchMethod(num1, num2, "gte") as boolean;
   }
 
-  export async function lte(
-    num1: TypeNumber,
-    num2: TypeNumber
-  ): Promise<boolean> {
-    return dispatchMethod(num1, num2, "lte") as Promise<boolean>;
+  export function lte(num1: TypeNumber, num2: TypeNumber): boolean {
+    return dispatchMethod(num1, num2, "lte") as boolean;
   }
 
-  export async function equals(
-    num1: TypeNumber,
-    num2: TypeNumber
-  ): Promise<boolean> {
-    return dispatchMethod(num1, num2, "equals") as Promise<boolean>;
+  export function equals(num1: TypeNumber, num2: TypeNumber): boolean {
+    return dispatchMethod(num1, num2, "equals") as boolean;
   }
 }

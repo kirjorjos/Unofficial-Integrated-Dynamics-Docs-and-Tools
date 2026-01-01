@@ -244,10 +244,7 @@ export namespace IntLongMath {
     ) as T;
   }
 
-  export async function lt<T extends Integer | Long>(
-    num1: T,
-    num2: T
-  ): Promise<boolean> {
+  export function lt<T extends Integer | Long>(num1: T, num2: T): boolean {
     const a = num1.getBits();
     const b = num2.getBits();
     if (a[0] !== b[0]) {
@@ -263,24 +260,15 @@ export namespace IntLongMath {
     return false;
   }
 
-  export async function gt<T extends Integer | Long>(
-    num1: T,
-    num2: T
-  ): Promise<boolean> {
+  export function gt<T extends Integer | Long>(num1: T, num2: T): boolean {
     return lt(num2, num1);
   }
 
-  export async function gte<T extends Integer | Long>(
-    num1: T,
-    num2: T
-  ): Promise<boolean> {
-    return (await JavaMath.equals(num1, num2)) || (await lt(num2, num1));
+  export function gte<T extends Integer | Long>(num1: T, num2: T): boolean {
+    return JavaMath.equals(num1, num2) || lt(num2, num1);
   }
 
-  export async function lte<T extends Integer | Long>(
-    num1: T,
-    num2: T
-  ): Promise<boolean> {
-    return (await JavaMath.equals(num1, num2)) || (await lt(num1, num2));
+  export function lte<T extends Integer | Long>(num1: T, num2: T): boolean {
+    return JavaMath.equals(num1, num2) || lt(num1, num2);
   }
 }

@@ -2,6 +2,11 @@ import { UniquelyNamed } from "./UniquelyNamed";
 import { Integer } from "JavaNumberClasses/Integer";
 import { Properties } from "./Properties";
 import { iBoolean } from "./typeWrappers/iBoolean";
+import { Fluid } from "./Fluid";
+import { Item } from "./Item";
+import { iString } from "./typeWrappers/iString";
+import { iArrayEager } from "./typeWrappers/iArrayEager";
+import { iArray } from "./typeWrappers/iArray";
 
 export class Block implements UniquelyNamed {
   static defaultProps = new Properties({
@@ -16,11 +21,11 @@ export class Block implements UniquelyNamed {
     // fluid: new Fluid(),
     fluidCapacity: new Integer(0),
     uname: "",
-    tagNames: [] as Array<string>,
+    tagNames: new iArrayEager<iString>([]),
     feContainer: new iBoolean(false),
     feCapacity: new Integer(0),
     feStored: new Integer(0),
-    inventory: null as Array<Item> | null,
+    inventory: new iArrayEager<Item>([]),
     blockName: "",
   });
   props: Properties;
@@ -29,12 +34,8 @@ export class Block implements UniquelyNamed {
     let props = Block.defaultProps;
     props.setAll(newProps);
     if (oldBlock) props.setAll(oldBlock.getProperties());
-    Promise.all([import("./Item"), import("./Fluid")]).then((values) => {
-      if (!props.has("item"))
-        props.set("item", new values[0].Item(new Properties({})));
-      if (!props.has("fluid"))
-        props.set("fluid", new values[1].Fluid(new Properties({})));
-    });
+    if (!props.has("item")) props.set("item", new Item(new Properties({})));
+    if (!props.has("fluid")) props.set("fluid", new Fluid(new Properties({})));
     this.props = props;
   }
 
@@ -46,19 +47,19 @@ export class Block implements UniquelyNamed {
     return this.props.get("item");
   }
 
-  getModName(): string {
+  getModName(): iString {
     return this.props.get("modName");
   }
 
-  getBreakSound(): string {
+  getBreakSound(): iString {
     return this.props.get("breakSound");
   }
 
-  getPlaceSound(): string {
+  getPlaceSound(): iString {
     return this.props.get("placeSound");
   }
 
-  getStepSound(): string {
+  getStepSound(): iString {
     return this.props.get("stepSound");
   }
 
@@ -82,11 +83,11 @@ export class Block implements UniquelyNamed {
     return this.props.get("fluidCapacity");
   }
 
-  getUniqueName(): string {
+  getUniqueName(): iString {
     return this.props.get("uname");
   }
 
-  getTagNames(): Array<string> {
+  getTagNames(): iArray<iString> {
     return this.props.get("tagNames");
   }
 
@@ -102,7 +103,7 @@ export class Block implements UniquelyNamed {
     return this.props.get("feStored");
   }
 
-  getInventory(): Array<Item> | null {
+  getInventory(): iArray<Item> {
     return this.props.get("inventory");
   }
 
@@ -118,8 +119,26 @@ export class Block implements UniquelyNamed {
     throw new Error("canHarvestBlock method not implemented");
   }
 
-  equals(other: Block) {
-    return JSON.stringify(this) === JSON.stringify(other);
+  equals(other: IntegratedValue) {
+    if (!(other instanceof Block)) return new iBoolean(false);
+    else {
+      for (const key of Object.keys(this) as Array<keyof Block>) {
+        if (key == "equals") continue; // prevent recursion
+        if (this[key] instanceof Function) {
+          const thisResult = (this[key] as Function)() as IntegratedValue;
+          const otherResult = (other[key] as Function)() as IntegratedValue;
+          if (!thisResult.equals(otherResult).valueOf())
+            return new iBoolean(false);
+        }
+      }
+      return new iBoolean(true);
+    }
+  }
+
+  getSignatureNode(): TypeRawSignatureAST.RawSignatureNode {
+    return {
+      type: "Block",
+    };
   }
 
   toString() {

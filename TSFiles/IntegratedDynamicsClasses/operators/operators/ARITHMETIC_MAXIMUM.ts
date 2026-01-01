@@ -32,10 +32,8 @@ export class OPERATOR_ARITHMETIC_MAXIMUM extends BaseOperator<
       ),
       symbol: "max",
       interactName: "numberMax",
-      function: (
-        num1: TypeNumber
-      ): TypeLambda<TypeNumber, Promise<TypeNumber>> => {
-        return (num2: TypeNumber): Promise<TypeNumber> => {
+      function: (num1: TypeNumber): TypeLambda<TypeNumber, TypeNumber> => {
+        return (num2: TypeNumber): TypeNumber => {
           return JavaMath.max(num1, num2);
         };
       },

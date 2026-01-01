@@ -38,17 +38,17 @@ export class OPERATOR_ITEMSTACK_ITEMLISTCOUNT extends BaseOperator<
       ),
       symbol: "item_list_count",
       interactName: "listItemListCount",
-      function: (items: Array<Item>): TypeLambda<Item, Integer> => {
+      function: (items: iArray<Item>): TypeLambda<Item, Integer> => {
         return (item: Item): Integer => {
-          return new Integer(
-            items.filter((i) => {
+          return items
+            .filter((i) => {
               try {
                 return i.equals(item);
               } catch (e) {
                 return false;
               }
-            }).length
-          );
+            })
+            .size();
         };
       },
     });

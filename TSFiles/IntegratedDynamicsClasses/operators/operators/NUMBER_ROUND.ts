@@ -12,7 +12,7 @@ NUMBER_ROUND: {
     },
     symbol: "|| ||",
     interactName: "numberRound",
-    function: (number: TypeNumber): Promise<Integer> => {
+    function: (number: TypeNumber): Integer => {
       return number.round();
     },
   },

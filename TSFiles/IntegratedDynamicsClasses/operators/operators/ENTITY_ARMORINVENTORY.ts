@@ -30,7 +30,7 @@ export class OPERATOR_ENTITY_ARMORINVENTORY extends BaseOperator<
       ),
       symbol: "armor_inventory",
       interactName: "entityArmorInventory",
-      function: (entity: Entity): Array<Item> => {
+      function: (entity: Entity): iArray<Item> => {
         return entity.getArmorInventory();
       },
     });

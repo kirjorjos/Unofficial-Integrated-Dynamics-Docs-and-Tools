@@ -1,33 +1,58 @@
-LIST_LAZYBUILT: {
-    internalName: "integrateddynamics:list_lazybuilt",
-    nicknames: ["listLazybuilt", "lazybuilt"],
-    parsedSignature: {
-      type: "Function",
-      from: { type: "Any", typeID: 1 },
-      to: {
-        type: "Function",
-        from: {
+import { ParsedSignature } from "HelperClasses/ParsedSignature";
+import { Operator } from "../Operator";
+import { iArrayLazy } from "IntegratedDynamicsClasses/typeWrappers/iArrayLazy";
+import { TypeMap } from "HelperClasses/TypeMap";
+import { BaseOperator } from "../BaseOperator";
+import { OPERATOR_GENERAL_IDENTITY } from "./GENERAL_IDENTITY";
+
+export class OPERATOR_IST_LAZYBUILT extends BaseOperator<
+  IntegratedValue,
+  Operator<
+    Operator<IntegratedValue, IntegratedValue>,
+    iArrayLazy<IntegratedValue>
+  >
+> {
+  constructor(globalMap: TypeMap) {
+    super({
+      internalName: "integrateddynamics:list_lazybuilt",
+      nicknames: ["listLazybuilt", "lazybuilt", "anyLazyBuilt"],
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: { type: "Any", typeID: 1 },
           to: {
             type: "Function",
-            from: { type: "Any", typeID: 1 },
-            to: {
-              type: "List",
-              listType: { type: "Any", typeID: 1 },
+            from: {
+              type: "Operator",
+              obscured: {
+                type: "Function",
+                from: { type: "Any", typeID: 1 },
+                to: { type: "Any", typeID: 1 },
+              },
             },
+            to: { type: "List", listType: { type: "Any", typeID: 1 } },
           },
         },
-        to: { type: "List", listType: { type: "Any", typeID: 1 } },
+        globalMap
+      ),
+      symbol: "lazybuilt",
+      interactName: "anyLazyBuilt",
+      function: (
+        initial: IntegratedValue
+      ): TypeLambda<
+        Operator<IntegratedValue, IntegratedValue>,
+        iArrayLazy<IntegratedValue>
+      > => {
+        return (
+          builder: Operator<IntegratedValue, IntegratedValue>
+        ): iArrayLazy<IntegratedValue> => {
+          return new iArrayLazy(
+            initial,
+            builder,
+            new OPERATOR_GENERAL_IDENTITY(globalMap)
+          );
+        };
       },
-    },
-    symbol: "lazybuilt",
-    interactName: "anyLazyBuilt",
-    function: <T>(
-      initial: T
-    ): TypeLambda<TypeLambda<T, T>, InfiniteList<T>> => {
-      return (builder: TypeLambda<T, T>): InfiniteList<T> => {
-        return new InfiniteList(initial, builder);
-      };
-    },
-  },
+    });
+  }
+}

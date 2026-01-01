@@ -32,10 +32,8 @@ export class OPERATOR_ARITHMETIC_DIVISION extends BaseOperator<
       ),
       symbol: "/",
       interactName: "numberDivide",
-      function: (
-        num1: TypeNumber
-      ): TypeLambda<TypeNumber, Promise<TypeNumber>> => {
-        return (num2: TypeNumber): Promise<TypeNumber> => {
+      function: (num1: TypeNumber): TypeLambda<TypeNumber, TypeNumber> => {
+        return (num2: TypeNumber): TypeNumber => {
           return JavaMath.divide(num1, num2);
         };
       },

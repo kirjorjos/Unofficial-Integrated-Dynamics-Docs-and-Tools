@@ -1,8 +1,8 @@
 import { TypeMap } from "HelperClasses/TypeMap";
 import { Ingredients } from "IntegratedDynamicsClasses/Ingredients";
-import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
+import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 
 export class OPERATOR_INGREDIENTS_FLUIDS extends BaseOperator<
   Ingredients,

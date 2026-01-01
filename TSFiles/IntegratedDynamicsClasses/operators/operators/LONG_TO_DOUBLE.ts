@@ -13,7 +13,7 @@ LONG_TO_DOUBLE: {
     },
     symbol: "()",
     interactName: "longLongToDouble",
-    function: (long: Long): Promise<Double> => {
+    function: (long: Long): Double => {
       return long.toDouble();
     },
   },

@@ -1,22 +1,41 @@
+import { Integer } from "JavaNumberClasses/Integer";
 import { iBoolean } from "./iBoolean";
+import { Operator } from "IntegratedDynamicsClasses/operators/Operator";
+import { iArrayEager } from "./iArrayEager";
 
-export class iArray<T extends IntegratedValue> implements IntegratedValue {
-  arr: Array<T>;
+export interface iArray<
+  Source extends IntegratedValue,
+  Result extends IntegratedValue = Source,
+> extends IntegratedValue {
+  valueOf(): Array<Source>;
 
-  constructor(arr: Array<T>) {
-    this.arr = arr;
-  }
+  append(element: Source): iArray<Source, Result>;
 
-  valueOf(): Array<T> {
-    return this.arr;
-  }
+  some(
+    fn: (value: Source, index: number, array: Source[]) => unknown
+  ): iBoolean;
 
-  getSignatureNode(): TypeRawSignatureAST.RawSignatureDefiniteValue {
-    return { type: "Boolean" };
-  }
+  map<U extends IntegratedValue>(
+    mapOp: Operator<Result, U>
+  ): iArray<IntegratedValue, U>;
 
-  equals(other: IntegratedValue) {
-    if (!(other instanceof iArray)) return new iBoolean(false);
-    return new iBoolean(this.arr == other.valueOf());
-  }
+  filter(
+    fn: (value: Source, index: number, array: Source[]) => unknown
+  ): iArray<Source, Result>;
+
+  size(): Integer;
+
+  get(index: Integer): Result;
+
+  getOrDefault(index: Integer, backup: Result): Result;
+
+  includes(element: Source): iBoolean;
+
+  concat(arr: iArray<Source, Result>): iArray<Source, Result>;
+
+  slice(start: Integer, end?: Integer): iArrayEager<Result, Result>;
+
+  equals(other: IntegratedValue): iBoolean;
+
+  getSignatureNode(): TypeRawSignatureAST.RawSignatureDefiniteValue;
 }

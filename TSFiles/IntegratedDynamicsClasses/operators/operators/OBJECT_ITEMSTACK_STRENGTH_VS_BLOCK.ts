@@ -23,8 +23,8 @@ OBJECT_ITEMSTACK_STRENGTH_VS_BLOCK: {
     },
     symbol: "strength",
     interactName: "itemstackStrength",
-    function: (item: Item): TypeLambda<Block, Promise<void>> => {
-      return (block: Block): Promise<void> => {
+    function: (item: Item): TypeLambda<Block, void> => {
+      return (block: Block): void => {
         return item.getStrengthVsBlock(block);
       };
     },

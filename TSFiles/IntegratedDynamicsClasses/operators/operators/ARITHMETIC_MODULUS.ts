@@ -32,10 +32,8 @@ export class OPERATOR_ARITHMETIC_MODULUS extends BaseOperator<
       ),
       symbol: "%",
       interactName: "numberModulus",
-      function: (
-        num1: TypeNumber
-      ): TypeLambda<TypeNumber, Promise<TypeNumber>> => {
-        return (num2: TypeNumber): Promise<TypeNumber> => {
+      function: (num1: TypeNumber): TypeLambda<TypeNumber, TypeNumber> => {
+        return (num2: TypeNumber): TypeNumber => {
           return JavaMath.mod(num1, num2);
         };
       },

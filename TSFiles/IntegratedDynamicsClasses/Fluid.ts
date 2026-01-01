@@ -3,6 +3,9 @@ import { Integer } from "../JavaNumberClasses/Integer";
 import { Properties } from "./Properties";
 import { CompoundTag } from "./NBTFunctions/MinecraftClasses/CompoundTag";
 import { iBoolean } from "./typeWrappers/iBoolean";
+import { Item } from "./Item";
+import { Block } from "./Block";
+import { iString } from "./typeWrappers/iString";
 
 export class Fluid implements UniquelyNamed {
   static defaultProps = new Properties({
@@ -29,16 +32,12 @@ export class Fluid implements UniquelyNamed {
     let props = Fluid.defaultProps;
     props.setAll(newProps);
     if (oldFluid) props.setAll(oldFluid.getProperties());
-    Promise.all([import("./Item"), import("./Fluid")]).then((values) => {
-      if (!props.has("item"))
-        props.set("item", new values[0].Item(new Properties({})));
-      if (!props.has("fluid"))
-        props.set("fluid", new values[1].Fluid(new Properties({})));
-    });
+    if (!props.has("block")) props.set("block", new Block(new Properties({})));
+    if (!props.has("item")) props.set("item", new Item(new Properties({})));
     this.props = props;
   }
 
-  getUniqueName(): string {
+  getUniqueName(): iString {
     return this.props.get("uname");
   }
 
@@ -108,5 +107,27 @@ export class Fluid implements UniquelyNamed {
 
   getProperties(): Properties {
     return this.props;
+  }
+
+  getSignatureNode(): TypeRawSignatureAST.RawSignatureDefiniteValue {
+    return {
+      type: "Fluid",
+    };
+  }
+
+  equals(other: IntegratedValue) {
+    if (!(other instanceof Fluid)) return new iBoolean(false);
+    else {
+      for (const key of Object.keys(this) as Array<keyof Fluid>) {
+        if (key == "equals") continue; // prevent recursion
+        if (this[key] instanceof Function) {
+          const thisResult = (this[key] as Function)() as IntegratedValue;
+          const otherResult = (other[key] as Function)() as IntegratedValue;
+          if (!thisResult.equals(otherResult).valueOf())
+            return new iBoolean(false);
+        }
+      }
+      return new iBoolean(true);
+    }
   }
 }

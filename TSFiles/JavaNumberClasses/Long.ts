@@ -1,6 +1,8 @@
 import { IntLongMath } from "HelperClasses/IntLongMath";
 import { JavaMath } from "HelperClasses/Math";
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
+import { Double } from "./Double";
+import { Integer } from "./Integer";
 
 export class Long implements NumberBase<Long> {
   private bits!: TypeInt64;
@@ -30,23 +32,19 @@ export class Long implements NumberBase<Long> {
   }
 
   // Long → Integer
-  toInteger(): Promise<Integer> {
+  toInteger(): Integer {
     const intBits = this.bits.slice(32) as TypeInt32; // low 32 bits
-    return import("./Integer").then((obj) => {
-      return new obj.Integer(intBits);
-    });
+    return new Integer(intBits);
   }
 
   // Long → Double
-  toDouble(): Promise<Double> {
+  toDouble(): Double {
     const num = JavaMath.toDecimal(this.bits);
-    return import("./Double").then((obj) => {
-      return new obj.Double(num);
-    });
+    return new Double(num);
   }
 
-  toLong(): Promise<Long> {
-    return new Promise((resolve) => resolve(new Long(this.bits as TypeInt64)));
+  toLong(): Long {
+    return new Long(this.bits as TypeInt64);
   }
 
   toDecimal(): TypeNumericString {
@@ -77,27 +75,27 @@ export class Long implements NumberBase<Long> {
     return IntLongMath.mod(this, num);
   }
 
-  async max(num: Long): Promise<Long> {
-    return (await this.gt(num)) ? this : num;
+  max(num: Long): Long {
+    return this.gt(num) ? this : num;
   }
 
-  async min(num: Long): Promise<Long> {
-    return (await this.lt(num)) ? this : num;
+  min(num: Long): Long {
+    return this.lt(num) ? this : num;
   }
 
-  async lt(num: Long): Promise<boolean> {
+  lt(num: Long): boolean {
     return IntLongMath.lt(this, num);
   }
 
-  async lte(num: Long): Promise<boolean> {
+  lte(num: Long): boolean {
     return IntLongMath.lte(this, num);
   }
 
-  async gt(num: Long): Promise<boolean> {
+  gt(num: Long): boolean {
     return IntLongMath.gt(this, num);
   }
 
-  async gte(num: Long): Promise<boolean> {
+  gte(num: Long): boolean {
     return IntLongMath.gte(this, num);
   }
 
@@ -106,15 +104,15 @@ export class Long implements NumberBase<Long> {
     return new iBoolean(num.getBits().every((bit, i) => bit === this.bits[i]));
   }
 
-  round(): Promise<Integer> {
+  round(): Integer {
     return this.toInteger();
   }
 
-  ceil(): Promise<Integer> {
+  ceil(): Integer {
     return this.toInteger();
   }
 
-  floor(): Promise<Integer> {
+  floor(): Integer {
     return this.toInteger();
   }
 

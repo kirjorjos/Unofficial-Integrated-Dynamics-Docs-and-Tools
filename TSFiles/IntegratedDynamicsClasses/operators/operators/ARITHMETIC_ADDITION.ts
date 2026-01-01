@@ -32,10 +32,8 @@ export class OPERATOR_ARITHMETIC_ADDITION extends BaseOperator<
       ),
       symbol: "+",
       interactName: "numberAdd",
-      function: async (
-        num1: TypeNumber
-      ): Promise<TypeLambda<TypeNumber, Promise<TypeNumber>>> => {
-        return async (num2: TypeNumber): Promise<TypeNumber> => {
+      function: (num1: TypeNumber): TypeLambda<TypeNumber, TypeNumber> => {
+        return (num2: TypeNumber): TypeNumber => {
           return JavaMath.add(num1, num2);
         };
       },

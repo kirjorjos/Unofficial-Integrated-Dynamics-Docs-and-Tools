@@ -1,5 +1,6 @@
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { Integer } from "./Integer";
+import { Long } from "./Long";
 
 export class Double implements NumberBase<Double> {
   value: number;
@@ -43,25 +44,19 @@ export class Double implements NumberBase<Double> {
   }
 
   // Double → Double
-  toLong(): Promise<Long> {
+  toLong(): Long {
     const n = Math.trunc(this.value); // Java semantics: truncate toward zero
-    return import("./Long").then((obj) => {
-      return new obj.Long(n.toString() as TypeNumericString);
-    });
+    return new Long(n.toString() as TypeNumericString);
   }
 
   // Double → Integer
-  toInteger(): Promise<Integer> {
+  toInteger(): Integer {
     const n = Math.trunc(this.value); // safe for 32-bit
-    return import("./Integer").then((obj) => {
-      return new obj.Integer(n.toString() as TypeNumericString);
-    });
+    return new Integer(n.toString() as TypeNumericString);
   }
 
-  toDouble(): Promise<Double> {
-    return new Promise((resolve) =>
-      resolve(new Double(`${this.value}` as TypeNumericString))
-    );
+  toDouble(): Double {
+    return new Double(`${this.value}` as TypeNumericString);
   }
 
   toDecimal(): TypeNumericString {
@@ -100,27 +95,27 @@ export class Double implements NumberBase<Double> {
     return new Double(Math.pow(this.value, parseInt(exponent.toDecimal())));
   }
 
-  async max(num: Double): Promise<Double> {
-    return (await this.gt(num)) ? this : num;
+  max(num: Double): Double {
+    return this.gt(num) ? this : num;
   }
 
-  async min(num: Double): Promise<Double> {
-    return (await this.lt(num)) ? this : num;
+  min(num: Double): Double {
+    return this.lt(num) ? this : num;
   }
 
-  async lt(num: Double): Promise<boolean> {
+  lt(num: Double): boolean {
     return this.value < parseInt(num.toDecimal());
   }
 
-  async lte(num: Double): Promise<boolean> {
+  lte(num: Double): boolean {
     return this.value <= parseInt(num.toDecimal());
   }
 
-  async gt(num: Double): Promise<boolean> {
+  gt(num: Double): boolean {
     return this.value > parseInt(num.toDecimal());
   }
 
-  async gte(num: Double): Promise<boolean> {
+  gte(num: Double): boolean {
     return this.value >= parseInt(num.toDecimal());
   }
 
@@ -129,15 +124,15 @@ export class Double implements NumberBase<Double> {
     return new iBoolean(`${this.value}` === num.toDecimal());
   }
 
-  async round(): Promise<Integer> {
+  round(): Integer {
     return new Integer(Math.round(this.value));
   }
 
-  async ceil(): Promise<Integer> {
+  ceil(): Integer {
     return new Integer(Math.ceil(this.value));
   }
 
-  async floor(): Promise<Integer> {
+  floor(): Integer {
     return new Integer(Math.floor(this.value));
   }
 

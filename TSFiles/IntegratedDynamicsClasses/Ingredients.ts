@@ -2,6 +2,7 @@ import { Fluid } from "./Fluid";
 import { Item } from "./Item";
 import { Long } from "../JavaNumberClasses/Long";
 import { iBoolean } from "./typeWrappers/iBoolean";
+import { iArrayEager } from "./typeWrappers/iArrayEager";
 import { iArray } from "./typeWrappers/iArray";
 
 export class Ingredients implements IntegratedValue {
@@ -10,9 +11,9 @@ export class Ingredients implements IntegratedValue {
   private energies: iArray<Long>;
 
   constructor(
-    items = new iArray<Item>([]),
-    fluids = new iArray<Fluid>([]),
-    energies = new iArray<Long>([])
+    items = new iArrayEager<Item>([]) as iArray<Item>,
+    fluids = new iArrayEager<Fluid>([]) as iArray<Fluid>,
+    energies = new iArrayEager<Long>([]) as iArray<Long>
   ) {
     this.items = items;
     this.fluids = fluids;
@@ -22,7 +23,11 @@ export class Ingredients implements IntegratedValue {
   setItem(item: Item, index: Integer): Ingredients {
     let items = [...this.items.valueOf()];
     items[parseInt(index.toDecimal())] = item;
-    return new Ingredients(new iArray<Item>(items), this.fluids, this.energies);
+    return new Ingredients(
+      new iArrayEager<Item>(items),
+      this.fluids,
+      this.energies
+    );
   }
 
   setFluid(fluid: Fluid, index: Integer): Ingredients {
@@ -30,7 +35,7 @@ export class Ingredients implements IntegratedValue {
     fluids[parseInt(index.toDecimal())] = fluid;
     return new Ingredients(
       this.items,
-      new iArray<Fluid>(fluids),
+      new iArrayEager<Fluid>(fluids),
       this.energies
     );
   }
@@ -38,12 +43,16 @@ export class Ingredients implements IntegratedValue {
   setEnergy(energy: Long, index: Integer): Ingredients {
     let energies = [...this.energies.valueOf()];
     energies[parseInt(index.toDecimal())] = energy;
-    return new Ingredients(this.items, this.fluids, new iArray<Long>(energies));
+    return new Ingredients(
+      this.items,
+      this.fluids,
+      new iArrayEager<Long>(energies)
+    );
   }
 
   appendItems(items: iArray<Item>): Ingredients {
     return new Ingredients(
-      new iArray<Item>([...this.items.valueOf(), ...items.valueOf()]),
+      new iArrayEager<Item>([...this.items.valueOf(), ...items.valueOf()]),
       this.fluids,
       this.energies
     );
@@ -52,7 +61,7 @@ export class Ingredients implements IntegratedValue {
   appendFluids(fluids: iArray<Fluid>): Ingredients {
     return new Ingredients(
       this.items,
-      new iArray<Fluid>([...this.fluids.valueOf(), ...fluids.valueOf()]),
+      new iArrayEager<Fluid>([...this.fluids.valueOf(), ...fluids.valueOf()]),
       this.energies
     );
   }
@@ -61,7 +70,7 @@ export class Ingredients implements IntegratedValue {
     return new Ingredients(
       this.items,
       this.fluids,
-      new iArray<Long>([...this.energies.valueOf(), ...energies.valueOf()])
+      new iArrayEager<Long>([...this.energies.valueOf(), ...energies.valueOf()])
     );
   }
 

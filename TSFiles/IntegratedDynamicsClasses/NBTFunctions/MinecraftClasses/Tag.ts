@@ -1,7 +1,9 @@
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 
-export abstract class Tag<T extends IntegratedValue> {
+export abstract class Tag<T extends IntegratedValue>
+  implements IntegratedValue
+{
   static TAG_LIST = 0;
   static TAG_COMPOUND = 1;
   static TAG_STRING = 2;
@@ -20,7 +22,13 @@ export abstract class Tag<T extends IntegratedValue> {
 
   abstract valueOf(): T | Record<string, Tag<T>> | Tag<T>[];
 
-  abstract equals(tag: Tag<T>): iBoolean;
+  abstract equals(tag: IntegratedValue): iBoolean;
 
   abstract getTypeAsString(): iString;
+
+  getSignatureNode(): TypeRawSignatureAST.RawSignatureNode {
+    return {
+      type: "NBT",
+    };
+  }
 }

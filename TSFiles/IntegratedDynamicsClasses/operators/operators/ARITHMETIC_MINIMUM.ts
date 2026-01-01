@@ -32,10 +32,8 @@ export class OPERATOR_ARITHMETIC_MINIMUM extends BaseOperator<
       ),
       symbol: "min",
       interactName: "numberMin",
-      function: (
-        num1: TypeNumber
-      ): TypeLambda<TypeNumber, Promise<TypeNumber>> => {
-        return (num2: TypeNumber): Promise<TypeNumber> => {
+      function: (num1: TypeNumber): TypeLambda<TypeNumber, TypeNumber> => {
+        return (num2: TypeNumber): TypeNumber => {
           return JavaMath.min(num1, num2);
         };
       },

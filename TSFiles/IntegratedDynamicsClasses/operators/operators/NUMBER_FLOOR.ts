@@ -12,7 +12,7 @@ NUMBER_FLOOR: {
     },
     symbol: "⌊ ⌋",
     interactName: "numberFloor",
-    function: (number: TypeNumber): Promise<Integer> => {
+    function: (number: TypeNumber): Integer => {
       return number.floor();
     },
   },

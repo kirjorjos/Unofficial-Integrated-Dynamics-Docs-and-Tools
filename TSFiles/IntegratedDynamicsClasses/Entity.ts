@@ -6,9 +6,12 @@ import { CompoundTag } from "./NBTFunctions/MinecraftClasses/CompoundTag";
 import { iBoolean } from "./typeWrappers/iBoolean";
 import { iString } from "./typeWrappers/iString";
 import { iNull } from "./typeWrappers/iNull";
+import { iArrayEager } from "./typeWrappers/iArrayEager";
+import { Block } from "./Block";
+import { Item } from "./Item";
 import { iArray } from "./typeWrappers/iArray";
 
-export class Entity implements UniquelyNamed, IntegratedValue {
+export class Entity implements UniquelyNamed {
   static defaultProps = new Properties({
     uname: new iString(""),
     mob: new iBoolean(false),
@@ -23,7 +26,7 @@ export class Entity implements UniquelyNamed, IntegratedValue {
     wet: new iBoolean(false),
     crouching: new iBoolean(false),
     eating: new iBoolean(false),
-    armorInventory: new iArray<Item>([]),
+    armorInventory: new iArrayEager<Item>([]),
     inventory: [] as Array<Item>,
     modName: new iString(""),
     // targetBlock: new Block(),
@@ -42,11 +45,11 @@ export class Entity implements UniquelyNamed, IntegratedValue {
     breedable: new iBoolean(false),
     inLove: new iBoolean(false),
     shearable: new iBoolean(false),
-    breedableList: new iArray<iString>([]),
+    breedableList: new iArrayEager<iString>([]),
     NBT: new iNull(),
     entityType: new iString(""),
-    itemList: new iArray<Item>([]),
-    fluids: new iArray<Fluid>([]),
+    itemList: new iArrayEager<Item>([]),
+    fluids: new iArrayEager<Fluid>([]),
     energyStored: new Integer(0),
     energyCapacity: new Integer(0),
   });
@@ -57,16 +60,14 @@ export class Entity implements UniquelyNamed, IntegratedValue {
     let props = Entity.defaultProps;
     props.setAll(newProps);
     if (oldEntity) props.setAll(oldEntity.getProperties());
-    Promise.all([import("./Item"), import("./Block")]).then((values) => {
-      if (!props.has("heldItemMain"))
-        props.set("heldItemMain", new values[0].Item(new Properties({})));
-      if (!props.has("helpItemOffHand"))
-        props.set("helpItemOffHand", new values[0].Item(new Properties({})));
-      if (!props.has("itemFrameContents"))
-        props.set("itemFrameContents", new values[0].Item(new Properties({})));
-      if (!props.has("targetBlock"))
-        props.set("targetBlock", new values[1].Block(new Properties({})));
-    });
+    if (!props.has("heldItemMain"))
+      props.set("heldItemMain", new Item(new Properties({})));
+    if (!props.has("helpItemOffHand"))
+      props.set("helpItemOffHand", new Item(new Properties({})));
+    if (!props.has("itemFrameContents"))
+      props.set("itemFrameContents", new Item(new Properties({})));
+    if (!props.has("targetBlock"))
+      props.set("targetBlock", new Block(new Properties({})));
     this.props = props;
   }
 
@@ -126,11 +127,11 @@ export class Entity implements UniquelyNamed, IntegratedValue {
     return this.props.get("eating");
   }
 
-  getArmorInventory(): Array<Item> {
+  getArmorInventory(): iArray<Item> {
     return this.props.get("armorInventory");
   }
 
-  getInventory(): Array<Item> {
+  getInventory(): iArray<Item> {
     return this.props.get("inventory");
   }
 
@@ -202,8 +203,11 @@ export class Entity implements UniquelyNamed, IntegratedValue {
     return this.props.get("shearable");
   }
 
-  getBreadableList(): Array<iString> {
-    return [...this.props.get("breedableList"), this.props.get("uname")];
+  getBreadableList(): iArray<iString> {
+    return new iArrayEager<iString>([
+      ...this.props.get("breedableList"),
+      this.props.get("uname"),
+    ]);
   }
 
   getNBT(): CompoundTag {
