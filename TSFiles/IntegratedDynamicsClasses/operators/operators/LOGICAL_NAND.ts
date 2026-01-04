@@ -1,35 +1,42 @@
-LOGICAL_NAND: {
-    internalName: "integrateddynamics:logical_nand",
-    nicknames: ["nand", "logicalNand"],
-    parsedSignature: {
-      type: "Function",
-      from: {
-        type: "Boolean",
-      },
-      to: {
-        type: "Function",
-        from: {
-          type: "Boolean",
+import { TypeMap } from "HelperClasses/TypeMap";
+import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
+import { BaseOperator } from "../BaseOperator";
+import { ParsedSignature } from "HelperClasses/ParsedSignature";
+import { Operator } from "../Operator";
+
+export class OPERATOR_LOGICAL_NAND extends BaseOperator<
+  iBoolean,
+  Operator<iBoolean, iBoolean>
+> {
+  constructor(globalMap: TypeMap) {
+    super({
+      internalName: "integrateddynamics:logical_nand",
+      nicknames: ["nand", "logicalNand"],
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Boolean",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Boolean",
+            },
+            to: {
+              type: "Boolean",
+            },
+          },
         },
-        to: {
-          type: "Boolean",
-        },
-      },
-    },
-    symbol: "!&&",
-    interactName: "booleanNand",
-    function: (
-      func1: TypeLambda<iBoolean, iBoolean>
-    ): TypeLambda<
-      TypeLambda<iBoolean, iBoolean>,
-      TypeLambda<iBoolean, iBoolean>
-    > => {
-      return (
-        func2: TypeLambda<iBoolean, iBoolean>
-      ): TypeLambda<iBoolean, iBoolean> => {
-        return (input: iBoolean): iBoolean => {
-          return new iBoolean(!(func1(input).valueOf() && func2(input)));
+        globalMap
+      ),
+      symbol: "!&&",
+      interactName: "booleanNand",
+      function: (bool1: iBoolean): TypeLambda<iBoolean, iBoolean> => {
+        return (bool2: iBoolean): iBoolean => {
+          return new iBoolean(!(bool1.valueOf() && bool2.valueOf()));
         };
-      };
-    },
-  },
+      },
+    });
+  }
+}
