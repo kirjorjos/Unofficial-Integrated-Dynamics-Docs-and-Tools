@@ -39,6 +39,12 @@ export class iArrayLazy<
     throw new Error("Some not supported on infinite list");
   }
 
+  every(
+    _fn: (value: Source, index: number, array: Source[]) => unknown
+  ): iBoolean {
+    throw new Error("Every not supported on infinite list");
+  }
+
   map<U extends IntegratedValue>(
     mapOp: Operator<Result, U>
   ): iArray<Source, U> {

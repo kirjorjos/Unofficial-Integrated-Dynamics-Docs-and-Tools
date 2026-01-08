@@ -15,6 +15,10 @@ export interface iArray<
     fn: (value: Source, index: number, array: Source[]) => unknown
   ): iBoolean;
 
+  every(
+    fn: (value: Source, index: number, array: Source[]) => unknown
+  ): iBoolean;
+
   map<U extends IntegratedValue>(
     mapOp: Operator<Result, U>
   ): iArray<IntegratedValue, U>;

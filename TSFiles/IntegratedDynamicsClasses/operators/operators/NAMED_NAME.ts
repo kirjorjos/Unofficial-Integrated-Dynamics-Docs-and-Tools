@@ -1,18 +1,33 @@
-NAMED_NAME: {
-    internalName: "integrateddynamics:string_name",
-    nicknames: ["name", "namedName", "toString"],
-    parsedSignature: {
-      type: "Function",
-      from: {
-        type: "Named",
+import { ParsedSignature } from "HelperClasses/ParsedSignature";
+import { TypeMap } from "HelperClasses/TypeMap";
+import { BaseOperator } from "../BaseOperator";
+import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
+
+export class OPERATOR_NAMED_NAME extends BaseOperator<
+  IntegratedValue,
+  iString
+> {
+  constructor(globalMap: TypeMap) {
+    super({
+      internalName: "integrateddynamics:string_name",
+      nicknames: ["name", "namedName", "toString"],
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Named",
+          },
+          to: {
+            type: "String",
+          },
+        },
+        globalMap
+      ),
+      symbol: "name",
+      interactName: "namedName",
+      function: (named: TypeRawSignatureAST.RawSignatureNamed): string => {
+        return named.toString();
       },
-      to: {
-        type: "String",
-      },
-    },
-    symbol: "name",
-    interactName: "namedName",
-    function: (named: TypeRawSignatureAST.RawSignatureNamed): string => {
-      return named.toString();
-    },
-  },
+    });
+  }
+}

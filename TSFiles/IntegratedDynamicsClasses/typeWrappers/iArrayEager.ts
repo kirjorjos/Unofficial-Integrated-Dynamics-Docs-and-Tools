@@ -32,6 +32,12 @@ export class iArrayEager<
     return new iBoolean(this.arr.some(fn));
   }
 
+  every(
+    fn: (value: Source, index: number, array: Source[]) => unknown
+  ): iBoolean {
+    return new iBoolean(this.arr.every(fn));
+  }
+
   map<U extends IntegratedValue>(
     mapOp: Operator<Result, U>
   ): iArray<IntegratedValue, U> {
