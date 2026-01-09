@@ -23,6 +23,10 @@ export class Operator<I extends IntegratedValue, O extends IntegratedValue>
   }
 
   apply(arg: I): O {
+    this.typeMap.unify(
+      this.parsedSignature.getInput(0),
+      arg.getSignatureNode()
+    );
     const parsedSignature = this.parsedSignature.apply(arg.getSignatureNode());
 
     let newOp = this.fn(arg);

@@ -1,24 +1,39 @@
-PARSE_DOUBLE: {
-    internalName:
-      "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.double",
-    nicknames: ["parseDouble"],
-    parsedSignature: {
-      type: "Function",
-      from: {
-        type: "Any",
-        typeID: 1,
+import { ParsedSignature } from "HelperClasses/ParsedSignature";
+import { BaseOperator } from "../BaseOperator";
+import { TypeMap } from "HelperClasses/TypeMap";
+import { Double } from "JavaNumberClasses/Double";
+
+export class OPERATOR_PARSE_DOUBLE extends BaseOperator<
+  IntegratedValue,
+  Double
+> {
+  constructor(globalMap: TypeMap) {
+    super({
+      internalName:
+        "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.double",
+      nicknames: ["parseDouble"],
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Any",
+            typeID: 1,
+          },
+          to: {
+            type: "Double",
+          },
+        },
+        globalMap
+      ),
+      symbol: "parse_double",
+      interactName: "stringParseAsDouble",
+      function: (data: IntegratedValue): Double => {
+        try {
+          return new Double(data as Double); // fine to cast as constructor throws error
+        } catch (e) {
+          return new Double(0);
+        }
       },
-      to: {
-        type: "Double",
-      },
-    },
-    symbol: "parse_double",
-    interactName: "stringParseAsDouble",
-    function: (data: IntegratedValue): Double => {
-      try {
-        return new Double(data as Double); // fine to cast as constructor throws error
-      } catch (e) {
-        return new Double(0);
-      }
-    },
-  },
+    });
+  }
+}
