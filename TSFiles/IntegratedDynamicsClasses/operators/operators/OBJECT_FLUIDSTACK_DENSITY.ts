@@ -1,26 +1,42 @@
-OBJECT_FLUIDSTACK_DENSITY: {
-    internalName: "integrateddynamics:fluidstack_density",
-    nicknames: [
-      "FluidstackDensity",
-      "fluidstackDensity",
-      "fluid_stack_density",
-      "fluidStackDensity",
-      "fluid_stack_density",
-      "fluid_density",
+import { TypeMap } from "HelperClasses/TypeMap";
+import { BaseOperator } from "../BaseOperator";
+import { ParsedSignature } from "HelperClasses/ParsedSignature";
+import { Integer } from "JavaNumberClasses/Integer";
+import { Fluid } from "IntegratedDynamicsClasses/Fluid";
+
+export class OPERATOR_OBJECT_FLUIDSTACK_DENSITY extends BaseOperator<
+  Fluid,
+  Integer
+> {
+  constructor(globalMap: TypeMap) {
+    super({
+      internalName: "integrateddynamics:fluidstack_density",
+      nicknames: [
+        "FluidstackDensity",
+        "fluidstackDensity",
+        "fluid_stack_density",
+        "fluidStackDensity",
+        "fluid_stack_density",
+        "fluid_density",
         "fluidDensity",
-    ],
-    parsedSignature: {
-      type: "Function",
-      from: {
-        type: "Fluid",
+      ],
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Fluid",
+          },
+          to: {
+            type: "Integer",
+          },
+        },
+        globalMap
+      ),
+      symbol: "density",
+      interactName: "fluidstackDensity",
+      function: (fluid: Fluid): Integer => {
+        return fluid.getDensity();
       },
-      to: {
-        type: "Integer",
-      },
-    },
-    symbol: "density",
-    interactName: "fluidstackDensity",
-    function: (fluid: Fluid): Integer => {
-      return fluid.getDensity();
-    },
-  },
+    });
+  }
+}
