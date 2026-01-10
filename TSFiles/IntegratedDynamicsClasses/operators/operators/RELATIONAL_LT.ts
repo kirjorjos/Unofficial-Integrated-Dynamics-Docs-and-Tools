@@ -1,26 +1,43 @@
-RELATIONAL_LT: {
-    internalName: "integrateddynamics:relational_lt",
-    nicknames: ["relationalLt", "<"],
-    parsedSignature: {
-      type: "Function",
-      from: {
-        type: "Number",
-      },
-      to: {
-        type: "Function",
-        from: {
-          type: "Number",
+import { TypeMap } from "HelperClasses/TypeMap";
+import { BaseOperator } from "../BaseOperator";
+import { ParsedSignature } from "HelperClasses/ParsedSignature";
+import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
+import { Operator } from "../Operator";
+import { JavaMath } from "HelperClasses/Math";
+
+export class OPERATOR_RELATIONAL_LT extends BaseOperator<
+  TypeNumber,
+  Operator<TypeNumber, iBoolean>
+> {
+  constructor(globalMap: TypeMap) {
+    super({
+      internalName: "integrateddynamics:relational_lt",
+      nicknames: ["relationalLt", "<"],
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Number",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Number",
+            },
+            to: {
+              type: "Boolean",
+            },
+          },
         },
-        to: {
-          type: "Boolean",
-        },
+        globalMap
+      ),
+      symbol: "<",
+      interactName: "numberLessThan",
+      function: (num1: TypeNumber): TypeLambda<TypeNumber, iBoolean> => {
+        return (num2: TypeNumber): iBoolean => {
+          return new iBoolean(JavaMath.lt(num1, num2));
+        };
       },
-    },
-    symbol: "<",
-    interactName: "numberLessThan",
-    function: (num1: TypeNumber): TypeLambda<TypeNumber, iBoolean> => {
-      return (num2: TypeNumber): iBoolean => {
-        return new iBoolean(JavaMath.lt(num1, num2));
-      };
-    },
-  },
+    });
+  }
+}
