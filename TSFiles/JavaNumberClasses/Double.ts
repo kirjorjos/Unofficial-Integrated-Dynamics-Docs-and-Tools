@@ -64,27 +64,27 @@ export class Double implements NumberBase<Double> {
   }
 
   leftShift(num: Integer): Double {
-    return new Double(this.value << parseInt(num.toDecimal()));
+    return new Double(this.value << num.toJSNumber());
   }
 
   add(num: Double): Double {
-    return new Double(this.value + parseInt(num.toDecimal()));
+    return new Double(this.value + num.toJSNumber());
   }
 
   subtract(num: Double): Double {
-    return new Double(this.value - parseInt(num.toDecimal()));
+    return new Double(this.value - num.toJSNumber());
   }
 
   multiply(num: Double): Double {
-    return new Double(this.value * parseInt(num.toDecimal()));
+    return new Double(this.value * num.toJSNumber());
   }
 
   divide(num: Double): Double {
-    return new Double(this.value / parseInt(num.toDecimal()));
+    return new Double(this.value / num.toJSNumber());
   }
 
   mod(num: Double): Double {
-    return new Double(this.value % parseInt(num.toDecimal()));
+    return new Double(this.value % num.toJSNumber());
   }
 
   sqrt(): Double {
@@ -92,7 +92,7 @@ export class Double implements NumberBase<Double> {
   }
 
   pow(exponent: Double): Double {
-    return new Double(Math.pow(this.value, parseInt(exponent.toDecimal())));
+    return new Double(Math.pow(this.value, exponent.toJSNumber()));
   }
 
   max(num: Double): Double {
@@ -104,19 +104,19 @@ export class Double implements NumberBase<Double> {
   }
 
   lt(num: Double): boolean {
-    return this.value < parseInt(num.toDecimal());
+    return this.value < num.toJSNumber();
   }
 
   lte(num: Double): boolean {
-    return this.value <= parseInt(num.toDecimal());
+    return this.value <= num.toJSNumber();
   }
 
   gt(num: Double): boolean {
-    return this.value > parseInt(num.toDecimal());
+    return this.value > num.toJSNumber();
   }
 
   gte(num: Double): boolean {
-    return this.value >= parseInt(num.toDecimal());
+    return this.value >= num.toJSNumber();
   }
 
   equals(num: IntegratedValue): iBoolean {
@@ -138,5 +138,9 @@ export class Double implements NumberBase<Double> {
 
   getSignatureNode(): { type: "Double" } {
     return { type: "Double" };
+  }
+
+  toJSNumber(): number {
+    return this.value;
   }
 }

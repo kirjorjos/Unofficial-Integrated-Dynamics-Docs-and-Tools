@@ -101,8 +101,8 @@ class Expression extends INbtPathExpression {
             let start = this.getStart();
             let actualEnd =
               this.getEnd() > -1
-                ? Math.min(parseInt(tag.size().toDecimal()) - 1, this.getEnd())
-                : parseInt(tag.size().toDecimal()) - 1;
+                ? Math.min(tag.size().toJSNumber() - 1, this.getEnd())
+                : tag.size().toJSNumber() - 1;
             let step = this.getStep();
             return NbtPathExpressionParseHandlerListSlice.newStartEndStepStream(
               start,

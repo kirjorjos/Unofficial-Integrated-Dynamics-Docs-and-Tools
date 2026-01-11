@@ -157,7 +157,9 @@ export class CompoundTag extends Tag<IntegratedValue> {
             else if (str.match(/\d*[Ll]/))
               obj[key] = new LongTag(new Long(parseInt(str.slice(0, -1))));
             else if (str.match(/\d*[FfDd]/))
-              obj[key] = new DoubleTag(new Double(parseInt(str.slice(0, -1))));
+              obj[key] = new DoubleTag(
+                new Double(parseFloat(str.slice(0, -1)))
+              );
             else if (str.match(/d{1,}/))
               obj[key] = new IntTag(new Integer(parseInt(obj[key])));
             break;

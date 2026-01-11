@@ -61,9 +61,7 @@ export class Integer implements NumberBase<Integer> {
   }
 
   leftShift(num: Integer): Integer {
-    return new Integer(
-      JavaMath.leftShift(this.bits, parseInt(num.toDecimal()))
-    );
+    return new Integer(JavaMath.leftShift(this.bits, num.toJSNumber()));
   }
 
   add(num: Integer): Integer {
@@ -153,5 +151,9 @@ export class Integer implements NumberBase<Integer> {
 
   getSignatureNode(): { type: "Integer" } {
     return { type: "Integer" };
+  }
+
+  toJSNumber(): number {
+    return parseInt(JavaMath.toDecimal(this.bits));
   }
 }

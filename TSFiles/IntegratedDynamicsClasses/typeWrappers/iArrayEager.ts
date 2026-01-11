@@ -64,7 +64,7 @@ export class iArrayEager<
   get(index: Integer): Result {
     if (this.size().lte(index))
       throw new Error(`Index out of bounds: ${index.toDecimal()}`);
-    const i = parseInt(index.toDecimal().valueOf());
+    const i = index.toJSNumber();
     return this.arr[i] as unknown as Result;
   }
 
@@ -79,8 +79,8 @@ export class iArrayEager<
   }
 
   slice(startInt: Integer, endInt?: Integer): iArrayEager<Result, Result> {
-    const start = parseInt(startInt.toDecimal());
-    const end = endInt ? parseInt(endInt!.toDecimal()) : undefined;
+    const start = startInt.toJSNumber();
+    const end = endInt ? endInt!.toJSNumber() : undefined;
     return new iArrayEager(this.arr.slice(start, end) as unknown as Result[]);
   }
 

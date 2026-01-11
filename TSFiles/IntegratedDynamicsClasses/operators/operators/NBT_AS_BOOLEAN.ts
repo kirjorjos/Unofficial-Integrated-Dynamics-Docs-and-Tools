@@ -26,7 +26,7 @@ export class OPERATOR_NBT_AS_BOOLEAN extends BaseOperator<ByteTag, iBoolean> {
       interactName: "nbtAsBoolean",
       function: (nbt: ByteTag): iBoolean => {
         if (nbt.getType() === Tag.TAG_BYTE) {
-          return new iBoolean(!!parseInt(nbt.valueOf().toDecimal()));
+          return new iBoolean(!!nbt.valueOf().toJSNumber());
         } else {
           return new iBoolean(false);
         }

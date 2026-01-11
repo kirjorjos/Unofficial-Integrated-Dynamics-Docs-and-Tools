@@ -32,6 +32,7 @@ declare global {
     ceil(): Integer;
     floor(): Integer;
     getSignatureNode(): { type: "Integer" | "Long" | "Double" };
+    toJSNumber(): number;
   }
 
   type TypeNumber = Integer | Long | Double;

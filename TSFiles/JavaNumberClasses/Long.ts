@@ -52,7 +52,7 @@ export class Long implements NumberBase<Long> {
   }
 
   leftShift(num: Integer): Long {
-    return new Long(JavaMath.leftShift(this.bits, parseInt(num.toDecimal())));
+    return new Long(JavaMath.leftShift(this.bits, num.toJSNumber()));
   }
 
   add(num: Long): Long {
@@ -118,5 +118,9 @@ export class Long implements NumberBase<Long> {
 
   getSignatureNode(): { type: "Long" } {
     return { type: "Long" };
+  }
+
+  toJSNumber(): number {
+    return parseInt(JavaMath.toDecimal(this.bits));
   }
 }

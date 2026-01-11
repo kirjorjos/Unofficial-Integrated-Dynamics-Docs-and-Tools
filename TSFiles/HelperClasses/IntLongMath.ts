@@ -239,7 +239,7 @@ export namespace IntLongMath {
     bits: T,
     places: Integer
   ): T {
-    return [...bits, ...Array(parseInt(places.toDecimal())).fill(0)].slice(
+    return [...bits, ...Array(places.toJSNumber()).fill(0)].slice(
       -bits.length
     ) as T;
   }

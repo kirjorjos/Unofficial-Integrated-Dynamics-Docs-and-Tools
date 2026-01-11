@@ -44,12 +44,10 @@ export class OPERATOR_STRING_SUBSTRING extends BaseOperator<
       ): TypeLambda<Integer, TypeLambda<iString, iString>> => {
         return (end: Integer): TypeLambda<iString, iString> => {
           return (fullString: iString): iString => {
-            let endNum = parseInt(end.toDecimal()) as number | undefined;
+            let endNum = end.toJSNumber() as number | undefined;
             if (isNaN(endNum!)) endNum = undefined;
             return new iString(
-              fullString
-                .valueOf()
-                .substring(parseInt(start.toDecimal()), endNum)
+              fullString.valueOf().substring(start.toJSNumber(), endNum)
             );
           };
         };

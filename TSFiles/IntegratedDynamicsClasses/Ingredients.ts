@@ -22,7 +22,7 @@ export class Ingredients implements IntegratedValue {
 
   setItem(item: Item, index: Integer): Ingredients {
     let items = [...this.items.valueOf()];
-    items[parseInt(index.toDecimal())] = item;
+    items[index.toJSNumber()] = item;
     return new Ingredients(
       new iArrayEager<Item>(items),
       this.fluids,
@@ -32,7 +32,7 @@ export class Ingredients implements IntegratedValue {
 
   setFluid(fluid: Fluid, index: Integer): Ingredients {
     let fluids = [...this.fluids.valueOf()];
-    fluids[parseInt(index.toDecimal())] = fluid;
+    fluids[index.toJSNumber()] = fluid;
     return new Ingredients(
       this.items,
       new iArrayEager<Fluid>(fluids),
@@ -42,7 +42,7 @@ export class Ingredients implements IntegratedValue {
 
   setEnergy(energy: Long, index: Integer): Ingredients {
     let energies = [...this.energies.valueOf()];
-    energies[parseInt(index.toDecimal())] = energy;
+    energies[index.toJSNumber()] = energy;
     return new Ingredients(
       this.items,
       this.fluids,

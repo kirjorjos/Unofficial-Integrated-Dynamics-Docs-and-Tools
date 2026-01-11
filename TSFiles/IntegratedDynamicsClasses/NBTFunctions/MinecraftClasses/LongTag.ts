@@ -24,7 +24,7 @@ export class LongTag extends NumericTag {
   }
 
   getAsDouble(): number {
-    return parseInt(this.data.toDecimal());
+    return this.data.toJSNumber();
   }
 
   getTypeAsString(): iString {

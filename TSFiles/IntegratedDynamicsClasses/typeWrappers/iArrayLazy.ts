@@ -79,7 +79,7 @@ export class iArrayLazy<
     if (this.trueSize().lte(index)) {
       this.get(index.subtract(new Integer(1)));
     }
-    const i = parseInt(index.toDecimal().valueOf());
+    const i = index.toJSNumber();
     if (this.arr.length == i)
       this.arr[i] = this.generatorOp.apply(this.arr[i - 1] as Source);
     let baseValue = this.arr[i] as Source;

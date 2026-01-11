@@ -24,7 +24,7 @@ export class ByteTag extends NumericTag {
   }
 
   getAsDouble(): number {
-    return parseInt(this.data.toDecimal());
+    return this.data.toJSNumber();
   }
 
   override getTypeAsString(): iString {

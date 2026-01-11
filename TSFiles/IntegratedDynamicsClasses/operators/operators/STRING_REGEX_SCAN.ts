@@ -49,7 +49,7 @@ export class OPERATOR_STRING_REGEX_SCAN extends BaseOperator<
             regex.lastIndex = 0;
 
             while ((match = regex.exec(fullString.valueOf())) !== null) {
-              const groupValue = match[parseInt(groupIndex.toDecimal())];
+              const groupValue = match[groupIndex.toJSNumber()];
               if (groupValue !== undefined && groupValue !== null) {
                 results.push(new iString(groupValue));
               }
