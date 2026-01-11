@@ -4,7 +4,7 @@ import { Integer } from "JavaNumberClasses/Integer";
 import { BaseOperator } from "../BaseOperator";
 import { Operator } from "../Operator";
 
-export class OPEERATOR_BINARY_RZSHIFT extends BaseOperator<
+export class OPERATOR_BINARY_RZSHIFT extends BaseOperator<
   Integer,
   Operator<Integer, Integer>
 > {

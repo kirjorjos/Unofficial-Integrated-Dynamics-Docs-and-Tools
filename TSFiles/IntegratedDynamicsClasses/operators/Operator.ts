@@ -18,7 +18,7 @@ export class Operator<I extends IntegratedValue, O extends IntegratedValue>
     function: TypeLambda<I, O>;
   }) {
     this.fn = fn;
-    this.typeMap = new TypeMap(parsedSignature.getAST());
+    this.typeMap = parsedSignature.getTypeMap();
     this.parsedSignature = parsedSignature;
   }
 

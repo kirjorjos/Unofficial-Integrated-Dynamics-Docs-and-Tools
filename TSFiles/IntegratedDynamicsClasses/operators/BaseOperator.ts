@@ -1,5 +1,4 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
-import { TypeMap } from "HelperClasses/TypeMap";
 import { Operator } from "./Operator";
 
 export class BaseOperator<
@@ -31,7 +30,7 @@ export class BaseOperator<
   }) {
     super({ parsedSignature, function: fn });
     this.fn = fn;
-    this.typeMap = new TypeMap(parsedSignature.getAST());
+    this.typeMap = parsedSignature.getTypeMap();
     this.parsedSignature = parsedSignature;
     this.internalName = internalName;
     this.nicknames = nicknames;

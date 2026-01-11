@@ -5,7 +5,7 @@ import { TypeMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { OPERATOR_GENERAL_IDENTITY } from "./GENERAL_IDENTITY";
 
-export class OPERATOR_IST_LAZYBUILT extends BaseOperator<
+export class OPERATOR_LIST_LAZYBUILT extends BaseOperator<
   IntegratedValue,
   Operator<
     Operator<IntegratedValue, IntegratedValue>,
