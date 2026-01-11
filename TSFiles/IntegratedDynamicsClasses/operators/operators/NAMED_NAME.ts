@@ -25,8 +25,8 @@ export class OPERATOR_NAMED_NAME extends BaseOperator<
       ),
       symbol: "name",
       interactName: "namedName",
-      function: (named: TypeRawSignatureAST.RawSignatureNamed): string => {
-        return named.toString();
+      function: (named: TypeRawSignatureAST.RawSignatureNamed): iString => {
+        return new iString(named.toString());
       },
     });
   }
