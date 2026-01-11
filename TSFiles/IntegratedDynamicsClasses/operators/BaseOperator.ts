@@ -55,4 +55,8 @@ export class BaseOperator<
 
     return result;
   }
+
+  getUname() {
+    return this.internalName;
+  }
 }

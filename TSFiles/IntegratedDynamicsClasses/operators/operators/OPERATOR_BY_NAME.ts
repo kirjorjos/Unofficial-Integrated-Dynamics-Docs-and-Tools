@@ -30,10 +30,9 @@ export class OPERATOR_OPERATOR_BY_NAME extends BaseOperator<
       symbol: "op_by_name",
       interactName: "stringOperatorByName",
       function: (name: iString): Operator<IntegratedValue, IntegratedValue> => {
-        return operatorRegistry.find(
-          (op: BaseOperator<IntegratedValue, IntegratedValue>) =>
-            op.internalName === name.valueOf()
-        );
+        const result = operatorRegistry.find(name.valueOf());
+        if (!result) throw new Error(`No operator found: ${name.valueOf()}`);
+        return result;
       },
     });
   }
