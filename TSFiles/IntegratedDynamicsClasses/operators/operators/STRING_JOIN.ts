@@ -35,14 +35,14 @@ export class OPERATOR_STRING_JOIN extends BaseOperator<
         return (stringList: iArray<iString>): iString => {
           if (
             stringList
-              .getRawValue()
+              .valueOf()
               .some((item) => typeof item.valueOf() !== "string")
           ) {
             throw new Error("stringJoin expects a list of strings");
           }
           return new iString(
             stringList
-              .getRawValue()
+              .valueOf()
               .map((s) => s.valueOf())
               .join(delimiter.valueOf())
           );

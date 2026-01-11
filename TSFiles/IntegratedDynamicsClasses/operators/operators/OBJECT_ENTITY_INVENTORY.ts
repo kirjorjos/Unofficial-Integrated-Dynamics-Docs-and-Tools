@@ -24,7 +24,7 @@ export class OPERATOR_OBJECT_ENTITY_INVENTORY extends BaseOperator<
           from: {
             type: "Entity",
           },
-          to: { type: "List", listType: { type: "ItemStack" } },
+          to: { type: "List", listType: { type: "Item" } },
         },
         globalMap
       ),

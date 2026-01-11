@@ -1,5 +1,4 @@
 import { TypeMap } from "HelperClasses/TypeMap";
-import { Block } from "IntegratedDynamicsClasses/IntegratedDynamicsClasses/Block";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
@@ -33,7 +32,7 @@ export class OPERATOR_OBJECT_BLOCK_MODNAME extends BaseOperator<
       symbol: "mod",
       interactName: "blockMod",
       function: (block: Block): iString => {
-        return new iString(block.getModName());
+        return block.getModName();
       },
     });
   }

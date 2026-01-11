@@ -12,7 +12,7 @@ export class OPERATOR_RECIPE_WITH_INPUT extends BaseOperator<
   constructor(globalMap: TypeMap) {
     super({
       internalName: "integrateddynamics:recipe_with_input",
-      nicknames: [, "recipeWithInput"],
+      nicknames: ["Recipe.with_in", "recipeWithInput"],
       parsedSignature: new ParsedSignature(
         {
           type: "Function",

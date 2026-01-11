@@ -45,8 +45,11 @@ export class OPERATOR_STRING_REGEX_GROUP extends BaseOperator<
           return (fullString: iString) => {
             const regex = new RE2(regexString.valueOf(), "u");
             const match = regex.exec(fullString.valueOf());
-            if (match && match[groupIndex.valueOf()] !== undefined) {
-              return new iString(match[groupIndex.valueOf()]);
+            if (
+              match &&
+              match[parseInt(groupIndex.toDecimal())] !== undefined
+            ) {
+              return new iString(match[parseInt(groupIndex.toDecimal())]!);
             } else {
               throw new Error(
                 `No match found for group index ${groupIndex.valueOf()} in regex "${regexString.valueOf()}" on string "${fullString.valueOf()}"`

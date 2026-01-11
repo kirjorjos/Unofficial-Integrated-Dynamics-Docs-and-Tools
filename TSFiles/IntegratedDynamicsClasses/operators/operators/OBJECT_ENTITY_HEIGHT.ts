@@ -24,7 +24,7 @@ export class OPERATOR_OBJECT_ENTITY_HEIGHT extends BaseOperator<
             type: "Entity",
           },
           to: {
-            type: "Float",
+            type: "Double",
           },
         },
         globalMap
