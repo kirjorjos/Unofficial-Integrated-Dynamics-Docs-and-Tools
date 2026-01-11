@@ -2,6 +2,7 @@ import { IntLongMath } from "HelperClasses/IntLongMath";
 import { JavaMath } from "HelperClasses/Math";
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { Long } from "./Long";
+import { Double } from "./Double";
 
 export class Integer implements NumberBase<Integer> {
   private bits!: TypeInt32;
