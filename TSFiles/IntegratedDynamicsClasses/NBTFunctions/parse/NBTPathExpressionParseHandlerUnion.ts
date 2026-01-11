@@ -17,6 +17,7 @@ import {
 import { NbtPathExpressionExecutionContext } from "./NBTPathExecutionContext";
 import { NbtPathNavigationAdapter } from "../navigate/NbtPathNavigationAdapter";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
+import { Integer } from "JavaNumberClasses/Integer";
 
 /**
  * A handler that handles union expressions in the form of "[10,12]" or "[10,]" or "[,12]",
@@ -92,7 +93,7 @@ class Expression extends INbtPathExpression {
           ) {
             let tag = nbt as ListTag;
             return this.getChildIndexes()
-              .map((i) => tag.get(i))
+              .map((i) => tag.get(new Integer(i)))
               .filter((subTag) => subTag.getType() == Tag.TAG_COMPOUND)
               .map(
                 (subTag) =>

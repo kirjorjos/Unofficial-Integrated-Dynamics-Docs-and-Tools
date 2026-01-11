@@ -4,6 +4,7 @@
  * Original Author: rubensworks
  */
 
+import { Integer } from "JavaNumberClasses/Integer";
 import { INbtPathExpression } from "../INbtPathExpression";
 import { ListTag } from "../MinecraftClasses/ListTag";
 import { Tag } from "../MinecraftClasses/Tag";
@@ -100,8 +101,8 @@ class Expression extends INbtPathExpression {
             let start = this.getStart();
             let actualEnd =
               this.getEnd() > -1
-                ? Math.min(tag.size() - 1, this.getEnd())
-                : tag.size() - 1;
+                ? Math.min(parseInt(tag.size().toDecimal()) - 1, this.getEnd())
+                : parseInt(tag.size().toDecimal()) - 1;
             let step = this.getStep();
             return NbtPathExpressionParseHandlerListSlice.newStartEndStepStream(
               start,
@@ -110,7 +111,7 @@ class Expression extends INbtPathExpression {
             ).map(
               (i) =>
                 new NbtPathExpressionExecutionContext(
-                  tag.get(i),
+                  tag.get(new Integer(i)),
                   executionContext
                 )
             );

@@ -49,6 +49,7 @@ export class NbtPathExpressionParseHandlerAllChildren
               let tag = nbt as ListTag;
               return tag
                 .getArray()
+                .valueOf()
                 .map(
                   (subTag: Tag<IntegratedValue>) =>
                     new NbtPathExpressionExecutionContext(
@@ -60,6 +61,7 @@ export class NbtPathExpressionParseHandlerAllChildren
               let tag = nbt as CompoundTag;
               return tag
                 .getAllKeys()
+                .valueOf()
                 .map(
                   (key) =>
                     new NbtPathExpressionExecutionContext(
