@@ -5,7 +5,7 @@ import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 import { iArrayEager } from "IntegratedDynamicsClasses/typeWrappers/iArrayEager";
 import { Operator } from "../Operator";
-import RE2 from "re2";
+import { RE2 } from "re2-wasm";
 
 export class OPERATOR_STRING_SPLIT_ON_REGEX extends BaseOperator<
   iString,

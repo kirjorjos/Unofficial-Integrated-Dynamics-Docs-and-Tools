@@ -17,10 +17,6 @@
     if (typeof require !== "undefined") return require.apply(this, arguments);
     throw Error('Dynamic require of "' + x + '" is not supported');
   });
-  var __esm = (fn, res) =>
-    function __init() {
-      return (fn && (res = (0, fn[__getOwnPropNames(fn)[0]])((fn = 0))), res);
-    };
   var __commonJS = (cb, mod) =>
     function __require2() {
       return (
@@ -32,10 +28,6 @@
         mod.exports
       );
     };
-  var __export = (target, all) => {
-    for (var name in all)
-      __defProp(target, name, { get: all[name], enumerable: true });
-  };
   var __copyProps = (to, from, except, desc) => {
     if ((from && typeof from === "object") || typeof from === "function") {
       for (let key of __getOwnPropNames(from))
@@ -61,1462 +53,6 @@
       mod
     )
   );
-
-  // TSFiles/HelperClasses/Math.ts
-  var JavaMath;
-  var init_Math = __esm({
-    "TSFiles/HelperClasses/Math.ts"() {
-      "use strict";
-      ((JavaMath2) => {
-        const bitMap32 = [
-          "1073741824",
-          "536870912",
-          "268435456",
-          "134217728",
-          "67108864",
-          "33554432",
-          "16777216",
-          "8388608",
-          "4194304",
-          "2097152",
-          "1048576",
-          "524288",
-          "262144",
-          "131072",
-          "65536",
-          "32768",
-          "16384",
-          "8192",
-          "4096",
-          "2048",
-          "1024",
-          "512",
-          "256",
-          "128",
-          "64",
-          "32",
-          "16",
-          "8",
-          "4",
-          "2",
-          "1",
-        ];
-        const bitMap64 = [
-          "4611686018427387904",
-          "2305843009213693952",
-          "1152921504606846976",
-          "576460752303423488",
-          "288230376151711744",
-          "144115188075855872",
-          "72057594037927936",
-          "36028797018963968",
-          "18014398509481984",
-          "9007199254740992",
-          "4503599627370496",
-          "2251799813685248",
-          "1125899906842624",
-          "562949953421312",
-          "281474976710656",
-          "140737488355328",
-          "70368744177664",
-          "35184372088832",
-          "17592186044416",
-          "8796093022208",
-          "4398046511104",
-          "2199023255552",
-          "1099511627776",
-          "549755813888",
-          "274877906944",
-          "137438953472",
-          "68719476736",
-          "34359738368",
-          "17179869184",
-          "8589934592",
-          "4294967296",
-          "2147483648",
-          "1073741824",
-          "536870912",
-          "268435456",
-          "134217728",
-          "67108864",
-          "33554432",
-          "16777216",
-          "8388608",
-          "4194304",
-          "2097152",
-          "1048576",
-          "524288",
-          "262144",
-          "131072",
-          "65536",
-          "32768",
-          "16384",
-          "8192",
-          "4096",
-          "2048",
-          "1024",
-          "512",
-          "256",
-          "128",
-          "64",
-          "32",
-          "16",
-          "8",
-          "4",
-          "2",
-          "1",
-        ];
-        function stringGt(a, b) {
-          const maxLength = Math.max(a.length, b.length);
-          a = a.padStart(maxLength, "0");
-          b = b.padStart(maxLength, "0");
-          for (let i = 0; i < maxLength; i++) {
-            if (parseInt(a[i]) > parseInt(b[i])) return true;
-            else if (a[i] === b[i]) continue;
-            else return false;
-          }
-          return false;
-        }
-        function stringAdd(a, b) {
-          const maxLength = Math.max(a.length, b.length);
-          a = a.padStart(maxLength, "0");
-          b = b.padStart(maxLength, "0");
-          let arrA = a.split("").reverse();
-          let arrB = b.split("").reverse();
-          let result = [];
-          let carry = 0;
-          for (let i = 0; i < maxLength; i++) {
-            let digit1 = parseInt(arrA[i]);
-            let digit2 = parseInt(arrB[i]);
-            let sum = digit1 + digit2 + carry;
-            carry = Math.floor(sum / 10);
-            result.push(`${sum % 10}`);
-          }
-          return result.reverse().join("");
-        }
-        function decimalToBinary(decimal, length) {
-          let bits = new Array(length).fill(0);
-          let abs = decimal;
-          if (decimal.startsWith("-")) abs = decimal.slice(1);
-          let runningTotal = "0";
-          for (const [index, value] of (length === 32
-            ? bitMap32
-            : bitMap64
-          ).entries()) {
-            let oldTotal = runningTotal;
-            if (stringGt(value, abs)) {
-              bits[index + 1] = 0;
-            } else {
-              runningTotal = stringAdd(runningTotal, value);
-              if (!stringGt(runningTotal, abs)) {
-                bits[index + 1] = 1;
-              } else {
-                bits[index + 1] = 0;
-                runningTotal = oldTotal;
-              }
-            }
-          }
-          if (decimal.startsWith("-")) {
-            for (let i = 0; i < bits.length; i++) {
-              bits[i] = bits[i] ^ 1;
-            }
-            bits = bitwiseAdd(
-              bits,
-              "1"
-                .padStart(length, "0")
-                .split("")
-                .map((str) => parseInt(str))
-            );
-          }
-          return bits;
-        }
-        JavaMath2.decimalToBinary = decimalToBinary;
-        function bitwiseAdd(a, b) {
-          const result = new Array(a.length).fill(0);
-          let carry = 0;
-          for (let i = a.length - 1; i >= 0; i--) {
-            const sum = a[i] + b[i] + carry;
-            result[i] = sum & 1;
-            carry = sum >> 1;
-          }
-          return result;
-        }
-        JavaMath2.bitwiseAdd = bitwiseAdd;
-        function toDecimal(bits) {
-          bits = [...bits];
-          const isMinValue = bits[0] && !bits.slice(1).includes(1);
-          if (isMinValue)
-            return bits.length === 64 ? "-9223372036854775808" : "-2147483648";
-          if (bits[0]) {
-            for (let i = 0; i < bits.length; i++) {
-              bits[i] = bits[i] ^ 1;
-            }
-            bits = bitwiseAdd(
-              bits,
-              "1"
-                .padStart(bits.length, "0")
-                .split("")
-                .map((str) => parseInt(str))
-            );
-            return toDecimal(bits);
-          } else {
-            let runningTotal = "0";
-            let bitMap = bits.length === 32 ? bitMap32 : bitMap64;
-            for (let i = 1; i < bits.length; i++) {
-              runningTotal = bits[i]
-                ? stringAdd(runningTotal, bitMap[i])
-                : runningTotal;
-            }
-            return runningTotal;
-          }
-        }
-        JavaMath2.toDecimal = toDecimal;
-        function leftShift(a, num) {
-          let result = new Array(a.length).fill(0);
-          for (let i = 0; i < a.length; i++) {
-            result[i] = i + num < a.length ? a[i + num] : 0;
-          }
-          return result;
-        }
-        JavaMath2.leftShift = leftShift;
-        async function dispatchMethod(num1, num2, method) {
-          const higherOrderNum =
-            num1.getOrder() < num2.getOrder() ? num2 : num1;
-          switch (higherOrderNum.getType()) {
-            case "Integer":
-              num1 = await num1.toInteger();
-              num2 = await num2.toInteger();
-              return num1[method](num2);
-            case "Long":
-              num1 = await num1.toLong();
-              num2 = await num2.toLong();
-              return num1[method](num2);
-            case "Double":
-              num1 = await num1.toDouble();
-              num2 = await num2.toDouble();
-              return num1[method](num2);
-          }
-        }
-        async function add(num1, num2) {
-          return dispatchMethod(num1, num2, "add");
-        }
-        JavaMath2.add = add;
-        async function subtract(num1, num2) {
-          return dispatchMethod(num1, num2, "subtract");
-        }
-        JavaMath2.subtract = subtract;
-        async function multiply(num1, num2) {
-          return dispatchMethod(num1, num2, "multiply");
-        }
-        JavaMath2.multiply = multiply;
-        async function divide(num1, num2) {
-          return dispatchMethod(num1, num2, "divide");
-        }
-        JavaMath2.divide = divide;
-        async function max(num1, num2) {
-          return dispatchMethod(num1, num2, "max");
-        }
-        JavaMath2.max = max;
-        async function min(num1, num2) {
-          return dispatchMethod(num1, num2, "min");
-        }
-        JavaMath2.min = min;
-        async function mod(num1, num2) {
-          return dispatchMethod(num1, num2, "mod");
-        }
-        JavaMath2.mod = mod;
-        async function gt(num1, num2) {
-          return dispatchMethod(num1, num2, "gt");
-        }
-        JavaMath2.gt = gt;
-        async function lt(num1, num2) {
-          return dispatchMethod(num1, num2, "lt");
-        }
-        JavaMath2.lt = lt;
-        async function gte(num1, num2) {
-          return dispatchMethod(num1, num2, "gte");
-        }
-        JavaMath2.gte = gte;
-        async function lte(num1, num2) {
-          return dispatchMethod(num1, num2, "lte");
-        }
-        JavaMath2.lte = lte;
-        async function equals(num1, num2) {
-          return dispatchMethod(num1, num2, "equals");
-        }
-        JavaMath2.equals = equals;
-      })(JavaMath || (JavaMath = {}));
-    },
-  });
-
-  // TSFiles/HelperClasses/IntLongMath.ts
-  var IntLongMath;
-  var init_IntLongMath = __esm({
-    "TSFiles/HelperClasses/IntLongMath.ts"() {
-      "use strict";
-      init_Math();
-      ((IntLongMath2) => {
-        function add(num1, num2) {
-          let temp = num1.getBits();
-          let a = [...temp];
-          let b = [...num2.getBits()];
-          const result = JavaMath.bitwiseAdd(a, b);
-          const classConstructor = num1.constructor;
-          return new classConstructor(result);
-        }
-        IntLongMath2.add = add;
-        function subtract(num1, num2) {
-          let temp = num1.getBits();
-          const length = temp.length;
-          let a = [...temp];
-          let b = [...num2.getBits()];
-          b = b.map((x) => x ^ 1);
-          b = JavaMath.bitwiseAdd(b, [...Array(length - 1).fill(0), 1]);
-          const classConstructor = num1.constructor;
-          return new classConstructor(JavaMath.bitwiseAdd(a, b));
-        }
-        IntLongMath2.subtract = subtract;
-        function multiply(num1, num2) {
-          let temp = num1.getBits();
-          const length = temp.length;
-          let a = [...temp];
-          let b = [...num2.getBits()];
-          const sign = a[0] ^ b[0];
-          if (a[0]) {
-            a = a.map((x) => x ^ 1);
-            a = JavaMath.bitwiseAdd(a, [...Array(length - 1).fill(0), 1]);
-          }
-          if (b[0]) {
-            b = b.map((x) => x ^ 1);
-            b = JavaMath.bitwiseAdd(b, [...Array(length - 1).fill(0), 1]);
-          }
-          let result = new Array(length * 2).fill(0);
-          for (let i = length - 1; i >= 0; i--) {
-            if (b[i]) {
-              result = JavaMath.bitwiseAdd(
-                result,
-                JavaMath.leftShift(
-                  [...Array(length).fill(a[0]), ...a],
-                  length - 1 - i
-                )
-              );
-            }
-          }
-          if (sign) {
-            result = result.map((x) => x ^ 1);
-            result = JavaMath.bitwiseAdd(result, [
-              ...Array(length * 2 - 1).fill(0),
-              1,
-            ]);
-          }
-          const classConstructor = num1.constructor;
-          return new classConstructor(result);
-        }
-        IntLongMath2.multiply = multiply;
-        function divide(num1, num2) {
-          let temp = num1.getBits();
-          const length = temp.length;
-          let a = [...temp];
-          let b = [...num2.getBits()];
-          const sign = a[0] ^ b[0];
-          if (a[0]) {
-            a = a.map((x) => x ^ 1);
-            a = JavaMath.bitwiseAdd(a, [...Array(length - 1).fill(0), 1]);
-          }
-          if (b[0]) {
-            b = b.map((x) => x ^ 1);
-            b = JavaMath.bitwiseAdd(b, [...Array(length - 1).fill(0), 1]);
-          }
-          let quotient = new Array(length).fill(0);
-          let remainder = new Array(length).fill(0);
-          for (let i = 0; i < length; i++) {
-            remainder = JavaMath.leftShift(remainder, 1);
-            remainder[length - 1] = a[i];
-            let tempB = b.map((x) => x ^ 1);
-            tempB = JavaMath.bitwiseAdd(tempB, [
-              ...Array(length - 1).fill(0),
-              1,
-            ]);
-            let temp2 = JavaMath.bitwiseAdd(remainder, tempB);
-            if (temp2[0]) {
-              quotient[i] = 0;
-            } else {
-              quotient[i] = 1;
-              remainder = temp2;
-            }
-          }
-          if (sign) {
-            quotient = quotient.map((x) => x ^ 1);
-            quotient = JavaMath.bitwiseAdd(quotient, [
-              ...Array(length - 1).fill(0),
-              1,
-            ]);
-          }
-          const classConstructor = num1.constructor;
-          return new classConstructor(quotient);
-        }
-        IntLongMath2.divide = divide;
-        function mod(num1, num2) {
-          const quotient = divide(num1, num2);
-          const product = multiply(num2, quotient);
-          return subtract(num1, product);
-        }
-        IntLongMath2.mod = mod;
-        function binaryAnd(num1, num2) {
-          let temp = num1.getBits();
-          const length = temp.length;
-          let a = [...temp];
-          let b = [...num2.getBits()];
-          let result = new Array(length).fill(0);
-          for (let i = 0; i < length; i++) {
-            result[i] = a[i] & b[i];
-          }
-          const classConstructor = num1.constructor;
-          return new classConstructor(result);
-        }
-        IntLongMath2.binaryAnd = binaryAnd;
-        function binaryOr(num1, num2) {
-          let temp = num1.getBits();
-          const length = temp.length;
-          let a = [...temp];
-          let b = [...num2.getBits()];
-          let result = new Array(length).fill(0);
-          for (let i = 0; i < length; i++) {
-            result[i] = a[i] | b[i];
-          }
-          const classConstructor = num1.constructor;
-          return new classConstructor(result);
-        }
-        IntLongMath2.binaryOr = binaryOr;
-        function binaryXor(num1, num2) {
-          let temp = num1.getBits();
-          const length = temp.length;
-          let a = [...temp];
-          let b = [...num2.getBits()];
-          let result = new Array(length).fill(0);
-          for (let i = 0; i < length; i++) {
-            result[i] = a[i] ^ b[i];
-          }
-          const classConstructor = num1.constructor;
-          return new classConstructor(result);
-        }
-        IntLongMath2.binaryXor = binaryXor;
-        function binaryComplement(num) {
-          let temp = num.getBits();
-          const length = temp.length;
-          let a = [...temp];
-          let result = new Array(length).fill(0);
-          for (let i = 0; i < length; i++) {
-            result[i] = a[i] ^ 1;
-          }
-          const classConstructor = num.constructor;
-          return new classConstructor(result);
-        }
-        IntLongMath2.binaryComplement = binaryComplement;
-        function rightShift(num, places) {
-          const bits = num.getBits();
-          const sign = bits[0];
-          let result = unsignedRightShift(bits, places);
-          result[0] = sign;
-          const classConstructor = num.constructor;
-          return new classConstructor(result);
-        }
-        IntLongMath2.rightShift = rightShift;
-        function unsignedRightShift(bits, places) {
-          return [
-            ...bits,
-            ...Array(parseInt(places.toDecimal())).fill(0),
-          ].slice(-bits.length);
-        }
-        IntLongMath2.unsignedRightShift = unsignedRightShift;
-        async function lt(num1, num2) {
-          const a = num1.getBits();
-          const b = num2.getBits();
-          if (a[0] !== b[0]) {
-            if (a[0]) return true;
-            return false;
-          }
-          for (let i = 1; i < a.length; i++) {
-            if (a[i] !== b[i]) {
-              if (a[i]) return false;
-              return true;
-            }
-          }
-          return false;
-        }
-        IntLongMath2.lt = lt;
-        async function gt(num1, num2) {
-          return lt(num2, num1);
-        }
-        IntLongMath2.gt = gt;
-        async function gte(num1, num2) {
-          return (await JavaMath.equals(num1, num2)) || (await lt(num2, num1));
-        }
-        IntLongMath2.gte = gte;
-        async function lte(num1, num2) {
-          return (await JavaMath.equals(num1, num2)) || (await lt(num1, num2));
-        }
-        IntLongMath2.lte = lte;
-      })(IntLongMath || (IntLongMath = {}));
-    },
-  });
-
-  // TSFiles/JavaNumberClasses/Double.ts
-  var Double_exports = {};
-  __export(Double_exports, {
-    Double: () => Double,
-  });
-  var Double;
-  var init_Double = __esm({
-    "TSFiles/JavaNumberClasses/Double.ts"() {
-      "use strict";
-      init_Integer();
-      Double = class _Double {
-        value;
-        constructor(decimal) {
-          if (typeof decimal === "number") {
-            this.value = decimal;
-          } else {
-            this.value = parseInt(decimal);
-          }
-          this.initializeBits();
-        }
-        initializeBits() {
-          return new Array(64).fill(0);
-        }
-        getBits() {
-          const buffer = new ArrayBuffer(8);
-          const view = new DataView(buffer);
-          view.setFloat64(0, this.value, false);
-          const bits = [];
-          for (let byteIndex = 0; byteIndex < 8; byteIndex++) {
-            const byte = view.getUint8(byteIndex);
-            for (let bitIndex = 7; bitIndex >= 0; bitIndex--) {
-              bits.push((byte >> bitIndex) & 1);
-            }
-          }
-          return bits;
-        }
-        getType() {
-          return "Double";
-        }
-        getOrder() {
-          return 2;
-        }
-        // Double → Double
-        toLong() {
-          const n = Math.trunc(this.value);
-          return Promise.resolve()
-            .then(() => (init_Long(), Long_exports))
-            .then((obj) => {
-              return new obj.Long(n.toString());
-            });
-        }
-        // Double → Integer
-        toInteger() {
-          const n = Math.trunc(this.value);
-          return Promise.resolve()
-            .then(() => (init_Integer(), Integer_exports))
-            .then((obj) => {
-              return new obj.Integer(n.toString());
-            });
-        }
-        toDouble() {
-          return new Promise((resolve) =>
-            resolve(new _Double(`${this.value}`))
-          );
-        }
-        toDecimal() {
-          return `${this.value}`;
-        }
-        leftShift(num) {
-          return new _Double(this.value << parseInt(num.toDecimal()));
-        }
-        add(num) {
-          return new _Double(this.value + parseInt(num.toDecimal()));
-        }
-        subtract(num) {
-          return new _Double(this.value - parseInt(num.toDecimal()));
-        }
-        multiply(num) {
-          return new _Double(this.value * parseInt(num.toDecimal()));
-        }
-        divide(num) {
-          return new _Double(this.value / parseInt(num.toDecimal()));
-        }
-        mod(num) {
-          return new _Double(this.value % parseInt(num.toDecimal()));
-        }
-        sqrt() {
-          return new _Double(Math.sqrt(this.value));
-        }
-        pow(exponent) {
-          return new _Double(
-            Math.pow(this.value, parseInt(exponent.toDecimal()))
-          );
-        }
-        async max(num) {
-          return (await this.gt(num)) ? this : num;
-        }
-        async min(num) {
-          return (await this.lt(num)) ? this : num;
-        }
-        async lt(num) {
-          return this.value < parseInt(num.toDecimal());
-        }
-        async lte(num) {
-          return this.value <= parseInt(num.toDecimal());
-        }
-        async gt(num) {
-          return this.value > parseInt(num.toDecimal());
-        }
-        async gte(num) {
-          return this.value >= parseInt(num.toDecimal());
-        }
-        equals(num) {
-          return `${this.value}` === num.toDecimal();
-        }
-        async round() {
-          return new Integer(Math.round(this.value));
-        }
-        async ceil() {
-          return new Integer(Math.ceil(this.value));
-        }
-        async floor() {
-          return new Integer(Math.floor(this.value));
-        }
-      };
-    },
-  });
-
-  // TSFiles/JavaNumberClasses/Long.ts
-  var Long_exports = {};
-  __export(Long_exports, {
-    Long: () => Long,
-  });
-  var Long;
-  var init_Long = __esm({
-    "TSFiles/JavaNumberClasses/Long.ts"() {
-      "use strict";
-      init_IntLongMath();
-      init_Math();
-      Long = class _Long {
-        bits;
-        constructor(data) {
-          if (!Array.isArray(data)) this.bits = this.initializeBits(data);
-          if (Array.isArray(data)) this.bits = data.slice(-64);
-        }
-        initializeBits(decimal) {
-          return JavaMath.decimalToBinary(`${decimal}`, 64);
-        }
-        getBits() {
-          return this.bits;
-        }
-        getType() {
-          return "Long";
-        }
-        getOrder() {
-          return 1;
-        }
-        // Long → Integer
-        toInteger() {
-          const intBits = this.bits.slice(32);
-          return Promise.resolve()
-            .then(() => (init_Integer(), Integer_exports))
-            .then((obj) => {
-              return new obj.Integer(intBits);
-            });
-        }
-        // Long → Double
-        toDouble() {
-          const num = JavaMath.toDecimal(this.bits);
-          return Promise.resolve()
-            .then(() => (init_Double(), Double_exports))
-            .then((obj) => {
-              return new obj.Double(num);
-            });
-        }
-        toLong() {
-          return new Promise((resolve) => resolve(new _Long(this.bits)));
-        }
-        toDecimal() {
-          return JavaMath.toDecimal(this.bits);
-        }
-        leftShift(num) {
-          return new _Long(
-            JavaMath.leftShift(this.bits, parseInt(num.toDecimal()))
-          );
-        }
-        add(num) {
-          return IntLongMath.add(this, num);
-        }
-        subtract(num) {
-          return IntLongMath.subtract(this, num);
-        }
-        multiply(num) {
-          return IntLongMath.multiply(this, num);
-        }
-        divide(num) {
-          return IntLongMath.divide(this, num);
-        }
-        mod(num) {
-          return IntLongMath.mod(this, num);
-        }
-        async max(num) {
-          return (await this.gt(num)) ? this : num;
-        }
-        async min(num) {
-          return (await this.lt(num)) ? this : num;
-        }
-        async lt(num) {
-          return IntLongMath.lt(this, num);
-        }
-        async lte(num) {
-          return IntLongMath.lte(this, num);
-        }
-        async gt(num) {
-          return IntLongMath.gt(this, num);
-        }
-        async gte(num) {
-          return IntLongMath.gte(this, num);
-        }
-        equals(num) {
-          return num.getBits().every((bit, i) => bit === this.bits[i]);
-        }
-        round() {
-          return this.toInteger();
-        }
-        ceil() {
-          return this.toInteger();
-        }
-        floor() {
-          return this.toInteger();
-        }
-      };
-    },
-  });
-
-  // TSFiles/JavaNumberClasses/Integer.ts
-  var Integer_exports = {};
-  __export(Integer_exports, {
-    Integer: () => Integer,
-  });
-  var Integer;
-  var init_Integer = __esm({
-    "TSFiles/JavaNumberClasses/Integer.ts"() {
-      "use strict";
-      init_IntLongMath();
-      init_Math();
-      Integer = class _Integer {
-        bits;
-        constructor(data) {
-          if (!Array.isArray(data)) this.bits = this.initializeBits(data);
-          if (Array.isArray(data)) this.bits = data.slice(-32);
-        }
-        initializeBits(decimal) {
-          return JavaMath.decimalToBinary(`${decimal}`, 32);
-        }
-        getBits() {
-          return this.bits;
-        }
-        getType() {
-          return "Integer";
-        }
-        getOrder() {
-          return 0;
-        }
-        // Integer → Long
-        toLong() {
-          const sign = this.bits[0];
-          const longBits = Array(32).fill(sign).concat(this.bits);
-          return Promise.resolve()
-            .then(() => (init_Long(), Long_exports))
-            .then((obj) => {
-              return new obj.Long(longBits);
-            });
-        }
-        // Integer → Double
-        toDouble() {
-          const num = JavaMath.toDecimal(this.bits);
-          return Promise.resolve()
-            .then(() => (init_Double(), Double_exports))
-            .then((obj) => {
-              return new obj.Double(num);
-            });
-        }
-        toInteger() {
-          return new Promise((resolve) => resolve(new _Integer(this.bits)));
-        }
-        toDecimal() {
-          return JavaMath.toDecimal(this.bits);
-        }
-        leftShift(num) {
-          return new _Integer(
-            JavaMath.leftShift(this.bits, parseInt(num.toDecimal()))
-          );
-        }
-        add(num) {
-          return IntLongMath.add(this, num);
-        }
-        subtract(num) {
-          return IntLongMath.subtract(this, num);
-        }
-        multiply(num) {
-          return IntLongMath.multiply(this, num);
-        }
-        divide(num) {
-          return IntLongMath.divide(this, num);
-        }
-        mod(num) {
-          return IntLongMath.mod(this, num);
-        }
-        binaryAnd(num) {
-          return IntLongMath.binaryAnd(this, num);
-        }
-        binaryOr(num) {
-          return IntLongMath.binaryOr(this, num);
-        }
-        binaryXor(num) {
-          return IntLongMath.binaryXor(this, num);
-        }
-        binaryComplement() {
-          return IntLongMath.binaryComplement(this);
-        }
-        rightShift(places) {
-          return IntLongMath.rightShift(this, places);
-        }
-        unsignedRightShift(places) {
-          return IntLongMath.unsignedRightShift(this.bits, places);
-        }
-        async max(num) {
-          return (await this.gt(num)) ? this : num;
-        }
-        async min(num) {
-          return (await this.lt(num)) ? this : num;
-        }
-        async lt(num) {
-          return IntLongMath.lt(this, num);
-        }
-        async lte(num) {
-          return IntLongMath.lte(this, num);
-        }
-        async gt(num) {
-          return IntLongMath.gt(this, num);
-        }
-        async gte(num) {
-          return IntLongMath.gte(this, num);
-        }
-        equals(num) {
-          return num.getBits().every((bit, i) => bit === this.bits[i]);
-        }
-        round() {
-          return this.toInteger();
-        }
-        ceil() {
-          return this.toInteger();
-        }
-        floor() {
-          return this.toInteger();
-        }
-      };
-    },
-  });
-
-  // TSFiles/IntegratedDynamicsClasses/Properties.ts
-  var Properties;
-  var init_Properties = __esm({
-    "TSFiles/IntegratedDynamicsClasses/Properties.ts"() {
-      "use strict";
-      Properties = class {
-        data;
-        constructor(data) {
-          this.data = data;
-        }
-        has(key) {
-          return key in this.data;
-        }
-        set(key, value) {
-          this.data[key] = value;
-        }
-        setAll(newData) {
-          for (const [k, v] of newData.getItterator()) {
-            this.data[k] = v;
-          }
-        }
-        getItterator() {
-          return Object.entries(this.data);
-        }
-        get(key) {
-          return this.data[key];
-        }
-      };
-    },
-  });
-
-  // TSFiles/IntegratedDynamicsClasses/Fluid.ts
-  var Fluid_exports = {};
-  __export(Fluid_exports, {
-    Fluid: () => Fluid,
-  });
-  var Fluid;
-  var init_Fluid = __esm({
-    "TSFiles/IntegratedDynamicsClasses/Fluid.ts"() {
-      "use strict";
-      init_Integer();
-      init_Properties();
-      Fluid = class _Fluid {
-        static defaultProps = new Properties({
-          uname: "",
-          amount: new Integer(0),
-          // block: new Block(),
-          lightLevel: new Integer(0),
-          density: new Integer(0),
-          temperature: new Integer(0),
-          viscosity: new Integer(0),
-          lighterThanAir: false,
-          rarity: "",
-          bucketEmptySound: "",
-          fluidVaporizeSound: "",
-          bucketFillSound: "",
-          // bucket: new Item(),
-          modName: "",
-          nbt: null,
-          tagNames: [],
-        });
-        props;
-        constructor(newProps, oldFluid) {
-          let props = _Fluid.defaultProps;
-          props.setAll(newProps);
-          if (oldFluid) props.setAll(oldFluid.getProperties());
-          Promise.all([
-            Promise.resolve().then(() => (init_Item(), Item_exports)),
-            Promise.resolve().then(() => (init_Fluid(), Fluid_exports)),
-          ]).then((values) => {
-            if (!props.has("item"))
-              props.set("item", new values[0].Item(new Properties({})));
-            if (!props.has("fluid"))
-              props.set("fluid", new values[1].Fluid(new Properties({})));
-          });
-          this.props = props;
-        }
-        getUniqueName() {
-          return this.props.get("uname");
-        }
-        getAmount() {
-          return this.props.get("amount");
-        }
-        getBlock() {
-          return this.props.get("block");
-        }
-        getLightLevel() {
-          return this.props.get("lightLevel");
-        }
-        getDensity() {
-          return this.props.get("density");
-        }
-        getTemperature() {
-          return this.props.get("temperature");
-        }
-        getViscosity() {
-          return this.props.get("viscosity");
-        }
-        getLighterThanAir() {
-          return this.props.get("lighterThanAir");
-        }
-        getRarity() {
-          return this.props.get("rarity");
-        }
-        getBucketEmptySound() {
-          return this.props.get("bucketEmptySound");
-        }
-        getFluidVaporizeSound() {
-          return this.props.get("fluidVaporizeSound");
-        }
-        getBucketFillSound() {
-          return this.props.get("bucketFillSound");
-        }
-        getBucket() {
-          return this.props.get("bucket");
-        }
-        getUname() {
-          return this.props.get("uname");
-        }
-        getModName() {
-          return this.props.get("modName");
-        }
-        getNBT() {
-          return this.props.get("nbt");
-        }
-        getTagNames() {
-          return this.props.get("tagNames");
-        }
-        getProperties() {
-          return this.props;
-        }
-      };
-    },
-  });
-
-  // TSFiles/IntegratedDynamicsClasses/Item.ts
-  var Item_exports = {};
-  __export(Item_exports, {
-    Item: () => Item,
-  });
-  var Item;
-  var init_Item = __esm({
-    "TSFiles/IntegratedDynamicsClasses/Item.ts"() {
-      "use strict";
-      init_Integer();
-      init_Properties();
-      Item = class _Item {
-        props;
-        static defaultProps = new Properties({
-          size: new Integer(1),
-          maxSize: new Integer(64),
-          stackable: true,
-          damageable: false,
-          damage: new Integer(0),
-          maxDamage: new Integer(0),
-          enchanted: false,
-          enchantable: false,
-          repairCost: new Integer(0),
-          rarity: "",
-          // fluid: new Fluid(),
-          fluidCapacity: new Integer(0),
-          NBT: null,
-          uname: "",
-          modName: "",
-          fuelBurnTime: new Integer(0),
-          fuel: false,
-          tagNames: [],
-          feContainer: false,
-          feStored: new Integer(0),
-          feCapacity: new Integer(0),
-          inventory: [],
-          tooltip: [],
-          itemName: "",
-          // block: new Block()
-        });
-        constructor(newProps, oldItem) {
-          let props = _Item.defaultProps;
-          props.setAll(newProps);
-          if (oldItem) props.setAll(oldItem.getProperties());
-          Promise.all([
-            Promise.resolve().then(() => (init_Block(), Block_exports)),
-            Promise.resolve().then(() => (init_Fluid(), Fluid_exports)),
-          ]).then((values) => {
-            if (!props.has("block"))
-              props.set("block", new values[0].Block(new Properties({})));
-            if (!props.has("fluid"))
-              props.set("fluid", new values[1].Fluid(new Properties({})));
-          });
-          this.props = props;
-        }
-        getSize() {
-          return this.props.get("size");
-        }
-        getMaxSize() {
-          return this.props.get("maxSize");
-        }
-        isStackable() {
-          return this.props.get("stackable");
-        }
-        isDamageable() {
-          return this.props.get("damageable");
-        }
-        getDamage() {
-          return this.props.get("damage");
-        }
-        getMaxDamage() {
-          return this.props.get("maxDamage");
-        }
-        isEnchanted() {
-          return this.props.get("enchanted");
-        }
-        isEnchantable() {
-          return this.props.get("enchantable");
-        }
-        getRepairCost() {
-          return this.props.get("repairCost");
-        }
-        getRarity() {
-          return this.props.get("rarity");
-        }
-        getFluid() {
-          return this.props.get("fluid");
-        }
-        getFluidCapacity() {
-          return this.props.get("fluidCapacity");
-        }
-        getNBT() {
-          return this.props.get("NBT");
-        }
-        getUniqueName() {
-          return this.props.get("uname");
-        }
-        getModName() {
-          return this.props.get("modName");
-        }
-        getFuelBurnTime() {
-          return this.props.get("fuelBurnTime");
-        }
-        isFuel() {
-          return this.props.get("fuel");
-        }
-        getTagNames() {
-          return this.props.get("tagNames");
-        }
-        isFeContainer() {
-          return this.props.get("feContainer");
-        }
-        getFeStored() {
-          return this.props.get("feStored");
-        }
-        getFeCapacity() {
-          return this.props.get("feCapacity");
-        }
-        getInventory() {
-          return this.props.get("inventory") || [];
-        }
-        getTooltip() {
-          return this.props.get("tooltip");
-        }
-        getItemName() {
-          return this.props.get("itemName");
-        }
-        getBlock() {
-          return this.props.get("block");
-        }
-        getProperties() {
-          return this.props;
-        }
-        async getStrengthVsBlock(block) {
-          let { Block: Block2 } = await Promise.resolve().then(
-            () => (init_Block(), Block_exports)
-          );
-          if (!(block instanceof Block2))
-            throw new Error("block is not a Block");
-          throw new Error("getStrengthVsBlock method not implemented");
-        }
-        canHarvestBlock() {
-          throw new Error("canHarvestBlock method not implemented");
-        }
-        equals(other) {
-          if (!(other instanceof _Item)) return false;
-          return JSON.stringify(this) === JSON.stringify(other);
-        }
-        toString() {
-          return this.props.get("itemName");
-        }
-      };
-    },
-  });
-
-  // TSFiles/IntegratedDynamicsClasses/Block.ts
-  var Block_exports = {};
-  __export(Block_exports, {
-    Block: () => Block,
-  });
-  var Block;
-  var init_Block = __esm({
-    "TSFiles/IntegratedDynamicsClasses/Block.ts"() {
-      "use strict";
-      init_Integer();
-      init_Properties();
-      Block = class _Block {
-        static defaultProps = new Properties({
-          opaque: true,
-          // item: new Item(),
-          modName: "",
-          breakSound: "",
-          placeSound: "",
-          stepSound: "",
-          shearable: false,
-          plantAge: new Integer(-1),
-          // fluid: new Fluid(),
-          fluidCapacity: new Integer(0),
-          uname: "",
-          tagNames: [],
-          feContainer: false,
-          feCapacity: new Integer(0),
-          feStored: new Integer(0),
-          inventory: null,
-          blockName: "",
-        });
-        props;
-        constructor(newProps, oldBlock) {
-          let props = _Block.defaultProps;
-          props.setAll(newProps);
-          if (oldBlock) props.setAll(oldBlock.getProperties());
-          Promise.all([
-            Promise.resolve().then(() => (init_Item(), Item_exports)),
-            Promise.resolve().then(() => (init_Fluid(), Fluid_exports)),
-          ]).then((values) => {
-            if (!props.has("item"))
-              props.set("item", new values[0].Item(new Properties({})));
-            if (!props.has("fluid"))
-              props.set("fluid", new values[1].Fluid(new Properties({})));
-          });
-          this.props = props;
-        }
-        isOpaque() {
-          return this.props.get("opaque");
-        }
-        getItem() {
-          return this.props.get("item");
-        }
-        getModName() {
-          return this.props.get("modName");
-        }
-        getBreakSound() {
-          return this.props.get("breakSound");
-        }
-        getPlaceSound() {
-          return this.props.get("placeSound");
-        }
-        getStepSound() {
-          return this.props.get("stepSound");
-        }
-        isShearable() {
-          return this.props.get("shearable");
-        }
-        getPlantAge() {
-          return this.props.get("plantAge");
-        }
-        getProperties() {
-          return this.props;
-        }
-        getFluid() {
-          return this.props.get("fluid");
-        }
-        getFluidCapacity() {
-          return this.props.get("fluidCapacity");
-        }
-        getUniqueName() {
-          return this.props.get("uname");
-        }
-        getTagNames() {
-          return this.props.get("tagNames");
-        }
-        isFeContainer() {
-          return this.props.get("feContainer");
-        }
-        getFeCapacity() {
-          return this.props.get("feCapacity");
-        }
-        getFeStored() {
-          return this.props.get("feStored");
-        }
-        getInventory() {
-          return this.props.get("inventory");
-        }
-        getBlockName() {
-          return this.props.get("blockName");
-        }
-        getStrengthVsBlock() {
-          throw new Error("getStrengthVsBlock method not implemented");
-        }
-        canHarvestBlock() {
-          throw new Error("canHarvestBlock method not implemented");
-        }
-        equals(other) {
-          return JSON.stringify(this) === JSON.stringify(other);
-        }
-        toString() {
-          return this.props.get("blockName");
-        }
-      };
-    },
-  });
-
-  // TSFiles/IntegratedDynamicsClasses/Operator.ts
-  var Operator_exports = {};
-  __export(Operator_exports, {
-    Operator: () => Operator,
-  });
-  var Operator;
-  var init_Operator = __esm({
-    "TSFiles/IntegratedDynamicsClasses/Operator.ts"() {
-      "use strict";
-      init_TypeMap();
-      Operator = class _Operator extends Function {
-        fn;
-        parsedSignature;
-        typeMap;
-        internalName;
-        nicknames;
-        symbol;
-        interactName;
-        serializer;
-        constructor({
-          internalName,
-          nicknames,
-          parsedSignature,
-          symbol,
-          interactName,
-          function: fn,
-          serializer,
-        }) {
-          super("...args", "return this.__call__(...args)");
-          this.fn = fn;
-          this.typeMap = new TypeMap(parsedSignature.getAST());
-          this.parsedSignature = parsedSignature;
-          this.internalName = internalName;
-          this.nicknames = nicknames;
-          this.symbol = symbol;
-          this.interactName = interactName;
-          this.serializer = serializer;
-        }
-        __call__(...args) {
-          if (args.length !== this.parsedSignature.getArity()) {
-            throw new Error(
-              `Operator expected ${this.parsedSignature.getArity()} args, got ${args.length}`
-            );
-          }
-          return this.fn(...args);
-        }
-        apply(arg) {
-          const parsedSignature = this.parsedSignature.apply(arg);
-          const newFn = (...rest) => this.fn(arg, ...rest);
-          if (this.parsedSignature.getArity() === 1) {
-            return this.fn(arg);
-          }
-          return new _Operator({
-            internalName: this.internalName,
-            nicknames: this.nicknames,
-            parsedSignature,
-            symbol: this.symbol,
-            interactName: this.interactName,
-            function: newFn,
-          });
-        }
-      };
-    },
-  });
-
-  // TSFiles/HelperClasses/TypeMap.ts
-  var TypeMap;
-  var init_TypeMap = __esm({
-    "TSFiles/HelperClasses/TypeMap.ts"() {
-      "use strict";
-      TypeMap = class {
-        aliases;
-        constructor(ast) {
-          this.aliases = /* @__PURE__ */ new Map();
-          if (ast) {
-            this.extractTypeIDs(ast);
-          }
-        }
-        extractTypeIDs(node) {
-          if (node.type === "Any") {
-            this.aliases.set(node.typeID, "Any");
-          }
-          if (node.type === "Function") {
-            this.extractTypeIDs(node.from);
-            this.extractTypeIDs(node.to);
-          }
-          if (node.type === "List") {
-            this.extractTypeIDs(node.listType);
-          }
-        }
-        find(typeID) {
-          while (this.aliases.has(typeID)) {
-            typeID = this.aliases.get(typeID);
-          }
-          return typeID;
-        }
-        async unify(a, b) {
-          const { Operator: Operator2 } = await Promise.resolve().then(
-            () => (init_Operator(), Operator_exports)
-          );
-          if (typeof a === "boolean" || typeof b === "boolean") {
-            return;
-          }
-          if (!(a instanceof Operator2 && b instanceof Operator2)) {
-            if (a.type === "Any" && b.type === "Any") {
-              this.aliases.set(this.find(a.typeID), this.find(b.typeID));
-              return;
-            }
-            if (a.type === "Any" && b.type !== "Any") {
-              this.aliases.set(this.find(a.typeID), b);
-              return;
-            }
-            if (b.type === "Any" && a.type !== "Any") {
-              this.aliases.set(this.find(b.typeID), a);
-              return;
-            }
-            if (a.type === "List" && b.type === "List") {
-              if (
-                typeof a.listType !== "string" &&
-                typeof b.listType !== "string"
-              )
-                this.unify(a.listType, b.listType);
-              return;
-            }
-            if (a.type !== b.type) {
-              throw new Error(`Type mismatch: ${a.type} vs ${b.type}`);
-            }
-            if (a.type === "Function" && b.type === "Function") {
-              this.unify(a.from, b.from);
-              this.unify(a.to, b.to);
-              return;
-            }
-          }
-          if (a instanceof Operator2 && b instanceof Operator2) {
-            return this.unify(
-              a.parsedSignature.getAST(),
-              b.parsedSignature.getAST()
-            );
-          }
-          throw new Error(
-            `Unhandled unify case: ${JSON.stringify(a)} vs ${JSON.stringify(b)}`
-          );
-        }
-        rewrite(node) {
-          if (node.type === "Any" && node.typeID) {
-            return { ...node, typeID: this.find(node.typeID) };
-          }
-          if (node.type === "Function") {
-            return {
-              type: "Function",
-              from: this.rewrite(node.from),
-              to: this.rewrite(node.to),
-            };
-          }
-          if (node.type === "List") {
-            return {
-              type: "List",
-              listType: this.rewrite(node.listType),
-            };
-          }
-          return node;
-        }
-        resolve(node) {
-          if (node.type === "Any") {
-            const alias = this.aliases.get(node.typeID);
-            if (alias) {
-              return this.resolve(alias);
-            }
-            return node;
-          }
-          if (node.type === "Function") {
-            return {
-              type: "Function",
-              from: this.resolve(node.from),
-              to: this.resolve(node.to),
-            };
-          }
-          if (node.type === "List") {
-            return {
-              type: "List",
-              listType: this.resolve(node.listType),
-            };
-          }
-          return node;
-        }
-      };
-    },
-  });
 
   // node_modules/re2-wasm/build/wasm/re2.js
   var require_re2 = __commonJS({
@@ -6912,7 +5448,7 @@
       function escapeRegExp(pattern) {
         return pattern.replace(/(^|[^\\])((?:\\\\)*)\//g, "$1$2\\/");
       }
-      var RE22 = class _RE2 {
+      var RE210 = class _RE2 {
         constructor(pattern, flags) {
           this._global = false;
           this._ignoreCase = false;
@@ -7320,1703 +5856,116 @@
           return this[Symbol.split](input, limit);
         }
       };
-      exports.RE2 = RE22;
+      exports.RE2 = RE210;
     },
   });
 
-  // TSFiles/HelperClasses/InfiniteList.ts
-  var InfiniteList = class _InfiniteList extends Array {
-    constructor(initial, func) {
-      super();
-      this.initial = initial;
-      this.func = func;
-      super.push(initial);
-      return new Proxy(this, {
-        get: (target, prop, receiver) => {
-          if (typeof prop === "string" && !isNaN(Number(prop))) {
-            const index = Number(prop);
-            return _InfiniteList.lazyAt(
-              target,
-              index,
-              func,
-              receiver.transforms
-            );
-          }
-          if (prop === Symbol.iterator) {
-            return function* () {
-              let index = 0;
-              while (true) {
-                yield _InfiniteList.lazyAt(
-                  target,
-                  index++,
-                  func,
-                  receiver.transforms
-                );
-              }
-            };
-          }
-          if (prop === "map") {
-            return (fn) => {
-              const newList = new _InfiniteList(initial, func);
-              for (let i = 0; i < target.length; i++) {
-                newList[i] = target[i];
-              }
-              newList.transforms = [...receiver.transforms, fn];
-              return newList;
-            };
-          }
-          if (prop === "slice") {
-            return (start, end) => {
-              const s = start ?? 0;
-              const e = end ?? target.length;
-              const result = [];
-              for (let i = s; i < e; i++) {
-                result.push(
-                  _InfiniteList.lazyAt(target, i, func, receiver.transforms)
-                );
-              }
-              return result;
-            };
-          }
-          const value = Reflect.get(target, prop, receiver);
-          return typeof value === "function" ? value.bind(target) : value;
-        },
-      });
-    }
-    transforms = [];
-    static lazyAt(target, index, func, transforms) {
-      if (index < 0) throw new RangeError("Index must be >= 0");
-      while (target.length <= index) {
-        const prev = target[target.length - 1];
-        target.push(func(prev));
-      }
-      let value = target[index];
-      for (const f of transforms) {
-        value = f(value);
-      }
-      return value;
-    }
-    take(n) {
-      const result = [];
-      for (let i = 0; i < n; i++) {
-        result.push(this[i]);
-      }
-      return result;
-    }
-  };
-
-  // TSFiles/operatorRegistry.ts
-  init_Block();
-  init_Item();
-  init_TypeMap();
-  init_Double();
-  init_Integer();
-  init_Fluid();
-  init_Math();
-  var import_re2_wasm = __toESM(require_re22());
-  init_Long();
-
-  // TSFiles/IntegratedDynamicsClasses/Recipe.ts
-  var Recipe = class _Recipe {
-    input;
-    output;
-    constructor(input, output) {
-      this.input = input;
-      this.output = output;
-    }
-    getInput() {
-      return this.input;
-    }
-    setInput(value) {
-      return new _Recipe(value, this.output);
-    }
-    getOutput() {
-      return this.output;
-    }
-    setOutput(value) {
-      return new _Recipe(this.input, value);
-    }
-  };
-
-  // TSFiles/operatorRegistry.ts
-  init_Properties();
-
-  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/Tag.ts
-  var Tag = class {
-    static TAG_LIST = 0;
-    static TAG_COMPOUND = 1;
-    static TAG_STRING = 2;
-    static TAG_NUMERIC = 3;
-    static TAG_BYTE = 4;
-    static TAG_DOUBLE = 5;
-    static TAG_NULL = 6;
-    static TAG_INT = 7;
-    static TAG_LONG = 7;
-    constructor() {}
-  };
-
-  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/NullTag.ts
-  var NullTag = class extends Tag {
+  // TSFiles/HelperClasses/TypeMap.ts
+  var TypeMap = class {
+    aliases;
     constructor() {
-      super();
+      this.aliases = /* @__PURE__ */ new Map();
     }
-    getType() {
-      return Tag.TAG_NULL;
-    }
-    valueOf() {
-      return null;
-    }
-    getTypeAsString() {
-      return "NullTag";
-    }
-    equals(tag) {
-      return tag.getType() == Tag.TAG_NULL;
-    }
-  };
-
-  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag.ts
-  init_Integer();
-
-  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ListTag.ts
-  var ListTag = class _ListTag extends Tag {
-    data;
-    constructor(data) {
-      super();
-      this.data = data;
-    }
-    getType() {
-      return Tag.TAG_LIST;
-    }
-    static valueOf(value) {
-      return new _ListTag(value);
-    }
-    valueOf() {
-      return this.data;
-    }
-    size() {
-      return this.data.length;
-    }
-    get(index) {
-      return this.data[index];
-    }
-    getArray() {
-      return [...this.data];
-    }
-    add(tag) {
-      this.data.push(tag);
-    }
-    getTypeAsString() {
-      return "ListTag";
-    }
-    equals(tag) {
-      if (tag.getType() != Tag.TAG_LIST) return false;
-      for (const [i, e] of Object.entries(tag.getArray())) {
-        if (!e.equals(this.get(parseInt(i)))) return false;
+    findBaseID(typeID) {
+      while (this.aliases.has(typeID)) {
+        let newValue = this.aliases.get(typeID);
+        if (typeof newValue != "number") break;
+        typeID = newValue;
       }
-      return true;
+      return typeID;
     }
-  };
-
-  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/NumericTag.ts
-  var NumericTag = class extends Tag {
-    constructor() {
-      super();
-    }
-    getType() {
-      return Tag.TAG_NUMERIC;
-    }
-  };
-
-  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/IntTag.ts
-  var IntTag = class _IntTag extends NumericTag {
-    data;
-    constructor(data) {
-      super();
-      this.data = data;
-    }
-    getType() {
-      return Tag.TAG_BYTE;
-    }
-    static valueOf(value) {
-      return new _IntTag(value);
-    }
-    valueOf() {
-      return this.data;
-    }
-    getAsDouble() {
-      return parseInt(this.data.toDecimal());
-    }
-    getTypeAsString() {
-      return "IntTag";
-    }
-    equals(tag) {
-      if (tag.getType() != Tag.TAG_BYTE) return false;
-      return this.valueOf() == tag.valueOf();
-    }
-  };
-
-  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ByteTag.ts
-  var ByteTag = class _ByteTag extends NumericTag {
-    data;
-    constructor(data) {
-      super();
-      this.data = data;
-    }
-    getType() {
-      return Tag.TAG_BYTE;
-    }
-    static valueOf(value) {
-      return new _ByteTag(value);
-    }
-    valueOf() {
-      return this.data;
-    }
-    getAsDouble() {
-      return parseInt(this.data.toDecimal());
-    }
-    getTypeAsString() {
-      return "ByteTag";
-    }
-    equals(tag) {
-      if (tag.getType() != Tag.TAG_BYTE) return false;
-      return this.valueOf() == tag.valueOf();
-    }
-  };
-
-  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag.ts
-  init_Long();
-
-  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/LongTag.ts
-  var LongTag = class _LongTag extends NumericTag {
-    data;
-    constructor(data) {
-      super();
-      this.data = data;
-    }
-    getType() {
-      return Tag.TAG_BYTE;
-    }
-    static valueOf(value) {
-      return new _LongTag(value);
-    }
-    valueOf() {
-      return this.data;
-    }
-    getAsDouble() {
-      return parseInt(this.data.toDecimal());
-    }
-    getTypeAsString() {
-      return "LongTag";
-    }
-    equals(tag) {
-      if (tag.getType() != Tag.TAG_BYTE) return false;
-      return this.valueOf() == tag.valueOf();
-    }
-  };
-
-  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag.ts
-  init_Double();
-
-  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/DoubleTag.ts
-  var DoubleTag = class _DoubleTag extends NumericTag {
-    data;
-    getType() {
-      return Tag.TAG_DOUBLE;
-    }
-    constructor(data) {
-      super();
-      this.data = data;
-    }
-    static valueOf(value) {
-      return new _DoubleTag(value);
-    }
-    valueOf() {
-      return this.data;
-    }
-    getAsDouble() {
-      return parseInt(this.data.toDecimal());
-    }
-    getTypeAsString() {
-      return "DoubleTag";
-    }
-    equals(tag) {
-      if (tag.getType() != Tag.TAG_DOUBLE) return false;
-      return this.getAsDouble() == tag.getAsDouble();
-    }
-  };
-
-  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag.ts
-  var CompoundTag = class _CompoundTag extends Tag {
-    data;
-    constructor(data) {
-      super();
-      this.data = data;
-    }
-    getType() {
-      return Tag.TAG_COMPOUND;
-    }
-    static valueOf(value) {
-      return new _CompoundTag(value);
-    }
-    valueOf() {
-      return this.data;
-    }
-    getAllKeys() {
-      return Object.keys(this.data);
-    }
-    get(key) {
-      return this.data[key];
-    }
-    has(key) {
-      return key in this.data;
-    }
-    set(key, value) {
-      let data = { ...this.data };
-      data[key] = value;
-      return new _CompoundTag(data);
-    }
-    setAll(keys, values) {
-      if (keys.length != values.length)
-        throw new Error(
-          `Keys (length ${keys.length}) is not the same as values (${values.length})`
-        );
-      let data = { ...this.data };
-      for (let i = 0; i < keys.length; i++) {
-        let key = keys[i];
-        let value = values[i];
-        data[key] = value;
+    unify(a, b) {
+      if (a.type === "Any" && b.type === "Any") {
+        this.aliases.set(this.findBaseID(a.typeID), this.findBaseID(b.typeID));
+        return;
       }
-      return new _CompoundTag(data);
+      if (a.type === "Any" && b.type !== "Any") {
+        this.aliases.set(this.findBaseID(a.typeID), b);
+        return;
+      }
+      if (a.type !== "Any" && b.type === "Any") {
+        this.aliases.set(this.findBaseID(b.typeID), a);
+        return;
+      }
+      if (a.type === "List" && b.type === "List") {
+        this.unify(a.listType, b.listType);
+      }
+      if (a.type === "Function" && b.type === "Function") {
+        this.unify(a.from, b.from);
+        this.unify(a.to, b.to);
+        return;
+      }
+      if (a.type === "Operator" && b.type === "Operator") {
+        this.unify(a.obscured, b.obscured);
+        return;
+      }
+      if (a.type !== b.type) {
+        throw new Error(`Type mismatch: ${a.type} vs ${b.type}`);
+      }
+      return;
     }
-    without(key) {
-      let data = { ...this.data };
-      delete data[key];
-      return new _CompoundTag(data);
+    rewrite(node) {
+      if (node.type === "Any") {
+        return { type: "Any", typeID: this.findBaseID(node.typeID) };
+      }
+      if (node.type === "Function") {
+        return {
+          type: "Function",
+          from: this.rewrite(node.from),
+          to: this.rewrite(node.to),
+        };
+      }
+      if (node.type === "Operator") {
+        return {
+          type: "Operator",
+          obscured: this.rewrite(node.obscured),
+        };
+      }
+      if (node.type === "List") {
+        return {
+          type: "List",
+          listType: this.rewrite(node.listType),
+        };
+      }
+      return node;
     }
-    getTypeAsString() {
-      return "CompoundTag";
-    }
-    toJSON() {
-      let obj = {};
-      function mapTagArray(value) {
-        value.getArray().map((e) => {
-          if (e instanceof _CompoundTag) return e.toJSON();
-          if (e instanceof ListTag) return mapTagArray(e);
-          let innerValue = value.valueOf();
-          while (
-            innerValue instanceof Object &&
-            innerValue.constructor.name != "Object"
-          ) {
-            innerValue = innerValue.toJSON();
+    resolve(node) {
+      if (node.type === "Any") {
+        let alias = this.aliases.get(node.typeID);
+        if (alias) {
+          if (typeof alias === "number") {
+            alias = this.findBaseID(alias);
+            alias = this.aliases.get(alias);
+            if (typeof alias === "number") return node;
           }
-        });
-      }
-      for (const [key, value] of Object.entries(this.data)) {
-        if (!(value instanceof _CompoundTag || value instanceof ListTag)) {
-          let innerValue = value.valueOf();
-          findBase: while (
-            innerValue instanceof Object &&
-            innerValue.constructor.name != "Object"
-          ) {
-            if (!("toJSON" in innerValue)) break findBase;
-            innerValue = innerValue["toJSON"]();
-          }
-          obj[key] = innerValue;
-        } else if (value instanceof _CompoundTag) obj[key] = value.toJSON();
-        else obj[key] = mapTagArray(value);
-      }
-    }
-    static fromJSON(data) {
-      const jsonStr = data
-        .replace(/([{,]\s*)([A-Za-z_]+)(\s*:)/g, '$1"$2"$3')
-        .replace(
-          /(:\s*)([A-Za-z0-9_]*[A-Za-z][A-Za-z0-9_]*)(?=\s*[,}])/g,
-          '$1"$2"'
-        )
-        .replace(
-          /\[(?<type>[BIL]);(?<values>-?\d+[bl]?(?:,-?\d+[bl]?)*?)\]/g,
-          (_, type, values) => {
-            const arr = values.split(",");
-            return JSON.stringify({ type, values: arr });
-          }
-        );
-      const json = JSON.parse(jsonStr);
-      function objectCase(obj) {
-        for (const key of Object.keys(obj)) {
-          if (Array.isArray(obj[key])) obj[key] = arrayCase(obj[key]);
-          if (obj[key] instanceof Object) obj[key] = objectCase(obj[key]);
-          else obj[key] = baseCase(obj[key]);
+          return this.resolve(alias);
         }
-        return new _CompoundTag(obj);
+        return node;
       }
-      function baseCase(obj) {
-        for (const key of Object.keys(obj)) {
-          switch (typeof obj[key]) {
-            case "number":
-              obj[key] = new IntTag(new Integer(obj[key]));
-              break;
-            case "boolean":
-              obj[key] = new ByteTag(new Integer(+obj[key]));
-              break;
-            case "string":
-              const str = obj[key];
-              if (str.match(/\d*[Bb]/))
-                obj[key] = new ByteTag(new Integer(parseInt(str.slice(0, -1))));
-              if (str.match(/\d*[Ss]/))
-                obj[key] = new IntTag(new Integer(parseInt(str.slice(0, -1))));
-              else if (str.match(/\d*[Ll]/))
-                obj[key] = new LongTag(new Long(parseInt(str.slice(0, -1))));
-              else if (str.match(/\d*[FfDd]/))
-                obj[key] = new DoubleTag(
-                  new Double(parseInt(str.slice(0, -1)))
-                );
-              else if (str.match(/d{1,}/))
-                obj[key] = new IntTag(new Integer(parseInt(obj[key])));
-              break;
-            default:
-              throw new Error(`Unknown type: ${typeof obj[key]}`);
-          }
-        }
-        return new _CompoundTag(obj);
+      if (node.type === "Function") {
+        return {
+          type: "Function",
+          from: this.resolve(node.from),
+          to: this.resolve(node.to),
+        };
       }
-      function arrayCase(arr) {
-        for (const [k, v] of Object.entries(arr)) {
-          const i = parseInt(k);
-          if (Array.isArray(v)) arr[i] = new ListTag(arrayCase(v));
-          else if (v instanceof Object) arr[i] = objectCase(v);
-          else arr[i] = baseCase(v);
-        }
-        return arr;
+      if (node.type === "List") {
+        return {
+          type: "List",
+          listType: this.resolve(node.listType),
+        };
       }
-      return objectCase(json);
-    }
-    compoundSubset(subset) {
-      for (const key of subset.getAllKeys()) {
-        const subValue = subset.get(key);
-        const superValue = this.get(key);
-        if (superValue === void 0) return false;
-        if (
-          subValue instanceof _CompoundTag &&
-          superValue instanceof _CompoundTag
-        ) {
-          if (!superValue.compoundSubset(subValue)) return false;
-        } else if (
-          subValue instanceof ListTag &&
-          superValue instanceof ListTag
-        ) {
-          let subValueArr = subValue.valueOf();
-          let superValueArr = superValue.valueOf();
-          if (subValueArr.length !== superValueArr.length) return false;
-          if (subValueArr.every((v, i) => superValueArr[i]?.equals(v)))
-            return true;
-          return false;
-        }
+      if (node.type === "Operator") {
+        return {
+          type: "Operator",
+          obscured: this.resolve(node.obscured),
+        };
       }
-      return true;
-    }
-    compoundUnion(other) {
-      const keys = [];
-      const values = [];
-      for (const key of other.getAllKeys()) {
-        const thisValue = this.get(key);
-        const otherValue = other.get(key);
-        if (
-          thisValue instanceof _CompoundTag &&
-          otherValue instanceof _CompoundTag
-        ) {
-          keys.push(key);
-          values.push(thisValue.compoundUnion(otherValue));
-        } else {
-          keys.push(key);
-          values.push(otherValue);
-        }
-      }
-      return this.setAll(keys, values);
-    }
-    compoundIntersection(other) {
-      const result = {};
-      for (const key of this.getAllKeys()) {
-        const thisValue = this.get(key);
-        const otherValue = other.get(key);
-        if (
-          thisValue instanceof _CompoundTag &&
-          otherValue instanceof _CompoundTag
-        ) {
-          const sub = thisValue.compoundIntersection(otherValue);
-          if (sub.getAllKeys().length > 0) result[key] = sub;
-        } else if (thisValue.equals(otherValue)) {
-          result[key] = thisValue;
-        }
-      }
-      return new _CompoundTag(result);
-    }
-    compoundMinus(other) {
-      const result = {};
-      for (const key of this.getAllKeys()) {
-        const thisValue = this.get(key);
-        const otherValue = other.get(key);
-        if (
-          thisValue instanceof _CompoundTag &&
-          otherValue instanceof _CompoundTag
-        ) {
-          const sub = thisValue.compoundMinus(otherValue);
-          if (sub.getAllKeys().length > 0) result[key] = sub;
-        } else if (!thisValue.equals(otherValue)) {
-          result[key] = thisValue;
-        }
-      }
-      return new _CompoundTag(result);
-    }
-    equals(tag) {
-      if (tag.getType() != Tag.TAG_COMPOUND) return false;
-      let compoundTag = tag;
-      for (const key of Object.values(
-        /* @__PURE__ */ new Set([
-          ...this.getAllKeys(),
-          ...compoundTag.getAllKeys(),
-        ])
-      )) {
-        if (this.get(key) !== compoundTag.get(key)) return false;
-      }
-      return true;
+      return node;
     }
   };
-
-  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/StringTag.ts
-  var StringTag = class extends Tag {
-    data;
-    constructor(data) {
-      super();
-      this.data = data;
-    }
-    getType() {
-      return Tag.TAG_STRING;
-    }
-    valueOf() {
-      return this.data;
-    }
-    getTypeAsString() {
-      return "StringTag";
-    }
-    equals(other) {
-      if (other.getType() != Tag.TAG_STRING) return false;
-      return this.data == other.valueOf();
-    }
-  };
-
-  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/parse/NBTPathExecutionContext.ts
-  var NbtPathExpressionExecutionContext = class _NbtPathExpressionExecutionContext {
-    currentTag;
-    parentContext;
-    constructor(currentTag, parentContext) {
-      this.currentTag = currentTag;
-      this.parentContext = parentContext;
-    }
-    getCurrentTag() {
-      return this.currentTag;
-    }
-    getParentContext() {
-      return this.parentContext;
-    }
-    getRootContext() {
-      const parent = this.getParentContext();
-      return parent ? parent.getRootContext() : this;
-    }
-    equals(obj) {
-      if (!(obj instanceof _NbtPathExpressionExecutionContext)) {
-        return false;
-      }
-      let that = obj;
-      return this.getCurrentTag().equals(that.getCurrentTag());
-    }
-  };
-
-  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/NbtParseException.ts
-  var NbtParseException = class extends Error {
-    constructor(msg) {
-      super(msg);
-    }
-  };
-
-  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/INbtPathExpression.ts
-  var INbtPathExpression = class {
-    /**
-     * Find all matches for the given stream of NBT tags or a single tag.
-     * @param nbts A stream of NBT tags or tag.
-     * @return The matches.
-     */
-    match(nbts) {
-      if (Array.isArray(nbts))
-        return this.matchContexts(
-          nbts.map((nbt) => new NbtPathExpressionExecutionContext(nbt))
-        );
-      else return this.match([nbts]);
-    }
-    /**
-     * Test if any of the given NBT tags or tag in the given stream match with the expression.
-     * @param nbts A stream of NBT tags or singular tag.
-     * @return True if there is at least one match.
-     */
-    test(nbts) {
-      if (!Array.isArray(nbts)) return this.test([nbts]);
-      return (
-        this.match([nbts[0]])
-          .getMatches()
-          .filter(
-            (tag) =>
-              tag.getType() != Tag.TAG_BYTE ||
-              parseInt(tag.valueOf().toDecimal()) == 1
-          ).length != 0
-      );
-    }
-    /**
-     * Find all matches for the given stream of NBT tags.
-     * @param executionContexts A stream of NBT execution contexts.
-     * @return The matches.
-     */
-    matchContexts(_executionContexts) {
-      throw new Error(
-        "matchContexts from INbtPathExpression.ts should not have been called!"
-      );
-    }
-    /**
-     * Create a navigation for this expression with the given navigation as child.
-     * If a null child is passed, the created navigation is a leaf.
-     * @param child An option child.
-     * @return A navigation path.
-     * @throws NbtParseException If this expression can not be expressed as a navigation.
-     */
-    asNavigation(_child) {
-      if (arguments.length === 0) return this.asNavigation();
-      throw new NbtParseException(
-        "This NBT Path expression has no navigation keys."
-      );
-    }
-  };
-
-  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/NbtPathExpressionMatches.ts
-  var NbtPathExpressionMatches = class _NbtPathExpressionMatches {
-    EMPTY = _NbtPathExpressionMatches.forAll();
-    matches;
-    constructor(matches) {
-      this.matches = matches;
-    }
-    getContexts() {
-      return this.matches;
-    }
-    getMatches() {
-      return this.getContexts().map((e) => e.getCurrentTag());
-    }
-    static forAll(...nbts) {
-      return new _NbtPathExpressionMatches(nbts);
-    }
-  };
-
-  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/NbtPathExpressionList.ts
-  var NbtPathExpressionList = class extends INbtPathExpression {
-    subExpressions;
-    constructor(...subExpressions) {
-      super();
-      this.subExpressions = subExpressions;
-    }
-    matchContexts(executionContexts) {
-      let matches = new NbtPathExpressionMatches(executionContexts);
-      for (const subExpression of this.subExpressions) {
-        matches = subExpression.matchContexts(matches.getContexts());
-      }
-      return matches;
-    }
-    getSubExpressions() {
-      return this.subExpressions;
-    }
-    asNavigation(_child) {
-      let current;
-      for (let i = this.subExpressions.length - 1; i >= 0; i--) {
-        if (current) {
-          current = this.subExpressions[i].asNavigation(current);
-        } else {
-          current = this.subExpressions[i].asNavigation();
-        }
-      }
-      return current;
-    }
-  };
-
-  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/parse/INbtPathExpressionParseHandler.ts
-  var HandleResult = class _HandleResult {
-    static INVALID = new _HandleResult(void 0, 0);
-    prefixExpression;
-    consumedExpressionLength;
-    constructor(prefixExpression, consumedExpressionLength) {
-      this.prefixExpression = prefixExpression;
-      this.consumedExpressionLength = consumedExpressionLength;
-    }
-    /**
-     * @return If the handler could produce a valid expression.
-     */
-    isValid() {
-      return this.getPrefixExpression() != null;
-    }
-    /**
-     * @return The expression (for a part) of the given string expression.
-     */
-    getPrefixExpression() {
-      return this.prefixExpression;
-    }
-    /**
-     * @return The length of the string expression that was consumed.
-     */
-    getConsumedExpressionLength() {
-      return this.consumedExpressionLength;
-    }
-  };
-
-  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/navigate/NbtPathNavigationLinkWildcard.ts
-  var NbtPathNavigationLinkWildcard = class {
-    child;
-    constructor(child) {
-      this.child = child;
-    }
-    isLeafKey(_key) {
-      return false;
-    }
-    getNext(_key) {
-      return this.child;
-    }
-  };
-
-  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/navigate/NbtPathNavigationLeafWildcard.ts
-  var NbtPathNavigationLeafWildcard = class _NbtPathNavigationLeafWildcard {
-    static INSTANCE = new _NbtPathNavigationLeafWildcard();
-    constructor() {}
-    isLeafKey(_key) {
-      return true;
-    }
-    getNext(_key) {
-      return void 0;
-    }
-  };
-
-  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/parse/NbtPathExpressionParseHandlerAllChildren.ts
-  var NbtPathExpressionParseHandlerAllChildren = class _NbtPathExpressionParseHandlerAllChildren {
-    handlePrefixOf(nbtPathExpression, pos) {
-      if (nbtPathExpression.charAt(pos) != "*") {
-        return HandleResult.INVALID;
-      }
-      return new HandleResult(
-        _NbtPathExpressionParseHandlerAllChildren.Expression.INSTANCE,
-        1
-      );
-    }
-    static Expression = class Expression extends INbtPathExpression {
-      static INSTANCE =
-        new _NbtPathExpressionParseHandlerAllChildren.Expression();
-      matchContexts(executionContexts) {
-        return new NbtPathExpressionMatches(
-          executionContexts
-            .flatMap((executionContext) => {
-              let nbt = executionContext.getCurrentTag();
-              if (nbt.getType() === Tag.TAG_LIST) {
-                let tag = nbt;
-                return tag
-                  .getArray()
-                  .map(
-                    (subTag) =>
-                      new NbtPathExpressionExecutionContext(
-                        subTag,
-                        executionContext
-                      )
-                  );
-              } else if (nbt.getType() === Tag.TAG_COMPOUND) {
-                let tag = nbt;
-                return tag
-                  .getAllKeys()
-                  .map(
-                    (key) =>
-                      new NbtPathExpressionExecutionContext(
-                        tag.get(key),
-                        executionContext
-                      )
-                  );
-              }
-              return null;
-            })
-            .filter((e) => !(e === null))
-        );
-      }
-      asNavigation(child) {
-        return child == child
-          ? new NbtPathNavigationLinkWildcard(child)
-          : NbtPathNavigationLeafWildcard.INSTANCE;
-      }
-    };
-  };
-
-  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/parse/NbtPathExpressionParseHandlerBooleanRelationalAdapter.ts
-  init_Integer();
-  var NbtPathExpressionParseHandlerBooleanRelationalAdapter = class _NbtPathExpressionParseHandlerBooleanRelationalAdapter {
-    regex;
-    constructor(relation) {
-      this.regex = new RegExp(`^ *${relation} *([0-9]+(\\.[0-9]+)?)`);
-    }
-    handlePrefixOf(nbtPathExpression, pos) {
-      let match = this.regex.exec(nbtPathExpression.slice(pos));
-      if (!match) {
-        return HandleResult.INVALID;
-      }
-      let targetDoubleString = match[1];
-      let targetDouble = Number(targetDoubleString);
-      return new HandleResult(
-        new _NbtPathExpressionParseHandlerBooleanRelationalAdapter.Expression(
-          targetDouble,
-          this
-        ),
-        match[0].length
-      );
-    }
-    static Expression;
-  };
-  var Expression = class extends INbtPathExpression {
-    targetDouble;
-    handler;
-    constructor(targetDouble, handler) {
-      super();
-      this.targetDouble = targetDouble;
-      this.handler = handler;
-    }
-    getTargetDouble() {
-      return this.targetDouble;
-    }
-    matchContexts(executionContexts) {
-      return new NbtPathExpressionMatches(
-        executionContexts.map((executionContext) => {
-          let nbt = executionContext.getCurrentTag();
-          if (nbt instanceof NumericTag) {
-            let tag = nbt;
-            return new NbtPathExpressionExecutionContext(
-              ByteTag.valueOf(
-                new Integer(
-                  this.handler.getRelationalValue(
-                    tag.getAsDouble(),
-                    this.getTargetDouble()
-                  )
-                    ? 1
-                    : 0
-                )
-              ),
-              executionContext
-            );
-          }
-          return new NbtPathExpressionExecutionContext(
-            ByteTag.valueOf(new Integer(0)),
-            executionContext
-          );
-        })
-      );
-    }
-  };
-  NbtPathExpressionParseHandlerBooleanRelationalAdapter.Expression = Expression;
-
-  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/parse/NbtPathExpressionParseHandlerBooleanRelationalEqual.ts
-  var NbtPathExpressionParseHandlerBooleanRelationalEqual = class extends NbtPathExpressionParseHandlerBooleanRelationalAdapter {
-    constructor() {
-      super("==");
-    }
-    getRelationalValue(left, right) {
-      return left == right;
-    }
-  };
-
-  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/parse/NbtPathExpressionParseHandlerBooleanRelationalGreaterThan.ts
-  var NbtPathExpressionParseHandlerBooleanRelationalGreaterThan = class extends NbtPathExpressionParseHandlerBooleanRelationalAdapter {
-    constructor() {
-      super(">");
-    }
-    getRelationalValue(left, right) {
-      return left > right;
-    }
-  };
-
-  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/parse/NbtPathExpressionParseHandlerBooleanRelationalGreaterThanOrEqual.ts
-  var NbtPathExpressionParseHandlerBooleanRelationalGreaterThanOrEqual = class extends NbtPathExpressionParseHandlerBooleanRelationalAdapter {
-    constructor() {
-      super(">=");
-    }
-    getRelationalValue(left, right) {
-      return left >= right;
-    }
-  };
-
-  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/parse/NbtPathExpressionParseHandlerBooleanRelationalLessThan.ts
-  var NbtPathExpressionParseHandlerBooleanRelationalLessThan = class extends NbtPathExpressionParseHandlerBooleanRelationalAdapter {
-    constructor() {
-      super("<");
-    }
-    getRelationalValue(left, right) {
-      return left < right;
-    }
-  };
-
-  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/parse/NbtPathExpressionParseHandlerBooleanRelationalLessThanOrEqual.ts
-  var NbtPathExpressionParseHandlerBooleanRelationalLessThanOrEqual = class extends NbtPathExpressionParseHandlerBooleanRelationalAdapter {
-    constructor() {
-      super("<=");
-    }
-    getRelationalValue(left, right) {
-      return left <= right;
-    }
-  };
-
-  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/navigate/NbtPathNavigationAdapter.ts
-  var NbtPathNavigationAdapter = class {
-    keys;
-    child;
-    constructor(keys, child) {
-      if (!Array.isArray(keys)) keys = [keys];
-      this.keys = keys;
-      this.child = child;
-    }
-    isLeaf() {
-      return this.child == null;
-    }
-    isLeafKey(key) {
-      return this.isLeaf() && this.keys.includes(key);
-    }
-    getNext(key) {
-      return !this.isLeaf() && this.keys.includes(key) ? this.child : void 0;
-    }
-  };
-
-  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/parse/NbtPathExpressionParseHandlerChild.ts
-  var NbtPathExpressionParseHandlerChild = class {
-    REGEX_CHILDNAME = new RegExp("^[a-zA-Z_0-9]+");
-    handlePrefixOf(nbtPathExpression, pos) {
-      if (
-        nbtPathExpression.charAt(pos) != "." ||
-        nbtPathExpression.length <= pos + 1
-      ) {
-        return HandleResult.INVALID;
-      }
-      const region = nbtPathExpression.slice(pos + 1);
-      const match = region.match(this.REGEX_CHILDNAME);
-      if (!match) {
-        return HandleResult.INVALID;
-      }
-      let childName = match[0];
-      return new HandleResult(new Expression2(childName), 1 + childName.length);
-    }
-    static Expression;
-  };
-  var Expression2 = class extends INbtPathExpression {
-    childName;
-    constructor(childName) {
-      super();
-      this.childName = childName;
-    }
-    getChildName() {
-      return this.childName;
-    }
-    matchContexts(executionContexts) {
-      return new NbtPathExpressionMatches(
-        executionContexts
-          .map((executionContext) => {
-            let nbt = executionContext.getCurrentTag();
-            if (nbt.getType() == Tag.TAG_COMPOUND) {
-              let tag = nbt;
-              let childTag = tag.get(this.childName);
-              if (childTag != null) {
-                return new NbtPathExpressionExecutionContext(
-                  childTag,
-                  executionContext
-                );
-              }
-            }
-            return null;
-          })
-          .filter((e) => e != null)
-      );
-    }
-    asNavigation(child) {
-      return new NbtPathNavigationAdapter(this.getChildName(), child);
-    }
-  };
-  NbtPathExpressionParseHandlerChild.Expression = Expression2;
-
-  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/parse/NbtPathStringParser.ts
-  var NbtPathStringParser = class {
-    static StringParseResult = class StringParseResult {
-      static FAIL = new StringParseResult(false, 0, "");
-      successVal;
-      consumed;
-      result;
-      constructor(success, consumed, result) {
-        this.successVal = success;
-        this.consumed = consumed;
-        this.result = result;
-      }
-      isSuccess() {
-        return this.successVal;
-      }
-      getConsumed() {
-        return this.consumed;
-      }
-      getResult() {
-        return this.result;
-      }
-      static success(consumed, result) {
-        return new StringParseResult(true, consumed, result);
-      }
-      static fail() {
-        return this.FAIL;
-      }
-    };
-    /**
-     * Parse a string that starts and ends with doubles quotes and; Can handle escape sequences
-     * within that string.
-     * @param source The source string
-     * @param pos Where to start parse; The index of the opening double quote
-     * @return Parse result
-     */
-    static parse(source, pos) {
-      if (pos >= source.length || source.charAt(pos) != '"') {
-        return this.StringParseResult.fail();
-      }
-      let resultBuilder = "";
-      let currentPos = pos + 1;
-      while (true) {
-        if (currentPos >= source.length) {
-          return this.StringParseResult.fail();
-        }
-        let character = source.charAt(currentPos);
-        currentPos++;
-        switch (character) {
-          case "\\": {
-            if (currentPos >= source.length) {
-              return this.StringParseResult.fail();
-            }
-            let escapeName = source.charAt(currentPos);
-            currentPos++;
-            switch (escapeName) {
-              case "\\":
-              // For \\
-              case '"':
-                resultBuilder + escapeName;
-                continue;
-              default:
-                return this.StringParseResult.fail();
-            }
-          }
-          case '"':
-            return this.StringParseResult.success(
-              currentPos - pos,
-              resultBuilder
-            );
-          default:
-            resultBuilder + character;
-        }
-      }
-    }
-  };
-
-  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/parse/NbtPathExpressionParseHandlerChildBrackets.ts
-  var NbtPathExpressionParseHandlerChildBrackets = class {
-    handlePrefixOf(nbtPathExpression, pos) {
-      if (
-        pos >= nbtPathExpression.length ||
-        nbtPathExpression.charAt(pos) != "["
-      ) {
-        return HandleResult.INVALID;
-      }
-      let parseResult = NbtPathStringParser.parse(nbtPathExpression, pos + 1);
-      if (!parseResult.isSuccess()) {
-        return HandleResult.INVALID;
-      }
-      let closingBracketIndex = pos + parseResult.getConsumed() + 1;
-      if (
-        closingBracketIndex >= nbtPathExpression.length ||
-        nbtPathExpression.charAt(closingBracketIndex) != "]"
-      ) {
-        return HandleResult.INVALID;
-      }
-      return new HandleResult(
-        new NbtPathExpressionParseHandlerChild.Expression(
-          parseResult.getResult()
-        ),
-        2 + parseResult.getConsumed()
-      );
-    }
-  };
-
-  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/parse/NbtPathExpressionParseHandlerCurrent.ts
-  var NbtPathExpressionParseHandlerCurrent = class _NbtPathExpressionParseHandlerCurrent {
-    handlePrefixOf(nbtPathExpression, pos) {
-      if (nbtPathExpression.charAt(pos) != "@") {
-        return HandleResult.INVALID;
-      }
-      return new HandleResult(
-        _NbtPathExpressionParseHandlerCurrent.Expression.INSTANCE,
-        1
-      );
-    }
-    static Expression;
-  };
-  var Expression3 = class _Expression extends INbtPathExpression {
-    static INSTANCE = new _Expression();
-    matchContexts(executionContexts) {
-      return new NbtPathExpressionMatches(executionContexts);
-    }
-  };
-  NbtPathExpressionParseHandlerCurrent.Expression = Expression3;
-
-  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/parse/NbtPathExpressionParseHandlerFilterExpression.ts
-  var NbtPathExpressionParseHandlerFilterExpression = class _NbtPathExpressionParseHandlerFilterExpression {
-    REGEX_EXPRESSION = new RegExp("^\\[\\?\\(([^\\)^\\(]+)\\)\\]");
-    handlePrefixOf(nbtPathExpression, pos) {
-      const match = this.REGEX_EXPRESSION.exec(nbtPathExpression.slice(pos));
-      if (!match) {
-        return HandleResult.INVALID;
-      }
-      let expressionString = match[1];
-      try {
-        let expression = NbtPath.parse(expressionString);
-        return new HandleResult(
-          new _NbtPathExpressionParseHandlerFilterExpression.Expression(
-            expression
-          ),
-          5 + expressionString.length
-        );
-      } catch (e) {
-        if (!(e instanceof NbtParseException)) throw e;
-        return HandleResult.INVALID;
-      }
-    }
-    static Expression;
-  };
-  var Expression4 = class extends INbtPathExpression {
-    expression;
-    constructor(expression) {
-      super();
-      this.expression = expression;
-    }
-    getExpression() {
-      return this.expression;
-    }
-    matchContexts(executionContexts) {
-      return new NbtPathExpressionMatches(
-        executionContexts
-          .map((executionContext) => {
-            let nbt = executionContext.getCurrentTag();
-            if (nbt.getType() == Tag.TAG_LIST) {
-              let tag = nbt;
-              let newTagList = new ListTag([]);
-              tag
-                .getArray()
-                .filter((subTag) => this.getExpression().test(subTag))
-                .forEach((subTag) => newTagList.add(subTag));
-              return new NbtPathExpressionExecutionContext(
-                newTagList,
-                executionContext
-              );
-            } else if (nbt.getType() == Tag.TAG_COMPOUND) {
-              let tag = nbt;
-              let newTagList = new ListTag([]);
-              Array.from(tag.getAllKeys())
-                .map((key) => tag.get(key))
-                .filter((subTag) => this.getExpression().test(subTag))
-                .forEach((subTag) => newTagList.add(subTag));
-              return new NbtPathExpressionExecutionContext(
-                newTagList,
-                executionContext
-              );
-            }
-            return null;
-          })
-          .filter((e) => e != null)
-      );
-    }
-  };
-  NbtPathExpressionParseHandlerFilterExpression.Expression = Expression4;
-
-  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/parse/NbtPathExpressionParseHandlerLength.ts
-  init_Integer();
-  var NbtPathExpressionParseHandlerLength = class {
-    handlePrefixOf(nbtPathExpression, pos) {
-      if (
-        nbtPathExpression.substring(
-          pos,
-          Math.min(pos + 7, nbtPathExpression.length)
-        ) != ".length"
-      ) {
-        return HandleResult.INVALID;
-      }
-      return new HandleResult(Expression5.INSTANCE, 7);
-    }
-    static Expression;
-  };
-  var Expression5 = class extends INbtPathExpression {
-    static INSTANCE = new NbtPathExpressionParseHandlerLength.Expression();
-    matchContexts(executionContexts) {
-      return new NbtPathExpressionMatches(
-        executionContexts
-          .map((executionContext) => {
-            let nbt = executionContext.getCurrentTag();
-            if (nbt.getType() == Tag.TAG_LIST) {
-              let tag = nbt;
-              return new NbtPathExpressionExecutionContext(
-                IntTag.valueOf(new Integer(tag.size())),
-                executionContext
-              );
-            } else if (nbt.getType() == Tag.TAG_COMPOUND) {
-              let tag = nbt;
-              return new NbtPathExpressionExecutionContext(
-                IntTag.valueOf(new Integer(tag.getAllKeys().length)),
-                executionContext
-              );
-            }
-            return null;
-          })
-          .filter((e) => e != null)
-      );
-    }
-  };
-  NbtPathExpressionParseHandlerLength.Expression = Expression5;
-
-  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/parse/NbtPathExpressionParseHandlerListElement.ts
-  var NbtPathExpressionParseHandlerListElement = class {
-    REGEX_ELEMENTINDEX = new RegExp("^\\[([0-9]+)\\]");
-    handlePrefixOf(nbtPathExpression, pos) {
-      const region = nbtPathExpression.slice(pos);
-      const match = region.match(this.REGEX_ELEMENTINDEX);
-      if (!match) {
-        return HandleResult.INVALID;
-      }
-      const childIndexString = match[1];
-      const childIndex = parseInt(childIndexString);
-      return new HandleResult(
-        new Expression6(childIndex),
-        2 + childIndexString.length
-      );
-    }
-    static Expression;
-  };
-  var Expression6 = class extends INbtPathExpression {
-    childIndex;
-    constructor(childIndex) {
-      super();
-      this.childIndex = childIndex;
-    }
-    getChildIndex() {
-      return this.childIndex;
-    }
-    matchContexts(executionContexts) {
-      return new NbtPathExpressionMatches(
-        executionContexts
-          .map((executionContext) => {
-            let nbt = executionContext.getCurrentTag();
-            if (nbt.getType() == Tag.TAG_LIST) {
-              let tag = nbt;
-              if (this.childIndex < tag.size()) {
-                let childTag = tag.get(this.getChildIndex());
-                return new NbtPathExpressionExecutionContext(
-                  childTag,
-                  executionContext
-                );
-              }
-            }
-            return null;
-          })
-          .filter((e) => e != null)
-      );
-    }
-  };
-  NbtPathExpressionParseHandlerListElement.Expression = Expression6;
-
-  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/parse/NbtPathExpressionParseHandlerListSlice.ts
-  var NbtPathExpressionParseHandlerListSlice = class _NbtPathExpressionParseHandlerListSlice {
-    REGEX_RANGE = new RegExp("^\\[([0-9]*):([0-9]*)(:([0-9]+))?\\]");
-    handlePrefixOf(nbtPathExpression, pos) {
-      const region = nbtPathExpression.slice(pos);
-      const match = region.match(this.REGEX_RANGE);
-      if (!match) {
-        return HandleResult.INVALID;
-      }
-      const startString = match[1] ?? "";
-      const endString = match[2] ?? "";
-      const stepString = match[4] ?? null;
-      const start = startString !== "" ? parseInt(startString, 10) : 0;
-      const end = endString !== "" ? parseInt(endString, 10) : -1;
-      const step = stepString !== null ? parseInt(stepString, 10) : 1;
-      if (step === 0) {
-        return HandleResult.INVALID;
-      }
-      return new HandleResult(
-        new _NbtPathExpressionParseHandlerListSlice.Expression(
-          start,
-          end,
-          step
-        ),
-        3 +
-          startString.length +
-          endString.length +
-          (stepString == null ? 0 : 1 + stepString.length)
-      );
-    }
-    static newStartEndStepStream(start, end, step) {
-      end -= start - 1;
-      let endScaled = end / step;
-      let endMod = end % step > 0 ? 1 : 0;
-      let countingArr = [];
-      for (let i = 0; i < endScaled + endMod; i++) countingArr.push(i);
-      return countingArr.map((i) => i * step + start);
-    }
-    static Expression;
-  };
-  var Expression7 = class extends INbtPathExpression {
-    start;
-    end;
-    step;
-    constructor(start, end, step) {
-      super();
-      this.start = start;
-      this.end = end;
-      this.step = step;
-    }
-    getStart() {
-      return this.start;
-    }
-    getEnd() {
-      return this.end;
-    }
-    getStep() {
-      return this.step;
-    }
-    matchContexts(executionContexts) {
-      return new NbtPathExpressionMatches(
-        executionContexts
-          .flatMap((executionContext) => {
-            let nbt = executionContext.getCurrentTag();
-            if (nbt.getType() == Tag.TAG_LIST) {
-              let tag = nbt;
-              let start = this.getStart();
-              let actualEnd =
-                this.getEnd() > -1
-                  ? Math.min(tag.size() - 1, this.getEnd())
-                  : tag.size() - 1;
-              let step = this.getStep();
-              return NbtPathExpressionParseHandlerListSlice.newStartEndStepStream(
-                start,
-                actualEnd,
-                step
-              ).map(
-                (i) =>
-                  new NbtPathExpressionExecutionContext(
-                    tag.get(i),
-                    executionContext
-                  )
-              );
-            }
-            return null;
-          })
-          .filter((e) => e != null)
-      );
-    }
-  };
-  NbtPathExpressionParseHandlerListSlice.Expression = Expression7;
-
-  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/parse/NbtPathExpressionParseHandlerParent.ts
-  var NbtPathExpressionParseHandlerParent = class _NbtPathExpressionParseHandlerParent {
-    handlePrefixOf(nbtPathExpression, pos) {
-      if (
-        nbtPathExpression.length <= pos + 1 ||
-        nbtPathExpression.charAt(pos) != "." ||
-        nbtPathExpression.charAt(pos + 1) != "."
-      ) {
-        return HandleResult.INVALID;
-      }
-      return new HandleResult(
-        _NbtPathExpressionParseHandlerParent.Expression.INSTANCE,
-        2
-      );
-    }
-    static Expression;
-  };
-  var Expression8 = class _Expression extends INbtPathExpression {
-    static INSTANCE = new _Expression();
-    matchContexts(executionContexts) {
-      return new NbtPathExpressionMatches(
-        executionContexts
-          .map((e) => e.getParentContext())
-          .filter((e) => e != null)
-      );
-    }
-  };
-  NbtPathExpressionParseHandlerParent.Expression = Expression8;
-
-  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/parse/NbtPathExpressionParseHandlerRoot.ts
-  var NbtPathExpressionParseHandlerRoot = class _NbtPathExpressionParseHandlerRoot {
-    handlePrefixOf(nbtPathExpression, pos) {
-      if (nbtPathExpression.charAt(pos) != "$") {
-        return HandleResult.INVALID;
-      }
-      return new HandleResult(
-        _NbtPathExpressionParseHandlerRoot.Expression.INSTANCE,
-        1
-      );
-    }
-    static Expression = class Expression11 extends INbtPathExpression {
-      static INSTANCE = new Expression11();
-      matchContexts(executionContexts) {
-        return new NbtPathExpressionMatches(
-          executionContexts.map((e) => e.getRootContext())
-        );
-      }
-      asNavigation(child) {
-        return child;
-      }
-    };
-  };
-
-  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/parse/NbtPathExpressionParseHandlerStringEqual.ts
-  init_Integer();
-  var NbtPathExpressionParseHandlerStringEqual = class _NbtPathExpressionParseHandlerStringEqual {
-    /**
-     * Skips all consecutive spaces.
-     * @param str Source string
-     * @param pos Index of the first potential space
-     * @return Index of first encountered non space character
-     */
-    static skipSpaces(str, pos) {
-      while (pos < str.length && str.charAt(pos) == " ") {
-        pos++;
-      }
-      return pos;
-    }
-    handlePrefixOf(nbtPathExpression, pos) {
-      let currentPos = _NbtPathExpressionParseHandlerStringEqual.skipSpaces(
-        nbtPathExpression,
-        pos
-      );
-      if (currentPos + 1 >= nbtPathExpression.length) {
-        return HandleResult.INVALID;
-      }
-      if (
-        nbtPathExpression.charAt(currentPos) != "=" ||
-        nbtPathExpression.charAt(currentPos + 1) != "="
-      ) {
-        return HandleResult.INVALID;
-      }
-      currentPos = _NbtPathExpressionParseHandlerStringEqual.skipSpaces(
-        nbtPathExpression,
-        currentPos + 2
-      );
-      let parseResult = NbtPathStringParser.parse(
-        nbtPathExpression,
-        currentPos
-      );
-      if (!parseResult.isSuccess()) {
-        return HandleResult.INVALID;
-      }
-      return new HandleResult(
-        new _NbtPathExpressionParseHandlerStringEqual.Expression(
-          parseResult.getResult()
-        ),
-        currentPos - pos + parseResult.getConsumed()
-      );
-    }
-    static Expression;
-  };
-  var Expression9 = class extends INbtPathExpression {
-    targetString;
-    constructor(targetString) {
-      super();
-      this.targetString = targetString;
-    }
-    getTargetString() {
-      return this.targetString;
-    }
-    matchContexts(executionContexts) {
-      return new NbtPathExpressionMatches(
-        executionContexts.map((executionContext) => {
-          let nbt = executionContext.getCurrentTag();
-          if (nbt.getType() == Tag.TAG_STRING) {
-            let tag = nbt;
-            return new NbtPathExpressionExecutionContext(
-              ByteTag.valueOf(
-                new Integer(+(this.getTargetString() == tag.valueOf()))
-              ),
-              executionContext
-            );
-          }
-          return new NbtPathExpressionExecutionContext(
-            ByteTag.valueOf(new Integer(0)),
-            executionContext
-          );
-        })
-      );
-    }
-  };
-  NbtPathExpressionParseHandlerStringEqual.Expression = Expression9;
-
-  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/parse/NBTPathExpressionParseHandlerUnion.ts
-  var NbtPathExpressionParseHandlerUnion = class {
-    REGEX_BRACKETS = new RegExp("^\\[([^\\]]+(,[^\\]]+)+)\\]");
-    handlePrefixOf(nbtPathExpression, pos) {
-      const match = this.REGEX_BRACKETS.exec(nbtPathExpression.slice(pos));
-      if (!match) {
-        return HandleResult.INVALID;
-      }
-      let contents = match[1].split(",");
-      let childNames = [];
-      let childIndexes = [];
-      let expressionLength = 1;
-      for (const match2 of contents) {
-        expressionLength += 1 + match2.length;
-        try {
-          childIndexes.push(parseInt(match2));
-          if (!(childNames.length == 0)) {
-            return HandleResult.INVALID;
-          }
-        } catch (e) {
-          childNames.push(match2);
-          if (!(childIndexes.length == 0)) {
-            return HandleResult.INVALID;
-          }
-        }
-      }
-      return new HandleResult(
-        new Expression10(childNames, childIndexes),
-        expressionLength
-      );
-    }
-    static Expression;
-  };
-  var Expression10 = class extends INbtPathExpression {
-    childNames;
-    childIndexes;
-    constructor(childNames, childIndexes) {
-      super();
-      this.childNames = childNames;
-      this.childIndexes = childIndexes;
-    }
-    getChildNames() {
-      return this.childNames;
-    }
-    getChildIndexes() {
-      return this.childIndexes;
-    }
-    matchContexts(executionContexts) {
-      return new NbtPathExpressionMatches(
-        executionContexts
-          .flatMap((executionContext) => {
-            let nbt = executionContext.getCurrentTag();
-            if (
-              !(this.getChildIndexes().length == 0) &&
-              nbt.getType() == Tag.TAG_LIST
-            ) {
-              let tag = nbt;
-              return this.getChildIndexes()
-                .map((i) => tag.get(i))
-                .filter((subTag) => subTag.getId() != 0)
-                .map(
-                  (subTag) =>
-                    new NbtPathExpressionExecutionContext(
-                      subTag,
-                      executionContext
-                    )
-                );
-            } else if (
-              !(this.getChildNames().length == 0) &&
-              nbt.getType() == Tag.TAG_COMPOUND
-            ) {
-              let tag = nbt;
-              return this.getChildNames()
-                .map((e) => tag.get(e))
-                .filter((e) => e != null)
-                .map(
-                  (subTag) =>
-                    new NbtPathExpressionExecutionContext(
-                      subTag,
-                      executionContext
-                    )
-                );
-            }
-            return null;
-          })
-          .filter((e) => e != null)
-      );
-    }
-    asNavigation(child) {
-      if (!(this.getChildNames().length == 0)) {
-        return new NbtPathNavigationAdapter(this.getChildNames(), child);
-      } else {
-        throw new Error(
-          "NbtPathExpressionParseHandlerUnion.Expression#asNavigation is not implemented for lists"
-        );
-      }
-    }
-  };
-  NbtPathExpressionParseHandlerUnion.Expression = Expression10;
-
-  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/NbtPath.ts
-  var NbtPath = class _NbtPath {
-    static PARSE_HANDLERS = [
-      new NbtPathExpressionParseHandlerRoot(),
-      new NbtPathExpressionParseHandlerLength(),
-      new NbtPathExpressionParseHandlerChild(),
-      new NbtPathExpressionParseHandlerChildBrackets(),
-      new NbtPathExpressionParseHandlerParent(),
-      new NbtPathExpressionParseHandlerAllChildren(),
-      new NbtPathExpressionParseHandlerCurrent(),
-      new NbtPathExpressionParseHandlerListElement(),
-      new NbtPathExpressionParseHandlerListSlice(),
-      new NbtPathExpressionParseHandlerUnion(),
-      new NbtPathExpressionParseHandlerBooleanRelationalLessThan(),
-      new NbtPathExpressionParseHandlerBooleanRelationalLessThanOrEqual(),
-      new NbtPathExpressionParseHandlerBooleanRelationalGreaterThan(),
-      new NbtPathExpressionParseHandlerBooleanRelationalGreaterThanOrEqual(),
-      new NbtPathExpressionParseHandlerBooleanRelationalEqual(),
-      new NbtPathExpressionParseHandlerStringEqual(),
-      new NbtPathExpressionParseHandlerFilterExpression(),
-    ];
-    /**
-     * Parse an NBT path expression string into an in-memory representation.
-     * @param nbtPathExpression An NBT path expression string
-     * @return An in-memory representation of the given expression.
-     * @throws NbtParseException An exception that can be thrown if parsing failed.
-     */
-    static parse(nbtPathExpression) {
-      let expressions = [];
-      let pos = 0;
-      while (pos < nbtPathExpression.length) {
-        let handled = false;
-        for (const parseHandler of _NbtPath.PARSE_HANDLERS) {
-          let handleResult = parseHandler.handlePrefixOf(
-            nbtPathExpression,
-            pos
-          );
-          if (handleResult.isValid()) {
-            pos += handleResult.getConsumedExpressionLength();
-            expressions.push(handleResult.getPrefixExpression());
-            handled = true;
-            break;
-          }
-        }
-        if (!handled) {
-          throw new Error(
-            `Failed to parse expression at pos '${pos}': ${nbtPathExpression}`
-          );
-        }
-        return new NbtPathExpressionList(...expressions);
-      }
-      return void 0;
-    }
-  };
-
-  // TSFiles/HelperClasses/operatorRegistry.ts
-  init_Operator();
 
   // TSFiles/HelperClasses/ParsedSignature.ts
-  init_TypeMap();
   var ParsedSignature = class _ParsedSignature {
     ast;
     TypeIDCounter;
@@ -9027,6 +5976,9 @@
       this.TypeIDCounter = 0;
       this.typeMap = typeMap;
       this.flatArgs = this.toFlatSignature();
+    }
+    getTypeMap() {
+      return this.typeMap;
     }
     getAST() {
       return JSON.parse(JSON.stringify(this.ast));
@@ -9185,1781 +6137,12012 @@
     }
   };
 
-  // TSFiles/HelperClasses/operatorRegistry.ts
-  var OperatorRegistry = class {
-    data;
-    constructor() {
-      this.data = {};
+  // TSFiles/IntegratedDynamicsClasses/typeWrappers/iBoolean.ts
+  var iBoolean = class _iBoolean {
+    bool;
+    constructor(bool) {
+      this.bool = bool;
     }
-    register(
-      k,
-      {
-        internalName,
-        nicknames,
-        symbol,
-        parsedSignature,
-        interactName,
-        function: Function2,
-        serializer,
-      },
-      globalMap2
-    ) {
-      let data = {
-        internalName,
-        nicknames,
-        symbol,
-        interactName,
-        function: Function2,
-        serializer,
-      };
-      data["parsedSignature"] = new ParsedSignature(
-        parsedSignature,
-        globalMap2
-      );
-      this.data[k] = new Operator(data);
+    valueOf() {
+      return this.bool;
     }
-    find(fn) {
-      for (const [_, o] of Object.entries(this.data)) {
-        if (fn(o)) return o;
-      }
-      throw new Error("Unknown Operator");
+    getSignatureNode() {
+      return { type: "Boolean" };
+    }
+    equals(other) {
+      if (!(other instanceof _iBoolean)) return new _iBoolean(false);
+      return new _iBoolean(this.bool == other.valueOf());
     }
   };
 
-  // TSFiles/operatorRegistry.ts
-  var globalMap = new TypeMap();
-  var operatorRegistryRawData = {
-    and: {
-      internalName: "integrateddynamics:logical_and",
-      nicknames: ["logicalAnd"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Boolean",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Boolean",
-          },
-          to: {
-            type: "Boolean",
-          },
-        },
-      },
-      symbol: "&&",
-      interactName: "booleanAnd",
-      function: (bool1) => {
-        return (bool2) => {
-          return bool1 && bool2;
-        };
-      },
-    },
-    or: {
-      internalName: "integrateddynamics:logical_or",
-      nicknames: ["logicalOr"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Boolean",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Boolean",
-          },
-          to: {
-            type: "Boolean",
-          },
-        },
-      },
-      symbol: "||",
-      interactName: "booleanOr",
-      function: (bool1) => {
-        return (bool2) => {
-          return bool1 || bool2;
-        };
-      },
-    },
-    not: {
-      internalName: "integrateddynamics:logical_not",
-      nicknames: ["logicalNot"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Boolean",
-        },
-        to: {
-          type: "Boolean",
-        },
-      },
-      symbol: "!",
-      interactName: "booleanNot",
-      function: (bool) => {
-        return !bool;
-      },
-    },
-    nand: {
-      internalName: "integrateddynamics:logical_nand",
-      nicknames: ["logicalNand"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Boolean",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Boolean",
-          },
-          to: {
-            type: "Boolean",
-          },
-        },
-      },
-      symbol: "!&&",
-      interactName: "booleanNand",
-      function: (func1) => {
-        return (func2) => {
-          return (input) => {
-            return !(func1(input) && func2(input));
-          };
-        };
-      },
-    },
-    nor: {
-      internalName: "integrateddynamics:logical_nor",
-      nicknames: ["logicalNor"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Boolean",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Boolean",
-          },
-          to: {
-            type: "Boolean",
-          },
-        },
-      },
-      symbol: "!||",
-      interactName: "booleanNor",
-      function: (func1) => {
-        return (func2) => {
-          return (input) => {
-            return !(func1(input) || func2(input));
-          };
-        };
-      },
-    },
-    add: {
-      internalName: "integrateddynamics:arithmetic_addition",
-      nicknames: ["arithmeticAddition"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Number",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Number",
-          },
-          to: {
-            type: "Number",
-          },
-        },
-      },
-      symbol: "+",
-      interactName: "numberAdd",
-      function: async (num1) => {
-        return async (num2) => {
-          return JavaMath.add(num1, num2);
-        };
-      },
-    },
-    subtract: {
-      internalName: "integrateddynamics:arithmetic_subtraction",
-      nicknames: ["arithmeticSubtraction"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Number",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Number",
-          },
-          to: {
-            type: "Number",
-          },
-        },
-      },
-      symbol: "-",
-      interactName: "numberSubtract",
-      function: (num1) => {
-        return (num2) => {
-          return JavaMath.subtract(num1, num2);
-        };
-      },
-    },
-    multiply: {
-      internalName: "integrateddynamics:arithmetic_multiplication",
-      nicknames: ["arithmeticMultiplication"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Number",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Number",
-          },
-          to: {
-            type: "Number",
-          },
-        },
-      },
-      symbol: "*",
-      interactName: "numberMultiply",
-      function: (num1) => {
-        return (num2) => {
-          return JavaMath.multiply(num1, num2);
-        };
-      },
-    },
-    divide: {
-      internalName: "integrateddynamics:arithmetic_division",
-      nicknames: ["arithmeticDivision"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Number",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Number",
-          },
-          to: {
-            type: "Number",
-          },
-        },
-      },
-      symbol: "/",
-      interactName: "numberDivide",
-      function: (num1) => {
-        return (num2) => {
-          return JavaMath.divide(num1, num2);
-        };
-      },
-    },
-    max: {
-      internalName: "integrateddynamics:arithmetic_maximum",
-      nicknames: ["arithmeticMaximum"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Number",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Number",
-          },
-          to: {
-            type: "Number",
-          },
-        },
-      },
-      symbol: "max",
-      interactName: "numberMax",
-      function: (num1) => {
-        return (num2) => {
-          return JavaMath.max(num1, num2);
-        };
-      },
-    },
-    min: {
-      internalName: "integrateddynamics:arithmetic_minimum",
-      nicknames: ["arithmeticMinimum"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Number",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Number",
-          },
-          to: {
-            type: "Number",
-          },
-        },
-      },
-      symbol: "min",
-      interactName: "numberMin",
-      function: (num1) => {
-        return (num2) => {
-          return JavaMath.min(num1, num2);
-        };
-      },
-    },
-    increment: {
-      internalName: "integrateddynamics:arithmetic_increment",
-      nicknames: ["arithmeticIncrement"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Number",
-        },
-        to: {
-          type: "Number",
-        },
-      },
-      symbol: "++",
-      interactName: "numberIncrement",
-      function: async (num1) => {
-        return JavaMath.add(num1, new Integer(1));
-      },
-    },
-    decrement: {
-      internalName: "integrateddynamics:arithmetic_decrement",
-      nicknames: ["arithmeticDecrement"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Number",
-        },
-        to: {
-          type: "Number",
-        },
-      },
-      symbol: "--",
-      interactName: "numberDecrement",
-      function: async (num1) => {
-        return JavaMath.subtract(num1, new Integer(1));
-      },
-    },
-    modulus: {
-      internalName: "integrateddynamics:arithmetic_modulus",
-      nicknames: ["arithmeticModulus"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Number",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Number",
-          },
-          to: {
-            type: "Number",
-          },
-        },
-      },
-      symbol: "%",
-      interactName: "numberModulus",
-      function: (num1) => {
-        return (num2) => {
-          return JavaMath.mod(num1, num2);
-        };
-      },
-    },
-    doubleSqrt: {
-      internalName: "integrateddynamics:double_sqrt",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Double",
-        },
-        to: {
-          type: "Double",
-        },
-      },
-      symbol: "sqrt",
-      interactName: "doubleSqrt",
-      function: (double) => {
-        return double.sqrt();
-      },
-    },
-    doublePow: {
-      internalName: "integrateddynamics:double_pow",
-      nicknames: ["doublePow"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Double",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Double",
-          },
-          to: {
-            type: "Double",
-          },
-        },
-      },
-      symbol: "pow",
-      interactName: "doublePow",
-      function: (base) => {
-        return (exponent) => {
-          return base.pow(exponent);
-        };
-      },
-    },
-    "==": {
-      internalName: "integrateddynamics:relational_equals",
-      nicknames: ["relationalEquals"],
-      parsedSignature: {
-        type: "Function",
-        from: { type: "Any", typeID: 1 },
-        to: {
-          type: "Function",
-          from: { type: "Any", typeID: 1 },
-          to: {
-            type: "Boolean",
-          },
-        },
-      },
-      symbol: "==",
-      interactName: "anyEquals",
-      function: (value1) => {
-        return (value2) => {
-          try {
-            return value1.equals(value2);
-          } catch (e) {
-            return value1 === value2;
-          }
-        };
-      },
-    },
-    ">": {
-      internalName: "integrateddynamics:relational_gt",
-      nicknames: ["relationalGt"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Number",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Number",
-          },
-          to: {
-            type: "Boolean",
-          },
-        },
-      },
-      symbol: ">",
-      interactName: "numberGreaterThan",
-      function: (num1) => {
-        return (num2) => {
-          return JavaMath.gt(num1, num2);
-        };
-      },
-    },
-    "<": {
-      internalName: "integrateddynamics:relational_lt",
-      nicknames: ["relationalLt"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Number",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Number",
-          },
-          to: {
-            type: "Boolean",
-          },
-        },
-      },
-      symbol: "<",
-      interactName: "numberLessThan",
-      function: (num1) => {
-        return (num2) => {
-          return JavaMath.lt(num1, num2);
-        };
-      },
-    },
-    "!=": {
-      internalName: "integrateddynamics:relational_notequals",
-      nicknames: ["relationalNotequals"],
-      parsedSignature: {
-        type: "Function",
-        from: { type: "Any", typeID: 1 },
-        to: {
-          type: "Function",
-          from: { type: "Any", typeID: 1 },
-          to: {
-            type: "Boolean",
-          },
-        },
-      },
-      symbol: "!=",
-      interactName: "anyNotEquals",
-      function: (value1) => {
-        return (value2) => {
-          try {
-            return !value1.equals(value2);
-          } catch (e) {
-            return value1 !== value2;
-          }
-        };
-      },
-    },
-    ">=": {
-      internalName: "integrateddynamics:relational_ge",
-      nicknames: ["relationalGe"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Number",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Number",
-          },
-          to: {
-            type: "Boolean",
-          },
-        },
-      },
-      symbol: ">=",
-      interactName: "anyGreaterThanOrEquals",
-      function: (num1) => {
-        return (num2) => {
-          return JavaMath.gte(num1, num2);
-        };
-      },
-    },
-    "<=": {
-      internalName: "integrateddynamics:relational_le",
-      nicknames: ["relationalLe"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Number",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Number",
-          },
-          to: {
-            type: "Boolean",
-          },
-        },
-      },
-      symbol: "<=",
-      interactName: "anyLessThanOrEquals",
-      function: (num1) => {
-        return (num2) => {
-          return JavaMath.lte(num1, num2);
-        };
-      },
-    },
-    binaryAnd: {
-      internalName: "integrateddynamics:binary_and",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Integer",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Integer",
-          },
-          to: {
-            type: "Integer",
-          },
-        },
-      },
-      symbol: "&",
-      interactName: "integerBinaryAnd",
-      function: (int1) => {
-        return (int2) => {
-          return int1.binaryAnd(int2);
-        };
-      },
-    },
-    binaryOr: {
-      internalName: "integrateddynamics:binary_or",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Integer",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Integer",
-          },
-          to: {
-            type: "Integer",
-          },
-        },
-      },
-      symbol: "|",
-      interactName: "integerBinaryOr",
-      function: (int1) => {
-        return (int2) => {
-          return int1.binaryOr(int2);
-        };
-      },
-    },
-    binaryXor: {
-      internalName: "integrateddynamics:binary_xor",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Integer",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Integer",
-          },
-          to: {
-            type: "Integer",
-          },
-        },
-      },
-      symbol: "^",
-      interactName: "integerXor",
-      function: (int1) => {
-        return (int2) => {
-          return int1.binaryXor(int2);
-        };
-      },
-    },
-    binaryComplement: {
-      internalName: "integrateddynamics:binary_complement",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Integer",
-        },
-        to: {
-          type: "Integer",
-        },
-      },
-      symbol: "~",
-      interactName: "integerComplement",
-      function: (int) => {
-        return int.binaryComplement();
-      },
-    },
-    "<<": {
-      internalName: "integrateddynamics:binary_lshift",
-      nicknames: ["binaryLshift"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Integer",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Integer",
-          },
-          to: {
-            type: "Integer",
-          },
-        },
-      },
-      symbol: "<<",
-      interactName: "integerLeftShift",
-      function: (int1) => {
-        return (int2) => {
-          return int1.leftShift(int2);
-        };
-      },
-    },
-    ">>": {
-      internalName: "integrateddynamics:binary_rshift",
-      nicknames: ["binaryRshift"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Integer",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Integer",
-          },
-          to: {
-            type: "Integer",
-          },
-        },
-      },
-      symbol: ">>",
-      interactName: "integerRightShift",
-      function: (int1) => {
-        return (int2) => {
-          return int1.rightShift(int2);
-        };
-      },
-    },
-    ">>>": {
-      internalName: "integrateddynamics:binary_rzshift",
-      nicknames: ["binaryRzshift"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Integer",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Integer",
-          },
-          to: {
-            type: "Integer",
-          },
-        },
-      },
-      symbol: ">>>",
-      interactName: "integerUnsignedRightShift",
-      function: (int1) => {
-        return (int2) => {
-          return new Integer(int1.unsignedRightShift(int2));
-        };
-      },
-    },
-    stringLength: {
-      internalName: "integrateddynamics:string_length",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
-          type: "Integer",
-        },
-      },
-      symbol: "len",
-      interactName: "stringLength",
-      function: (str) => {
-        return new Integer(str.length);
-      },
-    },
-    stringConcat: {
-      internalName: "integrateddynamics:string_concat",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "String",
-          },
-        },
-      },
-      symbol: "+",
-      interactName: "stringConcat",
-      function: (str1) => {
-        return (str2) => {
-          return str1.concat(str2);
-        };
-      },
-    },
-    stringContains: {
-      internalName: "integrateddynamics:string_contains",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "Boolean",
-          },
-        },
-      },
-      symbol: "contains",
-      interactName: "stringContains",
-      function: (substring) => {
-        return (fullString) => {
-          return fullString.includes(substring);
-        };
-      },
-    },
-    containsRegex: {
-      internalName: "integrateddynamics:string_contains_regex",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "Boolean",
-          },
-        },
-      },
-      symbol: "contains_regex",
-      interactName: "stringContainsRegex",
-      function: (regexString) => {
-        return (fullString) => {
-          const regex = new import_re2_wasm.RE2(regexString, "u");
-          return regex.test(fullString);
-        };
-      },
-    },
-    matchesRegex: {
-      internalName: "integrateddynamics:string_matches_regex",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "Boolean",
-          },
-        },
-      },
-      symbol: "matches_regex",
-      interactName: "stringMatchesRegex",
-      function: (regexString) => {
-        return (fullString) => {
-          if (regexString.startsWith("^")) regexString = regexString.slice(1);
-          if (regexString.endsWith("$")) regexString = regexString.slice(0, -1);
-          const regex = new import_re2_wasm.RE2(`^(?:${regexString})$`, "u");
-          return regex.test(fullString);
-        };
-      },
-    },
-    stringIndexOf: {
-      internalName: "integrateddynamics:string_index_of",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "Integer",
-          },
-        },
-      },
-      symbol: "index_of",
-      interactName: "stringIndexOf",
-      function: (substring) => {
-        return (fullString) => {
-          return new Integer(fullString.indexOf(substring));
-        };
-      },
-    },
-    indexOfRegex: {
-      internalName: "integrateddynamics:string_index_of_regex",
-      nicknames: ["stringIndexOfRegex"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "Integer",
-          },
-        },
-      },
-      symbol: "index_of_regex",
-      interactName: "stringIndexOfRegex",
-      function: (regexString) => {
-        return (fullString) => {
-          const regex = new import_re2_wasm.RE2(regexString, "u");
-          return new Integer(fullString.search(regex));
-        };
-      },
-    },
-    startsWith: {
-      internalName: "integrateddynamics:string_starts_with",
-      nicknames: ["stringStartsWith"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "Boolean",
-          },
-        },
-      },
-      symbol: "starts_with",
-      interactName: "stringStartsWith",
-      function: (substring) => {
-        return (fullString) => {
-          return fullString.startsWith(substring);
-        };
-      },
-    },
-    endsWith: {
-      internalName: "integrateddynamics:string_ends_with",
-      nicknames: ["stringEndsWith"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "Boolean",
-          },
-        },
-      },
-      symbol: "ends_with",
-      interactName: "stringEndsWith",
-      function: (substring) => {
-        return (fullString) => {
-          return fullString.endsWith(substring);
-        };
-      },
-    },
-    stringSplitOn: {
-      internalName: "integrateddynamics:string_split_on",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: { type: "List", listType: { type: "String" } },
-        },
-      },
-      symbol: "split_on",
-      interactName: "stringSplitOn",
-      function: (delimiter) => {
-        return (fullString) => {
-          return fullString.split(delimiter);
-        };
-      },
-    },
-    stringSplitOnRegex: {
-      internalName: "integrateddynamics:string_split_on_regex",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: { type: "List", listType: { type: "String" } },
-        },
-      },
-      symbol: "split_on_regex",
-      interactName: "stringSplitOnRegex",
-      function: (regexString) => {
-        return (fullString) => {
-          const regex = new import_re2_wasm.RE2(regexString, "u");
-          return regex.split(fullString);
-        };
-      },
-    },
-    substring: {
-      internalName: "integrateddynamics:string_substring",
-      nicknames: ["stringSubstring"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Integer",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Integer",
-          },
-          to: {
+  // TSFiles/IntegratedDynamicsClasses/operators/Operator.ts
+  var Operator = class _Operator {
+    fn;
+    parsedSignature;
+    typeMap;
+    _output;
+    constructor({ parsedSignature, function: fn }) {
+      this.fn = fn;
+      this.typeMap = parsedSignature.getTypeMap();
+      this.parsedSignature = parsedSignature;
+    }
+    apply(arg) {
+      this.typeMap.unify(
+        this.parsedSignature.getInput(0),
+        arg.getSignatureNode()
+      );
+      const parsedSignature = this.parsedSignature.apply(
+        arg.getSignatureNode()
+      );
+      let newOp = this.fn(arg);
+      if ("_setSignature" in newOp) newOp._setSignature(parsedSignature);
+      return newOp;
+    }
+    pipe(otherOp) {
+      const newFn = (x) => {
+        return otherOp.apply(this.apply(x));
+      };
+      const newSignature = this.parsedSignature.pipe(otherOp.parsedSignature);
+      return new _Operator({
+        parsedSignature: newSignature,
+        function: newFn,
+      });
+    }
+    getFn() {
+      return this.fn;
+    }
+    getSignatureNode() {
+      return this.parsedSignature.ast;
+    }
+    _setSignature(signature) {
+      this.parsedSignature = signature;
+    }
+    equals(other) {
+      if (!(other instanceof _Operator)) return new iBoolean(false);
+      return new iBoolean(this.fn.toString() == other.getFn().toString());
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/BaseOperator.ts
+  var BaseOperator = class extends Operator {
+    internalName;
+    nicknames;
+    symbol;
+    interactName;
+    serializer;
+    constructor({
+      internalName,
+      nicknames,
+      parsedSignature,
+      symbol,
+      interactName,
+      function: fn,
+      serializer,
+    }) {
+      super({ parsedSignature, function: fn });
+      this.fn = fn;
+      this.typeMap = parsedSignature.getTypeMap();
+      this.parsedSignature = parsedSignature;
+      this.internalName = internalName;
+      this.nicknames = nicknames;
+      this.symbol = symbol;
+      this.interactName = interactName;
+      this.serializer = serializer;
+    }
+    evaluate(...args) {
+      const arity = this.parsedSignature.getArity();
+      if (args.length !== arity) {
+        throw new Error(`Operator expected ${arity} args, got ${args.length}`);
+      }
+      args = args.reverse();
+      let result = this.fn(args.pop());
+      while (args.length > 0) {
+        result = result.fn(args.pop());
+      }
+      return result;
+    }
+    getUname() {
+      return this.internalName;
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/ARITHMETIC_ADDITION.ts
+  var OPERATOR_ARITHMETIC_ADDITION = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:arithmetic_addition",
+        nicknames: ["add", "arithmeticAddition", "+", "numberAdd"],
+        parsedSignature: new ParsedSignature(
+          {
             type: "Function",
             from: {
-              type: "String",
+              type: "Number",
             },
             to: {
-              type: "String",
+              type: "Function",
+              from: {
+                type: "Number",
+              },
+              to: {
+                type: "Number",
+              },
             },
           },
-        },
-      },
-      symbol: "substring",
-      interactName: "integerSubstring",
-      function: (start) => {
-        return (end) => {
-          return (fullString) => {
-            return fullString.substring(
-              parseInt(start.toDecimal()),
-              parseInt(end.toDecimal())
-            );
+          globalMap2
+        ),
+        symbol: "+",
+        interactName: "numberAdd",
+        function: (num1) => {
+          return (num2) => {
+            return num1.add(num2);
           };
-        };
-      },
-    },
-    stringRegexGroup: {
-      internalName: "integrateddynamics:string_regex_group",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "String",
         },
-        to: {
-          type: "Function",
-          from: {
-            type: "Integer",
-          },
-          to: {
+      });
+    }
+  };
+
+  // TSFiles/JavaNumberClasses/Double.ts
+  var Double = class _Double {
+    num;
+    constructor(data) {
+      if (data instanceof _Double) data = data.num;
+      if (typeof data === "string") data = parseFloat(data);
+      this.num = data;
+    }
+    static ZERO = new _Double(0);
+    getType() {
+      return "Double";
+    }
+    getOrder() {
+      return 2;
+    }
+    // Double → Double
+    toLong() {
+      return new Long(this.num);
+    }
+    // Double → Integer
+    toInteger() {
+      return new Integer(this.num);
+    }
+    toDouble() {
+      return new _Double(this.num);
+    }
+    toString() {
+      return `${this.num}`;
+    }
+    leftShift(num) {
+      return new _Double(this.num << num.toJSNumber());
+    }
+    add(num) {
+      return new _Double(this.num + num.toJSNumber());
+    }
+    subtract(num) {
+      return new _Double(this.num - num.toJSNumber());
+    }
+    multiply(num) {
+      return new _Double(this.num * num.toJSNumber());
+    }
+    divide(num) {
+      return new _Double(this.num / num.toJSNumber());
+    }
+    mod(num) {
+      return new _Double(this.num % num.toJSNumber());
+    }
+    sqrt() {
+      return new _Double(Math.sqrt(this.num));
+    }
+    pow(exponent) {
+      return new _Double(Math.pow(this.num, exponent.toJSNumber()));
+    }
+    max(num) {
+      return this.gt(num) ? this : num.toDouble();
+    }
+    min(num) {
+      return this.lt(num) ? this : num.toDouble();
+    }
+    lt(num) {
+      return this.num < num.toJSNumber();
+    }
+    lte(num) {
+      return this.num <= num.toJSNumber();
+    }
+    gt(num) {
+      return this.num > num.toJSNumber();
+    }
+    gte(num) {
+      return this.num >= num.toJSNumber();
+    }
+    equals(num) {
+      if (!(num instanceof _Double)) return new iBoolean(false);
+      return new iBoolean(this.num === num.num);
+    }
+    round() {
+      return new Integer(Math.round(this.num));
+    }
+    ceil() {
+      return new Integer(Math.ceil(this.num));
+    }
+    floor() {
+      return new Integer(Math.floor(this.num));
+    }
+    getSignatureNode() {
+      return { type: "Double" };
+    }
+    toJSNumber() {
+      return this.num;
+    }
+  };
+
+  // TSFiles/JavaNumberClasses/Long.ts
+  var Long = class _Long {
+    num;
+    constructor(data) {
+      if (data instanceof _Long) data = data.num;
+      if (typeof data === "number") {
+        this.num = _Long.limitToLong(data);
+      } else {
+        this.num = BigInt.asIntN(64, BigInt(data));
+      }
+    }
+    static limitToLong(num) {
+      return BigInt.asIntN(64, BigInt(num));
+    }
+    static ZERO = new _Long(0);
+    getType() {
+      return "Long";
+    }
+    getOrder() {
+      return 1;
+    }
+    toType(value) {
+      return value.toLong();
+    }
+    // Long → Integer
+    toInteger() {
+      return new Integer(this.toString());
+    }
+    // Long → Double
+    toDouble() {
+      return new Double(this.toString());
+    }
+    toLong() {
+      return new _Long(this.num);
+    }
+    toString() {
+      return this.num.toString();
+    }
+    add(num) {
+      return new _Long(this.num + num.toLong().num);
+    }
+    subtract(num) {
+      return new _Long(this.num - num.toLong().num);
+    }
+    multiply(num) {
+      return new _Long(this.num * num.toLong().num);
+    }
+    divide(num) {
+      return new _Long(this.num / num.toLong().num);
+    }
+    mod(num) {
+      return new _Long(this.num % num.toLong().num);
+    }
+    max(num) {
+      return this.gt(num) ? this : num.toLong();
+    }
+    min(num) {
+      return this.lt(num) ? this : num.toLong();
+    }
+    leftShift(num) {
+      return new _Long(this.num << num.toLong().num);
+    }
+    lt(num) {
+      return this.num < num.toLong().num;
+    }
+    lte(num) {
+      return this.num <= num.toLong().num;
+    }
+    gt(num) {
+      return this.num > num.toLong().num;
+    }
+    gte(num) {
+      return this.num >= num.toLong().num;
+    }
+    equals(num) {
+      if (!(num instanceof _Long)) return new iBoolean(false);
+      return new iBoolean(this.num === num.toLong().num);
+    }
+    round() {
+      return this.toInteger();
+    }
+    ceil() {
+      return this.toInteger();
+    }
+    floor() {
+      return this.toInteger();
+    }
+    getSignatureNode() {
+      return { type: "Long" };
+    }
+    toJSNumber() {
+      return parseInt(this.num.toString());
+    }
+  };
+
+  // TSFiles/JavaNumberClasses/Integer.ts
+  var Integer = class _Integer {
+    num;
+    constructor(num) {
+      if (num instanceof _Integer) num = num.toJSNumber();
+      if (typeof num === "string") num = parseInt(num);
+      this.num = _Integer.limitToInteger(num);
+    }
+    static limitToInteger(num) {
+      if (!Number.isFinite(num)) return 0;
+      return Math.trunc(num) >> 0;
+    }
+    static ZERO = new _Integer(0);
+    static ONE = new _Integer(1);
+    static SIXTY_FOUR = new _Integer(64);
+    static MAX_INT = new _Integer(2147483647);
+    getType() {
+      return "Integer";
+    }
+    getOrder() {
+      return 0;
+    }
+    toType(value) {
+      return value.toInteger();
+    }
+    // Integer → Long
+    toLong() {
+      return new Long(BigInt(this.toJSNumber()));
+    }
+    // Integer → Double
+    toDouble() {
+      return new Double(this.toJSNumber());
+    }
+    toInteger() {
+      return new _Integer(this.toJSNumber());
+    }
+    toString() {
+      return `${this.toJSNumber()}`;
+    }
+    add(num) {
+      return new _Integer(this.toJSNumber() + num.toJSNumber());
+    }
+    subtract(num) {
+      return new _Integer(this.toJSNumber() - num.toJSNumber());
+    }
+    multiply(num) {
+      return new _Integer(this.toJSNumber() * num.toJSNumber());
+    }
+    divide(num) {
+      return new _Integer(this.toJSNumber() / num.toJSNumber());
+    }
+    mod(num) {
+      return new _Integer(this.toJSNumber() % num.toJSNumber());
+    }
+    binaryAnd(num) {
+      return new _Integer(this.toJSNumber() & num.toJSNumber());
+    }
+    binaryOr(num) {
+      return new _Integer(this.toJSNumber() | num.toJSNumber());
+    }
+    binaryXor(num) {
+      return new _Integer(this.toJSNumber() ^ num.toJSNumber());
+    }
+    binaryComplement() {
+      return new _Integer(~this.toJSNumber());
+    }
+    leftShift(num) {
+      return new _Integer(this.toJSNumber() << num.toJSNumber());
+    }
+    rightShift(places) {
+      return new _Integer(this.toJSNumber() >> places.num);
+    }
+    unsignedRightShift(places) {
+      return new _Integer(this.toJSNumber() >>> places.num);
+    }
+    max(num) {
+      return this.gt(num) ? this : num.toInteger();
+    }
+    min(num) {
+      return this.lt(num) ? this : num.toInteger();
+    }
+    lt(num) {
+      return this.toJSNumber() < num.toJSNumber();
+    }
+    lte(num) {
+      return this.toJSNumber() <= num.toJSNumber();
+    }
+    gt(num) {
+      return this.toJSNumber() > num.toJSNumber();
+    }
+    gte(num) {
+      return this.toJSNumber() >= num.toJSNumber();
+    }
+    equals(num) {
+      if (!(num instanceof _Integer)) return new iBoolean(false);
+      return new iBoolean(this.toJSNumber() === num.toJSNumber());
+    }
+    round() {
+      return this.toInteger();
+    }
+    ceil() {
+      return this.toInteger();
+    }
+    floor() {
+      return this.toInteger();
+    }
+    getSignatureNode() {
+      return { type: "Integer" };
+    }
+    toJSNumber() {
+      return this.toJSNumber();
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/ARITHMETIC_DECREMENT.ts
+  var OPERATOR_ARITHMETIC_DECREMENT = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:arithmetic_decrement",
+        nicknames: [
+          "arithmeticDecrement",
+          "decrement",
+          "--",
+          "numberDecrement",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
             type: "Function",
             from: {
-              type: "String",
+              type: "Number",
             },
             to: {
-              type: "String",
+              type: "Number",
             },
           },
+          globalMap2
+        ),
+        symbol: "--",
+        interactName: "numberDecrement",
+        function: (num1) => {
+          return num1.subtract(Integer.ONE);
         },
-      },
-      symbol: "regex_group",
-      interactName: "stringRegexGroup",
-      function: (regexString) => {
-        return (groupIndex) => {
-          return (fullString) => {
-            const regex = new import_re2_wasm.RE2(regexString, "u");
-            const match = regex.exec(fullString);
-            if (match && match[parseInt(groupIndex.toDecimal())] !== void 0) {
-              return match[parseInt(groupIndex.toDecimal())];
-            } else {
-              throw new Error(
-                `No match found for group index ${groupIndex.toDecimal()} in regex "${regexString}" on string "${fullString}"`
-              );
-            }
-          };
-        };
-      },
-    },
-    stringRegexGroups: {
-      internalName: "integrateddynamics:string_regex_groups",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/ARITHMETIC_DIVISION.ts
+  var OPERATOR_ARITHMETIC_DIVISION = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:arithmetic_division",
+        nicknames: ["divide", "arithmeticDivision", "/", "numberDivide"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Number",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "Number",
+              },
+              to: {
+                type: "Number",
+              },
+            },
           },
-          to: { type: "List", listType: { type: "String" } },
+          globalMap2
+        ),
+        symbol: "/",
+        interactName: "numberDivide",
+        function: (num1) => {
+          return (num2) => {
+            return num1.divide(num2);
+          };
         },
-      },
-      symbol: "regex_groups",
-      interactName: "stringRegexGroups",
-      function: (regexString) => {
-        return (fullString) => {
-          const regex = new import_re2_wasm.RE2(regexString, "u");
-          const match = regex.exec(fullString);
-          if (match) {
-            return match;
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/ARITHMETIC_INCREMENT.ts
+  var OPERATOR_ARITHMETIC_INCREMENT = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:arithmetic_increment",
+        nicknames: [
+          "increment",
+          "arithmeticIncrement",
+          "++",
+          "numberIncrement",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Number",
+            },
+            to: {
+              type: "Number",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "++",
+        interactName: "numberIncrement",
+        function: (num1) => {
+          return num1.add(Integer.ONE);
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/ARITHMETIC_MAXIMUM.ts
+  var OPERATOR_ARITHMETIC_MAXIMUM = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:arithmetic_maximum",
+        nicknames: ["max", "arithmeticMaximum", "max", "numberMax"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Number",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "Number",
+              },
+              to: {
+                type: "Number",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "max",
+        interactName: "numberMax",
+        function: (num1) => {
+          return (num2) => {
+            return num1.max(num2);
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/ARITHMETIC_MINIMUM.ts
+  var OPERATOR_ARITHMETIC_MINIMUM = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:arithmetic_minimum",
+        nicknames: ["min", "arithmeticMinimum", "numberMin"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Number",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "Number",
+              },
+              to: {
+                type: "Number",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "min",
+        interactName: "numberMin",
+        function: (num1) => {
+          return (num2) => {
+            return num1.min(num2);
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/ARITHMETIC_MODULUS.ts
+  var OPERATOR_ARITHMETIC_MODULUS = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:arithmetic_modulus",
+        nicknames: ["modulus", "arithmeticModulus", "%", "numberModulus"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Number",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "Number",
+              },
+              to: {
+                type: "Number",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "%",
+        interactName: "numberModulus",
+        function: (num1) => {
+          return (num2) => {
+            return num1.mod(num2);
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/ARITHMETIC_MULTIPLICATION.ts
+  var OPERATOR_ARITHMETIC_MULTIPLICATION = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:arithmetic_multiplication",
+        nicknames: [
+          "multiply",
+          "arithmeticMultiplication",
+          "*",
+          "numberMultiply",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Number",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "Number",
+              },
+              to: {
+                type: "Number",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "*",
+        interactName: "numberMultiply",
+        function: (num1) => {
+          return (num2) => {
+            return num1.multiply(num2);
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/ARITHMETIC_SUBTRACTION.ts
+  var OPERATOR_ARITHMETIC_SUBTRACTION = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:arithmetic_subtraction",
+        nicknames: ["subtract", "arithmeticSubtraction"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Number",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "Number",
+              },
+              to: {
+                type: "Number",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "-",
+        interactName: "numberSubtract",
+        function: (num1) => {
+          return (num2) => {
+            return num1.subtract(num2);
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/BINARY_AND.ts
+  var OPERATOR_BINARY_AND = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:binary_and",
+        nicknames: ["binaryAnd", "&", "integerBinaryAnd"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Integer",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "Integer",
+              },
+              to: {
+                type: "Integer",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "&",
+        interactName: "integerBinaryAnd",
+        function: (int1) => {
+          return (int2) => {
+            return int1.binaryAnd(int2);
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/BINARY_COMPLEMENT.ts
+  var OPERATOR_BINARY_COMPLEMENT = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:binary_complement",
+        nicknames: ["binaryComplement", "~", "integerComplement"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Integer",
+            },
+            to: {
+              type: "Integer",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "~",
+        interactName: "integerComplement",
+        function: (int) => {
+          return int.binaryComplement();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/BINARY_LSHIFT.ts
+  var OPERATOR_BINARY_LSHIFT = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:binary_lshift",
+        nicknames: ["<<", "binaryLshift", "integerLeftShift"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Integer",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "Integer",
+              },
+              to: {
+                type: "Integer",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "<<",
+        interactName: "integerLeftShift",
+        function: (int1) => {
+          return (int2) => {
+            return int1.leftShift(int2);
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/BINARY_OR.ts
+  var OPERATOR_BINARY_OR = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:binary_or",
+        nicknames: ["binaryOr", "|", "integerBinaryOr"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Integer",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "Integer",
+              },
+              to: {
+                type: "Integer",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "|",
+        interactName: "integerBinaryOr",
+        function: (int1) => {
+          return (int2) => {
+            return int1.binaryOr(int2);
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/BINARY_RSHIFT.ts
+  var OPERATOR_BINARY_RSHIFT = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:binary_rshift",
+        nicknames: [">>", "binaryRshift", "integerRightShift"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Integer",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "Integer",
+              },
+              to: {
+                type: "Integer",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: ">>",
+        interactName: "integerRightShift",
+        function: (int1) => {
+          return (int2) => {
+            return int1.rightShift(int2);
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/BINARY_XOR.ts
+  var OPERATOR_BINARY_XOR = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:binary_xor",
+        nicknames: ["binaryXor", "^", "integerXor"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Integer",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "Integer",
+              },
+              to: {
+                type: "Integer",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "^",
+        interactName: "integerXor",
+        function: (int1) => {
+          return (int2) => {
+            return int1.binaryXor(int2);
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/DOUBLE_POW.ts
+  var OPERATOR_DOUBLE_POW = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:double_pow",
+        nicknames: ["doublePow", "pow"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Double",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "Double",
+              },
+              to: {
+                type: "Double",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "pow",
+        interactName: "doublePow",
+        function: (base) => {
+          return (exponent) => {
+            return base.pow(exponent);
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/DOUBLE_SQRT.ts
+  var OPERATOR_DOUBLE_SQRT = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:double_sqrt",
+        nicknames: ["doubleSqrt", "sqrt"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Double",
+            },
+            to: {
+              type: "Double",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "sqrt",
+        interactName: "doubleSqrt",
+        function: (double) => {
+          return double.sqrt();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/DOUBLE_TO_INTEGER.ts
+  var OPERATOR_DOUBLE_TO_INTEGER = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName:
+          "integrateddynamics:operator.integrateddynamics.castintegrateddynamics_double__integrateddynamics_integer",
+        nicknames: ["doubleToInt", "doubleInteger"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Double",
+            },
+            to: {
+              type: "Integer",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "()",
+        interactName: "doubleDoubleToInteger",
+        function: (double) => {
+          return double.toInteger();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/DOUBLE_TO_LONG.ts
+  var OPERATOR_DOUBLE_TO_LONG = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName:
+          "integrateddynamics:operator.integrateddynamics.castintegrateddynamics_double__integrateddynamics_long",
+        nicknames: ["doubleToLong"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Double",
+            },
+            to: {
+              type: "Long",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "()",
+        interactName: "doubleDoubleToLong",
+        function: (double) => {
+          return double.toLong();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/ENTITY_ARMORINVENTORY.ts
+  var OPERATOR_ENTITY_ARMORINVENTORY = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:entity_armorinventory",
+        nicknames: [
+          "EntityArmorinventory",
+          "entity_armor_inventory",
+          "entityArmorInventory",
+          "entity_armor",
+          "entityArmor",
+          "armor_inventory",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Entity",
+            },
+            to: { type: "List", listType: { type: "Item" } },
+          },
+          globalMap2
+        ),
+        symbol: "armor_inventory",
+        interactName: "entityArmorInventory",
+        function: (entity) => {
+          return entity.getArmorInventory();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/ENTITY_HASGUIOPEN.ts
+  var OPERATOR_ENTITY_HASGUIOPEN = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:entity_hasguiopen",
+        nicknames: [
+          "PlayerHasguiopen",
+          "player_has_gui_open",
+          "playerHasGuiOpen",
+          "has_gui_open",
+          "entityHasGuiOpen",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Entity",
+            },
+            to: {
+              type: "Boolean",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "has_gui_open",
+        interactName: "entityHasGuiOpen",
+        function: (entity) => {
+          return entity.hasGuiOpen();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/ENTITY_HEALTH.ts
+  var OPERATOR_ENTITY_HEALTH = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:entity_health",
+        nicknames: [
+          "EntityHealth",
+          "entity_health",
+          "entity_health_value",
+          "entityHealthValue",
+          "entityHealth",
+          "health",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Entity",
+            },
+            to: {
+              type: "Double",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "health",
+        interactName: "entityHealth",
+        function: (entity) => {
+          return entity.getHealth();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/ENTITY_HELDITEM.ts
+  var OPERATOR_ENTITY_HELDITEM = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:entity_helditem",
+        nicknames: [
+          "EntityHelditemMain",
+          "entity_held_item_main",
+          "entityHeldItemMain",
+          "heldItemMain",
+          "held_item_1",
+          "entityHeldItem",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Entity",
+            },
+            to: {
+              type: "Item",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "held_item_1",
+        interactName: "entityHeldItem",
+        function: (entity) => {
+          return entity.getHeldItemMain();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/ENTITY_HELDITEMOFFHAND.ts
+  var OPERATOR_ENTITY_HELDITEMOFFHAND = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:entity_helditemoffhand",
+        nicknames: [
+          "EntityHelditemOff",
+          "entity_held_item_off",
+          "entityHeldItemOff",
+          "heldItemOff",
+          "entityHeldItemOffHand",
+          "held_item_2",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Entity",
+            },
+            to: {
+              type: "Item",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "held_item_2",
+        interactName: "entityHeldItemOffHand",
+        function: (entity) => {
+          return entity.getHeldItemOffHand();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/ENTITY_ISMINECART.ts
+  var OPERATOR_ENTITY_ISMINECART = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:entity_isminecart",
+        nicknames: [
+          "EntityIsminecart",
+          "entity_is_minecart",
+          "entityIsMinecart",
+          "isMinecart",
+          "is_minecart",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Entity",
+            },
+            to: {
+              type: "Boolean",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "is_minecart",
+        interactName: "entityIsMinecart",
+        function: (entity) => {
+          return entity.isMinecart();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/ENTITY_ITEM.ts
+  var OPERATOR_ENTITY_ITEM = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:entity_item",
+        nicknames: [
+          "EntityItemstack",
+          "entity_itemstack",
+          "entityItemstack",
+          "entity_item_stack",
+          "entityItemStack",
+          "entity_item",
+          "entityItem",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Entity",
+            },
+            to: {
+              type: "Item",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "item",
+        interactName: "entityItem",
+        function: (entity) => {
+          if (entity.isItem()) {
+            return entity.getItem();
           } else {
-            throw new Error(
-              `No match found for group in regex "${regexString}" on string "${fullString}"`
-            );
+            throw new Error("Entity is not an item entity.");
           }
-        };
-      },
-    },
-    stringRegexScan: {
-      internalName: "integrateddynamics:string_regex_scan",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "String",
         },
-        to: {
-          type: "Function",
-          from: {
-            type: "Integer",
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/ENTITY_WIDTH.ts
+  var OPERATOR_ENTITY_WIDTH = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:entity_width",
+        nicknames: ["EntityWidth", "entity_width", "entityWidth", "width"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Entity",
+            },
+            to: {
+              type: "Double",
+            },
           },
-          to: {
+          globalMap2
+        ),
+        symbol: "width",
+        interactName: "entityWidth",
+        function: (entity) => {
+          return entity.getWidth();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/GENERAL_CHOICE.ts
+  var OPERATOR_GENERAL_CHOICE = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:general_choice",
+        nicknames: [
+          "generalChoice",
+          "choice",
+          "booleanChoice",
+          "?",
+          "if",
+          "ifElse",
+          "if_else",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Boolean",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "Any",
+                typeID: 1,
+              },
+              to: {
+                type: "Function",
+                from: {
+                  type: "Any",
+                  typeID: 1,
+                },
+                to: {
+                  type: "Any",
+                  typeID: 1,
+                },
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "?",
+        interactName: "booleanChoice",
+        function: (bool) => {
+          return (trueValue) => {
+            return (falseValue) => {
+              return bool ? trueValue : falseValue;
+            };
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/GENERAL_CONSTANT.ts
+  var OPERATOR_GENERAL_CONSTANT = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:general_constant",
+        nicknames: ["generalConstant", "const", "constant", "anyConstant", "K"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Any",
+              typeID: 1,
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "Any",
+                typeID: 2,
+              },
+              to: {
+                type: "Any",
+                typeID: 1,
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "K",
+        interactName: "anyConstant",
+        function: (value) => {
+          return () => {
+            return value;
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/GENERAL_IDENTITY.ts
+  var OPERATOR_GENERAL_IDENTITY = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:general_identity",
+        nicknames: ["generalIdentity", "id", "identity", "anyIdentity"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Any",
+              typeID: 1,
+            },
+            to: {
+              type: "Any",
+              typeID: 1,
+            },
+          },
+          globalMap2
+        ),
+        symbol: "id",
+        interactName: "anyIdentity",
+        function: (value) => {
+          return value;
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/INGREDIENTS_ENERGIES.ts
+  var OPERATOR_INGREDIENTS_ENERGIES = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:ingredients_energies",
+        nicknames: ["ingredientsEnergies", "Ingr.energies"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Ingredients",
+            },
+            to: { type: "List", listType: { type: "Long" } },
+          },
+          globalMap2
+        ),
+        symbol: "Ingr.energies",
+        interactName: "ingredientsEnergies",
+        function: (ingredients) => {
+          return ingredients.getEnergies();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/INGREDIENTS_FLUIDS.ts
+  var OPERATOR_INGREDIENTS_FLUIDS = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:ingredients_fluids",
+        nicknames: ["ingredientsFluids", "Ingr.fluids"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Ingredients",
+            },
+            to: { type: "List", listType: { type: "Fluid" } },
+          },
+          globalMap2
+        ),
+        symbol: "Ingr.fluids",
+        interactName: "ingredientsFluids",
+        function: (ingredients) => {
+          return ingredients.getFluids();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/INGREDIENTS_ITEMS.ts
+  var OPERATOR_INGREDIENTS_ITEMS = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:ingredients_items",
+        nicknames: ["ingredientsItems", "Ingr.items"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Ingredients",
+            },
+            to: { type: "List", listType: { type: "Item" } },
+          },
+          globalMap2
+        ),
+        symbol: "Ingr.items",
+        interactName: "ingredientsItems",
+        function: (ingredients) => {
+          return ingredients.getItems();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/INGREDIENTS_WITH_ENERGIES.ts
+  var OPERATOR_INGREDIENTS_WITH_ENERGIES = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:ingredients_with_energies",
+        nicknames: ["ingredientsWithEnergies", "Ingr.with_energies"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Ingredients",
+            },
+            to: {
+              type: "Function",
+              from: { type: "List", listType: { type: "Long" } },
+              to: {
+                type: "Ingredients",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "Ingr.with_energies",
+        interactName: "ingredientsWithEnergies",
+        function: (ingredients) => {
+          return (energyList) => {
+            return ingredients.appendEnergies(energyList);
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/INGREDIENTS_WITH_ENERGY.ts
+  var OPERATOR_INGREDIENTS_WITH_ENERGY = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:ingredients_with_energy",
+        nicknames: ["ingredientsWithEnergy", "Ingr.with_energy"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Ingredients",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "Integer",
+              },
+              to: {
+                type: "Function",
+                from: {
+                  type: "Long",
+                },
+                to: {
+                  type: "Ingredients",
+                },
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "Ingr.with_energy",
+        interactName: "ingredientsWithEnergy",
+        function: (ingredients) => {
+          return (index) => {
+            return (energy) => {
+              return ingredients.setEnergy(energy, index);
+            };
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/INGREDIENTS_WITH_FLUID.ts
+  var OPERATOR_INGREDIENTS_WITH_FLUID = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:ingredients_with_fluid",
+        nicknames: ["ingredientsWithFluid", "Ingr.with_fluid"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Ingredients",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "Integer",
+              },
+              to: {
+                type: "Function",
+                from: {
+                  type: "Fluid",
+                },
+                to: {
+                  type: "Ingredients",
+                },
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "Ingr.with_fluid",
+        interactName: "ingredientsWithFluid",
+        function: (ingredients) => {
+          return (index) => {
+            return (fluid) => {
+              return ingredients.setFluid(fluid, index);
+            };
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/INGREDIENTS_WITH_FLUIDS.ts
+  var OPERATOR_INGREDIENTS_WITH_FLUIDS = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:ingredients_with_fluids",
+        nicknames: ["ingredientsWithFluids", "Ingr.with_fluids"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Ingredients",
+            },
+            to: {
+              type: "Function",
+              from: { type: "List", listType: { type: "Fluid" } },
+              to: {
+                type: "Ingredients",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "Ingr.with_fluids",
+        interactName: "ingredientsWithFluids",
+        function: (ingredients) => {
+          return (fluidList) => {
+            return ingredients.appendFluids(fluidList);
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/INGREDIENTS_WITH_ITEM.ts
+  var OPERATOR_INGREDIENTS_WITH_ITEM = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:ingredients_with_item",
+        nicknames: ["ingredientsWithItem", "Ingr.with_item"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Ingredients",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "Integer",
+              },
+              to: {
+                type: "Function",
+                from: {
+                  type: "Item",
+                },
+                to: {
+                  type: "Ingredients",
+                },
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "Ingr.with_item",
+        interactName: "ingredientsWithItem",
+        function: (ingredients) => {
+          return (index) => {
+            return (item) => {
+              return ingredients.setItem(item, index);
+            };
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/INGREDIENTS_WITH_ITEMS.ts
+  var OPERATOR_INGREDIENTS_WITH_ITEMS = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:ingredients_with_items",
+        nicknames: ["ingredientsWithItems", "Ingr.with_items"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Ingredients",
+            },
+            to: {
+              type: "Function",
+              from: { type: "List", listType: { type: "Item" } },
+              to: {
+                type: "Ingredients",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "Ingr.with_items",
+        interactName: "ingredientsWithItems",
+        function: (ingredients) => {
+          return (itemList) => {
+            return ingredients.appendItems(itemList);
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/INTEGER_TO_DOUBLE.ts
+  var OPERATOR_INTEGER_TO_DOUBLE = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName:
+          "integrateddynamics:operator.integrateddynamics.castintegrateddynamics_integer__integrateddynamics_double",
+        nicknames: ["intToDouble", "integerToDouble", "integerIntegerToDouble"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Integer",
+            },
+            to: {
+              type: "Double",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "()",
+        interactName: "integerIntegerToDouble",
+        function: (int) => {
+          return int.toDouble();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/INTEGER_TO_LONG.ts
+  var OPERATOR_INTEGER_TO_LONG = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName:
+          "integrateddynamics:operator.integrateddynamics.castintegrateddynamics_integer__integrateddynamics_long",
+        nicknames: ["intToLong", "integerLong", "integerIntegerToLong"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Integer",
+            },
+            to: {
+              type: "Long",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "()",
+        interactName: "integerIntegerToLong",
+        function: (int) => {
+          return int.toLong();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/ITEMSTACK_CANBURN.ts
+  var OPERATOR_ITEMSTACK_CANBURN = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:itemstack_canburn",
+        nicknames: [
+          "ItemstackCanburn",
+          "item_can_burn",
+          "itemCanBurn",
+          "item_is_fuel",
+          "itemIsFuel",
+          "isFuel",
+          "can_burn",
+          "itemstackCanBurn",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Item",
+            },
+            to: {
+              type: "Boolean",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "can_burn",
+        interactName: "itemstackCanBurn",
+        function: (item) => {
+          return item.isFuel();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/typeWrappers/iNull.ts
+  var iNull = class _iNull {
+    constructor() {}
+    valueOf() {
+      return null;
+    }
+    getSignatureNode() {
+      return { type: "Null" };
+    }
+    equals(other) {
+      if (!(other instanceof _iNull)) return new iBoolean(false);
+      return new iBoolean(null === other.valueOf());
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/Tag.ts
+  var Tag = class {
+    static TAG_LIST = 0;
+    static TAG_COMPOUND = 1;
+    static TAG_STRING = 2;
+    static TAG_NUMERIC = 3;
+    static TAG_BYTE = 4;
+    static TAG_DOUBLE = 5;
+    static TAG_NULL = 6;
+    static TAG_INT = 7;
+    static TAG_LONG = 7;
+    static TAG_FLOAT = 8;
+    static TAG_Short = 9;
+    constructor() {}
+    getSignatureNode() {
+      return {
+        type: "NBT",
+      };
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/typeWrappers/iString.ts
+  var iString = class _iString {
+    str;
+    constructor(str) {
+      this.str = str;
+    }
+    valueOf() {
+      return this.str;
+    }
+    getSignatureNode() {
+      return { type: "String" };
+    }
+    equals(other) {
+      if (!(other instanceof _iString)) return new iBoolean(false);
+      return new iBoolean(this.str == other.valueOf());
+    }
+    add(other) {
+      return new _iString(this.str + other);
+    }
+    length() {
+      return this.str.length;
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/NullTag.ts
+  var NullTag = class extends Tag {
+    constructor() {
+      super();
+    }
+    getType() {
+      return Tag.TAG_NULL;
+    }
+    valueOf() {
+      return new iNull();
+    }
+    getTypeAsString() {
+      return new iString("NullTag");
+    }
+    equals(tag) {
+      return new iBoolean(tag.getType() == Tag.TAG_NULL);
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/ITEMSTACK_DATAVALUE.ts
+  var OPERATOR_ITEMSTACK_DATAVALUE = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:itemstack_datavalue",
+        nicknames: [
+          "ItemstackDataValue",
+          "itemstack_data_value",
+          "itemstackDataValue",
+          "item_data_value",
+          "itemDataValue",
+          "itemNBTValue",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Item",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: {
+                type: "NBT",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "data_value",
+        interactName: "itemstackDataValue",
+        function: (item) => {
+          return (key) => {
+            const nbt = item.getNBT();
+            if (!nbt || !nbt.has(key)) {
+              return new NullTag();
+            }
+            return nbt.get(key);
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/ITEMSTACK_ISFECONTAINER.ts
+  var OPERATOR_ITEMSTACK_ISFECONTAINER = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:itemstack_isfecontainer",
+        nicknames: [
+          "ItemstackIsfecontainer",
+          "itemstack_is_fe_container",
+          "itemstackIsFecontainer",
+          "item_is_fe_container",
+          "itemIsFecontainer",
+          "isFeContainer",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Item",
+            },
+            to: {
+              type: "Boolean",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "is_fe_container",
+        interactName: "itemstackIsFeContainer",
+        function: (item) => {
+          return item.isFeContainer();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/ITEMSTACK_ITEMBYNAME.ts
+  var OPERATOR_ITEMSTACK_ITEMBYNAME = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:itemstack_itembyname",
+        nicknames: [
+          "ItemstackByName",
+          "itemstack_by_name",
+          "itemstackByName",
+          "item_by_name",
+          "itemByName",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
             type: "Function",
             from: {
               type: "String",
+            },
+            to: {
+              type: "Item",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "item_by_name",
+        interactName: "stringItemByName",
+        function: () => {
+          throw new Error(
+            "Item by name is infeasible without a registry. This is a placeholder function."
+          );
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/ITEMSTACK_ITEMLISTCOUNT.ts
+  var OPERATOR_ITEMSTACK_ITEMLISTCOUNT = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:itemstack_itemlistcount",
+        nicknames: [
+          "ItemstackListCount",
+          "itemstack_list_count",
+          "itemstackListCount",
+          "item_list_count",
+          "itemListCount",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "List",
+              listType: { type: "Item" },
+            },
+            to: {
+              type: "Function",
+              from: { type: "Item" },
+              to: {
+                type: "Integer",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "item_list_count",
+        interactName: "listItemListCount",
+        function: (items) => {
+          return (item) => {
+            return items
+              .filter((i) => {
+                try {
+                  return i.equals(item);
+                } catch (e) {
+                  return false;
+                }
+              })
+              .size();
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/ITEMSTACK_TAG.ts
+  var OPERATOR_ITEMSTACK_TAG = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:itemstack_tag",
+        nicknames: [
+          "ItemstackTag",
+          "itemstack_tag_names",
+          "itemstackTagNames",
+          "item_tag_names",
+          "itemTagNames",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Item",
             },
             to: { type: "List", listType: { type: "String" } },
           },
+          globalMap2
+        ),
+        symbol: "item_tag_names",
+        interactName: "itemstackTags",
+        function: (item) => {
+          return item.getTagNames();
         },
-      },
-      symbol: "regex_scan",
-      interactName: "stringRegexScan",
-      function: (regexString) => {
-        return (groupIndex) => {
-          return (fullString) => {
-            const regex = new import_re2_wasm.RE2(regexString, "gu");
-            let results = [];
-            let match;
-            regex.lastIndex = 0;
-            while ((match = regex.exec(fullString)) !== null) {
-              const groupValue = match[parseInt(groupIndex.toDecimal())];
-              if (groupValue !== void 0 && groupValue !== null) {
-                results.push(groupValue);
-              }
-            }
-            return results;
-          };
-        };
-      },
-    },
-    stringReplace: {
-      internalName: "integrateddynamics:string_replace",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/ITEMSTACK_TOOLTIP.ts
+  var OPERATOR_ITEMSTACK_TOOLTIP = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:itemstack_tooltip",
+        nicknames: [
+          "ItemstackTooltip",
+          "itemstack_tooltip",
+          "itemstackTooltip",
+          "item_tooltip",
+          "itemTooltip",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
             type: "Function",
             from: {
-              type: "String",
+              type: "Item",
             },
-            to: {
-              type: "String",
-            },
+            to: { type: "List", listType: { type: "String" } },
           },
+          globalMap2
+        ),
+        symbol: "tooltip",
+        interactName: "itemstackTooltip",
+        function: (item) => {
+          return item.getTooltip();
         },
-      },
-      symbol: "replace",
-      interactName: "stringReplace",
-      function: (searchString) => {
-        return (replacementString) => {
-          return (fullString) => {
-            return fullString.replace(searchString, replacementString);
-          };
-        };
-      },
-    },
-    stringReplaceRegex: {
-      internalName: "integrateddynamics:string_replace_regex",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "Function",
-            from: {
-              type: "String",
-            },
-            to: {
-              type: "String",
-            },
-          },
-        },
-      },
-      symbol: "replace_regex",
-      interactName: "stringReplaceRegex",
-      function: (regexString) => {
-        return (replacementString) => {
-          return (fullString) => {
-            const regex = new import_re2_wasm.RE2(regexString, "u");
-            return fullString.replace(regex, replacementString);
-          };
-        };
-      },
-    },
-    stringJoin: {
-      internalName: "integrateddynamics:string_join",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
-          type: "Function",
-          from: { type: "List", listType: { type: "String" } },
-          to: {
-            type: "String",
-          },
-        },
-      },
-      symbol: "join",
-      interactName: "stringJoin",
-      function: (delimiter) => {
-        return (stringList) => {
-          if (stringList.some((item) => typeof item !== "string")) {
-            throw new Error("stringJoin expects a list of strings");
-          }
-          return stringList.join(delimiter);
-        };
-      },
-    },
-    name: {
-      internalName: "integrateddynamics:string_name",
-      nicknames: ["namedName", "toString"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Named",
-        },
-        to: {
-          type: "String",
-        },
-      },
-      symbol: "name",
-      interactName: "namedName",
-      function: (named) => {
-        return named.toString();
-      },
-    },
-    uname: {
-      internalName: "integrateddynamics:string_unique_name",
-      nicknames: ["uniquelynamedUniquename"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "UniquelyNamed",
-        },
-        to: {
-          type: "String",
-        },
-      },
-      symbol: "uname",
-      interactName: "uniquely_namedUniqueName",
-      function: (uniquelyNamed) => {
-        return uniquelyNamed.getUniqueName();
-      },
-    },
-    error: {
-      internalName: "integrateddynamics:string_string_error",
-      nicknames: ["string_error"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: { type: "Any", typeID: 1 },
-      },
-      symbol: "error",
-      interactName: "stringStringError",
-      function: (message) => {
-        throw new Error(`Error: ${message}`);
-      },
-    },
-    round: {
-      internalName: "integrateddynamics:number_round",
-      nicknames: ["numberRound"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Number",
-        },
-        to: {
-          type: "Integer",
-        },
-      },
-      symbol: "|| ||",
-      interactName: "numberRound",
-      function: (number) => {
-        return number.round();
-      },
-    },
-    ceil: {
-      internalName: "integrateddynamics:number_ceil",
-      nicknames: ["numberCeil"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Number",
-        },
-        to: {
-          type: "Integer",
-        },
-      },
-      symbol: "\u2308 \u2309",
-      interactName: "numberCeil",
-      function: (number) => {
-        return number.ceil();
-      },
-    },
-    floor: {
-      internalName: "integrateddynamics:number_floor",
-      nicknames: ["numberFloor"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Number",
-        },
-        to: {
-          type: "Integer",
-        },
-      },
-      symbol: "\u230A \u230B",
-      interactName: "numberFloor",
-      function: (number) => {
-        return number.floor();
-      },
-    },
-    compact: {
-      internalName: "integrateddynamics:number_compact",
-      nicknames: ["numberCompact"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Number",
-        },
-        to: {
-          type: "String",
-        },
-      },
-      symbol: "compact",
-      interactName: "numberCompact",
-      function: (number) => {
-        return number.toDecimal().toString();
-      },
-    },
-    isNull: {
-      internalName: "integrateddynamics:general_isnull",
-      nicknames: ["nullableIsnull"],
-      parsedSignature: {
-        type: "Function",
-        from: { type: "Any", typeID: 1 },
-        to: {
-          type: "Boolean",
-        },
-      },
-      symbol: "o",
-      interactName: "anyIsNull",
-      function: (value) => {
-        return value === null || value === void 0;
-      },
-    },
-    isNotNull: {
-      internalName: "integrateddynamics:general_isnotnull",
-      nicknames: ["nullableIsnotnull"],
-      parsedSignature: {
-        type: "Function",
-        from: { type: "Any", typeID: 1 },
-        to: {
-          type: "Boolean",
-        },
-      },
-      symbol: "\u2205",
-      interactName: "anyIsNotNull",
-      function: (value) => {
-        return value !== null && value !== void 0;
-      },
-    },
-    listLength: {
-      internalName: "integrateddynamics:list_length",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: {
-          type: "Integer",
-        },
-      },
-      symbol: "| |",
-      interactName: "listLength",
-      function: (list) => {
-        return list.length;
-      },
-    },
-    listEmpty: {
-      internalName: "integrateddynamics:list_empty",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: {
-          type: "Boolean",
-        },
-      },
-      symbol: "\u2205",
-      interactName: "listIsEmpty",
-      function: (list) => {
-        return list.length === 0;
-      },
-    },
-    listNotEmpty: {
-      internalName: "integrateddynamics:list_notempty",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: {
-          type: "Boolean",
-        },
-      },
-      symbol: "o",
-      interactName: "listIsNotEmpty",
-      function: (list) => {
-        return list.length > 0;
-      },
-    },
-    get: {
-      internalName: "integrateddynamics:list_get",
-      nicknames: ["listElement"],
-      parsedSignature: {
-        type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: {
-          type: "Function",
-          from: {
-            type: "Integer",
-          },
-          to: { type: "Any", typeID: 1 },
-        },
-      },
-      symbol: "get",
-      interactName: "listGet",
-      function: (index) => {
-        return async (list) => {
-          if (
-            (await index.lt(new Integer(0))) ||
-            (await index.lte(new Integer(list.length)))
-          ) {
-            throw new Error(
-              `Index ${index} out of bounds for list of length ${list.length}`
-            );
-          }
-          return list[parseInt(index.toDecimal())];
-        };
-      },
-    },
-    getOrDefault: {
-      internalName: "integrateddynamics:list_get_or_default",
-      nicknames: ["listElementDefault", "get_or_default"],
-      parsedSignature: {
-        type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: {
-          type: "Function",
-          from: {
-            type: "Integer",
-          },
-          to: {
-            type: "Function",
-            from: { type: "Any", typeID: 1 },
-            to: { type: "Any", typeID: 1 },
-          },
-        },
-      },
-      symbol: "get_or_default",
-      interactName: "listGetOrDefault",
-      function: async (list) => {
-        return async (index) => {
-          return async (defaultValue) => {
-            if (
-              (await JavaMath.lt(index, new Integer(0))) ||
-              (await JavaMath.gte(index, new Integer(list.length)))
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/typeWrappers/iArrayLazy.ts
+  var iArrayLazy = class _iArrayLazy {
+    mapOp;
+    initial;
+    generatorOp;
+    arr;
+    constructor(initial, generatorOp, mapOp) {
+      this.initial = initial;
+      this.generatorOp = generatorOp;
+      this.mapOp = mapOp;
+      this.arr = [initial];
+    }
+    append(_element) {
+      return new _iArrayLazy(this.initial, this.generatorOp, this.mapOp);
+    }
+    some(_fn) {
+      throw new Error("Some not supported on infinite list");
+    }
+    every(_fn) {
+      throw new Error("Every not supported on infinite list");
+    }
+    map(mapOp) {
+      const returnValue = new _iArrayLazy(
+        this.initial,
+        this.generatorOp,
+        this.mapOp.pipe(mapOp)
+      );
+      returnValue.arr = [...this.arr];
+      return returnValue;
+    }
+    filter(_fn) {
+      throw new Error("Filter not supported on infinite list");
+    }
+    size() {
+      return Integer.MAX_INT;
+    }
+    trueSize() {
+      return new Integer(this.arr.length);
+    }
+    getOrDefault(index, _backup) {
+      return this.get(index);
+    }
+    get(index) {
+      if (this.trueSize().lte(index)) {
+        this.get(index.subtract(Integer.ONE));
+      }
+      const i = index.toJSNumber();
+      if (this.arr.length == i)
+        this.arr[i] = this.generatorOp.apply(this.arr[i - 1]);
+      let baseValue = this.arr[i];
+      return this.mapOp.apply(baseValue);
+    }
+    includes(_element) {
+      throw new Error("Includes not supported on an Infinite List");
+    }
+    concat(_arr) {
+      return new iArrayEager([]);
+    }
+    slice(start, end) {
+      let newArrRaw = [];
+      for (let i = start; i.lt(end); i = i.add(Integer.ONE)) {
+        newArrRaw.push(this.get(i));
+      }
+      return new iArrayEager(newArrRaw);
+    }
+    equals(other) {
+      if (!(other instanceof _iArrayLazy)) return new iBoolean(false);
+      if (!other.initial.equals(this.initial)) return new iBoolean(false);
+      if (!other.generatorOp.equals(this.generatorOp))
+        return new iBoolean(false);
+      if (!other.mapOp.equals(this.mapOp)) return new iBoolean(false);
+      return new iBoolean(true);
+    }
+    getSignatureNode() {
+      return {
+        type: "List",
+        listType: this.mapOp.apply(this.initial).getSignatureNode(),
+      };
+    }
+    valueOf() {
+      throw new Error("Value of not supported for Infinite List");
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/typeWrappers/iArrayEager.ts
+  var iArrayEager = class _iArrayEager {
+    arr;
+    constructor(arr) {
+      this.arr = arr;
+    }
+    valueOf() {
+      console.warn("Calling this is probally a bug, ensure you're sure");
+      return this.arr;
+    }
+    append(element) {
+      let returnValue = [...this.arr];
+      returnValue.push(element);
+      return new _iArrayEager(returnValue);
+    }
+    some(fn) {
+      return new iBoolean(this.arr.some(fn));
+    }
+    every(fn) {
+      return new iBoolean(this.arr.every(fn));
+    }
+    map(mapOp) {
+      return new _iArrayEager(this.arr.map((e) => mapOp.apply(e)));
+    }
+    filter(fn) {
+      return new _iArrayEager(this.arr.filter(fn));
+    }
+    size() {
+      return new Integer(this.arr.length);
+    }
+    getOrDefault(index, backup) {
+      if (this.size().lte(index)) return backup;
+      return this.get(index);
+    }
+    get(index) {
+      if (this.size().lte(index))
+        throw new Error(`Index out of bounds: ${index.toString()}`);
+      const i = index.toJSNumber();
+      return this.arr[i];
+    }
+    includes(element) {
+      return this.some((e) => e.equals(element));
+    }
+    concat(arr) {
+      if (this instanceof iArrayLazy || arr instanceof iArrayLazy)
+        return new _iArrayEager([]);
+      return new _iArrayEager([...this.arr, ...arr.valueOf()]);
+    }
+    slice(startInt, endInt) {
+      const start = startInt.toJSNumber();
+      const end = endInt ? endInt.toJSNumber() : void 0;
+      return new _iArrayEager(this.arr.slice(start, end));
+    }
+    getSignatureNode() {
+      return { type: "Boolean" };
+    }
+    equals(other) {
+      if (!(other instanceof _iArrayEager)) return new iBoolean(false);
+      const otherArr = other.valueOf();
+      if (this.arr.length !== otherArr.length) return new iBoolean(false);
+      return new iBoolean(this.arr.every((e, i) => e.equals(otherArr[i])));
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ListTag.ts
+  var ListTag = class _ListTag extends Tag {
+    data;
+    constructor(data) {
+      super();
+      this.data = data;
+    }
+    getType() {
+      return Tag.TAG_LIST;
+    }
+    static valueOf(value) {
+      return new _ListTag(value);
+    }
+    valueOf() {
+      return this.data;
+    }
+    size() {
+      return this.data.size();
+    }
+    get(index) {
+      return this.data.get(index) ?? new NullTag();
+    }
+    getArray() {
+      return new iArrayEager([...this.data.valueOf()]);
+    }
+    add(tag) {
+      this.data.append(tag);
+    }
+    getTypeAsString() {
+      return new iString("ListTag");
+    }
+    equals(tag) {
+      if (tag.getType() != Tag.TAG_LIST) return new iBoolean(false);
+      for (const [i, e] of Object.entries(tag.getArray())) {
+        if (!e.equals(this.get(new Integer(i)))) return new iBoolean(false);
+      }
+      return new iBoolean(true);
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/NumericTag.ts
+  var NumericTag = class extends Tag {
+    constructor() {
+      super();
+    }
+    getType() {
+      return Tag.TAG_NUMERIC;
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/IntTag.ts
+  var IntTag = class _IntTag extends NumericTag {
+    data;
+    constructor(data) {
+      super();
+      this.data = data;
+    }
+    getType() {
+      return Tag.TAG_BYTE;
+    }
+    static valueOf(value) {
+      return new _IntTag(value);
+    }
+    valueOf() {
+      return this.data;
+    }
+    getAsDouble() {
+      return this.data.toJSNumber();
+    }
+    getTypeAsString() {
+      return new iString("IntTag");
+    }
+    equals(tag) {
+      if (tag.getType() != Tag.TAG_BYTE) return new iBoolean(false);
+      return new iBoolean(this.valueOf() == tag.valueOf());
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ByteTag.ts
+  var ByteTag = class _ByteTag extends NumericTag {
+    data;
+    constructor(data) {
+      super();
+      this.data = data;
+    }
+    getType() {
+      return Tag.TAG_BYTE;
+    }
+    static valueOf(value) {
+      return new _ByteTag(value);
+    }
+    valueOf() {
+      return this.data;
+    }
+    getAsDouble() {
+      return this.data.toJSNumber();
+    }
+    getTypeAsString() {
+      return new iString("ByteTag");
+    }
+    equals(tag) {
+      if (tag.getType() != Tag.TAG_BYTE) return new iBoolean(false);
+      return new iBoolean(this.valueOf() == tag.valueOf());
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/LongTag.ts
+  var LongTag = class _LongTag extends NumericTag {
+    data;
+    constructor(data) {
+      super();
+      this.data = data;
+    }
+    getType() {
+      return Tag.TAG_BYTE;
+    }
+    static valueOf(value) {
+      return new _LongTag(value);
+    }
+    valueOf() {
+      return this.data;
+    }
+    getAsDouble() {
+      return this.data.toJSNumber();
+    }
+    getTypeAsString() {
+      return new iString("LongTag");
+    }
+    equals(tag) {
+      if (tag.getType() != Tag.TAG_BYTE) return new iBoolean(false);
+      return new iBoolean(this.valueOf() == tag.valueOf());
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/DoubleTag.ts
+  var DoubleTag = class _DoubleTag extends NumericTag {
+    data;
+    getType() {
+      return Tag.TAG_DOUBLE;
+    }
+    constructor(data) {
+      super();
+      this.data = data;
+    }
+    static valueOf(value) {
+      return new _DoubleTag(value);
+    }
+    valueOf() {
+      return this.data;
+    }
+    getAsDouble() {
+      return this.data.toJSNumber();
+    }
+    getTypeAsString() {
+      return new iString("DoubleTag");
+    }
+    equals(tag) {
+      if (tag.getType() != Tag.TAG_DOUBLE) return new iBoolean(false);
+      return new iBoolean(this.getAsDouble() == tag.getAsDouble());
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag.ts
+  var CompoundTag = class _CompoundTag extends Tag {
+    data;
+    constructor(data) {
+      super();
+      this.data = data;
+    }
+    getType() {
+      return Tag.TAG_COMPOUND;
+    }
+    static valueOf(value) {
+      return new _CompoundTag(value);
+    }
+    valueOf() {
+      return this.data;
+    }
+    getAllKeys() {
+      return new iArrayEager(Object.keys(this.data).map((e) => new iString(e)));
+    }
+    get(key) {
+      return this.data[key.valueOf()] ?? new NullTag();
+    }
+    has(key) {
+      return key.valueOf() in this.data;
+    }
+    set(key, value) {
+      let data = { ...this.data };
+      data[key] = value;
+      return new _CompoundTag(data);
+    }
+    setAll(keys, values) {
+      if (keys.length != values.length)
+        throw new Error(
+          `Keys (length ${keys.length}) is not the same as values (${values.length})`
+        );
+      let data = { ...this.data };
+      for (let i = 0; i < keys.length; i++) {
+        let key = keys[i];
+        let value = values[i];
+        data[key.valueOf()] = value;
+      }
+      return new _CompoundTag(data);
+    }
+    without(key) {
+      let data = { ...this.data };
+      delete data[key];
+      return new _CompoundTag(data);
+    }
+    getTypeAsString() {
+      return new iString("CompoundTag");
+    }
+    toJSON() {
+      let obj = {};
+      function mapTagArray(value) {
+        value
+          .getArray()
+          .valueOf()
+          .map((e) => {
+            if (e instanceof _CompoundTag) return e.toJSON();
+            if (e instanceof ListTag) return mapTagArray(e);
+            let innerValue = value.valueOf();
+            while (
+              innerValue instanceof Object &&
+              innerValue.constructor.name != "Object"
             ) {
-              return defaultValue;
+              innerValue = innerValue.toJSON();
             }
-            return list[parseInt(index.toDecimal())];
+          });
+      }
+      for (const [key, value] of Object.entries(this.data)) {
+        if (!(value instanceof _CompoundTag || value instanceof ListTag)) {
+          let innerValue = value.valueOf();
+          findBase: while (
+            innerValue instanceof Object &&
+            innerValue.constructor.name != "Object"
+          ) {
+            if (!("toJSON" in innerValue)) break findBase;
+            innerValue = innerValue["toJSON"]();
+          }
+          obj[key] = innerValue;
+        } else if (value instanceof _CompoundTag) obj[key] = value.toJSON();
+        else obj[key] = mapTagArray(value);
+      }
+    }
+    static fromJSON(data) {
+      const jsonStr = data
+        .replace(/([{,]\s*)([A-Za-z_]+)(\s*:)/g, '$1"$2"$3')
+        .replace(
+          /(:\s*)([A-Za-z0-9_]*[A-Za-z][A-Za-z0-9_]*)(?=\s*[,}])/g,
+          '$1"$2"'
+        )
+        .replace(
+          /\[(?<type>[BIL]);(?<values>-?\d+[bl]?(?:,-?\d+[bl]?)*?)\]/g,
+          (_, type, values) => {
+            const arr = values.split(",");
+            return JSON.stringify({ type, values: arr });
+          }
+        );
+      const json = JSON.parse(jsonStr);
+      function objectCase(obj) {
+        for (const key of Object.keys(obj)) {
+          if (Array.isArray(obj[key])) obj[key] = arrayCase(obj[key]);
+          if (obj[key] instanceof Object) obj[key] = objectCase(obj[key]);
+          else obj[key] = baseCase(obj[key]);
+        }
+        return new _CompoundTag(obj);
+      }
+      function baseCase(obj) {
+        for (const key of Object.keys(obj)) {
+          switch (typeof obj[key]) {
+            case "number":
+              obj[key] = new IntTag(new Integer(obj[key]));
+              break;
+            case "boolean":
+              obj[key] = new ByteTag(new Integer(+obj[key]));
+              break;
+            case "string":
+              const str = obj[key];
+              if (str.match(/\d*[Bb]/))
+                obj[key] = new ByteTag(new Integer(parseInt(str.slice(0, -1))));
+              if (str.match(/\d*[Ss]/))
+                obj[key] = new IntTag(new Integer(parseInt(str.slice(0, -1))));
+              else if (str.match(/\d*[Ll]/))
+                obj[key] = new LongTag(new Long(parseInt(str.slice(0, -1))));
+              else if (str.match(/\d*[FfDd]/))
+                obj[key] = new DoubleTag(
+                  new Double(parseFloat(str.slice(0, -1)))
+                );
+              else if (str.match(/d{1,}/))
+                obj[key] = new IntTag(new Integer(parseInt(obj[key])));
+              break;
+            default:
+              throw new Error(`Unknown type: ${typeof obj[key]}`);
+          }
+        }
+        return new _CompoundTag(obj);
+      }
+      function arrayCase(arr) {
+        for (const [k, v] of Object.entries(arr)) {
+          const i = parseInt(k);
+          if (Array.isArray(v))
+            arr[i] = new ListTag(new iArrayEager(arrayCase(v)));
+          else if (v instanceof Object) arr[i] = objectCase(v);
+          else arr[i] = baseCase(v);
+        }
+        return arr;
+      }
+      return objectCase(json);
+    }
+    compoundSubset(subset) {
+      for (const key of subset.getAllKeys().valueOf()) {
+        const subValue = subset.get(key);
+        const superValue = this.get(key);
+        if (superValue === void 0) return false;
+        if (
+          subValue instanceof _CompoundTag &&
+          superValue instanceof _CompoundTag
+        ) {
+          if (!superValue.compoundSubset(subValue)) return false;
+        } else if (
+          subValue instanceof ListTag &&
+          superValue instanceof ListTag
+        ) {
+          let subValueArr = subValue.valueOf();
+          let superValueArr = superValue.valueOf();
+          if (!subValueArr.size().equals(superValueArr.size())) return false;
+          if (
+            subValueArr.every((v, i) => superValueArr.valueOf()[i]?.equals(v))
+          )
+            return true;
+          return false;
+        }
+      }
+      return true;
+    }
+    compoundUnion(other) {
+      const keys = [];
+      const values = [];
+      for (const key of other.getAllKeys().valueOf()) {
+        const thisValue = this.get(key);
+        const otherValue = other.get(key);
+        if (
+          thisValue instanceof _CompoundTag &&
+          otherValue instanceof _CompoundTag
+        ) {
+          keys.push(key);
+          values.push(thisValue.compoundUnion(otherValue));
+        } else {
+          keys.push(key);
+          values.push(otherValue);
+        }
+      }
+      return this.setAll(keys, values);
+    }
+    compoundIntersection(other) {
+      const result = {};
+      for (const key of this.getAllKeys().valueOf()) {
+        const thisValue = this.get(key);
+        const otherValue = other.get(key);
+        if (
+          thisValue instanceof _CompoundTag &&
+          otherValue instanceof _CompoundTag
+        ) {
+          const sub = thisValue.compoundIntersection(otherValue);
+          if (sub.getAllKeys().size().gt(Integer.ZERO))
+            result[key.valueOf()] = sub;
+        } else if (thisValue.equals(otherValue ?? new _CompoundTag({}))) {
+          result[key.valueOf()] = thisValue;
+        }
+      }
+      return new _CompoundTag(result);
+    }
+    compoundMinus(other) {
+      const result = {};
+      for (const key of this.getAllKeys().valueOf()) {
+        const thisValue = this.get(key);
+        const otherValue = other.get(key);
+        if (
+          thisValue instanceof _CompoundTag &&
+          otherValue instanceof _CompoundTag
+        ) {
+          const sub = thisValue.compoundMinus(otherValue);
+          if (sub.getAllKeys().size().gt(Integer.ZERO))
+            result[key.valueOf()] = sub;
+        } else if (!thisValue.equals(otherValue ?? new _CompoundTag({}))) {
+          result[key.valueOf()] = thisValue;
+        }
+      }
+      return new _CompoundTag(result);
+    }
+    equals(tag) {
+      if (tag.getType() != Tag.TAG_COMPOUND) return new iBoolean(false);
+      let compoundTag = tag;
+      for (const key of Object.values(
+        /* @__PURE__ */ new Set([
+          ...this.getAllKeys().valueOf(),
+          ...compoundTag.getAllKeys().valueOf(),
+        ])
+      )) {
+        if (this.get(key) !== compoundTag.get(key)) return new iBoolean(false);
+      }
+      return new iBoolean(true);
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/Properties.ts
+  var Properties = class {
+    data;
+    constructor(data) {
+      this.data = data;
+    }
+    has(key) {
+      return key in this.data;
+    }
+    set(key, value) {
+      this.data[key] = value;
+    }
+    setAll(newData) {
+      for (const [k, v] of newData.getItterator()) {
+        this.data[k] = v;
+      }
+    }
+    getItterator() {
+      return Object.entries(this.data);
+    }
+    get(key) {
+      return this.data[key];
+    }
+    toCompoundTag() {
+      let result = {};
+      for (const [k, v] of Object.entries(this.data)) {
+        result[k] = v;
+      }
+      return new CompoundTag(result);
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/Fluid.ts
+  var Fluid = class _Fluid {
+    static defaultProps = new Properties({
+      uname: "",
+      amount: Integer.ZERO,
+      // block: new Block(),
+      lightLevel: Integer.ZERO,
+      density: Integer.ZERO,
+      temperature: Integer.ZERO,
+      viscosity: Integer.ZERO,
+      lighterThanAir: new iBoolean(false),
+      rarity: "",
+      bucketEmptySound: "",
+      fluidVaporizeSound: "",
+      bucketFillSound: "",
+      // bucket: new Item(),
+      modName: "",
+      nbt: null,
+      tagNames: [],
+    });
+    props;
+    constructor(newProps, oldFluid) {
+      let props = _Fluid.defaultProps;
+      props.setAll(newProps);
+      if (oldFluid) props.setAll(oldFluid.getProperties());
+      if (!props.has("block"))
+        props.set("block", new Block(new Properties({})));
+      if (!props.has("item")) props.set("item", new Item(new Properties({})));
+      this.props = props;
+    }
+    getUniqueName() {
+      return this.props.get("uname");
+    }
+    getAmount() {
+      return this.props.get("amount");
+    }
+    getBlock() {
+      return this.props.get("block");
+    }
+    getLightLevel() {
+      return this.props.get("lightLevel");
+    }
+    getDensity() {
+      return this.props.get("density");
+    }
+    getTemperature() {
+      return this.props.get("temperature");
+    }
+    getViscosity() {
+      return this.props.get("viscosity");
+    }
+    isLighterThanAir() {
+      return this.props.get("lighterThanAir");
+    }
+    getRarity() {
+      return this.props.get("rarity");
+    }
+    getBucketEmptySound() {
+      return this.props.get("bucketEmptySound");
+    }
+    getFluidVaporizeSound() {
+      return this.props.get("fluidVaporizeSound");
+    }
+    getBucketFillSound() {
+      return this.props.get("bucketFillSound");
+    }
+    getBucket() {
+      return this.props.get("bucket");
+    }
+    getUname() {
+      return this.props.get("uname");
+    }
+    getModName() {
+      return this.props.get("modName");
+    }
+    getNBT() {
+      return this.props.get("nbt");
+    }
+    getTagNames() {
+      return this.props.get("tagNames");
+    }
+    getProperties() {
+      return this.props;
+    }
+    getSignatureNode() {
+      return {
+        type: "Fluid",
+      };
+    }
+    equals(other) {
+      if (!(other instanceof _Fluid)) return new iBoolean(false);
+      else {
+        for (const key of Object.keys(this)) {
+          if (key == "equals") continue;
+          if (this[key] instanceof Function) {
+            const thisResult = this[key]();
+            const otherResult = other[key]();
+            if (!thisResult.equals(otherResult).valueOf())
+              return new iBoolean(false);
+          }
+        }
+        return new iBoolean(true);
+      }
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/Block.ts
+  var Block = class _Block {
+    static defaultProps = new Properties({
+      opaque: new iBoolean(true),
+      // item: new Item(),
+      modName: "",
+      breakSound: "",
+      placeSound: "",
+      stepSound: "",
+      shearable: new iBoolean(false),
+      plantAge: new Integer(-1),
+      // fluid: new Fluid(),
+      fluidCapacity: Integer.ZERO,
+      uname: "",
+      tagNames: new iArrayEager([]),
+      feContainer: new iBoolean(false),
+      feCapacity: Integer.ZERO,
+      feStored: Integer.ZERO,
+      inventory: new iArrayEager([]),
+      blockName: "",
+    });
+    props;
+    constructor(newProps, oldBlock) {
+      let props = _Block.defaultProps;
+      props.setAll(newProps);
+      if (oldBlock) props.setAll(oldBlock.getProperties());
+      if (!props.has("item")) props.set("item", new Item(new Properties({})));
+      if (!props.has("fluid"))
+        props.set("fluid", new Fluid(new Properties({})));
+      this.props = props;
+    }
+    isOpaque() {
+      return this.props.get("opaque");
+    }
+    getItem() {
+      return this.props.get("item");
+    }
+    getModName() {
+      return this.props.get("modName");
+    }
+    getBreakSound() {
+      return this.props.get("breakSound");
+    }
+    getPlaceSound() {
+      return this.props.get("placeSound");
+    }
+    getStepSound() {
+      return this.props.get("stepSound");
+    }
+    isShearable() {
+      return this.props.get("shearable");
+    }
+    getPlantAge() {
+      return this.props.get("plantAge");
+    }
+    getProperties() {
+      return this.props;
+    }
+    getFluid() {
+      return this.props.get("fluid");
+    }
+    getFluidCapacity() {
+      return this.props.get("fluidCapacity");
+    }
+    getUniqueName() {
+      return this.props.get("uname");
+    }
+    getTagNames() {
+      return this.props.get("tagNames");
+    }
+    isFeContainer() {
+      return this.props.get("feContainer");
+    }
+    getFeCapacity() {
+      return this.props.get("feCapacity");
+    }
+    getFeStored() {
+      return this.props.get("feStored");
+    }
+    getInventory() {
+      return this.props.get("inventory");
+    }
+    getBlockName() {
+      return this.props.get("blockName");
+    }
+    getStrengthVsBlock() {
+      throw new Error("getStrengthVsBlock method not implemented");
+    }
+    canHarvestBlock() {
+      throw new Error("canHarvestBlock method not implemented");
+    }
+    equals(other) {
+      if (!(other instanceof _Block)) return new iBoolean(false);
+      else {
+        for (const key of Object.keys(this)) {
+          if (key == "equals") continue;
+          if (this[key] instanceof Function) {
+            const thisResult = this[key]();
+            const otherResult = other[key]();
+            if (!thisResult.equals(otherResult).valueOf())
+              return new iBoolean(false);
+          }
+        }
+        return new iBoolean(true);
+      }
+    }
+    getSignatureNode() {
+      return {
+        type: "Block",
+      };
+    }
+    toString() {
+      return this.props.get("blockName");
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/Item.ts
+  var Item = class _Item {
+    props;
+    static defaultProps = new Properties({
+      size: Integer.ONE,
+      maxSize: Integer.SIXTY_FOUR,
+      stackable: new iBoolean(true),
+      damageable: new iBoolean(false),
+      damage: Integer.ZERO,
+      maxDamage: Integer.ZERO,
+      enchanted: new iBoolean(false),
+      enchantable: new iBoolean(false),
+      repairCost: Integer.ZERO,
+      rarity: new iString(""),
+      // fluid: new Fluid(),
+      fluidCapacity: Integer.ZERO,
+      NBT: new NullTag(),
+      uname: new iString(""),
+      modName: new iString(""),
+      fuelBurnTime: Integer.ZERO,
+      fuel: new iBoolean(false),
+      tagNames: new iArrayEager([]),
+      feContainer: new iBoolean(false),
+      feStored: Integer.ZERO,
+      feCapacity: Integer.ZERO,
+      inventory: new iArrayEager([]),
+      tooltip: new iArrayEager([]),
+      itemName: new iString(""),
+      // block: new Block()
+    });
+    constructor(newProps, oldItem) {
+      let props = _Item.defaultProps;
+      props.setAll(newProps);
+      if (oldItem) props.setAll(oldItem.getProperties());
+      if (!props.has("block"))
+        props.set("block", new Block(new Properties({})));
+      if (!props.has("fluid"))
+        props.set("fluid", new Fluid(new Properties({})));
+      this.props = props;
+    }
+    getSize() {
+      return this.props.get("size");
+    }
+    getMaxSize() {
+      return this.props.get("maxSize");
+    }
+    isStackable() {
+      return this.props.get("stackable");
+    }
+    isDamageable() {
+      return this.props.get("damageable");
+    }
+    getDamage() {
+      return this.props.get("damage");
+    }
+    getMaxDamage() {
+      return this.props.get("maxDamage");
+    }
+    isEnchanted() {
+      return this.props.get("enchanted");
+    }
+    isEnchantable() {
+      return this.props.get("enchantable");
+    }
+    getRepairCost() {
+      return this.props.get("repairCost");
+    }
+    getRarity() {
+      return this.props.get("rarity");
+    }
+    getFluid() {
+      return this.props.get("fluid");
+    }
+    getFluidCapacity() {
+      return this.props.get("fluidCapacity");
+    }
+    getNBT() {
+      return this.props.get("NBT");
+    }
+    getUniqueName() {
+      return this.props.get("uname");
+    }
+    getModName() {
+      return this.props.get("modName");
+    }
+    getFuelBurnTime() {
+      return this.props.get("fuelBurnTime");
+    }
+    isFuel() {
+      return this.props.get("fuel");
+    }
+    getTagNames() {
+      return this.props.get("tagNames");
+    }
+    isFeContainer() {
+      return this.props.get("feContainer");
+    }
+    getFeStored() {
+      return this.props.get("feStored");
+    }
+    getFeCapacity() {
+      return this.props.get("feCapacity");
+    }
+    getInventory() {
+      return this.props.get("inventory") || [];
+    }
+    getTooltip(_player) {
+      return this.props.get("tooltip");
+    }
+    getItemName() {
+      return this.props.get("itemName");
+    }
+    getBlock() {
+      return this.props.get("block");
+    }
+    getProperties() {
+      return this.props;
+    }
+    getStrengthVsBlock(block) {
+      if (!(block instanceof Block)) throw new Error("block is not a Block");
+      throw new Error("getStrengthVsBlock method not implemented");
+    }
+    canHarvestBlock(_block) {
+      throw new Error("canHarvestBlock method not implemented");
+    }
+    equals(other) {
+      if (!(other instanceof _Item)) return new iBoolean(false);
+      else {
+        for (const key of Object.keys(this)) {
+          if (key == "equals") continue;
+          if (this[key] instanceof Function) {
+            const thisResult = this[key]();
+            const otherResult = other[key]();
+            if (!thisResult.equals(otherResult).valueOf())
+              return new iBoolean(false);
+          }
+        }
+        return new iBoolean(true);
+      }
+    }
+    getSignatureNode() {
+      return {
+        type: "Entity",
+      };
+    }
+    toString() {
+      return this.props.get("itemName");
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/ITEMSTACK_WITHDATA.ts
+  var OPERATOR_ITEMSTACK_WITHDATA = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:itemstack_withdata",
+        nicknames: [
+          "ItemstackWithData",
+          "itemstack_with_data",
+          "itemstackWithData",
+          "item_with_data",
+          "itemWithData",
+          "itemWithNBT",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Item",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: {
+                type: "Function",
+                from: {
+                  type: "NBT",
+                },
+                to: {
+                  type: "Item",
+                },
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "with_data",
+        interactName: "itemstackWithData",
+        function: (item) => {
+          return (key) => {
+            return (value) => {
+              let nbt = item.getNBT() || {};
+              nbt = nbt.set(key, value);
+              return new Item(new Properties({ nbt }), item);
+            };
           };
-        };
-      },
-    },
-    listContains: {
-      internalName: "integrateddynamics:list_contains",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: {
-          type: "Function",
-          from: { type: "Any", typeID: 1 },
-          to: {
-            type: "Boolean",
-          },
         },
-      },
-      symbol: "contains",
-      interactName: "listContains",
-      function: (list) => {
-        return (element) => {
-          return list.includes(element);
-        };
-      },
-    },
-    listContainsPredicate: {
-      internalName: "integrateddynamics:list_contains_p",
-      nicknames: ["listContainsP"],
-      parsedSignature: {
-        type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: {
-          type: "Function",
-          from: {
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/LIST_APPEND.ts
+  var OPERATOR_LIST_APPEND = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:list_append",
+        nicknames: ["listAppend", "append"],
+        parsedSignature: new ParsedSignature(
+          {
             type: "Function",
-            from: { type: "Any", typeID: 1 },
-            to: {
-              type: "Boolean",
-            },
-          },
-          to: {
-            type: "Boolean",
-          },
-        },
-      },
-      symbol: "contains_p",
-      interactName: "listContainsPredicate",
-      function: (predicate) => {
-        return (list) => {
-          return list.some((item) => predicate.apply(item));
-        };
-      },
-    },
-    listCount: {
-      internalName: "integrateddynamics:list_count",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: {
-          type: "Function",
-          from: { type: "Any", typeID: 1 },
-          to: {
-            type: "Integer",
-          },
-        },
-      },
-      symbol: "count",
-      interactName: "listCount",
-      function: (list) => {
-        return (element) => {
-          return new Integer(list.filter((item) => item === element).length);
-        };
-      },
-    },
-    listCountPredicate: {
-      internalName: "integrateddynamics:list_count_p",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: {
-          type: "Function",
-          from: {
-            type: "Function",
-            from: { type: "Any", typeID: 1 },
-            to: {
-              type: "Boolean",
-            },
-          },
-          to: {
-            type: "Integer",
-          },
-        },
-      },
-      symbol: "count_p",
-      interactName: "listCountPredicate",
-      function: (list) => {
-        return (predicate) => {
-          return new Integer(
-            list.filter((item) => predicate.apply(item)).length
-          );
-        };
-      },
-    },
-    append: {
-      internalName: "integrateddynamics:list_append",
-      nicknames: ["listAppend"],
-      parsedSignature: {
-        type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: {
-          type: "Function",
-          from: { type: "Any", typeID: 1 },
-          to: { type: "List", listType: { type: "Any", typeID: 1 } },
-        },
-      },
-      symbol: "append",
-      interactName: "listAppend",
-      function: (list) => {
-        return (element) => {
-          return [...list, element];
-        };
-      },
-    },
-    listConcat: {
-      internalName: "integrateddynamics:list_concat",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: {
-          type: "Function",
-          from: { type: "List", listType: { type: "Any", typeID: 1 } },
-          to: { type: "List", listType: { type: "Any", typeID: 1 } },
-        },
-      },
-      symbol: "concat",
-      interactName: "listConcat",
-      function: (list1) => {
-        return (list2) => {
-          return [...list1, ...list2];
-        };
-      },
-    },
-    lazybuilt: {
-      internalName: "integrateddynamics:list_lazybuilt",
-      nicknames: ["listLazybuilt"],
-      parsedSignature: {
-        type: "Function",
-        from: { type: "Any", typeID: 1 },
-        to: {
-          type: "Function",
-          from: {
-            type: "Function",
-            from: { type: "Any", typeID: 1 },
+            from: { type: "List", listType: { type: "Any", typeID: 1 } },
             to: {
               type: "Function",
               from: { type: "Any", typeID: 1 },
+              to: { type: "List", listType: { type: "Any", typeID: 1 } },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "append",
+        interactName: "listAppend",
+        function: (list) => {
+          return (element) => {
+            return list.append(element);
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/LIST_CONCAT.ts
+  var OPERATOR_LIST_CONCAT = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:list_concat",
+        nicknames: ["listConcat", "concat"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: { type: "List", listType: { type: "Any", typeID: 1 } },
+            to: {
+              type: "Function",
+              from: { type: "List", listType: { type: "Any", typeID: 1 } },
+              to: { type: "List", listType: { type: "Any", typeID: 1 } },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "concat",
+        interactName: "listConcat",
+        function: (list1) => {
+          return (list2) => {
+            return list1.concat(list2);
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/LIST_CONTAINS.ts
+  var OPERATOR_LIST_CONTAINS = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:list_contains",
+        nicknames: ["listContains", "contains"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: { type: "List", listType: { type: "Any", typeID: 1 } },
+            to: {
+              type: "Function",
+              from: { type: "Any", typeID: 1 },
+              to: {
+                type: "Boolean",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "contains",
+        interactName: "listContains",
+        function: (list) => {
+          return (element) => {
+            return list.includes(element);
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/LIST_CONTAINS_PREDICATE.ts
+  var OPERATOR_LIST_CONTAINS_PREDICATE = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:list_contains_p",
+        nicknames: [
+          "listContainsP",
+          "listContainsPredicate",
+          "containsPredicate",
+          "containsP",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: { type: "List", listType: { type: "Any", typeID: 1 } },
+            to: {
+              type: "Function",
+              from: {
+                type: "Operator",
+                obscured: {
+                  type: "Function",
+                  from: { type: "Any", typeID: 1 },
+                  to: {
+                    type: "Boolean",
+                  },
+                },
+              },
+              to: {
+                type: "Boolean",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "contains_p",
+        interactName: "listContainsPredicate",
+        function: (predicate) => {
+          return (list) => {
+            return list.some((item) => predicate.apply(item).valueOf());
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/LIST_COUNT.ts
+  var OPERATOR_LIST_COUNT = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:list_count",
+        nicknames: ["listCount", "count"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: { type: "List", listType: { type: "Any", typeID: 1 } },
+            to: {
+              type: "Function",
+              from: { type: "Any", typeID: 1 },
+              to: {
+                type: "Integer",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "count",
+        interactName: "listCount",
+        function: (list) => {
+          return (element) => {
+            return list.filter((item) => item.equals(element).valueOf()).size();
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/LIST_COUNT_PREDICATE.ts
+  var OPERATOR_LIST_COUNT_PREDICATE = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:list_count_p",
+        nicknames: ["listCountPredicate", "listCountP"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: { type: "List", listType: { type: "Any", typeID: 1 } },
+            to: {
+              type: "Function",
+              from: {
+                type: "Operator",
+                obscured: {
+                  type: "Function",
+                  from: { type: "Any", typeID: 1 },
+                  to: {
+                    type: "Boolean",
+                  },
+                },
+              },
+              to: {
+                type: "Integer",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "count_p",
+        interactName: "listCountPredicate",
+        function: (list) => {
+          return (predicate) => {
+            return list.filter((item) => predicate.apply(item)).size();
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/LIST_ELEMENT.ts
+  var OPERATOR_LIST_ELEMENT = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:list_get",
+        nicknames: ["listElement", "get", "listGet"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: { type: "List", listType: { type: "Any", typeID: 1 } },
+            to: {
+              type: "Function",
+              from: {
+                type: "Integer",
+              },
+              to: { type: "Any", typeID: 1 },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "get",
+        interactName: "listGet",
+        function: (index) => {
+          return (list) => {
+            return list.get(index);
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/LIST_ELEMENT_DEFAULT.ts
+  var OPERATOR_LIST_ELEMENT_DEFAULT = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:list_get_or_default",
+        nicknames: [
+          "listElementDefault",
+          "get_or_default",
+          "getOrDefault",
+          "listGetOrDefault",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: { type: "List", listType: { type: "Any", typeID: 1 } },
+            to: {
+              type: "Function",
+              from: {
+                type: "Integer",
+              },
+              to: {
+                type: "Function",
+                from: { type: "Any", typeID: 1 },
+                to: { type: "Any", typeID: 1 },
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "get_or_default",
+        interactName: "listGetOrDefault",
+        function: (list) => {
+          return (index) => {
+            return (defaultValue) => {
+              return list.getOrDefault(index, defaultValue);
+            };
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/LIST_EMPTY.ts
+  var OPERATOR_LIST_EMPTY = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:list_empty",
+        nicknames: ["listEmpty", "listIsEmpty"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: { type: "List", listType: { type: "Any", typeID: 1 } },
+            to: {
+              type: "Boolean",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "\u2205",
+        interactName: "listIsEmpty",
+        function: (list) => {
+          return list.size().equals(Integer.ZERO);
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/LIST_EQUALS_MULTISET.ts
+  var OPERATOR_LIST_EQUALS_MULTISET = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:list_equals_multiset",
+        nicknames: ["listEqualsMultiset", "equalsMultiset"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: { type: "List", listType: { type: "Any", typeID: 1 } },
+            to: {
+              type: "Function",
+              from: { type: "List", listType: { type: "Any", typeID: 1 } },
+              to: {
+                type: "Boolean",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "=multiset=",
+        interactName: "listEquals_multiset",
+        function: (list1) => {
+          return (list2) => {
+            if (list1 instanceof iArrayLazy || list2 instanceof iArrayLazy)
+              throw new Error(
+                "Equals Multiset not supported for infinite lists."
+              );
+            const newList1 = [...list1.valueOf()].sort();
+            const newList2 = [...list2.valueOf()].sort();
+            if (newList1.length !== newList2.length) {
+              return new iBoolean(false);
+            }
+            for (let i = 0; i < newList1.length; i++) {
+              if (!newList1[i] || !newList2[i]) {
+                return new iBoolean(false);
+              } else {
+                if (!newList1[i].equals(newList2[i])) {
+                  return new iBoolean(false);
+                }
+              }
+            }
+            return new iBoolean(true);
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/LIST_EQUALS_SET.ts
+  var OPERATOR_LIST_EQUALS_SET = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:list_equals_set",
+        nicknames: ["listEqualsSet", "equalsSet"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: { type: "List", listType: { type: "Any", typeID: 1 } },
+            to: {
+              type: "Function",
+              from: { type: "List", listType: { type: "Any", typeID: 1 } },
+              to: {
+                type: "Boolean",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "=set=",
+        interactName: "listEquals_set",
+        function: (list1) => {
+          return (list2) => {
+            if (list1 instanceof iArrayLazy || list2 instanceof iArrayLazy)
+              throw new Error("Equals Set not supported for infinite lists.");
+            const set1 = new Set(list1.valueOf());
+            const set2 = new Set(list2.valueOf());
+            if (
+              set1.size !== set2.size ||
+              set1.size !== /* @__PURE__ */ new Set([...set1, ...set2]).size
+            )
+              return new iBoolean(false);
+            return new iBoolean(true);
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/LIST_HEAD.ts
+  var OPERATOR_LIST_HEAD = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:list_head",
+        nicknames: ["listHead", "head"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: { type: "List", listType: { type: "Any", typeID: 1 } },
+            to: { type: "Any", typeID: 1 },
+          },
+          globalMap2
+        ),
+        symbol: "head",
+        interactName: "listHead",
+        function: (list) => {
+          if (list.size().equals(Integer.ZERO)) {
+            throw new Error("head called on an empty list");
+          }
+          return list.get(Integer.ZERO);
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/LIST_INTERSECTION.ts
+  var OPERATOR_LIST_INTERSECTION = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:list_intersection",
+        nicknames: ["listIntersection", "intersection"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: { type: "List", listType: { type: "Any", typeID: 1 } },
+            to: {
+              type: "Function",
+              from: { type: "List", listType: { type: "Any", typeID: 1 } },
+              to: { type: "List", listType: { type: "Any", typeID: 1 } },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "\u2229",
+        interactName: "listIntersection",
+        function: (list1) => {
+          return (list2) => {
+            const set1 = new Set(list1.valueOf());
+            return list2.filter((item) => set1.has(item));
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/LIST_LENGTH.ts
+  var OPERATOR_LIST_LENGTH = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:list_length",
+        nicknames: ["listLength"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: { type: "List", listType: { type: "Any", typeID: 1 } },
+            to: {
+              type: "Integer",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "| |",
+        interactName: "listLength",
+        function: (list) => {
+          return list.size();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/LIST_NOT_EMPTY.ts
+  var OPERATOR_LIST_NOT_EMPTY = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:list_notempty",
+        nicknames: ["listNotEmpty", "listIsNotEmpty"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: { type: "List", listType: { type: "Any", typeID: 1 } },
+            to: {
+              type: "Boolean",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "o",
+        interactName: "listIsNotEmpty",
+        function: (list) => {
+          return new iBoolean(list.size().gte(Integer.ZERO));
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/LIST_SLICE.ts
+  var OPERATOR_LIST_SLICE = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:list_slice",
+        nicknames: ["listSlice", "slice"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: { type: "List", listType: { type: "Any", typeID: 1 } },
+            to: {
+              type: "Function",
+              from: {
+                type: "Integer",
+              },
+              to: {
+                type: "Function",
+                from: {
+                  type: "Integer",
+                },
+                to: { type: "List", listType: { type: "Any", typeID: 1 } },
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "slice",
+        interactName: "listSlice",
+        function: (list) => {
+          return (start) => {
+            return (end) => {
+              if (
+                start.lt(Integer.ZERO) ||
+                end.gt(list.size()) ||
+                start.gt(end)
+              ) {
+                throw new Error(
+                  `Invalid slice range: [${start.toString()}, ${end.toString()}) for list of length ${list.size().toString()}`
+                );
+              }
+              return list.slice(start, end);
+            };
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/LIST_TAIL.ts
+  var OPERATOR_LIST_TAIL = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:list_tail",
+        nicknames: ["listTail", "tail"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: { type: "List", listType: { type: "Any", typeID: 1 } },
+            to: { type: "List", listType: { type: "Any", typeID: 1 } },
+          },
+          globalMap2
+        ),
+        symbol: "tail",
+        interactName: "listTail",
+        function: (list) => {
+          if (list.size().equals(Integer.ZERO)) {
+            throw new Error("tail called on an empty list");
+          }
+          return list.slice(Integer.ONE);
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/LIST_UNIQ.ts
+  var OPERATOR_LIST_UNIQ = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:list_uniq",
+        nicknames: ["listUniq"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: { type: "List", listType: { type: "Any", typeID: 1 } },
+            to: { type: "List", listType: { type: "Any", typeID: 1 } },
+          },
+          globalMap2
+        ),
+        symbol: "uniq",
+        interactName: "listUnique",
+        function: (list) => {
+          const seen = /* @__PURE__ */ new Set();
+          return list.filter((item) => {
+            if (seen.has(item)) {
+              return false;
+            } else {
+              seen.add(item);
+              return true;
+            }
+          });
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/LIST_UNIQ_PREDICATE.ts
+  var OPERATOR_LIST_UNIQ_PREDICATE = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:list_uniq_p",
+        nicknames: ["listUniqPredicate", "uniq_p", "list_uniq_p"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: { type: "List", listType: { type: "Any", typeID: 1 } },
+            to: {
+              type: "Function",
+              from: {
+                type: "Operator",
+                obscured: {
+                  type: "Function",
+                  from: { type: "Any", typeID: 1 },
+                  to: {
+                    type: "Function",
+                    from: { type: "Any", typeID: 1 },
+                    to: {
+                      type: "Boolean",
+                    },
+                  },
+                },
+              },
+              to: { type: "List", listType: { type: "Any", typeID: 1 } },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "uniq_p",
+        interactName: "listUniquePredicate",
+        function: (list) => {
+          return (predicate) => {
+            const seen = /* @__PURE__ */ new Set();
+            return list.filter((item) => {
+              const key = predicate.apply(item);
+              if (seen.has(key)) {
+                return false;
+              } else {
+                seen.add(key);
+                return true;
+              }
+            });
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/LOGICAL_AND.ts
+  var OPERATOR_LOGICAL_AND = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:logical_and",
+        nicknames: ["and", "logicalAnd"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Boolean",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "Boolean",
+              },
+              to: {
+                type: "Boolean",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "&&",
+        interactName: "booleanAnd",
+        function: (bool1) => {
+          return (bool2) => {
+            return new iBoolean(bool1.valueOf() && bool2.valueOf());
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/LOGICAL_NAND.ts
+  var OPERATOR_LOGICAL_NAND = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:logical_nand",
+        nicknames: ["nand", "logicalNand"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Boolean",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "Boolean",
+              },
+              to: {
+                type: "Boolean",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "!&&",
+        interactName: "booleanNand",
+        function: (bool1) => {
+          return (bool2) => {
+            return new iBoolean(!(bool1.valueOf() && bool2.valueOf()));
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/LOGICAL_NOR.ts
+  var OPERATOR_LOGICAL_NOR = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:logical_nor",
+        nicknames: ["nor", "logicalNor"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Boolean",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "Boolean",
+              },
+              to: {
+                type: "Boolean",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "!||",
+        interactName: "booleanNor",
+        function: (bool1) => {
+          return (bool2) => {
+            return new iBoolean(!(bool1.valueOf() || bool2.valueOf()));
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/LOGICAL_NOT.ts
+  var OPERATOR_LOGICAL_NOT = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:logical_not",
+        nicknames: ["not", "logicalNot"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Boolean",
+            },
+            to: {
+              type: "Boolean",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "!",
+        interactName: "booleanNot",
+        function: (bool) => {
+          return new iBoolean(!bool.valueOf());
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/LOGICAL_OR.ts
+  var OPERATOR_LOGICAL_OR = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:logical_or",
+        nicknames: ["or", "logicalOr"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Boolean",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "Boolean",
+              },
+              to: {
+                type: "Boolean",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "||",
+        interactName: "booleanOr",
+        function: (bool1) => {
+          return (bool2) => {
+            return new iBoolean(bool1.valueOf() || bool2.valueOf());
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/LONG_TO_DOUBLE.ts
+  var OPERATOR_LONG_TO_DOUBLE = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName:
+          "integrateddynamics:operator.integrateddynamics.castintegrateddynamics_long__integrateddynamics_double",
+        nicknames: ["longToDouble", "longDouble", "longLongToDouble"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Long",
+            },
+            to: {
+              type: "Double",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "()",
+        interactName: "longLongToDouble",
+        function: (long) => {
+          return long.toDouble();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/LONG_TO_INTEGER.ts
+  var OPERATOR_LONG_TO_INTEGER = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName:
+          "integrateddynamics:operator.integrateddynamics.castintegrateddynamics_long__integrateddynamics_integer",
+        nicknames: ["longToInt", "longInteger", "longToInteger"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Long",
+            },
+            to: {
+              type: "Integer",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "()",
+        interactName: "longLongToInteger",
+        function: (long) => {
+          return long.toInteger();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NAMED_NAME.ts
+  var OPERATOR_NAMED_NAME = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:string_name",
+        nicknames: ["name", "namedName", "toString"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Named",
+            },
+            to: {
+              type: "String",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "name",
+        interactName: "namedName",
+        function: (named) => {
+          return new iString(named.toString());
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_AS_BOOLEAN.ts
+  var OPERATOR_NBT_AS_BOOLEAN = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_as_iBoolean",
+        nicknames: ["nbtAsBoolean"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "Boolean",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT.as_iBoolean",
+        interactName: "nbtAsBoolean",
+        function: (nbt) => {
+          if (nbt.getType() === Tag.TAG_BYTE) {
+            return new iBoolean(!!nbt.valueOf().toJSNumber());
+          } else {
+            return new iBoolean(false);
+          }
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_AS_BYTE.ts
+  var OPERATOR_NBT_AS_BYTE = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_as_byte",
+        nicknames: ["nbtAsByte"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "Integer",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT.as_byte",
+        interactName: "nbtAsByte",
+        function: (nbt) => {
+          if (nbt.getType() === Tag.TAG_INT) {
+            return nbt.valueOf();
+          } else {
+            return Integer.ZERO;
+          }
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_AS_BYTE_LIST.ts
+  var OPERATOR_NBT_AS_BYTE_LIST = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_as_byte_list",
+        nicknames: ["nbtAsByteList"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: { type: "List", listType: { type: "Integer" } },
+          },
+          globalMap2
+        ),
+        symbol: "NBT.as_byte_list",
+        interactName: "nbtAsByteList",
+        function: (nbt) => {
+          if (nbt.getType() === Tag.TAG_LIST) {
+            const list = nbt.valueOf();
+            if (!list.every((e) => e.getType() == Tag.TAG_INT))
+              return new iArrayEager([]);
+            return list.map(
+              new Operator({
+                function: (e) => e.valueOf(),
+                parsedSignature: new ParsedSignature(
+                  {
+                    type: "Function",
+                    from: { type: "Any", typeID: 1 },
+                    to: { type: "Any", typeID: 2 },
+                  },
+                  globalMap2
+                ),
+              })
+            );
+          } else {
+            return new iArrayEager([]);
+          }
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_AS_DOUBLE.ts
+  var OPERATOR_NBT_AS_DOUBLE = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_as_double",
+        nicknames: ["nbtAsDouble"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "Double",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT.as_double",
+        interactName: "nbtAsDouble",
+        function: (nbt) => {
+          if (nbt.getType() === Tag.TAG_DOUBLE) {
+            return nbt.valueOf();
+          } else {
+            return Double.ZERO;
+          }
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_AS_FLOAT.ts
+  var OPERATOR_NBT_AS_FLOAT = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_as_float",
+        nicknames: ["nbtAsFloat"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "Double",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT.as_float",
+        interactName: "nbtAsFloat",
+        function: (nbt) => {
+          if (nbt.getType() === Tag.TAG_DOUBLE) {
+            return nbt.valueOf();
+          } else {
+            return Double.ZERO;
+          }
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_AS_INT.ts
+  var OPERATOR_NBT_AS_INT = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_as_int",
+        nicknames: ["nbtAsInt"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "Integer",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT.as_int",
+        interactName: "nbtAsInt",
+        function: (nbt) => {
+          if (nbt.getType() === Tag.TAG_INT) {
+            return nbt.valueOf();
+          } else {
+            return Integer.ZERO;
+          }
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_AS_INT_LIST.ts
+  var OPERATOR_NBT_AS_INT_LIST = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_as_int_list",
+        nicknames: ["nbtAsIntList"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: { type: "List", listType: { type: "Integer" } },
+          },
+          globalMap2
+        ),
+        symbol: "NBT.as_int_list",
+        interactName: "nbtAsIntList",
+        function: (nbt) => {
+          if (nbt.getType() === Tag.TAG_LIST) {
+            const list = nbt.valueOf();
+            if (!list.every((e) => e.getType() == Tag.TAG_INT))
+              return new iArrayEager([]);
+            return list.map(
+              new Operator({
+                function: (e) => e.valueOf(),
+                parsedSignature: new ParsedSignature(
+                  {
+                    type: "Function",
+                    from: { type: "Any", typeID: 1 },
+                    to: { type: "Any", typeID: 2 },
+                  },
+                  globalMap2
+                ),
+              })
+            );
+          } else {
+            return new iArrayEager([]);
+          }
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_AS_LONG.ts
+  var OPERATOR_NBT_AS_LONG = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_as_long",
+        nicknames: ["nbtAsLong"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "Long",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT.as_long",
+        interactName: "nbtAsLong",
+        function: (nbt) => {
+          if (nbt.getType() === Tag.TAG_LONG) {
+            return nbt.valueOf();
+          } else {
+            return Long.ZERO;
+          }
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_AS_LONG_LIST.ts
+  var OPERATOR_NBT_AS_LONG_LIST = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_as_long_list",
+        nicknames: ["nbtAsLongList"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: { type: "List", listType: { type: "Long" } },
+          },
+          globalMap2
+        ),
+        symbol: "NBT.as_long_list",
+        interactName: "nbtAsLongList",
+        function: (nbt) => {
+          if (nbt.getType() === Tag.TAG_LIST) {
+            const list = nbt.valueOf();
+            if (!list.every((e) => e.getType() == Tag.TAG_LONG))
+              return new iArrayEager([]);
+            return list.map(
+              new Operator({
+                function: (e) => e.valueOf(),
+                parsedSignature: new ParsedSignature(
+                  {
+                    type: "Function",
+                    from: { type: "Any", typeID: 1 },
+                    to: { type: "Any", typeID: 2 },
+                  },
+                  globalMap2
+                ),
+              })
+            );
+          } else {
+            return new iArrayEager([]);
+          }
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_AS_SHORT.ts
+  var OPERATOR_NBT_AS_SHORT = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_as_short",
+        nicknames: ["nbtAsShort"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "Integer",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT.as_short",
+        interactName: "nbtAsShort",
+        function: (nbt) => {
+          if (nbt.getType() === Tag.TAG_INT) {
+            return nbt.valueOf();
+          } else {
+            return Integer.ZERO;
+          }
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_AS_STRING.ts
+  var OPERATOR_NBT_AS_STRING = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_as_string",
+        nicknames: ["nbtAsString"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "String",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT.as_string",
+        interactName: "nbtAsString",
+        function: (nbt) => {
+          if (nbt.getType() === Tag.TAG_STRING) {
+            return nbt.valueOf();
+          } else {
+            return new iString("");
+          }
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_AS_TAG_LIST.ts
+  var OPERATOR_NBT_AS_TAG_LIST = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_as_tag_list",
+        nicknames: ["nbtAsTagList"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: { type: "List", listType: { type: "NBT" } },
+          },
+          globalMap2
+        ),
+        symbol: "NBT.as_tag_list",
+        interactName: "nbtAsTagList",
+        function: (nbt) => {
+          if (nbt.getType() === Tag.TAG_LIST) {
+            return nbt.valueOf();
+          } else {
+            return new iArrayEager([]);
+          }
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_COMPOUND_HASKEY.ts
+  var OPERATOR_NBT_COMPOUND_HASKEY = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_compound_haskey",
+        nicknames: ["nbtCompoundHaskey", "NBTHasKey"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: {
+                type: "Boolean",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT{}.has_key",
+        interactName: "nbtHasKey",
+        function: (nbt) => {
+          return (key) => {
+            return new iBoolean(nbt.has(key));
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_COMPOUND_INTERSECTION.ts
+  var OPERATOR_NBT_COMPOUND_INTERSECTION = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_compound_intersection",
+        nicknames: ["nbtCompoundIntersection", "NBTIntersection"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "NBT",
+              },
+              to: {
+                type: "NBT",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT{}.\u2229",
+        interactName: "nbtIntersection",
+        function: (nbt1) => {
+          return (nbt2) => {
+            return nbt1.compoundIntersection(nbt2);
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_COMPOUND_KEYS.ts
+  var OPERATOR_NBT_COMPOUND_KEYS = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_compound_keys",
+        nicknames: ["nbtCompoundKeys", "NBTKeys"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: { type: "List", listType: { type: "String" } },
+          },
+          globalMap2
+        ),
+        symbol: "NBT{}.keys",
+        interactName: "nbtKeys",
+        function: (nbt) => {
+          return nbt.getAllKeys();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_COMPOUND_MINUS.ts
+  var OPERATOR_NBT_COMPOUND_MINUS = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_compound_minus",
+        nicknames: ["nbtCompoundMinus", "NBTMinus"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "NBT",
+              },
+              to: {
+                type: "NBT",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT{}.\u2216",
+        interactName: "nbtMinus",
+        function: (nbt1) => {
+          return (nbt2) => {
+            return nbt1.compoundMinus(nbt2);
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_COMPOUND_SIZE.ts
+  var OPERATOR_NBT_COMPOUND_SIZE = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_compound_size",
+        nicknames: ["nbtCompoundSize", "NBTSize"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "Integer",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT{}.size",
+        interactName: "nbtSize",
+        function: (nbt) => {
+          return nbt.getAllKeys().size();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_COMPOUND_SUBSET.ts
+  var OPERATOR_NBT_COMPOUND_SUBSET = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_compound_subset",
+        nicknames: ["nbtCompoundSubset", "NBTSubset"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "NBT",
+              },
+              to: {
+                type: "Boolean",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT{}.\u2286",
+        interactName: "nbtIsSubset",
+        function: (subSet) => {
+          return (superSet) => {
+            return new iBoolean(superSet.compoundSubset(subSet));
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_COMPOUND_UNION.ts
+  var OPERATOR_NBT_COMPOUND_UNION = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_compound_union",
+        nicknames: ["nbtCompoundUnion", "NBTUnion"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "NBT",
+              },
+              to: {
+                type: "NBT",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT{}.\u222A",
+        interactName: "nbtUnion",
+        function: (nbt1) => {
+          return (nbt2) => {
+            return nbt1.compoundUnion(nbt2);
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_COMPOUND_VALUE_BOOLEAN.ts
+  var OPERATOR_NBT_COMPOUND_VALUE_BOOLEAN = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_compound_value_iBoolean",
+        nicknames: ["nbtCompoundValueBoolean", "compoundValueBoolean"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: {
+                type: "Boolean",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT{}.get_iBoolean",
+        interactName: "nbtGetBoolean",
+        function: (nbt) => {
+          return (key) => {
+            const result = nbt.get(key).valueOf();
+            if (!(result instanceof iBoolean)) return new iBoolean(false);
+            return result;
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_COMPOUND_VALUE_COMPOUND.ts
+  var OPERATOR_NBT_COMPOUND_VALUE_COMPOUND = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_compound_value_compound",
+        nicknames: ["nbtCompoundValueCompound", "compoundValueNBT"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: {
+                type: "NBT",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT{}.get_compound",
+        interactName: "nbtGetCompound",
+        function: (nbt) => {
+          return (key) => {
+            let value = nbt.get(key);
+            if (value.getType() === Tag.TAG_COMPOUND) {
+              return value;
+            }
+            throw new Error(
+              `${key} is not a Compound in ${JSON.stringify(nbt.toJSON())}`
+            );
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_COMPOUND_VALUE_DOUBLE.ts
+  var OPERATOR_NBT_COMPOUND_VALUE_DOUBLE = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_compound_value_double",
+        nicknames: ["nbtCompoundValueDouble", "compoundValueDouble"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: {
+                type: "Double",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT{}.get_double",
+        interactName: "nbtGetDouble",
+        function: (nbt) => {
+          return (key) => {
+            let value = nbt.get(key);
+            if (value.getType() === Tag.TAG_DOUBLE) {
+              return value.valueOf();
+            }
+            throw new Error(
+              `${key} is not a double in ${JSON.stringify(nbt.toJSON())}`
+            );
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_COMPOUND_VALUE_INTEGER.ts
+  var OPERATOR_NBT_COMPOUND_VALUE_INTEGER = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_compound_value_integer",
+        nicknames: ["nbtCompoundValueInteger", "compoundValueInteger"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: {
+                type: "Integer",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT{}.get_integer",
+        interactName: "nbtGetInteger",
+        function: (nbt) => {
+          return (key) => {
+            let value = nbt.get(key);
+            if (value.getType() != Tag.TAG_INT)
+              throw new Error(
+                `${key} is not an integer in ${JSON.stringify(nbt.toJSON())}`
+              );
+            return value.valueOf();
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_COMPOUND_VALUE_LIST_BYTE.ts
+  var OPERATOR_NBT_COMPOUND_VALUE_LIST_BYTE = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_compound_value_list_byte",
+        nicknames: ["nbtCompoundValueListByte", "compoundValueListByte"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: { type: "List", listType: { type: "Integer" } },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT{}.get_list_byte",
+        interactName: "nbtGetListByte",
+        function: (nbt) => {
+          return (key) => {
+            let value = nbt.get(key);
+            if (value.getType() !== Tag.TAG_LIST)
+              return new iArrayEager([Integer.ZERO]);
+            let list = value.valueOf();
+            return list.map(
+              new Operator({
+                function: (e) => e.valueOf(),
+                parsedSignature: new ParsedSignature(
+                  {
+                    type: "Function",
+                    from: { type: "NBT" },
+                    to: { type: "Integer" },
+                  },
+                  globalMap2
+                ),
+              })
+            );
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_COMPOUND_VALUE_LIST_INT.ts
+  var OPERATOR_NBT_COMPOUND_VALUE_LIST_INT = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_compound_value_list_int",
+        nicknames: ["nbtCompoundValueListInt", "compoundValueListInteger"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: { type: "List", listType: { type: "Integer" } },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT{}.get_list_int",
+        interactName: "nbtGetListInt",
+        function: (nbt) => {
+          return (key) => {
+            let value = nbt.get(key);
+            if (value.getType() != Tag.TAG_LIST)
+              throw new Error(
+                `${key} is not a list of int in ${JSON.stringify(nbt.toJSON())}`
+              );
+            let list = value.getArray();
+            if (!list.every((e) => e.getType() == Tag.TAG_INT))
+              throw new Error(
+                `${key} is not a list of int in ${JSON.stringify(nbt.toJSON())}`
+              );
+            return list.map(
+              new Operator({
+                function: (e) => e.valueOf(),
+                parsedSignature: new ParsedSignature(
+                  {
+                    type: "Function",
+                    from: { type: "NBT" },
+                    to: { type: "Integer" },
+                  },
+                  globalMap2
+                ),
+              })
+            );
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_COMPOUND_VALUE_LIST_LONG.ts
+  var OPERATOR_NBT_COMPOUND_VALUE_LIST_LONG = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_compound_value_list_long",
+        nicknames: ["nbtCompoundValueListLong", "compoundValueListLong"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: { type: "List", listType: { type: "Long" } },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT{}.get_list_long",
+        interactName: "nbtGetListLong",
+        function: (nbt) => {
+          return (key) => {
+            let value = nbt.get(key);
+            if (value.getType() != Tag.TAG_LIST)
+              throw new Error(
+                `${key} is not a list of long in ${JSON.stringify(nbt.toJSON())}`
+              );
+            let list = value.getArray();
+            if (!list.every((e) => e.getType() == Tag.TAG_LONG))
+              throw new Error(
+                `${key} is not a list of long in ${JSON.stringify(nbt.toJSON())}`
+              );
+            return list.map(
+              new Operator({
+                function: (e) => e.valueOf(),
+                parsedSignature: new ParsedSignature(
+                  {
+                    type: "Function",
+                    from: { type: "NBT" },
+                    to: { type: "Long" },
+                  },
+                  globalMap2
+                ),
+              })
+            );
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_COMPOUND_VALUE_LIST_TAG.ts
+  var OPERATOR_NBT_COMPOUND_VALUE_LIST_TAG = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_compound_value_list_tag",
+        nicknames: [
+          "nbtCompoundValueListTag",
+          "nbtCompoundValueList",
+          "compoundValueListNBT",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: { type: "List", listType: { type: "NBT" } },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT{}.get_list_tag",
+        interactName: "nbtGetListTag",
+        function: (nbt) => {
+          return (key) => {
+            if (!nbt.has(key))
+              throw new Error(
+                `${key} is not a list of NBT in ${JSON.stringify(nbt.toJSON())}`
+              );
+            let listTag = nbt.get(key);
+            if (listTag.getType() != Tag.TAG_LIST)
+              throw new Error(
+                `${key} is not a list of NBT in ${JSON.stringify(nbt.toJSON())}`
+              );
+            return listTag.getArray();
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_COMPOUND_VALUE_LONG.ts
+  var OPERATOR_NBT_COMPOUND_VALUE_LONG = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_compound_value_long",
+        nicknames: ["nbtCompoundValueLong", "compoundValueLong"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: {
+                type: "Long",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT{}.get_long",
+        interactName: "nbtGetLong",
+        function: (nbt) => {
+          return (key) => {
+            let value = nbt.get(key);
+            if (value.getType() === Tag.TAG_LONG) {
+              return value.valueOf();
+            }
+            throw new Error(
+              `${key} is not a long in ${JSON.stringify(nbt.toJSON())}`
+            );
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_COMPOUND_VALUE_STRING.ts
+  var OPERATOR_NBT_COMPOUND_VALUE_STRING = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_compound_value_string",
+        nicknames: ["nbtCompoundValueString", "compoundValueString"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: {
+                type: "String",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT{}.get_string",
+        interactName: "nbtGetString",
+        function: (nbt) => {
+          return (key) => {
+            let value = nbt.get(key);
+            if (value.getType() === Tag.TAG_STRING) {
+              return value.valueOf();
+            }
+            throw new Error(
+              `${key} is not a string in ${JSON.stringify(nbt.toJSON())}`
+            );
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_COMPOUND_VALUE_TAG.ts
+  var OPERATOR_NBT_COMPOUND_VALUE_TAG = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_compound_value_tag",
+        nicknames: ["nbtCompoundValueTag", "compoundValueAny"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: {
+                type: "NBT",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT{}.get_tag",
+        interactName: "nbtGetTag",
+        function: (nbt) => {
+          return (key) => {
+            return nbt.get(key);
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_COMPOUND_VALUE_TYPE.ts
+  var OPERATOR_NBT_COMPOUND_VALUE_TYPE = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_compound_type",
+        nicknames: ["nbtCompoundValueType", "NBTValueType"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: {
+                type: "String",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT{}.type",
+        interactName: "nbtType",
+        function: (nbt) => {
+          return (key) => {
+            if (!nbt.has(key)) {
+              throw new Error(
+                `${key} does not exist in ${JSON.stringify(nbt)}`
+              );
+            }
+            return nbt.get(key).getTypeAsString();
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_COMPOUND_WITH_BOOLEAN.ts
+  var OPERATOR_NBT_COMPOUND_WITH_BOOLEAN = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_compound_with_iBoolean",
+        nicknames: ["nbtCompoundWithBoolean", "NBTWithBoolean"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: {
+                type: "Function",
+                from: {
+                  type: "Boolean",
+                },
+                to: {
+                  type: "NBT",
+                },
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT{}.with_iBoolean",
+        interactName: "nbtWithBoolean",
+        function: (nbt) => {
+          return (key) => {
+            return (value) => {
+              return nbt.set(
+                key.valueOf(),
+                new ByteTag(new Integer(+value.valueOf()))
+              );
+            };
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_COMPOUND_WITH_COMPOUND.ts
+  var OPERATOR_NBT_COMPOUND_WITH_COMPOUND = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_compound_with_tag",
+        nicknames: ["nbtCompoundWithCompound", "NBTWithNBT"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: {
+                type: "Function",
+                from: {
+                  type: "NBT",
+                },
+                to: {
+                  type: "NBT",
+                },
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT{}.with_tag",
+        interactName: "nbtWithTag",
+        function: (nbt) => {
+          return (key) => {
+            return (value) => {
+              return nbt.set(key.valueOf(), value);
+            };
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_COMPOUND_WITH_DOUBLE.ts
+  var OPERATOR_NBT_COMPOUND_WITH_DOUBLE = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_compound_with_double",
+        nicknames: ["nbtCompoundWithDouble", "NBTWithDouble"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: {
+                type: "Function",
+                from: {
+                  type: "Double",
+                },
+                to: {
+                  type: "NBT",
+                },
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT{}.with_double",
+        interactName: "nbtWithDouble",
+        function: (nbt) => {
+          return (key) => {
+            return (value) => {
+              return nbt.set(key.valueOf(), new DoubleTag(value));
+            };
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/FloatTag.ts
+  var FloatTag = class _FloatTag extends NumericTag {
+    data;
+    getType() {
+      return Tag.TAG_FLOAT;
+    }
+    constructor(data) {
+      super();
+      this.data = data;
+    }
+    static valueOf(value) {
+      return new _FloatTag(value);
+    }
+    valueOf() {
+      return this.data;
+    }
+    getAsDouble() {
+      return this.data.toJSNumber();
+    }
+    getTypeAsString() {
+      return new iString("FloatTag");
+    }
+    equals(tag) {
+      if (tag.getType() != Tag.TAG_FLOAT) return new iBoolean(false);
+      return new iBoolean(this.getAsDouble() == tag.getAsDouble());
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_COMPOUND_WITH_FLOAT.ts
+  var OPERATOR_NBT_COMPOUND_WITH_FLOAT = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_compound_with_float",
+        nicknames: ["nbtCompoundWithFloat", "NBTWithFloat"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: {
+                type: "Function",
+                from: {
+                  type: "Double",
+                },
+                to: {
+                  type: "NBT",
+                },
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT{}.with_float",
+        interactName: "nbtWithFloat",
+        function: (nbt) => {
+          return (key) => {
+            return (value) => {
+              return nbt.set(key.valueOf(), new FloatTag(value));
+            };
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_COMPOUND_WITH_INTEGER.ts
+  var OPERATOR_NBT_COMPOUND_WITH_INTEGER = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_compound_with_integer",
+        nicknames: ["nbtCompoundWithInteger", "NBTWithInteger"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: {
+                type: "Function",
+                from: {
+                  type: "Integer",
+                },
+                to: {
+                  type: "NBT",
+                },
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT{}.with_integer",
+        interactName: "nbtWithInteger",
+        function: (nbt) => {
+          return (key) => {
+            return (value) => {
+              return nbt.set(key.valueOf(), new IntTag(value));
+            };
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_COMPOUND_WITH_LIST_BYTE.ts
+  var OPERATOR_NBT_COMPOUND_WITH_LIST_BYTE = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_compound_with_list_byte",
+        nicknames: ["nbtCompoundWithListByte", "NBTWithByteList"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: {
+                type: "Function",
+                from: { type: "List", listType: { type: "Integer" } },
+                to: {
+                  type: "NBT",
+                },
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT{}.with_byte_list",
+        interactName: "nbtWithByteList",
+        function: (nbt) => {
+          return (key) => {
+            return (value) => {
+              const nativeArray = value.valueOf();
+              const mappedTags = nativeArray.map((e) => new ByteTag(e));
+              const tagArray = new iArrayEager(mappedTags);
+              return nbt.set(key.valueOf(), new ListTag(tagArray));
+            };
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_COMPOUND_WITH_LIST_INT.ts
+  var OPERATOR_NBT_COMPOUND_WITH_LIST_INT = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_compound_with_list_int",
+        nicknames: ["nbtCompoundWithListInt", "NBTWithIntegerList"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: {
+                type: "Function",
+                from: { type: "List", listType: { type: "Integer" } },
+                to: {
+                  type: "NBT",
+                },
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT{}.with_int_list",
+        interactName: "nbtWithIntList",
+        function: (nbt) => {
+          return (key) => {
+            return (value) => {
+              const nativeArray = value.valueOf();
+              const mappedTags = nativeArray.map((e) => new IntTag(e));
+              const tagArray = new iArrayEager(mappedTags);
+              return nbt.set(key.valueOf(), new ListTag(tagArray));
+            };
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_COMPOUND_WITH_LIST_LONG.ts
+  var OPERATOR_NBT_COMPOUND_WITH_LIST_LONG = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_compound_with_list_long",
+        nicknames: ["nbtCompoundWithListLong", "NBTWithLongList"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: {
+                type: "Function",
+                from: { type: "List", listType: { type: "Long" } },
+                to: {
+                  type: "NBT",
+                },
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT{}.with_list_long",
+        interactName: "nbtWithListLong",
+        function: (nbt) => {
+          return (key) => {
+            return (value) => {
+              const nativeArray = value.valueOf();
+              const mappedTags = nativeArray.map((e) => new LongTag(e));
+              const tagArray = new iArrayEager(mappedTags);
+              return nbt.set(key.valueOf(), new ListTag(tagArray));
+            };
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_COMPOUND_WITH_LIST_TAG.ts
+  var OPERATOR_NBT_COMPOUND_WITH_LIST_TAG = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_compound_with_list_tag",
+        nicknames: ["nbtCompoundWithListTag", "NBTWithNBTList"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: {
+                type: "Function",
+                from: { type: "List", listType: { type: "NBT" } },
+                to: {
+                  type: "NBT",
+                },
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT{}.with_tag_list",
+        interactName: "nbtWithTagList",
+        function: (nbt) => {
+          return (key) => {
+            return (value) => {
+              return nbt.set(key.valueOf(), value);
+            };
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_COMPOUND_WITH_LONG.ts
+  var OPERATOR_NBT_COMPOUND_WITH_LONG = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_compound_with_long",
+        nicknames: ["nbtCompoundWithLong", "NBTWithLong"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: {
+                type: "Function",
+                from: {
+                  type: "Long",
+                },
+                to: {
+                  type: "NBT",
+                },
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT{}.with_long",
+        interactName: "nbtWithLong",
+        function: (nbt) => {
+          return (key) => {
+            return (value) => {
+              return nbt.set(key.valueOf(), new LongTag(value));
+            };
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ShortTag.ts
+  var ShortTag = class _ShortTag extends NumericTag {
+    data;
+    constructor(data) {
+      super();
+      this.data = data;
+    }
+    getType() {
+      return Tag.TAG_Short;
+    }
+    static valueOf(value) {
+      return new _ShortTag(value);
+    }
+    valueOf() {
+      return this.data;
+    }
+    getAsDouble() {
+      return this.data.toJSNumber();
+    }
+    getTypeAsString() {
+      return new iString("ShortTag");
+    }
+    equals(tag) {
+      if (tag.getType() != Tag.TAG_Short) return new iBoolean(false);
+      return new iBoolean(this.valueOf() == tag.valueOf());
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_COMPOUND_WITH_SHORT.ts
+  var OPERATOR_NBT_COMPOUND_WITH_SHORT = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_compound_with_short",
+        nicknames: ["nbtCompoundWithShort", "NBTWithShort"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: {
+                type: "Function",
+                from: {
+                  type: "Integer",
+                },
+                to: {
+                  type: "NBT",
+                },
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT{}.with_short",
+        interactName: "nbtWithShort",
+        function: (nbt) => {
+          return (key) => {
+            return (value) => {
+              return nbt.set(key.valueOf(), new ShortTag(value));
+            };
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/StringTag.ts
+  var StringTag = class extends Tag {
+    data;
+    constructor(data) {
+      super();
+      this.data = data;
+    }
+    getType() {
+      return Tag.TAG_STRING;
+    }
+    valueOf() {
+      return this.data;
+    }
+    getTypeAsString() {
+      return new iString("StringTag");
+    }
+    equals(other) {
+      if (other.getType() != Tag.TAG_STRING) return new iBoolean(false);
+      return new iBoolean(this.data == other.valueOf());
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_COMPOUND_WITH_STRING.ts
+  var OPERATOR_NBT_COMPOUND_WITH_STRING = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_compound_with_string",
+        nicknames: ["nbtCompoundWithString", "NBTWithString"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: {
+                type: "Function",
+                from: {
+                  type: "String",
+                },
+                to: {
+                  type: "NBT",
+                },
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT{}.with_string",
+        interactName: "nbtWithString",
+        function: (nbt) => {
+          return (key) => {
+            return (value) => {
+              return nbt.set(key.valueOf(), new StringTag(value));
+            };
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_COMPOUND_WITHOUT.ts
+  var OPERATOR_NBT_COMPOUND_WITHOUT = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_compound_without",
+        nicknames: ["nbtCompoundWithout", "NBTWithout"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: {
+                type: "NBT",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT{}.without",
+        interactName: "nbtWithout",
+        function: (nbt) => {
+          return (key) => {
+            return nbt.without(key.valueOf());
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_FROM_BOOLEAN.ts
+  var OPERATOR_NBT_FROM_BOOLEAN = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_from_iBoolean",
+        nicknames: ["nbtFromBoolean"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Boolean",
+            },
+            to: {
+              type: "NBT",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT.from_iBoolean",
+        interactName: "booleanAsNbt",
+        function: (bool) => {
+          return new ByteTag(new Integer(+bool.valueOf()));
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_FROM_BYTE.ts
+  var OPERATOR_NBT_FROM_BYTE = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_from_byte",
+        nicknames: ["nbtFromByte"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Integer",
+            },
+            to: {
+              type: "NBT",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT.from_byte",
+        interactName: "byteAsNbt",
+        function: (byte) => {
+          return new IntTag(byte);
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_FROM_BYTE_LIST.ts
+  var OPERATOR_NBT_FROM_BYTE_LIST = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_from_byte_list",
+        nicknames: ["nbtFromByteList"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: { type: "List", listType: { type: "Integer" } },
+            to: {
+              type: "NBT",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT.from_byte_list",
+        interactName: "byteListAsNbt",
+        function: (byteList) => {
+          const nativeArray = byteList.valueOf();
+          const mappedTags = nativeArray.map((e) => new ByteTag(e));
+          const tagArray = new iArrayEager(mappedTags);
+          return new ListTag(tagArray);
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_FROM_DOUBLE.ts
+  var OPERATOR_NBT_FROM_DOUBLE = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_from_double",
+        nicknames: ["nbtFromDouble"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Double",
+            },
+            to: {
+              type: "NBT",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT.from_double",
+        interactName: "doubleAsNbt",
+        function: (double) => {
+          return new DoubleTag(double);
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_FROM_FLOAT.ts
+  var OPERATOR_NBT_FROM_FLOAT = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_from_float",
+        nicknames: ["nbtFromFloat"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Double",
+            },
+            to: {
+              type: "NBT",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT.from_float",
+        interactName: "floatAsNbt",
+        function: (float) => {
+          return new FloatTag(float);
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_FROM_INT.ts
+  var OPERATOR_NBT_FROM_INT = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_from_int",
+        nicknames: ["nbtFromInt"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Integer",
+            },
+            to: {
+              type: "NBT",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT.from_int",
+        interactName: "integerAsNbt",
+        function: (int) => {
+          return new IntTag(int);
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_FROM_INT_LIST.ts
+  var OPERATOR_NBT_FROM_INT_LIST = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_from_int_list",
+        nicknames: ["nbtFromIntList"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: { type: "List", listType: { type: "Integer" } },
+            to: {
+              type: "NBT",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT.from_int_list",
+        interactName: "intListAsNbt",
+        function: (intList) => {
+          const nativeArray = intList.valueOf();
+          const mappedTags = nativeArray.map((e) => new IntTag(e));
+          const tagArray = new iArrayEager(mappedTags);
+          return new ListTag(tagArray);
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_FROM_LONG.ts
+  var OPERATOR_NBT_FROM_LONG = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_from_long",
+        nicknames: ["nbtFromLong"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Long",
+            },
+            to: {
+              type: "NBT",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT.from_long",
+        interactName: "longAsNbt",
+        function: (long) => {
+          return new LongTag(long);
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_FROM_LONG_LIST.ts
+  var OPERATOR_NBT_FROM_LONG_LIST = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_from_long_list",
+        nicknames: ["nbtFromLongList"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: { type: "List", listType: { type: "Long" } },
+            to: {
+              type: "NBT",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT.from_long_list",
+        interactName: "longListAsNbt",
+        function: (longList) => {
+          const nativeArray = longList.valueOf();
+          const mappedTags = nativeArray.map((e) => new LongTag(e));
+          const tagArray = new iArrayEager(mappedTags);
+          return new ListTag(tagArray);
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_FROM_SHORT.ts
+  var OPERATOR_NBT_FROM_SHORT = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_from_short",
+        nicknames: ["nbtFromShort"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Integer",
+            },
+            to: {
+              type: "NBT",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT.from_short",
+        interactName: "shortAsNbt",
+        function: (short) => {
+          return new ShortTag(short);
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_FROM_STRING.ts
+  var OPERATOR_NBT_FROM_STRING = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_from_string",
+        nicknames: ["nbtFromString"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "NBT",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT.from_string",
+        interactName: "stringAsNbt",
+        function: (str) => {
+          return new StringTag(str);
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_FROM_TAG_LIST.ts
+  var OPERATOR_NBT_FROM_TAG_LIST = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_from_tag_list",
+        nicknames: ["nbtFromTagList"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: { type: "List", listType: { type: "NBT" } },
+            to: {
+              type: "NBT",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT.from_tag_list",
+        interactName: "tagListAsNbt",
+        function: (tagList) => {
+          return new ListTag(tagList);
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/parse/NBTPathExecutionContext.ts
+  var NbtPathExpressionExecutionContext = class _NbtPathExpressionExecutionContext {
+    currentTag;
+    parentContext;
+    constructor(currentTag, parentContext) {
+      this.currentTag = currentTag;
+      this.parentContext = parentContext;
+    }
+    getCurrentTag() {
+      return this.currentTag;
+    }
+    getParentContext() {
+      return this.parentContext;
+    }
+    getRootContext() {
+      const parent = this.getParentContext();
+      return parent ? parent.getRootContext() : this;
+    }
+    equals(obj) {
+      if (!(obj instanceof _NbtPathExpressionExecutionContext)) {
+        return new iBoolean(false);
+      }
+      let that = obj;
+      return this.getCurrentTag().equals(that.getCurrentTag());
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/NbtParseException.ts
+  var NbtParseException = class extends Error {
+    constructor(msg) {
+      super(msg);
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/INbtPathExpression.ts
+  var INbtPathExpression = class {
+    /**
+     * Find all matches for the given stream of NBT tags or a single tag.
+     * @param nbts A stream of NBT tags or tag.
+     * @return The matches.
+     */
+    match(nbts) {
+      if (Array.isArray(nbts))
+        return this.matchContexts(
+          nbts.map((nbt) => new NbtPathExpressionExecutionContext(nbt))
+        );
+      else return this.match([nbts]);
+    }
+    /**
+     * Test if any of the given NBT tags or tag in the given stream match with the expression.
+     * @param nbts A stream of NBT tags or singular tag.
+     * @return True if there is at least one match.
+     */
+    test(nbts) {
+      if (!Array.isArray(nbts)) return this.test([nbts]);
+      return (
+        this.match([nbts[0]])
+          .getMatches()
+          .filter(
+            (tag) =>
+              tag.getType() != Tag.TAG_BYTE || tag.valueOf().toJSNumber() === 1
+          ).length != 0
+      );
+    }
+    /**
+     * Find all matches for the given stream of NBT tags.
+     * @param executionContexts A stream of NBT execution contexts.
+     * @return The matches.
+     */
+    matchContexts(_executionContexts) {
+      throw new Error(
+        "matchContexts from INbtPathExpression.ts should not have been called!"
+      );
+    }
+    /**
+     * Create a navigation for this expression with the given navigation as child.
+     * If a null child is passed, the created navigation is a leaf.
+     * @param child An option child.
+     * @return A navigation path.
+     * @throws NbtParseException If this expression can not be expressed as a navigation.
+     */
+    asNavigation(_child) {
+      if (arguments.length === 0) return this.asNavigation();
+      throw new NbtParseException(
+        "This NBT Path expression has no navigation keys."
+      );
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/NbtPathExpressionMatches.ts
+  var NbtPathExpressionMatches = class _NbtPathExpressionMatches {
+    EMPTY = _NbtPathExpressionMatches.forAll();
+    matches;
+    constructor(matches) {
+      this.matches = matches;
+    }
+    getContexts() {
+      return this.matches;
+    }
+    getMatches() {
+      return this.getContexts().map((e) => e.getCurrentTag());
+    }
+    static forAll(...nbts) {
+      return new _NbtPathExpressionMatches(nbts);
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/NbtPathExpressionList.ts
+  var NbtPathExpressionList = class extends INbtPathExpression {
+    subExpressions;
+    constructor(...subExpressions) {
+      super();
+      this.subExpressions = subExpressions;
+    }
+    matchContexts(executionContexts) {
+      let matches = new NbtPathExpressionMatches(executionContexts);
+      for (const subExpression of this.subExpressions) {
+        matches = subExpression.matchContexts(matches.getContexts());
+      }
+      return matches;
+    }
+    getSubExpressions() {
+      return this.subExpressions;
+    }
+    asNavigation(_child) {
+      let current;
+      for (let i = this.subExpressions.length - 1; i >= 0; i--) {
+        if (current) {
+          current = this.subExpressions[i].asNavigation(current);
+        } else {
+          current = this.subExpressions[i].asNavigation();
+        }
+      }
+      return current;
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/parse/INbtPathExpressionParseHandler.ts
+  var HandleResult = class _HandleResult {
+    static INVALID = new _HandleResult(void 0, 0);
+    prefixExpression;
+    consumedExpressionLength;
+    constructor(prefixExpression, consumedExpressionLength) {
+      this.prefixExpression = prefixExpression;
+      this.consumedExpressionLength = consumedExpressionLength;
+    }
+    /**
+     * @return If the handler could produce a valid expression.
+     */
+    isValid() {
+      return this.getPrefixExpression() != null;
+    }
+    /**
+     * @return The expression (for a part) of the given string expression.
+     */
+    getPrefixExpression() {
+      return this.prefixExpression;
+    }
+    /**
+     * @return The length of the string expression that was consumed.
+     */
+    getConsumedExpressionLength() {
+      return this.consumedExpressionLength;
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/navigate/NbtPathNavigationLinkWildcard.ts
+  var NbtPathNavigationLinkWildcard = class {
+    child;
+    constructor(child) {
+      this.child = child;
+    }
+    isLeafKey(_key) {
+      return false;
+    }
+    getNext(_key) {
+      return this.child;
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/navigate/NbtPathNavigationLeafWildcard.ts
+  var NbtPathNavigationLeafWildcard = class _NbtPathNavigationLeafWildcard {
+    static INSTANCE = new _NbtPathNavigationLeafWildcard();
+    constructor() {}
+    isLeafKey(_key) {
+      return true;
+    }
+    getNext(_key) {
+      return void 0;
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/parse/NbtPathExpressionParseHandlerAllChildren.ts
+  var NbtPathExpressionParseHandlerAllChildren = class _NbtPathExpressionParseHandlerAllChildren {
+    handlePrefixOf(nbtPathExpression, pos) {
+      if (nbtPathExpression.charAt(pos) != "*") {
+        return HandleResult.INVALID;
+      }
+      return new HandleResult(
+        _NbtPathExpressionParseHandlerAllChildren.Expression.INSTANCE,
+        1
+      );
+    }
+    static Expression = class Expression extends INbtPathExpression {
+      static INSTANCE =
+        new _NbtPathExpressionParseHandlerAllChildren.Expression();
+      matchContexts(executionContexts) {
+        return new NbtPathExpressionMatches(
+          executionContexts
+            .flatMap((executionContext) => {
+              let nbt = executionContext.getCurrentTag();
+              if (nbt.getType() === Tag.TAG_LIST) {
+                let tag = nbt;
+                return tag
+                  .getArray()
+                  .valueOf()
+                  .map(
+                    (subTag) =>
+                      new NbtPathExpressionExecutionContext(
+                        subTag,
+                        executionContext
+                      )
+                  );
+              } else if (nbt.getType() === Tag.TAG_COMPOUND) {
+                let tag = nbt;
+                return tag
+                  .getAllKeys()
+                  .valueOf()
+                  .map(
+                    (key) =>
+                      new NbtPathExpressionExecutionContext(
+                        tag.get(key),
+                        executionContext
+                      )
+                  );
+              }
+              return null;
+            })
+            .filter((e) => !(e === null))
+        );
+      }
+      asNavigation(child) {
+        return child == child
+          ? new NbtPathNavigationLinkWildcard(child)
+          : NbtPathNavigationLeafWildcard.INSTANCE;
+      }
+    };
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/parse/NbtPathExpressionParseHandlerBooleanRelationalAdapter.ts
+  var NbtPathExpressionParseHandlerBooleanRelationalAdapter = class _NbtPathExpressionParseHandlerBooleanRelationalAdapter {
+    regex;
+    constructor(relation) {
+      this.regex = new RegExp(`^ *${relation} *([0-9]+(\\.[0-9]+)?)`);
+    }
+    handlePrefixOf(nbtPathExpression, pos) {
+      let match = this.regex.exec(nbtPathExpression.slice(pos));
+      if (!match) {
+        return HandleResult.INVALID;
+      }
+      let targetDoubleString = match[1];
+      let targetDouble = Number(targetDoubleString);
+      return new HandleResult(
+        new _NbtPathExpressionParseHandlerBooleanRelationalAdapter.Expression(
+          targetDouble,
+          this
+        ),
+        match[0].length
+      );
+    }
+    static Expression;
+  };
+  var Expression = class extends INbtPathExpression {
+    targetDouble;
+    handler;
+    constructor(targetDouble, handler) {
+      super();
+      this.targetDouble = targetDouble;
+      this.handler = handler;
+    }
+    getTargetDouble() {
+      return this.targetDouble;
+    }
+    matchContexts(executionContexts) {
+      return new NbtPathExpressionMatches(
+        executionContexts.map((executionContext) => {
+          let nbt = executionContext.getCurrentTag();
+          if (nbt instanceof NumericTag) {
+            let tag = nbt;
+            return new NbtPathExpressionExecutionContext(
+              ByteTag.valueOf(
+                new Integer(
+                  this.handler.getRelationalValue(
+                    tag.getAsDouble(),
+                    this.getTargetDouble()
+                  )
+                    ? 1
+                    : 0
+                )
+              ),
+              executionContext
+            );
+          }
+          return new NbtPathExpressionExecutionContext(
+            ByteTag.valueOf(Integer.ZERO),
+            executionContext
+          );
+        })
+      );
+    }
+  };
+  NbtPathExpressionParseHandlerBooleanRelationalAdapter.Expression = Expression;
+
+  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/parse/NbtPathExpressionParseHandlerBooleanRelationalEqual.ts
+  var NbtPathExpressionParseHandlerBooleanRelationalEqual = class extends NbtPathExpressionParseHandlerBooleanRelationalAdapter {
+    constructor() {
+      super("==");
+    }
+    getRelationalValue(left, right) {
+      return left == right;
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/parse/NbtPathExpressionParseHandlerBooleanRelationalGreaterThan.ts
+  var NbtPathExpressionParseHandlerBooleanRelationalGreaterThan = class extends NbtPathExpressionParseHandlerBooleanRelationalAdapter {
+    constructor() {
+      super(">");
+    }
+    getRelationalValue(left, right) {
+      return left > right;
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/parse/NbtPathExpressionParseHandlerBooleanRelationalGreaterThanOrEqual.ts
+  var NbtPathExpressionParseHandlerBooleanRelationalGreaterThanOrEqual = class extends NbtPathExpressionParseHandlerBooleanRelationalAdapter {
+    constructor() {
+      super(">=");
+    }
+    getRelationalValue(left, right) {
+      return left >= right;
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/parse/NbtPathExpressionParseHandlerBooleanRelationalLessThan.ts
+  var NbtPathExpressionParseHandlerBooleanRelationalLessThan = class extends NbtPathExpressionParseHandlerBooleanRelationalAdapter {
+    constructor() {
+      super("<");
+    }
+    getRelationalValue(left, right) {
+      return left < right;
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/parse/NbtPathExpressionParseHandlerBooleanRelationalLessThanOrEqual.ts
+  var NbtPathExpressionParseHandlerBooleanRelationalLessThanOrEqual = class extends NbtPathExpressionParseHandlerBooleanRelationalAdapter {
+    constructor() {
+      super("<=");
+    }
+    getRelationalValue(left, right) {
+      return left <= right;
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/navigate/NbtPathNavigationAdapter.ts
+  var NbtPathNavigationAdapter = class {
+    keys;
+    child;
+    constructor(keys, child) {
+      if (!Array.isArray(keys)) keys = [keys];
+      this.keys = keys;
+      this.child = child;
+    }
+    isLeaf() {
+      return this.child == null;
+    }
+    isLeafKey(key) {
+      return this.isLeaf() && this.keys.includes(key);
+    }
+    getNext(key) {
+      return !this.isLeaf() && this.keys.includes(key) ? this.child : void 0;
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/parse/NbtPathExpressionParseHandlerChild.ts
+  var NbtPathExpressionParseHandlerChild = class {
+    REGEX_CHILDNAME = new RegExp("^[a-zA-Z_0-9]+");
+    handlePrefixOf(nbtPathExpression, pos) {
+      if (
+        nbtPathExpression.charAt(pos) != "." ||
+        nbtPathExpression.length <= pos + 1
+      ) {
+        return HandleResult.INVALID;
+      }
+      const region = nbtPathExpression.slice(pos + 1);
+      const match = region.match(this.REGEX_CHILDNAME);
+      if (!match) {
+        return HandleResult.INVALID;
+      }
+      let childName = new iString(match[0]);
+      return new HandleResult(
+        new Expression2(childName),
+        1 + childName.length()
+      );
+    }
+    static Expression;
+  };
+  var Expression2 = class extends INbtPathExpression {
+    childName;
+    constructor(childName) {
+      super();
+      this.childName = childName;
+    }
+    getChildName() {
+      return this.childName;
+    }
+    matchContexts(executionContexts) {
+      return new NbtPathExpressionMatches(
+        executionContexts
+          .map((executionContext) => {
+            let nbt = executionContext.getCurrentTag();
+            if (nbt.getType() == Tag.TAG_COMPOUND) {
+              let tag = nbt;
+              let childTag = tag.get(this.childName);
+              if (childTag != null) {
+                return new NbtPathExpressionExecutionContext(
+                  childTag,
+                  executionContext
+                );
+              }
+            }
+            return null;
+          })
+          .filter((e) => e != null)
+      );
+    }
+    asNavigation(child) {
+      return new NbtPathNavigationAdapter(this.getChildName(), child);
+    }
+  };
+  NbtPathExpressionParseHandlerChild.Expression = Expression2;
+
+  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/parse/NbtPathStringParser.ts
+  var NbtPathStringParser = class {
+    static StringParseResult = class StringParseResult {
+      static FAIL = new StringParseResult(false, 0, new iString(""));
+      successVal;
+      consumed;
+      result;
+      constructor(success, consumed, result) {
+        this.successVal = success;
+        this.consumed = consumed;
+        this.result = result;
+      }
+      isSuccess() {
+        return this.successVal;
+      }
+      getConsumed() {
+        return this.consumed;
+      }
+      getResult() {
+        return this.result;
+      }
+      static success(consumed, result) {
+        return new StringParseResult(true, consumed, result);
+      }
+      static fail() {
+        return this.FAIL;
+      }
+    };
+    /**
+     * Parse a string that starts and ends with doubles quotes and; Can handle escape sequences
+     * within that string.
+     * @param source The source string
+     * @param pos Where to start parse; The index of the opening double quote
+     * @return Parse result
+     */
+    static parse(source, pos) {
+      if (pos >= source.length || source.charAt(pos) != '"') {
+        return this.StringParseResult.fail();
+      }
+      let resultBuilder = new iString("");
+      let currentPos = pos + 1;
+      while (true) {
+        if (currentPos >= source.length) {
+          return this.StringParseResult.fail();
+        }
+        let character = source.charAt(currentPos);
+        currentPos++;
+        switch (character) {
+          case "\\": {
+            if (currentPos >= source.length) {
+              return this.StringParseResult.fail();
+            }
+            let escapeName = source.charAt(currentPos);
+            currentPos++;
+            switch (escapeName) {
+              case "\\":
+              // For \\
+              case '"':
+                resultBuilder.add(escapeName);
+                continue;
+              default:
+                return this.StringParseResult.fail();
+            }
+          }
+          case '"':
+            return this.StringParseResult.success(
+              currentPos - pos,
+              resultBuilder
+            );
+          default:
+            resultBuilder.add(character);
+        }
+      }
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/parse/NbtPathExpressionParseHandlerChildBrackets.ts
+  var NbtPathExpressionParseHandlerChildBrackets = class {
+    handlePrefixOf(nbtPathExpression, pos) {
+      if (
+        pos >= nbtPathExpression.length ||
+        nbtPathExpression.charAt(pos) != "["
+      ) {
+        return HandleResult.INVALID;
+      }
+      let parseResult = NbtPathStringParser.parse(nbtPathExpression, pos + 1);
+      if (!parseResult.isSuccess()) {
+        return HandleResult.INVALID;
+      }
+      let closingBracketIndex = pos + parseResult.getConsumed() + 1;
+      if (
+        closingBracketIndex >= nbtPathExpression.length ||
+        nbtPathExpression.charAt(closingBracketIndex) != "]"
+      ) {
+        return HandleResult.INVALID;
+      }
+      return new HandleResult(
+        new NbtPathExpressionParseHandlerChild.Expression(
+          parseResult.getResult()
+        ),
+        2 + parseResult.getConsumed()
+      );
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/parse/NbtPathExpressionParseHandlerCurrent.ts
+  var NbtPathExpressionParseHandlerCurrent = class _NbtPathExpressionParseHandlerCurrent {
+    handlePrefixOf(nbtPathExpression, pos) {
+      if (nbtPathExpression.charAt(pos) != "@") {
+        return HandleResult.INVALID;
+      }
+      return new HandleResult(
+        _NbtPathExpressionParseHandlerCurrent.Expression.INSTANCE,
+        1
+      );
+    }
+    static Expression;
+  };
+  var Expression3 = class _Expression extends INbtPathExpression {
+    static INSTANCE = new _Expression();
+    matchContexts(executionContexts) {
+      return new NbtPathExpressionMatches(executionContexts);
+    }
+  };
+  NbtPathExpressionParseHandlerCurrent.Expression = Expression3;
+
+  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/parse/NbtPathExpressionParseHandlerFilterExpression.ts
+  var NbtPathExpressionParseHandlerFilterExpression = class _NbtPathExpressionParseHandlerFilterExpression {
+    REGEX_EXPRESSION = new RegExp("^\\[\\?\\(([^\\)^\\(]+)\\)\\]");
+    handlePrefixOf(nbtPathExpression, pos) {
+      const match = this.REGEX_EXPRESSION.exec(nbtPathExpression.slice(pos));
+      if (!match) {
+        return HandleResult.INVALID;
+      }
+      let expressionString = match[1];
+      try {
+        let expression = NbtPath.parse(expressionString);
+        return new HandleResult(
+          new _NbtPathExpressionParseHandlerFilterExpression.Expression(
+            expression
+          ),
+          5 + expressionString.length
+        );
+      } catch (e) {
+        if (!(e instanceof NbtParseException)) throw e;
+        return HandleResult.INVALID;
+      }
+    }
+    static Expression;
+  };
+  var Expression4 = class extends INbtPathExpression {
+    expression;
+    constructor(expression) {
+      super();
+      this.expression = expression;
+    }
+    getExpression() {
+      return this.expression;
+    }
+    matchContexts(executionContexts) {
+      return new NbtPathExpressionMatches(
+        executionContexts
+          .map((executionContext) => {
+            let nbt = executionContext.getCurrentTag();
+            if (nbt.getType() == Tag.TAG_LIST) {
+              let tag = nbt;
+              let newTagList = new ListTag(new iArrayEager([]));
+              tag
+                .getArray()
+                .valueOf()
+                .filter((subTag) => this.getExpression().test(subTag))
+                .forEach((subTag) => newTagList.add(subTag));
+              return new NbtPathExpressionExecutionContext(
+                newTagList,
+                executionContext
+              );
+            } else if (nbt.getType() == Tag.TAG_COMPOUND) {
+              let tag = nbt;
+              let newTagList = new ListTag(new iArrayEager([]));
+              Array.from(tag.getAllKeys().valueOf())
+                .map((key) => tag.get(key))
+                .filter((subTag) => this.getExpression().test(subTag))
+                .forEach((subTag) => newTagList.add(subTag));
+              return new NbtPathExpressionExecutionContext(
+                newTagList,
+                executionContext
+              );
+            }
+            return null;
+          })
+          .filter((e) => e != null)
+      );
+    }
+  };
+  NbtPathExpressionParseHandlerFilterExpression.Expression = Expression4;
+
+  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/parse/NbtPathExpressionParseHandlerLength.ts
+  var NbtPathExpressionParseHandlerLength = class {
+    handlePrefixOf(nbtPathExpression, pos) {
+      if (
+        nbtPathExpression.substring(
+          pos,
+          Math.min(pos + 7, nbtPathExpression.length)
+        ) != ".length"
+      ) {
+        return HandleResult.INVALID;
+      }
+      return new HandleResult(Expression5.INSTANCE, 7);
+    }
+    static Expression;
+  };
+  var Expression5 = class extends INbtPathExpression {
+    static INSTANCE = new NbtPathExpressionParseHandlerLength.Expression();
+    matchContexts(executionContexts) {
+      return new NbtPathExpressionMatches(
+        executionContexts
+          .map((executionContext) => {
+            let nbt = executionContext.getCurrentTag();
+            if (nbt.getType() == Tag.TAG_LIST) {
+              let tag = nbt;
+              return new NbtPathExpressionExecutionContext(
+                IntTag.valueOf(new Integer(tag.size())),
+                executionContext
+              );
+            } else if (nbt.getType() == Tag.TAG_COMPOUND) {
+              let tag = nbt;
+              return new NbtPathExpressionExecutionContext(
+                IntTag.valueOf(new Integer(tag.getAllKeys().size())),
+                executionContext
+              );
+            }
+            return null;
+          })
+          .filter((e) => e != null)
+      );
+    }
+  };
+  NbtPathExpressionParseHandlerLength.Expression = Expression5;
+
+  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/parse/NbtPathExpressionParseHandlerListElement.ts
+  var NbtPathExpressionParseHandlerListElement = class {
+    REGEX_ELEMENTINDEX = new RegExp("^\\[([0-9]+)\\]");
+    handlePrefixOf(nbtPathExpression, pos) {
+      const region = nbtPathExpression.slice(pos);
+      const match = region.match(this.REGEX_ELEMENTINDEX);
+      if (!match) {
+        return HandleResult.INVALID;
+      }
+      const childIndexString = match[1];
+      const childIndex = parseInt(childIndexString);
+      return new HandleResult(
+        new Expression6(childIndex),
+        2 + childIndexString.length
+      );
+    }
+    static Expression;
+  };
+  var Expression6 = class extends INbtPathExpression {
+    childIndex;
+    constructor(childIndex) {
+      super();
+      this.childIndex = childIndex;
+    }
+    getChildIndex() {
+      return new Integer(this.childIndex);
+    }
+    matchContexts(executionContexts) {
+      return new NbtPathExpressionMatches(
+        executionContexts
+          .map((executionContext) => {
+            let nbt = executionContext.getCurrentTag();
+            if (nbt.getType() == Tag.TAG_LIST) {
+              let tag = nbt;
+              if (new Integer(this.childIndex).lt(tag.size())) {
+                let childTag = tag.get(this.getChildIndex());
+                return new NbtPathExpressionExecutionContext(
+                  childTag,
+                  executionContext
+                );
+              }
+            }
+            return null;
+          })
+          .filter((e) => e != null)
+      );
+    }
+  };
+  NbtPathExpressionParseHandlerListElement.Expression = Expression6;
+
+  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/parse/NbtPathExpressionParseHandlerListSlice.ts
+  var NbtPathExpressionParseHandlerListSlice = class _NbtPathExpressionParseHandlerListSlice {
+    REGEX_RANGE = new RegExp("^\\[([0-9]*):([0-9]*)(:([0-9]+))?\\]");
+    handlePrefixOf(nbtPathExpression, pos) {
+      const region = nbtPathExpression.slice(pos);
+      const match = region.match(this.REGEX_RANGE);
+      if (!match) {
+        return HandleResult.INVALID;
+      }
+      const startString = match[1] ?? "";
+      const endString = match[2] ?? "";
+      const stepString = match[4] ?? null;
+      const start = startString !== "" ? parseInt(startString, 10) : 0;
+      const end = endString !== "" ? parseInt(endString, 10) : -1;
+      const step = stepString !== null ? parseInt(stepString, 10) : 1;
+      if (step === 0) {
+        return HandleResult.INVALID;
+      }
+      return new HandleResult(
+        new _NbtPathExpressionParseHandlerListSlice.Expression(
+          start,
+          end,
+          step
+        ),
+        3 +
+          startString.length +
+          endString.length +
+          (stepString == null ? 0 : 1 + stepString.length)
+      );
+    }
+    static newStartEndStepStream(start, end, step) {
+      end -= start - 1;
+      let endScaled = end / step;
+      let endMod = end % step > 0 ? 1 : 0;
+      let countingArr = [];
+      for (let i = 0; i < endScaled + endMod; i++) countingArr.push(i);
+      return countingArr.map((i) => i * step + start);
+    }
+    static Expression;
+  };
+  var Expression7 = class extends INbtPathExpression {
+    start;
+    end;
+    step;
+    constructor(start, end, step) {
+      super();
+      this.start = start;
+      this.end = end;
+      this.step = step;
+    }
+    getStart() {
+      return this.start;
+    }
+    getEnd() {
+      return this.end;
+    }
+    getStep() {
+      return this.step;
+    }
+    matchContexts(executionContexts) {
+      return new NbtPathExpressionMatches(
+        executionContexts
+          .flatMap((executionContext) => {
+            let nbt = executionContext.getCurrentTag();
+            if (nbt.getType() == Tag.TAG_LIST) {
+              let tag = nbt;
+              let start = this.getStart();
+              let actualEnd =
+                this.getEnd() > -1
+                  ? Math.min(tag.size().toJSNumber() - 1, this.getEnd())
+                  : tag.size().toJSNumber() - 1;
+              let step = this.getStep();
+              return NbtPathExpressionParseHandlerListSlice.newStartEndStepStream(
+                start,
+                actualEnd,
+                step
+              ).map(
+                (i) =>
+                  new NbtPathExpressionExecutionContext(
+                    tag.get(new Integer(i)),
+                    executionContext
+                  )
+              );
+            }
+            return null;
+          })
+          .filter((e) => e != null)
+      );
+    }
+  };
+  NbtPathExpressionParseHandlerListSlice.Expression = Expression7;
+
+  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/parse/NbtPathExpressionParseHandlerParent.ts
+  var NbtPathExpressionParseHandlerParent = class _NbtPathExpressionParseHandlerParent {
+    handlePrefixOf(nbtPathExpression, pos) {
+      if (
+        nbtPathExpression.length <= pos + 1 ||
+        nbtPathExpression.charAt(pos) != "." ||
+        nbtPathExpression.charAt(pos + 1) != "."
+      ) {
+        return HandleResult.INVALID;
+      }
+      return new HandleResult(
+        _NbtPathExpressionParseHandlerParent.Expression.INSTANCE,
+        2
+      );
+    }
+    static Expression;
+  };
+  var Expression8 = class _Expression extends INbtPathExpression {
+    static INSTANCE = new _Expression();
+    matchContexts(executionContexts) {
+      return new NbtPathExpressionMatches(
+        executionContexts
+          .map((e) => e.getParentContext())
+          .filter((e) => e != null)
+      );
+    }
+  };
+  NbtPathExpressionParseHandlerParent.Expression = Expression8;
+
+  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/parse/NbtPathExpressionParseHandlerRoot.ts
+  var NbtPathExpressionParseHandlerRoot = class _NbtPathExpressionParseHandlerRoot {
+    handlePrefixOf(nbtPathExpression, pos) {
+      if (nbtPathExpression.charAt(pos) != "$") {
+        return HandleResult.INVALID;
+      }
+      return new HandleResult(
+        _NbtPathExpressionParseHandlerRoot.Expression.INSTANCE,
+        1
+      );
+    }
+    static Expression = class Expression11 extends INbtPathExpression {
+      static INSTANCE = new Expression11();
+      matchContexts(executionContexts) {
+        return new NbtPathExpressionMatches(
+          executionContexts.map((e) => e.getRootContext())
+        );
+      }
+      asNavigation(child) {
+        return child;
+      }
+    };
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/parse/NbtPathExpressionParseHandlerStringEqual.ts
+  var NbtPathExpressionParseHandlerStringEqual = class _NbtPathExpressionParseHandlerStringEqual {
+    /**
+     * Skips all consecutive spaces.
+     * @param str Source string
+     * @param pos Index of the first potential space
+     * @return Index of first encountered non space character
+     */
+    static skipSpaces(str, pos) {
+      while (pos < str.length && str.charAt(pos) == " ") {
+        pos++;
+      }
+      return pos;
+    }
+    handlePrefixOf(nbtPathExpression, pos) {
+      let currentPos = _NbtPathExpressionParseHandlerStringEqual.skipSpaces(
+        nbtPathExpression,
+        pos
+      );
+      if (currentPos + 1 >= nbtPathExpression.length) {
+        return HandleResult.INVALID;
+      }
+      if (
+        nbtPathExpression.charAt(currentPos) != "=" ||
+        nbtPathExpression.charAt(currentPos + 1) != "="
+      ) {
+        return HandleResult.INVALID;
+      }
+      currentPos = _NbtPathExpressionParseHandlerStringEqual.skipSpaces(
+        nbtPathExpression,
+        currentPos + 2
+      );
+      let parseResult = NbtPathStringParser.parse(
+        nbtPathExpression,
+        currentPos
+      );
+      if (!parseResult.isSuccess()) {
+        return HandleResult.INVALID;
+      }
+      return new HandleResult(
+        new _NbtPathExpressionParseHandlerStringEqual.Expression(
+          parseResult.getResult()
+        ),
+        currentPos - pos + parseResult.getConsumed()
+      );
+    }
+    static Expression;
+  };
+  var Expression9 = class extends INbtPathExpression {
+    targetString;
+    constructor(targetString) {
+      super();
+      this.targetString = targetString;
+    }
+    getTargetString() {
+      return this.targetString;
+    }
+    matchContexts(executionContexts) {
+      return new NbtPathExpressionMatches(
+        executionContexts.map((executionContext) => {
+          let nbt = executionContext.getCurrentTag();
+          if (nbt.getType() == Tag.TAG_STRING) {
+            let tag = nbt;
+            return new NbtPathExpressionExecutionContext(
+              ByteTag.valueOf(
+                new Integer(+this.getTargetString().equals(tag.valueOf()))
+              ),
+              executionContext
+            );
+          }
+          return new NbtPathExpressionExecutionContext(
+            ByteTag.valueOf(Integer.ZERO),
+            executionContext
+          );
+        })
+      );
+    }
+  };
+  NbtPathExpressionParseHandlerStringEqual.Expression = Expression9;
+
+  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/parse/NBTPathExpressionParseHandlerUnion.ts
+  var NbtPathExpressionParseHandlerUnion = class {
+    REGEX_BRACKETS = new RegExp("^\\[([^\\]]+(,[^\\]]+)+)\\]");
+    handlePrefixOf(nbtPathExpression, pos) {
+      const match = this.REGEX_BRACKETS.exec(nbtPathExpression.slice(pos));
+      if (!match) {
+        return HandleResult.INVALID;
+      }
+      let contents = match[1].split(",");
+      let childNames = [];
+      let childIndexes = [];
+      let expressionLength = 1;
+      for (const match2 of contents) {
+        expressionLength += 1 + match2.length;
+        try {
+          childIndexes.push(parseInt(match2));
+          if (!(childNames.length == 0)) {
+            return HandleResult.INVALID;
+          }
+        } catch (e) {
+          childNames.push(new iString(match2));
+          if (!(childIndexes.length == 0)) {
+            return HandleResult.INVALID;
+          }
+        }
+      }
+      return new HandleResult(
+        new Expression10(childNames, childIndexes),
+        expressionLength
+      );
+    }
+    static Expression;
+  };
+  var Expression10 = class extends INbtPathExpression {
+    childNames;
+    childIndexes;
+    constructor(childNames, childIndexes) {
+      super();
+      this.childNames = childNames;
+      this.childIndexes = childIndexes;
+    }
+    getChildNames() {
+      return this.childNames;
+    }
+    getChildIndexes() {
+      return this.childIndexes;
+    }
+    matchContexts(executionContexts) {
+      return new NbtPathExpressionMatches(
+        executionContexts
+          .flatMap((executionContext) => {
+            let nbt = executionContext.getCurrentTag();
+            if (
+              !(this.getChildIndexes().length == 0) &&
+              nbt.getType() == Tag.TAG_LIST
+            ) {
+              let tag = nbt;
+              return this.getChildIndexes()
+                .map((i) => tag.get(new Integer(i)))
+                .filter((subTag) => subTag.getType() == Tag.TAG_COMPOUND)
+                .map(
+                  (subTag) =>
+                    new NbtPathExpressionExecutionContext(
+                      subTag,
+                      executionContext
+                    )
+                );
+            } else if (
+              !(this.getChildNames().length == 0) &&
+              nbt.getType() == Tag.TAG_COMPOUND
+            ) {
+              let tag = nbt;
+              return this.getChildNames()
+                .map((e) => tag.get(e))
+                .filter((e) => e != null)
+                .map(
+                  (subTag) =>
+                    new NbtPathExpressionExecutionContext(
+                      subTag,
+                      executionContext
+                    )
+                );
+            }
+            return null;
+          })
+          .filter((e) => e != null)
+      );
+    }
+    asNavigation(child) {
+      if (!(this.getChildNames().length == 0)) {
+        return new NbtPathNavigationAdapter(this.getChildNames(), child);
+      } else {
+        throw new Error(
+          "NbtPathExpressionParseHandlerUnion.Expression#asNavigation is not implemented for lists"
+        );
+      }
+    }
+  };
+  NbtPathExpressionParseHandlerUnion.Expression = Expression10;
+
+  // TSFiles/IntegratedDynamicsClasses/NBTFunctions/NbtPath.ts
+  var NbtPath = class _NbtPath {
+    static PARSE_HANDLERS = [
+      new NbtPathExpressionParseHandlerRoot(),
+      new NbtPathExpressionParseHandlerLength(),
+      new NbtPathExpressionParseHandlerChild(),
+      new NbtPathExpressionParseHandlerChildBrackets(),
+      new NbtPathExpressionParseHandlerParent(),
+      new NbtPathExpressionParseHandlerAllChildren(),
+      new NbtPathExpressionParseHandlerCurrent(),
+      new NbtPathExpressionParseHandlerListElement(),
+      new NbtPathExpressionParseHandlerListSlice(),
+      new NbtPathExpressionParseHandlerUnion(),
+      new NbtPathExpressionParseHandlerBooleanRelationalLessThan(),
+      new NbtPathExpressionParseHandlerBooleanRelationalLessThanOrEqual(),
+      new NbtPathExpressionParseHandlerBooleanRelationalGreaterThan(),
+      new NbtPathExpressionParseHandlerBooleanRelationalGreaterThanOrEqual(),
+      new NbtPathExpressionParseHandlerBooleanRelationalEqual(),
+      new NbtPathExpressionParseHandlerStringEqual(),
+      new NbtPathExpressionParseHandlerFilterExpression(),
+    ];
+    /**
+     * Parse an NBT path expression string into an in-memory representation.
+     * @param nbtPathExpression An NBT path expression string
+     * @return An in-memory representation of the given expression.
+     * @throws NbtParseException An exception that can be thrown if parsing failed.
+     */
+    static parse(nbtPathExpression) {
+      let expressions = [];
+      let pos = 0;
+      while (pos < nbtPathExpression.length) {
+        let handled = false;
+        for (const parseHandler of _NbtPath.PARSE_HANDLERS) {
+          let handleResult = parseHandler.handlePrefixOf(
+            nbtPathExpression,
+            pos
+          );
+          if (handleResult.isValid()) {
+            pos += handleResult.getConsumedExpressionLength();
+            expressions.push(handleResult.getPrefixExpression());
+            handled = true;
+            break;
+          }
+        }
+        if (!handled) {
+          throw new Error(
+            `Failed to parse expression at pos '${pos}': ${nbtPathExpression}`
+          );
+        }
+        return new NbtPathExpressionList(...expressions);
+      }
+      return void 0;
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_PATH_MATCH_ALL.ts
+  var OPERATOR_NBT_PATH_MATCH_ALL = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_path_match_all",
+        nicknames: ["nbtPathMatchAll"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "NBT",
+              },
+              to: { type: "List", listType: { type: "NBT" } },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT.path_match_all",
+        interactName: "stringNbtPathMatchAll",
+        function: (path) => {
+          return (nbt) => {
+            let expression = NbtPath.parse(path.valueOf());
+            if (!expression) throw new Error(`Invalid path: ${path.valueOf()}`);
+            return new iArrayEager(expression.match(nbt).getMatches());
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_PATH_MATCH_FIRST.ts
+  var OPERATOR_NBT_PATH_MATCH_FIRST = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_path_match_first",
+        nicknames: ["nbtPathMatchFirst"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "NBT",
+              },
+              to: {
+                type: "NBT",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT.path_match_first",
+        interactName: "stringNbtPathMatchFirst",
+        function: (path) => {
+          return (nbt) => {
+            let expression = NbtPath.parse(path.valueOf());
+            if (!expression) throw new Error(`Invalid path: ${path.valueOf()}`);
+            return expression.match(nbt).getMatches()[0] ?? new NullTag();
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NBT_PATH_TEST.ts
+  var OPERATOR_NBT_PATH_TEST = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:nbt_path_test",
+        nicknames: ["NBTPathTest"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "NBT",
+              },
+              to: {
+                type: "Boolean",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT.path_test",
+        interactName: "stringNbtPathTest",
+        function: (path) => {
+          return (nbt) => {
+            let expression = NbtPath.parse(path.valueOf());
+            if (!expression) throw new Error(`Invalid path: ${path.valueOf()}`);
+            return new iBoolean(expression.test(nbt));
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NULLABLE_ISNOTNULL.ts
+  var OPERATOR_NULLABLE_ISNOTNULL = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:general_isnotnull",
+        nicknames: ["isNotNull", "nullableIsnotnull"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: { type: "Any", typeID: 1 },
+            to: {
+              type: "Boolean",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "\u2205",
+        interactName: "anyIsNotNull",
+        function: (value) => {
+          return new iBoolean(value !== null && value !== void 0);
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NULLABLE_ISNULL.ts
+  var OPERATOR_NULLABLE_ISNULL = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:general_isnull",
+        nicknames: ["isNull", "nullableIsnull", "GENERAL_IS_NULL"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: { type: "Any", typeID: 1 },
+            to: {
+              type: "Boolean",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "o",
+        interactName: "anyIsNull",
+        function: (value) => {
+          return new iBoolean(value === null || value === void 0);
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NUMBER_CEIL.ts
+  var OPERATOR_NUMBER_CEIL = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:number_ceil",
+        nicknames: ["ceil", "numberCeil"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Number",
+            },
+            to: {
+              type: "Integer",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "\u2308 \u2309",
+        interactName: "numberCeil",
+        function: (number) => {
+          return number.ceil();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NUMBER_COMPACT.ts
+  var OPERATOR_NUMBER_COMPACT = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:number_compact",
+        nicknames: ["compact", "numberCompact"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Number",
+            },
+            to: {
+              type: "String",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "compact",
+        interactName: "numberCompact",
+        function: (number) => {
+          return new iString(number.toString());
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NUMBER_FLOOR.ts
+  var OPERATOR_NUMBER_FLOOR = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:number_floor",
+        nicknames: ["floor", "numberFloor"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Number",
+            },
+            to: {
+              type: "Integer",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "\u230A \u230B",
+        interactName: "numberFloor",
+        function: (number) => {
+          return number.floor();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/NUMBER_ROUND.ts
+  var OPERATOR_NUMBER_ROUND = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:number_round",
+        nicknames: ["round", "numberRound"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Number",
+            },
+            to: {
+              type: "Integer",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "|| ||",
+        interactName: "numberRound",
+        function: (number) => {
+          return number.round();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_BLOCK_BREAKSOUND.ts
+  var OPERATOR_OBJECT_BLOCK_BREAKSOUND = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:block_breaksound",
+        nicknames: [
+          "BlockBreaksound",
+          "block_break_sound",
+          "blockBreakSound",
+          "breakSound",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Block",
+            },
+            to: {
+              type: "String",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "break_sound",
+        interactName: "blockBreakSound",
+        function: (block) => {
+          return block.getBreakSound();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_BLOCK_BY_NAME.ts
+  var OPERATOR_OBJECT_BLOCK_BY_NAME = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:block_blockbyname",
+        nicknames: ["BlockByName", "block_by_name", "blockByName"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Block",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "block_by_name",
+        interactName: "stringBlockByName",
+        function: (_name) => {
+          throw new Error(
+            "Block by name is infeasible without a registry. This is a placeholder function."
+          );
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_BLOCK_ISSHEARABLE.ts
+  var OPERATOR_OBJECT_BLOCK_ISSHEARABLE = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:block_isshearable",
+        nicknames: [
+          "BlockIsshearable",
+          "block_is_shearable",
+          "blockIsShearable",
+          "blockIsShearable",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Block",
+            },
+            to: {
+              type: "Boolean",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "is_shearable",
+        interactName: "blockIsShearable",
+        function: (block) => {
+          return block.isShearable();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_BLOCK_ITEMSTACK.ts
+  var OPERATOR_OBJECT_BLOCK_ITEMSTACK = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:block_itemstack",
+        nicknames: [
+          "BlockItemstack",
+          "block_item",
+          "blockItemstack",
+          "block_itemstack",
+          "blockItem",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Block",
+            },
+            to: {
+              type: "Item",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "itemstack",
+        interactName: "blockItemStack",
+        function: (block) => {
+          return block.getItem();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_BLOCK_MODNAME.ts
+  var OPERATOR_OBJECT_BLOCK_MODNAME = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:block_mod",
+        nicknames: [
+          "BlockItemstack",
+          "block_item",
+          "blockItemstack",
+          "block_itemstack",
+          "blockItem",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Block",
+            },
+            to: {
+              type: "String",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "mod",
+        interactName: "blockMod",
+        function: (block) => {
+          return block.getModName();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_BLOCK_OPAQUE.ts
+  var OPERATOR_OBJECT_BLOCK_OPAQUE = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:block_opaque",
+        nicknames: ["BlockOpaque", "opaque"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Block",
+            },
+            to: {
+              type: "Boolean",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "opaque",
+        interactName: "blockIsOpaque",
+        function: (block) => {
+          return block.isOpaque();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_BLOCK_PLACESOUND.ts
+  var OPERATOR_OBJECT_BLOCK_PLACESOUND = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:block_placesound",
+        nicknames: [
+          "BlockPlacesound",
+          "blockPlaceSound",
+          "block_place_sound",
+          "placeSound",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Block",
+            },
+            to: {
+              type: "String",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "place_sound",
+        interactName: "blockPlaceSound",
+        function: (block) => {
+          return block.getPlaceSound();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_BLOCK_PLANTAGE.ts
+  var OPERATOR_OBJECT_BLOCK_PLANTAGE = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:block_plantage",
+        nicknames: [
+          "BlockPlantage",
+          "block_plant_age",
+          "blockPlantAge",
+          "plantAge",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Block",
+            },
+            to: {
+              type: "Integer",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "plant_age",
+        interactName: "blockPlantAge",
+        function: (block) => {
+          return block.getPlantAge();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_BLOCK_POSSIBLE_PROPERTIES.ts
+  var OPERATOR_OBJECT_BLOCK_POSSIBLE_PROPERTIES = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:block_blockpossibleproperties",
+        nicknames: [
+          "BlockPossibleProperties",
+          "block_possible_properties",
+          "blockPossibleProperties",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Block",
+            },
+            to: {
+              type: "NBT",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "block_all_props",
+        interactName: "blockPossibleProperties",
+        function: (_block) => {
+          throw new Error(
+            "Block possible properties is infeasible without a registry. This is a placeholder function."
+          );
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_BLOCK_PROPERTIES.ts
+  var OPERATOR_OBJECT_BLOCK_PROPERTIES = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:block_blockproperties",
+        nicknames: ["BlockProperties", "block_properties", "blockProperties"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Block",
+            },
+            to: {
+              type: "NBT",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "block_props",
+        interactName: "blockProperties",
+        function: (block) => {
+          return block.getProperties().toCompoundTag();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_BLOCK_STEPSOUND.ts
+  var OPERATOR_OBJECT_BLOCK_STEPSOUND = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:block_stepsound",
+        nicknames: [
+          "BlockStepsound",
+          "blockStepSound",
+          "block_step_sound",
+          "stepSound",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Block",
+            },
+            to: {
+              type: "String",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "step_sound",
+        interactName: "blockStepSound",
+        function: (block) => {
+          return block.getStepSound();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_BLOCK_TAG.ts
+  var OPERATOR_OBJECT_BLOCK_TAG = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:block_tag",
+        nicknames: ["BlockTag", "blockTag"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Block",
+            },
+            to: { type: "List", listType: { type: "String" } },
+          },
+          globalMap2
+        ),
+        symbol: "block_tag_names",
+        interactName: "blockTags",
+        function: (block) => {
+          return block.getTagNames();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_BLOCK_TAG_STACKS.ts
+  var OPERATOR_OBJECT_BLOCK_TAG_STACKS = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:string_blocktag",
+        nicknames: ["BlockTagStacks", "block_tag_stacks", "blockTagStacks"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: { type: "List", listType: { type: "Block" } },
+          },
+          globalMap2
+        ),
+        symbol: "block_tag_values",
+        interactName: "stringBlocksByTag",
+        function: (_name) => {
+          throw new Error(
+            "Block tag values is infeasible without a registry. This is a placeholder function."
+          );
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_BLOCK_WITH_PROPERTIES.ts
+  var OPERATOR_OBJECT_BLOCK_WITH_PROPERTIES = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:block_blockfromproperties",
+        nicknames: [
+          "BlockWithProperties",
+          "block_with_properties",
+          "blockWithProperties",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Block",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "NBT",
+              },
+              to: {
+                type: "Block",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "block_with_props",
+        interactName: "blockWithProperties",
+        function: (block) => {
+          return (nbtProperties) => {
+            const properties = new Properties(nbtProperties.toJSON());
+            return new Block(properties, block);
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ENTITY_AGE.ts
+  var OPERATOR_OBJECT_ENTITY_AGE = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:entity_age",
+        nicknames: ["EntityAge", "entity_age", "entityAge"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Entity",
+            },
+            to: {
+              type: "Integer",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "age",
+        interactName: "entityAge",
+        function: (entity) => {
+          return entity.getAge();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ENTITY_CANBREED.ts
+  var OPERATOR_OBJECT_ENTITY_CANBREED = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:entity_canbreed",
+        nicknames: [
+          "EntityCanbreed",
+          "entity_can_breed",
+          "entityCanBreed",
+          "canBreed",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Entity",
+            },
+            to: {
+              type: "Boolean",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "canbreed",
+        interactName: "entityCanBreed",
+        function: (entity) => {
+          return entity.canBreed();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ENTITY_CANBREEDWITH.ts
+  var OPERATOR_OBJECT_ENTITY_CANBREEDWITH = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:entity_canbreedwith",
+        nicknames: [
+          "EntityCanbreedwith",
+          "entity_can_breed_with",
+          "entityCanBreedWith",
+          "canBreedWith",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Entity",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "Entity",
+              },
+              to: {
+                type: "Boolean",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "can_breed_with",
+        interactName: "entityCanBreedWith",
+        function: (entity1) => {
+          return (entity2) => {
+            return entity1.getBreadableList().includes(entity2.getUniqueName());
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ENTITY_DEATHSOUND.ts
+  var OPERATOR_OBJECT_ENTITY_DEATHSOUND = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:entity_deathsound",
+        nicknames: [
+          "entityDeathSound",
+          "EntityDeathsound",
+          "entity_death_sound",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Entity",
+            },
+            to: {
+              type: "String",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "deathsound",
+        interactName: "entityDeathSound",
+        function: (entity) => {
+          return entity.getDeathSound();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ENTITY_ENERGY_CAPACITY.ts
+  var OPERATOR_OBJECT_ENTITY_ENERGY_CAPACITY = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:entity_entityenergystored",
+        nicknames: [
+          "EntityEnergyCapacity",
+          "entity_energy_capacity",
+          "entityEnergyCapacity",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Entity",
+            },
+            to: {
+              type: "Integer",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "entity_capacity_fe",
+        interactName: "entityEnergyCapacity",
+        function: (entity) => {
+          return entity.getEnergyCapacity();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ENTITY_ENERGY_STORED.ts
+  var OPERATOR_OBJECT_ENTITY_ENERGY_STORED = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:entity_entityenergystored",
+        nicknames: [
+          "EntityEnergyStored",
+          "entity_energy_stored",
+          "entityEnergyStored",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Entity",
+            },
+            to: {
+              type: "Integer",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "entity_stored_fe",
+        interactName: "entityEnergy",
+        function: (entity) => {
+          return entity.getEnergyStored();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ENTITY_ENTITYITEMTOOLTIP.ts
+  var OPERATOR_OBJECT_ENTITY_ENTITYITEMTOOLTIP = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:entity_entityitemtooltip",
+        nicknames: [
+          "ItemstackEntityTooltip",
+          "itemstack_entity_tooltip",
+          "itemstackEntityTooltip",
+          "item_entity_tooltip",
+          "itemEntityTooltip",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Entity",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "Item",
+              },
+              to: { type: "List", listType: { type: "String" } },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "entity_item_tooltip",
+        interactName: "entityEntityItemTooltip",
+        function: (entity) => {
+          return (item) => {
+            if (entity.isPlayer().valueOf()) {
+              return item.getTooltip(entity);
+            }
+            console.warn(
+              "Entity item tooltip is not fully supported for non-player entities. Returning item tooltip only."
+            );
+            return item.getTooltip();
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ENTITY_FLUIDS.ts
+  var OPERATOR_OBJECT_ENTITY_FLUIDS = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:entity_entityfluids",
+        nicknames: ["EntityFluids", "entity_fluids", "entityFluids"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Entity",
+            },
+            to: { type: "List", listType: { type: "Fluid" } },
+          },
+          globalMap2
+        ),
+        symbol: "entity_fluids",
+        interactName: "entityFluids",
+        function: (entity) => {
+          return new iArrayEager(entity.getFluids());
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ENTITY_HEIGHT.ts
+  var OPERATOR_OBJECT_ENTITY_HEIGHT = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:entity_height",
+        nicknames: [
+          "EntityHeight",
+          "entity_height",
+          "entityHeight",
+          "entityHeight",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Entity",
+            },
+            to: {
+              type: "Double",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "height",
+        interactName: "entityHeight",
+        function: (entity) => {
+          return entity.getHeight();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ENTITY_HURTSOUND.ts
+  var OPERATOR_OBJECT_ENTITY_HURTSOUND = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:entity_hurtsound",
+        nicknames: ["EntityHurtsound", "entity_hurt_sound", "entityHurtSound"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Entity",
+            },
+            to: {
+              type: "String",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "hurtsound",
+        interactName: "entityHurtSound",
+        function: (entity) => {
+          return entity.getHurtSound();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ENTITY_INVENTORY.ts
+  var OPERATOR_OBJECT_ENTITY_INVENTORY = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:entity_inventory",
+        nicknames: [
+          "EntityInventoryContents",
+          "entity_inventory_contents",
+          "entityInventoryContents",
+          "entityInventoryContents",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Entity",
+            },
+            to: { type: "List", listType: { type: "Item" } },
+          },
+          globalMap2
+        ),
+        symbol: "entity_inventory",
+        interactName: "entityInventory",
+        function: (entity) => {
+          return entity.getInventory();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ENTITY_ISANIMAL.ts
+  var OPERATOR_OBJECT_ENTITY_ISANIMAL = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:entity_isanimal",
+        nicknames: [
+          "EntityIsanimal",
+          "entity_is_animal",
+          "entityIsAnimal",
+          "isAnimal",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Entity",
+            },
+            to: {
+              type: "Boolean",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "is_animal",
+        interactName: "entityIsAnimal",
+        function: (entity) => {
+          return entity.isAnimal();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ENTITY_ISBURNING.ts
+  var OPERATOR_OBJECT_ENTITY_ISBURNING = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:entity_isburning",
+        nicknames: [
+          "EntityIsburning",
+          "entity_is_burning",
+          "entityIsBurning",
+          "isBurning",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Entity",
+            },
+            to: {
+              type: "Boolean",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "is_burning",
+        interactName: "entityIsBurning",
+        function: (entity) => {
+          return entity.isBurning();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ENTITY_ISCHILD.ts
+  var OPERATOR_OBJECT_ENTITY_ISCHILD = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:entity_ischild",
+        nicknames: [
+          "isChild",
+          "EntityIschild",
+          "entity_is_child",
+          "entityIsChild",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Entity",
+            },
+            to: {
+              type: "Boolean",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "is_child",
+        interactName: "entityIsChild",
+        function: (entity) => {
+          return entity.isChild();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ENTITY_ISCROUCHING.ts
+  var OPERATOR_OBJECT_ENTITY_ISCROUCHING = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:entity_iscrouching",
+        nicknames: [
+          "EntityIscrouching",
+          "entity_is_crouching",
+          "entityIsCrouching",
+          "isCrouching",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Entity",
+            },
+            to: {
+              type: "Boolean",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "is_crouching",
+        interactName: "entityIsCrouching",
+        function: (entity) => {
+          return entity.isCrouching();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ENTITY_ISEATING.ts
+  var OPERATOR_OBJECT_ENTITY_ISEATING = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:entity_iseating",
+        nicknames: [
+          "EntityIseating",
+          "entity_is_eating",
+          "entityIsEating",
+          "isEating",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Entity",
+            },
+            to: {
+              type: "Boolean",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "is_eating",
+        interactName: "entityIsEating",
+        function: (entity) => {
+          return entity.isEating();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ENTITY_ISINLOVE.ts
+  var OPERATOR_OBJECT_ENTITY_ISINLOVE = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:entity_isinlove",
+        nicknames: [
+          "EntityIsinlove",
+          "entity_is_in_love",
+          "entityIsInLove",
+          "isInLove",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Entity",
+            },
+            to: {
+              type: "Boolean",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "is_in_love",
+        interactName: "entityIsInLove",
+        function: (entity) => {
+          return entity.isInLove();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ENTITY_ISITEM.ts
+  var OPERATOR_OBJECT_ENTITY_ISITEM = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:entity_isitem",
+        nicknames: ["EntityIsitem", "entity_is_item", "entityIsItem", "isItem"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Entity",
+            },
+            to: {
+              type: "Boolean",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "is_item",
+        interactName: "entityIsItem",
+        function: (entity) => {
+          return entity.isItem();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ENTITY_ISMOB.ts
+  var OPERATOR_OBJECT_ENTITY_ISMOB = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:entity_ismob",
+        nicknames: ["EntityIsmob", "entity_is_mob", "entityIsMob", "isMob"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Entity",
+            },
+            to: {
+              type: "Boolean",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "is_mob",
+        interactName: "entityIsMob",
+        function: (entity) => {
+          return entity.isMob();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ENTITY_ISPLAYER.ts
+  var OPERATOR_OBJECT_ENTITY_ISPLAYER = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:entity_isplayer",
+        nicknames: [
+          "EntityIsplayer",
+          "entity_is_player",
+          "entityIsPlayer",
+          "isPlayer",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Entity",
+            },
+            to: {
+              type: "Boolean",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "is_player",
+        interactName: "entityIsPlayer",
+        function: (entity) => {
+          return entity.isPlayer();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ENTITY_ISSHEARABLE.ts
+  var OPERATOR_OBJECT_ENTITY_ISSHEARABLE = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:entity_isshearable",
+        nicknames: [
+          "EntityIsshearable",
+          "entity_is_shearable",
+          "entityIsShearable",
+          "entityIsShearable",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Entity",
+            },
+            to: {
+              type: "Boolean",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "is_shearable",
+        interactName: "entityIsShearable",
+        function: (entity) => {
+          return entity.isShearable();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ENTITY_ISWET.ts
+  var OPERATOR_OBJECT_ENTITY_ISWET = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:entity_iswet",
+        nicknames: ["EntityIswet", "entity_is_wet", "entityIsWet", "isWet"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Entity",
+            },
+            to: {
+              type: "Boolean",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "is_wet",
+        interactName: "entityIsWet",
+        function: (entity) => {
+          return entity.isWet();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ENTITY_ITEMS.ts
+  var OPERATOR_OBJECT_ENTITY_ITEMS = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:entity_entityitems",
+        nicknames: [
+          "EntityItems",
+          "entity_items",
+          "entityItems",
+          "entity_item_list",
+          "entityItemList",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Entity",
+            },
+            to: { type: "List", listType: { type: "Item" } },
+          },
+          globalMap2
+        ),
+        symbol: "entity_items",
+        interactName: "entityItems",
+        function: (entity) => {
+          return new iArrayEager(entity.getItemList());
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ENTITY_MODNAME.ts
+  var OPERATOR_OBJECT_ENTITY_MODNAME = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:entity_mod",
+        nicknames: ["EntityMod", "entity_mod", "entityMod", "entityModName"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Entity",
+            },
+            to: {
+              type: "String",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "entity_mod",
+        interactName: "entityMod",
+        function: (entity) => {
+          return entity.getModName();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ENTITY_MOUNTED.ts
+  var OPERATOR_OBJECT_ENTITY_MOUNTED = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:entity_mounted",
+        nicknames: ["EntityMounted", "entitys_mounted", "entitysMounted"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Entity",
+            },
+            to: { type: "Boolean" },
+          },
+          globalMap2
+        ),
+        symbol: "mounted",
+        interactName: "entityMounted",
+        function: (entity) => {
+          return entity.isEntityMounted();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ENTITY_NBT.ts
+  var OPERATOR_OBJECT_ENTITY_NBT = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:entity_nbt",
+        nicknames: ["EntityNbt", "entity_nbt", "canBreed", "entityNBT"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Entity",
+            },
+            to: {
+              type: "NBT",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT()",
+        interactName: "entityNbt",
+        function: (entity) => {
+          return entity.getNBT();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ENTITY_TYPE.ts
+  var OPERATOR_OBJECT_ENTITY_TYPE = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:entity_entitytype",
+        nicknames: ["EntityType", "entity_type", "entityType"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Entity",
+            },
+            to: {
+              type: "String",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "entity_type",
+        interactName: "entityType",
+        function: (entity) => {
+          return entity.getEntityType();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ENTITY_WIDTH.ts
+  var OPERATOR_OBJECT_ENTITY_WIDTH = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:entity_width",
+        nicknames: [
+          "EntityWidth",
+          "entity_width",
+          "entityWidth",
+          "entityWidth",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Entity",
+            },
+            to: {
+              type: "Double",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "width",
+        interactName: "entityWidth",
+        function: (entity) => {
+          return entity.getWidth();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_FLUIDSTACK_AMOUNT.ts
+  var OPERATOR_OBJECT_FLUIDSTACK_AMOUNT = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:fluidstack_amount",
+        nicknames: [
+          "FluidstackAmount",
+          "fluidstackAmount",
+          "fluid_stack_amount",
+          "fluidStackAmount",
+          "fluid_stack_amount",
+          "fluid_amount",
+          "fluidAmount",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Fluid",
+            },
+            to: {
+              type: "Integer",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "amount",
+        interactName: "fluidstackAmount",
+        function: (fluid) => {
+          return fluid.getAmount();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_FLUIDSTACK_BLOCK.ts
+  var OPERATOR_OBJECT_FLUIDSTACK_BLOCK = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:fluidstack_block",
+        nicknames: [
+          "FluidstackBlock",
+          "fluidstackBlock",
+          "fluid_stack_block",
+          "fluidStackBlock",
+          "fluid_stack_block",
+          "fluid_block",
+          "fluidBlock",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Fluid",
+            },
+            to: {
+              type: "Block",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "block",
+        interactName: "fluidstackBlock",
+        function: (fluid) => {
+          return fluid.getBlock();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_FLUIDSTACK_BUCKET.ts
+  var OPERATOR_OBJECT_FLUIDSTACK_BUCKET = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:fluidstack_bucket",
+        nicknames: [
+          "FluidstackBucket",
+          "fluidstackBucket",
+          "fluid_stack_bucket",
+          "fluidStackBucket",
+          "fluid_stack_bucket",
+          "fluid_bucket",
+          "fluidBucket",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Fluid",
+            },
+            to: {
+              type: "Item",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "bucket",
+        interactName: "fluidstackBucket",
+        function: (fluid) => {
+          return fluid.getBucket();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_FLUIDSTACK_BY_NAME.ts
+  var OPERATOR_OBJECT_FLUIDSTACK_BY_NAME = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:fluidstack_by_name",
+        nicknames: [
+          "FluidstackByName",
+          "fluidstack_by_name",
+          "fluidstackByName",
+          "fluid_by_name",
+          "fluidByName",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Fluid",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "fluid_by_name",
+        interactName: "stringFluidByName",
+        function: (_name) => {
+          throw new Error(
+            "Fluid by name is infeasible without a registry. This is a placeholder function."
+          );
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_FLUIDSTACK_DATA.ts
+  var OPERATOR_OBJECT_FLUIDSTACK_DATA = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:fluidstack_nbt",
+        nicknames: [
+          "FluidstackData",
+          "fluidstackData",
+          "fluid_stack_data",
+          "fluidStackData",
+          "fluid_stack_data",
+          "fluid_data",
+          "fluidData",
+          "fluid_NBT",
+          "fluidStackNBT",
+          "fluid_stack_NBT",
+          "fluidstack_NBT",
+          "fluidstackNBT",
+          "fluidNBT",
+          "fluidNBTKeys",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Fluid",
+            },
+            to: {
+              type: "NBT",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "NBT()",
+        interactName: "fluidstackNbt",
+        function: (fluid) => {
+          return fluid.getNBT();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_FLUIDSTACK_DATA_VALUE.ts
+  var OPERATOR_OBJECT_FLUIDSTACK_DATA_VALUE = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:fluidstack_datavalue",
+        nicknames: [
+          "FluidstackDataValue",
+          "fluidstackDataValue",
+          "fluid_stack_data_value",
+          "fluidStackDataValue",
+          "fluid_stack_data_value",
+          "fluid_data_value",
+          "fluidDataValue",
+          "fluid_NBT_value",
+          "fluidStackNBTValue",
+          "fluid_stack_NBT_value",
+          "fluidstack_NBT_value",
+          "fluidstackNBTValue",
+          "fluidNBTValue",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Fluid",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: {
+                type: "NBT",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "data_value",
+        interactName: "fluidstackDataValue",
+        function: (fluid) => {
+          return (key) => {
+            const nbt = fluid.getNBT();
+            if (!(nbt instanceof CompoundTag) || !nbt.has(key)) {
+              return new NullTag();
+            }
+            return nbt.get(key);
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_FLUIDSTACK_DATAKEYS.ts
+  var OPERATOR_OBJECT_FLUIDSTACK_DATAKEYS = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:fluidstack_datakeys",
+        nicknames: [
+          "FluidstackDataKeys",
+          "fluidstackDataKeys",
+          "fluid_stack_data_keys",
+          "fluidStackDataKeys",
+          "fluid_stack_data_keys",
+          "fluid_data_keys",
+          "fluidDataKeys",
+          "fluid_NBT_keys",
+          "fluidStackNBTKeys",
+          "fluid_stack_NBT_keys",
+          "fluidstack_NBT_keys",
+          "fluidstackNBTKeys",
+          "fluidNBTKeys",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Fluid",
+            },
+            to: { type: "List", listType: { type: "String" } },
+          },
+          globalMap2
+        ),
+        symbol: "data_keys",
+        interactName: "fluidstackDataKeys",
+        function: (fluid) => {
+          const nbt = fluid.getNBT();
+          if (nbt instanceof CompoundTag) {
+            return nbt.getAllKeys();
+          }
+          return new iArrayEager([]);
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_FLUIDSTACK_DENSITY.ts
+  var OPERATOR_OBJECT_FLUIDSTACK_DENSITY = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:fluidstack_density",
+        nicknames: [
+          "FluidstackDensity",
+          "fluidstackDensity",
+          "fluid_stack_density",
+          "fluidStackDensity",
+          "fluid_stack_density",
+          "fluid_density",
+          "fluidDensity",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Fluid",
+            },
+            to: {
+              type: "Integer",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "density",
+        interactName: "fluidstackDensity",
+        function: (fluid) => {
+          return fluid.getDensity();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_FLUIDSTACK_IS_LIGHTER_THAN_AIR.ts
+  var OPERATOR_OBJECT_FLUIDSTACK_IS_LIGHTER_THAN_AIR = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:fluidstack_lighter_than_air",
+        nicknames: [
+          "FluidstackIsLighterThanAir",
+          "fluidstackIsLighterThanAir",
+          "fluid_stack_is_lighter_than_air",
+          "fluidStackIsLighterThanAir",
+          "fluid_stack_is_lighter_than_air",
+          "fluid_is_lighter_than_air",
+          "fluidIsLighterThanAir",
+          "isLighterThanAir",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Fluid",
+            },
+            to: {
+              type: "Boolean",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "lighter_than_air",
+        interactName: "fluidstackIsLighterThanAir",
+        function: (fluid) => {
+          return fluid.isLighterThanAir();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_FLUIDSTACK_ISRAWFLUIDEQUAL.ts
+  var OPERATOR_OBJECT_FLUIDSTACK_ISRAWFLUIDEQUAL = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:fluidstack_israwfluidequal",
+        nicknames: [
+          "FluidstackIsrawfluidequal",
+          "fluidstackIsrawfluidequal",
+          "fluid_stack_israwfluidequal",
+          "fluidStackIsrawfluidequal",
+          "fluid_stack_israwfluidequal",
+          "fluid_israwfluidequal",
+          "isRawFluidEqual",
+          "rawFluidEquals",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Fluid",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "Fluid",
+              },
+              to: {
+                type: "Boolean",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "=Raw=",
+        interactName: "fluidstackIsRawEqual",
+        function: (fluid1) => {
+          return (fluid2) => {
+            return new iBoolean(
+              fluid1
+                .getUname()
+                .replace(new RegExp("\\s\\d+$"), "")
+                .toLowerCase() ===
+                fluid2
+                  .getUname()
+                  .replace(new RegExp("\\s\\d+$"), "")
+                  .toLowerCase()
+            );
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_FLUIDSTACK_LIGHT_LEVEL.ts
+  var OPERATOR_OBJECT_FLUIDSTACK_LIGHT_LEVEL = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:fluidstack_light_level",
+        nicknames: [
+          "FluidstackLightLevel",
+          "fluidstackLightLevel",
+          "fluid_stack_light_level",
+          "fluidStackLightLevel",
+          "fluid_stack_light_level",
+          "fluid_light_level",
+          "fluidLightLevel",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Fluid",
+            },
+            to: {
+              type: "Integer",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "light_level",
+        interactName: "fluidstackLightLevel",
+        function: (fluid) => {
+          return fluid.getLightLevel();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_FLUIDSTACK_MODNAME.ts
+  var OPERATOR_OBJECT_FLUIDSTACK_MODNAME = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:fluidstack_mod",
+        nicknames: [
+          "FluidstackModname",
+          "fluidstackModname",
+          "fluid_stack_modname",
+          "fluidStackModname",
+          "fluid_stack_modname",
+          "fluid_mod_name",
+          "fluidModName",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Fluid",
+            },
+            to: {
+              type: "String",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "mod",
+        interactName: "fluidstackMod",
+        function: (fluid) => {
+          return new iString(fluid.getModName());
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_FLUIDSTACK_RARITY.ts
+  var OPERATOR_OBJECT_FLUIDSTACK_RARITY = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:fluidstack_rarity",
+        nicknames: [
+          "FluidstackRarity",
+          "fluidstackRarity",
+          "fluid_stack_rarity",
+          "fluidStackRarity",
+          "fluid_stack_rarity",
+          "fluid_rarity",
+          "fluidRarity",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Fluid",
+            },
+            to: {
+              type: "String",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "rarity",
+        interactName: "fluidstackRarity",
+        function: (fluid) => {
+          return new iString(fluid.getRarity());
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_FLUIDSTACK_SOUND_BUCKET_EMPTY.ts
+  var OPERATOR_OBJECT_FLUIDSTACK_SOUND_BUCKET_EMPTY = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:fluidstack_sound_bucket_empty",
+        nicknames: [
+          "FluidstackSoundBucketEmpty",
+          "fluidstackSoundBucketEmpty",
+          "fluid_stack_sound_bucket_empty",
+          "fluidStackSoundBucketEmpty",
+          "fluid_stack_sound_bucket_empty",
+          "fluid_sound_bucket_empty",
+          "fluidSoundBucketEmpty",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Fluid",
+            },
+            to: {
+              type: "String",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "sound_bucket_empty",
+        interactName: "fluidstackBucketEmptySound",
+        function: (fluid) => {
+          return new iString(fluid.getBucketEmptySound());
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_FLUIDSTACK_SOUND_BUCKET_FILL.ts
+  var OPERATOR_OBJECT_FLUIDSTACK_SOUND_BUCKET_FILL = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:fluidstack_sound_bucket_fill",
+        nicknames: [
+          "FluidstackSoundBucketFill",
+          "fluidstackSoundBucketFill",
+          "fluid_stack_sound_bucket_fill",
+          "fluidStackSoundBucketFill",
+          "fluid_stack_sound_bucket_fill",
+          "fluid_sound_bucket_fill",
+          "fluidSoundBucketFill",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Fluid",
+            },
+            to: {
+              type: "String",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "sound_bucket_fill",
+        interactName: "fluidstackBucketFillSound",
+        function: (fluid) => {
+          return new iString(fluid.getBucketFillSound());
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_FLUIDSTACK_SOUND_FLUID_VAPORIZE.ts
+  var OPERATOR_OBJECT_FLUIDSTACK_SOUND_FLUID_VAPORIZE = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:fluidstack_sound_fluid_vaporize",
+        nicknames: [
+          "FluidstackSoundFluidVaporize",
+          "fluidstackSoundFluidVaporize",
+          "fluid_stack_sound_fluid_vaporize",
+          "fluidStackSoundFluidVaporize",
+          "fluid_stack_sound_fluid_vaporize",
+          "fluid_sound_fluid_vaporize",
+          "fluidSoundFluidVaporize",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Fluid",
+            },
+            to: {
+              type: "String",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "sound_fluid_vaporize",
+        interactName: "fluidstackFluidVaporizeSound",
+        function: (fluid) => {
+          return new iString(fluid.getFluidVaporizeSound());
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_FLUIDSTACK_TAG.ts
+  var OPERATOR_OBJECT_FLUIDSTACK_TAG = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:fluidstack_tag",
+        nicknames: [
+          "FluidstackTag",
+          "fluidstackTag",
+          "fluidstackTagStacks",
+          "fluidstackTagStack",
+          "fluidTag",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Fluid",
+            },
+            to: { type: "List", listType: { type: "String" } },
+          },
+          globalMap2
+        ),
+        symbol: "fluid_tag_names",
+        interactName: "fluidstackTags",
+        function: (fluid) => {
+          return new iArrayEager(
+            fluid.getTagNames().map((e) => new iString(e))
+          );
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_FLUIDSTACK_TAG_STACKS.ts
+  var OPERATOR_OBJECT_FLUIDSTACK_TAG_STACKS = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:string_fluidtag",
+        nicknames: [
+          "FluidstackTagStacks",
+          "fluidStackTagStacks",
+          "fluid_stack_tag_stacks",
+          "fluidTagStacks",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: { type: "List", listType: { type: "Fluid" } },
+          },
+          globalMap2
+        ),
+        symbol: "fluid_tag_values",
+        interactName: "stringFluidsByTag",
+        function: (_name) => {
+          throw new Error(
+            "Fluid tag values is infeasible without a registry. This is a placeholder function."
+          );
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_FLUIDSTACK_TEMPERATURE.ts
+  var OPERATOR_OBJECT_FLUIDSTACK_TEMPERATURE = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:fluidstack_temperature",
+        nicknames: [
+          "FluidstackTemperature",
+          "fluidstackTemperature",
+          "fluid_stack_temperature",
+          "fluidStackTemperature",
+          "fluid_stack_temperature",
+          "fluid_temperature",
+          "fluidTemperature",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Fluid",
+            },
+            to: {
+              type: "Integer",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "temperature",
+        interactName: "fluidstackTemperature",
+        function: (fluid) => {
+          return fluid.getTemperature();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_FLUIDSTACK_VISCOSITY.ts
+  var OPERATOR_OBJECT_FLUIDSTACK_VISCOSITY = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:fluidstack_viscosity",
+        nicknames: [
+          "FluidstackViscosity",
+          "fluidstackViscosity",
+          "fluid_stack_viscosity",
+          "fluidStackViscosity",
+          "fluid_stack_viscosity",
+          "fluid_viscosity",
+          "fluidViscosity",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Fluid",
+            },
+            to: {
+              type: "Integer",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "viscosity",
+        interactName: "fluidstackViscosity",
+        function: (fluid) => {
+          return fluid.getViscosity();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_FLUIDSTACK_WITH_AMOUNT.ts
+  var OPERATOR_OBJECT_FLUIDSTACK_WITH_AMOUNT = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:fluidstack_with_amount",
+        nicknames: [
+          "FluidstackWithAmount",
+          "fluidstackWithAmount",
+          "fluid_stack_with_amount",
+          "fluidStackWithAmount",
+          "fluid_stack_with_amount",
+          "fluid_with_amount",
+          "fluidWithAmount",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Fluid",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "Integer",
+              },
+              to: {
+                type: "Fluid",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "with_amount",
+        interactName: "fluidstackWithAmount",
+        function: (fluid) => {
+          return (amount) => {
+            return new Fluid(new Properties({ amount }), fluid);
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_FLUIDSTACK_WITH_DATA.ts
+  var OPERATOR_OBJECT_FLUIDSTACK_WITH_DATA = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:fluidstack_withdata",
+        nicknames: [
+          "FluidstackWithData",
+          "fluidstackWithData",
+          "fluid_stack_with_data",
+          "fluidStackWithData",
+          "fluidWithNBT",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Fluid",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: {
+                type: "Function",
+                from: {
+                  type: "NBT",
+                },
+                to: {
+                  type: "Fluid",
+                },
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "with_data",
+        interactName: "fluidstackWithData",
+        function: (fluid) => {
+          return (key) => {
+            return (value) => {
+              let nbt =
+                fluid.getNBT() instanceof NullTag
+                  ? new CompoundTag({})
+                  : fluid.getNBT();
+              nbt = nbt.set(key.valueOf(), value);
+              return new Fluid(new Properties({ nbt }), fluid);
+            };
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ITEMFRAME_CONTENTS.ts
+  var OPERATOR_OBJECT_ITEMFRAME_CONTENTS = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:entity_itemframecontents",
+        nicknames: [
+          "ItemframeContents",
+          "itemframe_contents",
+          "itemframeContents",
+          "item_frame_contents",
+          "itemFrameContents",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Entity",
+            },
+            to: {
+              type: "Item",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "itemframe_contents",
+        interactName: "entityItemFrameContents",
+        function: (entity) => {
+          if (entity.isItemFrame().valueOf()) {
+            return entity.getItemFrameContents();
+          } else {
+            throw new Error("Entity is not an item frame.");
+          }
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ITEMFRAME_ROTATION.ts
+  var OPERATOR_OBJECT_ITEMFRAME_ROTATION = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:entity_itemframerotation",
+        nicknames: [
+          "ItemframeRotation",
+          "itemframe_rotation",
+          "itemframeRotation",
+          "item_frame_rotation",
+          "itemFrameRotation",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Entity",
+            },
+            to: {
+              type: "Integer",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "itemframe_rotation",
+        interactName: "entityItemFrameRotation",
+        function: (entity) => {
+          if (entity.isItemFrame().valueOf()) {
+            return entity.getItemFrameRotation();
+          } else {
+            throw new Error("Entity is not an item frame.");
+          }
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ITEMSTACK_BLOCK.ts
+  var OPERATOR_OBJECT_ITEMSTACK_BLOCK = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:itemstack_block",
+        nicknames: [
+          "ItemstackBlock",
+          "itemstack_block",
+          "itemstackBlock",
+          "itemBlock",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Item",
+            },
+            to: {
+              type: "Block",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "block",
+        interactName: "itemstackBlock",
+        function: (item) => {
+          return new Block(new Properties({}), item.getBlock());
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ITEMSTACK_CANHARVESTBLOCK.ts
+  var OPERATOR_OBJECT_ITEMSTACK_CANHARVESTBLOCK = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:itemstack_canharvest",
+        nicknames: [
+          "ItemstackCanHarvestBlock",
+          "itemstack_can_harvest_block",
+          "itemstackCanHarvestBlock",
+          "canHarvestBlock",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Item",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "Block",
+              },
+              to: {
+                type: "Boolean",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "can_harvest",
+        interactName: "itemstackCanHarvest",
+        function: (_item) => {
+          return (_block) => {
+            throw new Error("Can harvest block not currently implemented");
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ITEMSTACK_DAMAGE.ts
+  var OPERATOR_OBJECT_ITEMSTACK_DAMAGE = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:itemstack_damage",
+        nicknames: [
+          "ItemstackDamage",
+          "itemstack_damage",
+          "itemstackDamage",
+          "damage",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Item",
+            },
+            to: {
+              type: "Integer",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "damage",
+        interactName: "itemstackDamage",
+        function: (item) => {
+          return item.getDamage();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ITEMSTACK_DATA_KEYS.ts
+  var OPERATOR_OBJECT_ITEMSTACK_DATA_KEYS = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:itemstack_datakeys",
+        nicknames: [
+          "ItemstackDatakeys",
+          "itemstack_data_keys",
+          "itemstackDataKeys",
+          "itemNBTKeys",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Item",
+            },
+            to: { type: "List", listType: { type: "String" } },
+          },
+          globalMap2
+        ),
+        symbol: "data_keys",
+        interactName: "itemStackDataKeys",
+        function: (item) => {
+          return item.getNBT().getAllKeys();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ITEMSTACK_FE_CAPACITY.ts
+  var OPERATOR_OBJECT_ITEMSTACK_FE_CAPACITY = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:itemstack_fecapacity",
+        nicknames: [
+          "ItemstackFecapacity",
+          "itemstack_fe_capacity",
+          "itemstackFECapacity",
+          "feCapacity",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Item",
+            },
+            to: {
+              type: "Integer",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "fe_capacity",
+        interactName: "itemstackFECapacity",
+        function: (item) => {
+          return item.getFeCapacity();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ITEMSTACK_FLUIDSTACK.ts
+  var OPERATOR_OBJECT_ITEMSTACK_FLUIDSTACK = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:itemstack_fluidstack",
+        nicknames: [
+          "ItemstackFluidstack",
+          "itemstack_fluidstack",
+          "itemstackFluidstack",
+          "itemFluidstack",
+          "item_fluidstack",
+          "itemFluid",
+          "item_fluid",
+          "itemstack_fluid",
+          "itemstackFluid",
+          "itemFluid",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Item",
+            },
+            to: {
+              type: "Fluid",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "fluidstack",
+        interactName: "itemstackFluidStack",
+        function: (item) => {
+          return item.getFluid();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ITEMSTACK_FLUIDSTACKCAPACITY.ts
+  var OPERATOR_OBJECT_ITEMSTACK_FLUIDSTACKCAPACITY = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:itemstack_fluidstackcapacity",
+        nicknames: [
+          "ItemstackFluidstackcapacity",
+          "itemstack_fluidstack_capacity",
+          "itemstackFluidstackCapacity",
+          "item_fluid_capacity",
+          "itemFluidCapacity",
+          "item_fluidstack_capacity",
+          "itemFluidstackCapacity",
+          "fluidCapatity",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Item",
+            },
+            to: {
+              type: "Integer",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "fluidstack_capacity",
+        interactName: "itemstackFluidCapacity",
+        function: (item) => {
+          return item.getFluidCapacity();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ITEMSTACK_FUELBURNTIME.ts
+  var OPERATOR_OBJECT_ITEMSTACK_FUELBURNTIME = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:itemstack_burntime",
+        nicknames: [
+          "ItemstackFuelburntime",
+          "item_fuel_burn_time",
+          "itemFuelBurnTime",
+          "fuelBurnTime",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Item",
+            },
+            to: {
+              type: "Integer",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "burn_time",
+        interactName: "itemstackBurnTime",
+        function: (item) => {
+          return item.getFuelBurnTime();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ITEMSTACK_HASINVENTORY.ts
+  var OPERATOR_OBJECT_ITEMSTACK_HASINVENTORY = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:itemstack_hasinventory",
+        nicknames: [
+          "ItemstackHasinventory",
+          "itemstack_has_inventory",
+          "itemstackHasInventory",
+          "hasInventory",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Item",
+            },
+            to: {
+              type: "Boolean",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "has_inventory",
+        interactName: "itemstackHasInventory",
+        function: (item) => {
+          return new iBoolean(item.getInventory().size().gt(Integer.ZERO));
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ITEMSTACK_HASNBT.ts
+  var OPERATOR_OBJECT_ITEMSTACK_HASNBT = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:itemstack_hasnbt",
+        nicknames: [
+          "ItemstackHasnbt",
+          "itemstack_has_nbt",
+          "itemstackHasNBT",
+          "hasNBT",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Item",
+            },
+            to: {
+              type: "Boolean",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "has_nbt",
+        interactName: "itemStackHasNBT",
+        function: (item) => {
+          return new iBoolean(item.getNBT().getType() != Tag.TAG_NULL);
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ITEMSTACK_INVENTORY.ts
+  var OPERATOR_OBJECT_ITEMSTACK_INVENTORY = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:itemstack_inventory",
+        nicknames: [
+          "ItemstackInventory",
+          "itemstack_inventory",
+          "itemstackInventory",
+          "item_inventory",
+          "itemInventory",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Item",
+            },
+            to: { type: "List", listType: { type: "Item" } },
+          },
+          globalMap2
+        ),
+        symbol: "inventory",
+        interactName: "itemstackInventory",
+        function: (item) => {
+          return item.getInventory();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ITEMSTACK_INVENTORYSIZE.ts
+  var OPERATOR_OBJECT_ITEMSTACK_INVENTORYSIZE = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:itemstack_inventorysize",
+        nicknames: [
+          "ItemstackInventorysize",
+          "itemstack_inventory_size",
+          "itemstackInventorySize",
+          "item_inventory_size",
+          "itemInventorySize",
+          "inventorySize",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Item",
+            },
+            to: {
+              type: "Integer",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "inventory_size",
+        interactName: "itemstackInventorySize",
+        function: (item) => {
+          return item.getInventory().size();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ITEMSTACK_ISDAMAGEABLE.ts
+  var OPERATOR_OBJECT_ITEMSTACK_ISDAMAGEABLE = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:itemstack_damageable",
+        nicknames: [
+          "ItemstackIsdamageable",
+          "itemstack_is_damageable",
+          "itemstackIsDamageable",
+          "isDamageable",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Item",
+            },
+            to: {
+              type: "Boolean",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "damageable",
+        interactName: "itemstackIsDamageable",
+        function: (item) => {
+          return item.isDamageable();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ITEMSTACK_ISDATAEQUAL.ts
+  var OPERATOR_OBJECT_ITEMSTACK_ISDATAEQUAL = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:itemstack_isnbtequal",
+        nicknames: [
+          "ItemstackIsdataequal",
+          "itemstack_is_dataequal",
+          "itemstackIsDataequal",
+          "=NBT=",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Item",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "Item",
+              },
+              to: {
+                type: "Boolean",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "=NBT=",
+        interactName: "itemstackIsNbtEqual",
+        function: (item1) => {
+          return (item2) => {
+            return item1.getNBT().equals(item2.getNBT());
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ITEMSTACK_ISENCHANTABLE.ts
+  var OPERATOR_OBJECT_ITEMSTACK_ISENCHANTABLE = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:itemstack_enchantable",
+        nicknames: [
+          "ItemstackIsenchantable",
+          "itemstack_is_enchantable",
+          "itemstackIsEnchantable",
+          "enchantable",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Item",
+            },
+            to: {
+              type: "Boolean",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "enchantable",
+        interactName: "itemstackIsEnchantable",
+        function: (item) => {
+          return item.isEnchantable();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ITEMSTACK_ISENCHANTED.ts
+  var OPERATOR_OBJECT_ITEMSTACK_ISENCHANTED = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:itemstack_enchanted",
+        nicknames: [
+          "ItemstackIsenchanted",
+          "itemstack_is_enchanted",
+          "itemstackIsEnchanted",
+          "isEnchanted",
+          "enchanted",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Item",
+            },
+            to: {
+              type: "Boolean",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "enchanted",
+        interactName: "itemstackIsEnchanted",
+        function: (item) => {
+          return item.isEnchanted();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ITEMSTACK_ISFLUIDSTACK.ts
+  var OPERATOR_OBJECT_ITEMSTACK_ISFLUIDSTACK = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:itemstack_isfluidstack",
+        nicknames: [
+          "ItemstackIsfluidstack",
+          "itemstack_is_fluidstack",
+          "itemstackIsFluidstack",
+          "itemHasFluid",
+          "isFluidstack",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Item",
+            },
+            to: {
+              type: "Boolean",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "is_fluidstack",
+        interactName: "itemstackIsFluidStack",
+        function: (item) => {
+          return new iBoolean(item.getFluid().getAmount().gt(Integer.ZERO));
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ITEMSTACK_ISITEMEQUALNODATA.ts
+  var OPERATOR_OBJECT_ITEMSTACK_ISITEMEQUALNODATA = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:itemstack_isnbtequal",
+        nicknames: [
+          "ItemstackIsitemequalnodata",
+          "itemstack_is_itemequalnodata",
+          "itemstackIsItemequalnodata",
+          "=NoNBT=",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Item",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "Item",
+              },
+              to: {
+                type: "Boolean",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "=NoNBT=",
+        interactName: "itemstackIsNbtEqual",
+        function: (item1) => {
+          return (item2) => {
+            return new iBoolean(
+              item1.getUniqueName().valueOf() ===
+                item2.getUniqueName().valueOf() &&
+                item1.getSize().equals(item2.getSize()).valueOf()
+            );
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ITEMSTACK_ISRAWITEMEQUAL.ts
+  var OPERATOR_OBJECT_ITEMSTACK_ISRAWITEMEQUAL = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:itemstack_israwitemequal",
+        nicknames: [
+          "ItemstackIsrawitemequal",
+          "itemstack_is_rawitemequal",
+          "itemstackIsRawitemequal",
+          "rawItemEquals",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Item",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "Item",
+              },
+              to: {
+                type: "Boolean",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "=Raw=",
+        interactName: "itemstackIsEqualRaw",
+        function: (item1) => {
+          return (item2) => {
+            return new iBoolean(
+              item1.getUniqueName().valueOf() ===
+                item2.getUniqueName().valueOf()
+            );
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ITEMSTACK_ISSTACKABLE.ts
+  var OPERATOR_OBJECT_ITEMSTACK_ISSTACKABLE = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:itemstack_stackable",
+        nicknames: [
+          "ItemstackIsstackable",
+          "itemstack_is_stackable",
+          "itemstackIsStackable",
+          "isStackable",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Item",
+            },
+            to: {
+              type: "Boolean",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "stackable",
+        interactName: "itemstackIsStackable",
+        function: (item) => {
+          return item.isStackable();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ITEMSTACK_MAXDAMAGE.ts
+  var OPERATOR_OBJECT_ITEMSTACK_MAXDAMAGE = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:itemstack_maxdamage",
+        nicknames: [
+          "ItemstackMaxdamage",
+          "itemstack_max_damage",
+          "itemstackMaxDamage",
+          "maxDamage",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Item",
+            },
+            to: {
+              type: "Integer",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "max_damage",
+        interactName: "itemstackMaxDamage",
+        function: (item) => {
+          return item.getMaxDamage();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ITEMSTACK_MAXSIZE.ts
+  var OPERATOR_OBJECT_ITEMSTACK_MAXSIZE = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:itemstack_maxsize",
+        nicknames: [
+          "ItemstackMaxsize",
+          "itemstack_max_size",
+          "itemstackMaxSize",
+          "maxSize",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Item",
+            },
+            to: {
+              type: "Integer",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "maxsize",
+        interactName: "itemstackMaxSize",
+        function: (item) => {
+          return item.getMaxSize();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ITEMSTACK_MODNAME.ts
+  var OPERATOR_OBJECT_ITEMSTACK_MODNAME = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:itemstack_mod",
+        nicknames: ["ItemstackModname", "item_mod", "itemModname", "itemMod"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Item",
+            },
+            to: {
+              type: "String",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "mod",
+        interactName: "itemstackMod",
+        function: (item) => {
+          return item.getModName();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ITEMSTACK_NBT.ts
+  var OPERATOR_OBJECT_ITEMSTACK_NBT = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:itemstack_nbt",
+        nicknames: ["ItemstackNbt", "itemstack_nbt", "itemstackNBT", "itemNBT"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Item",
+            },
+            to: {
+              type: "NBT",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "nbt",
+        interactName: "itemStackNBT",
+        function: (item) => {
+          return item.getNBT();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ITEMSTACK_RARITY.ts
+  var OPERATOR_OBJECT_ITEMSTACK_RARITY = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:itemstack_rarity",
+        nicknames: [
+          "ItemstackRarity",
+          "itemstack_rarity",
+          "itemstackRarity",
+          "rarity",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Item",
+            },
+            to: {
+              type: "String",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "rarity",
+        interactName: "itemstackRarity",
+        function: (item) => {
+          return item.getRarity();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ITEMSTACK_REPAIRCOST.ts
+  var OPERATOR_OBJECT_ITEMSTACK_REPAIRCOST = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:itemstack_repaircost",
+        nicknames: [
+          "ItemstackRepaircost",
+          "itemstack_repair_cost",
+          "itemstackRepairCost",
+          "repairCost",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Item",
+            },
+            to: {
+              type: "Integer",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "repair_cost",
+        interactName: "itemstackRepairCost",
+        function: (item) => {
+          return item.getRepairCost();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ITEMSTACK_SIZE.ts
+  var OPERATOR_OBJECT_ITEMSTACK_SIZE = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:itemstack_size",
+        nicknames: ["ItemstackSize", "itemstack_size", "itemstackSize", "size"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Item",
+            },
+            to: {
+              type: "Integer",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "size",
+        interactName: "itemstackSize",
+        function: (item) => {
+          return item.getSize();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ITEMSTACK_STORED_FE.ts
+  var OPERATOR_OBJECT_ITEMSTACK_STORED_FE = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:itemstack_storedfe",
+        nicknames: [
+          "ItemstackStoredfe",
+          "itemstack_stored_fe",
+          "itemstackStoredFe",
+          "item_stored_fe",
+          "itemStoredFe",
+          "storedFe",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Item",
+            },
+            to: {
+              type: "Integer",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "stored_fe",
+        interactName: "itemstackFeStored",
+        function: (item) => {
+          return item.getFeStored();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ITEMSTACK_STRENGTH_VS_BLOCK.ts
+  var OPERATOR_OBJECT_ITEMSTACK_STRENGTH_VS_BLOCK = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:itemstack_strength",
+        nicknames: [
+          "ItemstackStrengthVsBlock",
+          "itemstack_strength_vs_block",
+          "itemstackStrengthVsBlock",
+          "strengthVsBlock",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Item",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "Block",
+              },
+              to: {
+                type: "Double",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "strength",
+        interactName: "itemstackStrength",
+        function: (_item) => {
+          return (_block) => {
+            throw new Error("Strength vs Block not currently implemented");
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ITEMSTACK_TAG_STACKS.ts
+  var OPERATOR_OBJECT_ITEMSTACK_TAG_STACKS = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:itemstack_tags",
+        nicknames: [
+          "ItemstackTags",
+          "itemstack_tag_values",
+          "itemstackTagValues",
+          "item_tag_names",
+          "itemTagNames",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Item",
+            },
+            to: {
+              type: "List",
+              listType: {
+                type: "String",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "item_tag_val",
+        interactName: "itemstackTagVal",
+        function: (item) => {
+          return item.getTagNames();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_ITEMSTACK_WITHSIZE.ts
+  var OPERATOR_OBJECT_ITEMSTACK_WITHSIZE = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:itemstack_withsize",
+        nicknames: [
+          "ItemstackWithSize",
+          "itemstack_with_size",
+          "itemstackWithSize",
+          "itemWithSize",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Item",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "Integer",
+              },
+              to: {
+                type: "Item",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "with_size",
+        interactName: "itemstackWithSize",
+        function: (item) => {
+          return (size) => {
+            return new Item(new Properties({ size }), item);
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_PLAYER_TARGETBLOCK.ts
+  var OPERATOR_OBJECT_PLAYER_TARGETBLOCK = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:entity_targetblock",
+        nicknames: [
+          "PlayerTargetblock",
+          "player_target_block",
+          "playerTargetBlock",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Entity",
+            },
+            to: {
+              type: "Block",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "target_block",
+        interactName: "entityTargetBlock",
+        function: (entity) => {
+          return entity.getTargetBlock();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OBJECT_PLAYER_TARGETENTITY.ts
+  var OPERATOR_OBJECT_PLAYER_TARGETENTITY = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:entity_targetentity",
+        nicknames: [
+          "EntityTargetentity",
+          "entity_target_entity",
+          "entityTargetEntity",
+          "playerTargetEntity",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Entity",
+            },
+            to: {
+              type: "Entity",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "target_entity",
+        interactName: "entityTargetEntity",
+        function: (entity) => {
+          return entity.getTargetEntity();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OPERATOR_APPLY.ts
+  var OPERATOR_OPERATOR_APPLY = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:operator_apply",
+        nicknames: ["operatorApply", "apply"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Operator",
+              obscured: {
+                type: "Function",
+                from: { type: "Any", typeID: 1 },
+                to: { type: "Any", typeID: 2 },
+              },
+            },
+            to: {
+              type: "Function",
+              from: { type: "Any", typeID: 1 },
+              to: { type: "Any", typeID: 2 },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "apply",
+        interactName: "operatorApply",
+        serializer: "integrateddynamics:curry",
+        function: (op) => {
+          return (arg) => {
+            return op.apply(arg);
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OPERATOR_APPLY_0.ts
+  var OPERATOR_OPERATOR_APPLY_0 = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:operator_apply0",
+        nicknames: ["operatorApply_0", "apply0"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Operator",
+              obscured: {
+                type: "Function",
+                from: { type: "Any", typeID: 1 },
+                to: { type: "Any", typeID: 2 },
+              },
+            },
+            to: {
+              type: "Function",
+              from: { type: "Any", typeID: 3 },
+              to: { type: "Any", typeID: 2 },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "apply0",
+        interactName: "operatorApply0",
+        serializer: "integrateddynamics:curry",
+        function: (_op) => {
+          return () => {
+            throw new Error(`apply0 doesn't make sense to implement`);
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OPERATOR_APPLY_2.ts
+  var OPERATOR_OPERATOR_APPLY_2 = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:operator_apply2",
+        nicknames: ["operatorApply_2", "apply2"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Operator",
+              obscured: {
+                type: "Function",
+                from: { type: "Any", typeID: 1 },
+                to: {
+                  type: "Function",
+                  from: { type: "Any", typeID: 2 },
+                  to: { type: "Any", typeID: 3 },
+                },
+              },
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "Any",
+                typeID: 1,
+              },
+              to: {
+                type: "Function",
+                from: {
+                  type: "Any",
+                  typeID: 2,
+                },
+                to: {
+                  type: "Any",
+                  typeID: 3,
+                },
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "apply2",
+        interactName: "operatorApply2",
+        serializer: "integrateddynamics:curry",
+        function: (op) => {
+          return (arg1) => {
+            return (arg2) => {
+              return op.apply(arg1).apply(arg2);
+            };
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OPERATOR_APPLY_3.ts
+  var OPERATOR_OPERATOR_APPLY_3 = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:operator_apply3",
+        nicknames: ["operatorApply_3", "apply3"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Operator",
+              obscured: {
+                type: "Function",
+                from: { type: "Any", typeID: 1 },
+                to: {
+                  type: "Function",
+                  from: { type: "Any", typeID: 2 },
+                  to: {
+                    type: "Function",
+                    from: { type: "Any", typeID: 3 },
+                    to: { type: "Any", typeID: 4 },
+                  },
+                },
+              },
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "Any",
+                typeID: 1,
+              },
+              to: {
+                type: "Function",
+                from: {
+                  type: "Any",
+                  typeID: 2,
+                },
+                to: {
+                  type: "Function",
+                  from: {
+                    type: "Any",
+                    typeID: 3,
+                  },
+                  to: {
+                    type: "Any",
+                    typeID: 4,
+                  },
+                },
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "apply3",
+        interactName: "operatorApply3",
+        serializer: "integrateddynamics:curry",
+        function: (op) => {
+          return (arg1) => {
+            return (arg2) => {
+              return (arg3) => {
+                return op.apply(arg1).apply(arg2).apply(arg3);
+              };
+            };
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OPERATOR_APPLY_N.ts
+  var OPERATOR_OPERATOR_APPLY_N = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:operator_apply_n",
+        nicknames: ["operatorApplyN", "applyn", "applyN"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Operator",
+              obscured: {
+                type: "Function",
+                from: { type: "Any", typeID: 1 },
+                to: { type: "Any", typeID: 2 },
+              },
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "List",
+                listType: {
+                  type: "Any",
+                  typeID: 1,
+                },
+              },
+              to: { type: "Any", typeID: 2 },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "apply_n",
+        interactName: "operatorApply_n",
+        serializer: "integrateddynamics:curry",
+        function: (op) => {
+          return (args) => {
+            let result = op;
+            for (const arg of args.valueOf()) {
+              if (arg === void 0 || arg === null) {
+                throw new Error(
+                  "applyn requires all arguments to be defined and non-null."
+                );
+              }
+              if (!(result instanceof Operator)) {
+                throw new Error(`apply_n got too big a list`);
+              }
+              result = result.apply(arg);
+            }
+            return result;
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OPERATOR_BY_NAME.ts
+  var OPERATOR_OPERATOR_BY_NAME = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:operator_by_name",
+        nicknames: ["operatorByName", "opByName"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Function",
+              from: { type: "Any", typeID: 1 },
+              to: { type: "Any", typeID: 2 },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "op_by_name",
+        interactName: "stringOperatorByName",
+        function: (name) => {
+          const result = operatorRegistry.find(name.valueOf());
+          if (!result) throw new Error(`No operator found: ${name.valueOf()}`);
+          return result;
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OPERATOR_CONJUNCTION.ts
+  var OPERATOR_OPERATOR_CONJUNCTION = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:operator_conjunction",
+        nicknames: ["operatorConjunction", "conjunction"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Operator",
+              obscured: {
+                type: "Function",
+                from: { type: "Any", typeID: 1 },
+                to: { type: "Boolean" },
+              },
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "Operator",
+                obscured: {
+                  type: "Function",
+                  from: { type: "Any", typeID: 1 },
+                  to: { type: "Boolean" },
+                },
+              },
+              to: {
+                type: "Operator",
+                obscured: {
+                  type: "Function",
+                  from: { type: "Any", typeID: 1 },
+                  to: { type: "Boolean" },
+                },
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: ".&&.",
+        interactName: "operatorConjunction",
+        function: (predicate1) => {
+          return (predicate2) => {
+            return (input) => {
+              return new iBoolean(
+                predicate1.apply(input).valueOf() &&
+                  predicate2.apply(input).valueOf()
+              );
+            };
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OPERATOR_DISJUNCTION.ts
+  var OPERATOR_OPERATOR_DISJUNCTION = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:operator_disjunction",
+        nicknames: ["operatorDisjunction", "disjunction"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Operator",
+              obscured: {
+                type: "Function",
+                from: { type: "Any", typeID: 1 },
+                to: { type: "Boolean" },
+              },
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "Operator",
+                obscured: {
+                  type: "Function",
+                  from: { type: "Any", typeID: 1 },
+                  to: { type: "Boolean" },
+                },
+              },
+              to: {
+                type: "Operator",
+                obscured: {
+                  type: "Function",
+                  from: { type: "Any", typeID: 1 },
+                  to: { type: "Boolean" },
+                },
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: ".||.",
+        interactName: "operatorDisjunction",
+        function: (predicate1) => {
+          return (predicate2) => {
+            return (input) => {
+              return new iBoolean(
+                predicate1.apply(input).valueOf() ||
+                  predicate2.apply(input).valueOf()
+              );
+            };
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OPERATOR_FILTER.ts
+  var OPERATOR_OPERATOR_FILTER = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:operator_filter",
+        nicknames: ["operatorFilter", "filter"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Operator",
+              obscured: {
+                type: "Function",
+                from: { type: "Any", typeID: 1 },
+                to: { type: "Boolean" },
+              },
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "List",
+                listType: { type: "Any", typeID: 1 },
+              },
               to: {
                 type: "List",
                 listType: { type: "Any", typeID: 1 },
               },
             },
           },
-          to: { type: "List", listType: { type: "Any", typeID: 1 } },
+          globalMap2
+        ),
+        symbol: "filter",
+        interactName: "operatorFilter",
+        function: (predicate) => {
+          return (list) => {
+            return list.filter((item) => predicate.apply(item).valueOf());
+          };
         },
-      },
-      symbol: "lazybuilt",
-      interactName: "anyLazyBuilt",
-      function: (initial) => {
-        return (builder) => {
-          return new InfiniteList(initial, builder);
-        };
-      },
-    },
-    head: {
-      internalName: "integrateddynamics:list_head",
-      nicknames: ["listHead"],
-      parsedSignature: {
-        type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: { type: "Any", typeID: 1 },
-      },
-      symbol: "head",
-      interactName: "listHead",
-      function: (list) => {
-        if (list.length === 0) {
-          throw new Error("head called on an empty list");
-        }
-        return list[0];
-      },
-    },
-    tail: {
-      internalName: "integrateddynamics:list_tail",
-      nicknames: ["listTail"],
-      parsedSignature: {
-        type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: { type: "List", listType: { type: "Any", typeID: 1 } },
-      },
-      symbol: "tail",
-      interactName: "listTail",
-      function: (list) => {
-        if (list.length === 0) {
-          throw new Error("tail called on an empty list");
-        }
-        return list.slice(1);
-      },
-    },
-    listUniqPredicate: {
-      internalName: "integrateddynamics:list_uniq_p",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: {
-          type: "Function",
-          from: {
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OPERATOR_FLIP.ts
+  var OPERATOR_OPERATOR_FLIP = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:operator_flip",
+        nicknames: ["operatorFlip", "flip"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Operator",
+              obscured: {
+                type: "Function",
+                from: { type: "Any", typeID: 1 },
+                to: {
+                  type: "Function",
+                  from: { type: "Any", typeID: 2 },
+                  to: { type: "Any", typeID: 3 },
+                },
+              },
+            },
+            to: {
+              type: "Operator",
+              obscured: {
+                type: "Function",
+                from: { type: "Any", typeID: 2 },
+                to: {
+                  type: "Function",
+                  from: { type: "Any", typeID: 1 },
+                  to: { type: "Any", typeID: 3 },
+                },
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "flip",
+        interactName: "operatorFlip",
+        serializer: "integrateddynamics:combined.flip",
+        function: (op) => {
+          return (arg1) => {
+            return (arg2) => {
+              return op.apply(arg2).apply(arg1);
+            };
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OPERATOR_MAP.ts
+  var OPERATOR_OPERATOR_MAP = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:operator_map",
+        nicknames: ["operatorMap", "map"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Operator",
+              obscured: {
+                type: "Function",
+                from: { type: "Any", typeID: 1 },
+                to: { type: "Any", typeID: 2 },
+              },
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "List",
+                listType: { type: "Any", typeID: 1 },
+              },
+              to: {
+                type: "List",
+                listType: { type: "Any", typeID: 2 },
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "map",
+        interactName: "operatorMap",
+        function: (op) => {
+          return (list) => {
+            return list.map(op);
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OPERATOR_NEGATION.ts
+  var OPERATOR_OPERATOR_NEGATION = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:operator_negation",
+        nicknames: ["operatorNegation", "negation"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Operator",
+              obscured: {
+                type: "Function",
+                from: { type: "Any", typeID: 1 },
+                to: { type: "Boolean" },
+              },
+            },
+            to: {
+              type: "Operator",
+              obscured: {
+                type: "Function",
+                from: { type: "Any", typeID: 1 },
+                to: { type: "Boolean" },
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "!.",
+        interactName: "operatorNegation",
+        function: (predicate) => {
+          return (input) => {
+            return new iBoolean(!predicate.apply(input).valueOf());
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OPERATOR_PIPE.ts
+  var OPERATOR_OPERATOR_PIPE = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:operator_pipe",
+        nicknames: ["operatorPipe", "pipe"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Operator",
+              obscured: {
+                type: "Function",
+                from: { type: "Any", typeID: 1 },
+                to: { type: "Any", typeID: 2 },
+              },
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "Operator",
+                obscured: {
+                  type: "Function",
+                  from: { type: "Any", typeID: 2 },
+                  to: { type: "Any", typeID: 3 },
+                },
+              },
+              to: {
+                type: "Operator",
+                obscured: {
+                  type: "Function",
+                  from: { type: "Any", typeID: 1 },
+                  to: { type: "Any", typeID: 3 },
+                },
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: ".",
+        interactName: "operatorPipe",
+        serializer: "integrateddynamics:combined.pipe",
+        function: (f) => {
+          return (g) => {
+            return f.pipe(g);
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OPERATOR_PIPE2.ts
+  var OPERATOR_OPERATOR_PIPE2 = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:operator_pipe2",
+        nicknames: ["operatorPipe2", "pipe.2", "pipe2"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Operator",
+              obscured: {
+                type: "Function",
+                from: { type: "Any", typeID: 1 },
+                to: { type: "Any", typeID: 2 },
+              },
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "Operator",
+                obscured: {
+                  type: "Function",
+                  from: { type: "Any", typeID: 1 },
+                  to: { type: "Any", typeID: 3 },
+                },
+              },
+              to: {
+                type: "Function",
+                from: {
+                  type: "Operator",
+                  obscured: {
+                    type: "Function",
+                    from: { type: "Any", typeID: 2 },
+                    to: {
+                      type: "Function",
+                      from: { type: "Any", typeID: 3 },
+                      to: { type: "Any", typeID: 4 },
+                    },
+                  },
+                },
+                to: {
+                  type: "Operator",
+                  obscured: {
+                    type: "Function",
+                    from: { type: "Any", typeID: 1 },
+                    to: { type: "Any", typeID: 4 },
+                  },
+                },
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: ".2",
+        interactName: "operatorPipe2",
+        serializer: "integrateddynamics:combined.pipe",
+        function: (f) => {
+          return (g) => {
+            return (h) => {
+              return (x) => {
+                return h.apply(f.apply(x)).apply(g.apply(x));
+              };
+            };
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OPERATOR_REDUCE.ts
+  var OPERATOR_OPERATOR_REDUCE = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:operator_reduce",
+        nicknames: ["operatorReduce", "reduce"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Operator",
+              obscured: {
+                type: "Function",
+                from: { type: "Any", typeID: 1 },
+                to: {
+                  type: "Function",
+                  from: { type: "Any", typeID: 1 },
+                  to: { type: "Any", typeID: 1 },
+                },
+              },
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "List",
+                listType: { type: "Any", typeID: 1 },
+              },
+              to: {
+                type: "Function",
+                from: { type: "Any", typeID: 1 },
+                to: { type: "Any", typeID: 1 },
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "reduce",
+        interactName: "operatorReduce",
+        function: (op) => {
+          return (list) => {
+            return (startingValue) => {
+              return list
+                .valueOf()
+                .reduce(
+                  (acc, current) => op.apply(acc).apply(current),
+                  startingValue
+                );
+            };
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/OPERATOR_REDUCE1.ts
+  var OPERATOR_OPERATOR_REDUCE1 = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:operator_reduce1",
+        nicknames: ["operatorReduce1", "reduce1"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Operator",
+              obscured: {
+                type: "Function",
+                from: { type: "Any", typeID: 1 },
+                to: {
+                  type: "Function",
+                  from: { type: "Any", typeID: 1 },
+                  to: { type: "Any", typeID: 1 },
+                },
+              },
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "List",
+                listType: { type: "Any", typeID: 1 },
+              },
+              to: { type: "Any", typeID: 1 },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "reduce1",
+        interactName: "operatorReduce1",
+        function: (op) => {
+          return (list) => {
+            return list
+              .valueOf()
+              .reduce((acc, current) => op.apply(acc).apply(current));
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/PARSE_BOOLEAN.ts
+  var import_re2_wasm = __toESM(require_re22());
+  var OPERATOR_PARSE_BOOLEAN = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName:
+          "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.iBoolean",
+        nicknames: ["parseBoolean"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Boolean",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "parse_iBoolean",
+        interactName: "stringParseAsBoolean",
+        function: (value) => {
+          const matchArr =
+            new import_re2_wasm.RE2("(F(alse)?|[+-]?(0x|#)?0+|)", "i").match(
+              value.valueOf()
+            ) ?? [];
+          return new iBoolean(!!matchArr[0]);
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/PARSE_DOUBLE.ts
+  var OPERATOR_PARSE_DOUBLE = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName:
+          "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.double",
+        nicknames: ["parseDouble"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Any",
+              typeID: 1,
+            },
+            to: {
+              type: "Double",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "parse_double",
+        interactName: "stringParseAsDouble",
+        function: (data) => {
+          try {
+            return new Double(data);
+          } catch (e) {
+            return Double.ZERO;
+          }
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/PARSE_INTEGER.ts
+  var OPERATOR_PARSE_INTEGER = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName:
+          "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.integer",
+        nicknames: ["parseInteger"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Any",
+              typeID: 1,
+            },
+            to: {
+              type: "Integer",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "parse_integer",
+        interactName: "stringParseAsInteger",
+        function: (data) => {
+          try {
+            return new Integer(data);
+          } catch (e) {
+            return Integer.ZERO;
+          }
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/PARSE_LONG.ts
+  var OPERATOR_PARSE_LONG = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName:
+          "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.long",
+        nicknames: ["parseLong"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Any",
+              typeID: 1,
+            },
+            to: {
+              type: "Long",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "parse_long",
+        interactName: "stringParseAsLong",
+        function: (data) => {
+          try {
+            return new Long(data);
+          } catch (e) {
+            return Long.ZERO;
+          }
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/PARSE_NBT.ts
+  var OPERATOR_PARSE_NBT = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName:
+          "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.nbt",
+        nicknames: ["parseNBT"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "NBT",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "parse_nbt",
+        interactName: "stringParseAsNbt",
+        function: (data) => {
+          return CompoundTag.fromJSON(data.valueOf());
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/RECIPE_INPUT.ts
+  var OPERATOR_RECIPE_INPUT = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:recipe_input",
+        nicknames: ["recipeInput", "recipeWithInput"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Recipe",
+            },
+            to: {
+              type: "Ingredients",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "recipe_in",
+        interactName: "recipeInput",
+        function: (recipe) => {
+          return recipe.getInput();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/RECIPE_OUTPUT.ts
+  var OPERATOR_RECIPE_OUTPUT = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:recipe_output",
+        nicknames: ["recipeOutput"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Recipe",
+            },
+            to: {
+              type: "Ingredients",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "recipe_out",
+        interactName: "recipeOutput",
+        function: (recipe) => {
+          return recipe.getOutput();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/RECIPE_WITH_INPUT.ts
+  var OPERATOR_RECIPE_WITH_INPUT = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:recipe_with_input",
+        nicknames: ["Recipe.with_in", "recipeWithInput"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Recipe",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "Ingredients",
+              },
+              to: {
+                type: "Recipe",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "Recipe.with_in",
+        interactName: "recipeWithInput",
+        function: (recipe) => {
+          return (ingredients) => {
+            return recipe.setInput(ingredients);
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/Recipe.ts
+  var Recipe = class _Recipe {
+    input;
+    output;
+    constructor(input, output) {
+      this.input = input;
+      this.output = output;
+    }
+    getInput() {
+      return this.input;
+    }
+    setInput(value) {
+      return new _Recipe(value, this.output);
+    }
+    getOutput() {
+      return this.output;
+    }
+    setOutput(value) {
+      return new _Recipe(this.input, value);
+    }
+    equals(other) {
+      if (!(other instanceof _Recipe)) return new iBoolean(false);
+      if (!this.input.equals(other.input)) return new iBoolean(false);
+      if (!this.output.equals(other.output)) return new iBoolean(false);
+      return new iBoolean(true);
+    }
+    getSignatureNode() {
+      return {
+        type: "Recipe",
+      };
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/RECIPE_WITH_INPUT_OUTPUT.ts
+  var OPERATOR_RECIPE_WITH_INPUT_OUTPUT = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:recipe_with_input_output",
+        nicknames: ["recipeWithInputOutput"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Ingredients",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "Ingredients",
+              },
+              to: {
+                type: "Recipe",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "Recipe.with_io",
+        interactName: "ingredientsWithInputOutput",
+        function: (input) => {
+          return (output) => {
+            return new Recipe(input, output);
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/RECIPE_WITH_OUTPUT.ts
+  var OPERATOR_RECIPE_WITH_OUTPUT = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:recipe_with_output",
+        nicknames: ["recipeWithOutput"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Recipe",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "Ingredients",
+              },
+              to: {
+                type: "Recipe",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "Recipe.with_out",
+        interactName: "recipeWithOutput",
+        function: (recipe) => {
+          return (ingredients) => {
+            return recipe.setOutput(ingredients);
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/RELATIONAL_EQUALS.ts
+  var OPERATOR_RELATIONAL_EQUALS = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:relational_equals",
+        nicknames: ["==", "relationalEquals"],
+        parsedSignature: new ParsedSignature(
+          {
             type: "Function",
             from: { type: "Any", typeID: 1 },
             to: {
@@ -10970,5566 +18153,1531 @@
               },
             },
           },
-          to: { type: "List", listType: { type: "Any", typeID: 1 } },
-        },
-      },
-      symbol: "uniq_p",
-      interactName: "listUniquePredicate",
-      function: (list) => {
-        return (predicate) => {
-          const seen = /* @__PURE__ */ new Set();
-          return list.filter((item) => {
-            const key = predicate.apply(item);
-            if (seen.has(key)) {
-              return false;
-            } else {
-              seen.add(key);
-              return true;
-            }
-          });
-        };
-      },
-    },
-    listUniq: {
-      internalName: "integrateddynamics:list_uniq",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: { type: "List", listType: { type: "Any", typeID: 1 } },
-      },
-      symbol: "uniq",
-      interactName: "listUnique",
-      function: (list) => {
-        const seen = /* @__PURE__ */ new Set();
-        return list.filter((item) => {
-          if (seen.has(item)) {
-            return false;
-          } else {
-            seen.add(item);
-            return true;
-          }
-        });
-      },
-    },
-    slice: {
-      internalName: "integrateddynamics:list_slice",
-      nicknames: ["listSlice"],
-      parsedSignature: {
-        type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: {
-          type: "Function",
-          from: {
-            type: "Integer",
-          },
-          to: {
-            type: "Function",
-            from: {
-              type: "Integer",
-            },
-            to: { type: "List", listType: { type: "Any", typeID: 1 } },
-          },
-        },
-      },
-      symbol: "slice",
-      interactName: "listSlice",
-      function: async (list) => {
-        return async (start) => {
-          return async (end) => {
-            if (
-              (await JavaMath.lt(start, new Integer(0))) ||
-              (await JavaMath.gt(end, new Integer(list.length))) ||
-              (await JavaMath.gt(start, end))
-            ) {
-              throw new Error(
-                `Invalid slice range: [${start.toDecimal()}, ${end.toDecimal()}) for list of length ${list.length}`
-              );
-            }
-            return list.slice(
-              parseInt(start.toDecimal()),
-              parseInt(end.toDecimal())
-            );
+          globalMap2
+        ),
+        symbol: "==",
+        interactName: "anyEquals",
+        function: (value1) => {
+          return (value2) => {
+            return value1.equals(value2);
           };
-        };
-      },
-    },
-    intersection: {
-      internalName: "integrateddynamics:list_intersection",
-      nicknames: ["listIntersection"],
-      parsedSignature: {
-        type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: {
-          type: "Function",
-          from: { type: "List", listType: { type: "Any", typeID: 1 } },
-          to: { type: "List", listType: { type: "Any", typeID: 1 } },
         },
-      },
-      symbol: "\u2229",
-      interactName: "listIntersection",
-      function: (list1) => {
-        return (list2) => {
-          const set1 = new Set(list1);
-          return list2.filter((item) => set1.has(item));
-        };
-      },
-    },
-    equalsSet: {
-      internalName: "integrateddynamics:list_equals_set",
-      nicknames: ["listEqualsSet"],
-      parsedSignature: {
-        type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: {
-          type: "Function",
-          from: { type: "List", listType: { type: "Any", typeID: 1 } },
-          to: {
-            type: "Boolean",
-          },
-        },
-      },
-      symbol: "=set=",
-      interactName: "listEquals_set",
-      function: (list1) => {
-        return (list2) => {
-          const set1 = new Set(list1);
-          const set2 = new Set(list2);
-          if (
-            set1.size !== set2.size ||
-            set1.size !== /* @__PURE__ */ new Set([...set1, ...set2]).size
-          )
-            return false;
-          return true;
-        };
-      },
-    },
-    equalsMultiset: {
-      internalName: "integrateddynamics:list_equals_multiset",
-      nicknames: ["listEqualsMultiset"],
-      parsedSignature: {
-        type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: {
-          type: "Function",
-          from: { type: "List", listType: { type: "Any", typeID: 1 } },
-          to: {
-            type: "Boolean",
-          },
-        },
-      },
-      symbol: "=multiset=",
-      interactName: "listEquals_multiset",
-      function: (list1) => {
-        return (list2) => {
-          const newList1 = [...list1].sort();
-          const newList2 = [...list2].sort();
-          if (newList1.length !== newList2.length) {
-            return false;
-          }
-          for (let i = 0; i < newList1.length; i++) {
-            if (!newList1[i] || !newList2[i]) {
-              return false;
-            } else if (
-              "equals" in newList1[i] &&
-              typeof newList1[i].equals === "function"
-            ) {
-              if (!newList1[i].equals(newList2[i])) {
-                return false;
-              }
-            } else if (newList1[i] !== newList2[i]) {
-              return false;
-            }
-          }
-          return true;
-        };
-      },
-    },
-    opaque: {
-      internalName: "integrateddynamics:block_opaque",
-      nicknames: ["BlockOpaque"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Block",
-        },
-        to: {
-          type: "Boolean",
-        },
-      },
-      symbol: "opaque",
-      interactName: "blockIsOpaque",
-      function: (block) => {
-        return block.isOpaque();
-      },
-    },
-    blockItem: {
-      internalName: "integrateddynamics:block_itemstack",
-      nicknames: [
-        "BlockItemstack",
-        "block_item",
-        "blockItemstack",
-        "block_itemstack",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Block",
-        },
-        to: {
-          type: "Item",
-        },
-      },
-      symbol: "itemstack",
-      interactName: "blockItemStack",
-      function: (block) => {
-        return block.getItem();
-      },
-    },
-    blockMod: {
-      internalName: "integrateddynamics:block_mod",
-      nicknames: ["BlockModname", "block_mod", "blockMod", "block_modname"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Block",
-        },
-        to: {
-          type: "String",
-        },
-      },
-      symbol: "mod",
-      interactName: "blockMod",
-      function: (block) => {
-        return block.getModName();
-      },
-    },
-    breakSound: {
-      internalName: "integrateddynamics:block_breaksound",
-      nicknames: ["BlockBreaksound", "block_break_sound", "blockBreakSound"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Block",
-        },
-        to: {
-          type: "String",
-        },
-      },
-      symbol: "break_sound",
-      interactName: "blockBreakSound",
-      function: (block) => {
-        return block.getBreakSound();
-      },
-    },
-    placeSound: {
-      internalName: "integrateddynamics:block_placesound",
-      nicknames: ["BlockPlacesound", "blockPlaceSound", "block_place_sound"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Block",
-        },
-        to: {
-          type: "String",
-        },
-      },
-      symbol: "place_sound",
-      interactName: "blockPlaceSound",
-      function: (block) => {
-        return block.getPlaceSound();
-      },
-    },
-    stepSound: {
-      internalName: "integrateddynamics:block_stepsound",
-      nicknames: ["BlockStepsound", "blockStepSound", "block_step_sound"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Block",
-        },
-        to: {
-          type: "String",
-        },
-      },
-      symbol: "step_sound",
-      interactName: "blockStepSound",
-      function: (block) => {
-        return block.getStepSound();
-      },
-    },
-    blockIsShearable: {
-      internalName: "integrateddynamics:block_isshearable",
-      nicknames: ["BlockIsshearable", "block_is_shearable", "blockIsShearable"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Block",
-        },
-        to: {
-          type: "Boolean",
-        },
-      },
-      symbol: "is_shearable",
-      interactName: "blockIsShearable",
-      function: (block) => {
-        return block.isShearable();
-      },
-    },
-    plantAge: {
-      internalName: "integrateddynamics:block_plantage",
-      nicknames: ["BlockPlantage", "block_plant_age", "blockPlantAge"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Block",
-        },
-        to: {
-          type: "Integer",
-        },
-      },
-      symbol: "plant_age",
-      interactName: "blockPlantAge",
-      function: (block) => {
-        return block.getPlantAge();
-      },
-    },
-    blockByName: {
-      internalName: "integrateddynamics:block_blockbyname",
-      nicknames: ["BlockByName", "block_by_name"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
-          type: "Block",
-        },
-      },
-      symbol: "block_by_name",
-      interactName: "stringBlockByName",
-      function: () => {
-        throw new Error(
-          "Block by name is infeasible without a registry. This is a placeholder function."
-        );
-      },
-    },
-    blockProperties: {
-      internalName: "integrateddynamics:block_blockproperties",
-      nicknames: ["BlockProperties", "block_properties"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Block",
-        },
-        to: {
-          type: "NBT",
-        },
-      },
-      symbol: "block_props",
-      interactName: "blockProperties",
-      function: (block) => {
-        return block.getProperties();
-      },
-    },
-    blockWithProperties: {
-      internalName: "integrateddynamics:block_blockfromproperties",
-      nicknames: ["BlockWithProperties", "block_with_properties"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Block",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "NBT",
-          },
-          to: {
-            type: "Block",
-          },
-        },
-      },
-      symbol: "block_with_props",
-      interactName: "blockWithProperties",
-      function: (block) => {
-        return (properties) => {
-          return new Block(properties, block);
-        };
-      },
-    },
-    blockPossibleProperties: {
-      internalName: "integrateddynamics:block_blockpossibleproperties",
-      nicknames: ["BlockPossibleProperties", "block_possible_properties"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Block",
-        },
-        to: {
-          type: "NBT",
-        },
-      },
-      symbol: "block_all_props",
-      interactName: "blockPossibleProperties",
-      function: () => {
-        throw new Error(
-          "Block possible properties is infeasible without a registry. This is a placeholder function."
-        );
-      },
-    },
-    blockTag: {
-      internalName: "integrateddynamics:block_tag",
-      nicknames: ["BlockTag"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Block",
-        },
-        to: { type: "List", listType: { type: "String" } },
-      },
-      symbol: "block_tag_names",
-      interactName: "blockTags",
-      function: (block) => {
-        return block.getTagNames();
-      },
-    },
-    blockTagStacks: {
-      internalName: "integrateddynamics:string_blocktag",
-      nicknames: ["BlockTagStacks", "block_tag_stacks"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: { type: "List", listType: { type: "Block" } },
-      },
-      symbol: "block_tag_values",
-      interactName: "stringBlocksByTag",
-      function: () => {
-        throw new Error(
-          "Block tag values is infeasible without a registry. This is a placeholder function."
-        );
-      },
-    },
-    size: {
-      internalName: "integrateddynamics:itemstack_size",
-      nicknames: ["ItemstackSize", "itemstack_size", "itemstackSize"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Integer",
-        },
-      },
-      symbol: "size",
-      interactName: "itemstackSize",
-      function: (item) => {
-        return item.getSize();
-      },
-    },
-    maxSize: {
-      internalName: "integrateddynamics:itemstack_maxsize",
-      nicknames: ["ItemstackMaxsize", "itemstack_max_size", "itemstackMaxSize"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Integer",
-        },
-      },
-      symbol: "maxsize",
-      interactName: "itemstackMaxSize",
-      function: (item) => {
-        return item.getMaxSize();
-      },
-    },
-    isStackable: {
-      internalName: "integrateddynamics:itemstack_stackable",
-      nicknames: [
-        "ItemstackIsstackable",
-        "itemstack_is_stackable",
-        "itemstackIsStackable",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Boolean",
-        },
-      },
-      symbol: "stackable",
-      interactName: "itemstackIsStackable",
-      function: (item) => {
-        return item.isStackable();
-      },
-    },
-    isDamageable: {
-      internalName: "integrateddynamics:itemstack_damageable",
-      nicknames: [
-        "ItemstackIsdamageable",
-        "itemstack_is_damageable",
-        "itemstackIsDamageable",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Boolean",
-        },
-      },
-      symbol: "damageable",
-      interactName: "itemstackIsDamageable",
-      function: (item) => {
-        return item.isDamageable();
-      },
-    },
-    damage: {
-      internalName: "integrateddynamics:itemstack_damage",
-      nicknames: ["ItemstackDamage", "itemstack_damage", "itemstackDamage"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Integer",
-        },
-      },
-      symbol: "damage",
-      interactName: "itemstackDamage",
-      function: (item) => {
-        return item.getDamage();
-      },
-    },
-    maxDamage: {
-      internalName: "integrateddynamics:itemstack_maxdamage",
-      nicknames: [
-        "ItemstackMaxdamage",
-        "itemstack_max_damage",
-        "itemstackMaxDamage",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Integer",
-        },
-      },
-      symbol: "max_damage",
-      interactName: "itemstackMaxDamage",
-      function: (item) => {
-        return item.getMaxDamage();
-      },
-    },
-    enchanted: {
-      internalName: "integrateddynamics:itemstack_enchanted",
-      nicknames: [
-        "ItemstackIsenchanted",
-        "itemstack_is_enchanted",
-        "itemstackIsEnchanted",
-        "isEnchanted",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Boolean",
-        },
-      },
-      symbol: "enchanted",
-      interactName: "itemstackIsEnchanted",
-      function: (item) => {
-        return item.isEnchanted();
-      },
-    },
-    enchantable: {
-      internalName: "integrateddynamics:itemstack_enchantable",
-      nicknames: [
-        "ItemstackIsenchantable",
-        "itemstack_is_enchantable",
-        "itemstackIsEnchantable",
-        "isEnchantable",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Boolean",
-        },
-      },
-      symbol: "enchantable",
-      interactName: "itemstackIsEnchantable",
-      function: (item) => {
-        return item.isEnchantable();
-      },
-    },
-    repairCost: {
-      internalName: "integrateddynamics:itemstack_repaircost",
-      nicknames: [
-        "ItemstackRepaircost",
-        "itemstack_repair_cost",
-        "itemstackRepairCost",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Integer",
-        },
-      },
-      symbol: "repair_cost",
-      interactName: "itemstackRepairCost",
-      function: (item) => {
-        return item.getRepairCost();
-      },
-    },
-    rarity: {
-      internalName: "integrateddynamics:itemstack_rarity",
-      nicknames: ["ItemstackRarity", "itemstack_rarity", "itemstackRarity"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "String",
-        },
-      },
-      symbol: "rarity",
-      interactName: "itemstackRarity",
-      function: (item) => {
-        return item.getRarity();
-      },
-    },
-    strengthVsBlock: {
-      internalName: "integrateddynamics:itemstack_strength",
-      nicknames: [
-        "ItemstackStrengthVsBlock",
-        "itemstack_strength_vs_block",
-        "itemstackStrengthVsBlock",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Block",
-          },
-          to: {
-            type: "Double",
-          },
-        },
-      },
-      symbol: "strength",
-      interactName: "itemstackStrength",
-      function: (item) => {
-        return (block) => {
-          return item.getStrengthVsBlock(block);
-        };
-      },
-    },
-    canHarvestBlock: {
-      internalName: "integrateddynamics:itemstack_canharvest",
-      nicknames: [
-        "ItemstackCanHarvestBlock",
-        "itemstack_can_harvest_block",
-        "itemstackCanHarvestBlock",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Block",
-          },
-          to: {
-            type: "Boolean",
-          },
-        },
-      },
-      symbol: "can_harvest",
-      interactName: "itemstackCanHarvest",
-      function: (item) => {
-        return () => {
-          return item.canHarvestBlock();
-        };
-      },
-    },
-    itemBlock: {
-      internalName: "integrateddynamics:itemstack_block",
-      nicknames: ["ItemstackBlock", "itemstack_block", "itemstackBlock"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Block",
-        },
-      },
-      symbol: "block",
-      interactName: "itemstackBlock",
-      function: (item) => {
-        return new Block(new Properties({}), item.getBlock());
-      },
-    },
-    isFluidstack: {
-      internalName: "integrateddynamics:itemstack_isfluidstack",
-      nicknames: [
-        "ItemstackIsfluidstack",
-        "itemstack_is_fluidstack",
-        "itemstackIsFluidstack",
-        "itemHasFluid",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Boolean",
-        },
-      },
-      symbol: "is_fluidstack",
-      interactName: "itemstackIsFluidStack",
-      function: (item) => {
-        return item.getFluid() !== null;
-      },
-    },
-    itemFluid: {
-      internalName: "integrateddynamics:itemstack_fluidstack",
-      nicknames: [
-        "ItemstackFluidstack",
-        "itemstack_fluidstack",
-        "itemstackFluidstack",
-        "itemFluidstack",
-        "item_fluidstack",
-        "itemFluid",
-        "item_fluid",
-        "itemstack_fluid",
-        "itemstackFluid",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Fluid",
-        },
-      },
-      symbol: "fluidstack",
-      interactName: "itemstackFluidStack",
-      function: (item) => {
-        return item.getFluid();
-      },
-    },
-    fluidCapacity: {
-      internalName: "integrateddynamics:itemstack_fluidstackcapacity",
-      nicknames: [
-        "ItemstackFluidstackcapacity",
-        "itemstack_fluidstack_capacity",
-        "itemstackFluidstackCapacity",
-        "item_fluid_capacity",
-        "itemFluidCapacity",
-        "item_fluidstack_capacity",
-        "itemFluidstackCapacity",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Integer",
-        },
-      },
-      symbol: "fluidstack_capacity",
-      interactName: "itemstackFluidCapacity",
-      function: (item) => {
-        return item.getFluidCapacity();
-      },
-    },
-    "=NBT=": {
-      internalName: "integrateddynamics:itemstack_isnbtequal",
-      nicknames: [
-        "ItemstackIsdataequal",
-        "itemstack_is_dataequal",
-        "itemstackIsDataequal",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Item",
-          },
-          to: {
-            type: "Boolean",
-          },
-        },
-      },
-      symbol: "=NBT=",
-      interactName: "itemstackIsNbtEqual",
-      function: (item1) => {
-        return (item2) => {
-          return item1.getNBT().equals(item2.getNBT());
-        };
-      },
-    },
-    "=NoNBT=": {
-      internalName: "integrateddynamics:itemstack_isitemequalnonbt",
-      nicknames: [
-        "ItemstackIsitemequalnodata",
-        "itemstack_is_itemequalnodata",
-        "itemstackIsItemequalnodata",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Item",
-          },
-          to: {
-            type: "Boolean",
-          },
-        },
-      },
-      symbol: "=NoNBT=",
-      interactName: "itemstackIsEqualNonNbt",
-      function: (item1) => {
-        return (item2) => {
-          return (
-            item1.getUniqueName() === item2.getUniqueName() &&
-            item1.getSize() === item2.getSize()
-          );
-        };
-      },
-    },
-    rawItemEquals: {
-      internalName: "integrateddynamics:itemstack_israwitemequal",
-      nicknames: [
-        "ItemstackIsrawitemequal",
-        "itemstack_is_rawitemequal",
-        "itemstackIsRawitemequal",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Item",
-          },
-          to: {
-            type: "Boolean",
-          },
-        },
-      },
-      symbol: "=Raw=",
-      interactName: "itemstackIsEqualRaw",
-      function: (item1) => {
-        return (item2) => {
-          return item1.getUniqueName() === item2.getUniqueName();
-        };
-      },
-    },
-    itemMod: {
-      internalName: "integrateddynamics:itemstack_mod",
-      nicknames: ["ItemstackModname", "item_mod", "itemModname"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "String",
-        },
-      },
-      symbol: "mod",
-      interactName: "itemstackMod",
-      function: (item) => {
-        return item.getModName();
-      },
-    },
-    fuelBurnTime: {
-      internalName: "integrateddynamics:itemstack_burntime",
-      nicknames: [
-        "ItemstackFuelburntime",
-        "item_fuel_burn_time",
-        "itemFuelBurnTime",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Integer",
-        },
-      },
-      symbol: "burn_time",
-      interactName: "itemstackBurnTime",
-      function: (item) => {
-        return item.getFuelBurnTime();
-      },
-    },
-    isFuel: {
-      internalName: "integrateddynamics:itemstack_canburn",
-      nicknames: [
-        "ItemstackCanburn",
-        "item_can_burn",
-        "itemCanBurn",
-        "item_is_fuel",
-        "itemIsFuel",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Boolean",
-        },
-      },
-      symbol: "can_burn",
-      interactName: "itemstackCanBurn",
-      function: (item) => {
-        return item.isFuel();
-      },
-    },
-    itemTagNames: {
-      internalName: "integrateddynamics:itemstack_tag",
-      nicknames: [
-        "ItemstackTag",
-        "itemstack_tag_names",
-        "itemstackTagNames",
-        "item_tag_names",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: { type: "List", listType: { type: "String" } },
-      },
-      symbol: "item_tag_names",
-      interactName: "itemstackTags",
-      function: (item) => {
-        return item.getTagNames();
-      },
-    },
-    itemTagValues: {
-      internalName: "integrateddynamics:string_tag",
-      nicknames: [
-        "ItemstackTagStacks",
-        "itemstack_tag_values",
-        "itemstackTagValues",
-        "item_tag_values",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: { type: "List", listType: { type: "Item" } },
-      },
-      symbol: "item_tag_values",
-      interactName: "stringItemsByTag",
-      function: () => {
-        throw new Error(
-          "Item tag values is infeasible without a registry. This is a placeholder function."
-        );
-      },
-    },
-    itemWithSize: {
-      internalName: "integrateddynamics:itemstack_withsize",
-      nicknames: [
-        "ItemstackWithsize",
-        "itemstack_with_size",
-        "itemstackWithSize",
-        "item_with_size",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Integer",
-          },
-          to: {
-            type: "Item",
-          },
-        },
-      },
-      symbol: "with_size",
-      interactName: "itemstackWithSize",
-      function: (item) => {
-        return (size) => {
-          return new Item(new Properties({ size }), item);
-        };
-      },
-    },
-    isFeContainer: {
-      internalName: "integrateddynamics:itemstack_isfecontainer",
-      nicknames: [
-        "ItemstackIsfecontainer",
-        "itemstack_is_fe_container",
-        "itemstackIsFecontainer",
-        "item_is_fe_container",
-        "itemIsFecontainer",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Boolean",
-        },
-      },
-      symbol: "is_fe_container",
-      interactName: "itemstackIsFeContainer",
-      function: (item) => {
-        return item.isFeContainer();
-      },
-    },
-    storedFe: {
-      internalName: "integrateddynamics:itemstack_storedfe",
-      nicknames: [
-        "ItemstackStoredfe",
-        "itemstack_stored_fe",
-        "itemstackStoredFe",
-        "item_stored_fe",
-        "itemStoredFe",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Integer",
-        },
-      },
-      symbol: "stored_fe",
-      interactName: "itemstackFeStored",
-      function: (item) => {
-        return item.getFeStored();
-      },
-    },
-    feCapacity: {
-      internalName: "integrateddynamics:itemstack_fecapacity",
-      nicknames: [
-        "ItemstackFecapacity",
-        "itemstack_fe_capacity",
-        "itemstackFeCapacity",
-        "item_fe_capacity",
-        "itemFeCapacity",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Integer",
-        },
-      },
-      symbol: "capacity_fe",
-      interactName: "itemstackFeCapacity",
-      function: (item) => {
-        return item.getFeCapacity();
-      },
-    },
-    hasInventory: {
-      internalName: "integrateddynamics:itemstack_hasinventory",
-      nicknames: [
-        "ItemstackHasinventory",
-        "itemstack_has_inventory",
-        "itemstackHasInventory",
-        "item_has_inventory",
-        "itemHasInventory",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Boolean",
-        },
-      },
-      symbol: "has_inventory",
-      interactName: "itemstackHasInventory",
-      function: (item) => {
-        return item.getInventory() !== null;
-      },
-    },
-    inventorySize: {
-      internalName: "integrateddynamics:itemstack_inventorysize",
-      nicknames: [
-        "ItemstackInventorysize",
-        "itemstack_inventory_size",
-        "itemstackInventorySize",
-        "item_inventory_size",
-        "itemInventorySize",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Integer",
-        },
-      },
-      symbol: "inventory_size",
-      interactName: "itemstackInventorySize",
-      function: (item) => {
-        return new Integer(item.getInventory()?.length || 0);
-      },
-    },
-    itemInventory: {
-      internalName: "integrateddynamics:itemstack_inventory",
-      nicknames: [
-        "ItemstackInventory",
-        "itemstack_inventory",
-        "itemstackInventory",
-        "item_inventory",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: { type: "List", listType: { type: "Item" } },
-      },
-      symbol: "inventory",
-      interactName: "itemstackInventory",
-      function: (item) => {
-        return item.getInventory();
-      },
-    },
-    itemByName: {
-      internalName: "integrateddynamics:itemstack_itembyname",
-      nicknames: [
-        "ItemstackByName",
-        "itemstack_by_name",
-        "itemstackByName",
-        "item_by_name",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
-          type: "Item",
-        },
-      },
-      symbol: "item_by_name",
-      interactName: "stringItemByName",
-      function: () => {
-        throw new Error(
-          "Item by name is infeasible without a registry. This is a placeholder function."
-        );
-      },
-    },
-    itemListCount: {
-      internalName: "integrateddynamics:itemstack_itemlistcount",
-      nicknames: [
-        "ItemstackListCount",
-        "itemstack_list_count",
-        "itemstackListCount",
-        "item_list_count",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "List",
-          listType: { type: "Item" },
-        },
-        to: {
-          type: "Function",
-          from: { type: "Item" },
-          to: {
-            type: "Integer",
-          },
-        },
-      },
-      symbol: "item_list_count",
-      interactName: "listItemListCount",
-      function: (items) => {
-        return (item) => {
-          return new Integer(
-            items.filter((i) => {
-              try {
-                return i.equals(item);
-              } catch (e) {
-                return false;
-              }
-            }).length
-          );
-        };
-      },
-    },
-    itemNBT: {
-      internalName: "integrateddynamics:itemstack_nbt",
-      nicknames: [
-        "ItemstackData",
-        "itemstack_data",
-        "itemstackData",
-        "item_data",
-        "itemData",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "NBT",
-        },
-      },
-      symbol: "NBT()",
-      interactName: "itemstackNbt",
-      function: (item) => {
-        return item.getNBT();
-      },
-    },
-    hasNBT: {
-      internalName: "integrateddynamics:itemstack_hasnbt",
-      nicknames: [
-        "ItemstackHasdata",
-        "itemstack_has_data",
-        "itemstackHasData",
-        "item_has_data",
-        "itemHasData",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Boolean",
-        },
-      },
-      symbol: "has_nbt",
-      interactName: "itemstackHasNbt",
-      function: (item) => {
-        return item.getNBT() !== null && item.getNBT() !== void 0;
-      },
-    },
-    itemNBTKeys: {
-      internalName: "integrateddynamics:itemstack_datakeys",
-      nicknames: [
-        "ItemstackDataKeys",
-        "itemstack_data_keys",
-        "itemstackDataKeys",
-        "item_data_keys",
-        "itemDataKeys",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: { type: "List", listType: { type: "String" } },
-      },
-      symbol: "data_keys",
-      interactName: "itemstackDataKeys",
-      function: (item) => {
-        const nbt = item.getNBT();
-        if (!nbt) {
-          return [];
-        }
-        return Object.keys(nbt).filter((key) => nbt.has(key));
-      },
-    },
-    itemNBTValue: {
-      internalName: "integrateddynamics:itemstack_datavalue",
-      nicknames: [
-        "ItemstackDataValue",
-        "itemstack_data_value",
-        "itemstackDataValue",
-        "item_data_value",
-        "itemDataValue",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "NBT",
-          },
-        },
-      },
-      symbol: "data_value",
-      interactName: "itemstackDataValue",
-      function: (item) => {
-        return (key) => {
-          const nbt = item.getNBT();
-          if (!nbt || !nbt.has(key)) {
-            return new NullTag();
-          }
-          return nbt.get(key);
-        };
-      },
-    },
-    itemWithNBT: {
-      internalName: "integrateddynamics:itemstack_withdata",
-      nicknames: [
-        "ItemstackWithData",
-        "itemstack_with_data",
-        "itemstackWithData",
-        "item_with_data",
-        "itemWithData",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/RELATIONAL_GE.ts
+  var OPERATOR_RELATIONAL_GE = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:relational_ge",
+        nicknames: ["relationalGe", ">="],
+        parsedSignature: new ParsedSignature(
+          {
             type: "Function",
             from: {
-              type: "NBT",
-            },
-            to: {
-              type: "Item",
-            },
-          },
-        },
-      },
-      symbol: "with_data",
-      interactName: "itemstackWithData",
-      function: (item) => {
-        return (key) => {
-          return (value) => {
-            let nbt = item.getNBT() || {};
-            nbt = nbt.set(key, value);
-            return new Item(new Properties({ nbt }), item);
-          };
-        };
-      },
-    },
-    itemTooltip: {
-      internalName: "integrateddynamics:itemstack_tooltip",
-      nicknames: [
-        "ItemstackTooltip",
-        "itemstack_tooltip",
-        "itemstackTooltip",
-        "item_tooltip",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: { type: "List", listType: { type: "String" } },
-      },
-      symbol: "tooltip",
-      interactName: "itemstackTooltip",
-      function: (item) => {
-        return item.getTooltip();
-      },
-    },
-    itemEntityTooltip: {
-      internalName: "integrateddynamics:entity_entityitemtooltip",
-      nicknames: [
-        "ItemstackEntityTooltip",
-        "itemstack_entity_tooltip",
-        "itemstackEntityTooltip",
-        "item_entity_tooltip",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Item",
-          },
-          to: { type: "List", listType: { type: "String" } },
-        },
-      },
-      symbol: "entity_item_tooltip",
-      interactName: "entityEntityItemTooltip",
-      function: () => {
-        return (item) => {
-          console.warn(
-            "Entity item tooltip is not fully supported. Returning item tooltip only."
-          );
-          return item.getTooltip();
-        };
-      },
-    },
-    isMob: {
-      internalName: "integrateddynamics:entity_ismob",
-      nicknames: ["EntityIsmob", "entity_is_mob", "entityIsMob"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Boolean",
-        },
-      },
-      symbol: "is_mob",
-      interactName: "entityIsMob",
-      function: (entity) => {
-        return entity.isMob();
-      },
-    },
-    isAnimal: {
-      internalName: "integrateddynamics:entity_isanimal",
-      nicknames: ["EntityIsanimal", "entity_is_animal", "entityIsAnimal"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Boolean",
-        },
-      },
-      symbol: "is_animal",
-      interactName: "entityIsAnimal",
-      function: (entity) => {
-        return entity.isAnimal();
-      },
-    },
-    isItem: {
-      internalName: "integrateddynamics:entity_isitem",
-      nicknames: ["EntityIsitem", "entity_is_item", "entityIsItem"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Boolean",
-        },
-      },
-      symbol: "is_item",
-      interactName: "entityIsItem",
-      function: (entity) => {
-        return entity.isItem();
-      },
-    },
-    isPlayer: {
-      internalName: "integrateddynamics:entity_isplayer",
-      nicknames: ["EntityIsplayer", "entity_is_player", "entityIsPlayer"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Boolean",
-        },
-      },
-      symbol: "is_player",
-      interactName: "entityIsPlayer",
-      function: (entity) => {
-        return entity.isPlayer();
-      },
-    },
-    isMinecart: {
-      internalName: "integrateddynamics:entity_isminecart",
-      nicknames: ["EntityIsminecart", "entity_is_minecart", "entityIsMinecart"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Boolean",
-        },
-      },
-      symbol: "is_minecart",
-      interactName: "entityIsMinecart",
-      function: (entity) => {
-        return entity.isMinecart();
-      },
-    },
-    entityItem: {
-      internalName: "integrateddynamics:entity_item",
-      nicknames: [
-        "EntityItemstack",
-        "entity_itemstack",
-        "entityItemstack",
-        "entity_item_stack",
-        "entityItemStack",
-        "entity_item",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Item",
-        },
-      },
-      symbol: "item",
-      interactName: "entityItem",
-      function: (entity) => {
-        if (entity.isItem()) {
-          return entity.getItem();
-        } else {
-          throw new Error("Entity is not an item entity.");
-        }
-      },
-    },
-    entityHealth: {
-      internalName: "integrateddynamics:entity_health",
-      nicknames: [
-        "EntityHealth",
-        "entity_health",
-        "entity_health_value",
-        "entityHealthValue",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Double",
-        },
-      },
-      symbol: "health",
-      interactName: "entityHealth",
-      function: (entity) => {
-        return entity.getHealth();
-      },
-    },
-    entityWidth: {
-      internalName: "integrateddynamics:entity_width",
-      nicknames: ["EntityWidth", "entity_width"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Double",
-        },
-      },
-      symbol: "width",
-      interactName: "entityWidth",
-      function: (entity) => {
-        return entity.getWidth();
-      },
-    },
-    entityHeight: {
-      internalName: "integrateddynamics:entity_height",
-      nicknames: ["EntityHeight", "entity_height"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Double",
-        },
-      },
-      symbol: "height",
-      interactName: "entityHeight",
-      function: (entity) => {
-        return entity.getHeight();
-      },
-    },
-    isBurning: {
-      internalName: "integrateddynamics:entity_isburning",
-      nicknames: ["EntityIsburning", "entity_is_burning", "entityIsBurning"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Boolean",
-        },
-      },
-      symbol: "is_burning",
-      interactName: "entityEntityIsBurning",
-      function: (entity) => {
-        return entity.isBurning();
-      },
-    },
-    isWet: {
-      internalName: "integrateddynamics:entity_iswet",
-      nicknames: ["EntityIswet", "entity_is_wet", "entityIsWet"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Boolean",
-        },
-      },
-      symbol: "is_wet",
-      interactName: "entityIsWet",
-      function: (entity) => {
-        return entity.isWet();
-      },
-    },
-    isCrouching: {
-      internalName: "integrateddynamics:entity_iscrouching",
-      nicknames: [
-        "EntityIscrouching",
-        "entity_is_crouching",
-        "entityIsCrouching",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Boolean",
-        },
-      },
-      symbol: "is_crouching",
-      interactName: "entityIsCrouching",
-      function: (entity) => {
-        return entity.isCrouching();
-      },
-    },
-    isEating: {
-      internalName: "integrateddynamics:entity_iseating",
-      nicknames: ["EntityIseating", "entity_is_eating", "entityIsEating"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Boolean",
-        },
-      },
-      symbol: "is_eating",
-      interactName: "entityIsEating",
-      function: (entity) => {
-        return entity.isEating();
-      },
-    },
-    entityArmor: {
-      internalName: "integrateddynamics:entity_armorinventory",
-      nicknames: [
-        "EntityArmorinventory",
-        "entity_armor_inventory",
-        "entityArmorInventory",
-        "entity_armor",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: { type: "List", listType: { type: "Item" } },
-      },
-      symbol: "armor_inventory",
-      interactName: "entityArmorInventory",
-      function: (entity) => {
-        return entity.getArmorInventory();
-      },
-    },
-    entityInventoryContents: {
-      internalName: "integrateddynamics:entity_inventory",
-      nicknames: [
-        "EntityInventory",
-        "entity_inventory",
-        "entityInventory",
-        "entity_inventory_contents",
-        "entityInventoryContents",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: { type: "List", listType: { type: "Item" } },
-      },
-      symbol: "inventory",
-      interactName: "entityInventory",
-      function: (entity) => {
-        return entity.getInventory();
-      },
-    },
-    entityModName: {
-      internalName: "integrateddynamics:entity_mod",
-      nicknames: ["EntityModname", "entity_mod_name", "entityModName"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "String",
-        },
-      },
-      symbol: "mod",
-      interactName: "entityMod",
-      function: (entity) => {
-        return entity.getModName();
-      },
-    },
-    playerTargetBlock: {
-      internalName: "integrateddynamics:entity_targetblock",
-      nicknames: ["PlayerTargetblock", "player_target_block"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Block",
-        },
-      },
-      symbol: "target_block",
-      interactName: "entityTargetBlock",
-      function: (entity) => {
-        return entity.getTargetBlock();
-      },
-    },
-    playerTargetEntity: {
-      internalName: "integrateddynamics:entity_targetentity",
-      nicknames: ["PlayerTargetentity", "player_target_entity"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Entity",
-        },
-      },
-      symbol: "target_entity",
-      interactName: "entityTargetEntity",
-      function: (entity) => {
-        return entity.getTargetEntity();
-      },
-    },
-    playerHasGuiOpen: {
-      internalName: "integrateddynamics:entity_hasguiopen",
-      nicknames: ["PlayerHasguiopen", "player_has_gui_open"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Boolean",
-        },
-      },
-      symbol: "has_gui_open",
-      interactName: "entityHasGuiOpen",
-      function: (entity) => {
-        return entity.hasGuiOpen();
-      },
-    },
-    heldItemMain: {
-      internalName: "integrateddynamics:entity_helditem",
-      nicknames: [
-        "EntityHelditemMain",
-        "entity_held_item_main",
-        "entityHeldItemMain",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Item",
-        },
-      },
-      symbol: "held_item_1",
-      interactName: "entityHeldItem",
-      function: (entity) => {
-        return entity.getHeldItemMain();
-      },
-    },
-    heldItemOff: {
-      internalName: "integrateddynamics:entity_helditemoffhand",
-      nicknames: [
-        "EntityHelditemOff",
-        "entity_held_item_off",
-        "entityHeldItemOff",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Item",
-        },
-      },
-      symbol: "held_item_2",
-      interactName: "entityHeldItemOffHand",
-      function: (entity) => {
-        return entity.getHeldItemOffHand();
-      },
-    },
-    entitysMounted: {
-      internalName: "integrateddynamics:entity_mounted",
-      nicknames: ["EntityMounted", "entitys_mounted"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: { type: "List", listType: { type: "Entity" } },
-      },
-      symbol: "mounted",
-      interactName: "entityMounted",
-      function: (entity) => {
-        return entity.isEntityMounted();
-      },
-    },
-    itemFrameContents: {
-      internalName: "integrateddynamics:entity_itemframeconte)nts",
-      nicknames: [
-        "ItemframeContents",
-        "itemframe_contents",
-        "itemframeContents",
-        "item_frame_contents",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Item",
-        },
-      },
-      symbol: "itemframe_contents",
-      interactName: "entityItemFrameContents",
-      function: (entity) => {
-        if (entity.isItemFrame()) {
-          return entity.getItemFrameContents();
-        } else {
-          throw new Error("Entity is not an item frame.");
-        }
-      },
-    },
-    itemFrameRotation: {
-      internalName: "integrateddynamics:entity_itemframerotation",
-      nicknames: [
-        "ItemframeRotation",
-        "itemframe_rotation",
-        "itemframeRotation",
-        "item_frame_rotation",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Integer",
-        },
-      },
-      symbol: "itemframe_rotation",
-      interactName: "entityItemFrameRotation",
-      function: (entity) => {
-        if (entity.isItemFrame()) {
-          return entity.getItemFrameRotation();
-        } else {
-          throw new Error("Entity is not an item frame.");
-        }
-      },
-    },
-    entityHurtSound: {
-      internalName: "integrateddynamics:entity_hurtsound",
-      nicknames: ["EntityHurtsound", "entity_hurt_sound"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "String",
-        },
-      },
-      symbol: "hurtsound",
-      interactName: "entityHurtSound",
-      function: (entity) => {
-        return entity.getHurtSound();
-      },
-    },
-    entityDeathSound: {
-      internalName: "integrateddynamics:entity_deathsound",
-      nicknames: ["EntityDeathsound", "entity_death_sound"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "String",
-        },
-      },
-      symbol: "deathsound",
-      interactName: "entityDeathSound",
-      function: (entity) => {
-        return entity.getDeathSound();
-      },
-    },
-    entityAge: {
-      internalName: "integrateddynamics:entity_age",
-      nicknames: ["EntityAge", "entity_age"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Integer",
-        },
-      },
-      symbol: "age",
-      interactName: "entityAge",
-      function: (entity) => {
-        return entity.getAge();
-      },
-    },
-    isChild: {
-      internalName: "integrateddynamics:entity_ischild",
-      nicknames: ["EntityIschild", "entity_is_child", "entityIsChild"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Boolean",
-        },
-      },
-      symbol: "is_child",
-      interactName: "entityIsChild",
-      function: (entity) => {
-        return entity.isChild();
-      },
-    },
-    canBreed: {
-      internalName: "integrateddynamics:entity_canbreed",
-      nicknames: ["EntityCanbreed", "entity_can_breed", "entityCanBreed"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Boolean",
-        },
-      },
-      symbol: "canbreed",
-      interactName: "entityCanBreed",
-      function: (entity) => {
-        return entity.canBreed();
-      },
-    },
-    isInLove: {
-      internalName: "integrateddynamics:entity_isinlove",
-      nicknames: ["EntityIsinlove", "entity_is_in_love", "entityIsInLove"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Boolean",
-        },
-      },
-      symbol: "is_in_love",
-      interactName: "entityIsInLove",
-      function: (entity) => {
-        return entity.isInLove();
-      },
-    },
-    canBreedWith: {
-      internalName: "integrateddynamics:entity_canbreedwith",
-      nicknames: [
-        "EntityCanbreedwith",
-        "entity_can_breed_with",
-        "entityCanBreedWith",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Entity",
-          },
-          to: {
-            type: "Boolean",
-          },
-        },
-      },
-      symbol: "can_breed_with",
-      interactName: "entityCanBreedWith",
-      function: (entity1) => {
-        return (entity2) => {
-          return entity1.getBreadableList().includes(entity2.getUniqueName());
-        };
-      },
-    },
-    entityIsShearable: {
-      internalName: "integrateddynamics:entity_isshearable",
-      nicknames: [
-        "EntityIsshearable",
-        "entity_is_shearable",
-        "entityIsShearable",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Boolean",
-        },
-      },
-      symbol: "is_shearable",
-      interactName: "entityIsShearable",
-      function: (entity) => {
-        return entity.isShearable();
-      },
-    },
-    entityNBT: {
-      internalName: "integrateddynamics:entity_nbt",
-      nicknames: ["EntityNbt", "entity_nbt"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "NBT",
-        },
-      },
-      symbol: "NBT()",
-      interactName: "entityNbt",
-      function: (entity) => {
-        return entity.getNBT();
-      },
-    },
-    entityType: {
-      internalName: "integrateddynamics:entity_entitytype",
-      nicknames: ["EntityType", "entity_type"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "String",
-        },
-      },
-      symbol: "entity_type",
-      interactName: "entityType",
-      function: (entity) => {
-        return entity.getEntityType();
-      },
-    },
-    entityItemList: {
-      internalName: "integrateddynamics:entity_entityitems",
-      nicknames: [
-        "EntityItems",
-        "entity_items",
-        "entityItems",
-        "entity_item_list",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: { type: "List", listType: { type: "Item" } },
-      },
-      symbol: "entity_items",
-      interactName: "entityItems",
-      function: (entity) => {
-        return entity.getItemList();
-      },
-    },
-    entityFluids: {
-      internalName: "integrateddynamics:entity_entityfluids",
-      nicknames: ["EntityFluids", "entity_fluids"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: { type: "List", listType: { type: "Fluid" } },
-      },
-      symbol: "entity_fluids",
-      interactName: "entityFluids",
-      function: (entity) => {
-        return entity.getFluids();
-      },
-    },
-    entityEnergyStored: {
-      internalName: "integrateddynamics:entity_entityenergystored",
-      nicknames: ["EntityEnergyStored", "entity_energy_stored"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Integer",
-        },
-      },
-      symbol: "entity_stored_fe",
-      interactName: "entityEnergy",
-      function: (entity) => {
-        return entity.getEnergyStored();
-      },
-    },
-    entityEnergyCapacity: {
-      internalName: "integrateddynamics:entity_entityenergycapacity",
-      nicknames: ["EntityEnergyCapacity", "entity_energy_capacity"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
-          type: "Integer",
-        },
-      },
-      symbol: "entity_capacity_fe",
-      interactName: "entityEnergyCapacity",
-      function: (entity) => {
-        return entity.getEnergyCapacity();
-      },
-    },
-    fluidAmount: {
-      internalName: "integrateddynamics:fluidstack_amount",
-      nicknames: [
-        "FluidstackAmount",
-        "fluidstackAmount",
-        "fluid_stack_amount",
-        "fluidStackAmount",
-        "fluid_stack_amount",
-        "fluid_amount",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Fluid",
-        },
-        to: {
-          type: "Integer",
-        },
-      },
-      symbol: "amount",
-      interactName: "fluidstackAmount",
-      function: (fluid) => {
-        return fluid.getAmount();
-      },
-    },
-    fluidBlock: {
-      internalName: "integrateddynamics:fluidstack_block",
-      nicknames: [
-        "FluidstackBlock",
-        "fluidstackBlock",
-        "fluid_stack_block",
-        "fluidStackBlock",
-        "fluid_stack_block",
-        "fluid_block",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Fluid",
-        },
-        to: {
-          type: "Block",
-        },
-      },
-      symbol: "block",
-      interactName: "fluidstackBlock",
-      function: (fluid) => {
-        return fluid.getBlock();
-      },
-    },
-    fluidLightLevel: {
-      internalName: "integrateddynamics:fluidstack_light_level",
-      nicknames: [
-        "FluidstackLightLevel",
-        "fluidstackLightLevel",
-        "fluid_stack_light_level",
-        "fluidStackLightLevel",
-        "fluid_stack_light_level",
-        "fluid_light_level",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Fluid",
-        },
-        to: {
-          type: "Integer",
-        },
-      },
-      symbol: "light_level",
-      interactName: "fluidstackLightLevel",
-      function: (fluid) => {
-        return fluid.getLightLevel();
-      },
-    },
-    fluidDensity: {
-      internalName: "integrateddynamics:fluidstack_density",
-      nicknames: [
-        "FluidstackDensity",
-        "fluidstackDensity",
-        "fluid_stack_density",
-        "fluidStackDensity",
-        "fluid_stack_density",
-        "fluid_density",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Fluid",
-        },
-        to: {
-          type: "Integer",
-        },
-      },
-      symbol: "density",
-      interactName: "fluidstackDensity",
-      function: (fluid) => {
-        return fluid.getDensity();
-      },
-    },
-    fluidTemperature: {
-      internalName: "integrateddynamics:fluidstack_temperature",
-      nicknames: [
-        "FluidstackTemperature",
-        "fluidstackTemperature",
-        "fluid_stack_temperature",
-        "fluidStackTemperature",
-        "fluid_stack_temperature",
-        "fluid_temperature",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Fluid",
-        },
-        to: {
-          type: "Integer",
-        },
-      },
-      symbol: "temperature",
-      interactName: "fluidstackTemperature",
-      function: (fluid) => {
-        return fluid.getTemperature();
-      },
-    },
-    fluidViscosity: {
-      internalName: "integrateddynamics:fluidstack_viscosity",
-      nicknames: [
-        "FluidstackViscosity",
-        "fluidstackViscosity",
-        "fluid_stack_viscosity",
-        "fluidStackViscosity",
-        "fluid_stack_viscosity",
-        "fluid_viscosity",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Fluid",
-        },
-        to: {
-          type: "Integer",
-        },
-      },
-      symbol: "viscosity",
-      interactName: "fluidstackViscosity",
-      function: (fluid) => {
-        return fluid.getViscosity();
-      },
-    },
-    isLighterThanAir: {
-      internalName: "integrateddynamics:fluidstack_lighter_than_air",
-      nicknames: [
-        "FluidstackIsLighterThanAir",
-        "fluidstackIsLighterThanAir",
-        "fluid_stack_is_lighter_than_air",
-        "fluidStackIsLighterThanAir",
-        "fluid_stack_is_lighter_than_air",
-        "fluid_is_lighter_than_air",
-        "fluidIsLighterThanAir",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Fluid",
-        },
-        to: {
-          type: "Boolean",
-        },
-      },
-      symbol: "lighter_than_air",
-      interactName: "fluidstackIsLighterThanAir",
-      function: (fluid) => {
-        return fluid.getLighterThanAir();
-      },
-    },
-    fluidRarity: {
-      internalName: "integrateddynamics:fluidstack_rarity",
-      nicknames: [
-        "FluidstackRarity",
-        "fluidstackRarity",
-        "fluid_stack_rarity",
-        "fluidStackRarity",
-        "fluid_stack_rarity",
-        "fluid_rarity",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Fluid",
-        },
-        to: {
-          type: "String",
-        },
-      },
-      symbol: "rarity",
-      interactName: "fluidstackRarity",
-      function: (fluid) => {
-        return fluid.getRarity();
-      },
-    },
-    fluidSoundBucketEmpty: {
-      internalName: "integrateddynamics:fluidstack_sound_bucket_empty",
-      nicknames: [
-        "FluidstackSoundBucketEmpty",
-        "fluidstackSoundBucketEmpty",
-        "fluid_stack_sound_bucket_empty",
-        "fluidStackSoundBucketEmpty",
-        "fluid_stack_sound_bucket_empty",
-        "fluid_sound_bucket_empty",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Fluid",
-        },
-        to: {
-          type: "String",
-        },
-      },
-      symbol: "sound_bucket_empty",
-      interactName: "fluidstackBucketEmptySound",
-      function: (fluid) => {
-        return fluid.getBucketEmptySound();
-      },
-    },
-    fluidSoundFluidVaporize: {
-      internalName: "integrateddynamics:fluidstack_sound_fluid_vaporize",
-      nicknames: [
-        "FluidstackSoundFluidVaporize",
-        "fluidstackSoundFluidVaporize",
-        "fluid_stack_sound_fluid_vaporize",
-        "fluidStackSoundFluidVaporize",
-        "fluid_stack_sound_fluid_vaporize",
-        "fluid_sound_fluid_vaporize",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Fluid",
-        },
-        to: {
-          type: "String",
-        },
-      },
-      symbol: "sound_fluid_vaporize",
-      interactName: "fluidstackFluidVaporizeSound",
-      function: (fluid) => {
-        return fluid.getFluidVaporizeSound();
-      },
-    },
-    fluidSoundBucketFill: {
-      internalName: "integrateddynamics:fluidstack_sound_bucket_fill",
-      nicknames: [
-        "FluidstackSoundBucketFill",
-        "fluidstackSoundBucketFill",
-        "fluid_stack_sound_bucket_fill",
-        "fluidStackSoundBucketFill",
-        "fluid_stack_sound_bucket_fill",
-        "fluid_sound_bucket_fill",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Fluid",
-        },
-        to: {
-          type: "String",
-        },
-      },
-      symbol: "sound_bucket_fill",
-      interactName: "fluidstackBucketFillSound",
-      function: (fluid) => {
-        return fluid.getBucketFillSound();
-      },
-    },
-    fluidBucket: {
-      internalName: "integrateddynamics:fluidstack_bucket",
-      nicknames: [
-        "FluidstackBucket",
-        "fluidstackBucket",
-        "fluid_stack_bucket",
-        "fluidStackBucket",
-        "fluid_stack_bucket",
-        "fluid_bucket",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Fluid",
-        },
-        to: {
-          type: "Item",
-        },
-      },
-      symbol: "bucket",
-      interactName: "fluidstackBucket",
-      function: (fluid) => {
-        return fluid.getBucket();
-      },
-    },
-    rawFluidEquals: {
-      internalName: "integrateddynamics:fluidstack_israwfluidequal",
-      nicknames: [
-        "FluidstackIsrawfluidequal",
-        "fluidstackIsrawfluidequal",
-        "fluid_stack_israwfluidequal",
-        "fluidStackIsrawfluidequal",
-        "fluid_stack_israwfluidequal",
-        "fluid_israwfluidequal",
-        "isRawFluidEqual",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Fluid",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Fluid",
-          },
-          to: {
-            type: "Boolean",
-          },
-        },
-      },
-      symbol: "=Raw=",
-      interactName: "fluidstackIsRawEqual",
-      function: (fluid1) => {
-        return (fluid2) => {
-          return (
-            fluid1
-              .getUname()
-              .replace(new RegExp("\\s\\d+$"), "")
-              .toLowerCase() ===
-            fluid2.getUname().replace(new RegExp("\\s\\d+$"), "").toLowerCase()
-          );
-        };
-      },
-    },
-    fluidModName: {
-      internalName: "integrateddynamics:fluidstack_mod",
-      nicknames: [
-        "FluidstackModname",
-        "fluidstackModname",
-        "fluid_stack_modname",
-        "fluidStackModname",
-        "fluid_stack_modname",
-        "fluid_mod_name",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Fluid",
-        },
-        to: {
-          type: "String",
-        },
-      },
-      symbol: "mod",
-      interactName: "fluidstackMod",
-      function: (fluid) => {
-        return fluid.getModName();
-      },
-    },
-    fluidNBT: {
-      internalName: "integrateddynamics:fluidstack_nbt",
-      nicknames: [
-        "FluidstackData",
-        "fluidstackData",
-        "fluid_stack_data",
-        "fluidStackData",
-        "fluid_stack_data",
-        "fluid_data",
-        "fluidData",
-        "fluid_NBT",
-        "fluidStackNBT",
-        "fluid_stack_NBT",
-        "fluidstack_NBT",
-        "fluidstackNBT",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Fluid",
-        },
-        to: {
-          type: "NBT",
-        },
-      },
-      symbol: "NBT()",
-      interactName: "fluidstackNbt",
-      function: (fluid) => {
-        return fluid.getNBT();
-      },
-    },
-    fluidWithAmount: {
-      internalName: "integrateddynamics:fluidstack_with_amount",
-      nicknames: [
-        "FluidstackWithAmount",
-        "fluidstackWithAmount",
-        "fluid_stack_with_amount",
-        "fluidStackWithAmount",
-        "fluid_stack_with_amount",
-        "fluid_with_amount",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Fluid",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Integer",
-          },
-          to: {
-            type: "Fluid",
-          },
-        },
-      },
-      symbol: "with_amount",
-      interactName: "fluidstackWithAmount",
-      function: (fluid) => {
-        return (amount) => {
-          return new Fluid(new Properties({ amount }), fluid);
-        };
-      },
-    },
-    fluidNBTKeys: {
-      internalName: "integrateddynamics:fluidstack_datakeys",
-      nicknames: [
-        "FluidstackDataKeys",
-        "fluidstackDataKeys",
-        "fluid_stack_data_keys",
-        "fluidStackDataKeys",
-        "fluid_stack_data_keys",
-        "fluid_data_keys",
-        "fluidDataKeys",
-        "fluid_NBT_keys",
-        "fluidStackNBTKeys",
-        "fluid_stack_NBT_keys",
-        "fluidstack_NBT_keys",
-        "fluidstackNBTKeys",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Fluid",
-        },
-        to: { type: "List", listType: { type: "String" } },
-      },
-      symbol: "data_keys",
-      interactName: "fluidstackDataKeys",
-      function: (fluid) => {
-        const nbt = fluid.getNBT();
-        if (!nbt) {
-          return [];
-        }
-        return Object.keys(nbt).filter((key) => nbt.has(key));
-      },
-    },
-    fluidNBTValue: {
-      internalName: "integrateddynamics:fluidstack_datavalue",
-      nicknames: [
-        "FluidstackDataValue",
-        "fluidstackDataValue",
-        "fluid_stack_data_value",
-        "fluidStackDataValue",
-        "fluid_stack_data_value",
-        "fluid_data_value",
-        "fluidDataValue",
-        "fluid_NBT_value",
-        "fluidStackNBTValue",
-        "fluid_stack_NBT_value",
-        "fluidstack_NBT_value",
-        "fluidstackNBTValue",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Fluid",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "NBT",
-          },
-        },
-      },
-      symbol: "data_value",
-      interactName: "fluidstackDataValue",
-      function: (fluid) => {
-        return (key) => {
-          const nbt = fluid.getNBT();
-          if (!nbt || !nbt.hasOwnProperty(key)) {
-            return new NullTag();
-          }
-          return nbt.get(key);
-        };
-      },
-    },
-    fluidWithNBT: {
-      internalName: "integrateddynamics:itemstack_withdata",
-      nicknames: [
-        "FluidstackWithData",
-        "fluidstackWithData",
-        "fluid_stack_with_data",
-        "fluidStackWithData",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Fluid",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "Function",
-            from: {
-              type: "NBT",
-            },
-            to: {
-              type: "Fluid",
-            },
-          },
-        },
-      },
-      symbol: "with_data",
-      interactName: "fluidstackWithData",
-      function: (fluid) => {
-        return (key) => {
-          return (value) => {
-            let nbt = fluid.getNBT() || {};
-            nbt = nbt.set(key, value);
-            return new Fluid(new Properties({ nbt }), fluid);
-          };
-        };
-      },
-    },
-    fluidTag: {
-      internalName: "integrateddynamics:fluidstack_tag",
-      nicknames: [
-        "FluidstackTag",
-        "fluidstackTag",
-        "fluidstackTagStacks",
-        "fluidstackTagStack",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Fluid",
-        },
-        to: { type: "List", listType: { type: "String" } },
-      },
-      symbol: "fluid_tag_names",
-      interactName: "fluidstackTags",
-      function: (fluid) => {
-        return fluid.getTagNames();
-      },
-    },
-    fluidTagStacks: {
-      internalName: "integrateddynamics:string_fluidtag",
-      nicknames: [
-        "FluidstackTagStacks",
-        "fluidStackTagStacks",
-        "fluid_stack_tag_stacks",
-      ],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: { type: "List", listType: { type: "Fluid" } },
-      },
-      symbol: "fluid_tag_values",
-      interactName: "stringFluidsByTag",
-      function: () => {
-        throw new Error(
-          "Fluid tag values is infeasible without a registry. This is a placeholder function."
-        );
-      },
-    },
-    apply: {
-      internalName: "integrateddynamics:operator_apply",
-      nicknames: ["operatorApply"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Function",
-          from: { type: "Any", typeID: 1 },
-          to: { type: "Any", typeID: 2 },
-        },
-        to: {
-          type: "Function",
-          from: { type: "Any", typeID: 1 },
-          to: { type: "Any", typeID: 2 },
-        },
-      },
-      symbol: "apply",
-      interactName: "operatorApply",
-      serializer: "integrateddynamics:curry",
-      function: (op) => {
-        return (arg) => {
-          globalMap.unify(op.parsedSignature.getInput(0), arg);
-          return op.apply(arg);
-        };
-      },
-    },
-    apply2: {
-      internalName: "integrateddynamics:operator_apply2",
-      nicknames: ["operatorApply_2"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Function",
-          from: { type: "Any", typeID: 1 },
-          to: {
-            type: "Function",
-            from: { type: "Any", typeID: 2 },
-            to: { type: "Any", typeID: 3 },
-          },
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Any",
-            typeID: 1,
-          },
-          to: {
-            type: "Function",
-            from: {
-              type: "Any",
-              typeID: 2,
-            },
-            to: {
-              type: "Any",
-              typeID: 3,
-            },
-          },
-        },
-      },
-      symbol: "apply2",
-      interactName: "operatorApply2",
-      serializer: "integrateddynamics:curry",
-      function: (op) => {
-        return (arg1) => {
-          return (arg2) => {
-            globalMap.unify(op.parsedSignature.getInput(0), arg1);
-            globalMap.unify(op.parsedSignature.getInput(1), arg2);
-            return op.apply(arg1).apply(arg2);
-          };
-        };
-      },
-    },
-    apply3: {
-      internalName: "integrateddynamics:operator_apply3",
-      nicknames: ["operatorApply_3"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Function",
-          from: { type: "Any", typeID: 1 },
-          to: {
-            type: "Function",
-            from: { type: "Any", typeID: 2 },
-            to: {
-              type: "Function",
-              from: { type: "Any", typeID: 3 },
-              to: { type: "Any", typeID: 4 },
-            },
-          },
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Any",
-            typeID: 1,
-          },
-          to: {
-            type: "Function",
-            from: {
-              type: "Any",
-              typeID: 2,
+              type: "Number",
             },
             to: {
               type: "Function",
               from: {
-                type: "Any",
-                typeID: 3,
+                type: "Number",
               },
               to: {
-                type: "Any",
-                typeID: 4,
+                type: "Boolean",
               },
             },
           },
-        },
-      },
-      symbol: "apply3",
-      interactName: "operatorApply3",
-      serializer: "integrateddynamics:curry",
-      function: (op) => {
-        return (arg1) => {
-          return (arg2) => {
-            return (arg3) => {
-              op.parsedSignature.typeMap.unify(
-                op.parsedSignature.getInput(0),
-                arg1
-              );
-              op.parsedSignature.typeMap.unify(
-                op.parsedSignature.getInput(1),
-                arg2
-              );
-              op.parsedSignature.typeMap.unify(
-                op.parsedSignature.getInput(2),
-                arg3
-              );
-              return op.apply(arg1).apply(arg2).apply(arg3);
-            };
+          globalMap2
+        ),
+        symbol: ">=",
+        interactName: "anyGreaterThanOrEquals",
+        function: (num1) => {
+          return (num2) => {
+            return new iBoolean(num1.gte(num2));
           };
-        };
-      },
-    },
-    applyn: {
-      internalName: "integrateddynamics:operator_apply_n",
-      nicknames: ["operatorApplyN"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Function",
-          from: { type: "Any", typeID: 1 },
-          to: { type: "Any", typeID: 2 },
         },
-        to: {
-          type: "Function",
-          from: {
-            type: "List",
-            listType: {
-              type: "Any",
-              typeID: 1,
-            },
-          },
-          to: { type: "Any", typeID: 3 },
-        },
-      },
-      symbol: "apply_n",
-      interactName: "operatorApply_n",
-      serializer: "integrateddynamics:curry",
-      function: (op) => {
-        return (args) => {
-          args.forEach((arg, i) => {
-            if (arg === void 0 || arg === null) {
-              throw new Error(
-                "applyn requires all arguments to be defined and non-null."
-              );
-            }
-            op.parsedSignature.typeMap.unify(
-              op.parsedSignature.getInput(i),
-              arg
-            );
-            op = op.apply(arg);
-          });
-          return op;
-        };
-      },
-    },
-    apply0: {
-      internalName: "integrateddynamics:operator_apply0",
-      nicknames: ["operatorApply_0"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Any",
-          typeID: 1,
-        },
-        to: { type: "Any", typeID: 1 },
-      },
-      symbol: "apply0",
-      interactName: "operatorApply0",
-      serializer: "integrateddynamics:curry",
-      function: (op) => {
-        return () => {
-          return op.apply(void 0);
-        };
-      },
-    },
-    map: {
-      internalName: "integrateddynamics:operator_map",
-      nicknames: ["operatorMap"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Function",
-          from: { type: "Any", typeID: 1 },
-          to: { type: "Any", typeID: 2 },
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "List",
-            listType: { type: "Any", typeID: 1 },
-          },
-          to: {
-            type: "List",
-            listType: { type: "Any", typeID: 2 },
-          },
-        },
-      },
-      symbol: "map",
-      interactName: "operatorMap",
-      function: (op) => {
-        return (list) => {
-          return list.map((item) => op.apply(item));
-        };
-      },
-    },
-    filter: {
-      internalName: "integrateddynamics:operator_filter",
-      nicknames: ["operatorFilter"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Function",
-          from: { type: "Any", typeID: 1 },
-          to: {
-            type: "Boolean",
-          },
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "List",
-            listType: {
-              type: "Any",
-              typeID: 1,
-            },
-          },
-          to: {
-            type: "List",
-            listType: {
-              type: "Any",
-              typeID: 1,
-            },
-          },
-        },
-      },
-      symbol: "filter",
-      interactName: "operatorFilter",
-      function: (predicate) => {
-        return (list) => {
-          return list.filter((item) => predicate.apply(item));
-        };
-      },
-    },
-    conjunction: {
-      internalName: "integrateddynamics:operator_conjunction",
-      nicknames: ["operatorConjunction"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Function",
-          from: { type: "Any", typeID: 1 },
-          to: {
-            type: "Boolean",
-          },
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Function",
-            from: { type: "Any", typeID: 1 },
-            to: {
-              type: "Boolean",
-            },
-          },
-          to: {
-            type: "Function",
-            from: { type: "Any", typeID: 1 },
-            to: {
-              type: "Boolean",
-            },
-          },
-        },
-      },
-      symbol: ".&&.",
-      interactName: "operatorConjunction",
-      function: (predicate1) => {
-        return (predicate2) => {
-          return (input) => {
-            return predicate1.apply(input) && predicate2.apply(input);
-          };
-        };
-      },
-    },
-    disjunction: {
-      internalName: "integrateddynamics:operator_disjunction",
-      nicknames: ["operatorDisjunction"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Function",
-          from: { type: "Any", typeID: 1 },
-          to: {
-            type: "Boolean",
-          },
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Function",
-            from: { type: "Any", typeID: 1 },
-            to: {
-              type: "Boolean",
-            },
-          },
-          to: {
-            type: "Function",
-            from: { type: "Any", typeID: 1 },
-            to: {
-              type: "Boolean",
-            },
-          },
-        },
-      },
-      symbol: ".||.",
-      interactName: "operatorDisjunction",
-      function: (predicate1) => {
-        return (predicate2) => {
-          return (input) => {
-            return predicate1.apply(input) || predicate2.apply(input);
-          };
-        };
-      },
-    },
-    negation: {
-      internalName: "integrateddynamics:operator_negation",
-      nicknames: ["operatorNegation"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Function",
-          from: { type: "Any", typeID: 1 },
-          to: {
-            type: "Boolean",
-          },
-        },
-        to: {
-          type: "Function",
-          from: { type: "Any", typeID: 1 },
-          to: {
-            type: "Boolean",
-          },
-        },
-      },
-      symbol: "!.",
-      interactName: "operatorNegation",
-      function: (predicate) => {
-        return (input) => {
-          return !predicate.apply(input);
-        };
-      },
-    },
-    pipe: {
-      internalName: "integrateddynamics:operator_pipe",
-      nicknames: ["operatorPipe"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Function",
-          from: { type: "Any", typeID: 1 },
-          to: { type: "Any", typeID: 2 },
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Function",
-            from: { type: "Any", typeID: 2 },
-            to: { type: "Any", typeID: 3 },
-          },
-          to: {
-            type: "Function",
-            from: { type: "Any", typeID: 1 },
-            to: { type: "Any", typeID: 3 },
-          },
-        },
-      },
-      symbol: ".",
-      interactName: "operatorPipe",
-      serializer: "integrateddynamics:combined.pipe",
-      function: (f) => {
-        return (g) => {
-          f.parsedSignature.pipe(g.parsedSignature);
-          return (x) => {
-            return g.apply(f.apply(x));
-          };
-        };
-      },
-    },
-    "pipe.2": {
-      internalName: "integrateddynamics:operator_pipe2",
-      nicknames: ["operatorPipe2", "pipe2"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Function",
-          from: { type: "Any", typeID: 1 },
-          to: { type: "Any", typeID: 2 },
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Function",
-            from: { type: "Any", typeID: 1 },
-            to: { type: "Any", typeID: 3 },
-          },
-          to: {
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/RELATIONAL_GT.ts
+  var OPERATOR_RELATIONAL_GT = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:relational_gt",
+        nicknames: ["relationalGt", ">"],
+        parsedSignature: new ParsedSignature(
+          {
             type: "Function",
             from: {
+              type: "Number",
+            },
+            to: {
               type: "Function",
-              from: { type: "Any", typeID: 2 },
+              from: {
+                type: "Number",
+              },
               to: {
-                type: "Function",
-                from: { type: "Any", typeID: 3 },
-                to: { type: "Any", typeID: 4 },
+                type: "Boolean",
               },
             },
+          },
+          globalMap2
+        ),
+        symbol: ">",
+        interactName: "numberGreaterThan",
+        function: (num1) => {
+          return (num2) => {
+            return new iBoolean(num1.gt(num2));
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/RELATIONAL_LE.ts
+  var OPERATOR_RELATIONAL_LE = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:relational_le",
+        nicknames: ["relationalLe", "<="],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Number",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "Number",
+              },
+              to: {
+                type: "Boolean",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "<=",
+        interactName: "anyLessThanOrEquals",
+        function: (num1) => {
+          return (num2) => {
+            return new iBoolean(num1.lte(num2));
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/RELATIONAL_LT.ts
+  var OPERATOR_RELATIONAL_LT = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:relational_lt",
+        nicknames: ["relationalLt", "<"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Number",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "Number",
+              },
+              to: {
+                type: "Boolean",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "<",
+        interactName: "numberLessThan",
+        function: (num1) => {
+          return (num2) => {
+            return new iBoolean(num1.lt(num2));
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/RELATIONAL_NOTEQUALS.ts
+  var OPERATOR_RELATIONAL_NOTEQUALS = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:relational_notequals",
+        nicknames: ["relationalNotequals", "!="],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: { type: "Any", typeID: 1 },
             to: {
               type: "Function",
               from: { type: "Any", typeID: 1 },
-              to: { type: "Any", typeID: 4 },
+              to: {
+                type: "Boolean",
+              },
             },
           },
-        },
-      },
-      symbol: ".2",
-      interactName: "operatorPipe2",
-      serializer: "integrateddynamics:combined.pipe",
-      function: (f) => {
-        return (g) => {
-          return (h) => {
-            f.parsedSignature.typeMap.unify(
-              f.parsedSignature.getOutput(),
-              h.parsedSignature.getInput(0)
-            );
-            g.parsedSignature.typeMap.unify(
-              g.parsedSignature.getOutput(),
-              h.parsedSignature.getInput(1)
-            );
-            return (x) => {
-              return h.apply(f.apply(x)).apply(g.apply(x));
-            };
+          globalMap2
+        ),
+        symbol: "!=",
+        interactName: "anyNotEquals",
+        function: (value1) => {
+          return (value2) => {
+            return new iBoolean(!value1.equals(value2));
           };
-        };
-      },
-    },
-    flip: {
-      internalName: "integrateddynamics:operator_flip",
-      nicknames: ["operatorFlip"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Function",
-          from: { type: "Any", typeID: 1 },
-          to: {
-            type: "Function",
-            from: { type: "Any", typeID: 2 },
-            to: { type: "Any", typeID: 3 },
-          },
         },
-        to: {
-          type: "Function",
-          from: { type: "Any", typeID: 2 },
-          to: {
-            type: "Function",
-            from: { type: "Any", typeID: 1 },
-            to: { type: "Any", typeID: 3 },
-          },
-        },
-      },
-      symbol: "flip",
-      interactName: "operatorFlip",
-      serializer: "integrateddynamics:combined.flip",
-      function: (op) => {
-        return (arg1) => {
-          return (arg2) => {
-            return op.apply(arg2).apply(arg1);
-          };
-        };
-      },
-    },
-    reduce: {
-      internalName: "integrateddynamics:operator_reduce",
-      nicknames: ["operatorReduce"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Function",
-          from: { type: "Any", typeID: 1 },
-          to: {
-            type: "Function",
-            from: { type: "Any", typeID: 1 },
-            to: { type: "Any", typeID: 1 },
-          },
-        },
-        to: {
-          type: "Function",
-          from: { type: "List", listType: { type: "Any", typeID: 1 } },
-          to: {
-            type: "Function",
-            from: { type: "Any", typeID: 1 },
-            to: { type: "Any", typeID: 1 },
-          },
-        },
-      },
-      symbol: "reduce",
-      interactName: "operatorReduce",
-      function: (op) => {
-        return (list) => {
-          return (startingValue) => {
-            let result = startingValue;
-            for (let item of list) {
-              result = op.apply(result).apply(item);
-            }
-            return result;
-          };
-        };
-      },
-    },
-    reduce1: {
-      internalName: "integrateddynamics:operator_reduce1",
-      nicknames: ["operatorReduce1"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Function",
-          from: { type: "Any", typeID: 1 },
-          to: {
-            type: "Function",
-            from: { type: "Any", typeID: 1 },
-            to: { type: "Any", typeID: 1 },
-          },
-        },
-        to: {
-          type: "Function",
-          from: { type: "List", listType: { type: "Any", typeID: 1 } },
-          to: { type: "Any", typeID: 1 },
-        },
-      },
-      symbol: "reduce1",
-      interactName: "operatorReduce1",
-      function: (op) => {
-        return (list) => {
-          list = [...list];
-          let result = list.shift();
-          for (let item of list) {
-            result = op.apply(result).apply(item);
-          }
-          return result;
-        };
-      },
-    },
-    opByName: {
-      internalName: "integrateddynamics:operator_by_name",
-      nicknames: ["operatorByName"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
-          type: "Function",
-          from: { type: "Any", typeID: 1 },
-          to: { type: "Any", typeID: 2 },
-        },
-      },
-      symbol: "op_by_name",
-      interactName: "stringOperatorByName",
-      function: (name) => {
-        return operatorRegistry.find((op) => op.internalName === name);
-      },
-    },
-    NBTSize: {
-      internalName: "integrateddynamics:nbt_compound_size",
-      nicknames: ["nbtCompoundSize"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Integer",
-        },
-      },
-      symbol: "NBT{}.size",
-      interactName: "nbtSize",
-      function: (nbt) => {
-        return new Integer(nbt.getAllKeys().length);
-      },
-    },
-    NBTKeys: {
-      internalName: "integrateddynamics:nbt_compound_keys",
-      nicknames: ["nbtCompoundKeys"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: { type: "List", listType: { type: "String" } },
-      },
-      symbol: "NBT{}.keys",
-      interactName: "nbtKeys",
-      function: (nbt) => {
-        return nbt.getAllKeys();
-      },
-    },
-    NBTHasKey: {
-      internalName: "integrateddynamics:nbt_compound_haskey",
-      nicknames: ["nbtCompoundHaskey"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "Boolean",
-          },
-        },
-      },
-      symbol: "NBT{}.has_key",
-      interactName: "nbtHasKey",
-      function: (nbt) => {
-        return (key) => {
-          return nbt.has(key);
-        };
-      },
-    },
-    NBTValueType: {
-      internalName: "integrateddynamics:nbt_compound_type",
-      nicknames: ["nbtCompoundValueType"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "String",
-          },
-        },
-      },
-      symbol: "NBT{}.type",
-      interactName: "nbtType",
-      function: (nbt) => {
-        return (key) => {
-          if (!nbt.has(key)) {
-            throw new Error(`${key} does not exist in ${JSON.stringify(nbt)}`);
-          }
-          return nbt.get(key).getTypeAsString();
-        };
-      },
-    },
-    compoundValueAny: {
-      internalName: "integrateddynamics:nbt_compound_value_tag",
-      nicknames: ["nbtCompoundValueTag"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "NBT",
-          },
-        },
-      },
-      symbol: "NBT{}.get_tag",
-      interactName: "nbtGetTag",
-      function: (nbt) => {
-        return (key) => {
-          return nbt.get(key);
-        };
-      },
-    },
-    compoundValueBoolean: {
-      internalName: "integrateddynamics:nbt_compound_value_boolean",
-      nicknames: ["nbtCompoundValueBoolean"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "Boolean",
-          },
-        },
-      },
-      symbol: "NBT{}.get_boolean",
-      interactName: "nbtGetBoolean",
-      function: (nbt) => {
-        return (key) => {
-          return nbt.get(key).valueOf();
-        };
-      },
-    },
-    compoundValueInteger: {
-      internalName: "integrateddynamics:nbt_compound_value_integer",
-      nicknames: ["nbtCompoundValueInteger"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "Integer",
-          },
-        },
-      },
-      symbol: "NBT{}.get_integer",
-      interactName: "nbtGetInteger",
-      function: (nbt) => {
-        return (key) => {
-          let value = nbt.get(key);
-          if (value.getType() != Tag.TAG_INT)
-            throw new Error(
-              `${key} is not an integer in ${JSON.stringify(nbt.toJSON())}`
-            );
-          return value.valueOf();
-        };
-      },
-    },
-    compoundValueLong: {
-      internalName: "integrateddynamics:nbt_compound_value_long",
-      nicknames: ["nbtCompoundValueLong"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "Long",
-          },
-        },
-      },
-      symbol: "NBT{}.get_long",
-      interactName: "nbtGetLong",
-      function: (nbt) => {
-        return (key) => {
-          let value = nbt.get(key);
-          if (value.getType() === Tag.TAG_LONG) {
-            return value.valueOf();
-          }
-          throw new Error(
-            `${key} is not a long in ${JSON.stringify(nbt.toJSON())}`
-          );
-        };
-      },
-    },
-    compoundValueDouble: {
-      internalName: "integrateddynamics:nbt_compound_value_double",
-      nicknames: ["nbtCompoundValueDouble"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "Double",
-          },
-        },
-      },
-      symbol: "NBT{}.get_double",
-      interactName: "nbtGetDouble",
-      function: (nbt) => {
-        return (key) => {
-          let value = nbt.get(key);
-          if (value.getType() === Tag.TAG_DOUBLE) {
-            return value.valueOf();
-          }
-          throw new Error(
-            `${key} is not a double in ${JSON.stringify(nbt.toJSON())}`
-          );
-        };
-      },
-    },
-    compoundValueString: {
-      internalName: "integrateddynamics:nbt_compound_value_string",
-      nicknames: ["nbtCompoundValueString"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "String",
-          },
-        },
-      },
-      symbol: "NBT{}.get_string",
-      interactName: "nbtGetString",
-      function: (nbt) => {
-        return (key) => {
-          let value = nbt.get(key);
-          if (value.getType() === Tag.TAG_STRING) {
-            return value.valueOf();
-          }
-          throw new Error(
-            `${key} is not a string in ${JSON.stringify(nbt.toJSON())}`
-          );
-        };
-      },
-    },
-    compoundValueNBT: {
-      internalName: "integrateddynamics:nbt_compound_value_compound",
-      nicknames: ["nbtCompoundValueCompound"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "NBT",
-          },
-        },
-      },
-      symbol: "NBT{}.get_compound",
-      interactName: "nbtGetCompound",
-      function: (nbt) => {
-        return (key) => {
-          let value = nbt.get(key);
-          if (value.getType() === Tag.TAG_COMPOUND) {
-            return value.valueOf();
-          }
-          throw new Error(
-            `${key} is not a Compound in ${JSON.stringify(nbt.toJSON())}`
-          );
-        };
-      },
-    },
-    compoundValueListNBT: {
-      internalName: "integrateddynamics:nbt_compound_value_list_tag",
-      nicknames: ["nbtCompoundValueListTag", "nbtCompoundValueList"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: { type: "List", listType: { type: "NBT" } },
-        },
-      },
-      symbol: "NBT{}.get_list_tag",
-      interactName: "nbtGetListTag",
-      function: (nbt) => {
-        return (key) => {
-          if (!nbt.has(key))
-            throw new Error(
-              `${key} is not a list of NBT in ${JSON.stringify(nbt.toJSON())}`
-            );
-          let listTag = nbt.get(key);
-          if (listTag.getType() != Tag.TAG_LIST)
-            throw new Error(
-              `${key} is not a list of NBT in ${JSON.stringify(nbt.toJSON())}`
-            );
-          return listTag.getArray();
-        };
-      },
-    },
-    compoundValueListByte: {
-      internalName: "integrateddynamics:nbt_compound_value_list_byte",
-      nicknames: ["nbtCompoundValueListByte"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: { type: "List", listType: { type: "Integer" } },
-        },
-      },
-      symbol: "NBT{}.get_list_byte",
-      interactName: "nbtGetListByte",
-      function: (nbt) => {
-        return (key) => {
-          let value = nbt.get(key);
-          let list = value.valueOf();
-          if (value.getType() != Tag.TAG_BYTE)
-            throw new Error(
-              `${key} is not a list of byte in ${JSON.stringify(nbt.toJSON())}`
-            );
-          return list;
-        };
-      },
-    },
-    compoundValueListInteger: {
-      internalName: "integrateddynamics:nbt_compound_value_list_int",
-      nicknames: ["nbtCompoundValueListInt"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: { type: "List", listType: { type: "Integer" } },
-        },
-      },
-      symbol: "NBT{}.get_list_int",
-      interactName: "nbtGetListInt",
-      function: (nbt) => {
-        return (key) => {
-          let value = nbt.get(key);
-          if (value.getType() != Tag.TAG_LIST)
-            throw new Error(
-              `${key} is not a list of int in ${JSON.stringify(nbt.toJSON())}`
-            );
-          let list = value.getArray();
-          return list.map((e) => {
-            if (e.getType() != Tag.TAG_INT)
-              throw new Error(
-                `${key} is not a list of int in ${JSON.stringify(nbt.toJSON())}`
-              );
-            return e.valueOf();
-          });
-        };
-      },
-    },
-    compoundValueListLong: {
-      internalName: "integrateddynamics:nbt_compound_value_list_long",
-      nicknames: ["nbtCompoundValueListLong"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: { type: "List", listType: { type: "Long" } },
-        },
-      },
-      symbol: "NBT{}.get_list_long",
-      interactName: "nbtGetListLong",
-      function: (nbt) => {
-        return (key) => {
-          let value = nbt.get(key);
-          if (value.getType() != Tag.TAG_LIST)
-            throw new Error(
-              `${key} is not a list of long in ${JSON.stringify(nbt.toJSON())}`
-            );
-          let list = value.getArray();
-          return list.map((e) => {
-            if (e.getType() != Tag.TAG_LONG)
-              throw new Error(
-                `${key} is not a list of long in ${JSON.stringify(nbt.toJSON())}`
-              );
-            return e.valueOf();
-          });
-        };
-      },
-    },
-    NBTWithout: {
-      internalName: "integrateddynamics:nbt_compound_without",
-      nicknames: ["nbtCompoundWithout"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "NBT",
-          },
-        },
-      },
-      symbol: "NBT{}.without",
-      interactName: "nbtWithout",
-      function: (nbt) => {
-        return (key) => {
-          return nbt.without(key);
-        };
-      },
-    },
-    NBTWithBoolean: {
-      internalName: "integrateddynamics:nbt_compound_with_boolean",
-      nicknames: ["nbtCompoundWithBoolean"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "Function",
-            from: {
-              type: "Boolean",
-            },
-            to: {
-              type: "NBT",
-            },
-          },
-        },
-      },
-      symbol: "NBT{}.with_boolean",
-      interactName: "nbtWithBoolean",
-      function: (nbt) => {
-        return (key) => {
-          return (value) => {
-            return nbt.set(key, new ByteTag(new Integer(+value)));
-          };
-        };
-      },
-    },
-    NBTWithShort: {
-      internalName: "integrateddynamics:nbt_compound_with_short",
-      nicknames: ["nbtCompoundWithShort"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "Function",
-            from: {
-              type: "Integer",
-            },
-            to: {
-              type: "NBT",
-            },
-          },
-        },
-      },
-      symbol: "NBT{}.with_short",
-      interactName: "nbtWithShort",
-      function: (nbt) => {
-        return (key) => {
-          return (value) => {
-            return nbt.set(key, value);
-          };
-        };
-      },
-    },
-    NBTWithInteger: {
-      internalName: "integrateddynamics:nbt_compound_with_integer",
-      nicknames: ["nbtCompoundWithInteger"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "Function",
-            from: {
-              type: "Integer",
-            },
-            to: {
-              type: "NBT",
-            },
-          },
-        },
-      },
-      symbol: "NBT{}.with_integer",
-      interactName: "nbtWithInteger",
-      function: (nbt) => {
-        return (key) => {
-          return (value) => {
-            return nbt.set(key, value);
-          };
-        };
-      },
-    },
-    NBTWithLong: {
-      internalName: "integrateddynamics:nbt_compound_with_long",
-      nicknames: ["nbtCompoundWithLong"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "Function",
-            from: {
-              type: "Long",
-            },
-            to: {
-              type: "NBT",
-            },
-          },
-        },
-      },
-      symbol: "NBT{}.with_long",
-      interactName: "nbtWithLong",
-      function: (nbt) => {
-        return (key) => {
-          return (value) => {
-            return nbt.set(key, value);
-          };
-        };
-      },
-    },
-    NBTWithDouble: {
-      internalName: "integrateddynamics:nbt_compound_with_double",
-      nicknames: ["nbtCompoundWithDouble"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "Function",
-            from: {
-              type: "Double",
-            },
-            to: {
-              type: "NBT",
-            },
-          },
-        },
-      },
-      symbol: "NBT{}.with_double",
-      interactName: "nbtWithDouble",
-      function: (nbt) => {
-        return (key) => {
-          return (value) => {
-            return nbt.set(key, value);
-          };
-        };
-      },
-    },
-    NBTWithFloat: {
-      internalName: "integrateddynamics:nbt_compound_with_float",
-      nicknames: ["nbtCompoundWithFloat"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "Function",
-            from: {
-              type: "Double",
-            },
-            to: {
-              type: "NBT",
-            },
-          },
-        },
-      },
-      symbol: "NBT{}.with_float",
-      interactName: "nbtWithFloat",
-      function: (nbt) => {
-        return (key) => {
-          return (value) => {
-            return nbt.set(key, value);
-          };
-        };
-      },
-    },
-    NBTWithString: {
-      internalName: "integrateddynamics:nbt_compound_with_string",
-      nicknames: ["nbtCompoundWithString"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/STRING_CONCAT.ts
+  var OPERATOR_STRING_CONCAT = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:string_concat",
+        nicknames: ["stringConcat"],
+        parsedSignature: new ParsedSignature(
+          {
             type: "Function",
             from: {
               type: "String",
             },
             to: {
-              type: "NBT",
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: {
+                type: "String",
+              },
             },
           },
-        },
-      },
-      symbol: "NBT{}.with_string",
-      interactName: "nbtWithString",
-      function: (nbt) => {
-        return (key) => {
-          return (value) => {
-            return nbt.set(key, value);
+          globalMap2
+        ),
+        symbol: "+",
+        interactName: "stringConcat",
+        function: (str1) => {
+          return (str2) => {
+            return new iString(str1.valueOf().concat(str2.valueOf()));
           };
-        };
-      },
-    },
-    NBTWithNBT: {
-      internalName: "integrateddynamics:nbt_compound_with_tag",
-      nicknames: ["nbtCompoundWithCompound"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
         },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "Function",
-            from: {
-              type: "NBT",
-            },
-            to: {
-              type: "NBT",
-            },
-          },
-        },
-      },
-      symbol: "NBT{}.with_tag",
-      interactName: "nbtWithTag",
-      function: (nbt) => {
-        return (key) => {
-          return (value) => {
-            return nbt.set(key, value);
-          };
-        };
-      },
-    },
-    NBTWithNBTList: {
-      internalName: "integrateddynamics:nbt_compound_with_list_tag",
-      nicknames: ["nbtCompoundWithListTag"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "Function",
-            from: { type: "List", listType: { type: "NBT" } },
-            to: {
-              type: "NBT",
-            },
-          },
-        },
-      },
-      symbol: "NBT{}.with_tag_list",
-      interactName: "nbtWithTagList",
-      function: (nbt) => {
-        return (key) => {
-          return (value) => {
-            return nbt.set(key, value);
-          };
-        };
-      },
-    },
-    NBTWithByteList: {
-      internalName: "integrateddynamics:nbt_compound_with_list_byte",
-      nicknames: ["nbtCompoundWithListByte"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "Function",
-            from: { type: "List", listType: { type: "Integer" } },
-            to: {
-              type: "NBT",
-            },
-          },
-        },
-      },
-      symbol: "NBT{}.with_byte_list",
-      interactName: "nbtWithByteList",
-      function: (nbt) => {
-        return (key) => {
-          return (value) => {
-            return nbt.set(key, value);
-          };
-        };
-      },
-    },
-    NBTWithIntegerList: {
-      internalName: "integrateddynamics:nbt_compound_with_list_int",
-      nicknames: ["nbtCompoundWithListInt"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "Function",
-            from: { type: "List", listType: { type: "Integer" } },
-            to: {
-              type: "NBT",
-            },
-          },
-        },
-      },
-      symbol: "NBT{}.with_int_list",
-      interactName: "nbtWithIntList",
-      function: (nbt) => {
-        return (key) => {
-          return (value) => {
-            return nbt.set(key, value);
-          };
-        };
-      },
-    },
-    NBTWithLongList: {
-      internalName: "integrateddynamics:nbt_compound_with_list_long",
-      nicknames: ["nbtCompoundWithListLong"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "Function",
-            from: { type: "List", listType: { type: "Long" } },
-            to: {
-              type: "NBT",
-            },
-          },
-        },
-      },
-      symbol: "NBT{}.with_list_long",
-      interactName: "nbtWithListLong",
-      function: (nbt) => {
-        return (key) => {
-          return (value) => {
-            return nbt.set(key, value);
-          };
-        };
-      },
-    },
-    NBTSubset: {
-      internalName: "integrateddynamics:nbt_compound_subset",
-      nicknames: ["nbtCompoundSubset"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "NBT",
-          },
-          to: {
-            type: "Boolean",
-          },
-        },
-      },
-      symbol: "NBT{}.\u2286",
-      interactName: "nbtIsSubset",
-      function: (subSet) => {
-        return (superSet) => {
-          return superSet.compoundSubset(subSet);
-        };
-      },
-    },
-    NBTUnion: {
-      internalName: "integrateddynamics:nbt_compound_union",
-      nicknames: ["nbtCompoundUnion"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "NBT",
-          },
-          to: {
-            type: "NBT",
-          },
-        },
-      },
-      symbol: "NBT{}.\u222A",
-      interactName: "nbtUnion",
-      function: (nbt1) => {
-        return (nbt2) => {
-          return nbt1.compoundUnion(nbt2);
-        };
-      },
-    },
-    NBTIntersection: {
-      internalName: "integrateddynamics:nbt_compound_intersection",
-      nicknames: ["nbtCompoundIntersection"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "NBT",
-          },
-          to: {
-            type: "NBT",
-          },
-        },
-      },
-      symbol: "NBT{}.\u2229",
-      interactName: "nbtIntersection",
-      function: (nbt1) => {
-        return (nbt2) => {
-          return nbt1.compoundIntersection(nbt2);
-        };
-      },
-    },
-    NBTMinus: {
-      internalName: "integrateddynamics:nbt_compound_minus",
-      nicknames: ["nbtCompoundMinus"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "NBT",
-          },
-          to: {
-            type: "NBT",
-          },
-        },
-      },
-      symbol: "NBT{}.\u2216",
-      interactName: "nbtMinus",
-      function: (nbt1) => {
-        return (nbt2) => {
-          return nbt1.compoundMinus(nbt2);
-        };
-      },
-    },
-    nbtAsBoolean: {
-      internalName: "integrateddynamics:nbt_as_boolean",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Boolean",
-        },
-      },
-      symbol: "NBT.as_boolean",
-      interactName: "nbtAsBoolean",
-      function: (nbt) => {
-        if (nbt.getType() === Tag.TAG_BYTE) {
-          return !!parseInt(nbt.valueOf().toDecimal());
-        } else {
-          return false;
-        }
-      },
-    },
-    nbtAsByte: {
-      internalName: "integrateddynamics:nbt_as_byte",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Integer",
-        },
-      },
-      symbol: "NBT.as_byte",
-      interactName: "nbtAsByte",
-      function: (nbt) => {
-        if (nbt.getType() === Tag.TAG_INT) {
-          return nbt.valueOf();
-        } else {
-          return new Integer(0);
-        }
-      },
-    },
-    nbtAsShort: {
-      internalName: "integrateddynamics:nbt_as_short",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Integer",
-        },
-      },
-      symbol: "NBT.as_short",
-      interactName: "nbtAsShort",
-      function: (nbt) => {
-        if (nbt.getType() === Tag.TAG_INT) {
-          return nbt.valueOf();
-        } else {
-          return new Integer(0);
-        }
-      },
-    },
-    nbtAsInt: {
-      internalName: "integrateddynamics:nbt_as_int",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Integer",
-        },
-      },
-      symbol: "NBT.as_int",
-      interactName: "nbtAsInt",
-      function: (nbt) => {
-        if (nbt.getType() === Tag.TAG_INT) {
-          return nbt.valueOf();
-        } else {
-          return new Integer(0);
-        }
-      },
-    },
-    nbtAsLong: {
-      internalName: "integrateddynamics:nbt_as_long",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Long",
-        },
-      },
-      symbol: "NBT.as_long",
-      interactName: "nbtAsLong",
-      function: (nbt) => {
-        if (nbt.getType() === Tag.TAG_LONG) {
-          return nbt.valueOf();
-        } else {
-          return new Long(0);
-        }
-      },
-    },
-    nbtAsDouble: {
-      internalName: "integrateddynamics:nbt_as_double",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Double",
-        },
-      },
-      symbol: "NBT.as_double",
-      interactName: "nbtAsDouble",
-      function: (nbt) => {
-        if (nbt.getType() === Tag.TAG_DOUBLE) {
-          return nbt.valueOf();
-        } else {
-          return new Double(0);
-        }
-      },
-    },
-    nbtAsFloat: {
-      internalName: "integrateddynamics:nbt_as_float",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "Double",
-        },
-      },
-      symbol: "NBT.as_float",
-      interactName: "nbtAsFloat",
-      function: (nbt) => {
-        if (nbt.getType() === Tag.TAG_DOUBLE) {
-          return nbt.valueOf();
-        } else {
-          return new Double(0);
-        }
-      },
-    },
-    nbtAsString: {
-      internalName: "integrateddynamics:nbt_as_string",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
-          type: "String",
-        },
-      },
-      symbol: "NBT.as_string",
-      interactName: "nbtAsString",
-      function: (nbt) => {
-        if (nbt.getType() === Tag.TAG_STRING) {
-          return nbt.valueOf();
-        } else {
-          return "";
-        }
-      },
-    },
-    nbtAsTagList: {
-      internalName: "integrateddynamics:nbt_as_tag_list",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: { type: "List", listType: { type: "NBT" } },
-      },
-      symbol: "NBT.as_tag_list",
-      interactName: "nbtAsTagList",
-      function: (nbt) => {
-        if (nbt.getType() === Tag.TAG_LIST) {
-          return nbt.valueOf();
-        } else {
-          return new Array();
-        }
-      },
-    },
-    nbtAsByteList: {
-      internalName: "integrateddynamics:nbt_as_byte_list",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: { type: "List", listType: { type: "Integer" } },
-      },
-      symbol: "NBT.as_byte_list",
-      interactName: "nbtAsByteList",
-      function: (nbt) => {
-        if (nbt.getType() === Tag.TAG_LIST) {
-          const list = nbt.valueOf();
-          if (!list.every((e) => e.getType() == Tag.TAG_INT))
-            return new Array();
-          return list.map((e) => e.valueOf());
-        } else {
-          return new Array();
-        }
-      },
-    },
-    nbtAsIntList: {
-      internalName: "integrateddynamics:nbt_as_int_list",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: { type: "List", listType: { type: "Integer" } },
-      },
-      symbol: "NBT.as_int_list",
-      interactName: "nbtAsIntList",
-      function: (nbt) => {
-        if (nbt.getType() === Tag.TAG_LIST) {
-          const list = nbt.valueOf();
-          if (!list.every((e) => e.getType() == Tag.TAG_INT))
-            return new Array();
-          return list.map((e) => e.valueOf());
-        } else {
-          return new Array();
-        }
-      },
-    },
-    nbtAsLongList: {
-      internalName: "integrateddynamics:nbt_as_long_list",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: { type: "List", listType: { type: "Long" } },
-      },
-      symbol: "NBT.as_long_list",
-      interactName: "nbtAsLongList",
-      function: (nbt) => {
-        if (nbt.getType() === Tag.TAG_LIST) {
-          const list = nbt.valueOf();
-          if (!list.every((e) => e.getType() == Tag.TAG_LONG))
-            return new Array();
-          return list.map((e) => e.valueOf());
-        } else {
-          return new Array();
-        }
-      },
-    },
-    nbtFromBoolean: {
-      internalName: "integrateddynamics:nbt_from_boolean",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Boolean",
-        },
-        to: {
-          type: "NBT",
-        },
-      },
-      symbol: "NBT.from_boolean",
-      interactName: "booleanAsNbt",
-      function: (bool) => {
-        return new ByteTag(new Integer(+bool));
-      },
-    },
-    nbtFromShort: {
-      internalName: "integrateddynamics:nbt_from_short",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Integer",
-        },
-        to: {
-          type: "NBT",
-        },
-      },
-      symbol: "NBT.from_short",
-      interactName: "shortAsNbt",
-      function: (short) => {
-        return new IntTag(short);
-      },
-    },
-    nbtFromByte: {
-      internalName: "integrateddynamics:nbt_from_byte",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Integer",
-        },
-        to: {
-          type: "NBT",
-        },
-      },
-      symbol: "NBT.from_byte",
-      interactName: "byteAsNbt",
-      function: (byte) => {
-        return new IntTag(byte);
-      },
-    },
-    nbtFromInt: {
-      internalName: "integrateddynamics:nbt_from_int",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Integer",
-        },
-        to: {
-          type: "NBT",
-        },
-      },
-      symbol: "NBT.from_int",
-      interactName: "integerAsNbt",
-      function: (int) => {
-        return new IntTag(int);
-      },
-    },
-    nbtFromLong: {
-      internalName: "integrateddynamics:nbt_from_long",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Long",
-        },
-        to: {
-          type: "NBT",
-        },
-      },
-      symbol: "NBT.from_long",
-      interactName: "longAsNbt",
-      function: (long) => {
-        return new LongTag(long);
-      },
-    },
-    nbtFromDouble: {
-      internalName: "integrateddynamics:nbt_from_double",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Double",
-        },
-        to: {
-          type: "NBT",
-        },
-      },
-      symbol: "NBT.from_double",
-      interactName: "doubleAsNbt",
-      function: (double) => {
-        return new DoubleTag(double);
-      },
-    },
-    nbtFromFloat: {
-      internalName: "integrateddynamics:nbt_from_float",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Double",
-        },
-        to: {
-          type: "NBT",
-        },
-      },
-      symbol: "NBT.from_float",
-      interactName: "floatAsNbt",
-      function: (float) => {
-        return new DoubleTag(float);
-      },
-    },
-    nbtFromString: {
-      internalName: "integrateddynamics:nbt_from_string",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
-          type: "NBT",
-        },
-      },
-      symbol: "NBT.from_string",
-      interactName: "stringAsNbt",
-      function: (str) => {
-        return new StringTag(str);
-      },
-    },
-    nbtFromTagList: {
-      internalName: "integrateddynamics:nbt_from_tag_list",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: { type: "List", listType: { type: "NBT" } },
-        to: {
-          type: "NBT",
-        },
-      },
-      symbol: "NBT.from_tag_list",
-      interactName: "tagListAsNbt",
-      function: (tagList) => {
-        return new ListTag(tagList);
-      },
-    },
-    nbtFromByteList: {
-      internalName: "integrateddynamics:nbt_from_byte_list",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: { type: "List", listType: { type: "Integer" } },
-        to: {
-          type: "NBT",
-        },
-      },
-      symbol: "NBT.from_byte_list",
-      interactName: "byteListAsNbt",
-      function: (byteList) => {
-        return new ListTag(byteList.map((e) => new IntTag(e)));
-      },
-    },
-    nbtFromIntList: {
-      internalName: "integrateddynamics:nbt_from_int_list",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: { type: "List", listType: { type: "Integer" } },
-        to: {
-          type: "NBT",
-        },
-      },
-      symbol: "NBT.from_int_list",
-      interactName: "intListAsNbt",
-      function: (intList) => {
-        return new ListTag(intList.map((e) => new IntTag(e)));
-      },
-    },
-    nbtFromLongList: {
-      internalName: "integrateddynamics:nbt_from_long_list",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: { type: "List", listType: { type: "Long" } },
-        to: {
-          type: "NBT",
-        },
-      },
-      symbol: "NBT.from_long_list",
-      interactName: "longListAsNbt",
-      function: (longList) => {
-        return new ListTag(longList.map((e) => new LongTag(e)));
-      },
-    },
-    nbtPathMatchFirst: {
-      internalName: "integrateddynamics:nbt_path_match_first",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "NBT",
-          },
-          to: {
-            type: "NBT",
-          },
-        },
-      },
-      symbol: "NBT.path_match_first",
-      interactName: "stringNbtPathMatchFirst",
-      function: (path) => {
-        return (nbt) => {
-          let expression = NbtPath.parse(path);
-          if (!expression) throw new Error(`Invalid path: ${path}`);
-          return expression.match(nbt).getMatches()[0] ?? new NullTag();
-        };
-      },
-    },
-    nbtPathMatchAll: {
-      internalName: "integrateddynamics:nbt_path_match_all",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "NBT",
-          },
-          to: { type: "List", listType: { type: "NBT" } },
-        },
-      },
-      symbol: "NBT.path_match_all",
-      interactName: "stringNbtPathMatchAll",
-      function: (path) => {
-        return (nbt) => {
-          let expression = NbtPath.parse(path);
-          if (!expression) throw new Error(`Invalid path: ${path}`);
-          return expression.match(nbt).getMatches();
-        };
-      },
-    },
-    NBTPathTest: {
-      internalName: "integrateddynamics:nbt_path_test",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "NBT",
-          },
-          to: {
-            type: "Boolean",
-          },
-        },
-      },
-      symbol: "NBT.path_test",
-      interactName: "stringNbtPathTest",
-      function: (path) => {
-        return (nbt) => {
-          let expression = NbtPath.parse(path);
-          if (!expression) throw new Error(`Invalid path: ${path}`);
-          return expression.test(nbt);
-        };
-      },
-    },
-    ingredientsItems: {
-      internalName: "integrateddynamics:ingredients_items",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Ingredients",
-        },
-        to: { type: "List", listType: { type: "Item" } },
-      },
-      symbol: "Ingr.items",
-      interactName: "ingredientsItems",
-      function: (ingredients) => {
-        return ingredients.getItems();
-      },
-    },
-    ingredientsFluids: {
-      internalName: "integrateddynamics:ingredients_fluids",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Ingredients",
-        },
-        to: { type: "List", listType: { type: "Fluid" } },
-      },
-      symbol: "Ingr.fluids",
-      interactName: "ingredientsFluids",
-      function: (ingredients) => {
-        return ingredients.getFluids();
-      },
-    },
-    ingredientsEnergies: {
-      internalName: "integrateddynamics:ingredients_energies",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Ingredients",
-        },
-        to: { type: "List", listType: { type: "Long" } },
-      },
-      symbol: "Ingr.energies",
-      interactName: "ingredientsEnergies",
-      function: (ingredients) => {
-        return ingredients.getEnergies();
-      },
-    },
-    ingredientsWithItem: {
-      internalName: "integrateddynamics:ingredients_with_item",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Ingredients",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Integer",
-          },
-          to: {
-            type: "Function",
-            from: {
-              type: "Item",
-            },
-            to: {
-              type: "Ingredients",
-            },
-          },
-        },
-      },
-      symbol: "Ingr.with_item",
-      interactName: "ingredientsWithItem",
-      function: (ingredients) => {
-        return (index) => {
-          return (item) => {
-            return ingredients.setItem(item, index);
-          };
-        };
-      },
-    },
-    ingredientsWithFluid: {
-      internalName: "integrateddynamics:ingredients_with_fluid",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Ingredients",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Integer",
-          },
-          to: {
-            type: "Function",
-            from: {
-              type: "Fluid",
-            },
-            to: {
-              type: "Ingredients",
-            },
-          },
-        },
-      },
-      symbol: "Ingr.with_fluid",
-      interactName: "ingredientsWithFluid",
-      function: (ingredients) => {
-        return (index) => {
-          return (fluid) => {
-            return ingredients.setFluid(fluid, index);
-          };
-        };
-      },
-    },
-    ingredientsWithEnergy: {
-      internalName: "integrateddynamics:ingredients_with_energy",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Ingredients",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Integer",
-          },
-          to: {
-            type: "Function",
-            from: {
-              type: "Long",
-            },
-            to: {
-              type: "Ingredients",
-            },
-          },
-        },
-      },
-      symbol: "Ingr.with_energy",
-      interactName: "ingredientsWithEnergy",
-      function: (ingredients) => {
-        return (index) => {
-          return (energy) => {
-            return ingredients.setEnergy(energy, index);
-          };
-        };
-      },
-    },
-    ingredientsWithItems: {
-      internalName: "integrateddynamics:ingredients_with_items",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Ingredients",
-        },
-        to: {
-          type: "Function",
-          from: { type: "List", listType: { type: "Item" } },
-          to: {
-            type: "Ingredients",
-          },
-        },
-      },
-      symbol: "Ingr.with_items",
-      interactName: "ingredientsWithItems",
-      function: (ingredients) => {
-        return (itemList) => {
-          return ingredients.appendItems(itemList);
-        };
-      },
-    },
-    ingredientsWithFluids: {
-      internalName: "integrateddynamics:ingredients_with_fluids",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Ingredients",
-        },
-        to: {
-          type: "Function",
-          from: { type: "List", listType: { type: "Fluid" } },
-          to: {
-            type: "Ingredients",
-          },
-        },
-      },
-      symbol: "Ingr.with_fluids",
-      interactName: "ingredientsWithFluids",
-      function: (ingredients) => {
-        return (fluidList) => {
-          return ingredients.appendFluids(fluidList);
-        };
-      },
-    },
-    ingredientsWithEnergies: {
-      internalName: "integrateddynamics:ingredients_with_energies",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Ingredients",
-        },
-        to: {
-          type: "Function",
-          from: { type: "List", listType: { type: "Long" } },
-          to: {
-            type: "Ingredients",
-          },
-        },
-      },
-      symbol: "Ingr.with_energies",
-      interactName: "ingredientsWithEnergies",
-      function: (ingredients) => {
-        return (energyList) => {
-          return ingredients.appendEnergies(energyList);
-        };
-      },
-    },
-    recipeInput: {
-      internalName: "integrateddynamics:recipe_input",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Recipe",
-        },
-        to: {
-          type: "Ingredients",
-        },
-      },
-      symbol: "recipe_in",
-      interactName: "recipeInput",
-      function: (recipe) => {
-        return recipe.getInput();
-      },
-    },
-    recipeOutput: {
-      internalName: "integrateddynamics:recipe_output",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Recipe",
-        },
-        to: {
-          type: "Ingredients",
-        },
-      },
-      symbol: "recipe_out",
-      interactName: "recipeOutput",
-      function: (recipe) => {
-        return recipe.getOutput();
-      },
-    },
-    recipeWithInput: {
-      internalName: "integrateddynamics:recipe_with_input",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Recipe",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Ingredients",
-          },
-          to: {
-            type: "Recipe",
-          },
-        },
-      },
-      symbol: "Recipe.with_in",
-      interactName: "recipeWithInput",
-      function: (recipe) => {
-        return (ingredients) => {
-          return recipe.setInput(ingredients);
-        };
-      },
-    },
-    recipeWithOutput: {
-      internalName: "integrateddynamics:recipe_with_output",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Recipe",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Ingredients",
-          },
-          to: {
-            type: "Recipe",
-          },
-        },
-      },
-      symbol: "Recipe.with_out",
-      interactName: "recipeWithOutput",
-      function: (recipe) => {
-        return (ingredients) => {
-          return recipe.setOutput(ingredients);
-        };
-      },
-    },
-    recipeWithInputOutput: {
-      internalName: "integrateddynamics:recipe_with_input_output",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Ingredients",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Ingredients",
-          },
-          to: {
-            type: "Recipe",
-          },
-        },
-      },
-      symbol: "Recipe.with_io",
-      interactName: "ingredientsWithInputOutput",
-      function: (input) => {
-        return (output) => {
-          return new Recipe(input, output);
-        };
-      },
-    },
-    parseBoolean: {
-      internalName:
-        "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.boolean",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
-          type: "Boolean",
-        },
-      },
-      symbol: "parse_boolean",
-      interactName: "stringParseAsBoolean",
-      function: (value) => {
-        const matchArr =
-          new import_re2_wasm.RE2("(F(alse)?|[+-]?(0x|#)?0+|)", "i").match(
-            value
-          ) ?? [];
-        return !!matchArr[0];
-      },
-    },
-    parseDouble: {
-      internalName:
-        "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.double",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Any",
-          typeID: 1,
-        },
-        to: {
-          type: "Double",
-        },
-      },
-      symbol: "parse_double",
-      interactName: "stringParseAsDouble",
-      function: (data) => {
-        try {
-          return new Double(data);
-        } catch (e) {
-          return new Double(0);
-        }
-      },
-    },
-    parseInteger: {
-      internalName:
-        "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.integer",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Any",
-          typeID: 1,
-        },
-        to: {
-          type: "Integer",
-        },
-      },
-      symbol: "parse_integer",
-      interactName: "stringParseAsInteger",
-      function: (data) => {
-        try {
-          return new Integer(data);
-        } catch (e) {
-          return new Integer(0);
-        }
-      },
-    },
-    parseLong: {
-      internalName:
-        "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.long",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Any",
-          typeID: 1,
-        },
-        to: {
-          type: "Long",
-        },
-      },
-      symbol: "parse_long",
-      interactName: "stringParseAsLong",
-      function: (data) => {
-        try {
-          return new Long(data);
-        } catch (e) {
-          return new Long(0);
-        }
-      },
-    },
-    parseNBT: {
-      internalName:
-        "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.nbt",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
-          type: "NBT",
-        },
-      },
-      symbol: "parse_nbt",
-      interactName: "stringParseAsNbt",
-      function: (data) => {
-        return CompoundTag.fromJSON(data);
-      },
-    },
-    choice: {
-      internalName: "integrateddynamics:general_choice",
-      nicknames: ["generalChoice"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Boolean",
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Any",
-            typeID: 1,
-          },
-          to: {
-            type: "Function",
-            from: {
-              type: "Any",
-              typeID: 1,
-            },
-            to: {
-              type: "Any",
-              typeID: 1,
-            },
-          },
-        },
-      },
-      symbol: "?",
-      interactName: "booleanChoice",
-      function: (bool) => {
-        return (trueValue) => {
-          return (falseValue) => {
-            return bool ? trueValue : falseValue;
-          };
-        };
-      },
-    },
-    generalIdentity: {
-      internalName: "integrateddynamics:general_identity",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Any",
-          typeID: 1,
-        },
-        to: {
-          type: "Any",
-          typeID: 1,
-        },
-      },
-      symbol: "id",
-      interactName: "anyIdentity",
-      function: (value) => {
-        return value;
-      },
-    },
-    generalConstant: {
-      internalName: "integrateddynamics:general_constant",
-      nicknames: [],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Any",
-          typeID: 1,
-        },
-        to: {
-          type: "Function",
-          from: {
-            type: "Any",
-            typeID: 2,
-          },
-          to: {
-            type: "Any",
-            typeID: 1,
-          },
-        },
-      },
-      symbol: "K",
-      interactName: "anyConstant",
-      function: (value) => {
-        return () => {
-          return value;
-        };
-      },
-    },
-    integerToDouble: {
-      internalName:
-        "integrateddynamics:operator.integrateddynamics.castintegrateddynamics_integer__integrateddynamics_double",
-      nicknames: ["intToDouble", "integerDouble"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Integer",
-        },
-        to: {
-          type: "Double",
-        },
-      },
-      symbol: "()",
-      interactName: "integerIntegerToDouble",
-      function: (int) => {
-        return int.toDouble();
-      },
-    },
-    integerToLong: {
-      internalName:
-        "integrateddynamics:operator.integrateddynamics.castintegrateddynamics_integer__integrateddynamics_long",
-      nicknames: ["intToLong", "integerLong"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Integer",
-        },
-        to: {
-          type: "Long",
-        },
-      },
-      symbol: "()",
-      interactName: "integerIntegerToLong",
-      function: (int) => {
-        return int.toLong();
-      },
-    },
-    doubleToInteger: {
-      internalName:
-        "integrateddynamics:operator.integrateddynamics.castintegrateddynamics_double__integrateddynamics_integer",
-      nicknames: ["doubleToInt", "doubleInteger"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Double",
-        },
-        to: {
-          type: "Integer",
-        },
-      },
-      symbol: "()",
-      interactName: "doubleDoubleToInteger",
-      function: (double) => {
-        return double.toInteger();
-      },
-    },
-    doubleToLong: {
-      internalName:
-        "integrateddynamics:operator.integrateddynamics.castintegrateddynamics_double__integrateddynamics_long",
-      nicknames: ["doubleToLong"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Double",
-        },
-        to: {
-          type: "Long",
-        },
-      },
-      symbol: "()",
-      interactName: "doubleDoubleToLong",
-      function: (double) => {
-        return double.toLong();
-      },
-    },
-    longToInteger: {
-      internalName:
-        "integrateddynamics:operator.integrateddynamics.castintegrateddynamics_long__integrateddynamics_integer",
-      nicknames: ["longToInt", "longInteger"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Long",
-        },
-        to: {
-          type: "Integer",
-        },
-      },
-      symbol: "()",
-      interactName: "longLongToInteger",
-      function: (long) => {
-        return long.toInteger();
-      },
-    },
-    longToDouble: {
-      internalName:
-        "integrateddynamics:operator.integrateddynamics.castintegrateddynamics_long__integrateddynamics_double",
-      nicknames: ["longToDouble", "longDouble"],
-      parsedSignature: {
-        type: "Function",
-        from: {
-          type: "Long",
-        },
-        to: {
-          type: "Double",
-        },
-      },
-      symbol: "()",
-      interactName: "longLongToDouble",
-      function: (long) => {
-        return long.toDouble();
-      },
-    },
+      });
+    }
   };
-  var operatorRegistry = new OperatorRegistry();
-  for (const [k, v] of Object.entries(operatorRegistryRawData)) {
-    operatorRegistry.register(k, v, globalMap);
-  }
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/STRING_CONTAINS.ts
+  var OPERATOR_STRING_CONTAINS = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:string_contains",
+        nicknames: ["stringContains"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: {
+                type: "Boolean",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "contains",
+        interactName: "stringContains",
+        function: (substring) => {
+          return (fullString) => {
+            return new iBoolean(
+              fullString.valueOf().includes(substring.valueOf())
+            );
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/STRING_CONTAINS_REGEX.ts
+  var import_re2_wasm2 = __toESM(require_re22());
+  var OPERATOR_STRING_CONTAINS_REGEX = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:string_contains_regex",
+        nicknames: ["containsRegex"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: {
+                type: "Boolean",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "contains_regex",
+        interactName: "stringContainsRegex",
+        function: (regexString) => {
+          return (fullString) => {
+            const regex = new import_re2_wasm2.RE2(regexString.valueOf(), "u");
+            return new iBoolean(regex.test(fullString.valueOf()));
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/STRING_ENDS_WITH.ts
+  var OPERATOR_STRING_ENDS_WITH = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:string_ends_with",
+        nicknames: ["endsWith", "stringEndsWith"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: {
+                type: "Boolean",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "ends_with",
+        interactName: "stringEndsWith",
+        function: (substring) => {
+          return (fullString) => {
+            return new iBoolean(
+              fullString.valueOf().endsWith(substring.valueOf())
+            );
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/STRING_ERROR.ts
+  var OPERATOR_STRING_ERROR = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:string_string_error",
+        nicknames: ["error", "string_error"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: { type: "Any", typeID: 1 },
+          },
+          globalMap2
+        ),
+        symbol: "error",
+        interactName: "stringStringError",
+        function: (message) => {
+          throw new Error(`Error: ${message.valueOf()}`);
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/STRING_INDEX_OF.ts
+  var OPERATOR_STRING_INDEX_OF = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:string_index_of",
+        nicknames: ["stringIndexOf"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: {
+                type: "Integer",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "index_of",
+        interactName: "stringIndexOf",
+        function: (substring) => {
+          return (fullString) => {
+            return new Integer(
+              fullString.valueOf().indexOf(substring.valueOf())
+            );
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/STRING_INDEX_OF_REGEX.ts
+  var import_re2_wasm3 = __toESM(require_re22());
+  var OPERATOR_STRING_INDEX_OF_REGEX = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:string_index_of_regex",
+        nicknames: ["indexOfRegex", "stringIndexOfRegex"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: {
+                type: "Integer",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "index_of_regex",
+        interactName: "stringIndexOfRegex",
+        function: (regexString) => {
+          return (fullString) => {
+            const regex = new import_re2_wasm3.RE2(regexString.valueOf(), "u");
+            return new Integer(fullString.valueOf().search(regex));
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/STRING_JOIN.ts
+  var OPERATOR_STRING_JOIN = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:string_join",
+        nicknames: ["stringJoin"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Function",
+              from: { type: "List", listType: { type: "String" } },
+              to: {
+                type: "String",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "join",
+        interactName: "stringJoin",
+        function: (delimiter) => {
+          return (stringList) => {
+            if (
+              stringList
+                .valueOf()
+                .some((item) => typeof item.valueOf() !== "string")
+            ) {
+              throw new Error("stringJoin expects a list of strings");
+            }
+            return new iString(
+              stringList
+                .valueOf()
+                .map((s) => s.valueOf())
+                .join(delimiter.valueOf())
+            );
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/STRING_LENGTH.ts
+  var OPERATOR_STRING_LENGTH = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:string_length",
+        nicknames: ["stringLength"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Integer",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "len",
+        interactName: "stringLength",
+        function: (str) => {
+          return new Integer(str.valueOf().length);
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/STRING_MATCHES_REGEX.ts
+  var import_re2_wasm4 = __toESM(require_re22());
+  var OPERATOR_STRING_MATCHES_REGEX = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:string_matches_regex",
+        nicknames: ["matchesRegex"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: {
+                type: "Boolean",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "matches_regex",
+        interactName: "stringMatchesRegex",
+        function: (regexString) => {
+          return (fullString) => {
+            let regex = regexString.valueOf();
+            if (regex.startsWith("^")) regex = regex.slice(1);
+            if (regex.endsWith("$")) regex = regex.slice(0, -1);
+            const re2 = new import_re2_wasm4.RE2(`^(?:${regex})$`, "u");
+            return new iBoolean(re2.test(fullString.valueOf()));
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/STRING_REGEX_GROUP.ts
+  var import_re2_wasm5 = __toESM(require_re22());
+  var OPERATOR_STRING_REGEX_GROUP = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:string_regex_group",
+        nicknames: ["stringRegexGroup"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "Integer",
+              },
+              to: {
+                type: "Function",
+                from: {
+                  type: "String",
+                },
+                to: {
+                  type: "String",
+                },
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "regex_group",
+        interactName: "stringRegexGroup",
+        function: (regexString) => {
+          return (groupIndex) => {
+            return (fullString) => {
+              const regex = new import_re2_wasm5.RE2(
+                regexString.valueOf(),
+                "u"
+              );
+              const match = regex.exec(fullString.valueOf());
+              if (match && match[groupIndex.toJSNumber()] !== void 0) {
+                return new iString(match[groupIndex.toJSNumber()]);
+              } else {
+                throw new Error(
+                  `No match found for group index ${groupIndex.valueOf()} in regex "${regexString.valueOf()}" on string "${fullString.valueOf()}"`
+                );
+              }
+            };
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/STRING_REGEX_GROUPS.ts
+  var import_re2_wasm6 = __toESM(require_re22());
+  var OPERATOR_STRING_REGEX_GROUPS = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:string_regex_groups",
+        nicknames: ["stringRegexGroups", "stringRegexGroups"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: { type: "List", listType: { type: "String" } },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "regex_groups",
+        interactName: "stringRegexGroups",
+        function: (regexString) => {
+          return (fullString) => {
+            const regex = new import_re2_wasm6.RE2(regexString.valueOf(), "u");
+            const match = regex.exec(fullString.valueOf());
+            if (match) {
+              return new iArrayEager(match.map((m) => new iString(m)));
+            } else {
+              throw new Error(
+                `No match found for group in regex "${regexString.valueOf()}" on string "${fullString.valueOf()}"`
+              );
+            }
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/STRING_REGEX_SCAN.ts
+  var import_re2_wasm7 = __toESM(require_re22());
+  var OPERATOR_STRING_REGEX_SCAN = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:string_regex_scan",
+        nicknames: ["stringRegexScan"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "Integer",
+              },
+              to: {
+                type: "Function",
+                from: {
+                  type: "String",
+                },
+                to: { type: "List", listType: { type: "String" } },
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "regex_scan",
+        interactName: "stringRegexScan",
+        function: (regexString) => {
+          return (groupIndex) => {
+            return (fullString) => {
+              const regex = new import_re2_wasm7.RE2(
+                regexString.valueOf(),
+                "gu"
+              );
+              let results = [];
+              let match;
+              regex.lastIndex = 0;
+              while ((match = regex.exec(fullString.valueOf())) !== null) {
+                const groupValue = match[groupIndex.toJSNumber()];
+                if (groupValue !== void 0 && groupValue !== null) {
+                  results.push(new iString(groupValue));
+                }
+              }
+              return new iArrayEager(results);
+            };
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/STRING_REPLACE.ts
+  var OPERATOR_STRING_REPLACE = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:string_replace",
+        nicknames: ["stringReplace"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: {
+                type: "Function",
+                from: {
+                  type: "String",
+                },
+                to: {
+                  type: "String",
+                },
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "replace",
+        interactName: "stringReplace",
+        function: (searchString) => {
+          return (replacementString) => {
+            return (fullString) => {
+              return new iString(
+                fullString
+                  .valueOf()
+                  .replace(searchString.valueOf(), replacementString.valueOf())
+              );
+            };
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/STRING_REPLACE_REGEX.ts
+  var import_re2_wasm8 = __toESM(require_re22());
+  var OPERATOR_STRING_REPLACE_REGEX = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:string_replace_regex",
+        nicknames: ["stringReplaceRegex"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: {
+                type: "Function",
+                from: {
+                  type: "String",
+                },
+                to: {
+                  type: "String",
+                },
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "replace_regex",
+        interactName: "stringReplaceRegex",
+        function: (regexString) => {
+          return (replacementString) => {
+            return (fullString) => {
+              const regex = new import_re2_wasm8.RE2(
+                regexString.valueOf(),
+                "u"
+              );
+              return new iString(
+                fullString.valueOf().replace(regex, replacementString.valueOf())
+              );
+            };
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/STRING_SPLIT_ON.ts
+  var OPERATOR_STRING_SPLIT_ON = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:string_split_on",
+        nicknames: ["stringSplitOn"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: { type: "List", listType: { type: "String" } },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "split_on",
+        interactName: "stringSplitOn",
+        function: (delimiter) => {
+          return (fullString) => {
+            return new iArrayEager(
+              fullString
+                .valueOf()
+                .split(delimiter.valueOf())
+                .map((s) => new iString(s))
+            );
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/STRING_SPLIT_ON_REGEX.ts
+  var import_re2_wasm9 = __toESM(require_re22());
+  var OPERATOR_STRING_SPLIT_ON_REGEX = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:string_split_on_regex",
+        nicknames: ["stringSplitOnRegex"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: { type: "List", listType: { type: "String" } },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "split_on_regex",
+        interactName: "stringSplitOnRegex",
+        function: (regexString) => {
+          return (fullString) => {
+            const regex = new import_re2_wasm9.RE2(regexString.valueOf(), "u");
+            return new iArrayEager(
+              regex.split(fullString.valueOf()).map((s) => new iString(s))
+            );
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/STRING_STARTS_WITH.ts
+  var OPERATOR_STRING_STARTS_WITH = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:string_starts_with",
+        nicknames: ["startsWith", "stringStartsWith"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: {
+                type: "Boolean",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "starts_with",
+        interactName: "stringStartsWith",
+        function: (substring) => {
+          return (fullString) => {
+            return new iBoolean(
+              fullString.valueOf().startsWith(substring.valueOf())
+            );
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/STRING_SUBSTRING.ts
+  var OPERATOR_STRING_SUBSTRING = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:string_substring",
+        nicknames: ["substring", "stringSubstring"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Integer",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "Integer",
+              },
+              to: {
+                type: "Function",
+                from: {
+                  type: "String",
+                },
+                to: {
+                  type: "String",
+                },
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "substring",
+        interactName: "integerSubstring",
+        function: (start) => {
+          return (end) => {
+            return (fullString) => {
+              let endNum = end.toJSNumber();
+              if (isNaN(endNum)) endNum = void 0;
+              return new iString(
+                fullString.valueOf().substring(start.toJSNumber(), endNum)
+              );
+            };
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/STRING_TAG.ts
+  var OPERATOR_STRING_TAG = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:string_tag",
+        nicknames: [
+          "ItemstackTagStacks",
+          "itemstack_tag_values",
+          "itemstackTagValues",
+          "item_tag_names",
+          "itemTagNames",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: { type: "List", listType: { type: "Item" } },
+          },
+          globalMap2
+        ),
+        symbol: "item_tag_values",
+        interactName: "stringItemsByTag",
+        function: () => {
+          throw new Error(
+            "Item tag values is infeasible without a registry. This is a placeholder function."
+          );
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/UNIQUELY_NAMED_UNIQUE_NAME.ts
+  var OPERATOR_UNIQUELY_NAMED_UNIQUE_NAME = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:string_unique_name",
+        nicknames: ["uname", "uniquelynamedUniquename"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "UniquelyNamed",
+            },
+            to: {
+              type: "String",
+            },
+          },
+          globalMap2
+        ),
+        symbol: "uname",
+        interactName: "uniquely_namedUniqueName",
+        function: (uniquelyNamed) => {
+          return uniquelyNamed.getUniqueName();
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/BINARY_RZSHIFT.ts
+  var OPERATOR_BINARY_RZSHIFT = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:binary_rzshift",
+        nicknames: [
+          ">>>",
+          "binaryRzshift",
+          "integerUnsignedRightShift",
+          "binaryUnsignedRightShift",
+          "integerRzshift",
+        ],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: {
+              type: "Integer",
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "Integer",
+              },
+              to: {
+                type: "Integer",
+              },
+            },
+          },
+          globalMap2
+        ),
+        symbol: ">>>",
+        interactName: "integerUnsignedRightShift",
+        function: (int1) => {
+          return (int2) => {
+            return new Integer(int1.unsignedRightShift(int2));
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operators/LIST_LAZYBUILT.ts
+  var OPERATOR_LIST_LAZYBUILT = class extends BaseOperator {
+    constructor(globalMap2) {
+      super({
+        internalName: "integrateddynamics:list_lazybuilt",
+        nicknames: ["listLazybuilt", "lazybuilt", "anyLazyBuilt"],
+        parsedSignature: new ParsedSignature(
+          {
+            type: "Function",
+            from: { type: "Any", typeID: 1 },
+            to: {
+              type: "Function",
+              from: {
+                type: "Operator",
+                obscured: {
+                  type: "Function",
+                  from: { type: "Any", typeID: 1 },
+                  to: { type: "Any", typeID: 1 },
+                },
+              },
+              to: { type: "List", listType: { type: "Any", typeID: 1 } },
+            },
+          },
+          globalMap2
+        ),
+        symbol: "lazybuilt",
+        interactName: "anyLazyBuilt",
+        function: (initial) => {
+          return (builder) => {
+            return new iArrayLazy(
+              initial,
+              builder,
+              new OPERATOR_GENERAL_IDENTITY(globalMap2)
+            );
+          };
+        },
+      });
+    }
+  };
+
+  // TSFiles/IntegratedDynamicsClasses/operators/operatorRegistry.ts
+  var globalMap = new TypeMap();
+  var operatorRegistryClass = class {
+    constructor() {}
+    find = (uname) => {
+      for (const value of Object.values(this)) {
+        if (typeof value === "function") continue;
+        if (value.getUname() === uname) return value;
+      }
+    };
+    LOGICAL_AND = new OPERATOR_LOGICAL_AND(globalMap);
+    LOGICAL_OR = new OPERATOR_LOGICAL_OR(globalMap);
+    LOGICAL_NOT = new OPERATOR_LOGICAL_NOT(globalMap);
+    LOGICAL_NAND = new OPERATOR_LOGICAL_NAND(globalMap);
+    LOGICAL_NOR = new OPERATOR_LOGICAL_NOR(globalMap);
+    ARITHMETIC_ADDITION = new OPERATOR_ARITHMETIC_ADDITION(globalMap);
+    ARITHMETIC_SUBTRACTION = new OPERATOR_ARITHMETIC_SUBTRACTION(globalMap);
+    ARITHMETIC_MULTIPLICATION = new OPERATOR_ARITHMETIC_MULTIPLICATION(
+      globalMap
+    );
+    ARITHMETIC_DIVISION = new OPERATOR_ARITHMETIC_DIVISION(globalMap);
+    ARITHMETIC_MAXIMUM = new OPERATOR_ARITHMETIC_MAXIMUM(globalMap);
+    ARITHMETIC_MINIMUM = new OPERATOR_ARITHMETIC_MINIMUM(globalMap);
+    ARITHMETIC_INCREMENT = new OPERATOR_ARITHMETIC_INCREMENT(globalMap);
+    ARITHMETIC_DECREMENT = new OPERATOR_ARITHMETIC_DECREMENT(globalMap);
+    ARITHMETIC_MODULUS = new OPERATOR_ARITHMETIC_MODULUS(globalMap);
+    DOUBLE_SQRT = new OPERATOR_DOUBLE_SQRT(globalMap);
+    DOUBLE_POW = new OPERATOR_DOUBLE_POW(globalMap);
+    RELATIONAL_EQUALS = new OPERATOR_RELATIONAL_EQUALS(globalMap);
+    RELATIONAL_GT = new OPERATOR_RELATIONAL_GT(globalMap);
+    RELATIONAL_LT = new OPERATOR_RELATIONAL_LT(globalMap);
+    RELATIONAL_NOTEQUALS = new OPERATOR_RELATIONAL_NOTEQUALS(globalMap);
+    RELATIONAL_GE = new OPERATOR_RELATIONAL_GE(globalMap);
+    RELATIONAL_LE = new OPERATOR_RELATIONAL_LE(globalMap);
+    BINARY_AND = new OPERATOR_BINARY_AND(globalMap);
+    BINARY_OR = new OPERATOR_BINARY_OR(globalMap);
+    BINARY_XOR = new OPERATOR_BINARY_XOR(globalMap);
+    BINARY_COMPLEMENT = new OPERATOR_BINARY_COMPLEMENT(globalMap);
+    BINARY_LSHIFT = new OPERATOR_BINARY_LSHIFT(globalMap);
+    BINARY_RSHIFT = new OPERATOR_BINARY_RSHIFT(globalMap);
+    BINARY_RZSHIFT = new OPERATOR_BINARY_RZSHIFT(globalMap);
+    STRING_LENGTH = new OPERATOR_STRING_LENGTH(globalMap);
+    STRING_CONCAT = new OPERATOR_STRING_CONCAT(globalMap);
+    STRING_CONTAINS = new OPERATOR_STRING_CONTAINS(globalMap);
+    STRING_CONTAINS_REGEX = new OPERATOR_STRING_CONTAINS_REGEX(globalMap);
+    STRING_MATCHES_REGEX = new OPERATOR_STRING_MATCHES_REGEX(globalMap);
+    STRING_INDEX_OF = new OPERATOR_STRING_INDEX_OF(globalMap);
+    STRING_INDEX_OF_REGEX = new OPERATOR_STRING_INDEX_OF_REGEX(globalMap);
+    STRING_STARTS_WITH = new OPERATOR_STRING_STARTS_WITH(globalMap);
+    STRING_ENDS_WITH = new OPERATOR_STRING_ENDS_WITH(globalMap);
+    STRING_SPLIT_ON = new OPERATOR_STRING_SPLIT_ON(globalMap);
+    STRING_SPLIT_ON_REGEX = new OPERATOR_STRING_SPLIT_ON_REGEX(globalMap);
+    STRING_SUBSTRING = new OPERATOR_STRING_SUBSTRING(globalMap);
+    STRING_REGEX_GROUP = new OPERATOR_STRING_REGEX_GROUP(globalMap);
+    STRING_REGEX_GROUPS = new OPERATOR_STRING_REGEX_GROUPS(globalMap);
+    STRING_REGEX_SCAN = new OPERATOR_STRING_REGEX_SCAN(globalMap);
+    STRING_REPLACE = new OPERATOR_STRING_REPLACE(globalMap);
+    STRING_REPLACE_REGEX = new OPERATOR_STRING_REPLACE_REGEX(globalMap);
+    STRING_JOIN = new OPERATOR_STRING_JOIN(globalMap);
+    NAMED_NAME = new OPERATOR_NAMED_NAME(globalMap);
+    UNIQUELY_NAMED_UNIQUE_NAME = new OPERATOR_UNIQUELY_NAMED_UNIQUE_NAME(
+      globalMap
+    );
+    STRING_ERROR = new OPERATOR_STRING_ERROR(globalMap);
+    NUMBER_ROUND = new OPERATOR_NUMBER_ROUND(globalMap);
+    NUMBER_CEIL = new OPERATOR_NUMBER_CEIL(globalMap);
+    NUMBER_FLOOR = new OPERATOR_NUMBER_FLOOR(globalMap);
+    NUMBER_COMPACT = new OPERATOR_NUMBER_COMPACT(globalMap);
+    NULLABLE_ISNULL = new OPERATOR_NULLABLE_ISNULL(globalMap);
+    NULLABLE_ISNOTNULL = new OPERATOR_NULLABLE_ISNOTNULL(globalMap);
+    LIST_LENGTH = new OPERATOR_LIST_LENGTH(globalMap);
+    LIST_EMPTY = new OPERATOR_LIST_EMPTY(globalMap);
+    LIST_NOT_EMPTY = new OPERATOR_LIST_NOT_EMPTY(globalMap);
+    LIST_ELEMENT = new OPERATOR_LIST_ELEMENT(globalMap);
+    LIST_ELEMENT_DEFAULT = new OPERATOR_LIST_ELEMENT_DEFAULT(globalMap);
+    LIST_CONTAINS = new OPERATOR_LIST_CONTAINS(globalMap);
+    LIST_CONTAINS_PREDICATE = new OPERATOR_LIST_CONTAINS_PREDICATE(globalMap);
+    LIST_COUNT = new OPERATOR_LIST_COUNT(globalMap);
+    LIST_COUNT_PREDICATE = new OPERATOR_LIST_COUNT_PREDICATE(globalMap);
+    LIST_APPEND = new OPERATOR_LIST_APPEND(globalMap);
+    LIST_CONCAT = new OPERATOR_LIST_CONCAT(globalMap);
+    LIST_LAZYBUILT = new OPERATOR_LIST_LAZYBUILT(globalMap);
+    LIST_HEAD = new OPERATOR_LIST_HEAD(globalMap);
+    LIST_TAIL = new OPERATOR_LIST_TAIL(globalMap);
+    LIST_UNIQ_PREDICATE = new OPERATOR_LIST_UNIQ_PREDICATE(globalMap);
+    LIST_UNIQ = new OPERATOR_LIST_UNIQ(globalMap);
+    LIST_SLICE = new OPERATOR_LIST_SLICE(globalMap);
+    LIST_INTERSECTION = new OPERATOR_LIST_INTERSECTION(globalMap);
+    LIST_EQUALS_SET = new OPERATOR_LIST_EQUALS_SET(globalMap);
+    LIST_EQUALS_MULTISET = new OPERATOR_LIST_EQUALS_MULTISET(globalMap);
+    OBJECT_BLOCK_OPAQUE = new OPERATOR_OBJECT_BLOCK_OPAQUE(globalMap);
+    OBJECT_BLOCK_ITEMSTACK = new OPERATOR_OBJECT_BLOCK_ITEMSTACK(globalMap);
+    OBJECT_BLOCK_MODNAME = new OPERATOR_OBJECT_BLOCK_MODNAME(globalMap);
+    OBJECT_BLOCK_BREAKSOUND = new OPERATOR_OBJECT_BLOCK_BREAKSOUND(globalMap);
+    OBJECT_BLOCK_PLACESOUND = new OPERATOR_OBJECT_BLOCK_PLACESOUND(globalMap);
+    OBJECT_BLOCK_STEPSOUND = new OPERATOR_OBJECT_BLOCK_STEPSOUND(globalMap);
+    OBJECT_BLOCK_ISSHEARABLE = new OPERATOR_OBJECT_BLOCK_ISSHEARABLE(globalMap);
+    OBJECT_BLOCK_PLANTAGE = new OPERATOR_OBJECT_BLOCK_PLANTAGE(globalMap);
+    OBJECT_BLOCK_BY_NAME = new OPERATOR_OBJECT_BLOCK_BY_NAME(globalMap);
+    OBJECT_BLOCK_PROPERTIES = new OPERATOR_OBJECT_BLOCK_PROPERTIES(globalMap);
+    OBJECT_BLOCK_WITH_PROPERTIES = new OPERATOR_OBJECT_BLOCK_WITH_PROPERTIES(
+      globalMap
+    );
+    OBJECT_BLOCK_POSSIBLE_PROPERTIES =
+      new OPERATOR_OBJECT_BLOCK_POSSIBLE_PROPERTIES(globalMap);
+    OBJECT_BLOCK_TAG = new OPERATOR_OBJECT_BLOCK_TAG(globalMap);
+    OBJECT_BLOCK_TAG_STACKS = new OPERATOR_OBJECT_BLOCK_TAG_STACKS(globalMap);
+    OBJECT_ITEMSTACK_SIZE = new OPERATOR_OBJECT_ITEMSTACK_SIZE(globalMap);
+    OBJECT_ITEMSTACK_MAXSIZE = new OPERATOR_OBJECT_ITEMSTACK_MAXSIZE(globalMap);
+    OBJECT_ITEMSTACK_ISSTACKABLE = new OPERATOR_OBJECT_ITEMSTACK_ISSTACKABLE(
+      globalMap
+    );
+    OBJECT_ITEMSTACK_ISDAMAGEABLE = new OPERATOR_OBJECT_ITEMSTACK_ISDAMAGEABLE(
+      globalMap
+    );
+    OBJECT_ITEMSTACK_DAMAGE = new OPERATOR_OBJECT_ITEMSTACK_DAMAGE(globalMap);
+    OBJECT_ITEMSTACK_MAXDAMAGE = new OPERATOR_OBJECT_ITEMSTACK_MAXDAMAGE(
+      globalMap
+    );
+    OBJECT_ITEMSTACK_ISENCHANTED = new OPERATOR_OBJECT_ITEMSTACK_ISENCHANTED(
+      globalMap
+    );
+    OBJECT_ITEMSTACK_ISENCHANTABLE =
+      new OPERATOR_OBJECT_ITEMSTACK_ISENCHANTABLE(globalMap);
+    OBJECT_ITEMSTACK_REPAIRCOST = new OPERATOR_OBJECT_ITEMSTACK_REPAIRCOST(
+      globalMap
+    );
+    OBJECT_ITEMSTACK_RARITY = new OPERATOR_OBJECT_ITEMSTACK_RARITY(globalMap);
+    OBJECT_ITEMSTACK_STRENGTH_VS_BLOCK =
+      new OPERATOR_OBJECT_ITEMSTACK_STRENGTH_VS_BLOCK(globalMap);
+    OBJECT_ITEMSTACK_CANHARVESTBLOCK =
+      new OPERATOR_OBJECT_ITEMSTACK_CANHARVESTBLOCK(globalMap);
+    OBJECT_ITEMSTACK_BLOCK = new OPERATOR_OBJECT_ITEMSTACK_BLOCK(globalMap);
+    OBJECT_ITEMSTACK_ISFLUIDSTACK = new OPERATOR_OBJECT_ITEMSTACK_ISFLUIDSTACK(
+      globalMap
+    );
+    OBJECT_ITEMSTACK_FLUIDSTACK = new OPERATOR_OBJECT_ITEMSTACK_FLUIDSTACK(
+      globalMap
+    );
+    OBJECT_ITEMSTACK_FLUIDSTACKCAPACITY =
+      new OPERATOR_OBJECT_ITEMSTACK_FLUIDSTACKCAPACITY(globalMap);
+    OBJECT_ITEMSTACK_ISDATAEQUAL = new OPERATOR_OBJECT_ITEMSTACK_ISDATAEQUAL(
+      globalMap
+    );
+    OBJECT_ITEMSTACK_ISITEMEQUALNODATA =
+      new OPERATOR_OBJECT_ITEMSTACK_ISITEMEQUALNODATA(globalMap);
+    OBJECT_ITEMSTACK_ISRAWITEMEQUAL =
+      new OPERATOR_OBJECT_ITEMSTACK_ISRAWITEMEQUAL(globalMap);
+    OBJECT_ITEMSTACK_MODNAME = new OPERATOR_OBJECT_ITEMSTACK_MODNAME(globalMap);
+    OBJECT_ITEMSTACK_FUELBURNTIME = new OPERATOR_OBJECT_ITEMSTACK_FUELBURNTIME(
+      globalMap
+    );
+    ITEMSTACK_CANBURN = new OPERATOR_ITEMSTACK_CANBURN(globalMap);
+    ITEMSTACK_TAG = new OPERATOR_ITEMSTACK_TAG(globalMap);
+    STRING_TAG = new OPERATOR_STRING_TAG(globalMap);
+    OBJECT_ITEMSTACK_TAG_STACKS = new OPERATOR_OBJECT_ITEMSTACK_TAG_STACKS(
+      globalMap
+    );
+    OBJECT_ITEMSTACK_WITHSIZE = new OPERATOR_OBJECT_ITEMSTACK_WITHSIZE(
+      globalMap
+    );
+    ITEMSTACK_ISFECONTAINER = new OPERATOR_ITEMSTACK_ISFECONTAINER(globalMap);
+    OBJECT_ITEMSTACK_STORED_FE = new OPERATOR_OBJECT_ITEMSTACK_STORED_FE(
+      globalMap
+    );
+    OBJECT_ITEMSTACK_FE_CAPACITY = new OPERATOR_OBJECT_ITEMSTACK_FE_CAPACITY(
+      globalMap
+    );
+    OBJECT_ITEMSTACK_HASINVENTORY = new OPERATOR_OBJECT_ITEMSTACK_HASINVENTORY(
+      globalMap
+    );
+    OBJECT_ITEMSTACK_INVENTORYSIZE =
+      new OPERATOR_OBJECT_ITEMSTACK_INVENTORYSIZE(globalMap);
+    OBJECT_ITEMSTACK_INVENTORY = new OPERATOR_OBJECT_ITEMSTACK_INVENTORY(
+      globalMap
+    );
+    ITEMSTACK_ITEMBYNAME = new OPERATOR_ITEMSTACK_ITEMBYNAME(globalMap);
+    ITEMSTACK_ITEMLISTCOUNT = new OPERATOR_ITEMSTACK_ITEMLISTCOUNT(globalMap);
+    OBJECT_ITEMSTACK_NBT = new OPERATOR_OBJECT_ITEMSTACK_NBT(globalMap);
+    OBJECT_ITEMSTACK_HASNBT = new OPERATOR_OBJECT_ITEMSTACK_HASNBT(globalMap);
+    OBJECT_ITEMSTACK_DATA_KEYS = new OPERATOR_OBJECT_ITEMSTACK_DATA_KEYS(
+      globalMap
+    );
+    ITEMSTACK_DATAVALUE = new OPERATOR_ITEMSTACK_DATAVALUE(globalMap);
+    ITEMSTACK_WITHDATA = new OPERATOR_ITEMSTACK_WITHDATA(globalMap);
+    ITEMSTACK_TOOLTIP = new OPERATOR_ITEMSTACK_TOOLTIP(globalMap);
+    OBJECT_ENTITY_ENTITYITEMTOOLTIP =
+      new OPERATOR_OBJECT_ENTITY_ENTITYITEMTOOLTIP(globalMap);
+    OBJECT_ENTITY_ISMOB = new OPERATOR_OBJECT_ENTITY_ISMOB(globalMap);
+    OBJECT_ENTITY_ISANIMAL = new OPERATOR_OBJECT_ENTITY_ISANIMAL(globalMap);
+    OBJECT_ENTITY_ISITEM = new OPERATOR_OBJECT_ENTITY_ISITEM(globalMap);
+    OBJECT_ENTITY_ISPLAYER = new OPERATOR_OBJECT_ENTITY_ISPLAYER(globalMap);
+    ENTITY_ISMINECART = new OPERATOR_ENTITY_ISMINECART(globalMap);
+    ENTITY_ITEM = new OPERATOR_ENTITY_ITEM(globalMap);
+    ENTITY_HEALTH = new OPERATOR_ENTITY_HEALTH(globalMap);
+    ENTITY_WIDTH = new OPERATOR_ENTITY_WIDTH(globalMap);
+    OBJECT_ENTITY_WIDTH = new OPERATOR_OBJECT_ENTITY_WIDTH(globalMap);
+    OBJECT_ENTITY_HEIGHT = new OPERATOR_OBJECT_ENTITY_HEIGHT(globalMap);
+    OBJECT_ENTITY_ISBURNING = new OPERATOR_OBJECT_ENTITY_ISBURNING(globalMap);
+    OBJECT_ENTITY_ISWET = new OPERATOR_OBJECT_ENTITY_ISWET(globalMap);
+    OBJECT_ENTITY_ISCROUCHING = new OPERATOR_OBJECT_ENTITY_ISCROUCHING(
+      globalMap
+    );
+    OBJECT_ENTITY_ISEATING = new OPERATOR_OBJECT_ENTITY_ISEATING(globalMap);
+    ENTITY_ARMORINVENTORY = new OPERATOR_ENTITY_ARMORINVENTORY(globalMap);
+    OBJECT_ENTITY_INVENTORY = new OPERATOR_OBJECT_ENTITY_INVENTORY(globalMap);
+    OBJECT_ENTITY_MODNAME = new OPERATOR_OBJECT_ENTITY_MODNAME(globalMap);
+    OBJECT_PLAYER_TARGETBLOCK = new OPERATOR_OBJECT_PLAYER_TARGETBLOCK(
+      globalMap
+    );
+    OBJECT_PLAYER_TARGETENTITY = new OPERATOR_OBJECT_PLAYER_TARGETENTITY(
+      globalMap
+    );
+    ENTITY_HASGUIOPEN = new OPERATOR_ENTITY_HASGUIOPEN(globalMap);
+    ENTITY_HELDITEM = new OPERATOR_ENTITY_HELDITEM(globalMap);
+    ENTITY_HELDITEMOFFHAND = new OPERATOR_ENTITY_HELDITEMOFFHAND(globalMap);
+    OBJECT_ENTITY_MOUNTED = new OPERATOR_OBJECT_ENTITY_MOUNTED(globalMap);
+    OBJECT_ITEMFRAME_CONTENTS = new OPERATOR_OBJECT_ITEMFRAME_CONTENTS(
+      globalMap
+    );
+    OBJECT_ITEMFRAME_ROTATION = new OPERATOR_OBJECT_ITEMFRAME_ROTATION(
+      globalMap
+    );
+    OBJECT_ENTITY_HURTSOUND = new OPERATOR_OBJECT_ENTITY_HURTSOUND(globalMap);
+    OBJECT_ENTITY_DEATHSOUND = new OPERATOR_OBJECT_ENTITY_DEATHSOUND(globalMap);
+    OBJECT_ENTITY_AGE = new OPERATOR_OBJECT_ENTITY_AGE(globalMap);
+    OBJECT_ENTITY_ISCHILD = new OPERATOR_OBJECT_ENTITY_ISCHILD(globalMap);
+    OBJECT_ENTITY_CANBREED = new OPERATOR_OBJECT_ENTITY_CANBREED(globalMap);
+    OBJECT_ENTITY_ISINLOVE = new OPERATOR_OBJECT_ENTITY_ISINLOVE(globalMap);
+    OBJECT_ENTITY_CANBREEDWITH = new OPERATOR_OBJECT_ENTITY_CANBREEDWITH(
+      globalMap
+    );
+    OBJECT_ENTITY_ISSHEARABLE = new OPERATOR_OBJECT_ENTITY_ISSHEARABLE(
+      globalMap
+    );
+    OBJECT_ENTITY_NBT = new OPERATOR_OBJECT_ENTITY_NBT(globalMap);
+    OBJECT_ENTITY_TYPE = new OPERATOR_OBJECT_ENTITY_TYPE(globalMap);
+    OBJECT_ENTITY_ITEMS = new OPERATOR_OBJECT_ENTITY_ITEMS(globalMap);
+    OBJECT_ENTITY_FLUIDS = new OPERATOR_OBJECT_ENTITY_FLUIDS(globalMap);
+    OBJECT_ENTITY_ENERGY_STORED = new OPERATOR_OBJECT_ENTITY_ENERGY_STORED(
+      globalMap
+    );
+    OBJECT_ENTITY_ENERGY_CAPACITY = new OPERATOR_OBJECT_ENTITY_ENERGY_CAPACITY(
+      globalMap
+    );
+    OBJECT_FLUIDSTACK_AMOUNT = new OPERATOR_OBJECT_FLUIDSTACK_AMOUNT(globalMap);
+    OBJECT_FLUIDSTACK_BLOCK = new OPERATOR_OBJECT_FLUIDSTACK_BLOCK(globalMap);
+    OBJECT_FLUIDSTACK_LIGHT_LEVEL = new OPERATOR_OBJECT_FLUIDSTACK_LIGHT_LEVEL(
+      globalMap
+    );
+    OBJECT_FLUIDSTACK_DENSITY = new OPERATOR_OBJECT_FLUIDSTACK_DENSITY(
+      globalMap
+    );
+    OBJECT_FLUIDSTACK_TEMPERATURE = new OPERATOR_OBJECT_FLUIDSTACK_TEMPERATURE(
+      globalMap
+    );
+    OBJECT_FLUIDSTACK_VISCOSITY = new OPERATOR_OBJECT_FLUIDSTACK_VISCOSITY(
+      globalMap
+    );
+    OBJECT_FLUIDSTACK_IS_LIGHTER_THAN_AIR =
+      new OPERATOR_OBJECT_FLUIDSTACK_IS_LIGHTER_THAN_AIR(globalMap);
+    OBJECT_FLUIDSTACK_RARITY = new OPERATOR_OBJECT_FLUIDSTACK_RARITY(globalMap);
+    OBJECT_FLUIDSTACK_SOUND_BUCKET_EMPTY =
+      new OPERATOR_OBJECT_FLUIDSTACK_SOUND_BUCKET_EMPTY(globalMap);
+    OBJECT_FLUIDSTACK_SOUND_FLUID_VAPORIZE =
+      new OPERATOR_OBJECT_FLUIDSTACK_SOUND_FLUID_VAPORIZE(globalMap);
+    OBJECT_FLUIDSTACK_SOUND_BUCKET_FILL =
+      new OPERATOR_OBJECT_FLUIDSTACK_SOUND_BUCKET_FILL(globalMap);
+    OBJECT_FLUIDSTACK_BUCKET = new OPERATOR_OBJECT_FLUIDSTACK_BUCKET(globalMap);
+    OBJECT_FLUIDSTACK_ISRAWFLUIDEQUAL =
+      new OPERATOR_OBJECT_FLUIDSTACK_ISRAWFLUIDEQUAL(globalMap);
+    OBJECT_FLUIDSTACK_MODNAME = new OPERATOR_OBJECT_FLUIDSTACK_MODNAME(
+      globalMap
+    );
+    OBJECT_FLUIDSTACK_DATA = new OPERATOR_OBJECT_FLUIDSTACK_DATA(globalMap);
+    OBJECT_FLUIDSTACK_WITH_AMOUNT = new OPERATOR_OBJECT_FLUIDSTACK_WITH_AMOUNT(
+      globalMap
+    );
+    OBJECT_FLUIDSTACK_DATAKEYS = new OPERATOR_OBJECT_FLUIDSTACK_DATAKEYS(
+      globalMap
+    );
+    OBJECT_FLUIDSTACK_DATA_VALUE = new OPERATOR_OBJECT_FLUIDSTACK_DATA_VALUE(
+      globalMap
+    );
+    OBJECT_FLUIDSTACK_WITH_DATA = new OPERATOR_OBJECT_FLUIDSTACK_WITH_DATA(
+      globalMap
+    );
+    OBJECT_FLUIDSTACK_BY_NAME = new OPERATOR_OBJECT_FLUIDSTACK_BY_NAME(
+      globalMap
+    );
+    OBJECT_FLUIDSTACK_TAG = new OPERATOR_OBJECT_FLUIDSTACK_TAG(globalMap);
+    OBJECT_FLUIDSTACK_TAG_STACKS = new OPERATOR_OBJECT_FLUIDSTACK_TAG_STACKS(
+      globalMap
+    );
+    OPERATOR_APPLY = new OPERATOR_OPERATOR_APPLY(globalMap);
+    OPERATOR_APPLY_2 = new OPERATOR_OPERATOR_APPLY_2(globalMap);
+    OPERATOR_APPLY_3 = new OPERATOR_OPERATOR_APPLY_3(globalMap);
+    OPERATOR_APPLY_N = new OPERATOR_OPERATOR_APPLY_N(globalMap);
+    OPERATOR_APPLY_0 = new OPERATOR_OPERATOR_APPLY_0(globalMap);
+    OPERATOR_MAP = new OPERATOR_OPERATOR_MAP(globalMap);
+    OPERATOR_FILTER = new OPERATOR_OPERATOR_FILTER(globalMap);
+    OPERATOR_CONJUNCTION = new OPERATOR_OPERATOR_CONJUNCTION(globalMap);
+    OPERATOR_DISJUNCTION = new OPERATOR_OPERATOR_DISJUNCTION(globalMap);
+    OPERATOR_NEGATION = new OPERATOR_OPERATOR_NEGATION(globalMap);
+    OPERATOR_PIPE = new OPERATOR_OPERATOR_PIPE(globalMap);
+    OPERATOR_PIPE2 = new OPERATOR_OPERATOR_PIPE2(globalMap);
+    OPERATOR_FLIP = new OPERATOR_OPERATOR_FLIP(globalMap);
+    OPERATOR_REDUCE = new OPERATOR_OPERATOR_REDUCE(globalMap);
+    OPERATOR_REDUCE1 = new OPERATOR_OPERATOR_REDUCE1(globalMap);
+    OPERATOR_BY_NAME = new OPERATOR_OPERATOR_BY_NAME(globalMap);
+    NBT_COMPOUND_SIZE = new OPERATOR_NBT_COMPOUND_SIZE(globalMap);
+    NBT_COMPOUND_KEYS = new OPERATOR_NBT_COMPOUND_KEYS(globalMap);
+    NBT_COMPOUND_HASKEY = new OPERATOR_NBT_COMPOUND_HASKEY(globalMap);
+    NBT_COMPOUND_VALUE_TYPE = new OPERATOR_NBT_COMPOUND_VALUE_TYPE(globalMap);
+    NBT_COMPOUND_VALUE_TAG = new OPERATOR_NBT_COMPOUND_VALUE_TAG(globalMap);
+    NBT_COMPOUND_VALUE_BOOLEAN = new OPERATOR_NBT_COMPOUND_VALUE_BOOLEAN(
+      globalMap
+    );
+    NBT_COMPOUND_VALUE_INTEGER = new OPERATOR_NBT_COMPOUND_VALUE_INTEGER(
+      globalMap
+    );
+    NBT_COMPOUND_VALUE_LONG = new OPERATOR_NBT_COMPOUND_VALUE_LONG(globalMap);
+    NBT_COMPOUND_VALUE_DOUBLE = new OPERATOR_NBT_COMPOUND_VALUE_DOUBLE(
+      globalMap
+    );
+    NBT_COMPOUND_VALUE_STRING = new OPERATOR_NBT_COMPOUND_VALUE_STRING(
+      globalMap
+    );
+    NBT_COMPOUND_VALUE_COMPOUND = new OPERATOR_NBT_COMPOUND_VALUE_COMPOUND(
+      globalMap
+    );
+    NBT_COMPOUND_VALUE_LIST_TAG = new OPERATOR_NBT_COMPOUND_VALUE_LIST_TAG(
+      globalMap
+    );
+    NBT_COMPOUND_VALUE_LIST_BYTE = new OPERATOR_NBT_COMPOUND_VALUE_LIST_BYTE(
+      globalMap
+    );
+    NBT_COMPOUND_VALUE_LIST_INT = new OPERATOR_NBT_COMPOUND_VALUE_LIST_INT(
+      globalMap
+    );
+    NBT_COMPOUND_VALUE_LIST_LONG = new OPERATOR_NBT_COMPOUND_VALUE_LIST_LONG(
+      globalMap
+    );
+    NBT_COMPOUND_WITHOUT = new OPERATOR_NBT_COMPOUND_WITHOUT(globalMap);
+    NBT_COMPOUND_WITH_BOOLEAN = new OPERATOR_NBT_COMPOUND_WITH_BOOLEAN(
+      globalMap
+    );
+    NBT_COMPOUND_WITH_SHORT = new OPERATOR_NBT_COMPOUND_WITH_SHORT(globalMap);
+    NBT_COMPOUND_WITH_INTEGER = new OPERATOR_NBT_COMPOUND_WITH_INTEGER(
+      globalMap
+    );
+    NBT_COMPOUND_WITH_LONG = new OPERATOR_NBT_COMPOUND_WITH_LONG(globalMap);
+    NBT_COMPOUND_WITH_DOUBLE = new OPERATOR_NBT_COMPOUND_WITH_DOUBLE(globalMap);
+    NBT_COMPOUND_WITH_FLOAT = new OPERATOR_NBT_COMPOUND_WITH_FLOAT(globalMap);
+    NBT_COMPOUND_WITH_STRING = new OPERATOR_NBT_COMPOUND_WITH_STRING(globalMap);
+    NBT_COMPOUND_WITH_COMPOUND = new OPERATOR_NBT_COMPOUND_WITH_COMPOUND(
+      globalMap
+    );
+    NBT_COMPOUND_WITH_LIST_TAG = new OPERATOR_NBT_COMPOUND_WITH_LIST_TAG(
+      globalMap
+    );
+    NBT_COMPOUND_WITH_LIST_BYTE = new OPERATOR_NBT_COMPOUND_WITH_LIST_BYTE(
+      globalMap
+    );
+    NBT_COMPOUND_WITH_LIST_INT = new OPERATOR_NBT_COMPOUND_WITH_LIST_INT(
+      globalMap
+    );
+    NBT_COMPOUND_WITH_LIST_LONG = new OPERATOR_NBT_COMPOUND_WITH_LIST_LONG(
+      globalMap
+    );
+    NBT_COMPOUND_SUBSET = new OPERATOR_NBT_COMPOUND_SUBSET(globalMap);
+    NBT_COMPOUND_UNION = new OPERATOR_NBT_COMPOUND_UNION(globalMap);
+    NBT_COMPOUND_INTERSECTION = new OPERATOR_NBT_COMPOUND_INTERSECTION(
+      globalMap
+    );
+    NBT_COMPOUND_MINUS = new OPERATOR_NBT_COMPOUND_MINUS(globalMap);
+    NBT_AS_BOOLEAN = new OPERATOR_NBT_AS_BOOLEAN(globalMap);
+    NBT_AS_BYTE = new OPERATOR_NBT_AS_BYTE(globalMap);
+    NBT_AS_SHORT = new OPERATOR_NBT_AS_SHORT(globalMap);
+    NBT_AS_INT = new OPERATOR_NBT_AS_INT(globalMap);
+    NBT_AS_LONG = new OPERATOR_NBT_AS_LONG(globalMap);
+    NBT_AS_DOUBLE = new OPERATOR_NBT_AS_DOUBLE(globalMap);
+    NBT_AS_FLOAT = new OPERATOR_NBT_AS_FLOAT(globalMap);
+    NBT_AS_STRING = new OPERATOR_NBT_AS_STRING(globalMap);
+    NBT_AS_TAG_LIST = new OPERATOR_NBT_AS_TAG_LIST(globalMap);
+    NBT_AS_BYTE_LIST = new OPERATOR_NBT_AS_BYTE_LIST(globalMap);
+    NBT_AS_INT_LIST = new OPERATOR_NBT_AS_INT_LIST(globalMap);
+    NBT_AS_LONG_LIST = new OPERATOR_NBT_AS_LONG_LIST(globalMap);
+    NBT_FROM_BOOLEAN = new OPERATOR_NBT_FROM_BOOLEAN(globalMap);
+    NBT_FROM_SHORT = new OPERATOR_NBT_FROM_SHORT(globalMap);
+    NBT_FROM_BYTE = new OPERATOR_NBT_FROM_BYTE(globalMap);
+    NBT_FROM_INT = new OPERATOR_NBT_FROM_INT(globalMap);
+    NBT_FROM_LONG = new OPERATOR_NBT_FROM_LONG(globalMap);
+    NBT_FROM_DOUBLE = new OPERATOR_NBT_FROM_DOUBLE(globalMap);
+    NBT_FROM_FLOAT = new OPERATOR_NBT_FROM_FLOAT(globalMap);
+    NBT_FROM_STRING = new OPERATOR_NBT_FROM_STRING(globalMap);
+    NBT_FROM_TAG_LIST = new OPERATOR_NBT_FROM_TAG_LIST(globalMap);
+    NBT_FROM_BYTE_LIST = new OPERATOR_NBT_FROM_BYTE_LIST(globalMap);
+    NBT_FROM_INT_LIST = new OPERATOR_NBT_FROM_INT_LIST(globalMap);
+    NBT_FROM_LONG_LIST = new OPERATOR_NBT_FROM_LONG_LIST(globalMap);
+    NBT_PATH_MATCH_FIRST = new OPERATOR_NBT_PATH_MATCH_FIRST(globalMap);
+    NBT_PATH_MATCH_ALL = new OPERATOR_NBT_PATH_MATCH_ALL(globalMap);
+    NBT_PATH_TEST = new OPERATOR_NBT_PATH_TEST(globalMap);
+    INGREDIENTS_ITEMS = new OPERATOR_INGREDIENTS_ITEMS(globalMap);
+    INGREDIENTS_FLUIDS = new OPERATOR_INGREDIENTS_FLUIDS(globalMap);
+    INGREDIENTS_ENERGIES = new OPERATOR_INGREDIENTS_ENERGIES(globalMap);
+    INGREDIENTS_WITH_ITEM = new OPERATOR_INGREDIENTS_WITH_ITEM(globalMap);
+    INGREDIENTS_WITH_FLUID = new OPERATOR_INGREDIENTS_WITH_FLUID(globalMap);
+    INGREDIENTS_WITH_ENERGY = new OPERATOR_INGREDIENTS_WITH_ENERGY(globalMap);
+    INGREDIENTS_WITH_ITEMS = new OPERATOR_INGREDIENTS_WITH_ITEMS(globalMap);
+    INGREDIENTS_WITH_FLUIDS = new OPERATOR_INGREDIENTS_WITH_FLUIDS(globalMap);
+    INGREDIENTS_WITH_ENERGIES = new OPERATOR_INGREDIENTS_WITH_ENERGIES(
+      globalMap
+    );
+    RECIPE_INPUT = new OPERATOR_RECIPE_INPUT(globalMap);
+    RECIPE_OUTPUT = new OPERATOR_RECIPE_OUTPUT(globalMap);
+    RECIPE_WITH_INPUT = new OPERATOR_RECIPE_WITH_INPUT(globalMap);
+    RECIPE_WITH_OUTPUT = new OPERATOR_RECIPE_WITH_OUTPUT(globalMap);
+    RECIPE_WITH_INPUT_OUTPUT = new OPERATOR_RECIPE_WITH_INPUT_OUTPUT(globalMap);
+    PARSE_BOOLEAN = new OPERATOR_PARSE_BOOLEAN(globalMap);
+    PARSE_DOUBLE = new OPERATOR_PARSE_DOUBLE(globalMap);
+    PARSE_INTEGER = new OPERATOR_PARSE_INTEGER(globalMap);
+    PARSE_LONG = new OPERATOR_PARSE_LONG(globalMap);
+    PARSE_NBT = new OPERATOR_PARSE_NBT(globalMap);
+    GENERAL_CHOICE = new OPERATOR_GENERAL_CHOICE(globalMap);
+    GENERAL_IDENTITY = new OPERATOR_GENERAL_IDENTITY(globalMap);
+    GENERAL_CONSTANT = new OPERATOR_GENERAL_CONSTANT(globalMap);
+    INTEGER_TO_DOUBLE = new OPERATOR_INTEGER_TO_DOUBLE(globalMap);
+    INTEGER_TO_LONG = new OPERATOR_INTEGER_TO_LONG(globalMap);
+    DOUBLE_TO_INTEGER = new OPERATOR_DOUBLE_TO_INTEGER(globalMap);
+    DOUBLE_TO_LONG = new OPERATOR_DOUBLE_TO_LONG(globalMap);
+    LONG_TO_INTEGER = new OPERATOR_LONG_TO_INTEGER(globalMap);
+    LONG_TO_DOUBLE = new OPERATOR_LONG_TO_DOUBLE(globalMap);
+  };
+  var operatorRegistry = new operatorRegistryClass();
 
   // TSFiles/index.ts
   window.operatorRegistry = operatorRegistry;

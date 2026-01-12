@@ -3,7 +3,7 @@ import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 import { Operator } from "../Operator";
-import RE2 from "re2";
+import { RE2 } from "re2-wasm";
 
 export class OPERATOR_STRING_REPLACE_REGEX extends BaseOperator<
   iString,
