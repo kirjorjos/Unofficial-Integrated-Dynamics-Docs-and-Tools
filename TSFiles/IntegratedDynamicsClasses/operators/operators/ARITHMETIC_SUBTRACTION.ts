@@ -1,4 +1,3 @@
-import { JavaMath } from "HelperClasses/Math";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { TypeMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
@@ -34,7 +33,7 @@ export class OPERATOR_ARITHMETIC_SUBTRACTION extends BaseOperator<
       interactName: "numberSubtract",
       function: (num1: TypeNumber): TypeLambda<TypeNumber, TypeNumber> => {
         return (num2: TypeNumber): TypeNumber => {
-          return JavaMath.subtract(num1, num2);
+          return num1.subtract(num2);
         };
       },
     });

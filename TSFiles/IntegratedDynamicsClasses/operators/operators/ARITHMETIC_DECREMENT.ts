@@ -2,7 +2,6 @@ import { TypeMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Integer } from "JavaNumberClasses/Integer";
-import { JavaMath } from "HelperClasses/Math";
 
 export class OPERATOR_ARITHMETIC_DECREMENT extends BaseOperator<
   TypeNumber,
@@ -27,7 +26,7 @@ export class OPERATOR_ARITHMETIC_DECREMENT extends BaseOperator<
       symbol: "--",
       interactName: "numberDecrement",
       function: (num1: TypeNumber): TypeNumber => {
-        return JavaMath.subtract(num1, new Integer(1));
+        return num1.subtract(new Integer(1));
       },
     });
   }

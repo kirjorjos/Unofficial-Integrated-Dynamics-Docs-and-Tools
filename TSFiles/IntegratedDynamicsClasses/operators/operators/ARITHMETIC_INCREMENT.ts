@@ -1,4 +1,3 @@
-import { JavaMath } from "HelperClasses/Math";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { TypeMap } from "HelperClasses/TypeMap";
 import { Integer } from "JavaNumberClasses/Integer";
@@ -27,7 +26,7 @@ export class OPERATOR_ARITHMETIC_INCREMENT extends BaseOperator<
       symbol: "++",
       interactName: "numberIncrement",
       function: (num1: TypeNumber): TypeNumber => {
-        return JavaMath.add(num1, new Integer(1));
+        return num1.add(new Integer(1));
       },
     });
   }

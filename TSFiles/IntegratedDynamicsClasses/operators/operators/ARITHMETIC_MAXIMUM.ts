@@ -1,4 +1,3 @@
-import { JavaMath } from "HelperClasses/Math";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { TypeMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
@@ -34,7 +33,7 @@ export class OPERATOR_ARITHMETIC_MAXIMUM extends BaseOperator<
       interactName: "numberMax",
       function: (num1: TypeNumber): TypeLambda<TypeNumber, TypeNumber> => {
         return (num2: TypeNumber): TypeNumber => {
-          return JavaMath.max(num1, num2);
+          return num1.max(num2);
         };
       },
     });

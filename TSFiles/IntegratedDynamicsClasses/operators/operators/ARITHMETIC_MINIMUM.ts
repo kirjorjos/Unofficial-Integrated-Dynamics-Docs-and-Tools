@@ -1,4 +1,3 @@
-import { JavaMath } from "HelperClasses/Math";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { TypeMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
@@ -34,7 +33,7 @@ export class OPERATOR_ARITHMETIC_MINIMUM extends BaseOperator<
       interactName: "numberMin",
       function: (num1: TypeNumber): TypeLambda<TypeNumber, TypeNumber> => {
         return (num2: TypeNumber): TypeNumber => {
-          return JavaMath.min(num1, num2);
+          return num1.min(num2);
         };
       },
     });

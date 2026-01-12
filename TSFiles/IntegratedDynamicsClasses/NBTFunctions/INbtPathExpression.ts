@@ -43,7 +43,7 @@ export class INbtPathExpression {
         .filter(
           (tag: Tag<IntegratedValue>) =>
             tag.getType() != Tag.TAG_BYTE ||
-            (tag as ByteTag).valueOf().toJSNumber() == (1 as TypeBit)
+            (tag as ByteTag).valueOf().toJSNumber() === 1
         ).length != 0 // Filter truthy values
     );
   }

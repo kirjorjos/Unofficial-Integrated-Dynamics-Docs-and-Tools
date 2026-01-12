@@ -1,4 +1,3 @@
-import { JavaMath } from "HelperClasses/Math";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { TypeMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
@@ -39,7 +38,7 @@ export class OPERATOR_ARITHMETIC_MULTIPLICATION extends BaseOperator<
       interactName: "numberMultiply",
       function: (num1: TypeNumber): TypeLambda<TypeNumber, TypeNumber> => {
         return (num2: TypeNumber): TypeNumber => {
-          return JavaMath.multiply(num1, num2);
+          return num1.multiply(num2);
         };
       },
     });

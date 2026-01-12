@@ -1,32 +1,19 @@
-import { IntLongMath } from "HelperClasses/IntLongMath";
-import { JavaMath } from "HelperClasses/Math";
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { Long } from "./Long";
 import { Double } from "./Double";
 
 export class Integer implements NumberBase<Integer> {
-  private bits!: TypeInt32;
+  readonly num: number;
 
-  constructor(
-    data:
-      | TypeNumericString
-      | TypeInt32
-      | TypeInt64
-      | TypeInt128
-      | number
-      | Integer
-  ) {
-    if (data instanceof Integer) data = data.bits;
-    if (!Array.isArray(data)) this.bits = this.initializeBits(data);
-    if (Array.isArray(data)) this.bits = data.slice(-32) as TypeInt32;
+  constructor(num: TypeNumericString | number | Integer) {
+    if (num instanceof Integer) num = num.toJSNumber();
+    if (typeof num === "string") num = parseInt(num);
+    this.num = Integer.limitToInteger(num);
   }
 
-  initializeBits(decimal: TypeNumericString | number): TypeInt32 {
-    return JavaMath.decimalToBinary(`${decimal}`, 32) as TypeInt32;
-  }
-
-  getBits(): TypeInt32 {
-    return this.bits;
+  private static limitToInteger(num: number) {
+    if (!Number.isFinite(num)) return 0;
+    return Math.trunc(num) >> 0;
   }
 
   getType(): "Integer" {
@@ -37,104 +24,103 @@ export class Integer implements NumberBase<Integer> {
     return 0;
   }
 
+  toType(value: TypeNumber) {
+    return value.toInteger();
+  }
+
   // Integer → Long
   toLong(): Long {
-    const sign = this.bits[0];
-    const longBits = Array(32)
-      .fill(sign as 0 | 1)
-      .concat(this.bits) as TypeInt64;
-    return new Long(longBits);
+    return new Long(BigInt(this.toJSNumber()));
   }
 
   // Integer → Double
   toDouble(): Double {
-    const num = JavaMath.toDecimal(this.bits);
-    return new Double(num);
+    return new Double(this.toJSNumber());
   }
 
   toInteger(): Integer {
-    return new Integer(this.bits as TypeInt32);
+    return new Integer(this.toJSNumber());
   }
 
-  toDecimal(): TypeNumericString {
-    return JavaMath.toDecimal(this.bits);
+  toString(): TypeNumericString {
+    return `${this.toJSNumber()}`;
   }
 
-  leftShift(num: Integer): Integer {
-    return new Integer(JavaMath.leftShift(this.bits, num.toJSNumber()));
+  add(num: TypeNumber): Integer {
+    return new Integer(this.toJSNumber() + num.toJSNumber());
   }
 
-  add(num: Integer): Integer {
-    return IntLongMath.add(this, num);
+  subtract(num: TypeNumber): Integer {
+    return new Integer(this.toJSNumber() - num.toJSNumber());
   }
 
-  subtract(num: Integer): Integer {
-    return IntLongMath.subtract(this, num);
+  multiply(num: TypeNumber): Integer {
+    return new Integer(this.toJSNumber() * num.toJSNumber());
   }
 
-  multiply(num: Integer): Integer {
-    return IntLongMath.multiply(this, num);
+  divide(num: TypeNumber): Integer {
+    return new Integer(this.toJSNumber() / num.toJSNumber());
   }
 
-  divide(num: Integer): Integer {
-    return IntLongMath.divide(this, num);
-  }
-
-  mod(num: Integer): Integer {
-    return IntLongMath.mod(this, num);
+  mod(num: TypeNumber): Integer {
+    return new Integer(this.toJSNumber() % num.toJSNumber());
   }
 
   binaryAnd(num: Integer): Integer {
-    return IntLongMath.binaryAnd(this, num);
+    return new Integer(this.toJSNumber() & num.toJSNumber());
   }
 
   binaryOr(num: Integer): Integer {
-    return IntLongMath.binaryOr(this, num);
+    return new Integer(this.toJSNumber() | num.toJSNumber());
   }
 
   binaryXor(num: Integer): Integer {
-    return IntLongMath.binaryXor(this, num);
+    return new Integer(this.toJSNumber() ^ num.toJSNumber());
   }
 
   binaryComplement(): Integer {
-    return IntLongMath.binaryComplement(this);
+    return new Integer(~this.toJSNumber());
+  }
+
+  leftShift(num: Integer): Integer {
+    return new Integer(this.toJSNumber() << num.toJSNumber());
   }
 
   rightShift(places: Integer) {
-    return IntLongMath.rightShift(this, places);
+    return new Integer(this.toJSNumber() >> places.num);
   }
 
   unsignedRightShift(places: Integer) {
-    return IntLongMath.unsignedRightShift(this.bits, places);
+    return new Integer(this.toJSNumber() >>> places.num);
   }
 
-  max(num: Integer): Integer {
-    return this.gt(num) ? this : num;
+  max(num: TypeNumber): Integer {
+    return this.gt(num) ? this : num.toInteger();
   }
 
-  min(num: Integer): Integer {
-    return this.lt(num) ? this : num;
+  min(num: TypeNumber): Integer {
+    return this.lt(num) ? this : num.toInteger();
   }
 
-  lt(num: Integer): boolean {
-    return IntLongMath.lt(this, num);
+  lt(num: TypeNumber): boolean {
+    return this.toJSNumber() < num.toJSNumber();
   }
 
-  lte(num: Integer): boolean {
-    return IntLongMath.lte(this, num);
+  lte(num: TypeNumber): boolean {
+    return this.toJSNumber() <= num.toJSNumber();
   }
 
-  gt(num: Integer): boolean {
-    return IntLongMath.gt(this, num);
+  gt(num: TypeNumber): boolean {
+    return this.toJSNumber() > num.toJSNumber();
   }
 
-  gte(num: Integer): boolean {
-    return IntLongMath.gte(this, num);
+  gte(num: TypeNumber): boolean {
+    return this.toJSNumber() >= num.toJSNumber();
   }
 
   equals(num: IntegratedValue): iBoolean {
     if (!(num instanceof Integer)) return new iBoolean(false);
-    return new iBoolean(num.getBits().every((bit, i) => bit === this.bits[i]));
+    return new iBoolean(this.toJSNumber() === num.toJSNumber());
   }
 
   round(): Integer {
@@ -154,6 +140,6 @@ export class Integer implements NumberBase<Integer> {
   }
 
   toJSNumber(): number {
-    return parseInt(JavaMath.toDecimal(this.bits));
+    return this.toJSNumber();
   }
 }

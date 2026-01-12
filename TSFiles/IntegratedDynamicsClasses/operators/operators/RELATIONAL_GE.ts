@@ -3,7 +3,6 @@ import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { Operator } from "../Operator";
-import { JavaMath } from "HelperClasses/Math";
 
 export class OPERATOR_RELATIONAL_GE extends BaseOperator<
   TypeNumber,
@@ -35,7 +34,7 @@ export class OPERATOR_RELATIONAL_GE extends BaseOperator<
       interactName: "anyGreaterThanOrEquals",
       function: (num1: TypeNumber): TypeLambda<TypeNumber, iBoolean> => {
         return (num2: TypeNumber): iBoolean => {
-          return new iBoolean(JavaMath.gte(num1, num2));
+          return new iBoolean(num1.gte(num2));
         };
       },
     });

@@ -1,26 +1,22 @@
-import { IntLongMath } from "HelperClasses/IntLongMath";
-import { JavaMath } from "HelperClasses/Math";
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { Double } from "./Double";
 import { Integer } from "./Integer";
 
 export class Long implements NumberBase<Long> {
-  private bits!: TypeInt64;
+  private num: bigint;
 
-  constructor(
-    data: TypeNumericString | TypeInt64 | TypeInt128 | number | Long
-  ) {
-    if (data instanceof Long) data = data.bits;
-    if (!Array.isArray(data)) this.bits = this.initializeBits(data);
-    if (Array.isArray(data)) this.bits = data.slice(-64) as TypeInt64;
+  constructor(data: TypeNumericString | bigint | Long | number) {
+    if (data instanceof Long) data = data.num;
+
+    if (typeof data === "number") {
+      this.num = Long.limitToLong(data);
+    } else {
+      this.num = BigInt.asIntN(64, BigInt(data));
+    }
   }
 
-  initializeBits(decimal: TypeNumericString | number): TypeInt64 {
-    return JavaMath.decimalToBinary(`${decimal}`, 64) as TypeInt64;
-  }
-
-  getBits(): TypeInt64 {
-    return this.bits;
+  private static limitToLong(num: number | bigint): bigint {
+    return BigInt.asIntN(64, BigInt(num));
   }
 
   getType(): "Long" {
@@ -31,77 +27,79 @@ export class Long implements NumberBase<Long> {
     return 1;
   }
 
+  toType(value: TypeNumber) {
+    return value.toLong();
+  }
+
   // Long → Integer
   toInteger(): Integer {
-    const intBits = this.bits.slice(32) as TypeInt32; // low 32 bits
-    return new Integer(intBits);
+    return new Integer(this.toString());
   }
 
   // Long → Double
   toDouble(): Double {
-    const num = JavaMath.toDecimal(this.bits);
-    return new Double(num);
+    return new Double(this.toString());
   }
 
   toLong(): Long {
-    return new Long(this.bits as TypeInt64);
+    return new Long(this.num);
   }
 
-  toDecimal(): TypeNumericString {
-    return JavaMath.toDecimal(this.bits);
+  toString(): TypeNumericString {
+    return this.num.toString() as TypeNumericString;
+  }
+
+  add(num: TypeNumber): Long {
+    return new Long(this.num + num.toLong().num);
+  }
+
+  subtract(num: TypeNumber): Long {
+    return new Long(this.num - num.toLong().num);
+  }
+
+  multiply(num: TypeNumber): Long {
+    return new Long(this.num * num.toLong().num);
+  }
+
+  divide(num: TypeNumber): Long {
+    return new Long(this.num / num.toLong().num);
+  }
+
+  mod(num: TypeNumber): Long {
+    return new Long(this.num % num.toLong().num);
+  }
+
+  max(num: TypeNumber): Long {
+    return this.gt(num) ? this : num.toLong();
+  }
+
+  min(num: TypeNumber): Long {
+    return this.lt(num) ? this : num.toLong();
   }
 
   leftShift(num: Integer): Long {
-    return new Long(JavaMath.leftShift(this.bits, num.toJSNumber()));
+    return new Long(this.num << num.toLong().num);
   }
 
-  add(num: Long): Long {
-    return IntLongMath.add(this, num);
+  lt(num: TypeNumber): boolean {
+    return this.num < num.toLong().num;
   }
 
-  subtract(num: Long): Long {
-    return IntLongMath.subtract(this, num);
+  lte(num: TypeNumber): boolean {
+    return this.num <= num.toLong().num;
   }
 
-  multiply(num: Long): Long {
-    return IntLongMath.multiply(this, num);
+  gt(num: TypeNumber): boolean {
+    return this.num > num.toLong().num;
   }
 
-  divide(num: Long): Long {
-    return IntLongMath.divide(this, num);
-  }
-
-  mod(num: Long): Long {
-    return IntLongMath.mod(this, num);
-  }
-
-  max(num: Long): Long {
-    return this.gt(num) ? this : num;
-  }
-
-  min(num: Long): Long {
-    return this.lt(num) ? this : num;
-  }
-
-  lt(num: Long): boolean {
-    return IntLongMath.lt(this, num);
-  }
-
-  lte(num: Long): boolean {
-    return IntLongMath.lte(this, num);
-  }
-
-  gt(num: Long): boolean {
-    return IntLongMath.gt(this, num);
-  }
-
-  gte(num: Long): boolean {
-    return IntLongMath.gte(this, num);
+  gte(num: TypeNumber): boolean {
+    return this.num >= num.toLong().num;
   }
 
   equals(num: IntegratedValue): iBoolean {
     if (!(num instanceof Long)) return new iBoolean(false);
-    return new iBoolean(num.getBits().every((bit, i) => bit === this.bits[i]));
+    return new iBoolean(this.num === num.toLong().num);
   }
 
   round(): Integer {
@@ -121,6 +119,6 @@ export class Long implements NumberBase<Long> {
   }
 
   toJSNumber(): number {
-    return parseInt(JavaMath.toDecimal(this.bits));
+    return parseInt(this.num.toString());
   }
 }

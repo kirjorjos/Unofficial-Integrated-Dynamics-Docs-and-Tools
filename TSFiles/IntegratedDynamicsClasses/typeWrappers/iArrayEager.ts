@@ -63,7 +63,7 @@ export class iArrayEager<
 
   get(index: Integer): Result {
     if (this.size().lte(index))
-      throw new Error(`Index out of bounds: ${index.toDecimal()}`);
+      throw new Error(`Index out of bounds: ${index.toString()}`);
     const i = index.toJSNumber();
     return this.arr[i] as unknown as Result;
   }

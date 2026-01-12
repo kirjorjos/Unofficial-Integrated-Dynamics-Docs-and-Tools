@@ -23,7 +23,7 @@ export class OPERATOR_NUMBER_COMPACT extends BaseOperator<TypeNumber, iString> {
       symbol: "compact",
       interactName: "numberCompact",
       function: (number: TypeNumber): iString => {
-        return new iString(number.toDecimal());
+        return new iString(number.toString());
       },
     });
   }

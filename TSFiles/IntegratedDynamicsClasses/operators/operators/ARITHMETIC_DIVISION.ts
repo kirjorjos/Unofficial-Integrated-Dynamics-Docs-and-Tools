@@ -1,4 +1,3 @@
-import { JavaMath } from "HelperClasses/Math";
 import { TypeMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { Operator } from "../Operator";
@@ -34,7 +33,7 @@ export class OPERATOR_ARITHMETIC_DIVISION extends BaseOperator<
       interactName: "numberDivide",
       function: (num1: TypeNumber): TypeLambda<TypeNumber, TypeNumber> => {
         return (num2: TypeNumber): TypeNumber => {
-          return JavaMath.divide(num1, num2);
+          return num1.divide(num2);
         };
       },
     });

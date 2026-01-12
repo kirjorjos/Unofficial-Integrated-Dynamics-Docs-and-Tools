@@ -49,7 +49,7 @@ export class OPERATOR_LIST_SLICE extends BaseOperator<
               start.gt(end)
             ) {
               throw new Error(
-                `Invalid slice range: [${start.toDecimal()}, ${end.toDecimal()}) for list of length ${list.size().toDecimal()}`
+                `Invalid slice range: [${start.toString()}, ${end.toString()}) for list of length ${list.size().toString()}`
               );
             }
             return list.slice(start, end);

@@ -1,5 +1,10 @@
 {
-  "include": ["TSFiles/**/*.ts", "TSFiles/**/*.d.ts"],
+  "include": [
+    "TSFiles/**/*.ts",
+    "TSFiles/**/*.d.ts",
+    "TSFiles/HelperClasses/Math.ts.disabled",
+    "TSFiles/HelperClasses/IntLongMath.ts.disabled"
+  ],
   "compilerOptions": {
     "outDir": "docs",
     "rootDir": "TSFiles",
