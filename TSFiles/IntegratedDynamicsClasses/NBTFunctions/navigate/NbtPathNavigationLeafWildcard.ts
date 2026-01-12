@@ -4,6 +4,7 @@
  * Original Author: rubensworks
  */
 
+import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 import { INbtPathNavigation } from "./INbtPathNavigation";
 
 /**
@@ -14,11 +15,11 @@ export class NbtPathNavigationLeafWildcard implements INbtPathNavigation {
 
   private constructor() {}
 
-  isLeafKey(_key: string): boolean {
+  isLeafKey(_key: iString): boolean {
     return true;
   }
 
-  getNext(_key: string): INbtPathNavigation | undefined {
+  getNext(_key: iString): INbtPathNavigation | undefined {
     return undefined;
   }
 }

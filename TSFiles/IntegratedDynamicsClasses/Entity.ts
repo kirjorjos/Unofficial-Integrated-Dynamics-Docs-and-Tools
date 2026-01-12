@@ -3,48 +3,55 @@ import { Integer } from "../JavaNumberClasses/Integer";
 import { Double } from "../JavaNumberClasses/Double";
 import { Properties } from "./Properties";
 import { CompoundTag } from "./NBTFunctions/MinecraftClasses/CompoundTag";
+import { iBoolean } from "./typeWrappers/iBoolean";
+import { iString } from "./typeWrappers/iString";
+import { iNull } from "./typeWrappers/iNull";
+import { iArrayEager } from "./typeWrappers/iArrayEager";
+import { Block } from "./Block";
+import { Item } from "./Item";
+import { iArray } from "./typeWrappers/iArray";
 
 export class Entity implements UniquelyNamed {
   static defaultProps = new Properties({
-    uname: "",
-    mob: false,
-    animal: false,
-    player: false,
-    minecart: false,
-    isItem: false,
-    health: new Integer(0),
-    width: new Integer(0),
-    height: new Integer(0),
-    burning: false,
-    wet: false,
-    crouching: false,
-    eating: false,
-    armorInventory: [] as Array<Item>,
+    uname: new iString(""),
+    mob: new iBoolean(false),
+    animal: new iBoolean(false),
+    player: new iBoolean(false),
+    minecart: new iBoolean(false),
+    isItem: new iBoolean(false),
+    health: Integer.ZERO,
+    width: Integer.ZERO,
+    height: Integer.ZERO,
+    burning: new iBoolean(false),
+    wet: new iBoolean(false),
+    crouching: new iBoolean(false),
+    eating: new iBoolean(false),
+    armorInventory: new iArrayEager<Item>([]),
     inventory: [] as Array<Item>,
-    modName: "",
+    modName: new iString(""),
     // targetBlock: new Block(),
     targetEntity: new Entity(new Properties({})),
-    guiOpen: false,
+    guiOpen: new iBoolean(false),
     // heldItemMain: new Item(),
     // heldItemOffHand: new Item(),
-    entityMounted: false,
-    itemFrame: false,
+    entityMounted: new iBoolean(false),
+    itemFrame: new iBoolean(false),
     // itemFrameContents: new Item(),
-    itemFrameRotation: new Integer(0),
-    hurtSound: "",
-    deathSound: "",
-    age: new Integer(0),
-    child: false,
-    breedable: false,
-    inLove: false,
-    shearable: false,
-    breedableList: [] as Array<string>,
-    NBT: null,
-    entityType: "",
-    itemList: [] as Array<Item>,
-    fluids: [] as Array<Fluid>,
-    energyStored: new Integer(0),
-    energyCapacity: new Integer(0),
+    itemFrameRotation: Integer.ZERO,
+    hurtSound: new iString(""),
+    deathSound: new iString(""),
+    age: Integer.ZERO,
+    child: new iBoolean(false),
+    breedable: new iBoolean(false),
+    inLove: new iBoolean(false),
+    shearable: new iBoolean(false),
+    breedableList: new iArrayEager<iString>([]),
+    NBT: new iNull(),
+    entityType: new iString(""),
+    itemList: new iArrayEager<Item>([]),
+    fluids: new iArrayEager<Fluid>([]),
+    energyStored: Integer.ZERO,
+    energyCapacity: Integer.ZERO,
   });
 
   props: Properties;
@@ -53,40 +60,38 @@ export class Entity implements UniquelyNamed {
     let props = Entity.defaultProps;
     props.setAll(newProps);
     if (oldEntity) props.setAll(oldEntity.getProperties());
-    Promise.all([import("./Item"), import("./Block")]).then((values) => {
-      if (!props.has("heldItemMain"))
-        props.set("heldItemMain", new values[0].Item(new Properties({})));
-      if (!props.has("helpItemOffHand"))
-        props.set("helpItemOffHand", new values[0].Item(new Properties({})));
-      if (!props.has("itemFrameContents"))
-        props.set("itemFrameContents", new values[0].Item(new Properties({})));
-      if (!props.has("targetBlock"))
-        props.set("targetBlock", new values[1].Block(new Properties({})));
-    });
+    if (!props.has("heldItemMain"))
+      props.set("heldItemMain", new Item(new Properties({})));
+    if (!props.has("helpItemOffHand"))
+      props.set("helpItemOffHand", new Item(new Properties({})));
+    if (!props.has("itemFrameContents"))
+      props.set("itemFrameContents", new Item(new Properties({})));
+    if (!props.has("targetBlock"))
+      props.set("targetBlock", new Block(new Properties({})));
     this.props = props;
   }
 
-  getUniqueName(): string {
+  getUniqueName(): iString {
     return this.props.get("uname");
   }
 
-  isMob(): boolean {
+  isMob(): iBoolean {
     return this.props.get("mob");
   }
 
-  isAnimal(): boolean {
+  isAnimal(): iBoolean {
     return this.props.get("animal");
   }
 
-  isItem(): boolean {
-    return !this.props.get("isItem");
+  isItem(): iBoolean {
+    return new iBoolean(!this.props.get("isItem").valueOf());
   }
 
-  isPlayer(): boolean {
+  isPlayer(): iBoolean {
     return this.props.get("player");
   }
 
-  isMinecart(): boolean {
+  isMinecart(): iBoolean {
     return this.props.get("minecart");
   }
 
@@ -106,31 +111,31 @@ export class Entity implements UniquelyNamed {
     return new Double(this.props.get("height").toDecimal());
   }
 
-  isBurning(): boolean {
+  isBurning(): iBoolean {
     return this.props.get("burning");
   }
 
-  isWet(): boolean {
+  isWet(): iBoolean {
     return this.props.get("wet");
   }
 
-  isCrouching(): boolean {
+  isCrouching(): iBoolean {
     return this.props.get("crouching");
   }
 
-  isEating(): boolean {
+  isEating(): iBoolean {
     return this.props.get("eating");
   }
 
-  getArmorInventory(): Array<Item> {
+  getArmorInventory(): iArray<Item> {
     return this.props.get("armorInventory");
   }
 
-  getInventory(): Array<Item> {
+  getInventory(): iArray<Item> {
     return this.props.get("inventory");
   }
 
-  getModName(): string {
+  getModName(): iString {
     return this.props.get("modName");
   }
 
@@ -142,7 +147,7 @@ export class Entity implements UniquelyNamed {
     return this.props.get("targetEntity");
   }
 
-  hasGuiOpen(): boolean {
+  hasGuiOpen(): iBoolean {
     return this.props.get("guiOpen");
   }
 
@@ -154,11 +159,11 @@ export class Entity implements UniquelyNamed {
     return this.props.get("heldItemOffHand");
   }
 
-  isEntityMounted(): boolean {
+  isEntityMounted(): iBoolean {
     return this.props.get("entityMounted");
   }
 
-  isItemFrame(): boolean {
+  isItemFrame(): iBoolean {
     return this.props.get("itemFrame");
   }
 
@@ -170,11 +175,11 @@ export class Entity implements UniquelyNamed {
     return this.props.get("itemFrameRotation");
   }
 
-  getHurtSound(): string {
+  getHurtSound(): iString {
     return this.props.get("hurtSound");
   }
 
-  getDeathSound(): string {
+  getDeathSound(): iString {
     return this.props.get("deathSound");
   }
 
@@ -182,31 +187,34 @@ export class Entity implements UniquelyNamed {
     return this.props.get("age");
   }
 
-  isChild(): boolean {
+  isChild(): iBoolean {
     return this.props.get("child");
   }
 
-  canBreed(): boolean {
+  canBreed(): iBoolean {
     return this.props.get("breedable");
   }
 
-  isInLove(): boolean {
+  isInLove(): iBoolean {
     return this.props.get("inLove");
   }
 
-  isShearable(): boolean {
+  isShearable(): iBoolean {
     return this.props.get("shearable");
   }
 
-  getBreadableList(): Array<string> {
-    return [...this.props.get("breedableList"), this.props.get("uname")];
+  getBreadableList(): iArray<iString> {
+    return new iArrayEager<iString>([
+      ...this.props.get("breedableList"),
+      this.props.get("uname"),
+    ]);
   }
 
   getNBT(): CompoundTag {
     return this.props.get("NBT");
   }
 
-  getEntityType(): string {
+  getEntityType(): iString {
     return this.props.get("entityType");
   }
 
@@ -228,5 +236,27 @@ export class Entity implements UniquelyNamed {
 
   getProperties(): Properties {
     return this.props;
+  }
+
+  getSignatureNode(): TypeRawSignatureAST.RawSignatureNode {
+    return {
+      type: "Entity",
+    };
+  }
+
+  equals(other: IntegratedValue) {
+    if (!(other instanceof Entity)) return new iBoolean(false);
+    else {
+      for (const key of Object.keys(this) as Array<keyof Entity>) {
+        if (key == "equals") continue; // prevent recursion
+        if (this[key] instanceof Function) {
+          const thisResult = (this[key] as Function)() as IntegratedValue;
+          const otherResult = (other[key] as Function)() as IntegratedValue;
+          if (!thisResult.equals(otherResult).valueOf())
+            return new iBoolean(false);
+        }
+      }
+      return new iBoolean(true);
+    }
   }
 }

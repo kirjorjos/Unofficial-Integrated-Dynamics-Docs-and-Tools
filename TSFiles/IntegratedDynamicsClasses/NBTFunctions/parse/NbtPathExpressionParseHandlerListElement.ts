@@ -13,6 +13,7 @@ import {
 import { NbtPathExpressionExecutionContext } from "./NBTPathExecutionContext";
 import { ListTag } from "../MinecraftClasses/ListTag";
 import { NbtPathExpressionMatches } from "../NbtPathExpressionMatches";
+import { Integer } from "JavaNumberClasses/Integer";
 
 /**
  * A handler that handles list element expressions in the form of "[10]",
@@ -50,8 +51,8 @@ class Expression extends INbtPathExpression {
     this.childIndex = childIndex;
   }
 
-  getChildIndex(): number {
-    return this.childIndex;
+  getChildIndex(): Integer {
+    return new Integer(this.childIndex);
   }
 
   override matchContexts(
@@ -63,7 +64,7 @@ class Expression extends INbtPathExpression {
           let nbt = executionContext.getCurrentTag();
           if (nbt.getType() == Tag.TAG_LIST) {
             let tag = nbt as ListTag;
-            if (this.childIndex < tag.size()) {
+            if (new Integer(this.childIndex).lt(tag.size())) {
               let childTag = tag.get(this.getChildIndex());
               return new NbtPathExpressionExecutionContext(
                 childTag,

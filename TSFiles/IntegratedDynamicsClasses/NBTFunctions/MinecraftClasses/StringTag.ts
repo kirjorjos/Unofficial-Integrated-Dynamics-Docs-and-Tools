@@ -1,9 +1,11 @@
+import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 import { Tag } from "./Tag";
+import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 
-export class StringTag extends Tag<string> {
-  protected data: string;
+export class StringTag extends Tag<iString> {
+  protected data: iString;
 
-  constructor(data: string) {
+  constructor(data: iString) {
     super();
     this.data = data;
   }
@@ -12,16 +14,16 @@ export class StringTag extends Tag<string> {
     return Tag.TAG_STRING;
   }
 
-  valueOf(): string {
+  valueOf(): iString {
     return this.data;
   }
 
-  getTypeAsString(): string {
-    return "StringTag";
+  getTypeAsString(): iString {
+    return new iString("StringTag");
   }
 
-  equals(other: Tag<any>): boolean {
-    if (other.getType() != Tag.TAG_STRING) return false;
-    return this.data == other.valueOf();
+  equals(other: Tag<any>): iBoolean {
+    if (other.getType() != Tag.TAG_STRING) return new iBoolean(false);
+    return new iBoolean(this.data == other.valueOf());
   }
 }

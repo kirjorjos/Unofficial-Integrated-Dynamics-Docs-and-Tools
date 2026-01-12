@@ -2,35 +2,42 @@ import { Integer } from "JavaNumberClasses/Integer";
 import { UniquelyNamed } from "./UniquelyNamed";
 import { Properties } from "./Properties";
 import { CompoundTag } from "./NBTFunctions/MinecraftClasses/CompoundTag";
+import { iBoolean } from "./typeWrappers/iBoolean";
+import { iString } from "./typeWrappers/iString";
+import { NullTag } from "./NBTFunctions/MinecraftClasses/NullTag";
+import { iArrayEager } from "./typeWrappers/iArrayEager";
+import { Block } from "./Block";
+import { Fluid } from "./Fluid";
+import { iArray } from "./typeWrappers/iArray";
 
-export class Item implements UniquelyNamed {
+export class Item implements UniquelyNamed, IntegratedValue {
   props: Properties;
 
   static defaultProps = new Properties({
-    size: new Integer(1),
-    maxSize: new Integer(64),
-    stackable: true,
-    damageable: false,
-    damage: new Integer(0),
-    maxDamage: new Integer(0),
-    enchanted: false,
-    enchantable: false,
-    repairCost: new Integer(0),
-    rarity: "",
+    size: Integer.ONE,
+    maxSize: Integer.SIXTY_FOUR,
+    stackable: new iBoolean(true),
+    damageable: new iBoolean(false),
+    damage: Integer.ZERO,
+    maxDamage: Integer.ZERO,
+    enchanted: new iBoolean(false),
+    enchantable: new iBoolean(false),
+    repairCost: Integer.ZERO,
+    rarity: new iString(""),
     // fluid: new Fluid(),
-    fluidCapacity: new Integer(0),
-    NBT: null,
-    uname: "",
-    modName: "",
-    fuelBurnTime: new Integer(0),
-    fuel: false,
-    tagNames: [] as Array<string>,
-    feContainer: false,
-    feStored: new Integer(0),
-    feCapacity: new Integer(0),
-    inventory: [] as Array<IntegratedValue>,
-    tooltip: [] as Array<string>,
-    itemName: "",
+    fluidCapacity: Integer.ZERO,
+    NBT: new NullTag(),
+    uname: new iString(""),
+    modName: new iString(""),
+    fuelBurnTime: Integer.ZERO,
+    fuel: new iBoolean(false),
+    tagNames: new iArrayEager<iString>([]),
+    feContainer: new iBoolean(false),
+    feStored: Integer.ZERO,
+    feCapacity: Integer.ZERO,
+    inventory: new iArrayEager<IntegratedValue>([]),
+    tooltip: new iArrayEager<iString>([]),
+    itemName: new iString(""),
     // block: new Block()
   });
 
@@ -38,12 +45,8 @@ export class Item implements UniquelyNamed {
     let props = Item.defaultProps;
     props.setAll(newProps);
     if (oldItem) props.setAll(oldItem.getProperties());
-    Promise.all([import("./Block"), import("./Fluid")]).then((values) => {
-      if (!props.has("block"))
-        props.set("block", new values[0].Block(new Properties({})));
-      if (!props.has("fluid"))
-        props.set("fluid", new values[1].Fluid(new Properties({})));
-    });
+    if (!props.has("block")) props.set("block", new Block(new Properties({})));
+    if (!props.has("fluid")) props.set("fluid", new Fluid(new Properties({})));
     this.props = props;
   }
 
@@ -55,11 +58,11 @@ export class Item implements UniquelyNamed {
     return this.props.get("maxSize");
   }
 
-  isStackable(): boolean {
+  isStackable(): iBoolean {
     return this.props.get("stackable");
   }
 
-  isDamageable(): boolean {
+  isDamageable(): iBoolean {
     return this.props.get("damageable");
   }
 
@@ -71,11 +74,11 @@ export class Item implements UniquelyNamed {
     return this.props.get("maxDamage");
   }
 
-  isEnchanted(): boolean {
+  isEnchanted(): iBoolean {
     return this.props.get("enchanted");
   }
 
-  isEnchantable(): boolean {
+  isEnchantable(): iBoolean {
     return this.props.get("enchantable");
   }
 
@@ -83,7 +86,7 @@ export class Item implements UniquelyNamed {
     return this.props.get("repairCost");
   }
 
-  getRarity(): string {
+  getRarity(): iString {
     return this.props.get("rarity");
   }
 
@@ -99,11 +102,11 @@ export class Item implements UniquelyNamed {
     return this.props.get("NBT");
   }
 
-  getUniqueName(): string {
+  getUniqueName(): iString {
     return this.props.get("uname");
   }
 
-  getModName(): string {
+  getModName(): iString {
     return this.props.get("modName");
   }
 
@@ -111,15 +114,15 @@ export class Item implements UniquelyNamed {
     return this.props.get("fuelBurnTime");
   }
 
-  isFuel(): boolean {
+  isFuel(): iBoolean {
     return this.props.get("fuel");
   }
 
-  getTagNames(): Array<string> {
+  getTagNames(): iArray<iString> {
     return this.props.get("tagNames");
   }
 
-  isFeContainer(): boolean {
+  isFeContainer(): iBoolean {
     return this.props.get("feContainer");
   }
 
@@ -131,15 +134,15 @@ export class Item implements UniquelyNamed {
     return this.props.get("feCapacity");
   }
 
-  getInventory(): Array<IntegratedValue> {
+  getInventory(): iArray<IntegratedValue> {
     return this.props.get("inventory") || [];
   }
 
-  getTooltip(): Array<string> {
+  getTooltip(_player?: Entity): iArray<iString> {
     return this.props.get("tooltip");
   }
 
-  getItemName(): string {
+  getItemName(): iString {
     return this.props.get("itemName");
   }
 
@@ -151,19 +154,35 @@ export class Item implements UniquelyNamed {
     return this.props;
   }
 
-  async getStrengthVsBlock(block: Block) {
-    let { Block } = await import("./Block");
+  getStrengthVsBlock(block: Block) {
     if (!(block instanceof Block)) throw new Error("block is not a Block");
     throw new Error("getStrengthVsBlock method not implemented");
   }
 
-  canHarvestBlock() {
+  canHarvestBlock(_block: Block) {
     throw new Error("canHarvestBlock method not implemented");
   }
 
-  equals(other: Item) {
-    if (!(other instanceof Item)) return false;
-    return JSON.stringify(this) === JSON.stringify(other);
+  equals(other: IntegratedValue) {
+    if (!(other instanceof Item)) return new iBoolean(false);
+    else {
+      for (const key of Object.keys(this) as Array<keyof Item>) {
+        if (key == "equals") continue; // prevent recursion
+        if (this[key] instanceof Function) {
+          const thisResult = (this[key] as Function)() as IntegratedValue;
+          const otherResult = (other[key] as Function)() as IntegratedValue;
+          if (!thisResult.equals(otherResult).valueOf())
+            return new iBoolean(false);
+        }
+      }
+      return new iBoolean(true);
+    }
+  }
+
+  getSignatureNode(): TypeRawSignatureAST.RawSignatureNode {
+    return {
+      type: "Entity",
+    };
   }
 
   toString() {

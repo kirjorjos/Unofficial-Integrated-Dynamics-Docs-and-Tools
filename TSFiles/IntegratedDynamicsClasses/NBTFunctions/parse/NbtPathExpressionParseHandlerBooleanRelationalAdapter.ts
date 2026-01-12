@@ -89,7 +89,7 @@ class Expression extends INbtPathExpression {
           );
         }
         return new NbtPathExpressionExecutionContext(
-          ByteTag.valueOf(new Integer(0)),
+          ByteTag.valueOf(Integer.ZERO),
           executionContext
         );
       })

@@ -4,6 +4,7 @@
  * Original Author: rubensworks
  */
 
+import { iArrayEager } from "IntegratedDynamicsClasses/typeWrappers/iArrayEager";
 import { INbtPathExpression } from "../INbtPathExpression";
 import { CompoundTag } from "../MinecraftClasses/CompoundTag";
 import { ListTag } from "../MinecraftClasses/ListTag";
@@ -70,9 +71,10 @@ class Expression extends INbtPathExpression {
           let nbt = executionContext.getCurrentTag();
           if (nbt.getType() == Tag.TAG_LIST) {
             let tag = nbt as ListTag;
-            let newTagList = new ListTag([]);
+            let newTagList = new ListTag(new iArrayEager([]));
             tag
               .getArray()
+              .valueOf()
               .filter((subTag) => this.getExpression().test(subTag))
               .forEach((subTag) => newTagList.add(subTag));
             return new NbtPathExpressionExecutionContext(
@@ -81,8 +83,8 @@ class Expression extends INbtPathExpression {
             );
           } else if (nbt.getType() == Tag.TAG_COMPOUND) {
             let tag = nbt as CompoundTag;
-            let newTagList = new ListTag([]);
-            Array.from(tag.getAllKeys())
+            let newTagList = new ListTag(new iArrayEager([]));
+            Array.from(tag.getAllKeys().valueOf())
               .map((key) => tag.get(key))
               .filter((subTag) => this.getExpression().test(subTag))
               .forEach((subTag) => newTagList.add(subTag));

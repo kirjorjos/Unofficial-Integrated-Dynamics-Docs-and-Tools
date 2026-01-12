@@ -4,6 +4,7 @@
  * Original Author: rubensworks
  */
 
+import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { Tag } from "../MinecraftClasses/Tag";
 
 /**
@@ -34,9 +35,9 @@ export class NbtPathExpressionExecutionContext {
     return parent ? parent.getRootContext() : this;
   }
 
-  equals(obj: NbtPathExpressionExecutionContext): boolean {
+  equals(obj: NbtPathExpressionExecutionContext): iBoolean {
     if (!(obj instanceof NbtPathExpressionExecutionContext)) {
-      return false;
+      return new iBoolean(false);
     }
     let that = obj as NbtPathExpressionExecutionContext;
     return this.getCurrentTag().equals(that.getCurrentTag());

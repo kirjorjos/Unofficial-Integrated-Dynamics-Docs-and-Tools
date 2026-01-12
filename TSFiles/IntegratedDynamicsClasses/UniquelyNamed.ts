@@ -1,3 +1,5 @@
-export interface UniquelyNamed {
-  getUniqueName(): string;
+import { iString } from "./typeWrappers/iString";
+
+export interface UniquelyNamed extends IntegratedValue {
+  getUniqueName(): iString;
 }

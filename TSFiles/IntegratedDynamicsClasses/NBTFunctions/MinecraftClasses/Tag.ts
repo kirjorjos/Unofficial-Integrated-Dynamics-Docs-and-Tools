@@ -1,4 +1,9 @@
-export abstract class Tag<T extends IntegratedValue> {
+import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
+import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
+
+export abstract class Tag<T extends IntegratedValue>
+  implements IntegratedValue
+{
   static TAG_LIST = 0;
   static TAG_COMPOUND = 1;
   static TAG_STRING = 2;
@@ -8,14 +13,22 @@ export abstract class Tag<T extends IntegratedValue> {
   static TAG_NULL = 6;
   static TAG_INT = 7;
   static TAG_LONG = 7;
+  static TAG_FLOAT = 8;
+  static TAG_Short = 9;
 
   protected constructor() {}
 
   abstract getType(): number;
 
-  abstract valueOf(): T;
+  abstract valueOf(): T | Record<string, Tag<T>> | Tag<T>[];
 
-  abstract equals(tag: Tag<T>): boolean;
+  abstract equals(tag: IntegratedValue): iBoolean;
 
-  abstract getTypeAsString(): string;
+  abstract getTypeAsString(): iString;
+
+  getSignatureNode(): TypeRawSignatureAST.RawSignatureNode {
+    return {
+      type: "NBT",
+    };
+  }
 }

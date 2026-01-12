@@ -59,7 +59,7 @@ class Expression extends INbtPathExpression {
           } else if (nbt.getType() == Tag.TAG_COMPOUND) {
             let tag = nbt as CompoundTag;
             return new NbtPathExpressionExecutionContext(
-              IntTag.valueOf(new Integer(tag.getAllKeys().length)),
+              IntTag.valueOf(new Integer(tag.getAllKeys().size())),
               executionContext
             );
           }

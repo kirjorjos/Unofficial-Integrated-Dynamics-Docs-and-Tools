@@ -1,21 +1,25 @@
-import { IntLongMath } from "HelperClasses/IntLongMath";
-import { JavaMath } from "HelperClasses/Math";
+import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
+import { Double } from "./Double";
+import { Integer } from "./Integer";
 
 export class Long implements NumberBase<Long> {
-  private bits!: TypeInt64;
+  private num: bigint;
 
-  constructor(data: TypeNumericString | TypeInt64 | TypeInt128 | number) {
-    if (!Array.isArray(data)) this.bits = this.initializeBits(data);
-    if (Array.isArray(data)) this.bits = data.slice(-64) as TypeInt64;
+  constructor(data: TypeNumericString | bigint | Long | number) {
+    if (data instanceof Long) data = data.num;
+
+    if (typeof data === "number") {
+      this.num = Long.limitToLong(data);
+    } else {
+      this.num = BigInt.asIntN(64, BigInt(data));
+    }
   }
 
-  initializeBits(decimal: TypeNumericString | number): TypeInt64 {
-    return JavaMath.decimalToBinary(`${decimal}`, 64) as TypeInt64;
+  private static limitToLong(num: number | bigint): bigint {
+    return BigInt.asIntN(64, BigInt(num));
   }
 
-  getBits(): TypeInt64 {
-    return this.bits;
-  }
+  static ZERO = new Long(0);
 
   getType(): "Long" {
     return "Long";
@@ -25,91 +29,98 @@ export class Long implements NumberBase<Long> {
     return 1;
   }
 
+  toType(value: TypeNumber) {
+    return value.toLong();
+  }
+
   // Long → Integer
-  toInteger(): Promise<Integer> {
-    const intBits = this.bits.slice(32) as TypeInt32; // low 32 bits
-    return import("./Integer").then((obj) => {
-      return new obj.Integer(intBits);
-    });
+  toInteger(): Integer {
+    return new Integer(this.toString());
   }
 
   // Long → Double
-  toDouble(): Promise<Double> {
-    const num = JavaMath.toDecimal(this.bits);
-    return import("./Double").then((obj) => {
-      return new obj.Double(num);
-    });
+  toDouble(): Double {
+    return new Double(this.toString());
   }
 
-  toLong(): Promise<Long> {
-    return new Promise((resolve) => resolve(new Long(this.bits as TypeInt64)));
+  toLong(): Long {
+    return new Long(this.num);
   }
 
-  toDecimal(): TypeNumericString {
-    return JavaMath.toDecimal(this.bits);
+  toString(): TypeNumericString {
+    return this.num.toString() as TypeNumericString;
+  }
+
+  add(num: TypeNumber): Long {
+    return new Long(this.num + num.toLong().num);
+  }
+
+  subtract(num: TypeNumber): Long {
+    return new Long(this.num - num.toLong().num);
+  }
+
+  multiply(num: TypeNumber): Long {
+    return new Long(this.num * num.toLong().num);
+  }
+
+  divide(num: TypeNumber): Long {
+    return new Long(this.num / num.toLong().num);
+  }
+
+  mod(num: TypeNumber): Long {
+    return new Long(this.num % num.toLong().num);
+  }
+
+  max(num: TypeNumber): Long {
+    return this.gt(num) ? this : num.toLong();
+  }
+
+  min(num: TypeNumber): Long {
+    return this.lt(num) ? this : num.toLong();
   }
 
   leftShift(num: Integer): Long {
-    return new Long(JavaMath.leftShift(this.bits, parseInt(num.toDecimal())));
+    return new Long(this.num << num.toLong().num);
   }
 
-  add(num: Long): Long {
-    return IntLongMath.add(this, num);
+  lt(num: TypeNumber): boolean {
+    return this.num < num.toLong().num;
   }
 
-  subtract(num: Long): Long {
-    return IntLongMath.subtract(this, num);
+  lte(num: TypeNumber): boolean {
+    return this.num <= num.toLong().num;
   }
 
-  multiply(num: Long): Long {
-    return IntLongMath.multiply(this, num);
+  gt(num: TypeNumber): boolean {
+    return this.num > num.toLong().num;
   }
 
-  divide(num: Long): Long {
-    return IntLongMath.divide(this, num);
+  gte(num: TypeNumber): boolean {
+    return this.num >= num.toLong().num;
   }
 
-  mod(num: Long): Long {
-    return IntLongMath.mod(this, num);
+  equals(num: IntegratedValue): iBoolean {
+    if (!(num instanceof Long)) return new iBoolean(false);
+    return new iBoolean(this.num === num.toLong().num);
   }
 
-  async max(num: Long): Promise<Long> {
-    return (await this.gt(num)) ? this : num;
-  }
-
-  async min(num: Long): Promise<Long> {
-    return (await this.lt(num)) ? this : num;
-  }
-
-  async lt(num: Long): Promise<boolean> {
-    return IntLongMath.lt(this, num);
-  }
-
-  async lte(num: Long): Promise<boolean> {
-    return IntLongMath.lte(this, num);
-  }
-
-  async gt(num: Long): Promise<boolean> {
-    return IntLongMath.gt(this, num);
-  }
-
-  async gte(num: Long): Promise<boolean> {
-    return IntLongMath.gte(this, num);
-  }
-
-  equals(num: Long): boolean {
-    return num.getBits().every((bit, i) => bit === this.bits[i]);
-  }
-
-  round(): Promise<Integer> {
+  round(): Integer {
     return this.toInteger();
   }
 
-  ceil(): Promise<Integer> {
+  ceil(): Integer {
     return this.toInteger();
   }
 
-  floor(): Promise<Integer> {
+  floor(): Integer {
     return this.toInteger();
+  }
+
+  getSignatureNode(): { type: "Long" } {
+    return { type: "Long" };
+  }
+
+  toJSNumber(): number {
+    return parseInt(this.num.toString());
   }
 }

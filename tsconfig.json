@@ -1,5 +1,10 @@
 {
-  "include": ["TSFiles/**/*.ts", "TSFiles/**/*.d.ts"],
+  "include": [
+    "TSFiles/**/*.ts",
+    "TSFiles/**/*.d.ts",
+    "TSFiles/HelperClasses/Math.ts.disabled",
+    "TSFiles/HelperClasses/IntLongMath.ts.disabled"
+  ],
   "compilerOptions": {
     "outDir": "docs",
     "rootDir": "TSFiles",
@@ -20,7 +25,7 @@
     "moduleResolution": "bundler",
     "lib": ["es2022", "dom"],
     "typeRoots": ["./TSFiles/types", "./node_modules/@types"],
-    "types": [],
+    "types": ["jest"],
     "skipLibCheck": true,
     "strict": true,
     "noUncheckedIndexedAccess": true,

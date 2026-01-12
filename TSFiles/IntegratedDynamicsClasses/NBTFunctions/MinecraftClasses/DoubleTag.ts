@@ -1,5 +1,7 @@
+import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { NumericTag } from "./NumericTag";
 import { Tag } from "./Tag";
+import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 
 export class DoubleTag extends NumericTag {
   protected data: Double;
@@ -22,15 +24,15 @@ export class DoubleTag extends NumericTag {
   }
 
   getAsDouble(): number {
-    return parseInt(this.data.toDecimal());
+    return this.data.toJSNumber();
   }
 
-  override getTypeAsString(): string {
-    return "DoubleTag";
+  override getTypeAsString(): iString {
+    return new iString("DoubleTag");
   }
 
-  equals(tag: Tag<IntegratedValue>): boolean {
-    if (tag.getType() != Tag.TAG_DOUBLE) return false;
-    return this.getAsDouble() == (tag as DoubleTag).getAsDouble();
+  equals(tag: Tag<IntegratedValue>): iBoolean {
+    if (tag.getType() != Tag.TAG_DOUBLE) return new iBoolean(false);
+    return new iBoolean(this.getAsDouble() == (tag as DoubleTag).getAsDouble());
   }
 }

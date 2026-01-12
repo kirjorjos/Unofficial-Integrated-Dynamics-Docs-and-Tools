@@ -1,36 +1,17 @@
+import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { Integer } from "./Integer";
+import { Long } from "./Long";
 
 export class Double implements NumberBase<Double> {
-  value: number;
+  private num: number;
 
-  constructor(decimal: TypeNumericString | number) {
-    if (typeof decimal === "number") {
-      this.value = decimal;
-    } else {
-      this.value = parseInt(decimal);
-    }
-    this.initializeBits();
+  constructor(data: TypeNumericString | number | Double) {
+    if (data instanceof Double) data = data.num;
+    if (typeof data === "string") data = parseFloat(data);
+    this.num = data;
   }
 
-  initializeBits(): TypeInt64 {
-    return new Array(64).fill(0) as TypeInt64;
-  }
-
-  getBits(): TypeInt64 {
-    const buffer = new ArrayBuffer(8);
-    const view = new DataView(buffer);
-    view.setFloat64(0, this.value, false);
-
-    const bits: number[] = [];
-    for (let byteIndex = 0; byteIndex < 8; byteIndex++) {
-      const byte = view.getUint8(byteIndex);
-      for (let bitIndex = 7; bitIndex >= 0; bitIndex--) {
-        bits.push((byte >> bitIndex) & 1);
-      }
-    }
-
-    return bits as TypeInt64;
-  }
+  static ZERO = new Double(0);
 
   getType(): "Double" {
     return "Double";
@@ -41,100 +22,101 @@ export class Double implements NumberBase<Double> {
   }
 
   // Double → Double
-  toLong(): Promise<Long> {
-    const n = Math.trunc(this.value); // Java semantics: truncate toward zero
-    return import("./Long").then((obj) => {
-      return new obj.Long(n.toString() as TypeNumericString);
-    });
+  toLong(): Long {
+    return new Long(this.num);
   }
 
   // Double → Integer
-  toInteger(): Promise<Integer> {
-    const n = Math.trunc(this.value); // safe for 32-bit
-    return import("./Integer").then((obj) => {
-      return new obj.Integer(n.toString() as TypeNumericString);
-    });
+  toInteger(): Integer {
+    return new Integer(this.num);
   }
 
-  toDouble(): Promise<Double> {
-    return new Promise((resolve) =>
-      resolve(new Double(`${this.value}` as TypeNumericString))
-    );
+  toDouble(): Double {
+    return new Double(this.num);
   }
 
-  toDecimal(): TypeNumericString {
-    return `${this.value}`;
+  toString(): TypeNumericString {
+    return `${this.num}`;
   }
 
   leftShift(num: Integer): Double {
-    return new Double(this.value << parseInt(num.toDecimal()));
+    return new Double(this.num << num.toJSNumber());
   }
 
-  add(num: Double): Double {
-    return new Double(this.value + parseInt(num.toDecimal()));
+  add(num: TypeNumber): Double {
+    return new Double(this.num + num.toJSNumber());
   }
 
-  subtract(num: Double): Double {
-    return new Double(this.value - parseInt(num.toDecimal()));
+  subtract(num: TypeNumber): Double {
+    return new Double(this.num - num.toJSNumber());
   }
 
-  multiply(num: Double): Double {
-    return new Double(this.value * parseInt(num.toDecimal()));
+  multiply(num: TypeNumber): Double {
+    return new Double(this.num * num.toJSNumber());
   }
 
-  divide(num: Double): Double {
-    return new Double(this.value / parseInt(num.toDecimal()));
+  divide(num: TypeNumber): Double {
+    return new Double(this.num / num.toJSNumber());
   }
 
-  mod(num: Double): Double {
-    return new Double(this.value % parseInt(num.toDecimal()));
+  mod(num: TypeNumber): Double {
+    return new Double(this.num % num.toJSNumber());
   }
 
   sqrt(): Double {
-    return new Double(Math.sqrt(this.value));
+    return new Double(Math.sqrt(this.num));
   }
 
-  pow(exponent: Double): Double {
-    return new Double(Math.pow(this.value, parseInt(exponent.toDecimal())));
+  pow(exponent: TypeNumber): Double {
+    return new Double(Math.pow(this.num, exponent.toJSNumber()));
   }
 
-  async max(num: Double): Promise<Double> {
-    return (await this.gt(num)) ? this : num;
+  max(num: TypeNumber): Double {
+    return this.gt(num) ? this : num.toDouble();
   }
 
-  async min(num: Double): Promise<Double> {
-    return (await this.lt(num)) ? this : num;
+  min(num: TypeNumber): Double {
+    return this.lt(num) ? this : num.toDouble();
   }
 
-  async lt(num: Double): Promise<boolean> {
-    return this.value < parseInt(num.toDecimal());
+  lt(num: TypeNumber): boolean {
+    return this.num < num.toJSNumber();
   }
 
-  async lte(num: Double): Promise<boolean> {
-    return this.value <= parseInt(num.toDecimal());
+  lte(num: TypeNumber): boolean {
+    return this.num <= num.toJSNumber();
   }
 
-  async gt(num: Double): Promise<boolean> {
-    return this.value > parseInt(num.toDecimal());
+  gt(num: TypeNumber): boolean {
+    return this.num > num.toJSNumber();
   }
 
-  async gte(num: Double): Promise<boolean> {
-    return this.value >= parseInt(num.toDecimal());
+  gte(num: TypeNumber): boolean {
+    return this.num >= num.toJSNumber();
   }
 
-  equals(num: Double): boolean {
-    return `${this.value}` === num.toDecimal();
+  equals(num: IntegratedValue): iBoolean {
+    if (!(num instanceof Double)) return new iBoolean(false);
+    return new iBoolean(this.num === num.num);
   }
 
-  async round(): Promise<Integer> {
-    return new Integer(Math.round(this.value));
+  round(): Integer {
+    return new Integer(Math.round(this.num));
   }
 
-  async ceil(): Promise<Integer> {
-    return new Integer(Math.ceil(this.value));
+  ceil(): Integer {
+    return new Integer(Math.ceil(this.num));
   }
 
-  async floor(): Promise<Integer> {
-    return new Integer(Math.floor(this.value));
+  floor(): Integer {
+    return new Integer(Math.floor(this.num));
+  }
+
+  getSignatureNode(): { type: "Double" } {
+    return { type: "Double" };
+  }
+
+  toJSNumber(): number {
+    return this.num;
   }
 }

@@ -1,6 +1,7 @@
 import { Ingredients } from "./Ingredients";
+import { iBoolean } from "./typeWrappers/iBoolean";
 
-export class Recipe {
+export class Recipe implements IntegratedValue {
   private input: Ingredients;
   private output: Ingredients;
 
@@ -9,17 +10,30 @@ export class Recipe {
     this.output = output;
   }
 
-  public getInput(): Ingredients {
+  getInput(): Ingredients {
     return this.input;
   }
-  public setInput(value: Ingredients): Recipe {
+  setInput(value: Ingredients): Recipe {
     return new Recipe(value, this.output);
   }
 
-  public getOutput(): Ingredients {
+  getOutput(): Ingredients {
     return this.output;
   }
-  public setOutput(value: Ingredients): Recipe {
+  setOutput(value: Ingredients): Recipe {
     return new Recipe(this.input, value);
+  }
+
+  equals(other: IntegratedValue): iBoolean {
+    if (!(other instanceof Recipe)) return new iBoolean(false);
+    if (!this.input.equals(other.input)) return new iBoolean(false);
+    if (!this.output.equals(other.output)) return new iBoolean(false);
+    return new iBoolean(true);
+  }
+
+  getSignatureNode(): TypeRawSignatureAST.RawSignatureNode {
+    return {
+      type: "Recipe",
+    };
   }
 }

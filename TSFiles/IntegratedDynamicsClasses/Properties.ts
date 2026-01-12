@@ -1,3 +1,5 @@
+import { CompoundTag } from "./NBTFunctions/MinecraftClasses/CompoundTag";
+
 export class Properties {
   data: Record<string, any>;
 
@@ -25,5 +27,13 @@ export class Properties {
 
   get(key: string) {
     return this.data[key];
+  }
+
+  toCompoundTag(): CompoundTag {
+    let result = {} as Record<string, any>;
+    for (const [k, v] of Object.entries(this.data)) {
+      result[k] = v;
+    }
+    return new CompoundTag(result);
   }
 }

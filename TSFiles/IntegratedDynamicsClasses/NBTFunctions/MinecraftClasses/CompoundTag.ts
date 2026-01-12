@@ -7,6 +7,11 @@ import { Long } from "JavaNumberClasses/Long";
 import { LongTag } from "./LongTag";
 import { Double } from "JavaNumberClasses/Double";
 import { DoubleTag } from "./DoubleTag";
+import { NullTag } from "./NullTag";
+import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
+import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
+import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
+import { iArrayEager } from "IntegratedDynamicsClasses/typeWrappers/iArrayEager";
 
 export class CompoundTag extends Tag<IntegratedValue> {
   data: Record<string, Tag<IntegratedValue>>;
@@ -30,34 +35,34 @@ export class CompoundTag extends Tag<IntegratedValue> {
     return this.data;
   }
 
-  getAllKeys(): string[] {
-    return Object.keys(this.data);
+  getAllKeys(): iArray<iString> {
+    return new iArrayEager(Object.keys(this.data).map((e) => new iString(e)));
   }
 
-  get(key: string): Tag<IntegratedValue> {
-    return this.data[key]!;
+  get(key: iString): Tag<IntegratedValue> {
+    return this.data[key.valueOf()] ?? new NullTag();
   }
 
-  has(key: string): boolean {
-    return key in this.data;
+  has(key: iString): boolean {
+    return key.valueOf() in this.data;
   }
 
-  set(key: string, value: IntegratedValue) {
+  set(key: string, value: Tag<IntegratedValue>) {
     let data = { ...this.data };
     data[key] = value;
     return new CompoundTag(data);
   }
 
-  setAll(keys: string[], values: Tag<IntegratedValue>[]): CompoundTag {
+  setAll(keys: iString[], values: Tag<IntegratedValue>[]): CompoundTag {
     if (keys.length != values.length)
       throw new Error(
         `Keys (length ${keys.length}) is not the same as values (${values.length})`
       );
     let data = { ...this.data };
     for (let i = 0; i < keys.length; i++) {
-      let key = keys[i] as string;
-      let value = values[i] as IntegratedValue;
-      data[key] = value;
+      let key = keys[i] as iString;
+      let value = values[i] as Tag<IntegratedValue>;
+      data[key.valueOf()] = value;
     }
     return new CompoundTag(data);
   }
@@ -68,30 +73,33 @@ export class CompoundTag extends Tag<IntegratedValue> {
     return new CompoundTag(data);
   }
 
-  getTypeAsString(): string {
-    return "CompoundTag";
+  getTypeAsString(): iString {
+    return new iString("CompoundTag");
   }
 
   toJSON(): any {
     let obj = {} as any;
 
     function mapTagArray(value: Tag<any>) {
-      (value as ListTag).getArray().map((e) => {
-        if (e instanceof CompoundTag) return e.toJSON();
-        if (e instanceof ListTag) return mapTagArray(e);
-        let innerValue = value.valueOf();
-        while (
-          innerValue instanceof Object &&
-          innerValue.constructor.name != "Object"
-        ) {
-          innerValue = innerValue.toJSON();
-        }
-      });
+      (value as ListTag)
+        .getArray()
+        .valueOf()
+        .map((e) => {
+          if (e instanceof CompoundTag) return e.toJSON();
+          if (e instanceof ListTag) return mapTagArray(e);
+          let innerValue = value.valueOf();
+          while (
+            innerValue instanceof Object &&
+            innerValue.constructor.name != "Object"
+          ) {
+            innerValue = innerValue.toJSON();
+          }
+        });
     }
 
     for (const [key, value] of Object.entries(this.data)) {
       if (!(value instanceof CompoundTag || value instanceof ListTag)) {
-        let innerValue = value.valueOf();
+        let innerValue = value.valueOf() as IntegratedValue;
         findBase: while (
           innerValue instanceof Object &&
           innerValue.constructor.name != "Object"
@@ -149,7 +157,9 @@ export class CompoundTag extends Tag<IntegratedValue> {
             else if (str.match(/\d*[Ll]/))
               obj[key] = new LongTag(new Long(parseInt(str.slice(0, -1))));
             else if (str.match(/\d*[FfDd]/))
-              obj[key] = new DoubleTag(new Double(parseInt(str.slice(0, -1))));
+              obj[key] = new DoubleTag(
+                new Double(parseFloat(str.slice(0, -1)))
+              );
             else if (str.match(/d{1,}/))
               obj[key] = new IntTag(new Integer(parseInt(obj[key])));
             break;
@@ -163,7 +173,8 @@ export class CompoundTag extends Tag<IntegratedValue> {
     function arrayCase(arr: any[]): Tag<any>[] {
       for (const [k, v] of Object.entries(arr)) {
         const i = parseInt(k);
-        if (Array.isArray(v)) arr[i] = new ListTag(arrayCase(v));
+        if (Array.isArray(v))
+          arr[i] = new ListTag(new iArrayEager(arrayCase(v)));
         else if (v instanceof Object) arr[i] = objectCase(v);
         else arr[i] = baseCase(v);
       }
@@ -174,7 +185,7 @@ export class CompoundTag extends Tag<IntegratedValue> {
   }
 
   compoundSubset(subset: CompoundTag): boolean {
-    for (const key of subset.getAllKeys()) {
+    for (const key of subset.getAllKeys().valueOf()) {
       const subValue = subset.get(key);
       const superValue = this.get(key);
 
@@ -188,8 +199,8 @@ export class CompoundTag extends Tag<IntegratedValue> {
       } else if (subValue instanceof ListTag && superValue instanceof ListTag) {
         let subValueArr = subValue.valueOf();
         let superValueArr = superValue.valueOf();
-        if (subValueArr.length !== superValueArr.length) return false;
-        if (subValueArr.every((v, i) => superValueArr[i]?.equals(v)))
+        if (!subValueArr.size().equals(superValueArr.size())) return false;
+        if (subValueArr.every((v, i) => superValueArr.valueOf()[i]?.equals(v)))
           return true;
         return false;
       }
@@ -198,10 +209,10 @@ export class CompoundTag extends Tag<IntegratedValue> {
   }
 
   public compoundUnion(other: CompoundTag): CompoundTag {
-    const keys: string[] = [];
+    const keys: iString[] = [];
     const values: any[] = [];
 
-    for (const key of other.getAllKeys()) {
+    for (const key of other.getAllKeys().valueOf()) {
       const thisValue = this.get(key);
       const otherValue = other.get(key);
 
@@ -223,8 +234,8 @@ export class CompoundTag extends Tag<IntegratedValue> {
   public compoundIntersection(other: CompoundTag): CompoundTag {
     const result: Record<string, Tag<IntegratedValue>> = {};
 
-    for (const key of this.getAllKeys()) {
-      const thisValue = this.get(key);
+    for (const key of this.getAllKeys().valueOf()) {
+      const thisValue = this.get(key)!;
       const otherValue = other.get(key);
 
       if (
@@ -232,9 +243,10 @@ export class CompoundTag extends Tag<IntegratedValue> {
         otherValue instanceof CompoundTag
       ) {
         const sub = thisValue.compoundIntersection(otherValue);
-        if (sub.getAllKeys().length > 0) result[key] = sub;
-      } else if (thisValue.equals(otherValue)) {
-        result[key] = thisValue;
+        if (sub.getAllKeys().size().gt(Integer.ZERO))
+          result[key.valueOf()] = sub;
+      } else if (thisValue.equals(otherValue ?? new CompoundTag({}))) {
+        result[key.valueOf()] = thisValue;
       }
     }
 
@@ -244,8 +256,8 @@ export class CompoundTag extends Tag<IntegratedValue> {
   public compoundMinus(other: CompoundTag): CompoundTag {
     const result: Record<string, any> = {};
 
-    for (const key of this.getAllKeys()) {
-      const thisValue = this.get(key);
+    for (const key of this.getAllKeys().valueOf()) {
+      const thisValue = this.get(key)!;
       const otherValue = other.get(key);
 
       if (
@@ -253,23 +265,27 @@ export class CompoundTag extends Tag<IntegratedValue> {
         otherValue instanceof CompoundTag
       ) {
         const sub = thisValue.compoundMinus(otherValue);
-        if (sub.getAllKeys().length > 0) result[key] = sub;
-      } else if (!thisValue.equals(otherValue)) {
-        result[key] = thisValue;
+        if (sub.getAllKeys().size().gt(Integer.ZERO))
+          result[key.valueOf()] = sub;
+      } else if (!thisValue.equals(otherValue ?? new CompoundTag({}))) {
+        result[key.valueOf()] = thisValue;
       }
     }
 
     return new CompoundTag(result);
   }
 
-  equals(tag: Tag<IntegratedValue>): boolean {
-    if (tag.getType() != Tag.TAG_COMPOUND) return false;
+  equals(tag: Tag<IntegratedValue>): iBoolean {
+    if (tag.getType() != Tag.TAG_COMPOUND) return new iBoolean(false);
     let compoundTag = tag as CompoundTag;
     for (const key of Object.values(
-      new Set([...this.getAllKeys(), ...compoundTag.getAllKeys()])
+      new Set([
+        ...this.getAllKeys().valueOf(),
+        ...compoundTag.getAllKeys().valueOf(),
+      ])
     )) {
-      if (this.get(key) !== compoundTag.get(key)) return false;
+      if (this.get(key) !== compoundTag.get(key)) return new iBoolean(false);
     }
-    return true;
+    return new iBoolean(true);
   }
 }

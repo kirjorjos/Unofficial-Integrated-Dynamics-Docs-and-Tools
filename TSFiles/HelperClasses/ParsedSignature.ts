@@ -16,6 +16,10 @@ export class ParsedSignature {
     this.flatArgs = this.toFlatSignature();
   }
 
+  getTypeMap(): TypeMap {
+    return this.typeMap;
+  }
+
   getAST() {
     return JSON.parse(JSON.stringify(this.ast));
   }
