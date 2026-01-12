@@ -10,12 +10,12 @@ import { iString } from "./typeWrappers/iString";
 export class Fluid implements UniquelyNamed {
   static defaultProps = new Properties({
     uname: "",
-    amount: new Integer(0),
+    amount: Integer.ZERO,
     // block: new Block(),
-    lightLevel: new Integer(0),
-    density: new Integer(0),
-    temperature: new Integer(0),
-    viscosity: new Integer(0),
+    lightLevel: Integer.ZERO,
+    density: Integer.ZERO,
+    temperature: Integer.ZERO,
+    viscosity: Integer.ZERO,
     lighterThanAir: new iBoolean(false),
     rarity: "",
     bucketEmptySound: "",

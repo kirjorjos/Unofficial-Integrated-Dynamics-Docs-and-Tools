@@ -64,7 +64,7 @@ export class iArrayLazy<
   }
 
   size(): Integer {
-    return new Integer(2147483647); // Integer.MAX_VALUE
+    return Integer.MAX_INT; // Integer.MAX_VALUE
   }
 
   private trueSize(): Integer {
@@ -77,7 +77,7 @@ export class iArrayLazy<
 
   get(index: Integer): Result {
     if (this.trueSize().lte(index)) {
-      this.get(index.subtract(new Integer(1)));
+      this.get(index.subtract(Integer.ONE));
     }
     const i = index.toJSNumber();
     if (this.arr.length == i)
@@ -96,7 +96,7 @@ export class iArrayLazy<
 
   slice(start: Integer, end: Integer): iArrayEager<Result, Result> {
     let newArrRaw = [];
-    for (let i = start; i.lt(end); i = i.add(new Integer(1))) {
+    for (let i = start; i.lt(end); i = i.add(Integer.ONE)) {
       newArrRaw.push(this.get(i));
     }
     return new iArrayEager<Result, Result>(newArrRaw);

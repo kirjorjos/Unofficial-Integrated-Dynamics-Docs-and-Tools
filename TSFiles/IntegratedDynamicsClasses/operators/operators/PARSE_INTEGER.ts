@@ -31,7 +31,7 @@ export class OPERATOR_PARSE_INTEGER extends BaseOperator<
         try {
           return new Integer(data as Integer);
         } catch (e) {
-          return new Integer(0);
+          return Integer.ZERO;
         }
       },
     });

@@ -28,7 +28,7 @@ export class OPERATOR_NBT_AS_FLOAT extends BaseOperator<FloatTag, Double> {
         if (nbt.getType() === Tag.TAG_DOUBLE) {
           return nbt.valueOf();
         } else {
-          return new Double(0);
+          return Double.ZERO;
         }
       },
     });

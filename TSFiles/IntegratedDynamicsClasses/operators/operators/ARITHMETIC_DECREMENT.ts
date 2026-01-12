@@ -26,7 +26,7 @@ export class OPERATOR_ARITHMETIC_DECREMENT extends BaseOperator<
       symbol: "--",
       interactName: "numberDecrement",
       function: (num1: TypeNumber): TypeNumber => {
-        return num1.subtract(new Integer(1));
+        return num1.subtract(Integer.ONE);
       },
     });
   }

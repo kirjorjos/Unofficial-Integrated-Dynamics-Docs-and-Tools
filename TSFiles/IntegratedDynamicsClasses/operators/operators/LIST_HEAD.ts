@@ -23,10 +23,10 @@ export class OPERATOR_LIST_HEAD extends BaseOperator<
       symbol: "head",
       interactName: "listHead",
       function: (list: iArray<IntegratedValue>): IntegratedValue => {
-        if (list.size().equals(new Integer(0))) {
+        if (list.size().equals(Integer.ZERO)) {
           throw new Error("head called on an empty list");
         }
-        return list.get(new Integer(0));
+        return list.get(Integer.ZERO);
       },
     });
   }

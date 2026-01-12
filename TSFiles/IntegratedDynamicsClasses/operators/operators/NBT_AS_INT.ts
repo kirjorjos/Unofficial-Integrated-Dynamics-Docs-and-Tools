@@ -28,7 +28,7 @@ export class OPERATOR_NBT_AS_INT extends BaseOperator<IntTag, Integer> {
         if (nbt.getType() === Tag.TAG_INT) {
           return nbt.valueOf();
         } else {
-          return new Integer(0);
+          return Integer.ZERO;
         }
       },
     });

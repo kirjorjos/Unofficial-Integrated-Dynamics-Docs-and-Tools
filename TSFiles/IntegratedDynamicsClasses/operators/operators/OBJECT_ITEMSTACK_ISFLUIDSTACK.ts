@@ -34,7 +34,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISFLUIDSTACK extends BaseOperator<
       symbol: "is_fluidstack",
       interactName: "itemstackIsFluidStack",
       function: (item: Item): iBoolean => {
-        return new iBoolean(item.getFluid().getAmount().gt(new Integer(0)));
+        return new iBoolean(item.getFluid().getAmount().gt(Integer.ZERO));
       },
     });
   }

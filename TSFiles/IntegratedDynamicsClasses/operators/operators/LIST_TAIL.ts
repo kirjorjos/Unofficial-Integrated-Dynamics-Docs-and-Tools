@@ -23,10 +23,10 @@ export class OPERATOR_LIST_TAIL extends BaseOperator<
       symbol: "tail",
       interactName: "listTail",
       function: (list: iArray<IntegratedValue>): iArray<IntegratedValue> => {
-        if (list.size().equals(new Integer(0))) {
+        if (list.size().equals(Integer.ZERO)) {
           throw new Error("tail called on an empty list");
         }
-        return list.slice(new Integer(1));
+        return list.slice(Integer.ONE);
       },
     });
   }

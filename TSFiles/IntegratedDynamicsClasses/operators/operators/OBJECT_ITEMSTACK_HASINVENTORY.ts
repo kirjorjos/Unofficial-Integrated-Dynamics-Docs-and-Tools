@@ -33,7 +33,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_HASINVENTORY extends BaseOperator<
       symbol: "has_inventory",
       interactName: "itemstackHasInventory",
       function: (item: Item): iBoolean => {
-        return new iBoolean(item.getInventory().size().gt(new Integer(0)));
+        return new iBoolean(item.getInventory().size().gt(Integer.ZERO));
       },
     });
   }

@@ -243,7 +243,7 @@ export class CompoundTag extends Tag<IntegratedValue> {
         otherValue instanceof CompoundTag
       ) {
         const sub = thisValue.compoundIntersection(otherValue);
-        if (sub.getAllKeys().size().gt(new Integer(0)))
+        if (sub.getAllKeys().size().gt(Integer.ZERO))
           result[key.valueOf()] = sub;
       } else if (thisValue.equals(otherValue ?? new CompoundTag({}))) {
         result[key.valueOf()] = thisValue;
@@ -265,7 +265,7 @@ export class CompoundTag extends Tag<IntegratedValue> {
         otherValue instanceof CompoundTag
       ) {
         const sub = thisValue.compoundMinus(otherValue);
-        if (sub.getAllKeys().size().gt(new Integer(0)))
+        if (sub.getAllKeys().size().gt(Integer.ZERO))
           result[key.valueOf()] = sub;
       } else if (!thisValue.equals(otherValue ?? new CompoundTag({}))) {
         result[key.valueOf()] = thisValue;

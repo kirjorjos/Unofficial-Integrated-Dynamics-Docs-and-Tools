@@ -41,7 +41,7 @@ export class OPERATOR_NBT_COMPOUND_VALUE_LIST_BYTE extends BaseOperator<
         return (key: iString): iArray<Integer> => {
           let value = nbt.get(key) as ListTag;
           if (value.getType() !== Tag.TAG_LIST)
-            return new iArrayEager([new Integer(0)]);
+            return new iArrayEager([Integer.ZERO]);
           let list = value.valueOf() as iArray<ByteTag>;
           return list.map(
             new Operator({

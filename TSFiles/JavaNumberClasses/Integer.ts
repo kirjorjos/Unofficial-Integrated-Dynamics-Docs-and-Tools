@@ -16,6 +16,11 @@ export class Integer implements NumberBase<Integer> {
     return Math.trunc(num) >> 0;
   }
 
+  static ZERO = new Integer(0);
+  static ONE = new Integer(1);
+  static SIXTY_FOUR = new Integer(64);
+  static MAX_INT = new Integer(2147483647);
+
   getType(): "Integer" {
     return "Integer";
   }

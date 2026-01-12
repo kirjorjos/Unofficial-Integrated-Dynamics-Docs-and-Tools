@@ -11,6 +11,8 @@ export class Double implements NumberBase<Double> {
     this.num = data;
   }
 
+  static ZERO = new Double(0);
+
   getType(): "Double" {
     return "Double";
   }

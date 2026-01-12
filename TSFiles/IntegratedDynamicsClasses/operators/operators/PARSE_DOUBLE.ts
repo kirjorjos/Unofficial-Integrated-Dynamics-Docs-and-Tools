@@ -31,7 +31,7 @@ export class OPERATOR_PARSE_DOUBLE extends BaseOperator<
         try {
           return new Double(data as Double); // fine to cast as constructor throws error
         } catch (e) {
-          return new Double(0);
+          return Double.ZERO;
         }
       },
     });

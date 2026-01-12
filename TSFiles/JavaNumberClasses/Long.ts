@@ -19,6 +19,8 @@ export class Long implements NumberBase<Long> {
     return BigInt.asIntN(64, BigInt(num));
   }
 
+  static ZERO = new Long(0);
+
   getType(): "Long" {
     return "Long";
   }

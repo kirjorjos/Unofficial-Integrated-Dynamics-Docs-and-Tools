@@ -28,7 +28,7 @@ export class OPERATOR_NBT_AS_LONG extends BaseOperator<LongTag, Long> {
         if (nbt.getType() === Tag.TAG_LONG) {
           return nbt.valueOf();
         } else {
-          return new Long(0);
+          return Long.ZERO;
         }
       },
     });

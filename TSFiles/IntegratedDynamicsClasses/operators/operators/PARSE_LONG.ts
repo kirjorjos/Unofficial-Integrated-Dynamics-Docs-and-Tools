@@ -28,7 +28,7 @@ export class OPERATOR_PARSE_LONG extends BaseOperator<IntegratedValue, Long> {
         try {
           return new Long(data as Long);
         } catch (e) {
-          return new Long(0);
+          return Long.ZERO;
         }
       },
     });

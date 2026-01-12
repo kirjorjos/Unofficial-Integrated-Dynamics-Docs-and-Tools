@@ -44,7 +44,7 @@ export class OPERATOR_LIST_SLICE extends BaseOperator<
         ): TypeLambda<Integer, iArray<IntegratedValue>> => {
           return (end: Integer): iArray<IntegratedValue> => {
             if (
-              start.lt(new Integer(0)) ||
+              start.lt(Integer.ZERO) ||
               end.gt(list.size()) ||
               start.gt(end)
             ) {

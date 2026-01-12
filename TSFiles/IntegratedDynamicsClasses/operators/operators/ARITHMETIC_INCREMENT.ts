@@ -26,7 +26,7 @@ export class OPERATOR_ARITHMETIC_INCREMENT extends BaseOperator<
       symbol: "++",
       interactName: "numberIncrement",
       function: (num1: TypeNumber): TypeNumber => {
-        return num1.add(new Integer(1));
+        return num1.add(Integer.ONE);
       },
     });
   }
