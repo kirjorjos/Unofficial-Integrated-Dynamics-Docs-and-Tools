@@ -1,4 +1,7 @@
 export class TypeMap {
+
+  private static NUMBER_TYPES = ["Integer", "Long", "Double", "Number"]
+
   aliases: Map<number, number | TypeRawSignatureAST.RawSignatureDefiniteValue>;
   constructor() {
     this.aliases = new Map();
@@ -45,6 +48,8 @@ export class TypeMap {
       this.unify(a.obscured, b.obscured);
       return;
     }
+
+    if (TypeMap.NUMBER_TYPES.includes(a.type) && TypeMap.NUMBER_TYPES.includes(b.type)) return;
 
     if (a.type !== b.type) {
       throw new Error(`Type mismatch: ${a.type} vs ${b.type}`);

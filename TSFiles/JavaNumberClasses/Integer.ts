@@ -64,10 +64,16 @@ export class Integer implements NumberBase<Integer> {
   }
 
   divide(num: TypeNumber): Integer {
+    if (num.toJSNumber() === 0) {
+      throw new Error("Division by zero");
+    }
     return new Integer(this.toJSNumber() / num.toJSNumber());
   }
 
   mod(num: TypeNumber): Integer {
+    if (num.toJSNumber() === 0) {
+      throw new Error("Division by zero");
+    }
     return new Integer(this.toJSNumber() % num.toJSNumber());
   }
 
@@ -145,6 +151,6 @@ export class Integer implements NumberBase<Integer> {
   }
 
   toJSNumber(): number {
-    return this.toJSNumber();
+    return this.num;
   }
 }

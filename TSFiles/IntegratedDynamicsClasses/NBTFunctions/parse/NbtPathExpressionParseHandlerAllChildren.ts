@@ -36,7 +36,9 @@ export class NbtPathExpressionParseHandlerAllChildren
   }
 
   static Expression = class Expression extends INbtPathExpression {
-    static INSTANCE = new NbtPathExpressionParseHandlerAllChildren.Expression();
+    static get INSTANCE() {
+      return new NbtPathExpressionParseHandlerAllChildren.Expression();
+    }
 
     public override matchContexts(
       executionContexts: Array<NbtPathExpressionExecutionContext>

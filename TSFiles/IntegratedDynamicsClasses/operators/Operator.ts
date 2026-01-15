@@ -5,7 +5,7 @@ import { TypeMap } from "../../HelperClasses/TypeMap";
 export class Operator<I extends IntegratedValue, O extends IntegratedValue>
   implements IntegratedValue
 {
-  fn: (arg: I) => O;
+  fn: (arg: I) => IntegratedValue | TypeLambda<any, any>;
   parsedSignature: ParsedSignature;
   typeMap: TypeMap;
   readonly _output!: O;
@@ -22,6 +22,24 @@ export class Operator<I extends IntegratedValue, O extends IntegratedValue>
     this.parsedSignature = parsedSignature;
   }
 
+  evaluate(...args: IntegratedValue[]) {
+    const arity = this.parsedSignature.getArity();
+    if (args.length !== arity) {
+      throw new Error(`Operator expected ${arity} args, got ${args.length}`);
+    }
+
+    args = args.reverse();
+    let result: IntegratedValue = this;
+    while (args.length > 0) {
+      const currentArg = args.pop()!;
+      result = (result as Operator<IntegratedValue, IntegratedValue>).apply(
+        currentArg
+      );
+    }
+
+    return result;
+  }
+
   apply(arg: I): O {
     this.typeMap.unify(
       this.parsedSignature.getInput(0),
@@ -30,9 +48,11 @@ export class Operator<I extends IntegratedValue, O extends IntegratedValue>
     const parsedSignature = this.parsedSignature.apply(arg.getSignatureNode());
 
     let newOp = this.fn(arg);
-    if ("_setSignature" in newOp)
-      (newOp._setSignature as Function)(parsedSignature);
-    return newOp;
+    if (typeof newOp != "function") return newOp as O;
+    return new Operator<IntegratedValue, IntegratedValue>({
+      function: newOp,
+      parsedSignature
+    }) as unknown as O;
   }
 
   pipe<V extends IntegratedValue>(otherOp: Operator<O, V>) {
@@ -46,7 +66,7 @@ export class Operator<I extends IntegratedValue, O extends IntegratedValue>
     });
   }
 
-  getFn(): TypeLambda<I, O> {
+  getFn(): Function {
     return this.fn;
   }
 

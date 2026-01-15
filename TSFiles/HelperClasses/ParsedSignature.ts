@@ -21,7 +21,7 @@ export class ParsedSignature {
   }
 
   getAST() {
-    return JSON.parse(JSON.stringify(this.ast));
+    return this.ast;
   }
 
   _normalize(

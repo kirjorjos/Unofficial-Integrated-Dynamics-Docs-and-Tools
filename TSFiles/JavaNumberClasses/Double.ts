@@ -56,10 +56,16 @@ export class Double implements NumberBase<Double> {
   }
 
   divide(num: TypeNumber): Double {
+    if (num.toJSNumber() === 0) {
+      throw new Error("Division by zero");
+    }
     return new Double(this.num / num.toJSNumber());
   }
 
   mod(num: TypeNumber): Double {
+    if (num.toJSNumber() === 0) {
+      throw new Error("Division by zero");
+    }
     return new Double(this.num % num.toJSNumber());
   }
 

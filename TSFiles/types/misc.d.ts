@@ -9,7 +9,7 @@ declare global {
   type TypeTypeMap = {
     [typeID: number]: TypeRawSignatureAST.RawSignatureDefiniteValue;
   };
-  type TypeLambda<P, R> = (...args: [P]) => R;
+  type TypeLambda<P, R> = (arg: P) => R;
   type TypeNumericString = `${number}` | `-${number}`;
 
   interface Block extends BlockType {}

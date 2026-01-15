@@ -41,7 +41,9 @@ export class NbtPathExpressionParseHandlerLength
 }
 
 class Expression extends INbtPathExpression {
-  public static INSTANCE = new NbtPathExpressionParseHandlerLength.Expression();
+  public static get INSTANCE() {
+    return new NbtPathExpressionParseHandlerLength.Expression();
+  }
 
   public override matchContexts(
     executionContexts: Array<NbtPathExpressionExecutionContext>

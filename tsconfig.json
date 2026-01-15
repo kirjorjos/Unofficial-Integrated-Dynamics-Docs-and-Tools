@@ -27,6 +27,7 @@
     "typeRoots": ["./TSFiles/types", "./node_modules/@types"],
     "types": ["jest"],
     "skipLibCheck": true,
+    "esModuleInterop": true,
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "noPropertyAccessFromIndexSignature": true,

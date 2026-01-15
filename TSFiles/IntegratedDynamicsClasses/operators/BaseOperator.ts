@@ -39,23 +39,6 @@ export class BaseOperator<
     this.serializer = serializer;
   }
 
-  evaluate(...args: IntegratedValue[]) {
-    const arity = this.parsedSignature.getArity();
-    if (args.length !== arity) {
-      throw new Error(`Operator expected ${arity} args, got ${args.length}`);
-    }
-
-    args = args.reverse();
-    let result = this.fn(args.pop() as I) as IntegratedValue;
-    while (args.length > 0) {
-      result = (result as Operator<IntegratedValue, IntegratedValue>).fn(
-        args.pop() as IntegratedValue
-      );
-    }
-
-    return result;
-  }
-
   getUname() {
     return this.internalName;
   }

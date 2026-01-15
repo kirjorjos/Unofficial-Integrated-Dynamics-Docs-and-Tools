@@ -40,7 +40,7 @@ export class OPERATOR_STRING_REGEX_GROUPS extends BaseOperator<
           const regex = new RE2(regexString.valueOf(), "u");
           const match = regex.exec(fullString.valueOf());
           if (match) {
-            return new iArrayEager(match.map((m) => new iString(m)));
+            return new iArrayEager(match.map((m) => new iString(m ?? '')));
           } else {
             throw new Error(
               `No match found for group in regex "${regexString.valueOf()}" on string "${fullString.valueOf()}"`

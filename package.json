@@ -8,10 +8,11 @@
   "devDependencies": {
     "@types/jest": "^30.0.0",
     "esbuild": "^0.27.0",
-    "jest": "^30.0.5",
+    "jest": "^30.2.0",
     "live-server": "^1.2.2",
     "nodemon": "^3.1.10",
     "prettier": "3.6.2",
+    "ts-jest": "^29.4.6",
     "typescript": "^5.9.3"
   },
   "scripts": {

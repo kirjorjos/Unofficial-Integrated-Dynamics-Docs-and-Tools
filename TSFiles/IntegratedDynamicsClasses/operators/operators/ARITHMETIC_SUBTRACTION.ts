@@ -33,7 +33,10 @@ export class OPERATOR_ARITHMETIC_SUBTRACTION extends BaseOperator<
       interactName: "numberSubtract",
       function: (num1: TypeNumber): TypeLambda<TypeNumber, TypeNumber> => {
         return (num2: TypeNumber): TypeNumber => {
-          return num1.subtract(num2);
+            if (num1.getOrder() < num2.getOrder()) {
+              num1 = num1[`to${num2.getSignatureNode().type}`]()
+            }
+            return num1.subtract(num2);
         };
       },
     });

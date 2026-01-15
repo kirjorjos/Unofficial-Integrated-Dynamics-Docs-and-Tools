@@ -38,7 +38,8 @@ export class OPERATOR_ARITHMETIC_MULTIPLICATION extends BaseOperator<
       interactName: "numberMultiply",
       function: (num1: TypeNumber): TypeLambda<TypeNumber, TypeNumber> => {
         return (num2: TypeNumber): TypeNumber => {
-          return num1.multiply(num2);
+          const [lowerOrder, higherOrder] = num1.getOrder() < num2.getOrder() ? [num1, num2] : [num2, num1]
+          return higherOrder.multiply(lowerOrder);
         };
       },
     });

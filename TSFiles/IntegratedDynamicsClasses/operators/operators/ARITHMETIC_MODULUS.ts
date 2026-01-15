@@ -33,6 +33,12 @@ export class OPERATOR_ARITHMETIC_MODULUS extends BaseOperator<
       interactName: "numberModulus",
       function: (num1: TypeNumber): TypeLambda<TypeNumber, TypeNumber> => {
         return (num2: TypeNumber): TypeNumber => {
+          if (num2.toJSNumber() === 0) {
+            throw new Error("Modulus by zero");
+          }
+          if (num1.getOrder() < num2.getOrder()) {
+            num1 = num1[`to${num2.getSignatureNode().type}`]() as TypeNumber;
+          }
           return num1.mod(num2);
         };
       },
