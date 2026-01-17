@@ -1,10 +1,10 @@
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 
 export class OPERATOR_ITEMSTACK_CANBURN extends BaseOperator<Item, iBoolean> {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:itemstack_canburn",
       nicknames: [

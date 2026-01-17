@@ -1,4 +1,4 @@
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { StringTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/StringTag";
 import { Tag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/Tag";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
@@ -6,7 +6,7 @@ import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 
 export class OPERATOR_NBT_AS_STRING extends BaseOperator<StringTag, iString> {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:nbt_as_string",
       nicknames: ["nbtAsString"],

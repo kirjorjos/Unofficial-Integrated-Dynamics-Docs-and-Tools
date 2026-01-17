@@ -1,4 +1,4 @@
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
@@ -8,7 +8,7 @@ export class OPERATOR_LIST_HEAD extends BaseOperator<
   iArray<IntegratedValue>,
   IntegratedValue
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:list_head",
       nicknames: ["listHead", "head"],

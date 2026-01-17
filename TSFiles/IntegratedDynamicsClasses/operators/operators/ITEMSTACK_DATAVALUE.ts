@@ -1,4 +1,4 @@
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { NullTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/NullTag";
 import { Tag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/Tag";
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
@@ -7,7 +7,7 @@ import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 
 export class OPERATOR_ITEMSTACK_DATAVALUE extends BaseOperator<Item, iBoolean> {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:itemstack_datavalue",
       nicknames: [

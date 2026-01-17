@@ -1,11 +1,11 @@
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { FloatTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/FloatTag";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Double } from "JavaNumberClasses/Double";
 
 export class OPERATOR_NBT_FROM_FLOAT extends BaseOperator<Double, FloatTag> {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:nbt_from_float",
       nicknames: ["nbtFromFloat"],

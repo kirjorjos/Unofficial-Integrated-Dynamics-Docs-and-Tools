@@ -1,4 +1,4 @@
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { CompoundTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
@@ -8,7 +8,7 @@ export class OPERATOR_OBJECT_FLUIDSTACK_DATA extends BaseOperator<
   Fluid,
   CompoundTag
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:fluidstack_nbt",
       nicknames: [

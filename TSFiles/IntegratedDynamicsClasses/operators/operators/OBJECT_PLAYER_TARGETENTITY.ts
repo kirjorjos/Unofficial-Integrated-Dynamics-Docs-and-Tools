@@ -1,4 +1,4 @@
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Entity } from "IntegratedDynamicsClasses/Entity";
@@ -7,7 +7,7 @@ export class OPERATOR_OBJECT_PLAYER_TARGETENTITY extends BaseOperator<
   Entity,
   Entity
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:entity_targetentity",
       nicknames: [

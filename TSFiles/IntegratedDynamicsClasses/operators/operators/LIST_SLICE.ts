@@ -1,5 +1,5 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 import { Integer } from "JavaNumberClasses/Integer";
 import { BaseOperator } from "../BaseOperator";
@@ -10,7 +10,7 @@ export class OPERATOR_LIST_SLICE extends BaseOperator<
   iArray<IntegratedValue>,
   Operator<Integer, Operator<Integer, iArrayEager<IntegratedValue>>>
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:list_slice",
       nicknames: ["listSlice", "slice"],

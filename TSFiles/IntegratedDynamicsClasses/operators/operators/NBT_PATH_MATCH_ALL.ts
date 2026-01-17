@@ -1,4 +1,4 @@
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { NbtPath } from "IntegratedDynamicsClasses/NBTFunctions/NbtPath";
 import { CompoundTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
 import { Tag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/Tag";
@@ -13,7 +13,7 @@ export class OPERATOR_NBT_PATH_MATCH_ALL extends BaseOperator<
   iString,
   Operator<CompoundTag, iArray<Tag<IntegratedValue>>>
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:nbt_path_match_all",
       nicknames: ["nbtPathMatchAll"],

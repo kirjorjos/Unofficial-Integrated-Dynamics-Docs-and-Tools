@@ -1,4 +1,4 @@
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { Ingredients } from "IntegratedDynamicsClasses/Ingredients";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
@@ -8,7 +8,7 @@ export class OPERATOR_INGREDIENTS_ENERGIES extends BaseOperator<
   Ingredients,
   iArray<Long>
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:ingredients_energies",
       nicknames: ["ingredientsEnergies", "Ingr.energies"],

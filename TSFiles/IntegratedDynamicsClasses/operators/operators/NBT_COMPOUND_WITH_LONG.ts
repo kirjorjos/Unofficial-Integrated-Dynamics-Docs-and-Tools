@@ -1,4 +1,4 @@
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { CompoundTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
 import { LongTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/LongTag";
 import { BaseOperator } from "../BaseOperator";
@@ -11,7 +11,7 @@ export class OPERATOR_NBT_COMPOUND_WITH_LONG extends BaseOperator<
   CompoundTag,
   Operator<iString, Operator<Long, CompoundTag>>
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:nbt_compound_with_long",
       nicknames: ["nbtCompoundWithLong", "NBTWithLong"],

@@ -1,14 +1,14 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { BaseOperator } from "../BaseOperator";
 import { Operator } from "../Operator";
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 
 export class OPERATOR_OPERATOR_NEGATION extends BaseOperator<
   Operator<IntegratedValue, iBoolean>,
   Operator<IntegratedValue, iBoolean>
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:operator_negation",
       nicknames: ["operatorNegation", "negation"],

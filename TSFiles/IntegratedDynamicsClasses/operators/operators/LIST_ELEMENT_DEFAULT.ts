@@ -1,6 +1,6 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Operator } from "../Operator";
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 import { Integer } from "JavaNumberClasses/Integer";
 import { BaseOperator } from "../BaseOperator";
@@ -9,7 +9,7 @@ export class OPERATOR_LIST_ELEMENT_DEFAULT extends BaseOperator<
   iArray<IntegratedValue>,
   Operator<Integer, Operator<IntegratedValue, IntegratedValue>>
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:list_get_or_default",
       nicknames: [

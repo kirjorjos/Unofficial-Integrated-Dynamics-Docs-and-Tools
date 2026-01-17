@@ -1,5 +1,5 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { Integer } from "JavaNumberClasses/Integer";
 import { BaseOperator } from "../BaseOperator";
 import { Operator } from "../Operator";
@@ -8,7 +8,7 @@ export class OPERATOR_BINARY_RZSHIFT extends BaseOperator<
   Integer,
   Operator<Integer, Integer>
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:binary_rzshift",
       nicknames: [

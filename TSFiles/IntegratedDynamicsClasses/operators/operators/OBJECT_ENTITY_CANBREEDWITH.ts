@@ -1,4 +1,4 @@
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
@@ -9,7 +9,7 @@ export class OPERATOR_OBJECT_ENTITY_CANBREEDWITH extends BaseOperator<
   Entity,
   Operator<Entity, iBoolean>
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:entity_canbreedwith",
       nicknames: [

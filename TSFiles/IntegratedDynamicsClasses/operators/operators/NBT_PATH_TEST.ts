@@ -1,4 +1,4 @@
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { NbtPath } from "IntegratedDynamicsClasses/NBTFunctions/NbtPath";
 import { CompoundTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
 import { BaseOperator } from "../BaseOperator";
@@ -11,7 +11,7 @@ export class OPERATOR_NBT_PATH_TEST extends BaseOperator<
   iString,
   Operator<CompoundTag, iBoolean>
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:nbt_path_test",
       nicknames: ["NBTPathTest"],

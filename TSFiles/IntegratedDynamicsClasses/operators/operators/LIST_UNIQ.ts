@@ -1,5 +1,5 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 import { BaseOperator } from "../BaseOperator";
 import { Operator } from "../Operator";
@@ -8,7 +8,7 @@ export class OPERATOR_LIST_UNIQ extends BaseOperator<
   iArray<IntegratedValue>,
   Operator<IntegratedValue, iArray<IntegratedValue>>
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:list_uniq",
       nicknames: ["listUniq"],

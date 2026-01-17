@@ -1,11 +1,11 @@
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 import { Integer } from "JavaNumberClasses/Integer";
 
 export class OPERATOR_STRING_LENGTH extends BaseOperator<iString, Integer> {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:string_length",
       nicknames: ["stringLength"],

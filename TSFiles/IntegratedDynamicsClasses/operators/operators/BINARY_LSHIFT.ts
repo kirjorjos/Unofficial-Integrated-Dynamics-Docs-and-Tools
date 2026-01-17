@@ -1,4 +1,4 @@
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { Operator } from "../Operator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
@@ -7,7 +7,7 @@ export class OPERATOR_BINARY_LSHIFT extends BaseOperator<
   Integer,
   Operator<Integer, Integer>
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:binary_lshift",
       nicknames: ["<<", "binaryLshift", "integerLeftShift"],

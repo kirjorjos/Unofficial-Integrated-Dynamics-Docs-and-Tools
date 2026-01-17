@@ -1,4 +1,4 @@
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Item } from "IntegratedDynamicsClasses/Item";
@@ -8,7 +8,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_INVENTORY extends BaseOperator<
   Item,
   iArray<Item>
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:itemstack_inventory",
       nicknames: [

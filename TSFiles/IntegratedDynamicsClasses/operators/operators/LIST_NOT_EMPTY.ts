@@ -1,4 +1,4 @@
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { Integer } from "JavaNumberClasses/Integer";
@@ -9,7 +9,7 @@ export class OPERATOR_LIST_NOT_EMPTY extends BaseOperator<
   iArray<IntegratedValue>,
   iBoolean
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:list_notempty",
       nicknames: ["listNotEmpty", "listIsNotEmpty"],

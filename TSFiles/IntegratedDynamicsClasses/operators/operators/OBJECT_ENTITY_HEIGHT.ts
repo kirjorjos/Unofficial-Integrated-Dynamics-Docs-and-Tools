@@ -1,4 +1,4 @@
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Double } from "JavaNumberClasses/Double";
@@ -8,7 +8,7 @@ export class OPERATOR_OBJECT_ENTITY_HEIGHT extends BaseOperator<
   Entity,
   Double
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:entity_height",
       nicknames: [

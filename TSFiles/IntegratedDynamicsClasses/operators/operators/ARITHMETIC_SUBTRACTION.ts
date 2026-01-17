@@ -1,5 +1,5 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { Operator } from "../Operator";
 
@@ -7,7 +7,7 @@ export class OPERATOR_ARITHMETIC_SUBTRACTION extends BaseOperator<
   TypeNumber,
   Operator<TypeNumber, TypeNumber>
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:arithmetic_subtraction",
       nicknames: ["subtract", "arithmeticSubtraction"],
@@ -33,10 +33,10 @@ export class OPERATOR_ARITHMETIC_SUBTRACTION extends BaseOperator<
       interactName: "numberSubtract",
       function: (num1: TypeNumber): TypeLambda<TypeNumber, TypeNumber> => {
         return (num2: TypeNumber): TypeNumber => {
-            if (num1.getOrder() < num2.getOrder()) {
-              num1 = num1[`to${num2.getSignatureNode().type}`]()
-            }
-            return num1.subtract(num2);
+          if (num1.getOrder() < num2.getOrder()) {
+            num1 = num1[`to${num2.getSignatureNode().type}`]();
+          }
+          return num1.subtract(num2);
         };
       },
     });

@@ -1,4 +1,4 @@
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { ListTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ListTag";
 import { Tag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/Tag";
 import { BaseOperator } from "../BaseOperator";
@@ -10,7 +10,7 @@ export class OPERATOR_NBT_AS_TAG_LIST extends BaseOperator<
   ListTag,
   iArray<Tag<IntegratedValue>>
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:nbt_as_tag_list",
       nicknames: ["nbtAsTagList"],

@@ -1,11 +1,11 @@
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Long } from "JavaNumberClasses/Long";
 import { Double } from "JavaNumberClasses/Double";
 
 export class OPERATOR_LONG_TO_DOUBLE extends BaseOperator<Long, Double> {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName:
         "integrateddynamics:operator.integrateddynamics.castintegrateddynamics_long__integrateddynamics_double",

@@ -1,7 +1,7 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { BaseOperator } from "../BaseOperator";
 import { Operator } from "../Operator";
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 
@@ -9,7 +9,7 @@ export class OPERATOR_OPERATOR_FILTER extends BaseOperator<
   Operator<IntegratedValue, iBoolean>,
   Operator<iArray<IntegratedValue>, iArray<IntegratedValue>>
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:operator_filter",
       nicknames: ["operatorFilter", "filter"],

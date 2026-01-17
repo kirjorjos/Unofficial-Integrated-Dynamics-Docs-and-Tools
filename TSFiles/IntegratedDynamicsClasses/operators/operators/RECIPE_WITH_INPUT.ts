@@ -1,4 +1,4 @@
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Recipe } from "IntegratedDynamicsClasses/Recipe";
@@ -9,7 +9,7 @@ export class OPERATOR_RECIPE_WITH_INPUT extends BaseOperator<
   Recipe,
   Operator<Ingredients, Recipe>
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:recipe_with_input",
       nicknames: ["Recipe.with_in", "recipeWithInput"],

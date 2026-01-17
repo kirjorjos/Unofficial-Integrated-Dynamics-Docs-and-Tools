@@ -1,4 +1,4 @@
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { CompoundTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
@@ -8,7 +8,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_NBT extends BaseOperator<
   Item,
   CompoundTag
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:itemstack_nbt",
       nicknames: ["ItemstackNbt", "itemstack_nbt", "itemstackNBT", "itemNBT"],

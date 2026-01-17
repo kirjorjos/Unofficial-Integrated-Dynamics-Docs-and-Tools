@@ -1,5 +1,5 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 import { UniquelyNamed } from "IntegratedDynamicsClasses/UniquelyNamed";
 import { BaseOperator } from "../BaseOperator";
@@ -8,7 +8,7 @@ export class OPERATOR_UNIQUELY_NAMED_UNIQUE_NAME extends BaseOperator<
   IntegratedValue,
   iString
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:string_unique_name",
       nicknames: ["uname", "uniquelynamedUniquename"],

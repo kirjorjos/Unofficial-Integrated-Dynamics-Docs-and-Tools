@@ -1,5 +1,5 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 
@@ -7,7 +7,7 @@ export class OPERATOR_ENTITY_ARMORINVENTORY extends BaseOperator<
   Entity,
   iArray<Item>
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:entity_armorinventory",
       nicknames: [

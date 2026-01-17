@@ -1,7 +1,7 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { BaseOperator } from "../BaseOperator";
 import { Operator } from "../Operator";
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 
 export class OPERATOR_OPERATOR_CONJUNCTION extends BaseOperator<
@@ -11,7 +11,7 @@ export class OPERATOR_OPERATOR_CONJUNCTION extends BaseOperator<
     Operator<IntegratedValue, iBoolean>
   >
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:operator_conjunction",
       nicknames: ["operatorConjunction", "conjunction"],

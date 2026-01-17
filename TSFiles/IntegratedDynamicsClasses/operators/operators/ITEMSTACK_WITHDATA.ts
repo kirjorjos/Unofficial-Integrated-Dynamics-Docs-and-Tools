@@ -1,4 +1,4 @@
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { Item } from "IntegratedDynamicsClasses/Item";
 import { CompoundTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
 import { Properties } from "IntegratedDynamicsClasses/Properties";
@@ -11,7 +11,7 @@ export class OPERATOR_ITEMSTACK_WITHDATA extends BaseOperator<
   Item,
   Operator<iString, Operator<CompoundTag, Item>>
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:itemstack_withdata",
       nicknames: [

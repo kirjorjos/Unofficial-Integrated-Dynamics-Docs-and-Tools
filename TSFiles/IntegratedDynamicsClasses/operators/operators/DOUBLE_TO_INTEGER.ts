@@ -1,9 +1,9 @@
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 
 export class OPERATOR_DOUBLE_TO_INTEGER extends BaseOperator<Double, Integer> {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName:
         "integrateddynamics:operator.integrateddynamics.castintegrateddynamics_double__integrateddynamics_integer",

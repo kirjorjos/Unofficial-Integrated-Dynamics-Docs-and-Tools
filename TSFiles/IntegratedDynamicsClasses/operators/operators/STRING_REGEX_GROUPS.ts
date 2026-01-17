@@ -1,4 +1,4 @@
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
@@ -11,7 +11,7 @@ export class OPERATOR_STRING_REGEX_GROUPS extends BaseOperator<
   iString,
   Operator<iString, iArray<iString>>
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:string_regex_groups",
       nicknames: ["stringRegexGroups", "stringRegexGroups"],
@@ -40,7 +40,7 @@ export class OPERATOR_STRING_REGEX_GROUPS extends BaseOperator<
           const regex = new RE2(regexString.valueOf(), "u");
           const match = regex.exec(fullString.valueOf());
           if (match) {
-            return new iArrayEager(match.map((m) => new iString(m ?? '')));
+            return new iArrayEager(match.map((m) => new iString(m ?? "")));
           } else {
             throw new Error(
               `No match found for group in regex "${regexString.valueOf()}" on string "${fullString.valueOf()}"`

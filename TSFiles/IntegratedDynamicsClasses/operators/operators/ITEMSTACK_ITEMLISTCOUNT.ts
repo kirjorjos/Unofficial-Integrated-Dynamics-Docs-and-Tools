@@ -2,14 +2,14 @@ import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Operator } from "../Operator";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 import { BaseOperator } from "../BaseOperator";
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { Integer } from "JavaNumberClasses/Integer";
 
 export class OPERATOR_ITEMSTACK_ITEMLISTCOUNT extends BaseOperator<
   iArray<Item>,
   Operator<Item, Integer>
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:itemstack_itemlistcount",
       nicknames: [

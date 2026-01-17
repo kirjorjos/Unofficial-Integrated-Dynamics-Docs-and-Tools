@@ -1,10 +1,10 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { BaseOperator } from "../BaseOperator";
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { Long } from "JavaNumberClasses/Long";
 
 export class OPERATOR_PARSE_LONG extends BaseOperator<IntegratedValue, Long> {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName:
         "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.long",

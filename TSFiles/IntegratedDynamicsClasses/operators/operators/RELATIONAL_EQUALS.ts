@@ -1,4 +1,4 @@
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
@@ -8,7 +8,7 @@ export class OPERATOR_RELATIONAL_EQUALS extends BaseOperator<
   IntegratedValue,
   Operator<IntegratedValue, iBoolean>
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:relational_equals",
       nicknames: ["==", "relationalEquals"],

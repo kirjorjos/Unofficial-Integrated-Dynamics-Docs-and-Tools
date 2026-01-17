@@ -10,8 +10,9 @@ module.exports = {
     ...tsJestTransformCfg,
   },
   moduleNameMapper: {
-    "^IntegratedDynamicsClasses/(.*)$": "<rootDir>/TSFiles/IntegratedDynamicsClasses/$1",
+    "^IntegratedDynamicsClasses/(.*)$":
+      "<rootDir>/TSFiles/IntegratedDynamicsClasses/$1",
     "^HelperClasses/(.*)$": "<rootDir>/TSFiles/HelperClasses/$1",
-    "^JavaNumberClasses/(.*)$": "<rootDir>/TSFiles/JavaNumberClasses/$1"
+    "^JavaNumberClasses/(.*)$": "<rootDir>/TSFiles/JavaNumberClasses/$1",
   },
 };

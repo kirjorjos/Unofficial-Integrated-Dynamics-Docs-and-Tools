@@ -1,4 +1,4 @@
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
@@ -12,7 +12,7 @@ export class OPERATOR_STRING_REGEX_SCAN extends BaseOperator<
   iString,
   Operator<Integer, Operator<iString, iArray<iString>>>
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:string_regex_scan",
       nicknames: ["stringRegexScan"],

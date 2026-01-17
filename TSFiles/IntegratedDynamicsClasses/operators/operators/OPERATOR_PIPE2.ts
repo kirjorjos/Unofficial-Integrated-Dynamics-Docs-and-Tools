@@ -1,10 +1,10 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { BaseOperator } from "../BaseOperator";
 import { Operator } from "../Operator";
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 
 export class OPERATOR_OPERATOR_PIPE2 extends BaseOperator<any, any> {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:operator_pipe2",
       nicknames: ["operatorPipe2", "pipe.2", "pipe2"],

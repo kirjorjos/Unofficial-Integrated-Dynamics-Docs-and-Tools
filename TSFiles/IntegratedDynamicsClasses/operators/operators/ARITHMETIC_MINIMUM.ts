@@ -1,5 +1,5 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { Operator } from "../Operator";
 
@@ -7,7 +7,7 @@ export class OPERATOR_ARITHMETIC_MINIMUM extends BaseOperator<
   TypeNumber,
   Operator<TypeNumber, TypeNumber>
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:arithmetic_minimum",
       nicknames: ["min", "arithmeticMinimum", "numberMin"],
@@ -33,7 +33,8 @@ export class OPERATOR_ARITHMETIC_MINIMUM extends BaseOperator<
       interactName: "numberMin",
       function: (num1: TypeNumber): TypeLambda<TypeNumber, TypeNumber> => {
         return (num2: TypeNumber): TypeNumber => {
-          const [lowerOrder, higherOrder] = num1.getOrder() < num2.getOrder() ? [num1, num2] : [num2, num1]
+          const [lowerOrder, higherOrder] =
+            num1.getOrder() < num2.getOrder() ? [num1, num2] : [num2, num1];
           return higherOrder.min(lowerOrder);
         };
       },

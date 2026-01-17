@@ -1,9 +1,9 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 
 export class OPERATOR_DOUBLE_SQRT extends BaseOperator<Double, Double> {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:double_sqrt",
       nicknames: ["doubleSqrt", "sqrt"],

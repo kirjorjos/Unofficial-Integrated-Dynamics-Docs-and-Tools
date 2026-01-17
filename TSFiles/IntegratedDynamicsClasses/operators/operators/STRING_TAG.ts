@@ -1,4 +1,4 @@
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
@@ -6,7 +6,7 @@ import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 import { Item } from "IntegratedDynamicsClasses/Item";
 
 export class OPERATOR_STRING_TAG extends BaseOperator<iString, iArray<Item>> {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:string_tag",
       nicknames: [

@@ -1,5 +1,5 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 
@@ -7,7 +7,7 @@ export class OPERATOR_NAMED_NAME extends BaseOperator<
   IntegratedValue,
   iString
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:string_name",
       nicknames: ["name", "namedName", "toString"],

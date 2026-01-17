@@ -1,4 +1,4 @@
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { Operator } from "../Operator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
@@ -7,7 +7,7 @@ export class OPERATOR_ARITHMETIC_DIVISION extends BaseOperator<
   TypeNumber,
   Operator<TypeNumber, TypeNumber>
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:arithmetic_division",
       nicknames: ["divide", "arithmeticDivision", "/", "numberDivide"],

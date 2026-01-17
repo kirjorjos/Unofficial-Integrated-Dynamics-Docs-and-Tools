@@ -1,4 +1,4 @@
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { Ingredients } from "IntegratedDynamicsClasses/Ingredients";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 import { BaseOperator } from "../BaseOperator";
@@ -8,7 +8,7 @@ export class OPERATOR_INGREDIENTS_ITEMS extends BaseOperator<
   Ingredients,
   iArray<Item>
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:ingredients_items",
       nicknames: ["ingredientsItems", "Ingr.items"],

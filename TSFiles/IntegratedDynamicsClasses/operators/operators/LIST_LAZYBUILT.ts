@@ -1,7 +1,7 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Operator } from "../Operator";
 import { iArrayLazy } from "IntegratedDynamicsClasses/typeWrappers/iArrayLazy";
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { OPERATOR_GENERAL_IDENTITY } from "./GENERAL_IDENTITY";
 
@@ -12,7 +12,7 @@ export class OPERATOR_LIST_LAZYBUILT extends BaseOperator<
     iArrayLazy<IntegratedValue>
   >
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:list_lazybuilt",
       nicknames: ["listLazybuilt", "lazybuilt", "anyLazyBuilt"],
@@ -49,7 +49,7 @@ export class OPERATOR_LIST_LAZYBUILT extends BaseOperator<
           return new iArrayLazy(
             initial,
             builder,
-            new OPERATOR_GENERAL_IDENTITY(globalMap)
+            new OPERATOR_GENERAL_IDENTITY()
           );
         };
       },

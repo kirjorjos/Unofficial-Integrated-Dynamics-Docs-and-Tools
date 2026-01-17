@@ -1,13 +1,13 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { BaseOperator } from "../BaseOperator";
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { Double } from "JavaNumberClasses/Double";
 
 export class OPERATOR_PARSE_DOUBLE extends BaseOperator<
   IntegratedValue,
   Double
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName:
         "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.double",

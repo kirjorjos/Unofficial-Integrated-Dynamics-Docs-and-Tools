@@ -1,4 +1,4 @@
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 
@@ -6,7 +6,7 @@ export class OPERATOR_GENERAL_IDENTITY extends BaseOperator<
   IntegratedValue,
   IntegratedValue
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:general_identity",
       nicknames: ["generalIdentity", "id", "identity", "anyIdentity"],

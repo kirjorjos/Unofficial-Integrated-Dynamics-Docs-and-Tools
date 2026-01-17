@@ -1,6 +1,6 @@
 import { Ingredients } from "IntegratedDynamicsClasses/Ingredients";
 import { Operator } from "../Operator";
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
@@ -9,7 +9,7 @@ export class OPERATOR_INGREDIENTS_WITH_ENERGIES extends BaseOperator<
   Ingredients,
   Operator<iArray<Long>, Ingredients>
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:ingredients_with_energies",
       nicknames: ["ingredientsWithEnergies", "Ingr.with_energies"],

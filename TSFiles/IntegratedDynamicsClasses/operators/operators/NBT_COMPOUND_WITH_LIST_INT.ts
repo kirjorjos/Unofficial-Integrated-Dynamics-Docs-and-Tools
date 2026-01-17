@@ -1,4 +1,4 @@
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { CompoundTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
 import { ListTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ListTag";
 import { IntTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/IntTag";
@@ -15,7 +15,7 @@ export class OPERATOR_NBT_COMPOUND_WITH_LIST_INT extends BaseOperator<
   CompoundTag,
   Operator<iString, Operator<iArray<Integer>, CompoundTag>>
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:nbt_compound_with_list_int",
       nicknames: ["nbtCompoundWithListInt", "NBTWithIntegerList"],

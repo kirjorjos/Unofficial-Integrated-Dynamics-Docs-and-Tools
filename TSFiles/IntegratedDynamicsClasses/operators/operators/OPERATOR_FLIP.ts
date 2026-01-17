@@ -1,13 +1,13 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { BaseOperator } from "../BaseOperator";
 import { Operator } from "../Operator";
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 
 export class OPERATOR_OPERATOR_FLIP extends BaseOperator<
   Operator<IntegratedValue, Operator<IntegratedValue, IntegratedValue>>,
   Operator<IntegratedValue, Operator<IntegratedValue, IntegratedValue>>
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:operator_flip",
       nicknames: ["operatorFlip", "flip"],
@@ -49,17 +49,11 @@ export class OPERATOR_OPERATOR_FLIP extends BaseOperator<
           IntegratedValue,
           Operator<IntegratedValue, IntegratedValue>
         >
-      ): TypeLambda<
+      ): Operator<
         IntegratedValue,
-        TypeLambda<IntegratedValue, IntegratedValue>
+        Operator<IntegratedValue, IntegratedValue>
       > => {
-        return (
-          arg1: IntegratedValue
-        ): TypeLambda<IntegratedValue, IntegratedValue> => {
-          return (arg2: IntegratedValue): IntegratedValue => {
-            return op.apply(arg2).apply(arg1);
-          };
-        };
+        return op.flip();
       },
     });
   }

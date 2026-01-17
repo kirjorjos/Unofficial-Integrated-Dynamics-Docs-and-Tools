@@ -1,14 +1,14 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { BaseOperator } from "../BaseOperator";
 import { Operator } from "../Operator";
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 
 export class OPERATOR_OPERATOR_APPLY_N extends BaseOperator<
   Operator<IntegratedValue, IntegratedValue>,
   Operator<iArray<IntegratedValue>, IntegratedValue>
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:operator_apply_n",
       nicknames: ["operatorApplyN", "applyn", "applyN"],

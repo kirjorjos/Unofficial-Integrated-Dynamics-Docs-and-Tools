@@ -5,10 +5,11 @@ import { TypeMap } from "../../HelperClasses/TypeMap";
 export class Operator<I extends IntegratedValue, O extends IntegratedValue>
   implements IntegratedValue
 {
-  fn: (arg: I) => IntegratedValue | TypeLambda<any, any>;
-  parsedSignature: ParsedSignature;
-  typeMap: TypeMap;
+  private fn: (arg: I) => IntegratedValue | TypeLambda<any, any>;
+  private parsedSignature: ParsedSignature;
+  private typeMap: TypeMap;
   readonly _output!: O;
+  private varID: number;
 
   constructor({
     parsedSignature,
@@ -19,7 +20,8 @@ export class Operator<I extends IntegratedValue, O extends IntegratedValue>
   }) {
     this.fn = fn;
     this.typeMap = parsedSignature.getTypeMap();
-    this.parsedSignature = parsedSignature;
+    this.parsedSignature = Operator.unwrapOperatorSignature(parsedSignature);
+    this.varID = this.typeMap.getNewVarID();
   }
 
   evaluate(...args: IntegratedValue[]) {
@@ -41,6 +43,8 @@ export class Operator<I extends IntegratedValue, O extends IntegratedValue>
   }
 
   apply(arg: I): O {
+    if (arg instanceof Operator && arg.varID === this.varID)
+      throw new Error("Tried to apply operator to it's self");
     this.typeMap.unify(
       this.parsedSignature.getInput(0),
       arg.getSignatureNode()
@@ -51,11 +55,42 @@ export class Operator<I extends IntegratedValue, O extends IntegratedValue>
     if (typeof newOp != "function") return newOp as O;
     return new Operator<IntegratedValue, IntegratedValue>({
       function: newOp,
-      parsedSignature
+      parsedSignature,
     }) as unknown as O;
   }
 
+  flip(): Operator<
+    IntegratedValue,
+    Operator<IntegratedValue, IntegratedValue>
+  > {
+    const newFn = (
+      arg1: IntegratedValue
+    ): TypeLambda<IntegratedValue, IntegratedValue> => {
+      return (arg2: IntegratedValue): IntegratedValue => {
+        return (
+          this.apply(arg2 as I) as unknown as Operator<
+            IntegratedValue,
+            IntegratedValue
+          >
+        ).apply(arg1);
+      };
+    };
+    const newSignature = this.parsedSignature.flip();
+    return new Operator<
+      IntegratedValue,
+      Operator<IntegratedValue, IntegratedValue>
+    >({
+      parsedSignature: newSignature,
+      function: newFn as unknown as TypeLambda<
+        IntegratedValue,
+        Operator<IntegratedValue, IntegratedValue>
+      >,
+    });
+  }
+
   pipe<V extends IntegratedValue>(otherOp: Operator<O, V>) {
+    if (otherOp.varID === this.varID)
+      throw new Error("Tried to pipe an operator into it's self");
     const newFn = (x: I): V => {
       return otherOp.apply(this.apply(x));
     };
@@ -70,12 +105,22 @@ export class Operator<I extends IntegratedValue, O extends IntegratedValue>
     return this.fn;
   }
 
-  getSignatureNode() {
-    return this.parsedSignature.ast;
+  getSignatureNode(): TypeRawSignatureAST.RawSignatureNode {
+    return {
+      type: "Operator",
+      obscured: this.parsedSignature.ast,
+    } as TypeRawSignatureAST.RawSignatureOperator;
   }
 
-  _setSignature(signature: ParsedSignature) {
-    this.parsedSignature = signature;
+  private static unwrapOperatorSignature(parsedSignature: ParsedSignature) {
+    const ast = parsedSignature.getAST();
+    if (ast.type === "Operator") {
+      return new ParsedSignature(ast.obscured, parsedSignature.getTypeMap());
+    } else return parsedSignature;
+  }
+
+  getParsedSignature(): ParsedSignature {
+    return this.parsedSignature;
   }
 
   equals(other: IntegratedValue) {

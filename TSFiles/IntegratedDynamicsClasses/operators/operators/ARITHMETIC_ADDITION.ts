@@ -1,13 +1,13 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { BaseOperator } from "../BaseOperator";
 import { Operator } from "../Operator";
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 
 export class OPERATOR_ARITHMETIC_ADDITION extends BaseOperator<
   TypeNumber,
   Operator<TypeNumber, TypeNumber>
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:arithmetic_addition",
       nicknames: ["add", "arithmeticAddition", "+", "numberAdd"],
@@ -33,7 +33,8 @@ export class OPERATOR_ARITHMETIC_ADDITION extends BaseOperator<
       interactName: "numberAdd",
       function: (num1: TypeNumber): TypeLambda<TypeNumber, TypeNumber> => {
         return (num2: TypeNumber): TypeNumber => {
-          const [lowerOrder, higherOrder] = num1.getOrder() < num2.getOrder() ? [num1, num2] : [num2, num1]
+          const [lowerOrder, higherOrder] =
+            num1.getOrder() < num2.getOrder() ? [num1, num2] : [num2, num1];
           return higherOrder.add(lowerOrder);
         };
       },

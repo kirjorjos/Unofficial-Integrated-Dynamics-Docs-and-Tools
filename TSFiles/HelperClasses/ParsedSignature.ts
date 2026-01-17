@@ -1,8 +1,9 @@
 import { TypeMap } from "./TypeMap";
 
 export class ParsedSignature {
-  ast: TypeRawSignatureAST.RawSignatureFunction;
-  TypeIDCounter: number;
+  private static maxTypeID = 0;
+
+  ast: TypeRawSignatureAST.RawSignatureNode;
   typeMap: TypeMap;
   flatArgs: (TypeRawSignatureAST.RawSignatureDefiniteValue["type"] | "Any")[];
 
@@ -10,8 +11,7 @@ export class ParsedSignature {
     ast: TypeRawSignatureAST.RawSignatureNode,
     typeMap: TypeMap = new TypeMap()
   ) {
-    this.ast = this._normalize(ast) as TypeRawSignatureAST.RawSignatureFunction;
-    this.TypeIDCounter = 0;
+    this.ast = this._normalize(ast);
     this.typeMap = typeMap;
     this.flatArgs = this.toFlatSignature();
   }
@@ -27,41 +27,53 @@ export class ParsedSignature {
   _normalize(
     node: TypeRawSignatureAST.RawSignatureNode
   ): TypeRawSignatureAST.RawSignatureNode {
-    let baseIDs = new Set();
-    let toAdd = this.TypeIDCounter;
+    const id_map = new Map<number, number>();
 
-    function normalize(
+    const remap = (
       node: TypeRawSignatureAST.RawSignatureNode
-    ): TypeRawSignatureAST.RawSignatureNode {
+    ): TypeRawSignatureAST.RawSignatureNode => {
       if (node.type === "Function") {
+        if (!node.from || !node.to) {
+          console.error("Malformed Function node in remap:", node);
+          throw new Error("Malformed Function node in remap");
+        }
         return {
           type: "Function",
-          from: normalize(node.from),
-          to: normalize(node.to),
+          from: remap(node.from),
+          to: remap(node.to),
         };
       }
 
       if (node.type === "List") {
         return {
           type: "List",
-          listType: normalize(node.listType),
+          listType: remap(node.listType),
         };
       }
 
       if (node.type === "Any") {
-        baseIDs.add(node.typeID);
+        if (!id_map.has(node.typeID)) {
+          id_map.set(node.typeID, ParsedSignature.getNewTypeID());
+        }
         return {
           type: "Any",
-          typeID: node.typeID + toAdd,
+          typeID: id_map.get(node.typeID)!,
+        };
+      }
+
+      if (node.type === "Operator") {
+        return {
+          type: "Operator",
+          obscured: remap(
+            node.obscured
+          ) as TypeRawSignatureAST.RawSignatureFunction,
         };
       }
 
       return node;
-    }
+    };
 
-    node = normalize(node);
-    this.TypeIDCounter += baseIDs.size;
-    return node;
+    return remap(node);
   }
 
   rename(mapping: TypeTypeMap): ParsedSignature {
@@ -119,7 +131,12 @@ export class ParsedSignature {
   }
 
   getInput(index = 0) {
-    let current = this.ast as TypeRawSignatureAST.RawSignatureFunction;
+    if (this.ast.type !== "Function") {
+      throw new Error(
+        `Cannot get input of a non-function signature. Got ${this.ast.type}`
+      );
+    }
+    let current = this.ast;
 
     for (let i = 0; i < index; i++) {
       if (current.to && current.to.type === "Function") {
@@ -135,7 +152,13 @@ export class ParsedSignature {
   }
 
   getOutput(index = 0) {
-    let current = this.ast as TypeRawSignatureAST.RawSignatureFunction;
+    if (index < 0) index = this.getArity() + index;
+    if (this.ast.type !== "Function") {
+      throw new Error(
+        `Cannot get output of a non-function signature. Got ${this.ast.type}`
+      );
+    }
+    let current = this.ast;
 
     for (let i = 0; i < index; i++) {
       if (current.to && current.to.type === "Function") {
@@ -159,11 +182,11 @@ export class ParsedSignature {
 
     this.typeMap.unify(out, input);
 
-    const newAST = Object.assign({}, this.ast, {
+    const newAST: TypeRawSignatureAST.RawSignatureFunction = {
       type: "Function",
       from: this.ast.from,
       to: other.getOutput(),
-    });
+    };
 
     return new ParsedSignature(newAST, this.typeMap);
   }
@@ -182,22 +205,22 @@ export class ParsedSignature {
 
   flip() {
     if (this.ast.type !== "Function" || this.ast.to.type !== "Function") {
-      throw new Error('Flip needs 2 "inputs".');
+      throw new Error('Flip needs at least 2 "inputs".');
     }
 
     const a = this.ast.from;
     const b = this.ast.to.from;
-    const c = this.ast.to.to;
+    const rest = this.ast.to.to;
 
-    const flipped = Object.assign({}, this.ast, {
-      kind: "Function",
+    const flipped: TypeRawSignatureAST.RawSignatureFunction = {
+      type: "Function",
       from: b,
       to: {
-        kind: "Function",
+        type: "Function",
         from: a,
-        to: c,
+        to: rest,
       },
-    });
+    };
 
     return new ParsedSignature(flipped, this.typeMap);
   }
@@ -211,5 +234,9 @@ export class ParsedSignature {
     }
     arr.push(current.type);
     return arr as TypeRawSignatureAST.RawSignatureNode["type"][];
+  }
+
+  private static getNewTypeID(): number {
+    return ParsedSignature.maxTypeID++;
   }
 }

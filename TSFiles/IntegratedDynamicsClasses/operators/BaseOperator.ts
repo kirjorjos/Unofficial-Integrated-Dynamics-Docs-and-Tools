@@ -29,9 +29,6 @@ export class BaseOperator<
     serializer?: string;
   }) {
     super({ parsedSignature, function: fn });
-    this.fn = fn;
-    this.typeMap = parsedSignature.getTypeMap();
-    this.parsedSignature = parsedSignature;
     this.internalName = internalName;
     this.nicknames = nicknames;
     this.symbol = symbol;

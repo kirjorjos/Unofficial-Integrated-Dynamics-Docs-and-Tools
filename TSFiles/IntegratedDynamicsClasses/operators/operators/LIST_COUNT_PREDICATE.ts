@@ -1,4 +1,4 @@
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { Integer } from "JavaNumberClasses/Integer";
@@ -10,7 +10,7 @@ export class OPERATOR_LIST_COUNT_PREDICATE extends BaseOperator<
   iArray<IntegratedValue>,
   Operator<Operator<IntegratedValue, iBoolean>, Integer>
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:list_count_p",
       nicknames: ["listCountPredicate", "listCountP"],

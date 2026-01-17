@@ -1,4 +1,4 @@
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
@@ -7,7 +7,7 @@ export class OPERATOR_NULLABLE_ISNULL extends BaseOperator<
   IntegratedValue,
   iBoolean
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:general_isnull",
       nicknames: ["isNull", "nullableIsnull", "GENERAL_IS_NULL"],

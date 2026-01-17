@@ -1,4 +1,4 @@
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Integer } from "JavaNumberClasses/Integer";
@@ -7,7 +7,7 @@ export class OPERATOR_ARITHMETIC_DECREMENT extends BaseOperator<
   TypeNumber,
   TypeNumber
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:arithmetic_decrement",
       nicknames: ["arithmeticDecrement", "decrement", "--", "numberDecrement"],

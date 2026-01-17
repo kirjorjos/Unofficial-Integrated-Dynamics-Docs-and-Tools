@@ -1,5 +1,5 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { BaseOperator } from "../BaseOperator";
@@ -12,7 +12,7 @@ export class OPERATOR_LIST_UNIQ_PREDICATE extends BaseOperator<
     iArray<IntegratedValue>
   >
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:list_uniq_p",
       nicknames: ["listUniqPredicate", "uniq_p", "list_uniq_p"],

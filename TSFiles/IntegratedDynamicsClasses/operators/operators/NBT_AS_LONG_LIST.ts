@@ -1,4 +1,4 @@
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { ListTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ListTag";
 import { Tag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/Tag";
 import { Long } from "JavaNumberClasses/Long";
@@ -12,7 +12,7 @@ export class OPERATOR_NBT_AS_LONG_LIST extends BaseOperator<
   ListTag,
   iArray<Long>
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:nbt_as_long_list",
       nicknames: ["nbtAsLongList"],

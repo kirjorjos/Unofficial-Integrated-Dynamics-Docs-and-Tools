@@ -2,13 +2,13 @@ import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Operator } from "../Operator";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 import { BaseOperator } from "../BaseOperator";
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 
 export class OPERATOR_LIST_INTERSECTION extends BaseOperator<
   iArray<IntegratedValue>,
   Operator<iArray<IntegratedValue>, iArray<IntegratedValue>>
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:list_intersection",
       nicknames: ["listIntersection", "intersection"],

@@ -1,15 +1,15 @@
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { Operator } from "../Operator";
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 
 export class OPERATOR_LIST_CONTAINS_PREDICATE extends BaseOperator<
   iArray<IntegratedValue>,
-  Operator<Operator<IntegratedValue, iBoolean>, iBoolean>
+  Operator<Predicate<IntegratedValue>, iBoolean>
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:list_contains_p",
       nicknames: [

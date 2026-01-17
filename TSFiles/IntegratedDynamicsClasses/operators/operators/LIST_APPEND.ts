@@ -1,4 +1,4 @@
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { Operator } from "../Operator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
@@ -8,7 +8,7 @@ export class OPERATOR_LIST_APPEND extends BaseOperator<
   iArray<IntegratedValue>,
   Operator<IntegratedValue, iArray<IntegratedValue>>
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:list_append",
       nicknames: ["listAppend", "append"],

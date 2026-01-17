@@ -1,4 +1,4 @@
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { CompoundTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
 import { Tag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/Tag";
 import { BaseOperator } from "../BaseOperator";
@@ -10,7 +10,7 @@ export class OPERATOR_NBT_COMPOUND_VALUE_COMPOUND extends BaseOperator<
   CompoundTag,
   Operator<iString, Tag<IntegratedValue>>
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:nbt_compound_value_compound",
       nicknames: ["nbtCompoundValueCompound", "compoundValueNBT"],

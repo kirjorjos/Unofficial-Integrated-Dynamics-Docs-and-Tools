@@ -1,4 +1,4 @@
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
@@ -10,7 +10,7 @@ export class OPERATOR_OBJECT_FLUIDSTACK_TAG extends BaseOperator<
   Fluid,
   iArray<iString>
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:fluidstack_tag",
       nicknames: [

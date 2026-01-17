@@ -1,4 +1,4 @@
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
@@ -9,7 +9,7 @@ export class OPERATOR_OBJECT_BLOCK_TAG extends BaseOperator<
   Block,
   iArray<iString>
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:block_tag",
       nicknames: ["BlockTag", "blockTag"],

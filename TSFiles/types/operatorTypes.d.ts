@@ -7,9 +7,7 @@ declare global {
     InstanceType<iOperatorRegistry[keyof iOperatorRegistry]>["getInternalName"]
   >;
 
-  type Predicate<T extends IntegratedValue> = Operator<T, iBoolean> & {
-    fn: (...args: any[]) => boolean;
-  };
+  type Predicate<T extends IntegratedValue> = Operator<T, iBoolean>;
 
   interface IntegratedValue {
     getSignatureNode(): TypeRawSignatureAST.RawSignatureNode;

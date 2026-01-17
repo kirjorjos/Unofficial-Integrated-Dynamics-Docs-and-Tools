@@ -1,4 +1,4 @@
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 import { Integer } from "JavaNumberClasses/Integer";
 import { BaseOperator } from "../BaseOperator";
@@ -8,7 +8,7 @@ export class OPERATOR_LIST_TAIL extends BaseOperator<
   iArray<IntegratedValue>,
   iArray<IntegratedValue>
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:list_tail",
       nicknames: ["listTail", "tail"],

@@ -1,4 +1,4 @@
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 import { BaseOperator } from "../BaseOperator";
@@ -8,7 +8,7 @@ export class OPERATOR_ITEMSTACK_TOOLTIP extends BaseOperator<
   Item,
   iArray<iString>
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:itemstack_tooltip",
       nicknames: [

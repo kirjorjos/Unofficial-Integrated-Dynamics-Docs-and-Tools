@@ -1,4 +1,4 @@
-import { TypeMap } from "HelperClasses/TypeMap";
+import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Entity } from "IntegratedDynamicsClasses/Entity";
@@ -10,7 +10,7 @@ export class OPERATOR_OBJECT_ENTITY_FLUIDS extends BaseOperator<
   Entity,
   iArray<Fluid>
 > {
-  constructor(globalMap: TypeMap) {
+  constructor() {
     super({
       internalName: "integrateddynamics:entity_entityfluids",
       nicknames: ["EntityFluids", "entity_fluids", "entityFluids"],
