@@ -9,9 +9,10 @@ export class ParsedSignature {
 
   constructor(
     ast: TypeRawSignatureAST.RawSignatureNode,
-    typeMap: TypeMap = new TypeMap()
+    typeMap: TypeMap = new TypeMap(),
+    normalize = true
   ) {
-    this.ast = this._normalize(ast);
+    this.ast = normalize ? this._normalize(ast) : ast;
     this.typeMap = typeMap;
     this.flatArgs = this.toFlatSignature();
   }
@@ -200,7 +201,7 @@ export class ParsedSignature {
     this.typeMap.unify(argType, expected);
 
     const newAst = this.typeMap.rewrite(this.ast.to);
-    return new ParsedSignature(newAst, this.typeMap);
+    return new ParsedSignature(newAst, this.typeMap, false);
   }
 
   flip() {

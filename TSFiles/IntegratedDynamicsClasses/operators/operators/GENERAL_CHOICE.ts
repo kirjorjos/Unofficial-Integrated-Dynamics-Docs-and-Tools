@@ -49,10 +49,17 @@ export class OPERATOR_GENERAL_CHOICE extends BaseOperator<
       ),
       symbol: "?",
       interactName: "booleanChoice",
-      function: <T>(bool: iBoolean): TypeLambda<T, TypeLambda<T, T>> => {
-        return (trueValue: T): TypeLambda<T, T> => {
-          return (falseValue: T): T => {
-            return bool ? trueValue : falseValue;
+      function: (
+        bool: iBoolean
+      ): TypeLambda<
+        IntegratedValue,
+        TypeLambda<IntegratedValue, IntegratedValue>
+      > => {
+        return (
+          trueValue: IntegratedValue
+        ): TypeLambda<IntegratedValue, IntegratedValue> => {
+          return (falseValue: IntegratedValue): IntegratedValue => {
+            return bool.valueOf() ? trueValue : falseValue;
           };
         };
       },

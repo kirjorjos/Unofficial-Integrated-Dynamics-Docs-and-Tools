@@ -28,6 +28,9 @@ export class TypeMap {
     TypeMap.validateNode(a);
     TypeMap.validateNode(b);
 
+    a = this.resolve(a);
+    b = this.resolve(b);
+
     if (a.type === "Function" && b.type === "Function") {
       this.unify(a.from, b.from);
       this.unify(a.to, b.to);

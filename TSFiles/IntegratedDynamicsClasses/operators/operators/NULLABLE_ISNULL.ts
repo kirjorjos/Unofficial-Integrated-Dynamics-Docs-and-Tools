@@ -1,6 +1,7 @@
 import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
+import { iNull } from "IntegratedDynamicsClasses/typeWrappers/iNull";
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 
 export class OPERATOR_NULLABLE_ISNULL extends BaseOperator<
@@ -24,7 +25,7 @@ export class OPERATOR_NULLABLE_ISNULL extends BaseOperator<
       symbol: "o",
       interactName: "anyIsNull",
       function: (value: IntegratedValue): iBoolean => {
-        return new iBoolean(value === null || value === undefined);
+        return new iBoolean(value instanceof iNull);
       },
     });
   }
