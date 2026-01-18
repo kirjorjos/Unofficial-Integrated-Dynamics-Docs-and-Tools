@@ -3,6 +3,7 @@ import { Operator } from "../Operator";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 import { BaseOperator } from "../BaseOperator";
 import { globalMap } from "HelperClasses/TypeMap";
+import { iArrayEager } from "IntegratedDynamicsClasses/typeWrappers/iArrayEager";
 
 export class OPERATOR_LIST_INTERSECTION extends BaseOperator<
   iArray<IntegratedValue>,
@@ -30,8 +31,28 @@ export class OPERATOR_LIST_INTERSECTION extends BaseOperator<
         list1: iArray<IntegratedValue>
       ): TypeLambda<iArray<IntegratedValue>, iArray<IntegratedValue>> => {
         return (list2: iArray<IntegratedValue>): iArray<IntegratedValue> => {
-          const set1 = new Set(list1.valueOf());
-          return list2.filter((item) => set1.has(item));
+          const arr1 = list1.valueOf();
+          const arr2 = list2.valueOf();
+
+          const intersection = arr1.filter((item1) => {
+            return arr2.some((item2) => item1.equals(item2).valueOf());
+          });
+
+          const uniqueIntersection = [] as IntegratedValue[];
+          intersection.forEach((item) => {
+            let found = false;
+            for (const uniqueItem of uniqueIntersection) {
+              if (uniqueItem.equals(item).valueOf()) {
+                found = true;
+                break;
+              }
+            }
+            if (!found) {
+              uniqueIntersection.push(item);
+            }
+          });
+
+          return new iArrayEager(uniqueIntersection);
         };
       },
     });

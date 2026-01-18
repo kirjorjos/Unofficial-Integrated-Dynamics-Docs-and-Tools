@@ -3,6 +3,7 @@ import { iBoolean } from "./iBoolean";
 import { Integer } from "JavaNumberClasses/Integer";
 import { Operator } from "IntegratedDynamicsClasses/operators/Operator";
 import { iArray } from "./iArray";
+import { ParsedSignature } from "HelperClasses/ParsedSignature";
 
 export class iArrayEager<
   Source extends IntegratedValue,
@@ -16,7 +17,6 @@ export class iArrayEager<
   }
 
   valueOf(): Array<Source> {
-    console.warn("Calling this is probally a bug, ensure you're sure");
     return this.arr;
   }
 
@@ -57,7 +57,7 @@ export class iArrayEager<
   }
 
   getOrDefault(index: Integer, backup: Result): Result {
-    if (this.size().lte(index)) return backup;
+    if (index.lt(Integer.ZERO) || this.size().lte(index)) return backup;
     return this.get(index);
   }
 
@@ -69,7 +69,7 @@ export class iArrayEager<
   }
 
   includes(element: Source) {
-    return this.some((e) => e.equals(element));
+    return this.some((e) => e.equals(element).valueOf());
   }
 
   concat(arr: iArray<Source, Result>): iArray<Source, Result> {
@@ -85,7 +85,13 @@ export class iArrayEager<
   }
 
   getSignatureNode(): TypeRawSignatureAST.RawSignatureDefiniteValue {
-    return { type: "Boolean" };
+    return {
+      type: "List",
+      listType:
+        this.arr.length === 0
+          ? { type: "Any", typeID: ParsedSignature.getNewTypeID() }
+          : this.arr[0]!.getSignatureNode(),
+    };
   }
 
   equals(other: IntegratedValue): iBoolean {

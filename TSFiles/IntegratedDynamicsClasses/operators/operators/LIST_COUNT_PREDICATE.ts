@@ -43,7 +43,7 @@ export class OPERATOR_LIST_COUNT_PREDICATE extends BaseOperator<
         list: iArray<IntegratedValue>
       ): TypeLambda<Predicate<IntegratedValue>, Integer> => {
         return (predicate: Predicate<IntegratedValue>): Integer => {
-          return list.filter((item) => predicate.apply(item)).size();
+          return list.filter((item) => predicate.apply(item).valueOf()).size();
         };
       },
     });

@@ -237,7 +237,7 @@ export class ParsedSignature {
     return arr as TypeRawSignatureAST.RawSignatureNode["type"][];
   }
 
-  private static getNewTypeID(): number {
+  public static getNewTypeID(): number {
     return ParsedSignature.maxTypeID++;
   }
 }

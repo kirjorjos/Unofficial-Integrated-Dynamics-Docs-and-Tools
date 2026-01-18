@@ -44,9 +44,9 @@ export class OPERATOR_LIST_CONTAINS_PREDICATE extends BaseOperator<
       symbol: "contains_p",
       interactName: "listContainsPredicate",
       function: (
-        predicate: Predicate<IntegratedValue>
-      ): TypeLambda<iArray<IntegratedValue>, iBoolean> => {
-        return (list: iArray<IntegratedValue>): iBoolean => {
+        list: iArray<IntegratedValue>
+      ): TypeLambda<Predicate<IntegratedValue>, iBoolean> => {
+        return (predicate: Predicate<IntegratedValue>): iBoolean => {
           return list.some((item) => predicate.apply(item).valueOf());
         };
       },

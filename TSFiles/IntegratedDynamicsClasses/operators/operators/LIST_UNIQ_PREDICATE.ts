@@ -4,6 +4,7 @@ import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { BaseOperator } from "../BaseOperator";
 import { Operator } from "../Operator";
+import { iArrayEager } from "IntegratedDynamicsClasses/typeWrappers/iArrayEager";
 
 export class OPERATOR_LIST_UNIQ_PREDICATE extends BaseOperator<
   iArray<IntegratedValue>,
@@ -45,20 +46,27 @@ export class OPERATOR_LIST_UNIQ_PREDICATE extends BaseOperator<
       interactName: "listUniquePredicate",
       function: (
         list: iArray<IntegratedValue>
-      ): TypeLambda<Predicate<IntegratedValue>, iArray<IntegratedValue>> => {
+      ): TypeLambda<
+        Operator<IntegratedValue, Predicate<IntegratedValue>>,
+        iArray<IntegratedValue>
+      > => {
         return (
-          predicate: Predicate<IntegratedValue>
+          predicate: Operator<IntegratedValue, Predicate<IntegratedValue>>
         ): iArray<IntegratedValue> => {
-          const seen = new Set();
-          return list.filter((item) => {
-            const key = predicate.apply(item);
-            if (seen.has(key)) {
-              return false;
-            } else {
-              seen.add(key);
-              return true;
+          const uniqueItems: IntegratedValue[] = [];
+          list.valueOf().forEach((item) => {
+            let found = false;
+            for (const uniqueItem of uniqueItems) {
+              if (predicate.apply(item).apply(uniqueItem).valueOf()) {
+                found = true;
+                break;
+              }
+            }
+            if (!found) {
+              uniqueItems.push(item);
             }
           });
+          return new iArrayEager(uniqueItems);
         };
       },
     });

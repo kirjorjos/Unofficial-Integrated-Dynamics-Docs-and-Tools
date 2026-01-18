@@ -43,11 +43,7 @@ export class OPERATOR_LIST_SLICE extends BaseOperator<
           start: Integer
         ): TypeLambda<Integer, iArray<IntegratedValue>> => {
           return (end: Integer): iArray<IntegratedValue> => {
-            if (
-              start.lt(Integer.ZERO) ||
-              end.gt(list.size()) ||
-              start.gt(end)
-            ) {
+            if (start.lt(Integer.ZERO) || start.gte(end)) {
               throw new Error(
                 `Invalid slice range: [${start.toString()}, ${end.toString()}) for list of length ${list.size().toString()}`
               );

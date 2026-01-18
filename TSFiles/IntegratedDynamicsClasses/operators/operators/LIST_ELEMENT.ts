@@ -30,9 +30,9 @@ export class OPERATOR_LIST_ELEMENT extends BaseOperator<
       symbol: "get",
       interactName: "listGet",
       function: (
-        index: Integer
-      ): TypeLambda<iArray<IntegratedValue>, IntegratedValue> => {
-        return (list: iArray<IntegratedValue>): IntegratedValue => {
+        list: iArray<IntegratedValue>
+      ): TypeLambda<Integer, IntegratedValue> => {
+        return (index: Integer): IntegratedValue => {
           return list.get(index);
         };
       },

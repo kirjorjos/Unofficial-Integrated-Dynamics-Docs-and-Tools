@@ -26,7 +26,7 @@ export class OPERATOR_LIST_NOT_EMPTY extends BaseOperator<
       symbol: "o",
       interactName: "listIsNotEmpty",
       function: (list: iArray<IntegratedValue>): iBoolean => {
-        return new iBoolean(list.size().gte(Integer.ZERO));
+        return new iBoolean(list.size().gt(Integer.ZERO));
       },
     });
   }
