@@ -110,7 +110,7 @@ export class iArrayLazy<
     return new iBoolean(true);
   }
 
-  getSignatureNode(): TypeRawSignatureAST.RawSignatureDefiniteValue {
+  getSignatureNode(): TypeRawSignatureAST.RawSignatureList {
     return {
       type: "List",
       listType: this.mapOp

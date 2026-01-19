@@ -19,11 +19,11 @@ export class StringTag extends Tag<iString> {
   }
 
   getTypeAsString(): iString {
-    return new iString("StringTag");
+    return new iString("STRING");
   }
 
   equals(other: Tag<any>): iBoolean {
     if (other.getType() != Tag.TAG_STRING) return new iBoolean(false);
-    return new iBoolean(this.data == other.valueOf());
+    return this.data.equals(other.valueOf());
   }
 }

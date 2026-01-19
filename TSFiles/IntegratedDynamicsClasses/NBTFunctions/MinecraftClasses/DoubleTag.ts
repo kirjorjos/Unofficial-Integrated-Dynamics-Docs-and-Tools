@@ -28,7 +28,7 @@ export class DoubleTag extends NumericTag {
   }
 
   override getTypeAsString(): iString {
-    return new iString("DoubleTag");
+    return new iString("DOUBLE");
   }
 
   equals(tag: Tag<IntegratedValue>): iBoolean {

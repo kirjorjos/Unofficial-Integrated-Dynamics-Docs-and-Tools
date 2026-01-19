@@ -1,16 +1,13 @@
+import { IntArrayTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/IntArrayTag";
 import { globalMap } from "HelperClasses/TypeMap";
-import { ListTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ListTag";
-import { IntTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/IntTag";
-import { Tag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/Tag";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
-import { iArrayEager } from "IntegratedDynamicsClasses/typeWrappers/iArrayEager";
 import { Integer } from "JavaNumberClasses/Integer";
 
 export class OPERATOR_NBT_FROM_INT_LIST extends BaseOperator<
   iArray<Integer>,
-  ListTag
+  IntArrayTag
 > {
   constructor() {
     super({
@@ -28,11 +25,8 @@ export class OPERATOR_NBT_FROM_INT_LIST extends BaseOperator<
       ),
       symbol: "NBT.from_int_list",
       interactName: "intListAsNbt",
-      function: (intList: iArray<Integer>): ListTag => {
-        const nativeArray = intList.valueOf();
-        const mappedTags = nativeArray.map((e: Integer) => new IntTag(e));
-        const tagArray = new iArrayEager<Tag<IntegratedValue>>(mappedTags);
-        return new ListTag(tagArray);
+      function: (intList: iArray<Integer>): IntArrayTag => {
+        return new IntArrayTag(intList);
       },
     });
   }

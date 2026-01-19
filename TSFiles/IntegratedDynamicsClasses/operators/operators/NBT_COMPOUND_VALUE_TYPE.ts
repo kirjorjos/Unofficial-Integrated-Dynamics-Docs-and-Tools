@@ -36,7 +36,7 @@ export class OPERATOR_NBT_COMPOUND_VALUE_TYPE extends BaseOperator<
       function: (nbt: CompoundTag): TypeLambda<iString, iString> => {
         return (key: iString): iString => {
           if (!nbt.has(key)) {
-            throw new Error(`${key} does not exist in ${JSON.stringify(nbt)}`);
+            return new iString("null");
           }
           return nbt.get(key).getTypeAsString();
         };

@@ -25,7 +25,7 @@ export class OPERATOR_NBT_AS_BYTE extends BaseOperator<ByteTag, Integer> {
       symbol: "NBT.as_byte",
       interactName: "nbtAsByte",
       function: (nbt: ByteTag): Integer => {
-        if (nbt.getType() === Tag.TAG_INT) {
+        if (nbt.getType() === Tag.TAG_BYTE) {
           return nbt.valueOf();
         } else {
           return Integer.ZERO;

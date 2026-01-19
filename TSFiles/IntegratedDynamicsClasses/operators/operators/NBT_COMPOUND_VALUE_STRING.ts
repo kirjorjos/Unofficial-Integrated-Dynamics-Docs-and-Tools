@@ -1,11 +1,17 @@
 import { globalMap } from "HelperClasses/TypeMap";
 import { CompoundTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
 import { StringTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/StringTag";
-import { Tag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/Tag";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 import { Operator } from "../Operator";
+import { ByteTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ByteTag";
+import { DoubleTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/DoubleTag";
+import { FloatTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/FloatTag";
+import { LongTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/LongTag";
+import { ShortTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ShortTag";
+import { NullTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/NullTag";
+import { IntTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/IntTag";
 
 export class OPERATOR_NBT_COMPOUND_VALUE_STRING extends BaseOperator<
   CompoundTag,
@@ -38,11 +44,26 @@ export class OPERATOR_NBT_COMPOUND_VALUE_STRING extends BaseOperator<
       function: (nbt: CompoundTag): TypeLambda<iString, iString> => {
         return (key: iString): iString => {
           let value = nbt.get(key);
-          if (value.getType() === Tag.TAG_STRING) {
-            return (value as StringTag).valueOf() as iString;
+          if (value instanceof StringTag) {
+            return value.valueOf();
+          }
+          if (
+            value instanceof ByteTag ||
+            value instanceof ShortTag ||
+            value instanceof IntTag ||
+            value instanceof LongTag ||
+            value instanceof FloatTag ||
+            value instanceof DoubleTag
+          ) {
+            return new iString(value.valueOf().toDecimal());
+          }
+          if (value instanceof NullTag) {
+            return new iString("");
           }
           throw new Error(
-            `${key} is not a string in ${JSON.stringify(nbt.toJSON())}`
+            `${key.valueOf()} is not a string in ${JSON.stringify(
+              nbt.toJSON()
+            )}`
           );
         };
       },

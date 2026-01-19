@@ -1,14 +1,16 @@
 import { globalMap } from "HelperClasses/TypeMap";
 import { CompoundTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
-import { ListTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ListTag";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 import { Operator } from "../Operator";
+import { ListTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ListTag";
+import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
+import { Tag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/Tag";
 
 export class OPERATOR_NBT_COMPOUND_WITH_LIST_TAG extends BaseOperator<
   CompoundTag,
-  Operator<iString, Operator<ListTag, CompoundTag>>
+  Operator<iString, Operator<iArray<Tag<IntegratedValue>>, CompoundTag>>
 > {
   constructor() {
     super({
@@ -38,15 +40,17 @@ export class OPERATOR_NBT_COMPOUND_WITH_LIST_TAG extends BaseOperator<
       ),
       symbol: "NBT{}.with_tag_list",
       interactName: "nbtWithTagList",
-      function: (
-        nbt: CompoundTag
-      ): TypeLambda<iString, TypeLambda<ListTag, CompoundTag>> => {
-        return (key: iString): TypeLambda<ListTag, CompoundTag> => {
-          return (value: ListTag): CompoundTag => {
-            return nbt.set(key.valueOf(), value);
-          };
-        };
-      },
+      function:
+        (
+          nbt: CompoundTag
+        ): TypeLambda<
+          iString,
+          TypeLambda<iArray<Tag<IntegratedValue>>, CompoundTag>
+        > =>
+        (key: iString): TypeLambda<iArray<Tag<IntegratedValue>>, CompoundTag> =>
+        (value: iArray<Tag<IntegratedValue>>): CompoundTag => {
+          return nbt.set(key.valueOf(), new ListTag(value));
+        },
     });
   }
 }

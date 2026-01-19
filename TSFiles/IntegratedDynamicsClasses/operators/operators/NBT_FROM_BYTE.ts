@@ -1,10 +1,10 @@
 import { globalMap } from "HelperClasses/TypeMap";
-import { IntTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/IntTag";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Integer } from "JavaNumberClasses/Integer";
+import { ByteTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ByteTag";
 
-export class OPERATOR_NBT_FROM_BYTE extends BaseOperator<Integer, IntTag> {
+export class OPERATOR_NBT_FROM_BYTE extends BaseOperator<Integer, ByteTag> {
   constructor() {
     super({
       internalName: "integrateddynamics:nbt_from_byte",
@@ -23,8 +23,8 @@ export class OPERATOR_NBT_FROM_BYTE extends BaseOperator<Integer, IntTag> {
       ),
       symbol: "NBT.from_byte",
       interactName: "byteAsNbt",
-      function: (byte: Integer): IntTag => {
-        return new IntTag(byte);
+      function: (byte: Integer): ByteTag => {
+        return new ByteTag(byte);
       },
     });
   }

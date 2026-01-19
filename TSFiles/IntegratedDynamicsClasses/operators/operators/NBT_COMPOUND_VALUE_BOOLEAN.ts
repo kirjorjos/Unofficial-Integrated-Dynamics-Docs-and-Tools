@@ -5,6 +5,8 @@ import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { Operator } from "../Operator";
+import { ByteTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ByteTag";
+import { NullTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/NullTag";
 
 export class OPERATOR_NBT_COMPOUND_VALUE_BOOLEAN extends BaseOperator<
   CompoundTag,
@@ -36,9 +38,18 @@ export class OPERATOR_NBT_COMPOUND_VALUE_BOOLEAN extends BaseOperator<
       interactName: "nbtGetBoolean",
       function: (nbt: CompoundTag): TypeLambda<iString, iBoolean> => {
         return (key: iString): iBoolean => {
-          const result = nbt.get(key).valueOf();
-          if (!(result instanceof iBoolean)) return new iBoolean(false);
-          return result;
+          const value = nbt.get(key);
+          if (value instanceof ByteTag) {
+            return new iBoolean(value.valueOf().toJSNumber() === 1);
+          }
+          if (value instanceof NullTag) {
+            return new iBoolean(false);
+          }
+          throw new Error(
+            `${key.valueOf()} is not a boolean in ${JSON.stringify(
+              nbt.toJSON()
+            )}`
+          );
         };
       },
     });

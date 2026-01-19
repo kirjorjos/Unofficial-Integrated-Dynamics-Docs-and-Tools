@@ -41,5 +41,5 @@ export interface iArray<
 
   equals(other: IntegratedValue): iBoolean;
 
-  getSignatureNode(): TypeRawSignatureAST.RawSignatureDefiniteValue;
+  getSignatureNode(): TypeRawSignatureAST.RawSignatureList;
 }

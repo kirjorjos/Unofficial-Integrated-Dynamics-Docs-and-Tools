@@ -12,7 +12,7 @@ export class IntTag extends NumericTag {
   }
 
   override getType(): number {
-    return Tag.TAG_BYTE;
+    return Tag.TAG_INT;
   }
 
   static override valueOf(value: Integer): IntTag {
@@ -28,11 +28,11 @@ export class IntTag extends NumericTag {
   }
 
   getTypeAsString(): iString {
-    return new iString("IntTag");
+    return new iString("INT");
   }
 
   equals(tag: Tag<IntegratedValue>) {
-    if (tag.getType() != Tag.TAG_BYTE) return new iBoolean(false);
-    return new iBoolean(this.valueOf() == tag.valueOf());
+    if (tag.getType() != Tag.TAG_INT) return new iBoolean(false);
+    return this.valueOf().equals(tag.valueOf());
   }
 }

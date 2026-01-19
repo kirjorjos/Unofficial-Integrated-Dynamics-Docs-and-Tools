@@ -21,6 +21,10 @@ export class Double implements NumberBase<Double> {
     return 2;
   }
 
+  toDecimal() {
+    return `${this.num}`;
+  }
+
   // Double → Double
   toLong(): Long {
     return new Long(this.num);

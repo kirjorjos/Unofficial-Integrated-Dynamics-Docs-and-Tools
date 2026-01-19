@@ -2,6 +2,7 @@ import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { NumericTag } from "./NumericTag";
 import { Tag } from "./Tag";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
+import { Integer } from "JavaNumberClasses/Integer";
 
 export class ByteTag extends NumericTag {
   protected data: Integer;
@@ -28,11 +29,13 @@ export class ByteTag extends NumericTag {
   }
 
   override getTypeAsString(): iString {
-    return new iString("ByteTag");
+    return new iString("BYTE");
   }
 
   equals(tag: Tag<IntegratedValue>) {
     if (tag.getType() != Tag.TAG_BYTE) return new iBoolean(false);
-    return new iBoolean(this.valueOf() == tag.valueOf());
+    return this.valueOf().equals(tag.valueOf());
   }
+
+  static ONE: ByteTag = new ByteTag(Integer.ONE);
 }

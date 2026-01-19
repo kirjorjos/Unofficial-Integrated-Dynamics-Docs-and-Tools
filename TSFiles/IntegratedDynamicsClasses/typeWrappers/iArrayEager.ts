@@ -84,7 +84,7 @@ export class iArrayEager<
     return new iArrayEager(this.arr.slice(start, end) as unknown as Result[]);
   }
 
-  getSignatureNode(): TypeRawSignatureAST.RawSignatureDefiniteValue {
+  getSignatureNode(): TypeRawSignatureAST.RawSignatureList {
     return {
       type: "List",
       listType:

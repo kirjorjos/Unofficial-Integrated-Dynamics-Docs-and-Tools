@@ -1,11 +1,13 @@
 import { globalMap } from "HelperClasses/TypeMap";
 import { CompoundTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
-import { Tag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/Tag";
-import { Double } from "JavaNumberClasses/Double";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 import { Operator } from "../Operator";
+import { Double } from "JavaNumberClasses/Double";
+import { DoubleTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/DoubleTag";
+import { FloatTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/FloatTag";
+import { NullTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/NullTag";
 
 export class OPERATOR_NBT_COMPOUND_VALUE_DOUBLE extends BaseOperator<
   CompoundTag,
@@ -38,11 +40,16 @@ export class OPERATOR_NBT_COMPOUND_VALUE_DOUBLE extends BaseOperator<
       function: (nbt: CompoundTag): TypeLambda<iString, Double> => {
         return (key: iString): Double => {
           let value = nbt.get(key);
-          if (value.getType() === Tag.TAG_DOUBLE) {
-            return value.valueOf() as Double;
+          if (value instanceof DoubleTag || value instanceof FloatTag) {
+            return (value as DoubleTag).valueOf();
+          }
+          if (value instanceof NullTag) {
+            return new Double(0);
           }
           throw new Error(
-            `${key} is not a double in ${JSON.stringify(nbt.toJSON())}`
+            `${key.valueOf()} is not a double in ${JSON.stringify(
+              nbt.toJSON()
+            )}`
           );
         };
       },

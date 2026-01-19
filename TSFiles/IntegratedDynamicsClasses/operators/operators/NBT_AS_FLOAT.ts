@@ -25,7 +25,7 @@ export class OPERATOR_NBT_AS_FLOAT extends BaseOperator<FloatTag, Double> {
       symbol: "NBT.as_float",
       interactName: "nbtAsFloat",
       function: (nbt: FloatTag): Double => {
-        if (nbt.getType() === Tag.TAG_DOUBLE) {
+        if (nbt.getType() === Tag.TAG_FLOAT) {
           return nbt.valueOf();
         } else {
           return Double.ZERO;

@@ -33,6 +33,10 @@ export class Integer implements NumberBase<Integer> {
     return value.toInteger();
   }
 
+  toDecimal() {
+    return `${this.num}`;
+  }
+
   // Integer → Long
   toLong(): Long {
     return new Long(BigInt(this.toJSNumber()));

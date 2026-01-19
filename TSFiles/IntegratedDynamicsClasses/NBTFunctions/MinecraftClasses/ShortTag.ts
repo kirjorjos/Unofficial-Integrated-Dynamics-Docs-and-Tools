@@ -12,7 +12,7 @@ export class ShortTag extends NumericTag {
   }
 
   override getType(): number {
-    return Tag.TAG_Short;
+    return Tag.TAG_SHORT;
   }
 
   static override valueOf(value: Integer): ShortTag {
@@ -28,11 +28,11 @@ export class ShortTag extends NumericTag {
   }
 
   override getTypeAsString(): iString {
-    return new iString("ShortTag");
+    return new iString("SHORT");
   }
 
   equals(tag: Tag<IntegratedValue>) {
-    if (tag.getType() != Tag.TAG_Short) return new iBoolean(false);
+    if (tag.getType() != Tag.TAG_SHORT) return new iBoolean(false);
     return new iBoolean(this.valueOf() == tag.valueOf());
   }
 }

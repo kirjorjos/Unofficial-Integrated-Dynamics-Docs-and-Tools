@@ -8,7 +8,6 @@ import { Integer } from "JavaNumberClasses/Integer";
 import { INbtPathExpression } from "../INbtPathExpression";
 import { CompoundTag } from "../MinecraftClasses/CompoundTag";
 import { IntTag } from "../MinecraftClasses/IntTag";
-import { ListTag } from "../MinecraftClasses/ListTag";
 import { Tag } from "../MinecraftClasses/Tag";
 import { NbtPathExpressionMatches } from "../NbtPathExpressionMatches";
 import {
@@ -16,6 +15,7 @@ import {
   HandleResult,
 } from "./INbtPathExpressionParseHandler";
 import { NbtPathExpressionExecutionContext } from "./NBTPathExecutionContext";
+import { ListTag } from "../MinecraftClasses/ListTag";
 
 /**
  * A handler that handles child path expressions for ".length",

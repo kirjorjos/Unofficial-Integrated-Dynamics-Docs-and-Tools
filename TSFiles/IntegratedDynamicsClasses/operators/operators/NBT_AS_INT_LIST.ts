@@ -1,11 +1,12 @@
 import { globalMap } from "HelperClasses/TypeMap";
-import { ListTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ListTag";
 import { Tag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/Tag";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Operator } from "../Operator";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 import { iArrayEager } from "IntegratedDynamicsClasses/typeWrappers/iArrayEager";
+import { ListTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ListTag";
+import { Integer } from "JavaNumberClasses/Integer";
 
 export class OPERATOR_NBT_AS_INT_LIST extends BaseOperator<ListTag, Integer> {
   constructor() {
@@ -25,9 +26,9 @@ export class OPERATOR_NBT_AS_INT_LIST extends BaseOperator<ListTag, Integer> {
       symbol: "NBT.as_int_list",
       interactName: "nbtAsIntList",
       function: (nbt: ListTag): iArray<Integer> => {
-        if (nbt.getType() === Tag.TAG_LIST) {
+        if (nbt.getType() === Tag.TAG_INT_ARRAY) {
           const list = nbt.valueOf();
-          if (!list.every((e) => e.getType() == Tag.TAG_INT))
+          if (!list.every((e: Tag<any>) => e.getType() == Tag.TAG_INT))
             return new iArrayEager<Integer>([]);
           return list.map(
             new Operator({

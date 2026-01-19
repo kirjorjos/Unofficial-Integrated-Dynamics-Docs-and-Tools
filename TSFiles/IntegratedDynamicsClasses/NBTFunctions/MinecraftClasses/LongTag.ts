@@ -12,7 +12,7 @@ export class LongTag extends NumericTag {
   }
 
   override getType(): number {
-    return Tag.TAG_BYTE;
+    return Tag.TAG_LONG;
   }
 
   static override valueOf(value: Long): LongTag {
@@ -28,7 +28,7 @@ export class LongTag extends NumericTag {
   }
 
   getTypeAsString(): iString {
-    return new iString("LongTag");
+    return new iString("LONG");
   }
 
   equals(tag: Tag<IntegratedValue>) {

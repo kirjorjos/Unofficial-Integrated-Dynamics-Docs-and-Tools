@@ -33,6 +33,10 @@ export class Long implements NumberBase<Long> {
     return value.toLong();
   }
 
+  toDecimal() {
+    return `${this.num}`;
+  }
+
   // Long → Integer
   toInteger(): Integer {
     return new Integer(this.toString());
