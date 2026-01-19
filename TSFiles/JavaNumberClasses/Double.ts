@@ -129,4 +129,17 @@ export class Double implements NumberBase<Double> {
   toJSNumber(): number {
     return this.num;
   }
+
+  compact(): string {
+    const n = this.num;
+    if (n >= 1000000) {
+      const val = n / 1000000;
+      return val.toFixed(1).replace(/\.0$/, "") + "M";
+    }
+    if (n >= 1000) {
+      const val = n / 1000;
+      return val.toFixed(1).replace(/\.0$/, "") + "K";
+    }
+    return n.toString();
+  }
 }

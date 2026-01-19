@@ -127,4 +127,17 @@ export class Long implements NumberBase<Long> {
   toJSNumber(): number {
     return parseInt(this.num.toString());
   }
+
+  compact(): string {
+    const n = this.toJSNumber();
+    if (n >= 1000000) {
+      const val = n / 1000000;
+      return val.toFixed(1).replace(/\.0$/, "") + "M";
+    }
+    if (n >= 1000) {
+      const val = n / 1000;
+      return val.toFixed(1).replace(/\.0$/, "") + "K";
+    }
+    return n.toString();
+  }
 }
