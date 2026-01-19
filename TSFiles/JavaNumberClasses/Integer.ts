@@ -5,9 +5,9 @@ import { Double } from "./Double";
 export class Integer implements NumberBase<Integer> {
   readonly num: number;
 
-  constructor(num: TypeNumericString | number | Integer) {
+  constructor(num: string | number | Integer) {
     if (num instanceof Integer) num = num.toJSNumber();
-    if (typeof num === "string") num = parseInt(num);
+    if (typeof num === "string") num = Integer.parseInteger(num);
     this.num = Integer.limitToInteger(num);
   }
 
@@ -169,5 +169,49 @@ export class Integer implements NumberBase<Integer> {
       return val.toFixed(1).replace(/\.0$/, "") + "K";
     }
     return n.toString();
+  }
+
+  private static parseInteger(s: string): number {
+    s = s.trim();
+    if (s.length === 0) {
+      throw new Error("Zero length string");
+    }
+    let i = 0;
+    let radix = 10;
+    let negative = false;
+
+    const firstChar = s.charAt(0);
+    if (firstChar === "-") {
+      negative = true;
+      i++;
+    } else if (firstChar === "+") {
+      i++;
+    }
+
+    if (s.toLowerCase().startsWith("0x", i)) {
+      i += 2;
+      radix = 16;
+    } else if (s.startsWith("#", i)) {
+      i++;
+      radix = 16;
+    } else if (s.startsWith("0", i) && s.length > i + 1) {
+      i++;
+      radix = 8;
+    }
+
+    const numStr = s.substring(i);
+    const result = parseInt(numStr, radix);
+
+    if (isNaN(result)) {
+      throw new Error("Invalid number format");
+    }
+
+    const finalResult = negative ? -result : result;
+
+    if ((finalResult | 0) !== finalResult) {
+      throw new Error(`Value "${s}" is out of range for a 32-bit integer`);
+    }
+
+    return finalResult;
   }
 }

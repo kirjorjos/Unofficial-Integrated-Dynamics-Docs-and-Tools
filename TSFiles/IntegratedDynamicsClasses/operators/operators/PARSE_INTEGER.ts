@@ -2,11 +2,9 @@ import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { BaseOperator } from "../BaseOperator";
 import { globalMap } from "HelperClasses/TypeMap";
 import { Integer } from "JavaNumberClasses/Integer";
+import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 
-export class OPERATOR_PARSE_INTEGER extends BaseOperator<
-  IntegratedValue,
-  Integer
-> {
+export class OPERATOR_PARSE_INTEGER extends BaseOperator<iString, Integer> {
   constructor() {
     super({
       internalName:
@@ -16,8 +14,7 @@ export class OPERATOR_PARSE_INTEGER extends BaseOperator<
         {
           type: "Function",
           from: {
-            type: "Any",
-            typeID: 1,
+            type: "String",
           },
           to: {
             type: "Integer",
@@ -27,11 +24,13 @@ export class OPERATOR_PARSE_INTEGER extends BaseOperator<
       ),
       symbol: "parse_integer",
       interactName: "stringParseAsInteger",
-      function: (data: IntegratedValue): Integer => {
+      function: (data: iString): Integer => {
         try {
-          return new Integer(data as Integer);
-        } catch (e) {
-          return Integer.ZERO;
+          return new Integer(data.valueOf());
+        } catch (e: any) {
+          throw new Error(
+            `Could not parse integer from "${data.valueOf()}": ${e.message}`
+          );
         }
       },
     });

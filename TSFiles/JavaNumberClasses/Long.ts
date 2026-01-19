@@ -5,7 +5,8 @@ import { Integer } from "./Integer";
 export class Long implements NumberBase<Long> {
   private num: bigint;
 
-  constructor(data: TypeNumericString | bigint | Long | number) {
+  constructor(data: string | bigint | Long | number) {
+    if (typeof data === "string") data = Long.parseLong(data);
     if (data instanceof Long) data = data.num;
 
     if (typeof data === "number") {
@@ -139,5 +140,63 @@ export class Long implements NumberBase<Long> {
       return val.toFixed(1).replace(/\.0$/, "") + "K";
     }
     return n.toString();
+  }
+
+  private static parseLong(s: string): bigint {
+    s = s.trim();
+    if (s.length === 0) {
+      throw new Error("Zero length string");
+    }
+    let i = 0;
+    let negative = false;
+    const firstChar = s.charAt(0);
+    if (firstChar === "-") {
+      negative = true;
+      i++;
+    } else if (firstChar === "+") {
+      i++;
+    }
+
+    let numStr = s.substring(i);
+    let radix = 10;
+
+    if (numStr.toLowerCase().startsWith("0x")) {
+      radix = 16;
+    } else if (numStr.startsWith("#")) {
+      radix = 16;
+      numStr = "0x" + numStr.substring(1);
+    } else if (numStr.startsWith("0") && numStr.length > 1) {
+      let isOctal = true;
+      for (const char of numStr) {
+        if (char < "0" || char > "7") {
+          isOctal = false;
+          break;
+        }
+      }
+      if (isOctal) {
+        radix = 8;
+        numStr = "0o" + numStr;
+      }
+    }
+
+    let result: bigint;
+    try {
+      result = BigInt(numStr);
+    } catch (e) {
+      throw new Error(`Invalid number format for string "${s}"`);
+    }
+
+    if (negative) {
+      result = -result;
+    }
+
+    if (radix === 10) {
+      const minLong = -9223372036854775808n;
+      const maxLong = 9223372036854775807n;
+      if (result < minLong || result > maxLong) {
+        throw new Error(`Value "${s}" is out of range for a 64-bit long`);
+      }
+    }
+    return result;
   }
 }

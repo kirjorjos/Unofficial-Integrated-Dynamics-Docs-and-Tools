@@ -26,10 +26,9 @@ export class OPERATOR_PARSE_BOOLEAN extends BaseOperator<iString, iBoolean> {
       symbol: "parse_iBoolean",
       interactName: "stringParseAsBoolean",
       function: (value: iString): iBoolean => {
-        const matchArr =
-          new RE2("(F(alse)?|[+-]?(0x|#)?0+|)", "i").match(value.valueOf()) ??
-          [];
-        return new iBoolean(!!matchArr[0]);
+        const re = new RE2("^(F(alse)?|[+-]?(0x|#)?0+|)$", "iu");
+        const match = re.match(value.valueOf().trim());
+        return new iBoolean(match === null);
       },
     });
   }

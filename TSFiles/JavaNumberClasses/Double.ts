@@ -5,9 +5,9 @@ import { Long } from "./Long";
 export class Double implements NumberBase<Double> {
   private num: number;
 
-  constructor(data: TypeNumericString | number | Double) {
+  constructor(data: string | number | Double) {
     if (data instanceof Double) data = data.num;
-    if (typeof data === "string") data = parseFloat(data);
+    if (typeof data === "string") data = Double.parseDouble(data);
     this.num = data;
   }
 
@@ -141,5 +141,39 @@ export class Double implements NumberBase<Double> {
       return val.toFixed(1).replace(/\.0$/, "") + "K";
     }
     return n.toString();
+  }
+
+  private static parseDouble(s: string): number {
+    s = s.trim();
+    if (s.length === 0) {
+      throw new Error("Zero length string");
+    }
+
+    const infinityMatch = s.match(/^([+-])?\s*(Infinity|inf|\u221e)$/i);
+    if (infinityMatch) {
+      const sign = infinityMatch[1] === "-" ? -1 : 1;
+      return sign * Infinity;
+    }
+
+    let negative = false;
+    let numPart = s;
+    if (s.startsWith("-")) {
+      negative = true;
+      numPart = s.substring(1);
+    } else if (s.startsWith("+")) {
+      numPart = s.substring(1);
+    }
+
+    if (numPart.startsWith("#")) {
+      numPart = "0x" + numPart.substring(1);
+    }
+
+    const result = Number(numPart);
+
+    if (isNaN(result)) {
+      throw new Error(`Invalid number format for string "${s}"`);
+    }
+
+    return negative ? -result : result;
   }
 }

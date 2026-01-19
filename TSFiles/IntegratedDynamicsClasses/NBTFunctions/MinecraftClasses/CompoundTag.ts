@@ -2,6 +2,8 @@ import { Integer } from "JavaNumberClasses/Integer";
 import { ListTag } from "./ListTag";
 import { Tag } from "./Tag";
 import { IntTag } from "./IntTag";
+import { ShortTag } from "./ShortTag";
+import { FloatTag } from "./FloatTag";
 import { ByteTag } from "./ByteTag";
 import { Long } from "JavaNumberClasses/Long";
 import { LongTag } from "./LongTag";
@@ -12,6 +14,7 @@ import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 import { iArrayEager } from "IntegratedDynamicsClasses/typeWrappers/iArrayEager";
+import { StringTag } from "./StringTag";
 
 export class CompoundTag extends Tag<CompoundTag> {
   data: Record<string, Tag<IntegratedValue>>;
@@ -123,54 +126,60 @@ export class CompoundTag extends Tag<CompoundTag> {
     const json = JSON.parse(jsonStr);
 
     function objectCase(obj: { [k: string]: any }): CompoundTag {
+      const newObj: Record<string, Tag<IntegratedValue>> = {};
       for (const key of Object.keys(obj)) {
-        if (Array.isArray(obj[key])) obj[key] = arrayCase(obj[key]);
-        if (obj[key] instanceof Object) obj[key] = objectCase(obj[key]);
-        else obj[key] = baseCase(obj[key]);
+        if (Array.isArray(obj[key]))
+          newObj[key] = new ListTag(new iArrayEager(arrayCase(obj[key])));
+        else if (obj[key] instanceof Object) newObj[key] = objectCase(obj[key]);
+        else newObj[key] = baseCase(obj[key]);
       }
-      return new CompoundTag(obj);
+      return new CompoundTag(newObj);
     }
 
-    function baseCase(obj: { [k: string]: any }): CompoundTag {
-      for (const key of Object.keys(obj)) {
-        switch (typeof obj[key]) {
-          case "number":
-            obj[key] = new IntTag(new Integer(obj[key]));
-            break;
-          case "boolean":
-            obj[key] = new ByteTag(new Integer(+obj[key]));
-            break;
-          case "string":
-            const str = obj[key] as string;
-            if (str.match(/\d*[Bb]/))
-              obj[key] = new ByteTag(new Integer(parseInt(str.slice(0, -1))));
-            if (str.match(/\d*[Ss]/))
-              obj[key] = new IntTag(new Integer(parseInt(str.slice(0, -1))));
-            else if (str.match(/\d*[Ll]/))
-              obj[key] = new LongTag(new Long(parseInt(str.slice(0, -1))));
-            else if (str.match(/\d*[FfDd]/))
-              obj[key] = new DoubleTag(
-                new Double(parseFloat(str.slice(0, -1)))
-              );
-            else if (str.match(/d{1,}/))
-              obj[key] = new IntTag(new Integer(parseInt(obj[key])));
-            break;
-          default:
-            throw new Error(`Unknown type: ${typeof obj[key]}`);
-        }
+    function baseCase(value: any): Tag<IntegratedValue> {
+      switch (typeof value) {
+        case "number":
+          if (Number.isInteger(value)) {
+            if (value >= -2147483648 && value <= 2147483647) {
+              return new IntTag(new Integer(value));
+            } else {
+              return new LongTag(new Long(value));
+            }
+          } else {
+            return new DoubleTag(new Double(value));
+          }
+        case "boolean":
+          return new ByteTag(new Integer(+value));
+        case "string":
+          const str = value as string;
+          if (str.match(/^-?\d+b$/i)) {
+            return new ByteTag(new Integer(parseInt(str.slice(0, -1))));
+          } else if (str.match(/^-?\d+s$/i)) {
+            return new ShortTag(new Integer(parseInt(str.slice(0, -1))));
+          } else if (str.match(/^-?\d+l$/i)) {
+            return new LongTag(new Long(parseInt(str.slice(0, -1))));
+          } else if (str.match(/^-?\d+(\.\d+)?[fF]$/)) {
+            return new FloatTag(new Double(parseFloat(str.slice(0, -1))));
+          } else if (str.match(/^-?\d+(\.\d+)?[dD]$/)) {
+            return new DoubleTag(new Double(parseFloat(str.slice(0, -1))));
+          } else if (str.match(/^-?\d+(\.\d+)?$/)) {
+            return new StringTag(new iString(str));
+          }
+          return new StringTag(new iString(str));
+        default:
+          throw new Error(`Unknown type for NBT baseCase: ${typeof value}`);
       }
-      return new CompoundTag(obj);
     }
 
-    function arrayCase(arr: any[]): Tag<any>[] {
-      for (const [k, v] of Object.entries(arr)) {
-        const i = parseInt(k);
+    function arrayCase(arr: any[]): Tag<IntegratedValue>[] {
+      const newArr: Tag<IntegratedValue>[] = [];
+      for (const v of arr) {
         if (Array.isArray(v))
-          arr[i] = new ListTag(new iArrayEager(arrayCase(v)));
-        else if (v instanceof Object) arr[i] = objectCase(v);
-        else arr[i] = baseCase(v);
+          newArr.push(new ListTag(new iArrayEager(arrayCase(v))));
+        else if (v instanceof Object) newArr.push(objectCase(v));
+        else newArr.push(baseCase(v));
       }
-      return arr;
+      return newArr;
     }
 
     return objectCase(json);
