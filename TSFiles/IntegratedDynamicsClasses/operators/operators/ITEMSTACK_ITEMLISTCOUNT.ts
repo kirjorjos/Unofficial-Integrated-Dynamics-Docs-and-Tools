@@ -9,9 +9,9 @@ export class OPERATOR_ITEMSTACK_ITEMLISTCOUNT extends BaseOperator<
   iArray<Item>,
   Operator<Item, Integer>
 > {
+    static override internalName = "integrateddynamics:itemstack_itemlistcount"
   constructor() {
     super({
-      internalName: "integrateddynamics:itemstack_itemlistcount",
       nicknames: [
         "ItemstackListCount",
         "itemstack_list_count",

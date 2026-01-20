@@ -11,9 +11,9 @@ export class OPERATOR_NBT_COMPOUND_WITH_SHORT extends BaseOperator<
   CompoundTag,
   Operator<iString, Operator<Integer, CompoundTag>>
 > {
+    static override internalName = "integrateddynamics:nbt_compound_with_short"
   constructor() {
     super({
-      internalName: "integrateddynamics:nbt_compound_with_short",
       nicknames: ["nbtCompoundWithShort", "NBTWithShort"],
       parsedSignature: new ParsedSignature(
         {

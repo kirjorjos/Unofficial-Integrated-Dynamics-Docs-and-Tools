@@ -11,9 +11,9 @@ export class OPERATOR_OPERATOR_CONJUNCTION extends BaseOperator<
     Operator<IntegratedValue, iBoolean>
   >
 > {
+    static override internalName = "integrateddynamics:operator_conjunction"
   constructor() {
     super({
-      internalName: "integrateddynamics:operator_conjunction",
       nicknames: ["operatorConjunction", "conjunction"],
       parsedSignature: new ParsedSignature(
         {

@@ -8,9 +8,9 @@ export class OPERATOR_OBJECT_ENTITY_ISPLAYER extends BaseOperator<
   Entity,
   iBoolean
 > {
+    static override internalName = "integrateddynamics:entity_isplayer"
   constructor() {
     super({
-      internalName: "integrateddynamics:entity_isplayer",
       nicknames: [
         "EntityIsplayer",
         "entity_is_player",

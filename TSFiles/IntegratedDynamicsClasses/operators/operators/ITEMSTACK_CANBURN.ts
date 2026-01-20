@@ -4,9 +4,9 @@ import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { globalMap } from "HelperClasses/TypeMap";
 
 export class OPERATOR_ITEMSTACK_CANBURN extends BaseOperator<Item, iBoolean> {
+    static override internalName = "integrateddynamics:itemstack_canburn"
   constructor() {
     super({
-      internalName: "integrateddynamics:itemstack_canburn",
       nicknames: [
         "ItemstackCanburn",
         "item_can_burn",

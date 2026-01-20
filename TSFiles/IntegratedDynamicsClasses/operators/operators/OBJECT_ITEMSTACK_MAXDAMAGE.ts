@@ -8,9 +8,9 @@ export class OPERATOR_OBJECT_ITEMSTACK_MAXDAMAGE extends BaseOperator<
   Item,
   Integer
 > {
+    static override internalName = "integrateddynamics:itemstack_maxdamage"
   constructor() {
     super({
-      internalName: "integrateddynamics:itemstack_maxdamage",
       nicknames: [
         "ItemstackMaxdamage",
         "itemstack_max_damage",

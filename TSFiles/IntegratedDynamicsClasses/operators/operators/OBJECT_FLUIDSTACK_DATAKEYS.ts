@@ -11,9 +11,9 @@ export class OPERATOR_OBJECT_FLUIDSTACK_DATAKEYS extends BaseOperator<
   Fluid,
   iArray<iString>
 > {
+    static override internalName = "integrateddynamics:fluidstack_datakeys"
   constructor() {
     super({
-      internalName: "integrateddynamics:fluidstack_datakeys",
       nicknames: [
         "FluidstackDataKeys",
         "fluidstackDataKeys",

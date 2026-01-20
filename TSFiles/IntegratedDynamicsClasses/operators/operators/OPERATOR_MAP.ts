@@ -8,9 +8,9 @@ export class OPERATOR_OPERATOR_MAP extends BaseOperator<
   Operator<IntegratedValue, IntegratedValue>,
   Operator<iArray<IntegratedValue>, iArray<IntegratedValue>>
 > {
+    static override internalName = "integrateddynamics:operator_map"
   constructor() {
     super({
-      internalName: "integrateddynamics:operator_map",
       nicknames: ["operatorMap", "map"],
       parsedSignature: new ParsedSignature(
         {

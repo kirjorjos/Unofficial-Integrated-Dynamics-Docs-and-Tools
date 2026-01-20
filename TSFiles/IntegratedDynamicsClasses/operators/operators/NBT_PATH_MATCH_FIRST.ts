@@ -12,9 +12,9 @@ export class OPERATOR_NBT_PATH_MATCH_FIRST extends BaseOperator<
   iString,
   Operator<CompoundTag, Tag<IntegratedValue>>
 > {
+    static override internalName = "integrateddynamics:nbt_path_match_first"
   constructor() {
     super({
-      internalName: "integrateddynamics:nbt_path_match_first",
       nicknames: ["nbtPathMatchFirst"],
       parsedSignature: new ParsedSignature(
         {

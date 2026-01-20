@@ -7,9 +7,9 @@ export class OPERATOR_OBJECT_BLOCK_OPAQUE extends BaseOperator<
   Block,
   iBoolean
 > {
+    static override internalName = "integrateddynamics:block_opaque"
   constructor() {
     super({
-      internalName: "integrateddynamics:block_opaque",
       nicknames: ["BlockOpaque", "opaque"],
       parsedSignature: new ParsedSignature(
         {

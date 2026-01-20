@@ -8,9 +8,9 @@ export class OPERATOR_OBJECT_FLUIDSTACK_RARITY extends BaseOperator<
   Fluid,
   iString
 > {
+    static override internalName = "integrateddynamics:fluidstack_rarity"
   constructor() {
     super({
-      internalName: "integrateddynamics:fluidstack_rarity",
       nicknames: [
         "FluidstackRarity",
         "fluidstackRarity",

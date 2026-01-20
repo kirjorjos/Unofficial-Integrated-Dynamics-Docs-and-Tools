@@ -8,9 +8,9 @@ export class OPERATOR_OPERATOR_NEGATION extends BaseOperator<
   Operator<IntegratedValue, iBoolean>,
   Operator<IntegratedValue, iBoolean>
 > {
+    static override internalName = "integrateddynamics:operator_negation"
   constructor() {
     super({
-      internalName: "integrateddynamics:operator_negation",
       nicknames: ["operatorNegation", "negation"],
       parsedSignature: new ParsedSignature(
         {

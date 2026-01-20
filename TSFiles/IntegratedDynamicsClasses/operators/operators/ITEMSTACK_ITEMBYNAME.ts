@@ -4,9 +4,9 @@ import { BaseOperator } from "../BaseOperator";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 
 export class OPERATOR_ITEMSTACK_ITEMBYNAME extends BaseOperator<iString, Item> {
+    static override internalName = "integrateddynamics:itemstack_itembyname"
   constructor() {
     super({
-      internalName: "integrateddynamics:itemstack_itembyname",
       nicknames: [
         "ItemstackByName",
         "itemstack_by_name",

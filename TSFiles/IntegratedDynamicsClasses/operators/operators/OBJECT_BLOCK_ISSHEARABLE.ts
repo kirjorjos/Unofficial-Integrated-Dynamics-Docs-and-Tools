@@ -7,9 +7,9 @@ export class OPERATOR_OBJECT_BLOCK_ISSHEARABLE extends BaseOperator<
   Block,
   iBoolean
 > {
+    static override internalName = "integrateddynamics:block_isshearable"
   constructor() {
     super({
-      internalName: "integrateddynamics:block_isshearable",
       nicknames: [
         "BlockIsshearable",
         "block_is_shearable",

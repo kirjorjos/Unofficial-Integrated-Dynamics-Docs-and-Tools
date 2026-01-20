@@ -5,10 +5,9 @@ import { Long } from "JavaNumberClasses/Long";
 import { Double } from "JavaNumberClasses/Double";
 
 export class OPERATOR_LONG_TO_DOUBLE extends BaseOperator<Long, Double> {
+    static override internalName = "integrateddynamics:operator.integrateddynamics.castintegrateddynamics_long__integrateddynamics_double"
   constructor() {
     super({
-      internalName:
-        "integrateddynamics:operator.integrateddynamics.castintegrateddynamics_long__integrateddynamics_double",
       nicknames: ["longToDouble", "longDouble", "longLongToDouble"],
       parsedSignature: new ParsedSignature(
         {

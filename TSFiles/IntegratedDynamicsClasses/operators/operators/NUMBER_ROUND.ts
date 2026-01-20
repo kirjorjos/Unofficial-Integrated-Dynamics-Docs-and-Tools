@@ -4,9 +4,9 @@ import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Integer } from "JavaNumberClasses/Integer";
 
 export class OPERATOR_NUMBER_ROUND extends BaseOperator<TypeNumber, Integer> {
+    static override internalName = "integrateddynamics:number_round"
   constructor() {
     super({
-      internalName: "integrateddynamics:number_round",
       nicknames: ["round", "numberRound"],
       parsedSignature: new ParsedSignature(
         {

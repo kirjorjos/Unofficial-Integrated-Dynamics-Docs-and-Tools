@@ -1,7 +1,9 @@
 import { TypeMap } from "./TypeMap";
 
 export class ParsedSignature {
+  
   private static maxTypeID = 0;
+  private static NUMBER_TYPES = ["Integer", "Long", "Double", "Number"];
 
   ast: TypeRawSignatureAST.RawSignatureNode;
   typeMap: TypeMap;
@@ -149,7 +151,7 @@ export class ParsedSignature {
       }
     }
 
-    return this.typeMap.resolve(current.from);
+    return current.from;
   }
 
   getOutput(index = 0) {
@@ -171,17 +173,13 @@ export class ParsedSignature {
       }
     }
 
-    return this.typeMap.resolve(current.to);
+    return current.to;
   }
 
   pipe(other: ParsedSignature) {
     if (this.ast.type !== "Function" || other.ast.type !== "Function") {
       throw new Error("Can only pipe operators, not values");
     }
-    const out = this.getOutput();
-    const input = other.getInput();
-
-    this.typeMap.unify(out, input);
 
     const newAST: TypeRawSignatureAST.RawSignatureFunction = {
       type: "Function",
@@ -237,7 +235,13 @@ export class ParsedSignature {
     return arr as TypeRawSignatureAST.RawSignatureNode["type"][];
   }
 
-  public static getNewTypeID(): number {
+  static getNewTypeID(): number {
     return ParsedSignature.maxTypeID++;
+  }
+
+  static typeEquals(a: TypeRawSignatureAST.RawSignatureNode, b: TypeRawSignatureAST.RawSignatureNode) {
+    if (a.type === b.type) return true;
+    if (ParsedSignature.NUMBER_TYPES.includes(a.type) && ParsedSignature.NUMBER_TYPES.includes(b.type)) return true;
+    return false;
   }
 }

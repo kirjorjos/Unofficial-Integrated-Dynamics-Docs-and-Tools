@@ -10,9 +10,9 @@ export class OPERATOR_NBT_AS_TAG_LIST extends BaseOperator<
   ListTag,
   iArray<Tag<IntegratedValue>>
 > {
+    static override internalName = "integrateddynamics:nbt_as_tag_list"
   constructor() {
     super({
-      internalName: "integrateddynamics:nbt_as_tag_list",
       nicknames: ["nbtAsTagList"],
       parsedSignature: new ParsedSignature(
         {

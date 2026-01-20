@@ -5,9 +5,9 @@ import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 
 export class OPERATOR_NBT_FROM_STRING extends BaseOperator<iString, StringTag> {
+    static override internalName = "integrateddynamics:nbt_from_string"
   constructor() {
     super({
-      internalName: "integrateddynamics:nbt_from_string",
       nicknames: ["nbtFromString"],
       parsedSignature: new ParsedSignature(
         {

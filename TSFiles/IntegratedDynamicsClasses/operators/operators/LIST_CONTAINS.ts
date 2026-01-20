@@ -9,9 +9,9 @@ export class OPERATOR_LIST_CONTAINS extends BaseOperator<
   iArray<IntegratedValue>,
   Operator<IntegratedValue, iBoolean>
 > {
+    static override internalName = "integrateddynamics:list_contains"
   constructor() {
     super({
-      internalName: "integrateddynamics:list_contains",
       nicknames: ["listContains", "contains"],
       parsedSignature: new ParsedSignature(
         {

@@ -11,9 +11,9 @@ export class OPERATOR_STRING_SPLIT_ON_REGEX extends BaseOperator<
   iString,
   Operator<iString, iArray<iString>>
 > {
+    static override internalName = "integrateddynamics:string_split_on_regex"
   constructor() {
     super({
-      internalName: "integrateddynamics:string_split_on_regex",
       nicknames: ["stringSplitOnRegex"],
       parsedSignature: new ParsedSignature(
         {

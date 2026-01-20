@@ -7,9 +7,9 @@ export class OPERATOR_ITEMSTACK_ISFECONTAINER extends BaseOperator<
   Item,
   iBoolean
 > {
+    static override internalName = "integrateddynamics:itemstack_isfecontainer"
   constructor() {
     super({
-      internalName: "integrateddynamics:itemstack_isfecontainer",
       nicknames: [
         "ItemstackIsfecontainer",
         "itemstack_is_fe_container",

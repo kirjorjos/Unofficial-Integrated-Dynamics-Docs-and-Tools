@@ -10,9 +10,9 @@ export class OPERATOR_OBJECT_ITEMSTACK_CANHARVESTBLOCK extends BaseOperator<
   Item,
   Operator<Block, iBoolean>
 > {
+    static override internalName = "integrateddynamics:itemstack_canharvest"
   constructor() {
     super({
-      internalName: "integrateddynamics:itemstack_canharvest",
       nicknames: [
         "ItemstackCanHarvestBlock",
         "itemstack_can_harvest_block",

@@ -6,9 +6,9 @@ import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 
 export class OPERATOR_NBT_AS_BYTE extends BaseOperator<ByteTag, Integer> {
+    static override internalName = "integrateddynamics:nbt_as_byte"
   constructor() {
     super({
-      internalName: "integrateddynamics:nbt_as_byte",
       nicknames: ["nbtAsByte"],
       parsedSignature: new ParsedSignature(
         {

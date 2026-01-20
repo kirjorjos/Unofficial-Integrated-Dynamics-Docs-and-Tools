@@ -5,10 +5,9 @@ import { Double } from "JavaNumberClasses/Double";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 
 export class OPERATOR_PARSE_DOUBLE extends BaseOperator<iString, Double> {
+    static override internalName = "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.double"
   constructor() {
     super({
-      internalName:
-        "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.double",
       nicknames: ["parseDouble"],
       parsedSignature: new ParsedSignature(
         {

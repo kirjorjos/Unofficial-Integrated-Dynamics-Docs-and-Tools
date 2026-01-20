@@ -3,9 +3,9 @@ import { BaseOperator } from "../BaseOperator";
 import { globalMap } from "HelperClasses/TypeMap";
 
 export class OPERATOR_BINARY_COMPLEMENT extends BaseOperator<Integer, Integer> {
+    static override internalName = "integrateddynamics:binary_complement"
   constructor() {
     super({
-      internalName: "integrateddynamics:binary_complement",
       nicknames: ["binaryComplement", "~", "integerComplement"],
       parsedSignature: new ParsedSignature(
         {

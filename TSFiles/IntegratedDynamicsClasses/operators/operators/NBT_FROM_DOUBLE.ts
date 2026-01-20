@@ -5,9 +5,9 @@ import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Double } from "JavaNumberClasses/Double";
 
 export class OPERATOR_NBT_FROM_DOUBLE extends BaseOperator<Double, DoubleTag> {
+    static override internalName = "integrateddynamics:nbt_from_double"
   constructor() {
     super({
-      internalName: "integrateddynamics:nbt_from_double",
       nicknames: ["nbtFromDouble"],
       parsedSignature: new ParsedSignature(
         {

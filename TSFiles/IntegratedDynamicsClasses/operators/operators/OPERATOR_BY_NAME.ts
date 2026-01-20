@@ -9,9 +9,9 @@ export class OPERATOR_OPERATOR_BY_NAME extends BaseOperator<
   iString,
   Operator<IntegratedValue, IntegratedValue>
 > {
+    static override internalName = "integrateddynamics:operator_by_name"
   constructor() {
     super({
-      internalName: "integrateddynamics:operator_by_name",
       nicknames: ["operatorByName", "opByName"],
       parsedSignature: new ParsedSignature(
         {
@@ -20,9 +20,12 @@ export class OPERATOR_OPERATOR_BY_NAME extends BaseOperator<
             type: "String",
           },
           to: {
-            type: "Function",
-            from: { type: "Any", typeID: 1 },
-            to: { type: "Any", typeID: 2 },
+            type: "Operator",
+            obscured: {  
+              type: "Function",
+              from: { type: "Any", typeID: 1 },
+              to: { type: "Any", typeID: 2 },
+            }
           },
         },
         globalMap

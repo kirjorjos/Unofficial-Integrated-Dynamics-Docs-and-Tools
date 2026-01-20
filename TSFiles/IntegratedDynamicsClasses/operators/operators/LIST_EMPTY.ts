@@ -9,9 +9,9 @@ export class OPERATOR_LIST_EMPTY extends BaseOperator<
   iArray<IntegratedValue>,
   iBoolean
 > {
+    static override internalName = "integrateddynamics:list_empty"
   constructor() {
     super({
-      internalName: "integrateddynamics:list_empty",
       nicknames: ["listEmpty", "listIsEmpty"],
       parsedSignature: new ParsedSignature(
         {

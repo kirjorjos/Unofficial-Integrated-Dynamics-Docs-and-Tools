@@ -13,9 +13,9 @@ export class OPERATOR_NBT_PATH_MATCH_ALL extends BaseOperator<
   iString,
   Operator<CompoundTag, iArray<Tag<IntegratedValue>>>
 > {
+    static override internalName = "integrateddynamics:nbt_path_match_all"
   constructor() {
     super({
-      internalName: "integrateddynamics:nbt_path_match_all",
       nicknames: ["nbtPathMatchAll"],
       parsedSignature: new ParsedSignature(
         {

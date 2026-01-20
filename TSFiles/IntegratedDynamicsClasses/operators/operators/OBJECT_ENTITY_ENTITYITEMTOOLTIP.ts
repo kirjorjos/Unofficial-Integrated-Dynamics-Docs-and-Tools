@@ -11,9 +11,9 @@ export class OPERATOR_OBJECT_ENTITY_ENTITYITEMTOOLTIP extends BaseOperator<
   Entity,
   Operator<Item, iArray<iString>>
 > {
+    static override internalName = "integrateddynamics:entity_entityitemtooltip"
   constructor() {
     super({
-      internalName: "integrateddynamics:entity_entityitemtooltip",
       nicknames: [
         "ItemstackEntityTooltip",
         "itemstack_entity_tooltip",

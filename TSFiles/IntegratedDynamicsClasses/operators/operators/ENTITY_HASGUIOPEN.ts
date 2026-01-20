@@ -4,9 +4,9 @@ import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 
 export class OPERATOR_ENTITY_HASGUIOPEN extends BaseOperator<Entity, iBoolean> {
+    static override internalName = "integrateddynamics:entity_hasguiopen"
   constructor() {
     super({
-      internalName: "integrateddynamics:entity_hasguiopen",
       nicknames: [
         "PlayerHasguiopen",
         "player_has_gui_open",

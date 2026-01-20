@@ -8,9 +8,9 @@ export class OPERATOR_RELATIONAL_GT extends BaseOperator<
   TypeNumber,
   Operator<TypeNumber, iBoolean>
 > {
+    static override internalName = "integrateddynamics:relational_gt"
   constructor() {
     super({
-      internalName: "integrateddynamics:relational_gt",
       nicknames: ["relationalGt", ">"],
       parsedSignature: new ParsedSignature(
         {

@@ -7,9 +7,9 @@ export class OPERATOR_DOUBLE_POW extends BaseOperator<
   Double,
   Operator<Double, Double>
 > {
+    static override internalName = "integrateddynamics:double_pow"
   constructor() {
     super({
-      internalName: "integrateddynamics:double_pow",
       nicknames: ["doublePow", "pow"],
       parsedSignature: new ParsedSignature(
         {

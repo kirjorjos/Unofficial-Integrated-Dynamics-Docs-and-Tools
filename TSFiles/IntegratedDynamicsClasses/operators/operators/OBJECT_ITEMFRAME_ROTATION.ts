@@ -8,9 +8,9 @@ export class OPERATOR_OBJECT_ITEMFRAME_ROTATION extends BaseOperator<
   Entity,
   Integer
 > {
+    static override internalName = "integrateddynamics:entity_itemframerotation"
   constructor() {
     super({
-      internalName: "integrateddynamics:entity_itemframerotation",
       nicknames: [
         "ItemframeRotation",
         "itemframe_rotation",

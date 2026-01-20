@@ -8,9 +8,9 @@ export class OPERATOR_OBJECT_ITEMSTACK_INVENTORYSIZE extends BaseOperator<
   Item,
   Integer
 > {
+    static override internalName = "integrateddynamics:itemstack_inventorysize"
   constructor() {
     super({
-      internalName: "integrateddynamics:itemstack_inventorysize",
       nicknames: [
         "ItemstackInventorysize",
         "itemstack_inventory_size",

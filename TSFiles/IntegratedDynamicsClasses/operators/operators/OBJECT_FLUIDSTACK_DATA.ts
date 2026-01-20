@@ -8,9 +8,9 @@ export class OPERATOR_OBJECT_FLUIDSTACK_DATA extends BaseOperator<
   Fluid,
   CompoundTag
 > {
+    static override internalName = "integrateddynamics:fluidstack_nbt"
   constructor() {
     super({
-      internalName: "integrateddynamics:fluidstack_nbt",
       nicknames: [
         "FluidstackData",
         "fluidstackData",

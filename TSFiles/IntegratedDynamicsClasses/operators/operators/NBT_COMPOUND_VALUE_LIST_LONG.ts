@@ -17,9 +17,9 @@ export class OPERATOR_NBT_COMPOUND_VALUE_LIST_LONG extends BaseOperator<
   CompoundTag,
   Operator<iString, iArray<Long>>
 > {
+    static override internalName = "integrateddynamics:nbt_compound_value_list_long"
   constructor() {
     super({
-      internalName: "integrateddynamics:nbt_compound_value_list_long",
       nicknames: ["nbtCompoundValueListLong", "compoundValueListLong"],
       parsedSignature: new ParsedSignature(
         {

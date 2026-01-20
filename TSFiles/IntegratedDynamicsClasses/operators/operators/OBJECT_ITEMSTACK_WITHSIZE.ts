@@ -10,9 +10,9 @@ export class OPERATOR_OBJECT_ITEMSTACK_WITHSIZE extends BaseOperator<
   Item,
   Operator<Integer, Item>
 > {
+    static override internalName = "integrateddynamics:itemstack_withsize"
   constructor() {
     super({
-      internalName: "integrateddynamics:itemstack_withsize",
       nicknames: [
         "ItemstackWithSize",
         "itemstack_with_size",

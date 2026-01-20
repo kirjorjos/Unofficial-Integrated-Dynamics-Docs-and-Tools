@@ -7,9 +7,9 @@ export class OPERATOR_OBJECT_BLOCK_BREAKSOUND extends BaseOperator<
   Block,
   iString
 > {
+    static override internalName = "integrateddynamics:block_breaksound"
   constructor() {
     super({
-      internalName: "integrateddynamics:block_breaksound",
       nicknames: [
         "BlockBreaksound",
         "block_break_sound",

@@ -8,9 +8,9 @@ export class OPERATOR_OBJECT_ITEMSTACK_MAXSIZE extends BaseOperator<
   Item,
   Integer
 > {
+    static override internalName = "integrateddynamics:itemstack_maxsize"
   constructor() {
     super({
-      internalName: "integrateddynamics:itemstack_maxsize",
       nicknames: [
         "ItemstackMaxsize",
         "itemstack_max_size",

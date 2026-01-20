@@ -5,9 +5,9 @@ import { Integer } from "JavaNumberClasses/Integer";
 import { Entity } from "IntegratedDynamicsClasses/Entity";
 
 export class OPERATOR_OBJECT_ENTITY_AGE extends BaseOperator<Entity, Integer> {
+    static override internalName = "integrateddynamics:entity_age"
   constructor() {
     super({
-      internalName: "integrateddynamics:entity_age",
       nicknames: ["EntityAge", "entity_age", "entityAge"],
       parsedSignature: new ParsedSignature(
         {

@@ -11,9 +11,9 @@ export class OPERATOR_STRING_REGEX_GROUPS extends BaseOperator<
   iString,
   Operator<iString, iArray<iString>>
 > {
+    static override internalName = "integrateddynamics:string_regex_groups"
   constructor() {
     super({
-      internalName: "integrateddynamics:string_regex_groups",
       nicknames: ["stringRegexGroups", "stringRegexGroups"],
       parsedSignature: new ParsedSignature(
         {

@@ -8,9 +8,9 @@ export class OPERATOR_OBJECT_ENTITY_HEIGHT extends BaseOperator<
   Entity,
   Double
 > {
+    static override internalName = "integrateddynamics:entity_height"
   constructor() {
     super({
-      internalName: "integrateddynamics:entity_height",
       nicknames: [
         "EntityHeight",
         "entity_height",

@@ -8,9 +8,9 @@ export class OPERATOR_OBJECT_ENTITY_ENERGY_CAPACITY extends BaseOperator<
   Entity,
   Integer
 > {
+    static override internalName = "integrateddynamics:entity_entityenergystored"
   constructor() {
     super({
-      internalName: "integrateddynamics:entity_entityenergystored",
       nicknames: [
         "EntityEnergyCapacity",
         "entity_energy_capacity",

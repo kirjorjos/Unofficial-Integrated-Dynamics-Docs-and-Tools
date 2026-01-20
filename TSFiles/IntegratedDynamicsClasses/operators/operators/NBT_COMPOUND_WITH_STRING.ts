@@ -10,9 +10,9 @@ export class OPERATOR_NBT_COMPOUND_WITH_STRING extends BaseOperator<
   CompoundTag,
   Operator<iString, Operator<iString, CompoundTag>>
 > {
+    static override internalName = "integrateddynamics:nbt_compound_with_string"
   constructor() {
     super({
-      internalName: "integrateddynamics:nbt_compound_with_string",
       nicknames: ["nbtCompoundWithString", "NBTWithString"],
       parsedSignature: new ParsedSignature(
         {

@@ -10,9 +10,9 @@ export class OPERATOR_STRING_MATCHES_REGEX extends BaseOperator<
   iString,
   Operator<iString, iBoolean>
 > {
+    static override internalName = "integrateddynamics:string_matches_regex"
   constructor() {
     super({
-      internalName: "integrateddynamics:string_matches_regex",
       nicknames: ["matchesRegex"],
       parsedSignature: new ParsedSignature(
         {

@@ -5,9 +5,9 @@ import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 import { Integer } from "JavaNumberClasses/Integer";
 
 export class OPERATOR_STRING_LENGTH extends BaseOperator<iString, Integer> {
+    static override internalName = "integrateddynamics:string_length"
   constructor() {
     super({
-      internalName: "integrateddynamics:string_length",
       nicknames: ["stringLength"],
       parsedSignature: new ParsedSignature(
         {

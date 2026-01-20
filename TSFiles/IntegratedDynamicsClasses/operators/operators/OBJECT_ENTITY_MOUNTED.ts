@@ -8,9 +8,9 @@ export class OPERATOR_OBJECT_ENTITY_MOUNTED extends BaseOperator<
   Entity,
   iBoolean
 > {
+    static override internalName = "integrateddynamics:entity_mounted"
   constructor() {
     super({
-      internalName: "integrateddynamics:entity_mounted",
       nicknames: ["EntityMounted", "entitys_mounted", "entitysMounted"],
       parsedSignature: new ParsedSignature(
         {

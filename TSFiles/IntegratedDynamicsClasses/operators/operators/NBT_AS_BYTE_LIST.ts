@@ -12,9 +12,9 @@ export class OPERATOR_NBT_AS_BYTE_LIST extends BaseOperator<
   ListTag,
   iArray<Integer>
 > {
+    static override internalName = "integrateddynamics:nbt_as_byte_list"
   constructor() {
     super({
-      internalName: "integrateddynamics:nbt_as_byte_list",
       nicknames: ["nbtAsByteList"],
       parsedSignature: new ParsedSignature(
         {

@@ -7,9 +7,9 @@ export class OPERATOR_ARITHMETIC_MULTIPLICATION extends BaseOperator<
   TypeNumber,
   Operator<TypeNumber, TypeNumber>
 > {
+    static override internalName = "integrateddynamics:arithmetic_multiplication"
   constructor() {
     super({
-      internalName: "integrateddynamics:arithmetic_multiplication",
       nicknames: [
         "multiply",
         "arithmeticMultiplication",

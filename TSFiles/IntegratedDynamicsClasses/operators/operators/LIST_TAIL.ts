@@ -8,9 +8,9 @@ export class OPERATOR_LIST_TAIL extends BaseOperator<
   iArray<IntegratedValue>,
   iArray<IntegratedValue>
 > {
+    static override internalName = "integrateddynamics:list_tail"
   constructor() {
     super({
-      internalName: "integrateddynamics:list_tail",
       nicknames: ["listTail", "tail"],
       parsedSignature: new ParsedSignature(
         {

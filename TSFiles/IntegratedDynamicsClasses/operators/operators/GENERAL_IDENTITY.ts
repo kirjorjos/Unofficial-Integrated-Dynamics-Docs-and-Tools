@@ -6,9 +6,9 @@ export class OPERATOR_GENERAL_IDENTITY extends BaseOperator<
   IntegratedValue,
   IntegratedValue
 > {
+    static override internalName = "integrateddynamics:general_identity"
   constructor() {
     super({
-      internalName: "integrateddynamics:general_identity",
       nicknames: ["generalIdentity", "id", "identity", "anyIdentity"],
       parsedSignature: new ParsedSignature(
         {

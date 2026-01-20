@@ -10,9 +10,9 @@ export class OPERATOR_LIST_EQUALS_MULTISET extends BaseOperator<
   iArray<IntegratedValue>,
   Operator<iArray<IntegratedValue>, iBoolean>
 > {
+    static override internalName = "integrateddynamics:list_equals_multiset"
   constructor() {
     super({
-      internalName: "integrateddynamics:list_equals_multiset",
       nicknames: ["listEqualsMultiset", "equalsMultiset"],
       parsedSignature: new ParsedSignature(
         {

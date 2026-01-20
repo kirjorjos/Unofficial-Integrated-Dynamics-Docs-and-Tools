@@ -9,9 +9,9 @@ import { ListTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses
 import { Integer } from "JavaNumberClasses/Integer";
 
 export class OPERATOR_NBT_AS_INT_LIST extends BaseOperator<ListTag, Integer> {
+    static override internalName = "integrateddynamics:nbt_as_int_list"
   constructor() {
     super({
-      internalName: "integrateddynamics:nbt_as_int_list",
       nicknames: ["nbtAsIntList"],
       parsedSignature: new ParsedSignature(
         {

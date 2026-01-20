@@ -12,9 +12,9 @@ export class OPERATOR_OBJECT_FLUIDSTACK_WITH_DATA extends BaseOperator<
   Fluid,
   Operator<iString, Operator<CompoundTag, Fluid>>
 > {
+    static override internalName = "integrateddynamics:fluidstack_withdata"
   constructor() {
     super({
-      internalName: "integrateddynamics:fluidstack_withdata",
       nicknames: [
         "FluidstackWithData",
         "fluidstackWithData",

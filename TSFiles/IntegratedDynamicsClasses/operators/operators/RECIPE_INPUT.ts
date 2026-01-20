@@ -5,9 +5,9 @@ import { Recipe } from "IntegratedDynamicsClasses/Recipe";
 import { Ingredients } from "IntegratedDynamicsClasses/Ingredients";
 
 export class OPERATOR_RECIPE_INPUT extends BaseOperator<Recipe, Ingredients> {
+    static override internalName = "integrateddynamics:recipe_input"
   constructor() {
     super({
-      internalName: "integrateddynamics:recipe_input",
       nicknames: ["recipeInput", "recipeWithInput"],
       parsedSignature: new ParsedSignature(
         {

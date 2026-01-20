@@ -6,9 +6,9 @@ import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Tag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/Tag";
 
 export class OPERATOR_NBT_AS_BOOLEAN extends BaseOperator<ByteTag, iBoolean> {
+    static override internalName = "integrateddynamics:nbt_as_iBoolean"
   constructor() {
     super({
-      internalName: "integrateddynamics:nbt_as_iBoolean",
       nicknames: ["nbtAsBoolean"],
       parsedSignature: new ParsedSignature(
         {

@@ -1,11 +1,11 @@
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { ParsedSignature } from "../../HelperClasses/ParsedSignature";
-import { TypeMap } from "../../HelperClasses/TypeMap";
+import { globalMap, TypeMap } from "../../HelperClasses/TypeMap";
 
 export class Operator<I extends IntegratedValue, O extends IntegratedValue>
   implements IntegratedValue
 {
-  private fn: (arg: I) => IntegratedValue | TypeLambda<any, any>;
+  private fn: Function;
   private parsedSignature: ParsedSignature;
   private typeMap: TypeMap;
   readonly _output!: O;
@@ -16,7 +16,7 @@ export class Operator<I extends IntegratedValue, O extends IntegratedValue>
     function: fn,
   }: {
     parsedSignature: ParsedSignature;
-    function: TypeLambda<I, O>;
+    function: Function;
   }) {
     this.fn = fn;
     this.typeMap = parsedSignature.getTypeMap();
@@ -42,14 +42,15 @@ export class Operator<I extends IntegratedValue, O extends IntegratedValue>
     return result;
   }
 
-  apply(arg: I): O {
+  apply(arg: I, updateSignature = true): O {
     if (arg instanceof Operator && arg.varID === this.varID)
       throw new Error("Tried to apply operator to it's self");
-    this.typeMap.unify(
-      this.parsedSignature.getInput(0),
-      arg.getSignatureNode()
-    );
-    const parsedSignature = this.parsedSignature.apply(arg.getSignatureNode());
+    // this.typeMap.unify(
+    //   this.parsedSignature.getInput(0),
+    //   arg.getSignatureNode()
+    // );
+    let parsedSignature = this.parsedSignature;
+    if (updateSignature) parsedSignature = parsedSignature.apply(arg.getSignatureNode());
 
     let newOp = this.fn(arg);
     if (typeof newOp != "function") return newOp as O;
@@ -98,6 +99,24 @@ export class Operator<I extends IntegratedValue, O extends IntegratedValue>
     return new Operator<I, V>({
       parsedSignature: newSignature,
       function: newFn,
+    });
+  }
+
+  /**
+   * pipe2(arg1, arg2, arg3)
+   * @param op1 arg1
+   * @param op2 arg2
+   * @param this arg3
+   */
+  pipe2<V extends IntegratedValue>(op1: Operator<V, I>, op2: Operator<V, I>): IntegratedValue {
+    if (op1.varID === this.varID || op2.varID === this.varID) throw new Error("Tried to pipe an operator into it's self");
+    const newFn = (x: V): IntegratedValue => {
+      return (this.apply(op1.apply(x, false) as I, false) as unknown as Operator<IntegratedValue, IntegratedValue>).apply(op2.apply(x, false), false);
+    }
+    const parsedSignature = globalMap.rewrite(this.parsedSignature.getOutput())
+    return new Operator<V, IntegratedValue>({
+      function: newFn,
+      parsedSignature: new ParsedSignature(parsedSignature, globalMap)
     });
   }
 

@@ -11,9 +11,9 @@ export class OPERATOR_NBT_PATH_TEST extends BaseOperator<
   iString,
   Operator<CompoundTag, iBoolean>
 > {
+    static override internalName = "integrateddynamics:nbt_path_test"
   constructor() {
     super({
-      internalName: "integrateddynamics:nbt_path_test",
       nicknames: ["NBTPathTest"],
       parsedSignature: new ParsedSignature(
         {

@@ -10,9 +10,9 @@ export class OPERATOR_OBJECT_ITEMSTACK_STRENGTH_VS_BLOCK extends BaseOperator<
   Item,
   Operator<Block, Double>
 > {
+    static override internalName = "integrateddynamics:itemstack_strength"
   constructor() {
     super({
-      internalName: "integrateddynamics:itemstack_strength",
       nicknames: [
         "ItemstackStrengthVsBlock",
         "itemstack_strength_vs_block",

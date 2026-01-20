@@ -8,9 +8,9 @@ export class OPERATOR_STRING_CONCAT extends BaseOperator<
   iString,
   Operator<iString, iString>
 > {
+    static override internalName = "integrateddynamics:string_concat"
   constructor() {
     super({
-      internalName: "integrateddynamics:string_concat",
       nicknames: ["stringConcat"],
       parsedSignature: new ParsedSignature(
         {

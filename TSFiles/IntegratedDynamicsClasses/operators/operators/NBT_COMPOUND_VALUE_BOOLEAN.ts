@@ -12,9 +12,9 @@ export class OPERATOR_NBT_COMPOUND_VALUE_BOOLEAN extends BaseOperator<
   CompoundTag,
   Operator<iString, iBoolean>
 > {
+    static override internalName = "integrateddynamics:nbt_compound_value_iBoolean"
   constructor() {
     super({
-      internalName: "integrateddynamics:nbt_compound_value_iBoolean",
       nicknames: ["nbtCompoundValueBoolean", "compoundValueBoolean"],
       parsedSignature: new ParsedSignature(
         {

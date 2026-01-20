@@ -7,9 +7,9 @@ export class OPERATOR_BINARY_LSHIFT extends BaseOperator<
   Integer,
   Operator<Integer, Integer>
 > {
+    static override internalName = "integrateddynamics:binary_lshift"
   constructor() {
     super({
-      internalName: "integrateddynamics:binary_lshift",
       nicknames: ["<<", "binaryLshift", "integerLeftShift"],
       parsedSignature: new ParsedSignature(
         {

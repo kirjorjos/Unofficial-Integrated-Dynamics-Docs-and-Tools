@@ -1,11 +1,11 @@
+import { ParsedSignature } from "./ParsedSignature";
+
 export class TypeMap {
   private static maxVarID = 0;
 
   getNewVarID(): number {
     return TypeMap.maxVarID++;
   }
-
-  private static NUMBER_TYPES = ["Integer", "Long", "Double", "Number"];
 
   aliases: Map<number, number | TypeRawSignatureAST.RawSignatureDefiniteValue>;
   constructor() {
@@ -21,15 +21,17 @@ export class TypeMap {
     return typeID;
   }
 
+  /**
+   * Sets a and b to be equal in the alias map
+   * @param a The first node
+   * @param b The second node
+   */
   unify(
     a: TypeRawSignatureAST.RawSignatureNode,
     b: TypeRawSignatureAST.RawSignatureNode
   ): void {
     TypeMap.validateNode(a);
     TypeMap.validateNode(b);
-
-    a = this.resolve(a);
-    b = this.resolve(b);
 
     if (a.type === "Function" && b.type === "Function") {
       this.unify(a.from, b.from);
@@ -73,8 +75,7 @@ export class TypeMap {
     }
 
     if (
-      TypeMap.NUMBER_TYPES.includes(a.type) &&
-      TypeMap.NUMBER_TYPES.includes(b.type)
+      ParsedSignature.typeEquals(a, b)
     )
       return;
 
@@ -102,6 +103,11 @@ export class TypeMap {
     return;
   }
 
+  /**
+   * Uses the current alias map to solidfy "Any" types
+   * @param node The node to solifidy
+   * @returns A new solified node
+   */
   rewrite(
     node: TypeRawSignatureAST.RawSignatureNode
   ): TypeRawSignatureAST.RawSignatureNode {

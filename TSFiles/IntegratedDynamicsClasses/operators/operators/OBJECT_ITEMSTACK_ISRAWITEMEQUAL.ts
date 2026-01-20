@@ -9,9 +9,9 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISRAWITEMEQUAL extends BaseOperator<
   Item,
   Operator<Item, iBoolean>
 > {
+    static override internalName = "integrateddynamics:itemstack_israwitemequal"
   constructor() {
     super({
-      internalName: "integrateddynamics:itemstack_israwitemequal",
       nicknames: [
         "ItemstackIsrawitemequal",
         "itemstack_is_rawitemequal",

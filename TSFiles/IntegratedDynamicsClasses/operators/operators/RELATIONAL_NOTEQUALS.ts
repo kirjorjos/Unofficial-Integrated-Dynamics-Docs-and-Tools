@@ -8,9 +8,9 @@ export class OPERATOR_RELATIONAL_NOTEQUALS extends BaseOperator<
   IntegratedValue,
   Operator<IntegratedValue, iBoolean>
 > {
+    static override internalName = "integrateddynamics:relational_notequals"
   constructor() {
     super({
-      internalName: "integrateddynamics:relational_notequals",
       nicknames: ["relationalNotequals", "!="],
       parsedSignature: new ParsedSignature(
         {

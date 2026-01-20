@@ -6,9 +6,9 @@ import { Block } from "IntegratedDynamicsClasses/Block";
 import { Properties } from "IntegratedDynamicsClasses/Properties";
 
 export class OPERATOR_OBJECT_ITEMSTACK_BLOCK extends BaseOperator<Item, Block> {
+    static override internalName = "integrateddynamics:itemstack_block"
   constructor() {
     super({
-      internalName: "integrateddynamics:itemstack_block",
       nicknames: [
         "ItemstackBlock",
         "itemstack_block",

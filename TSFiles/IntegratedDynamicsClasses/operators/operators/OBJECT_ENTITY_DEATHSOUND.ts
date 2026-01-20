@@ -8,9 +8,9 @@ export class OPERATOR_OBJECT_ENTITY_DEATHSOUND extends BaseOperator<
   Entity,
   iString
 > {
+    static override internalName = "integrateddynamics:entity_deathsound"
   constructor() {
     super({
-      internalName: "integrateddynamics:entity_deathsound",
       nicknames: ["entityDeathSound", "EntityDeathsound", "entity_death_sound"],
       parsedSignature: new ParsedSignature(
         {

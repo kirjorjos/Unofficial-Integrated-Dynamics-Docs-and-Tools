@@ -7,9 +7,9 @@ export class OPERATOR_STRING_ERROR extends BaseOperator<
   iString,
   IntegratedValue
 > {
+    static override internalName = "integrateddynamics:string_string_error"
   constructor() {
     super({
-      internalName: "integrateddynamics:string_string_error",
       nicknames: ["error", "string_error"],
       parsedSignature: new ParsedSignature(
         {

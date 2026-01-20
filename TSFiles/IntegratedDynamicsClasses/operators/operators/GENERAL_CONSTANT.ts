@@ -7,9 +7,9 @@ export class OPERATOR_GENERAL_CONSTANT extends BaseOperator<
   IntegratedValue,
   Operator<IntegratedValue, IntegratedValue>
 > {
+    static override internalName = "integrateddynamics:general_constant"
   constructor() {
     super({
-      internalName: "integrateddynamics:general_constant",
       nicknames: ["generalConstant", "const", "constant", "anyConstant", "K"],
       parsedSignature: new ParsedSignature(
         {

@@ -8,9 +8,9 @@ export class OPERATOR_OBJECT_ITEMFRAME_CONTENTS extends BaseOperator<
   Entity,
   Item
 > {
+    static override internalName = "integrateddynamics:entity_itemframecontents"
   constructor() {
     super({
-      internalName: "integrateddynamics:entity_itemframecontents",
       nicknames: [
         "ItemframeContents",
         "itemframe_contents",

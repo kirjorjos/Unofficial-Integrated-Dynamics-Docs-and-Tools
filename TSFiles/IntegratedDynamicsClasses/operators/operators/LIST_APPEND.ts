@@ -8,9 +8,9 @@ export class OPERATOR_LIST_APPEND extends BaseOperator<
   iArray<IntegratedValue>,
   Operator<IntegratedValue, iArray<IntegratedValue>>
 > {
+    static override internalName = "integrateddynamics:list_append"
   constructor() {
     super({
-      internalName: "integrateddynamics:list_append",
       nicknames: ["listAppend", "append"],
       parsedSignature: new ParsedSignature(
         {
@@ -30,6 +30,9 @@ export class OPERATOR_LIST_APPEND extends BaseOperator<
         list: iArray<IntegratedValue>
       ): TypeLambda<IntegratedValue, iArray<IntegratedValue>> => {
         return (element: IntegratedValue): iArray<IntegratedValue> => {
+          const listType = list.getSignatureNode().listType.type;
+          const elementType = element.getSignatureNode().type;
+          if (listType !== elementType) throw new Error(`Can't add ${elementType} to ${listType}[]`);
           return list.append(element);
         };
       },

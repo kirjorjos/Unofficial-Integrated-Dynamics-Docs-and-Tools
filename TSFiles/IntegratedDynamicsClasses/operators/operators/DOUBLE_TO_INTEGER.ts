@@ -3,10 +3,9 @@ import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 
 export class OPERATOR_DOUBLE_TO_INTEGER extends BaseOperator<Double, Integer> {
+    static override internalName = "integrateddynamics:operator.integrateddynamics.castintegrateddynamics_double__integrateddynamics_integer"
   constructor() {
     super({
-      internalName:
-        "integrateddynamics:operator.integrateddynamics.castintegrateddynamics_double__integrateddynamics_integer",
       nicknames: ["doubleToInt", "doubleInteger"],
       parsedSignature: new ParsedSignature(
         {

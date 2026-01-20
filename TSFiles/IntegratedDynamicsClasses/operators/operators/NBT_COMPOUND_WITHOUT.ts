@@ -9,9 +9,9 @@ export class OPERATOR_NBT_COMPOUND_WITHOUT extends BaseOperator<
   CompoundTag,
   Operator<iString, CompoundTag>
 > {
+    static override internalName = "integrateddynamics:nbt_compound_without"
   constructor() {
     super({
-      internalName: "integrateddynamics:nbt_compound_without",
       nicknames: ["nbtCompoundWithout", "NBTWithout"],
       parsedSignature: new ParsedSignature(
         {

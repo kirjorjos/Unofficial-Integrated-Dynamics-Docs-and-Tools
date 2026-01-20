@@ -8,9 +8,9 @@ export class OPERATOR_OBJECT_FLUIDSTACK_VISCOSITY extends BaseOperator<
   Fluid,
   Integer
 > {
+    static override internalName = "integrateddynamics:fluidstack_viscosity"
   constructor() {
     super({
-      internalName: "integrateddynamics:fluidstack_viscosity",
       nicknames: [
         "FluidstackViscosity",
         "fluidstackViscosity",

@@ -12,9 +12,9 @@ export class OPERATOR_NBT_AS_LONG_LIST extends BaseOperator<
   ListTag,
   iArray<Long>
 > {
+    static override internalName = "integrateddynamics:nbt_as_long_list"
   constructor() {
     super({
-      internalName: "integrateddynamics:nbt_as_long_list",
       nicknames: ["nbtAsLongList"],
       parsedSignature: new ParsedSignature(
         {

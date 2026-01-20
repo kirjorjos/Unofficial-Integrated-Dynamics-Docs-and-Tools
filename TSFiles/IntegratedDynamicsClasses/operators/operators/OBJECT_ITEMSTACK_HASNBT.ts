@@ -9,9 +9,9 @@ export class OPERATOR_OBJECT_ITEMSTACK_HASNBT extends BaseOperator<
   Item,
   iBoolean
 > {
+    static override internalName = "integrateddynamics:itemstack_hasnbt"
   constructor() {
     super({
-      internalName: "integrateddynamics:itemstack_hasnbt",
       nicknames: [
         "ItemstackHasnbt",
         "itemstack_has_nbt",

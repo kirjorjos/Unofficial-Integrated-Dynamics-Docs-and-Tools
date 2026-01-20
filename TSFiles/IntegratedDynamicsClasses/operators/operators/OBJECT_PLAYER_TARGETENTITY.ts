@@ -7,9 +7,9 @@ export class OPERATOR_OBJECT_PLAYER_TARGETENTITY extends BaseOperator<
   Entity,
   Entity
 > {
+    static override internalName = "integrateddynamics:entity_targetentity"
   constructor() {
     super({
-      internalName: "integrateddynamics:entity_targetentity",
       nicknames: [
         "EntityTargetentity",
         "entity_target_entity",

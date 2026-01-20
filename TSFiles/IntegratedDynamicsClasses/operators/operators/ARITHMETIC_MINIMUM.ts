@@ -7,9 +7,9 @@ export class OPERATOR_ARITHMETIC_MINIMUM extends BaseOperator<
   TypeNumber,
   Operator<TypeNumber, TypeNumber>
 > {
+    static override internalName = "integrateddynamics:arithmetic_minimum"
   constructor() {
     super({
-      internalName: "integrateddynamics:arithmetic_minimum",
       nicknames: ["min", "arithmeticMinimum", "numberMin"],
       parsedSignature: new ParsedSignature(
         {

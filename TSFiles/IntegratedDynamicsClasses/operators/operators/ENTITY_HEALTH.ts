@@ -3,9 +3,9 @@ import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 
 export class OPERATOR_ENTITY_HEALTH extends BaseOperator<Entity, Double> {
+    static override internalName = "integrateddynamics:entity_health"
   constructor() {
     super({
-      internalName: "integrateddynamics:entity_health",
       nicknames: [
         "EntityHealth",
         "entity_health",

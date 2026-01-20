@@ -10,9 +10,9 @@ export class OPERATOR_STRING_REGEX_GROUP extends BaseOperator<
   iString,
   Operator<Integer, Operator<iString, iString>>
 > {
+    static override internalName = "integrateddynamics:string_regex_group"
   constructor() {
     super({
-      internalName: "integrateddynamics:string_regex_group",
       nicknames: ["stringRegexGroup"],
       parsedSignature: new ParsedSignature(
         {

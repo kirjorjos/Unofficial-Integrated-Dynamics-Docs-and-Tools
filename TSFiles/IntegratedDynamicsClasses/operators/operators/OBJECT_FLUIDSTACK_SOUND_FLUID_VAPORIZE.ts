@@ -8,9 +8,9 @@ export class OPERATOR_OBJECT_FLUIDSTACK_SOUND_FLUID_VAPORIZE extends BaseOperato
   Fluid,
   iString
 > {
+    static override internalName = "integrateddynamics:fluidstack_sound_fluid_vaporize"
   constructor() {
     super({
-      internalName: "integrateddynamics:fluidstack_sound_fluid_vaporize",
       nicknames: [
         "FluidstackSoundFluidVaporize",
         "fluidstackSoundFluidVaporize",

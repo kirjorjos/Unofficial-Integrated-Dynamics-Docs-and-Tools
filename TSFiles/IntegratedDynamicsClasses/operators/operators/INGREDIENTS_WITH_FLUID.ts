@@ -8,9 +8,9 @@ export class OPERATOR_INGREDIENTS_WITH_FLUID extends BaseOperator<
   Ingredients,
   Operator<Integer, Operator<Fluid, Ingredients>>
 > {
+    static override internalName = "integrateddynamics:ingredients_with_fluid"
   constructor() {
     super({
-      internalName: "integrateddynamics:ingredients_with_fluid",
       nicknames: ["ingredientsWithFluid", "Ingr.with_fluid"],
       parsedSignature: new ParsedSignature(
         {

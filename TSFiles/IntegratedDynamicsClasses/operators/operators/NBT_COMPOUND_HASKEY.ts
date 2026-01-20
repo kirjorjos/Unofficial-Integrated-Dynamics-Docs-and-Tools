@@ -10,9 +10,9 @@ export class OPERATOR_NBT_COMPOUND_HASKEY extends BaseOperator<
   CompoundTag,
   Operator<iString, iBoolean>
 > {
+    static override internalName = "integrateddynamics:nbt_compound_haskey"
   constructor() {
     super({
-      internalName: "integrateddynamics:nbt_compound_haskey",
       nicknames: ["nbtCompoundHaskey", "NBTHasKey"],
       parsedSignature: new ParsedSignature(
         {

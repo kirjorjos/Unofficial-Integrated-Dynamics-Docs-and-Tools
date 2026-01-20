@@ -8,9 +8,9 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISSTACKABLE extends BaseOperator<
   Item,
   iBoolean
 > {
+    static override internalName = "integrateddynamics:itemstack_stackable"
   constructor() {
     super({
-      internalName: "integrateddynamics:itemstack_stackable",
       nicknames: [
         "ItemstackIsstackable",
         "itemstack_is_stackable",

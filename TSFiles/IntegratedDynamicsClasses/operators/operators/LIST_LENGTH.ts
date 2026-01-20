@@ -7,9 +7,9 @@ export class OPERATOR_LIST_LENGTH extends BaseOperator<
   iArray<IntegratedValue>,
   Integer
 > {
+    static override internalName = "integrateddynamics:list_length"
   constructor() {
     super({
-      internalName: "integrateddynamics:list_length",
       nicknames: ["listLength"],
       parsedSignature: new ParsedSignature(
         {

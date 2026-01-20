@@ -9,9 +9,9 @@ export class OPERATOR_STRING_STARTS_WITH extends BaseOperator<
   iString,
   Operator<iString, iBoolean>
 > {
+    static override internalName = "integrateddynamics:string_starts_with"
   constructor() {
     super({
-      internalName: "integrateddynamics:string_starts_with",
       nicknames: ["startsWith", "stringStartsWith"],
       parsedSignature: new ParsedSignature(
         {

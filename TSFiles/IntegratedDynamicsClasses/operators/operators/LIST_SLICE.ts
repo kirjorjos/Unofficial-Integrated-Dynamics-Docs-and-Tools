@@ -10,9 +10,9 @@ export class OPERATOR_LIST_SLICE extends BaseOperator<
   iArray<IntegratedValue>,
   Operator<Integer, Operator<Integer, iArrayEager<IntegratedValue>>>
 > {
+    static override internalName = "integrateddynamics:list_slice"
   constructor() {
     super({
-      internalName: "integrateddynamics:list_slice",
       nicknames: ["listSlice", "slice"],
       parsedSignature: new ParsedSignature(
         {

@@ -9,9 +9,9 @@ export class OPERATOR_LIST_INTERSECTION extends BaseOperator<
   iArray<IntegratedValue>,
   Operator<iArray<IntegratedValue>, iArray<IntegratedValue>>
 > {
+    static override internalName = "integrateddynamics:list_intersection"
   constructor() {
     super({
-      internalName: "integrateddynamics:list_intersection",
       nicknames: ["listIntersection", "intersection"],
       parsedSignature: new ParsedSignature(
         {

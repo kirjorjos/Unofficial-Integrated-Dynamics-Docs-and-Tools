@@ -3,9 +3,9 @@ import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 
 export class OPERATOR_ENTITY_HELDITEM extends BaseOperator<Entity, Item> {
+    static override internalName = "integrateddynamics:entity_helditem"
   constructor() {
     super({
-      internalName: "integrateddynamics:entity_helditem",
       nicknames: [
         "EntityHelditemMain",
         "entity_held_item_main",

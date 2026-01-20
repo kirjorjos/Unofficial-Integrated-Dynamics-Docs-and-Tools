@@ -8,9 +8,9 @@ export class OPERATOR_OPERATOR_APPLY_N extends BaseOperator<
   Operator<IntegratedValue, IntegratedValue>,
   Operator<iArray<IntegratedValue>, IntegratedValue>
 > {
+    static override internalName = "integrateddynamics:operator_apply_n"
   constructor() {
     super({
-      internalName: "integrateddynamics:operator_apply_n",
       nicknames: ["operatorApplyN", "applyn", "applyN"],
       parsedSignature: new ParsedSignature(
         {

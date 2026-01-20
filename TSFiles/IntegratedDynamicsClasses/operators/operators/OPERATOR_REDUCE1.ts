@@ -5,9 +5,9 @@ import { globalMap } from "HelperClasses/TypeMap";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 
 export class OPERATOR_OPERATOR_REDUCE1 extends BaseOperator<any, any> {
+    static override internalName = "integrateddynamics:operator_reduce1"
   constructor() {
     super({
-      internalName: "integrateddynamics:operator_reduce1",
       nicknames: ["operatorReduce1", "reduce1"],
       parsedSignature: new ParsedSignature(
         {
@@ -46,7 +46,7 @@ export class OPERATOR_OPERATOR_REDUCE1 extends BaseOperator<any, any> {
         return (list: iArray<IntegratedValue>): IntegratedValue => {
           return list
             .valueOf()
-            .reduce((acc, current) => op.apply(acc).apply(current));
+            .reduce((acc, current) => op.apply(acc, false).apply(current, false));
         };
       },
     });

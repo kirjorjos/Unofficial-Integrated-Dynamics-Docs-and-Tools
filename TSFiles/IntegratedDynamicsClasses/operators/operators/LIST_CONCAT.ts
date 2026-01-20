@@ -8,9 +8,9 @@ export class OPERATOR_LIST_CONCAT extends BaseOperator<
   iArray<IntegratedValue>,
   Operator<iArray<IntegratedValue>, iArray<IntegratedValue>>
 > {
+    static override internalName = "integrateddynamics:list_concat"
   constructor() {
     super({
-      internalName: "integrateddynamics:list_concat",
       nicknames: ["listConcat", "concat"],
       parsedSignature: new ParsedSignature(
         {

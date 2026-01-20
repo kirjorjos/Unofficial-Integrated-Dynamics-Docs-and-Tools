@@ -3,9 +3,9 @@ import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 
 export class OPERATOR_ENTITY_WIDTH extends BaseOperator<Entity, Double> {
+    static override internalName = "integrateddynamics:entity_width"
   constructor() {
     super({
-      internalName: "integrateddynamics:entity_width",
       nicknames: ["EntityWidth", "entity_width", "entityWidth", "width"],
       parsedSignature: new ParsedSignature(
         {

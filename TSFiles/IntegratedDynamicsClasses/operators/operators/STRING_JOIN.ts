@@ -9,9 +9,9 @@ export class OPERATOR_STRING_JOIN extends BaseOperator<
   iString,
   Operator<iArray<iString>, iString>
 > {
+    static override internalName = "integrateddynamics:string_join"
   constructor() {
     super({
-      internalName: "integrateddynamics:string_join",
       nicknames: ["stringJoin"],
       parsedSignature: new ParsedSignature(
         {

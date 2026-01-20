@@ -7,9 +7,9 @@ import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 
 export class OPERATOR_ITEMSTACK_DATAVALUE extends BaseOperator<Item, iBoolean> {
+    static override internalName = "integrateddynamics:itemstack_datavalue"
   constructor() {
     super({
-      internalName: "integrateddynamics:itemstack_datavalue",
       nicknames: [
         "ItemstackDataValue",
         "itemstack_data_value",

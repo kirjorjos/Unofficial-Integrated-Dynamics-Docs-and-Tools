@@ -10,9 +10,9 @@ export class OPERATOR_OBJECT_BLOCK_WITH_PROPERTIES extends BaseOperator<
   Block,
   Operator<CompoundTag, Block>
 > {
+    static override internalName = "integrateddynamics:block_blockfromproperties"
   constructor() {
     super({
-      internalName: "integrateddynamics:block_blockfromproperties",
       nicknames: [
         "BlockWithProperties",
         "block_with_properties",

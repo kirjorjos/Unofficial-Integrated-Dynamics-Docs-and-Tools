@@ -7,9 +7,9 @@ export class OPERATOR_OPERATOR_FLIP extends BaseOperator<
   Operator<IntegratedValue, Operator<IntegratedValue, IntegratedValue>>,
   Operator<IntegratedValue, Operator<IntegratedValue, IntegratedValue>>
 > {
+    static override internalName = "integrateddynamics:operator_flip"
   constructor() {
     super({
-      internalName: "integrateddynamics:operator_flip",
       nicknames: ["operatorFlip", "flip"],
       parsedSignature: new ParsedSignature(
         {

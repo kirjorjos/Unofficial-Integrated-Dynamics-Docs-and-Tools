@@ -7,9 +7,9 @@ export class OPERATOR_ARITHMETIC_MAXIMUM extends BaseOperator<
   TypeNumber,
   Operator<TypeNumber, TypeNumber>
 > {
+    static override internalName = "integrateddynamics:arithmetic_maximum"
   constructor() {
     super({
-      internalName: "integrateddynamics:arithmetic_maximum",
       nicknames: ["max", "arithmeticMaximum", "max", "numberMax"],
       parsedSignature: new ParsedSignature(
         {

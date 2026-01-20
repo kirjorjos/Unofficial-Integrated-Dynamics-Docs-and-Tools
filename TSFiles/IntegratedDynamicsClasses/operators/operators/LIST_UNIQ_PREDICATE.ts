@@ -13,9 +13,9 @@ export class OPERATOR_LIST_UNIQ_PREDICATE extends BaseOperator<
     iArray<IntegratedValue>
   >
 > {
+    static override internalName = "integrateddynamics:list_uniq_p"
   constructor() {
     super({
-      internalName: "integrateddynamics:list_uniq_p",
       nicknames: ["listUniqPredicate", "uniq_p", "list_uniq_p"],
       parsedSignature: new ParsedSignature(
         {

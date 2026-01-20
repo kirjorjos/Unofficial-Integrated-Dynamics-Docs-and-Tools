@@ -6,9 +6,9 @@ export class OPERATOR_ENTITY_HELDITEMOFFHAND extends BaseOperator<
   Entity,
   Item
 > {
+    static override internalName = "integrateddynamics:entity_helditemoffhand"
   constructor() {
     super({
-      internalName: "integrateddynamics:entity_helditemoffhand",
       nicknames: [
         "EntityHelditemOff",
         "entity_held_item_off",

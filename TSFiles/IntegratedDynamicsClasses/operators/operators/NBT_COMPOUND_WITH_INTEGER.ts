@@ -11,9 +11,9 @@ export class OPERATOR_NBT_COMPOUND_WITH_INTEGER extends BaseOperator<
   CompoundTag,
   Operator<iString, Operator<Integer, CompoundTag>>
 > {
+    static override internalName = "integrateddynamics:nbt_compound_with_integer"
   constructor() {
     super({
-      internalName: "integrateddynamics:nbt_compound_with_integer",
       nicknames: ["nbtCompoundWithInteger", "NBTWithInteger"],
       parsedSignature: new ParsedSignature(
         {

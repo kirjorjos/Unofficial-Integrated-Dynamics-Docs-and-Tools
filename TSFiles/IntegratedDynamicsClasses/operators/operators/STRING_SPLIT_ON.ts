@@ -10,9 +10,9 @@ export class OPERATOR_STRING_SPLIT_ON extends BaseOperator<
   iString,
   Operator<iString, iArray<iString>>
 > {
+    static override internalName = "integrateddynamics:string_split_on"
   constructor() {
     super({
-      internalName: "integrateddynamics:string_split_on",
       nicknames: ["stringSplitOn"],
       parsedSignature: new ParsedSignature(
         {

@@ -11,9 +11,9 @@ export class OPERATOR_ITEMSTACK_WITHDATA extends BaseOperator<
   Item,
   Operator<iString, Operator<CompoundTag, Item>>
 > {
+    static override internalName = "integrateddynamics:itemstack_withdata"
   constructor() {
     super({
-      internalName: "integrateddynamics:itemstack_withdata",
       nicknames: [
         "ItemstackWithData",
         "itemstack_with_data",

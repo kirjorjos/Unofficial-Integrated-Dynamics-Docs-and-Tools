@@ -7,9 +7,9 @@ export class OPERATOR_BINARY_XOR extends BaseOperator<
   Integer,
   Operator<Integer, Integer>
 > {
+    static override internalName = "integrateddynamics:binary_xor"
   constructor() {
     super({
-      internalName: "integrateddynamics:binary_xor",
       nicknames: ["binaryXor", "^", "integerXor"],
       parsedSignature: new ParsedSignature(
         {

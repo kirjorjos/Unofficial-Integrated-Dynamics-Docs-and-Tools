@@ -8,9 +8,9 @@ export class OPERATOR_NBT_COMPOUND_SIZE extends BaseOperator<
   CompoundTag,
   Integer
 > {
+    static override internalName = "integrateddynamics:nbt_compound_size"
   constructor() {
     super({
-      internalName: "integrateddynamics:nbt_compound_size",
       nicknames: ["nbtCompoundSize", "NBTSize"],
       parsedSignature: new ParsedSignature(
         {

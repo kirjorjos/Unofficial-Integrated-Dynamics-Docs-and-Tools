@@ -8,9 +8,9 @@ export class OPERATOR_LOGICAL_OR extends BaseOperator<
   iBoolean,
   Operator<iBoolean, iBoolean>
 > {
+    static override internalName = "integrateddynamics:logical_or"
   constructor() {
     super({
-      internalName: "integrateddynamics:logical_or",
       nicknames: ["or", "logicalOr"],
       parsedSignature: new ParsedSignature(
         {

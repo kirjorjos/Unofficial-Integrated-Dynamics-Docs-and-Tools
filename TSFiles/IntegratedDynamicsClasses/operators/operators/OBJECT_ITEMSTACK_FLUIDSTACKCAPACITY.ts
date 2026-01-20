@@ -8,9 +8,9 @@ export class OPERATOR_OBJECT_ITEMSTACK_FLUIDSTACKCAPACITY extends BaseOperator<
   Item,
   Integer
 > {
+    static override internalName = "integrateddynamics:itemstack_fluidstackcapacity"
   constructor() {
     super({
-      internalName: "integrateddynamics:itemstack_fluidstackcapacity",
       nicknames: [
         "ItemstackFluidstackcapacity",
         "itemstack_fluidstack_capacity",

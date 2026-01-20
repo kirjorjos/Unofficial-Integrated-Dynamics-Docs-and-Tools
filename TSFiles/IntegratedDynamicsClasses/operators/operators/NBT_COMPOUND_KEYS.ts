@@ -9,9 +9,9 @@ export class OPERATOR_NBT_COMPOUND_KEYS extends BaseOperator<
   CompoundTag,
   iArray<iString>
 > {
+    static override internalName = "integrateddynamics:nbt_compound_keys"
   constructor() {
     super({
-      internalName: "integrateddynamics:nbt_compound_keys",
       nicknames: ["nbtCompoundKeys", "NBTKeys"],
       parsedSignature: new ParsedSignature(
         {

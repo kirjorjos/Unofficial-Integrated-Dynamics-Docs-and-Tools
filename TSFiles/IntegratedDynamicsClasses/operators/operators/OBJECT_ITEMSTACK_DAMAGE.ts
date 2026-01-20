@@ -8,9 +8,9 @@ export class OPERATOR_OBJECT_ITEMSTACK_DAMAGE extends BaseOperator<
   Item,
   Integer
 > {
+    static override internalName = "integrateddynamics:itemstack_damage"
   constructor() {
     super({
-      internalName: "integrateddynamics:itemstack_damage",
       nicknames: [
         "ItemstackDamage",
         "itemstack_damage",

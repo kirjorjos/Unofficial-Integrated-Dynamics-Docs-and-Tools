@@ -9,9 +9,9 @@ export class OPERATOR_NBT_FROM_INT_LIST extends BaseOperator<
   iArray<Integer>,
   IntArrayTag
 > {
+    static override internalName = "integrateddynamics:nbt_from_int_list"
   constructor() {
     super({
-      internalName: "integrateddynamics:nbt_from_int_list",
       nicknames: ["nbtFromIntList"],
       parsedSignature: new ParsedSignature(
         {

@@ -9,9 +9,9 @@ export class OPERATOR_OBJECT_FLUIDSTACK_ISRAWFLUIDEQUAL extends BaseOperator<
   Fluid,
   Operator<Fluid, iBoolean>
 > {
+    static override internalName = "integrateddynamics:fluidstack_israwfluidequal"
   constructor() {
     super({
-      internalName: "integrateddynamics:fluidstack_israwfluidequal",
       nicknames: [
         "FluidstackIsrawfluidequal",
         "fluidstackIsrawfluidequal",

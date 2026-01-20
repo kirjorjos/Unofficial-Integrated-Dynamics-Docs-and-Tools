@@ -8,9 +8,9 @@ export class OPERATOR_OBJECT_ENTITY_ISCROUCHING extends BaseOperator<
   Entity,
   iBoolean
 > {
+    static override internalName = "integrateddynamics:entity_iscrouching"
   constructor() {
     super({
-      internalName: "integrateddynamics:entity_iscrouching",
       nicknames: [
         "EntityIscrouching",
         "entity_is_crouching",

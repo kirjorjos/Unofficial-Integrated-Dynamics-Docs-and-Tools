@@ -8,9 +8,9 @@ export class OPERATOR_GENERAL_CHOICE extends BaseOperator<
   iBoolean,
   Operator<IntegratedValue, Operator<IntegratedValue, IntegratedValue>>
 > {
+    static override internalName = "integrateddynamics:general_choice"
   constructor() {
     super({
-      internalName: "integrateddynamics:general_choice",
       nicknames: [
         "generalChoice",
         "choice",
@@ -59,6 +59,9 @@ export class OPERATOR_GENERAL_CHOICE extends BaseOperator<
           trueValue: IntegratedValue
         ): TypeLambda<IntegratedValue, IntegratedValue> => {
           return (falseValue: IntegratedValue): IntegratedValue => {
+            const trueValueNode = trueValue.getSignatureNode();
+            const falseValueNode = falseValue.getSignatureNode();
+            if (!ParsedSignature.typeEquals(trueValueNode, falseValueNode)) throw new Error(`Choice trueValue and falseValue must be the same type. Got ${trueValueNode.type} and ${falseValueNode.type}`);
             return bool.valueOf() ? trueValue : falseValue;
           };
         };

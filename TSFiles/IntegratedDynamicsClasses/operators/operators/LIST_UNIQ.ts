@@ -8,9 +8,9 @@ export class OPERATOR_LIST_UNIQ extends BaseOperator<
   iArray<IntegratedValue>,
   Operator<IntegratedValue, iArray<IntegratedValue>>
 > {
+    static override internalName = "integrateddynamics:list_uniq"
   constructor() {
     super({
-      internalName: "integrateddynamics:list_uniq",
       nicknames: ["listUniq"],
       parsedSignature: new ParsedSignature(
         {

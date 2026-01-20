@@ -8,9 +8,9 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISENCHANTED extends BaseOperator<
   Item,
   iBoolean
 > {
+    static override internalName = "integrateddynamics:itemstack_enchanted"
   constructor() {
     super({
-      internalName: "integrateddynamics:itemstack_enchanted",
       nicknames: [
         "ItemstackIsenchanted",
         "itemstack_is_enchanted",

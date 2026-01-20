@@ -9,9 +9,9 @@ export class OPERATOR_STRING_SUBSTRING extends BaseOperator<
   Integer,
   Operator<Integer, Operator<iString, iString>>
 > {
+    static override internalName = "integrateddynamics:string_substring"
   constructor() {
     super({
-      internalName: "integrateddynamics:string_substring",
       nicknames: ["substring", "stringSubstring"],
       parsedSignature: new ParsedSignature(
         {

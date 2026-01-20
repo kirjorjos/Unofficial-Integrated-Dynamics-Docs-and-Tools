@@ -9,9 +9,9 @@ export class OPERATOR_NBT_COMPOUND_SUBSET extends BaseOperator<
   CompoundTag,
   Operator<CompoundTag, iBoolean>
 > {
+    static override internalName = "integrateddynamics:nbt_compound_subset"
   constructor() {
     super({
-      internalName: "integrateddynamics:nbt_compound_subset",
       nicknames: ["nbtCompoundSubset", "NBTSubset"],
       parsedSignature: new ParsedSignature(
         {

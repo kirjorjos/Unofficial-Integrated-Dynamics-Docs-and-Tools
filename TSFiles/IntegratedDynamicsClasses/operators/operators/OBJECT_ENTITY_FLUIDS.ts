@@ -10,9 +10,9 @@ export class OPERATOR_OBJECT_ENTITY_FLUIDS extends BaseOperator<
   Entity,
   iArray<Fluid>
 > {
+    static override internalName = "integrateddynamics:entity_entityfluids"
   constructor() {
     super({
-      internalName: "integrateddynamics:entity_entityfluids",
       nicknames: ["EntityFluids", "entity_fluids", "entityFluids"],
       parsedSignature: new ParsedSignature(
         {

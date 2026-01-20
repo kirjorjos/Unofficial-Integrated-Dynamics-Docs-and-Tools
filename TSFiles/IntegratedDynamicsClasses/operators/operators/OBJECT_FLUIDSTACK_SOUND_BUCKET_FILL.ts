@@ -8,9 +8,9 @@ export class OPERATOR_OBJECT_FLUIDSTACK_SOUND_BUCKET_FILL extends BaseOperator<
   Fluid,
   iString
 > {
+    static override internalName = "integrateddynamics:fluidstack_sound_bucket_fill"
   constructor() {
     super({
-      internalName: "integrateddynamics:fluidstack_sound_bucket_fill",
       nicknames: [
         "FluidstackSoundBucketFill",
         "fluidstackSoundBucketFill",

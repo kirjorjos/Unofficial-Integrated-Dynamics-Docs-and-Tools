@@ -6,9 +6,9 @@ import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 import { Item } from "IntegratedDynamicsClasses/Item";
 
 export class OPERATOR_STRING_TAG extends BaseOperator<iString, iArray<Item>> {
+    static override internalName = "integrateddynamics:string_tag"
   constructor() {
     super({
-      internalName: "integrateddynamics:string_tag",
       nicknames: [
         "ItemstackTagStacks",
         "itemstack_tag_values",

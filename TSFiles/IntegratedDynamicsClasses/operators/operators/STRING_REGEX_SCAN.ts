@@ -12,9 +12,9 @@ export class OPERATOR_STRING_REGEX_SCAN extends BaseOperator<
   iString,
   Operator<Integer, Operator<iString, iArray<iString>>>
 > {
+    static override internalName = "integrateddynamics:string_regex_scan"
   constructor() {
     super({
-      internalName: "integrateddynamics:string_regex_scan",
       nicknames: ["stringRegexScan"],
       parsedSignature: new ParsedSignature(
         {

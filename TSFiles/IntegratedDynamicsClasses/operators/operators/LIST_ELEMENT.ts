@@ -9,9 +9,9 @@ export class OPERATOR_LIST_ELEMENT extends BaseOperator<
   iArray<IntegratedValue>,
   Operator<Integer, IntegratedValue>
 > {
+    static override internalName = "integrateddynamics:list_get"
   constructor() {
     super({
-      internalName: "integrateddynamics:list_get",
       nicknames: ["listElement", "get", "listGet"],
       parsedSignature: new ParsedSignature(
         {

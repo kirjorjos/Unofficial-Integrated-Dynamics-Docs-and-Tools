@@ -8,9 +8,9 @@ export class OPERATOR_RELATIONAL_EQUALS extends BaseOperator<
   IntegratedValue,
   Operator<IntegratedValue, iBoolean>
 > {
+    static override internalName = "integrateddynamics:relational_equals"
   constructor() {
     super({
-      internalName: "integrateddynamics:relational_equals",
       nicknames: ["==", "relationalEquals"],
       parsedSignature: new ParsedSignature(
         {

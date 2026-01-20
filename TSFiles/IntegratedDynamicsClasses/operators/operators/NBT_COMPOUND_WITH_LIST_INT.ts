@@ -12,9 +12,9 @@ export class OPERATOR_NBT_COMPOUND_WITH_LIST_INT extends BaseOperator<
   CompoundTag,
   Operator<iString, Operator<iArray<Integer>, CompoundTag>>
 > {
+    static override internalName = "integrateddynamics:nbt_compound_with_list_int"
   constructor() {
     super({
-      internalName: "integrateddynamics:nbt_compound_with_list_int",
       nicknames: ["nbtCompoundWithListInt", "NBTWithIntegerList"],
       parsedSignature: new ParsedSignature(
         {

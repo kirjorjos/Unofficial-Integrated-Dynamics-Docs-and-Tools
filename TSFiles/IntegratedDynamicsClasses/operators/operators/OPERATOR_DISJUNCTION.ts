@@ -11,9 +11,9 @@ export class OPERATOR_OPERATOR_DISJUNCTION extends BaseOperator<
     Operator<IntegratedValue, iBoolean>
   >
 > {
+    static override internalName = "integrateddynamics:operator_disjunction"
   constructor() {
     super({
-      internalName: "integrateddynamics:operator_disjunction",
       nicknames: ["operatorDisjunction", "disjunction"],
       parsedSignature: new ParsedSignature(
         {

@@ -10,9 +10,9 @@ export class OPERATOR_LIST_EQUALS_SET extends BaseOperator<
   iArray<IntegratedValue>,
   Operator<iArray<IntegratedValue>, iBoolean>
 > {
+    static override internalName = "integrateddynamics:list_equals_set"
   constructor() {
     super({
-      internalName: "integrateddynamics:list_equals_set",
       nicknames: ["listEqualsSet", "equalsSet"],
       parsedSignature: new ParsedSignature(
         {

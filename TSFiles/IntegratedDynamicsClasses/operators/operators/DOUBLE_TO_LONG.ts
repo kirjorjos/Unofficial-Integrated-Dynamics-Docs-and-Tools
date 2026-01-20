@@ -3,10 +3,9 @@ import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 
 export class OPERATOR_DOUBLE_TO_LONG extends BaseOperator<Double, Long> {
+    static override internalName = "integrateddynamics:operator.integrateddynamics.castintegrateddynamics_double__integrateddynamics_long"
   constructor() {
     super({
-      internalName:
-        "integrateddynamics:operator.integrateddynamics.castintegrateddynamics_double__integrateddynamics_long",
       nicknames: ["doubleToLong"],
       parsedSignature: new ParsedSignature(
         {

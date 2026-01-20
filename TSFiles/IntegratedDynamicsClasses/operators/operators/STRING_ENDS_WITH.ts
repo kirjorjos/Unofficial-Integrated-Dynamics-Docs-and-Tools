@@ -9,9 +9,9 @@ export class OPERATOR_STRING_ENDS_WITH extends BaseOperator<
   iString,
   Operator<iString, iBoolean>
 > {
+    static override internalName = "integrateddynamics:string_ends_with"
   constructor() {
     super({
-      internalName: "integrateddynamics:string_ends_with",
       nicknames: ["endsWith", "stringEndsWith"],
       parsedSignature: new ParsedSignature(
         {

@@ -9,9 +9,9 @@ export class OPERATOR_LIST_CONTAINS_PREDICATE extends BaseOperator<
   iArray<IntegratedValue>,
   Operator<Predicate<IntegratedValue>, iBoolean>
 > {
+    static override internalName = "integrateddynamics:list_contains_p"
   constructor() {
     super({
-      internalName: "integrateddynamics:list_contains_p",
       nicknames: [
         "listContainsP",
         "listContainsPredicate",

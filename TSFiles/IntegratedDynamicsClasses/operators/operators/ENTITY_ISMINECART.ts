@@ -4,9 +4,9 @@ import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { BaseOperator } from "../BaseOperator";
 
 export class OPERATOR_ENTITY_ISMINECART extends BaseOperator<Entity, iBoolean> {
+    static override internalName = "integrateddynamics:entity_isminecart"
   constructor() {
     super({
-      internalName: "integrateddynamics:entity_isminecart",
       nicknames: [
         "EntityIsminecart",
         "entity_is_minecart",

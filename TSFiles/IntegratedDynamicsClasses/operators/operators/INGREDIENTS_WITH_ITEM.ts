@@ -8,9 +8,9 @@ export class OPERATOR_INGREDIENTS_WITH_ITEM extends BaseOperator<
   Ingredients,
   Operator<Integer, Operator<Item, Ingredients>>
 > {
+    static override internalName = "integrateddynamics:ingredients_with_item"
   constructor() {
     super({
-      internalName: "integrateddynamics:ingredients_with_item",
       nicknames: ["ingredientsWithItem", "Ingr.with_item"],
       parsedSignature: new ParsedSignature(
         {

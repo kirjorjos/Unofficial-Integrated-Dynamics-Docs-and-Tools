@@ -7,9 +7,9 @@ export class OPERATOR_ARITHMETIC_DIVISION extends BaseOperator<
   TypeNumber,
   Operator<TypeNumber, TypeNumber>
 > {
+    static override internalName = "integrateddynamics:arithmetic_division"
   constructor() {
     super({
-      internalName: "integrateddynamics:arithmetic_division",
       nicknames: ["divide", "arithmeticDivision", "/", "numberDivide"],
       parsedSignature: new ParsedSignature(
         {

@@ -10,9 +10,9 @@ export class OPERATOR_OPERATOR_PIPE extends BaseOperator<
     Operator<IntegratedValue, IntegratedValue>
   >
 > {
+    static override internalName = "integrateddynamics:operator_pipe"
   constructor() {
     super({
-      internalName: "integrateddynamics:operator_pipe",
       nicknames: ["operatorPipe", "pipe"],
       parsedSignature: new ParsedSignature(
         {

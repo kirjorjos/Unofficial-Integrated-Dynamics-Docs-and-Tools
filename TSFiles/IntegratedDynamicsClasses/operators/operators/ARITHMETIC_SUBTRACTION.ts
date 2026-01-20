@@ -7,9 +7,9 @@ export class OPERATOR_ARITHMETIC_SUBTRACTION extends BaseOperator<
   TypeNumber,
   Operator<TypeNumber, TypeNumber>
 > {
+    static override internalName = "integrateddynamics:arithmetic_subtraction"
   constructor() {
     super({
-      internalName: "integrateddynamics:arithmetic_subtraction",
       nicknames: ["subtract", "arithmeticSubtraction"],
       parsedSignature: new ParsedSignature(
         {

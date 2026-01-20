@@ -6,10 +6,9 @@ import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { RE2 } from "re2-wasm";
 
 export class OPERATOR_PARSE_BOOLEAN extends BaseOperator<iString, iBoolean> {
+    static override internalName = "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.iBoolean"
   constructor() {
     super({
-      internalName:
-        "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.iBoolean",
       nicknames: ["parseBoolean"],
       parsedSignature: new ParsedSignature(
         {

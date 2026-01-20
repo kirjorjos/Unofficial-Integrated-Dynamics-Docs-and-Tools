@@ -9,9 +9,9 @@ export class OPERATOR_STRING_REPLACE_REGEX extends BaseOperator<
   iString,
   Operator<iString, Operator<iString, iString>>
 > {
+    static override internalName = "integrateddynamics:string_replace_regex"
   constructor() {
     super({
-      internalName: "integrateddynamics:string_replace_regex",
       nicknames: ["stringReplaceRegex"],
       parsedSignature: new ParsedSignature(
         {

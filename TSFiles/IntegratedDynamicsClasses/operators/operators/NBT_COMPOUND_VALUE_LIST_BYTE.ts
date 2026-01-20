@@ -17,9 +17,9 @@ export class OPERATOR_NBT_COMPOUND_VALUE_LIST_BYTE extends BaseOperator<
   CompoundTag,
   Operator<iString, iArray<Integer>>
 > {
+    static override internalName = "integrateddynamics:nbt_compound_value_list_byte"
   constructor() {
     super({
-      internalName: "integrateddynamics:nbt_compound_value_list_byte",
       nicknames: ["nbtCompoundValueListByte", "compoundValueListByte"],
       parsedSignature: new ParsedSignature(
         {

@@ -8,9 +8,9 @@ export class OPERATOR_OBJECT_ITEMSTACK_FUELBURNTIME extends BaseOperator<
   Item,
   Integer
 > {
+    static override internalName = "integrateddynamics:itemstack_burntime"
   constructor() {
     super({
-      internalName: "integrateddynamics:itemstack_burntime",
       nicknames: [
         "ItemstackFuelburntime",
         "item_fuel_burn_time",

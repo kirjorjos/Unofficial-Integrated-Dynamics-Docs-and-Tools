@@ -8,9 +8,9 @@ export class OPERATOR_OBJECT_BLOCK_PROPERTIES extends BaseOperator<
   Block,
   CompoundTag
 > {
+    static override internalName = "integrateddynamics:block_blockproperties"
   constructor() {
     super({
-      internalName: "integrateddynamics:block_blockproperties",
       nicknames: ["BlockProperties", "block_properties", "blockProperties"],
       parsedSignature: new ParsedSignature(
         {

@@ -8,9 +8,9 @@ export class OPERATOR_OBJECT_ITEMSTACK_SIZE extends BaseOperator<
   Item,
   Integer
 > {
+    static override internalName = "integrateddynamics:itemstack_size"
   constructor() {
     super({
-      internalName: "integrateddynamics:itemstack_size",
       nicknames: ["ItemstackSize", "itemstack_size", "itemstackSize", "size"],
       parsedSignature: new ParsedSignature(
         {

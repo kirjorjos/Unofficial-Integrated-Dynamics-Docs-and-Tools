@@ -9,9 +9,9 @@ export class OPERATOR_OBJECT_ITEMSTACK_TAG_STACKS extends BaseOperator<
   Item,
   iArray<iString>
 > {
+    static override internalName = "integrateddynamics:itemstack_tags"
   constructor() {
     super({
-      internalName: "integrateddynamics:itemstack_tags",
       nicknames: [
         "ItemstackTags",
         "itemstack_tag_values",

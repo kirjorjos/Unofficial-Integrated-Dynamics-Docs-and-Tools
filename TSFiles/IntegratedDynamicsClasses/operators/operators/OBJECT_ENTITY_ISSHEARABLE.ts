@@ -8,9 +8,9 @@ export class OPERATOR_OBJECT_ENTITY_ISSHEARABLE extends BaseOperator<
   Entity,
   iBoolean
 > {
+    static override internalName = "integrateddynamics:entity_isshearable"
   constructor() {
     super({
-      internalName: "integrateddynamics:entity_isshearable",
       nicknames: [
         "EntityIsshearable",
         "entity_is_shearable",

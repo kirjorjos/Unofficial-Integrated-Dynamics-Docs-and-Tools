@@ -5,9 +5,9 @@ import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 import { Entity } from "IntegratedDynamicsClasses/Entity";
 
 export class OPERATOR_OBJECT_ENTITY_TYPE extends BaseOperator<Entity, iString> {
+    static override internalName = "integrateddynamics:entity_entitytype"
   constructor() {
     super({
-      internalName: "integrateddynamics:entity_entitytype",
       nicknames: ["EntityType", "entity_type", "entityType"],
       parsedSignature: new ParsedSignature(
         {

@@ -8,9 +8,9 @@ export class OPERATOR_OBJECT_ENTITY_CANBREED extends BaseOperator<
   Entity,
   iBoolean
 > {
+    static override internalName = "integrateddynamics:entity_canbreed"
   constructor() {
     super({
-      internalName: "integrateddynamics:entity_canbreed",
       nicknames: [
         "EntityCanbreed",
         "entity_can_breed",

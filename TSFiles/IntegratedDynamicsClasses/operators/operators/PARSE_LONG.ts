@@ -5,10 +5,9 @@ import { Long } from "JavaNumberClasses/Long";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 
 export class OPERATOR_PARSE_LONG extends BaseOperator<iString, Long> {
+    static override internalName = "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.long"
   constructor() {
     super({
-      internalName:
-        "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.long",
       nicknames: ["parseLong"],
       parsedSignature: new ParsedSignature(
         {

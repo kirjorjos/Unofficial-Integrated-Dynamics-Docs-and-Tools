@@ -8,9 +8,9 @@ export class OPERATOR_OBJECT_BLOCK_PLANTAGE extends BaseOperator<
   Block,
   Integer
 > {
+    static override internalName = "integrateddynamics:block_plantage"
   constructor() {
     super({
-      internalName: "integrateddynamics:block_plantage",
       nicknames: [
         "BlockPlantage",
         "block_plant_age",

@@ -4,9 +4,9 @@ import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 
 export class OPERATOR_LOGICAL_NOT extends BaseOperator<iBoolean, iBoolean> {
+    static override internalName = "integrateddynamics:logical_not"
   constructor() {
     super({
-      internalName: "integrateddynamics:logical_not",
       nicknames: ["not", "logicalNot"],
       parsedSignature: new ParsedSignature(
         {

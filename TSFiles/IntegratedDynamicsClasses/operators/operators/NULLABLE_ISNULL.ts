@@ -8,9 +8,9 @@ export class OPERATOR_NULLABLE_ISNULL extends BaseOperator<
   IntegratedValue,
   iBoolean
 > {
+    static override internalName = "integrateddynamics:general_isnull"
   constructor() {
     super({
-      internalName: "integrateddynamics:general_isnull",
       nicknames: ["isNull", "nullableIsnull", "GENERAL_IS_NULL"],
       parsedSignature: new ParsedSignature(
         {

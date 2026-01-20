@@ -12,9 +12,9 @@ export class OPERATOR_OBJECT_FLUIDSTACK_DATA_VALUE extends BaseOperator<
   Fluid,
   Operator<iString, Tag<IntegratedValue>>
 > {
+    static override internalName = "integrateddynamics:fluidstack_datavalue"
   constructor() {
     super({
-      internalName: "integrateddynamics:fluidstack_datavalue",
       nicknames: [
         "FluidstackDataValue",
         "fluidstackDataValue",

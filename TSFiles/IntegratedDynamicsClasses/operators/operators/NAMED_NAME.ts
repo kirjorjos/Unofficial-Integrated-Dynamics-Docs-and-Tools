@@ -7,9 +7,9 @@ export class OPERATOR_NAMED_NAME extends BaseOperator<
   IntegratedValue,
   iString
 > {
+    static override internalName = "integrateddynamics:string_name"
   constructor() {
     super({
-      internalName: "integrateddynamics:string_name",
       nicknames: ["name", "namedName", "toString"],
       parsedSignature: new ParsedSignature(
         {

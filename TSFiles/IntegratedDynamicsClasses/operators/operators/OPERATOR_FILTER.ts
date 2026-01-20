@@ -9,9 +9,9 @@ export class OPERATOR_OPERATOR_FILTER extends BaseOperator<
   Operator<IntegratedValue, iBoolean>,
   Operator<iArray<IntegratedValue>, iArray<IntegratedValue>>
 > {
+    static override internalName = "integrateddynamics:operator_filter"
   constructor() {
     super({
-      internalName: "integrateddynamics:operator_filter",
       nicknames: ["operatorFilter", "filter"],
       parsedSignature: new ParsedSignature(
         {

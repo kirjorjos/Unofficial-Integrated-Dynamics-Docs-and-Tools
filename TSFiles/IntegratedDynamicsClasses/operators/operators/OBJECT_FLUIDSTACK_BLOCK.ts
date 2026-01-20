@@ -8,9 +8,9 @@ export class OPERATOR_OBJECT_FLUIDSTACK_BLOCK extends BaseOperator<
   Fluid,
   Block
 > {
+    static override internalName = "integrateddynamics:fluidstack_block"
   constructor() {
     super({
-      internalName: "integrateddynamics:fluidstack_block",
       nicknames: [
         "FluidstackBlock",
         "fluidstackBlock",

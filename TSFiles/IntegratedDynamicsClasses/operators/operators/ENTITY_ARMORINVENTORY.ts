@@ -7,9 +7,9 @@ export class OPERATOR_ENTITY_ARMORINVENTORY extends BaseOperator<
   Entity,
   iArray<Item>
 > {
+    static override internalName = "integrateddynamics:entity_armorinventory"
   constructor() {
     super({
-      internalName: "integrateddynamics:entity_armorinventory",
       nicknames: [
         "EntityArmorinventory",
         "entity_armor_inventory",

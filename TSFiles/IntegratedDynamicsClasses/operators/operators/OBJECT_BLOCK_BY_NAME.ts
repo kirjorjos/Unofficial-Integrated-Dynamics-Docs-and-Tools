@@ -7,9 +7,9 @@ export class OPERATOR_OBJECT_BLOCK_BY_NAME extends BaseOperator<
   iString,
   Block
 > {
+    static override internalName = "integrateddynamics:block_blockbyname"
   constructor() {
     super({
-      internalName: "integrateddynamics:block_blockbyname",
       nicknames: ["BlockByName", "block_by_name", "blockByName"],
       parsedSignature: new ParsedSignature(
         {

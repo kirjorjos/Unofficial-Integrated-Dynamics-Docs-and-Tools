@@ -298,16 +298,13 @@ import { BaseOperator } from "./BaseOperator";
 class operatorRegistryClass {
   constructor() {}
 
-  find = (
+  find(
     uname: string
-  ): BaseOperator<IntegratedValue, IntegratedValue> | void => {
+  ): BaseOperator<IntegratedValue, IntegratedValue> | void {
     for (const value of Object.values(this)) {
-      if (typeof value === "function") continue;
-      if (
-        (value as BaseOperator<IntegratedValue, IntegratedValue>).getUname() ===
-        uname
-      )
-        return value;
+      if (value.name === "find") continue;
+      const internalName = value.internalName;
+      if (internalName === uname) return new value();
     }
   };
 

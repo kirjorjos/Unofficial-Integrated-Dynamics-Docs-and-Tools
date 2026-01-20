@@ -10,9 +10,9 @@ export class OPERATOR_LIST_COUNT_PREDICATE extends BaseOperator<
   iArray<IntegratedValue>,
   Operator<Operator<IntegratedValue, iBoolean>, Integer>
 > {
+    static override internalName = "integrateddynamics:list_count_p"
   constructor() {
     super({
-      internalName: "integrateddynamics:list_count_p",
       nicknames: ["listCountPredicate", "listCountP"],
       parsedSignature: new ParsedSignature(
         {

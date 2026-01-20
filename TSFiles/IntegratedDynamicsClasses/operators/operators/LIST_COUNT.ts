@@ -9,9 +9,9 @@ export class OPERATOR_LIST_COUNT extends BaseOperator<
   iArray<IntegratedValue>,
   Operator<IntegratedValue, Integer>
 > {
+    static override internalName = "integrateddynamics:list_count"
   constructor() {
     super({
-      internalName: "integrateddynamics:list_count",
       nicknames: ["listCount", "count"],
       parsedSignature: new ParsedSignature(
         {

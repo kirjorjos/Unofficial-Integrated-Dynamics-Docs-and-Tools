@@ -10,9 +10,9 @@ export class OPERATOR_OBJECT_FLUIDSTACK_WITH_AMOUNT extends BaseOperator<
   Fluid,
   Operator<Integer, Fluid>
 > {
+    static override internalName = "integrateddynamics:fluidstack_with_amount"
   constructor() {
     super({
-      internalName: "integrateddynamics:fluidstack_with_amount",
       nicknames: [
         "FluidstackWithAmount",
         "fluidstackWithAmount",

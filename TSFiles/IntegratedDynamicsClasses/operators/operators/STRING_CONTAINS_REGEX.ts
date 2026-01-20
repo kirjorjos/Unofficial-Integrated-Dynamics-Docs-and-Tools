@@ -10,9 +10,9 @@ export class OPERATOR_STRING_CONTAINS_REGEX extends BaseOperator<
   iString,
   Operator<iString, iBoolean>
 > {
+    static override internalName = "integrateddynamics:string_contains_regex"
   constructor() {
     super({
-      internalName: "integrateddynamics:string_contains_regex",
       nicknames: ["containsRegex"],
       parsedSignature: new ParsedSignature(
         {

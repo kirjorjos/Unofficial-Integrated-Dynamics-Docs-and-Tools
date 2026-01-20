@@ -9,9 +9,9 @@ export class OPERATOR_LIST_ELEMENT_DEFAULT extends BaseOperator<
   iArray<IntegratedValue>,
   Operator<Integer, Operator<IntegratedValue, IntegratedValue>>
 > {
+    static override internalName = "integrateddynamics:list_get_or_default"
   constructor() {
     super({
-      internalName: "integrateddynamics:list_get_or_default",
       nicknames: [
         "listElementDefault",
         "get_or_default",

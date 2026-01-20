@@ -4,9 +4,9 @@ import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 
 export class OPERATOR_NUMBER_COMPACT extends BaseOperator<TypeNumber, iString> {
+    static override internalName = "integrateddynamics:number_compact"
   constructor() {
     super({
-      internalName: "integrateddynamics:number_compact",
       nicknames: ["compact", "numberCompact"],
       parsedSignature: new ParsedSignature(
         {

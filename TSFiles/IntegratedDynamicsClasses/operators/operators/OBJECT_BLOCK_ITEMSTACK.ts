@@ -3,9 +3,9 @@ import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 
 export class OPERATOR_OBJECT_BLOCK_ITEMSTACK extends BaseOperator<Block, Item> {
+    static override internalName = "integrateddynamics:block_itemstack"
   constructor() {
     super({
-      internalName: "integrateddynamics:block_itemstack",
       nicknames: [
         "BlockItemstack",
         "block_item",

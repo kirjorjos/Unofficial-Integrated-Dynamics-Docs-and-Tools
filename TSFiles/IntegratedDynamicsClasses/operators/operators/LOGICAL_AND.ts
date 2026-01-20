@@ -8,9 +8,9 @@ export class OPERATOR_LOGICAL_AND extends BaseOperator<
   iBoolean,
   Operator<iBoolean, iBoolean>
 > {
+    static override internalName = "integrateddynamics:logical_and"
   constructor() {
     super({
-      internalName: "integrateddynamics:logical_and",
       nicknames: ["and", "logicalAnd"],
       parsedSignature: new ParsedSignature(
         {

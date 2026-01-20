@@ -8,9 +8,9 @@ export class OPERATOR_OBJECT_ENTITY_NBT extends BaseOperator<
   Entity,
   CompoundTag
 > {
+    static override internalName = "integrateddynamics:entity_nbt"
   constructor() {
     super({
-      internalName: "integrateddynamics:entity_nbt",
       nicknames: ["EntityNbt", "entity_nbt", "canBreed", "entityNBT"],
       parsedSignature: new ParsedSignature(
         {

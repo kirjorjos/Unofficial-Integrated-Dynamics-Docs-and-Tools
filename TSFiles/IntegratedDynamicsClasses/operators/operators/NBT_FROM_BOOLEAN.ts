@@ -6,9 +6,9 @@ import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { Integer } from "JavaNumberClasses/Integer";
 
 export class OPERATOR_NBT_FROM_BOOLEAN extends BaseOperator<iBoolean, ByteTag> {
+    static override internalName = "integrateddynamics:nbt_from_iBoolean"
   constructor() {
     super({
-      internalName: "integrateddynamics:nbt_from_iBoolean",
       nicknames: ["nbtFromBoolean"],
       parsedSignature: new ParsedSignature(
         {

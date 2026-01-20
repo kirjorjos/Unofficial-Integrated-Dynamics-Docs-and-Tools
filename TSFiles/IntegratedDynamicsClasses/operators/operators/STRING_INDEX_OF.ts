@@ -9,9 +9,9 @@ export class OPERATOR_STRING_INDEX_OF extends BaseOperator<
   iString,
   Operator<iString, Integer>
 > {
+    static override internalName = "integrateddynamics:string_index_of"
   constructor() {
     super({
-      internalName: "integrateddynamics:string_index_of",
       nicknames: ["stringIndexOf"],
       parsedSignature: new ParsedSignature(
         {

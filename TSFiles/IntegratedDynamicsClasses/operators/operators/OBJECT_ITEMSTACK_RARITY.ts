@@ -8,9 +8,9 @@ export class OPERATOR_OBJECT_ITEMSTACK_RARITY extends BaseOperator<
   Item,
   iString
 > {
+    static override internalName = "integrateddynamics:itemstack_rarity"
   constructor() {
     super({
-      internalName: "integrateddynamics:itemstack_rarity",
       nicknames: [
         "ItemstackRarity",
         "itemstack_rarity",

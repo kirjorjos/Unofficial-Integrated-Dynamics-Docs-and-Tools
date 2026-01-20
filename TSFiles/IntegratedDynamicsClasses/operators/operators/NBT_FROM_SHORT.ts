@@ -5,9 +5,9 @@ import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Integer } from "JavaNumberClasses/Integer";
 
 export class OPERATOR_NBT_FROM_SHORT extends BaseOperator<Integer, ShortTag> {
+    static override internalName = "integrateddynamics:nbt_from_short"
   constructor() {
     super({
-      internalName: "integrateddynamics:nbt_from_short",
       nicknames: ["nbtFromShort"],
       parsedSignature: new ParsedSignature(
         {

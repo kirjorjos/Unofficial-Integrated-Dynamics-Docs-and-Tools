@@ -8,9 +8,9 @@ export class OPERATOR_OBJECT_ENTITY_MODNAME extends BaseOperator<
   Entity,
   iString
 > {
+    static override internalName = "integrateddynamics:entity_mod"
   constructor() {
     super({
-      internalName: "integrateddynamics:entity_mod",
       nicknames: ["EntityMod", "entity_mod", "entityMod", "entityModName"],
       parsedSignature: new ParsedSignature(
         {

@@ -7,9 +7,9 @@ export class OPERATOR_ARITHMETIC_INCREMENT extends BaseOperator<
   TypeNumber,
   TypeNumber
 > {
+    static override internalName = "integrateddynamics:arithmetic_increment"
   constructor() {
     super({
-      internalName: "integrateddynamics:arithmetic_increment",
       nicknames: ["increment", "arithmeticIncrement", "++", "numberIncrement"],
       parsedSignature: new ParsedSignature(
         {

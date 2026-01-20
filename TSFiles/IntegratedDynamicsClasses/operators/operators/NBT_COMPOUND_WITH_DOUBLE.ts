@@ -11,9 +11,9 @@ export class OPERATOR_NBT_COMPOUND_WITH_DOUBLE extends BaseOperator<
   CompoundTag,
   Operator<iString, Operator<Double, CompoundTag>>
 > {
+    static override internalName = "integrateddynamics:nbt_compound_with_double"
   constructor() {
     super({
-      internalName: "integrateddynamics:nbt_compound_with_double",
       nicknames: ["nbtCompoundWithDouble", "NBTWithDouble"],
       parsedSignature: new ParsedSignature(
         {

@@ -9,9 +9,9 @@ export class OPERATOR_LIST_NOT_EMPTY extends BaseOperator<
   iArray<IntegratedValue>,
   iBoolean
 > {
+    static override internalName = "integrateddynamics:list_notempty"
   constructor() {
     super({
-      internalName: "integrateddynamics:list_notempty",
       nicknames: ["listNotEmpty", "listIsNotEmpty"],
       parsedSignature: new ParsedSignature(
         {

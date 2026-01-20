@@ -7,9 +7,9 @@ export class OPERATOR_ARITHMETIC_MODULUS extends BaseOperator<
   TypeNumber,
   Operator<TypeNumber, TypeNumber>
 > {
+    static override internalName = "integrateddynamics:arithmetic_modulus"
   constructor() {
     super({
-      internalName: "integrateddynamics:arithmetic_modulus",
       nicknames: ["modulus", "arithmeticModulus", "%", "numberModulus"],
       parsedSignature: new ParsedSignature(
         {

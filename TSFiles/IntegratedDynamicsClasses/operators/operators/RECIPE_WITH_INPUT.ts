@@ -9,9 +9,9 @@ export class OPERATOR_RECIPE_WITH_INPUT extends BaseOperator<
   Recipe,
   Operator<Ingredients, Recipe>
 > {
+    static override internalName = "integrateddynamics:recipe_with_input"
   constructor() {
     super({
-      internalName: "integrateddynamics:recipe_with_input",
       nicknames: ["Recipe.with_in", "recipeWithInput"],
       parsedSignature: new ParsedSignature(
         {

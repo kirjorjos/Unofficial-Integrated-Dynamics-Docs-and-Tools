@@ -9,9 +9,9 @@ export class OPERATOR_OBJECT_BLOCK_TAG_STACKS extends BaseOperator<
   iString,
   iArray<Block>
 > {
+    static override internalName = "integrateddynamics:string_blocktag"
   constructor() {
     super({
-      internalName: "integrateddynamics:string_blocktag",
       nicknames: ["BlockTagStacks", "block_tag_stacks", "blockTagStacks"],
       parsedSignature: new ParsedSignature(
         {

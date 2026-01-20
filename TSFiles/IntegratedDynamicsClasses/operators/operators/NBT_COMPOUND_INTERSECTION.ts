@@ -8,9 +8,9 @@ export class OPERATOR_NBT_COMPOUND_INTERSECTION extends BaseOperator<
   CompoundTag,
   Operator<CompoundTag, CompoundTag>
 > {
+    static override internalName = "integrateddynamics:nbt_compound_intersection"
   constructor() {
     super({
-      internalName: "integrateddynamics:nbt_compound_intersection",
       nicknames: ["nbtCompoundIntersection", "NBTIntersection"],
       parsedSignature: new ParsedSignature(
         {

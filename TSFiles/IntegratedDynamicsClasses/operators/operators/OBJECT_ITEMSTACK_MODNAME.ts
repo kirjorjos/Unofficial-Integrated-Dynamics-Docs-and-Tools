@@ -8,9 +8,9 @@ export class OPERATOR_OBJECT_ITEMSTACK_MODNAME extends BaseOperator<
   Item,
   iString
 > {
+    static override internalName = "integrateddynamics:itemstack_mod"
   constructor() {
     super({
-      internalName: "integrateddynamics:itemstack_mod",
       nicknames: ["ItemstackModname", "item_mod", "itemModname", "itemMod"],
       parsedSignature: new ParsedSignature(
         {

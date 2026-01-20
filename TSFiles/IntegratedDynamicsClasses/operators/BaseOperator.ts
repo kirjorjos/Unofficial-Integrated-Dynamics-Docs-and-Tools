@@ -5,14 +5,13 @@ export class BaseOperator<
   I extends IntegratedValue,
   O extends IntegratedValue,
 > extends Operator<I, O> {
-  internalName: string;
+  static readonly internalName: string;
   nicknames: string[];
   symbol: string;
   interactName: string;
   serializer?: string;
 
   constructor({
-    internalName,
     nicknames,
     parsedSignature,
     symbol,
@@ -20,7 +19,6 @@ export class BaseOperator<
     function: fn,
     serializer,
   }: {
-    internalName: string;
     nicknames: string[];
     symbol: string;
     interactName: string;
@@ -29,7 +27,6 @@ export class BaseOperator<
     serializer?: string;
   }) {
     super({ parsedSignature, function: fn });
-    this.internalName = internalName;
     this.nicknames = nicknames;
     this.symbol = symbol;
     this.interactName = interactName;
@@ -37,6 +34,6 @@ export class BaseOperator<
   }
 
   getUname() {
-    return this.internalName;
+    return (this.constructor as typeof BaseOperator).internalName;
   }
 }

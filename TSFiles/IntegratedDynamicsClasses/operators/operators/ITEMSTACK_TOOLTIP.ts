@@ -8,9 +8,9 @@ export class OPERATOR_ITEMSTACK_TOOLTIP extends BaseOperator<
   Item,
   iArray<iString>
 > {
+    static override internalName = "integrateddynamics:itemstack_tooltip"
   constructor() {
     super({
-      internalName: "integrateddynamics:itemstack_tooltip",
       nicknames: [
         "ItemstackTooltip",
         "itemstack_tooltip",

@@ -7,9 +7,9 @@ export class OPERATOR_ARITHMETIC_DECREMENT extends BaseOperator<
   TypeNumber,
   TypeNumber
 > {
+    static override internalName = "integrateddynamics:arithmetic_decrement"
   constructor() {
     super({
-      internalName: "integrateddynamics:arithmetic_decrement",
       nicknames: ["arithmeticDecrement", "decrement", "--", "numberDecrement"],
       parsedSignature: new ParsedSignature(
         {

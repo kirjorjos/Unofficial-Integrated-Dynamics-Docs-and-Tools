@@ -8,9 +8,9 @@ export class OPERATOR_OBJECT_ITEMSTACK_NBT extends BaseOperator<
   Item,
   CompoundTag
 > {
+    static override internalName = "integrateddynamics:itemstack_nbt"
   constructor() {
     super({
-      internalName: "integrateddynamics:itemstack_nbt",
       nicknames: ["ItemstackNbt", "itemstack_nbt", "itemstackNBT", "itemNBT"],
       parsedSignature: new ParsedSignature(
         {

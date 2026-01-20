@@ -5,10 +5,9 @@ import { Integer } from "JavaNumberClasses/Integer";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 
 export class OPERATOR_PARSE_INTEGER extends BaseOperator<iString, Integer> {
+    static override internalName = "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.integer"
   constructor() {
     super({
-      internalName:
-        "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.integer",
       nicknames: ["parseInteger"],
       parsedSignature: new ParsedSignature(
         {

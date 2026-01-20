@@ -7,9 +7,9 @@ export class OPERATOR_OBJECT_BLOCK_MODNAME extends BaseOperator<
   Block,
   iString
 > {
+    static override internalName = "integrateddynamics:block_mod"
   constructor() {
     super({
-      internalName: "integrateddynamics:block_mod",
       nicknames: [
         "BlockItemstack",
         "block_item",

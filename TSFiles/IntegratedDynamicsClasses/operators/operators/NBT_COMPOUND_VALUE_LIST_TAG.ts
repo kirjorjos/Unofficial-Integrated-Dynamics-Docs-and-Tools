@@ -14,9 +14,9 @@ export class OPERATOR_NBT_COMPOUND_VALUE_LIST_TAG extends BaseOperator<
   CompoundTag,
   Operator<iString, iArray<Tag<IntegratedValue>>>
 > {
+    static override internalName = "integrateddynamics:nbt_compound_value_list_tag"
   constructor() {
     super({
-      internalName: "integrateddynamics:nbt_compound_value_list_tag",
       nicknames: [
         "nbtCompoundValueListTag",
         "nbtCompoundValueList",

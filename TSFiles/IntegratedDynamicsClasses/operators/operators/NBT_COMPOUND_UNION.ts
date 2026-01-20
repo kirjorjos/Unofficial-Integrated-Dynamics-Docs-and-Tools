@@ -8,9 +8,9 @@ export class OPERATOR_NBT_COMPOUND_UNION extends BaseOperator<
   CompoundTag,
   Operator<CompoundTag, CompoundTag>
 > {
+    static override internalName = "integrateddynamics:nbt_compound_union"
   constructor() {
     super({
-      internalName: "integrateddynamics:nbt_compound_union",
       nicknames: ["nbtCompoundUnion", "NBTUnion"],
       parsedSignature: new ParsedSignature(
         {

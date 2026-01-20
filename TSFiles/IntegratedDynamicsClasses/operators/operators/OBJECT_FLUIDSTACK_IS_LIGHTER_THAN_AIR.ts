@@ -8,9 +8,9 @@ export class OPERATOR_OBJECT_FLUIDSTACK_IS_LIGHTER_THAN_AIR extends BaseOperator
   Fluid,
   iBoolean
 > {
+    static override internalName = "integrateddynamics:fluidstack_lighter_than_air"
   constructor() {
     super({
-      internalName: "integrateddynamics:fluidstack_lighter_than_air",
       nicknames: [
         "FluidstackIsLighterThanAir",
         "fluidstackIsLighterThanAir",

@@ -8,9 +8,9 @@ export class OPERATOR_STRING_REPLACE extends BaseOperator<
   iString,
   Operator<iString, Operator<iString, iString>>
 > {
+    static override internalName = "integrateddynamics:string_replace"
   constructor() {
     super({
-      internalName: "integrateddynamics:string_replace",
       nicknames: ["stringReplace"],
       parsedSignature: new ParsedSignature(
         {

@@ -9,9 +9,9 @@ export class OPERATOR_OBJECT_BLOCK_TAG extends BaseOperator<
   Block,
   iArray<iString>
 > {
+    static override internalName = "integrateddynamics:block_tag"
   constructor() {
     super({
-      internalName: "integrateddynamics:block_tag",
       nicknames: ["BlockTag", "blockTag"],
       parsedSignature: new ParsedSignature(
         {

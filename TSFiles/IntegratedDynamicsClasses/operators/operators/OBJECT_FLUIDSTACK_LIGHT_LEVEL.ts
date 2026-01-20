@@ -8,9 +8,9 @@ export class OPERATOR_OBJECT_FLUIDSTACK_LIGHT_LEVEL extends BaseOperator<
   Fluid,
   Integer
 > {
+    static override internalName = "integrateddynamics:fluidstack_light_level"
   constructor() {
     super({
-      internalName: "integrateddynamics:fluidstack_light_level",
       nicknames: [
         "FluidstackLightLevel",
         "fluidstackLightLevel",
