@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Fluid } from "IntegratedDynamicsClasses/Fluid";
@@ -12,7 +11,8 @@ export class OPERATOR_OBJECT_FLUIDSTACK_DATA_VALUE extends BaseOperator<
   Fluid,
   Operator<iString, Tag<IntegratedValue>>
 > {
-    static override internalName = "integrateddynamics:fluidstack_datavalue"
+  static override internalName =
+    "integrateddynamics:fluidstack_datavalue" as const;
   constructor() {
     super({
       nicknames: [
@@ -30,24 +30,21 @@ export class OPERATOR_OBJECT_FLUIDSTACK_DATA_VALUE extends BaseOperator<
         "fluidstackNBTValue",
         "fluidNBTValue",
       ],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Fluid",
+        },
+        to: {
           type: "Function",
           from: {
-            type: "Fluid",
+            type: "String",
           },
           to: {
-            type: "Function",
-            from: {
-              type: "String",
-            },
-            to: {
-              type: "NBT",
-            },
+            type: "NBT",
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "data_value",
       interactName: "fluidstackDataValue",
       function: (fluid: Fluid): TypeLambda<iString, Tag<IntegratedValue>> => {

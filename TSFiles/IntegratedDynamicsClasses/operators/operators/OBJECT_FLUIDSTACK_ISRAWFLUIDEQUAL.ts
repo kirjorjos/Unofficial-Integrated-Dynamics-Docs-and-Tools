@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
@@ -9,7 +8,8 @@ export class OPERATOR_OBJECT_FLUIDSTACK_ISRAWFLUIDEQUAL extends BaseOperator<
   Fluid,
   Operator<Fluid, iBoolean>
 > {
-    static override internalName = "integrateddynamics:fluidstack_israwfluidequal"
+  static override internalName =
+    "integrateddynamics:fluidstack_israwfluidequal" as const;
   constructor() {
     super({
       nicknames: [
@@ -22,24 +22,21 @@ export class OPERATOR_OBJECT_FLUIDSTACK_ISRAWFLUIDEQUAL extends BaseOperator<
         "isRawFluidEqual",
         "rawFluidEquals",
       ],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Fluid",
+        },
+        to: {
           type: "Function",
           from: {
             type: "Fluid",
           },
           to: {
-            type: "Function",
-            from: {
-              type: "Fluid",
-            },
-            to: {
-              type: "Boolean",
-            },
+            type: "Boolean",
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "=Raw=",
       interactName: "fluidstackIsRawEqual",
       function: (fluid1: Fluid): TypeLambda<Fluid, iBoolean> => {

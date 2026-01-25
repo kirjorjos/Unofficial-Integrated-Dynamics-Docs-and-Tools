@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
@@ -9,7 +8,8 @@ export class OPERATOR_OBJECT_ENTITY_CANBREEDWITH extends BaseOperator<
   Entity,
   Operator<Entity, iBoolean>
 > {
-    static override internalName = "integrateddynamics:entity_canbreedwith"
+  static override internalName =
+    "integrateddynamics:entity_canbreedwith" as const;
   constructor() {
     super({
       nicknames: [
@@ -18,24 +18,21 @@ export class OPERATOR_OBJECT_ENTITY_CANBREEDWITH extends BaseOperator<
         "entityCanBreedWith",
         "canBreedWith",
       ],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Entity",
+        },
+        to: {
           type: "Function",
           from: {
             type: "Entity",
           },
           to: {
-            type: "Function",
-            from: {
-              type: "Entity",
-            },
-            to: {
-              type: "Boolean",
-            },
+            type: "Boolean",
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "can_breed_with",
       interactName: "entityCanBreedWith",
       function: (entity1: Entity): TypeLambda<Entity, iBoolean> => {

@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
@@ -9,12 +8,16 @@ export class OPERATOR_STRING_SUBSTRING extends BaseOperator<
   Integer,
   Operator<Integer, Operator<iString, iString>>
 > {
-    static override internalName = "integrateddynamics:string_substring"
+  static override internalName = "integrateddynamics:string_substring" as const;
   constructor() {
     super({
       nicknames: ["substring", "stringSubstring"],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Integer",
+        },
+        to: {
           type: "Function",
           from: {
             type: "Integer",
@@ -22,21 +25,14 @@ export class OPERATOR_STRING_SUBSTRING extends BaseOperator<
           to: {
             type: "Function",
             from: {
-              type: "Integer",
+              type: "String",
             },
             to: {
-              type: "Function",
-              from: {
-                type: "String",
-              },
-              to: {
-                type: "String",
-              },
+              type: "String",
             },
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "substring",
       interactName: "integerSubstring",
       function: (

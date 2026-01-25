@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
@@ -8,7 +7,7 @@ export class OPERATOR_OBJECT_ENTITY_ISBURNING extends BaseOperator<
   Entity,
   iBoolean
 > {
-    static override internalName = "integrateddynamics:entity_isburning"
+  static override internalName = "integrateddynamics:entity_isburning" as const;
   constructor() {
     super({
       nicknames: [
@@ -17,18 +16,15 @@ export class OPERATOR_OBJECT_ENTITY_ISBURNING extends BaseOperator<
         "entityIsBurning",
         "isBurning",
       ],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Entity",
-          },
-          to: {
-            type: "Boolean",
-          },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Entity",
         },
-        globalMap
-      ),
+        to: {
+          type: "Boolean",
+        },
+      }),
       symbol: "is_burning",
       interactName: "entityIsBurning",
       function: (entity: Entity): iBoolean => {

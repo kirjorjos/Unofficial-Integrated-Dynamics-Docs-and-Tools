@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { CompoundTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
 import { Tag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/Tag";
 import { BaseOperator } from "../BaseOperator";
@@ -17,26 +16,24 @@ export class OPERATOR_NBT_COMPOUND_VALUE_LIST_LONG extends BaseOperator<
   CompoundTag,
   Operator<iString, iArray<Long>>
 > {
-    static override internalName = "integrateddynamics:nbt_compound_value_list_long"
+  static override internalName =
+    "integrateddynamics:nbt_compound_value_list_long" as const;
   constructor() {
     super({
       nicknames: ["nbtCompoundValueListLong", "compoundValueListLong"],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "NBT",
+        },
+        to: {
           type: "Function",
           from: {
-            type: "NBT",
+            type: "String",
           },
-          to: {
-            type: "Function",
-            from: {
-              type: "String",
-            },
-            to: { type: "List", listType: { type: "Long" } },
-          },
+          to: { type: "List", listType: { type: "Long" } },
         },
-        globalMap
-      ),
+      }),
       symbol: "NBT{}.get_list_long",
       interactName: "nbtGetListLong",
       function: (nbt: CompoundTag): TypeLambda<iString, iArray<Long>> => {
@@ -60,14 +57,11 @@ export class OPERATOR_NBT_COMPOUND_VALUE_LIST_LONG extends BaseOperator<
               new Operator({
                 function: (e: Tag<IntegratedValue>) =>
                   e.valueOf() as IntegratedValue,
-                parsedSignature: new ParsedSignature(
-                  {
-                    type: "Function",
-                    from: { type: "NBT" },
-                    to: { type: "Long" },
-                  },
-                  globalMap
-                ),
+                parsedSignature: new ParsedSignature({
+                  type: "Function",
+                  from: { type: "NBT" },
+                  to: { type: "Long" },
+                }),
               })
             ) as iArray<Long>;
           }

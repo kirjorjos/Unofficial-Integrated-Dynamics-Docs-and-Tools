@@ -1,34 +1,31 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { BaseOperator } from "../BaseOperator";
 import { Operator } from "../Operator";
-import { globalMap } from "HelperClasses/TypeMap";
 
 export class OPERATOR_ARITHMETIC_ADDITION extends BaseOperator<
   TypeNumber,
   Operator<TypeNumber, TypeNumber>
 > {
-    static override internalName = "integrateddynamics:arithmetic_addition"
+  static override internalName =
+    "integrateddynamics:arithmetic_addition" as const;
   constructor() {
     super({
       nicknames: ["add", "arithmeticAddition", "+", "numberAdd"],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Number",
+        },
+        to: {
           type: "Function",
           from: {
             type: "Number",
           },
           to: {
-            type: "Function",
-            from: {
-              type: "Number",
-            },
-            to: {
-              type: "Number",
-            },
+            type: "Number",
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "+",
       interactName: "numberAdd",
       function: (num1: TypeNumber): TypeLambda<TypeNumber, TypeNumber> => {

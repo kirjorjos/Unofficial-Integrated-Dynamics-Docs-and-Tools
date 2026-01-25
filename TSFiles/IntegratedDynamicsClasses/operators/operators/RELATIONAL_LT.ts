@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
@@ -8,28 +7,25 @@ export class OPERATOR_RELATIONAL_LT extends BaseOperator<
   TypeNumber,
   Operator<TypeNumber, iBoolean>
 > {
-    static override internalName = "integrateddynamics:relational_lt"
+  static override internalName = "integrateddynamics:relational_lt" as const;
   constructor() {
     super({
       nicknames: ["relationalLt", "<"],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Number",
+        },
+        to: {
           type: "Function",
           from: {
             type: "Number",
           },
           to: {
-            type: "Function",
-            from: {
-              type: "Number",
-            },
-            to: {
-              type: "Boolean",
-            },
+            type: "Boolean",
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "<",
       interactName: "numberLessThan",
       function: (num1: TypeNumber): TypeLambda<TypeNumber, iBoolean> => {

@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
@@ -6,7 +5,7 @@ import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 import { Item } from "IntegratedDynamicsClasses/Item";
 
 export class OPERATOR_STRING_TAG extends BaseOperator<iString, iArray<Item>> {
-    static override internalName = "integrateddynamics:string_tag"
+  static override internalName = "integrateddynamics:string_tag" as const;
   constructor() {
     super({
       nicknames: [
@@ -16,16 +15,13 @@ export class OPERATOR_STRING_TAG extends BaseOperator<iString, iArray<Item>> {
         "item_tag_names",
         "itemTagNames",
       ],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: { type: "List", listType: { type: "Item" } },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "String",
         },
-        globalMap
-      ),
+        to: { type: "List", listType: { type: "Item" } },
+      }),
       symbol: "item_tag_values",
       interactName: "stringItemsByTag",
       function: (): never => {

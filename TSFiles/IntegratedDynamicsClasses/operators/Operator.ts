@@ -1,13 +1,13 @@
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { ParsedSignature } from "../../HelperClasses/ParsedSignature";
-import { globalMap, TypeMap } from "../../HelperClasses/TypeMap";
+import { globalMap } from "../../HelperClasses/TypeMap";
 
 export class Operator<I extends IntegratedValue, O extends IntegratedValue>
   implements IntegratedValue
 {
+  private _signatureCache: ParsedSignature | null = null;
   private fn: Function;
   private parsedSignature: ParsedSignature;
-  private typeMap: TypeMap;
   readonly _output!: O;
   private varID: number;
 
@@ -19,9 +19,8 @@ export class Operator<I extends IntegratedValue, O extends IntegratedValue>
     function: Function;
   }) {
     this.fn = fn;
-    this.typeMap = parsedSignature.getTypeMap();
     this.parsedSignature = Operator.unwrapOperatorSignature(parsedSignature);
-    this.varID = this.typeMap.getNewVarID();
+    this.varID = globalMap.getNewVarID();
   }
 
   evaluate(...args: IntegratedValue[]) {
@@ -45,12 +44,10 @@ export class Operator<I extends IntegratedValue, O extends IntegratedValue>
   apply(arg: I, updateSignature = true): O {
     if (arg instanceof Operator && arg.varID === this.varID)
       throw new Error("Tried to apply operator to it's self");
-    // this.typeMap.unify(
-    //   this.parsedSignature.getInput(0),
-    //   arg.getSignatureNode()
-    // );
+
     let parsedSignature = this.parsedSignature;
-    if (updateSignature) parsedSignature = parsedSignature.apply(arg.getSignatureNode());
+    if (updateSignature)
+      parsedSignature = parsedSignature.apply(arg.getSignatureNode());
 
     let newOp = this.fn(arg);
     if (typeof newOp != "function") return newOp as O;
@@ -108,15 +105,32 @@ export class Operator<I extends IntegratedValue, O extends IntegratedValue>
    * @param op2 arg2
    * @param this arg3
    */
-  pipe2<V extends IntegratedValue>(op1: Operator<V, I>, op2: Operator<V, I>): IntegratedValue {
-    if (op1.varID === this.varID || op2.varID === this.varID) throw new Error("Tried to pipe an operator into it's self");
+  pipe2<V extends IntegratedValue>(
+    op1: Operator<V, I>,
+    op2: Operator<V, I>
+  ): IntegratedValue {
+    if (op1.varID === this.varID || op2.varID === this.varID)
+      throw new Error("Tried to pipe an operator into it's self");
     const newFn = (x: V): IntegratedValue => {
-      return (this.apply(op1.apply(x, false) as I, false) as unknown as Operator<IntegratedValue, IntegratedValue>).apply(op2.apply(x, false), false);
-    }
-    const parsedSignature = globalMap.rewrite(this.parsedSignature.getOutput())
+      return (
+        this.apply(op1.apply(x, false) as I, false) as unknown as Operator<
+          IntegratedValue,
+          IntegratedValue
+        >
+      ).apply(op2.apply(x, false), false);
+    };
+    globalMap.unify(
+      this.getParsedSignature().getInput(),
+      op1.getParsedSignature().getOutput()
+    );
+    globalMap.unify(
+      this.getParsedSignature().getInput(1),
+      op2.getParsedSignature().getOutput()
+    );
+    const parsedSignature = this.parsedSignature.getOutput();
     return new Operator<V, IntegratedValue>({
       function: newFn,
-      parsedSignature: new ParsedSignature(parsedSignature, globalMap)
+      parsedSignature: parsedSignature,
     });
   }
 
@@ -124,18 +138,24 @@ export class Operator<I extends IntegratedValue, O extends IntegratedValue>
     return this.fn;
   }
 
-  getSignatureNode(): TypeRawSignatureAST.RawSignatureNode {
-    return {
+  getSignatureNode(): ParsedSignature {
+    if (this._signatureCache) {
+      return this._signatureCache;
+    }
+    const operatorAst: TypeRawSignatureAST.RawSignatureOperator = {
       type: "Operator",
-      obscured: this.parsedSignature.ast,
-    } as TypeRawSignatureAST.RawSignatureOperator;
+      obscured:
+        this.parsedSignature.getAst() as TypeRawSignatureAST.RawSignatureFunction,
+    };
+    const newSignature = new ParsedSignature(operatorAst, false);
+    this._signatureCache = newSignature;
+    return newSignature;
   }
 
   private static unwrapOperatorSignature(parsedSignature: ParsedSignature) {
-    const ast = parsedSignature.getAST();
-    if (ast.type === "Operator") {
-      return new ParsedSignature(ast.obscured, parsedSignature.getTypeMap());
-    } else return parsedSignature;
+    return parsedSignature.getRootType() === "Operator"
+      ? parsedSignature.getOutput()
+      : parsedSignature;
   }
 
   getParsedSignature(): ParsedSignature {

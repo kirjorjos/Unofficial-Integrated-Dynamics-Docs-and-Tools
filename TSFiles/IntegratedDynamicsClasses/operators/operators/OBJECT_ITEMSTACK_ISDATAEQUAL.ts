@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Item } from "IntegratedDynamicsClasses/Item";
@@ -9,7 +8,8 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISDATAEQUAL extends BaseOperator<
   Item,
   Operator<Item, iBoolean>
 > {
-    static override internalName = "integrateddynamics:itemstack_isnbtequal"
+  static override internalName =
+    "integrateddynamics:itemstack_isnbtequal" as const;
   constructor() {
     super({
       nicknames: [
@@ -18,24 +18,21 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISDATAEQUAL extends BaseOperator<
         "itemstackIsDataequal",
         "=NBT=",
       ],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Item",
+        },
+        to: {
           type: "Function",
           from: {
             type: "Item",
           },
           to: {
-            type: "Function",
-            from: {
-              type: "Item",
-            },
-            to: {
-              type: "Boolean",
-            },
+            type: "Boolean",
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "=NBT=",
       interactName: "itemstackIsNbtEqual",
       function: (item1: Item): TypeLambda<Item, iBoolean> => {

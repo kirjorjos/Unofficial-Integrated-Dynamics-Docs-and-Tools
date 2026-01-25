@@ -1,5 +1,4 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
-import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { Operator } from "../Operator";
 
@@ -7,28 +6,26 @@ export class OPERATOR_ARITHMETIC_MAXIMUM extends BaseOperator<
   TypeNumber,
   Operator<TypeNumber, TypeNumber>
 > {
-    static override internalName = "integrateddynamics:arithmetic_maximum"
+  static override internalName =
+    "integrateddynamics:arithmetic_maximum" as const;
   constructor() {
     super({
       nicknames: ["max", "arithmeticMaximum", "max", "numberMax"],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Number",
+        },
+        to: {
           type: "Function",
           from: {
             type: "Number",
           },
           to: {
-            type: "Function",
-            from: {
-              type: "Number",
-            },
-            to: {
-              type: "Number",
-            },
+            type: "Number",
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "max",
       interactName: "numberMax",
       function: (num1: TypeNumber): TypeLambda<TypeNumber, TypeNumber> => {

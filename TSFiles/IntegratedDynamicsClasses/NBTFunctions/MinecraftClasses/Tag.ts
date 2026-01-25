@@ -1,9 +1,11 @@
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
+import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 
 export abstract class Tag<T extends IntegratedValue>
   implements IntegratedValue
 {
+  private _signatureCache: ParsedSignature | null = null;
   static TAG_END = 0;
   static TAG_BYTE = 1;
   static TAG_SHORT = 2;
@@ -31,9 +33,12 @@ export abstract class Tag<T extends IntegratedValue>
 
   abstract getTypeAsString(): iString;
 
-  getSignatureNode(): TypeRawSignatureAST.RawSignatureNode {
-    return {
-      type: "NBT",
-    };
+  getSignatureNode(): ParsedSignature {
+    if (this._signatureCache) {
+      return this._signatureCache;
+    }
+    const newSignature = new ParsedSignature({ type: "NBT" }, false);
+    this._signatureCache = newSignature;
+    return newSignature;
   }
 }

@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { CompoundTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
@@ -8,28 +7,26 @@ export class OPERATOR_NBT_COMPOUND_INTERSECTION extends BaseOperator<
   CompoundTag,
   Operator<CompoundTag, CompoundTag>
 > {
-    static override internalName = "integrateddynamics:nbt_compound_intersection"
+  static override internalName =
+    "integrateddynamics:nbt_compound_intersection" as const;
   constructor() {
     super({
       nicknames: ["nbtCompoundIntersection", "NBTIntersection"],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "NBT",
+        },
+        to: {
           type: "Function",
           from: {
             type: "NBT",
           },
           to: {
-            type: "Function",
-            from: {
-              type: "NBT",
-            },
-            to: {
-              type: "NBT",
-            },
+            type: "NBT",
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "NBT{}.∩",
       interactName: "nbtIntersection",
       function: (nbt1: CompoundTag) => {

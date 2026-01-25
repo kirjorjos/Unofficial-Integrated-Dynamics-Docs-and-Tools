@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { ByteTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ByteTag";
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { BaseOperator } from "../BaseOperator";
@@ -6,22 +5,19 @@ import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Tag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/Tag";
 
 export class OPERATOR_NBT_AS_BOOLEAN extends BaseOperator<ByteTag, iBoolean> {
-    static override internalName = "integrateddynamics:nbt_as_iBoolean"
+  static override internalName = "integrateddynamics:nbt_as_iBoolean" as const;
   constructor() {
     super({
       nicknames: ["nbtAsBoolean"],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "NBT",
-          },
-          to: {
-            type: "Boolean",
-          },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "NBT",
         },
-        globalMap
-      ),
+        to: {
+          type: "Boolean",
+        },
+      }),
       symbol: "NBT.as_iBoolean",
       interactName: "nbtAsBoolean",
       function: (nbt: ByteTag): iBoolean => {

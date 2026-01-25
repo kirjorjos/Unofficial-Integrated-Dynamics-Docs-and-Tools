@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { CompoundTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
@@ -12,32 +11,30 @@ export class OPERATOR_NBT_COMPOUND_WITH_LIST_TAG extends BaseOperator<
   CompoundTag,
   Operator<iString, Operator<iArray<Tag<IntegratedValue>>, CompoundTag>>
 > {
-    static override internalName = "integrateddynamics:nbt_compound_with_list_tag"
+  static override internalName =
+    "integrateddynamics:nbt_compound_with_list_tag" as const;
   constructor() {
     super({
       nicknames: ["nbtCompoundWithListTag", "NBTWithNBTList"],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "NBT",
+        },
+        to: {
           type: "Function",
           from: {
-            type: "NBT",
+            type: "String",
           },
           to: {
             type: "Function",
-            from: {
-              type: "String",
-            },
+            from: { type: "List", listType: { type: "NBT" } },
             to: {
-              type: "Function",
-              from: { type: "List", listType: { type: "NBT" } },
-              to: {
-                type: "NBT",
-              },
+              type: "NBT",
             },
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "NBT{}.with_tag_list",
       interactName: "nbtWithTagList",
       function:

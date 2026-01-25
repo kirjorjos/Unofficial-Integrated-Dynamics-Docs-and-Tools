@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
@@ -9,7 +8,7 @@ export class OPERATOR_OBJECT_FLUIDSTACK_TAG_STACKS extends BaseOperator<
   iString,
   iArray<Fluid>
 > {
-    static override internalName = "integrateddynamics:string_fluidtag"
+  static override internalName = "integrateddynamics:string_fluidtag" as const;
   constructor() {
     super({
       nicknames: [
@@ -18,16 +17,13 @@ export class OPERATOR_OBJECT_FLUIDSTACK_TAG_STACKS extends BaseOperator<
         "fluid_stack_tag_stacks",
         "fluidTagStacks",
       ],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: { type: "List", listType: { type: "Fluid" } },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "String",
         },
-        globalMap
-      ),
+        to: { type: "List", listType: { type: "Fluid" } },
+      }),
       symbol: "fluid_tag_values",
       interactName: "stringFluidsByTag",
       function: (_name: iString): never => {

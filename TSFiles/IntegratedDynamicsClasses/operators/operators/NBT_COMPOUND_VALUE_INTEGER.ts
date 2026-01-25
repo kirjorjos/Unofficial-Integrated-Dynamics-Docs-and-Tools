@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { CompoundTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
@@ -14,28 +13,26 @@ export class OPERATOR_NBT_COMPOUND_VALUE_INTEGER extends BaseOperator<
   CompoundTag,
   Operator<iString, Integer>
 > {
-    static override internalName = "integrateddynamics:nbt_compound_value_integer"
+  static override internalName =
+    "integrateddynamics:nbt_compound_value_integer" as const;
   constructor() {
     super({
       nicknames: ["nbtCompoundValueInteger", "compoundValueInteger"],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "NBT",
+        },
+        to: {
           type: "Function",
           from: {
-            type: "NBT",
+            type: "String",
           },
           to: {
-            type: "Function",
-            from: {
-              type: "String",
-            },
-            to: {
-              type: "Integer",
-            },
+            type: "Integer",
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "NBT{}.get_integer",
       interactName: "nbtGetInteger",
       function: (nbt: CompoundTag): TypeLambda<iString, Integer> => {

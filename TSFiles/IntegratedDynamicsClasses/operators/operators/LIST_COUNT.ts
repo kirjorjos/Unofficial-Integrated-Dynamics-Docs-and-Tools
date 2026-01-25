@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 import { Integer } from "JavaNumberClasses/Integer";
 import { BaseOperator } from "../BaseOperator";
@@ -9,24 +8,21 @@ export class OPERATOR_LIST_COUNT extends BaseOperator<
   iArray<IntegratedValue>,
   Operator<IntegratedValue, Integer>
 > {
-    static override internalName = "integrateddynamics:list_count"
+  static override internalName = "integrateddynamics:list_count" as const;
   constructor() {
     super({
       nicknames: ["listCount", "count"],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: { type: "List", listType: { type: "Any", typeID: 1 } },
+        to: {
           type: "Function",
-          from: { type: "List", listType: { type: "Any", typeID: 1 } },
+          from: { type: "Any", typeID: 1 },
           to: {
-            type: "Function",
-            from: { type: "Any", typeID: 1 },
-            to: {
-              type: "Integer",
-            },
+            type: "Integer",
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "count",
       interactName: "listCount",
       function: (

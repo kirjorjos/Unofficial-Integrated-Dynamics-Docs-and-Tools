@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { Integer } from "JavaNumberClasses/Integer";
@@ -10,33 +9,30 @@ export class OPERATOR_LIST_COUNT_PREDICATE extends BaseOperator<
   iArray<IntegratedValue>,
   Operator<Operator<IntegratedValue, iBoolean>, Integer>
 > {
-    static override internalName = "integrateddynamics:list_count_p"
+  static override internalName = "integrateddynamics:list_count_p" as const;
   constructor() {
     super({
       nicknames: ["listCountPredicate", "listCountP"],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: { type: "List", listType: { type: "Any", typeID: 1 } },
+        to: {
           type: "Function",
-          from: { type: "List", listType: { type: "Any", typeID: 1 } },
-          to: {
-            type: "Function",
-            from: {
-              type: "Operator",
-              obscured: {
-                type: "Function",
-                from: { type: "Any", typeID: 1 },
-                to: {
-                  type: "Boolean",
-                },
+          from: {
+            type: "Operator",
+            obscured: {
+              type: "Function",
+              from: { type: "Any", typeID: 1 },
+              to: {
+                type: "Boolean",
               },
             },
-            to: {
-              type: "Integer",
-            },
+          },
+          to: {
+            type: "Integer",
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "count_p",
       interactName: "listCountPredicate",
       function: (

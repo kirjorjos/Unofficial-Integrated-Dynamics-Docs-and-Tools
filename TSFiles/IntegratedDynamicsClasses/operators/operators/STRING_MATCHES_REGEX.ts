@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
@@ -10,28 +9,26 @@ export class OPERATOR_STRING_MATCHES_REGEX extends BaseOperator<
   iString,
   Operator<iString, iBoolean>
 > {
-    static override internalName = "integrateddynamics:string_matches_regex"
+  static override internalName =
+    "integrateddynamics:string_matches_regex" as const;
   constructor() {
     super({
       nicknames: ["matchesRegex"],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "String",
+        },
+        to: {
           type: "Function",
           from: {
             type: "String",
           },
           to: {
-            type: "Function",
-            from: {
-              type: "String",
-            },
-            to: {
-              type: "Boolean",
-            },
+            type: "Boolean",
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "matches_regex",
       interactName: "stringMatchesRegex",
       function: (regexString: iString): TypeLambda<iString, iBoolean> => {

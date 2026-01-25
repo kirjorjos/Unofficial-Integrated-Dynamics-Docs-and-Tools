@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { CompoundTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
 import { FloatTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/FloatTag";
 import { BaseOperator } from "../BaseOperator";
@@ -11,34 +10,32 @@ export class OPERATOR_NBT_COMPOUND_WITH_FLOAT extends BaseOperator<
   CompoundTag,
   Operator<iString, Operator<Double, CompoundTag>>
 > {
-    static override internalName = "integrateddynamics:nbt_compound_with_float"
+  static override internalName =
+    "integrateddynamics:nbt_compound_with_float" as const;
   constructor() {
     super({
       nicknames: ["nbtCompoundWithFloat", "NBTWithFloat"],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "NBT",
+        },
+        to: {
           type: "Function",
           from: {
-            type: "NBT",
+            type: "String",
           },
           to: {
             type: "Function",
             from: {
-              type: "String",
+              type: "Double",
             },
             to: {
-              type: "Function",
-              from: {
-                type: "Double",
-              },
-              to: {
-                type: "NBT",
-              },
+              type: "NBT",
             },
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "NBT{}.with_float",
       interactName: "nbtWithFloat",
       function: (

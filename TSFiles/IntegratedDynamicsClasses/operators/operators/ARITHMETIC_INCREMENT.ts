@@ -1,5 +1,4 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
-import { globalMap } from "HelperClasses/TypeMap";
 import { Integer } from "JavaNumberClasses/Integer";
 import { BaseOperator } from "../BaseOperator";
 
@@ -7,22 +6,20 @@ export class OPERATOR_ARITHMETIC_INCREMENT extends BaseOperator<
   TypeNumber,
   TypeNumber
 > {
-    static override internalName = "integrateddynamics:arithmetic_increment"
+  static override internalName =
+    "integrateddynamics:arithmetic_increment" as const;
   constructor() {
     super({
       nicknames: ["increment", "arithmeticIncrement", "++", "numberIncrement"],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Number",
-          },
-          to: {
-            type: "Number",
-          },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Number",
         },
-        globalMap
-      ),
+        to: {
+          type: "Number",
+        },
+      }),
       symbol: "++",
       interactName: "numberIncrement",
       function: (num1: TypeNumber): TypeNumber => {

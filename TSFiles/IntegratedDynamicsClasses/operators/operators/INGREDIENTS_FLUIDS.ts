@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { Ingredients } from "IntegratedDynamicsClasses/Ingredients";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
@@ -8,20 +7,18 @@ export class OPERATOR_INGREDIENTS_FLUIDS extends BaseOperator<
   Ingredients,
   iArray<Fluid>
 > {
-    static override internalName = "integrateddynamics:ingredients_fluids"
+  static override internalName =
+    "integrateddynamics:ingredients_fluids" as const;
   constructor() {
     super({
       nicknames: ["ingredientsFluids", "Ingr.fluids"],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Ingredients",
-          },
-          to: { type: "List", listType: { type: "Fluid" } },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Ingredients",
         },
-        globalMap
-      ),
+        to: { type: "List", listType: { type: "Fluid" } },
+      }),
       symbol: "Ingr.fluids",
       interactName: "ingredientsFluids",
       function: (ingredients: Ingredients): iArray<Fluid> => {

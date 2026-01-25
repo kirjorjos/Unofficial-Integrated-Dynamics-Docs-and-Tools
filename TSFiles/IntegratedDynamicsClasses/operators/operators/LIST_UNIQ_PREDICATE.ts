@@ -1,5 +1,4 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
-import { globalMap } from "HelperClasses/TypeMap";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { BaseOperator } from "../BaseOperator";
@@ -13,35 +12,32 @@ export class OPERATOR_LIST_UNIQ_PREDICATE extends BaseOperator<
     iArray<IntegratedValue>
   >
 > {
-    static override internalName = "integrateddynamics:list_uniq_p"
+  static override internalName = "integrateddynamics:list_uniq_p" as const;
   constructor() {
     super({
       nicknames: ["listUniqPredicate", "uniq_p", "list_uniq_p"],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: { type: "List", listType: { type: "Any", typeID: 1 } },
+        to: {
           type: "Function",
-          from: { type: "List", listType: { type: "Any", typeID: 1 } },
-          to: {
-            type: "Function",
-            from: {
-              type: "Operator",
-              obscured: {
+          from: {
+            type: "Operator",
+            obscured: {
+              type: "Function",
+              from: { type: "Any", typeID: 1 },
+              to: {
                 type: "Function",
                 from: { type: "Any", typeID: 1 },
                 to: {
-                  type: "Function",
-                  from: { type: "Any", typeID: 1 },
-                  to: {
-                    type: "Boolean",
-                  },
+                  type: "Boolean",
                 },
               },
             },
-            to: { type: "List", listType: { type: "Any", typeID: 1 } },
           },
+          to: { type: "List", listType: { type: "Any", typeID: 1 } },
         },
-        globalMap
-      ),
+      }),
       symbol: "uniq_p",
       interactName: "listUniquePredicate",
       function: (

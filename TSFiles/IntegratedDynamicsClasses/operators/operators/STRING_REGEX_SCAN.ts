@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
@@ -12,32 +11,30 @@ export class OPERATOR_STRING_REGEX_SCAN extends BaseOperator<
   iString,
   Operator<Integer, Operator<iString, iArray<iString>>>
 > {
-    static override internalName = "integrateddynamics:string_regex_scan"
+  static override internalName =
+    "integrateddynamics:string_regex_scan" as const;
   constructor() {
     super({
       nicknames: ["stringRegexScan"],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "String",
+        },
+        to: {
           type: "Function",
           from: {
-            type: "String",
+            type: "Integer",
           },
           to: {
             type: "Function",
             from: {
-              type: "Integer",
+              type: "String",
             },
-            to: {
-              type: "Function",
-              from: {
-                type: "String",
-              },
-              to: { type: "List", listType: { type: "String" } },
-            },
+            to: { type: "List", listType: { type: "String" } },
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "regex_scan",
       interactName: "stringRegexScan",
       function: (regexString: iString) => {

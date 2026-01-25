@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Item } from "IntegratedDynamicsClasses/Item";
@@ -10,7 +9,8 @@ export class OPERATOR_OBJECT_ITEMSTACK_CANHARVESTBLOCK extends BaseOperator<
   Item,
   Operator<Block, iBoolean>
 > {
-    static override internalName = "integrateddynamics:itemstack_canharvest"
+  static override internalName =
+    "integrateddynamics:itemstack_canharvest" as const;
   constructor() {
     super({
       nicknames: [
@@ -19,24 +19,21 @@ export class OPERATOR_OBJECT_ITEMSTACK_CANHARVESTBLOCK extends BaseOperator<
         "itemstackCanHarvestBlock",
         "canHarvestBlock",
       ],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Item",
+        },
+        to: {
           type: "Function",
           from: {
-            type: "Item",
+            type: "Block",
           },
           to: {
-            type: "Function",
-            from: {
-              type: "Block",
-            },
-            to: {
-              type: "Boolean",
-            },
+            type: "Boolean",
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "can_harvest",
       interactName: "itemstackCanHarvest",
       function: (_item: Item): TypeLambda<Block, iBoolean> => {

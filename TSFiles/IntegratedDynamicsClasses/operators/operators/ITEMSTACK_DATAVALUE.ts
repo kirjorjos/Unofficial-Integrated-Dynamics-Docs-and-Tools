@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { NullTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/NullTag";
 import { Tag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/Tag";
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
@@ -7,7 +6,8 @@ import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 
 export class OPERATOR_ITEMSTACK_DATAVALUE extends BaseOperator<Item, iBoolean> {
-    static override internalName = "integrateddynamics:itemstack_datavalue"
+  static override internalName =
+    "integrateddynamics:itemstack_datavalue" as const;
   constructor() {
     super({
       nicknames: [
@@ -18,24 +18,21 @@ export class OPERATOR_ITEMSTACK_DATAVALUE extends BaseOperator<Item, iBoolean> {
         "itemDataValue",
         "itemNBTValue",
       ],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Item",
+        },
+        to: {
           type: "Function",
           from: {
-            type: "Item",
+            type: "String",
           },
           to: {
-            type: "Function",
-            from: {
-              type: "String",
-            },
-            to: {
-              type: "NBT",
-            },
+            type: "NBT",
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "data_value",
       interactName: "itemstackDataValue",
       function: (item: Item): TypeLambda<iString, Tag<IntegratedValue>> => {

@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Item } from "IntegratedDynamicsClasses/Item";
@@ -10,7 +9,8 @@ export class OPERATOR_OBJECT_ITEMSTACK_STRENGTH_VS_BLOCK extends BaseOperator<
   Item,
   Operator<Block, Double>
 > {
-    static override internalName = "integrateddynamics:itemstack_strength"
+  static override internalName =
+    "integrateddynamics:itemstack_strength" as const;
   constructor() {
     super({
       nicknames: [
@@ -19,24 +19,21 @@ export class OPERATOR_OBJECT_ITEMSTACK_STRENGTH_VS_BLOCK extends BaseOperator<
         "itemstackStrengthVsBlock",
         "strengthVsBlock",
       ],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Item",
+        },
+        to: {
           type: "Function",
           from: {
-            type: "Item",
+            type: "Block",
           },
           to: {
-            type: "Function",
-            from: {
-              type: "Block",
-            },
-            to: {
-              type: "Double",
-            },
+            type: "Double",
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "strength",
       interactName: "itemstackStrength",
       function: (_item: Item): TypeLambda<Block, Double> => {

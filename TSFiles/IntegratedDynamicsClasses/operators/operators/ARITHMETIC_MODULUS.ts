@@ -1,5 +1,4 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
-import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { Operator } from "../Operator";
 
@@ -7,28 +6,26 @@ export class OPERATOR_ARITHMETIC_MODULUS extends BaseOperator<
   TypeNumber,
   Operator<TypeNumber, TypeNumber>
 > {
-    static override internalName = "integrateddynamics:arithmetic_modulus"
+  static override internalName =
+    "integrateddynamics:arithmetic_modulus" as const;
   constructor() {
     super({
       nicknames: ["modulus", "arithmeticModulus", "%", "numberModulus"],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Number",
+        },
+        to: {
           type: "Function",
           from: {
             type: "Number",
           },
           to: {
-            type: "Function",
-            from: {
-              type: "Number",
-            },
-            to: {
-              type: "Number",
-            },
+            type: "Number",
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "%",
       interactName: "numberModulus",
       function: (num1: TypeNumber): TypeLambda<TypeNumber, TypeNumber> => {
@@ -37,7 +34,7 @@ export class OPERATOR_ARITHMETIC_MODULUS extends BaseOperator<
             throw new Error("Modulus by zero");
           }
           if (num1.getOrder() < num2.getOrder()) {
-            num1 = num1[`to${num2.getSignatureNode().type}`]() as TypeNumber;
+            num1 = num1[`to${num2.getType()}`]();
           }
           return num1.mod(num2);
         };

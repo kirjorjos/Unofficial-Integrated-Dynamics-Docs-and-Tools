@@ -10,6 +10,7 @@ export class iArrayEager<
   Result extends IntegratedValue = Source,
 > implements iArray<Source, Result>
 {
+  private _signatureCache: ParsedSignature | null = null;
   protected arr: Array<Source>;
 
   constructor(arr: Array<Source>) {
@@ -84,14 +85,26 @@ export class iArrayEager<
     return new iArrayEager(this.arr.slice(start, end) as unknown as Result[]);
   }
 
-  getSignatureNode(): TypeRawSignatureAST.RawSignatureList {
-    return {
+  getSignatureNode(): ParsedSignature {
+    if (this._signatureCache) {
+      return this._signatureCache;
+    }
+
+    let listTypeAst: TypeRawSignatureAST.RawSignatureNode;
+    if (this.arr.length === 0) {
+      listTypeAst = { type: "Any", typeID: ParsedSignature.getNewTypeID() };
+    } else {
+      listTypeAst = this.arr[0]!.getSignatureNode().getAst();
+    }
+
+    const listAst: TypeRawSignatureAST.RawSignatureList = {
       type: "List",
-      listType:
-        this.arr.length === 0
-          ? { type: "Any", typeID: ParsedSignature.getNewTypeID() }
-          : this.arr[0]!.getSignatureNode(),
+      listType: listTypeAst,
     };
+
+    const newSignature = new ParsedSignature(listAst, false);
+    this._signatureCache = newSignature;
+    return newSignature;
   }
 
   equals(other: IntegratedValue): iBoolean {

@@ -1,42 +1,38 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { BaseOperator } from "../BaseOperator";
 import { Operator } from "../Operator";
-import { globalMap } from "HelperClasses/TypeMap";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 
 export class OPERATOR_OPERATOR_MAP extends BaseOperator<
   Operator<IntegratedValue, IntegratedValue>,
   Operator<iArray<IntegratedValue>, iArray<IntegratedValue>>
 > {
-    static override internalName = "integrateddynamics:operator_map"
+  static override internalName = "integrateddynamics:operator_map" as const;
   constructor() {
     super({
       nicknames: ["operatorMap", "map"],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Operator",
-            obscured: {
-              type: "Function",
-              from: { type: "Any", typeID: 1 },
-              to: { type: "Any", typeID: 2 },
-            },
-          },
-          to: {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Operator",
+          obscured: {
             type: "Function",
-            from: {
-              type: "List",
-              listType: { type: "Any", typeID: 1 },
-            },
-            to: {
-              type: "List",
-              listType: { type: "Any", typeID: 2 },
-            },
+            from: { type: "Any", typeID: 1 },
+            to: { type: "Any", typeID: 2 },
           },
         },
-        globalMap
-      ),
+        to: {
+          type: "Function",
+          from: {
+            type: "List",
+            listType: { type: "Any", typeID: 1 },
+          },
+          to: {
+            type: "List",
+            listType: { type: "Any", typeID: 2 },
+          },
+        },
+      }),
       symbol: "map",
       interactName: "operatorMap",
       function: (

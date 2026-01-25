@@ -1,5 +1,4 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
-import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { Operator } from "../Operator";
 
@@ -7,7 +6,8 @@ export class OPERATOR_ARITHMETIC_MULTIPLICATION extends BaseOperator<
   TypeNumber,
   Operator<TypeNumber, TypeNumber>
 > {
-    static override internalName = "integrateddynamics:arithmetic_multiplication"
+  static override internalName =
+    "integrateddynamics:arithmetic_multiplication" as const;
   constructor() {
     super({
       nicknames: [
@@ -16,24 +16,21 @@ export class OPERATOR_ARITHMETIC_MULTIPLICATION extends BaseOperator<
         "*",
         "numberMultiply",
       ],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Number",
+        },
+        to: {
           type: "Function",
           from: {
             type: "Number",
           },
           to: {
-            type: "Function",
-            from: {
-              type: "Number",
-            },
-            to: {
-              type: "Number",
-            },
+            type: "Number",
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "*",
       interactName: "numberMultiply",
       function: (num1: TypeNumber): TypeLambda<TypeNumber, TypeNumber> => {

@@ -1,4 +1,5 @@
 import { UniquelyNamed } from "./UniquelyNamed";
+import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Integer } from "JavaNumberClasses/Integer";
 import { Properties } from "./Properties";
 import { iBoolean } from "./typeWrappers/iBoolean";
@@ -29,6 +30,7 @@ export class Block implements UniquelyNamed {
     blockName: "",
   });
   props: Properties;
+  private _signatureCache: any;
 
   constructor(newProps: Properties, oldBlock?: Block) {
     let props = Block.defaultProps;
@@ -135,10 +137,13 @@ export class Block implements UniquelyNamed {
     }
   }
 
-  getSignatureNode(): TypeRawSignatureAST.RawSignatureNode {
-    return {
-      type: "Block",
-    };
+  getSignatureNode(): ParsedSignature {
+    if (this._signatureCache) {
+      return this._signatureCache;
+    }
+    const newSignature = new ParsedSignature({ type: "Block" }, false);
+    this._signatureCache = newSignature;
+    return newSignature;
   }
 
   toString() {

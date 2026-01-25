@@ -1,35 +1,31 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { BaseOperator } from "../BaseOperator";
 import { Operator } from "../Operator";
-import { globalMap } from "HelperClasses/TypeMap";
 
 export class OPERATOR_OPERATOR_APPLY extends BaseOperator<
   Operator<IntegratedValue, IntegratedValue>,
   Operator<IntegratedValue, IntegratedValue>
 > {
-    static override internalName = "integrateddynamics:operator_apply"
+  static override internalName = "integrateddynamics:operator_apply" as const;
   constructor() {
     super({
       nicknames: ["operatorApply", "apply"],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Operator",
-            obscured: {
-              type: "Function",
-              from: { type: "Any", typeID: 1 },
-              to: { type: "Any", typeID: 2 },
-            },
-          },
-          to: {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Operator",
+          obscured: {
             type: "Function",
             from: { type: "Any", typeID: 1 },
             to: { type: "Any", typeID: 2 },
           },
         },
-        globalMap
-      ),
+        to: {
+          type: "Function",
+          from: { type: "Any", typeID: 1 },
+          to: { type: "Any", typeID: 2 },
+        },
+      }),
       symbol: "apply",
       interactName: "operatorApply",
       serializer: "integrateddynamics:curry",

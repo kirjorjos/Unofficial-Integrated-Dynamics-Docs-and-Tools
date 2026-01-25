@@ -1,4 +1,5 @@
 import { UniquelyNamed } from "./UniquelyNamed";
+import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Integer } from "../JavaNumberClasses/Integer";
 import { Properties } from "./Properties";
 import { CompoundTag } from "./NBTFunctions/MinecraftClasses/CompoundTag";
@@ -27,6 +28,7 @@ export class Fluid implements UniquelyNamed {
     tagNames: [] as Array<string>,
   });
   props: Properties;
+  private _signatureCache: any;
 
   constructor(newProps: Properties, oldFluid?: Fluid) {
     let props = Fluid.defaultProps;
@@ -109,10 +111,13 @@ export class Fluid implements UniquelyNamed {
     return this.props;
   }
 
-  getSignatureNode(): TypeRawSignatureAST.RawSignatureDefiniteValue {
-    return {
-      type: "Fluid",
-    };
+  getSignatureNode(): ParsedSignature {
+    if (this._signatureCache) {
+      return this._signatureCache;
+    }
+    const newSignature = new ParsedSignature({ type: "Fluid" }, false);
+    this._signatureCache = newSignature;
+    return newSignature;
   }
 
   equals(other: IntegratedValue) {

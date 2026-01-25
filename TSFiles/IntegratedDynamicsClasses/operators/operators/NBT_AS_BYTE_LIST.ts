@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { Tag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/Tag";
 import { BaseOperator } from "../BaseOperator";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
@@ -12,20 +11,17 @@ export class OPERATOR_NBT_AS_BYTE_LIST extends BaseOperator<
   ListTag,
   iArray<Integer>
 > {
-    static override internalName = "integrateddynamics:nbt_as_byte_list"
+  static override internalName = "integrateddynamics:nbt_as_byte_list" as const;
   constructor() {
     super({
       nicknames: ["nbtAsByteList"],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "NBT",
-          },
-          to: { type: "List", listType: { type: "Integer" } },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "NBT",
         },
-        globalMap
-      ),
+        to: { type: "List", listType: { type: "Integer" } },
+      }),
       symbol: "NBT.as_byte_list",
       interactName: "nbtAsByteList",
       function: (nbt: ListTag): iArray<Integer> => {
@@ -39,14 +35,11 @@ export class OPERATOR_NBT_AS_BYTE_LIST extends BaseOperator<
                 IntegratedValue,
                 IntegratedValue
               >,
-              parsedSignature: new ParsedSignature(
-                {
-                  type: "Function",
-                  from: { type: "Any", typeID: 1 },
-                  to: { type: "Any", typeID: 2 },
-                } as TypeRawSignatureAST.RawSignatureDefiniteValue,
-                globalMap
-              ),
+              parsedSignature: new ParsedSignature({
+                type: "Function",
+                from: { type: "Any", typeID: 1 },
+                to: { type: "Any", typeID: 2 },
+              } as TypeRawSignatureAST.RawSignatureDefiniteValue),
             })
           ) as iArray<Integer>;
         } else {

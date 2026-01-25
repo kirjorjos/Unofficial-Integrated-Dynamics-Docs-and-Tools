@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { CompoundTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
@@ -8,7 +7,7 @@ export class OPERATOR_OBJECT_FLUIDSTACK_DATA extends BaseOperator<
   Fluid,
   CompoundTag
 > {
-    static override internalName = "integrateddynamics:fluidstack_nbt"
+  static override internalName = "integrateddynamics:fluidstack_nbt" as const;
   constructor() {
     super({
       nicknames: [
@@ -27,18 +26,15 @@ export class OPERATOR_OBJECT_FLUIDSTACK_DATA extends BaseOperator<
         "fluidNBT",
         "fluidNBTKeys",
       ],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Fluid",
-          },
-          to: {
-            type: "NBT",
-          },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Fluid",
         },
-        globalMap
-      ),
+        to: {
+          type: "NBT",
+        },
+      }),
       symbol: "NBT()",
       interactName: "fluidstackNbt",
       function: (fluid: Fluid): CompoundTag => {

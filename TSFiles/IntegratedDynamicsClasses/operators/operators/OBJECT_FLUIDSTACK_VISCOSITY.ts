@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Integer } from "JavaNumberClasses/Integer";
@@ -8,7 +7,8 @@ export class OPERATOR_OBJECT_FLUIDSTACK_VISCOSITY extends BaseOperator<
   Fluid,
   Integer
 > {
-    static override internalName = "integrateddynamics:fluidstack_viscosity"
+  static override internalName =
+    "integrateddynamics:fluidstack_viscosity" as const;
   constructor() {
     super({
       nicknames: [
@@ -20,18 +20,15 @@ export class OPERATOR_OBJECT_FLUIDSTACK_VISCOSITY extends BaseOperator<
         "fluid_viscosity",
         "fluidViscosity",
       ],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Fluid",
-          },
-          to: {
-            type: "Integer",
-          },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Fluid",
         },
-        globalMap
-      ),
+        to: {
+          type: "Integer",
+        },
+      }),
       symbol: "viscosity",
       interactName: "fluidstackViscosity",
       function: (fluid: Fluid): Integer => {

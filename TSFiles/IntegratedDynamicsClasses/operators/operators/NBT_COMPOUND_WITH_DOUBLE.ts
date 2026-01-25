@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { CompoundTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
 import { DoubleTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/DoubleTag";
 import { BaseOperator } from "../BaseOperator";
@@ -11,34 +10,32 @@ export class OPERATOR_NBT_COMPOUND_WITH_DOUBLE extends BaseOperator<
   CompoundTag,
   Operator<iString, Operator<Double, CompoundTag>>
 > {
-    static override internalName = "integrateddynamics:nbt_compound_with_double"
+  static override internalName =
+    "integrateddynamics:nbt_compound_with_double" as const;
   constructor() {
     super({
       nicknames: ["nbtCompoundWithDouble", "NBTWithDouble"],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "NBT",
+        },
+        to: {
           type: "Function",
           from: {
-            type: "NBT",
+            type: "String",
           },
           to: {
             type: "Function",
             from: {
-              type: "String",
+              type: "Double",
             },
             to: {
-              type: "Function",
-              from: {
-                type: "Double",
-              },
-              to: {
-                type: "NBT",
-              },
+              type: "NBT",
             },
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "NBT{}.with_double",
       interactName: "nbtWithDouble",
       function: (

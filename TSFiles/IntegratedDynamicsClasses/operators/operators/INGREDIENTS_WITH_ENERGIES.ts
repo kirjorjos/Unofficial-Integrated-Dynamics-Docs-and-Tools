@@ -1,6 +1,5 @@
 import { Ingredients } from "IntegratedDynamicsClasses/Ingredients";
 import { Operator } from "../Operator";
-import { globalMap } from "HelperClasses/TypeMap";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
@@ -9,26 +8,24 @@ export class OPERATOR_INGREDIENTS_WITH_ENERGIES extends BaseOperator<
   Ingredients,
   Operator<iArray<Long>, Ingredients>
 > {
-    static override internalName = "integrateddynamics:ingredients_with_energies"
+  static override internalName =
+    "integrateddynamics:ingredients_with_energies" as const;
   constructor() {
     super({
       nicknames: ["ingredientsWithEnergies", "Ingr.with_energies"],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Ingredients",
+        },
+        to: {
           type: "Function",
-          from: {
+          from: { type: "List", listType: { type: "Long" } },
+          to: {
             type: "Ingredients",
           },
-          to: {
-            type: "Function",
-            from: { type: "List", listType: { type: "Long" } },
-            to: {
-              type: "Ingredients",
-            },
-          },
         },
-        globalMap
-      ),
+      }),
       symbol: "Ingr.with_energies",
       interactName: "ingredientsWithEnergies",
       function: (

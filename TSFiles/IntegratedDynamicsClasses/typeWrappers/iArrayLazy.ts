@@ -3,12 +3,14 @@ import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { Integer } from "JavaNumberClasses/Integer";
 import { iArray } from "./iArray";
 import { iArrayEager } from "./iArrayEager";
+import { ParsedSignature } from "HelperClasses/ParsedSignature";
 
 export class iArrayLazy<
   Source extends IntegratedValue,
   Result extends IntegratedValue = Source,
 > implements iArray<Source, Result>
 {
+  private _signatureCache: ParsedSignature | null = null;
   private mapOp: Operator<Source, Result>;
   private initial: Source;
   private generatorOp: Operator<Source, Source>;
@@ -110,13 +112,24 @@ export class iArrayLazy<
     return new iBoolean(true);
   }
 
-  getSignatureNode(): TypeRawSignatureAST.RawSignatureList {
-    return {
+  getSignatureNode(): ParsedSignature {
+    if (this._signatureCache) {
+      return this._signatureCache;
+    }
+
+    const listTypeAst = this.mapOp
+      .apply(this.initial)
+      .getSignatureNode()
+      .getAst();
+
+    const listAst: TypeRawSignatureAST.RawSignatureList = {
       type: "List",
-      listType: this.mapOp
-        .apply(this.initial)
-        .getSignatureNode() as TypeRawSignatureAST.RawSignatureDefiniteValue,
+      listType: listTypeAst,
     };
+
+    const newSignature = new ParsedSignature(listAst, false);
+    this._signatureCache = newSignature;
+    return newSignature;
   }
 
   valueOf(): Source[] {

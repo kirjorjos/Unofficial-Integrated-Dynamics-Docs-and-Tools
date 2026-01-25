@@ -1,5 +1,4 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
-import { globalMap } from "HelperClasses/TypeMap";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 import { UniquelyNamed } from "IntegratedDynamicsClasses/UniquelyNamed";
 import { BaseOperator } from "../BaseOperator";
@@ -8,22 +7,20 @@ export class OPERATOR_UNIQUELY_NAMED_UNIQUE_NAME extends BaseOperator<
   IntegratedValue,
   iString
 > {
-    static override internalName = "integrateddynamics:string_unique_name"
+  static override internalName =
+    "integrateddynamics:string_unique_name" as const;
   constructor() {
     super({
       nicknames: ["uname", "uniquelynamedUniquename"],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "UniquelyNamed",
-          },
-          to: {
-            type: "String",
-          },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "UniquelyNamed",
         },
-        globalMap
-      ),
+        to: {
+          type: "String",
+        },
+      }),
       symbol: "uname",
       interactName: "uniquely_namedUniqueName",
       function: (uniquelyNamed: UniquelyNamed): iString => {

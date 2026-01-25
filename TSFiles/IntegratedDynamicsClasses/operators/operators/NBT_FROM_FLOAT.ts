@@ -1,26 +1,22 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { FloatTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/FloatTag";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Double } from "JavaNumberClasses/Double";
 
 export class OPERATOR_NBT_FROM_FLOAT extends BaseOperator<Double, FloatTag> {
-    static override internalName = "integrateddynamics:nbt_from_float"
+  static override internalName = "integrateddynamics:nbt_from_float" as const;
   constructor() {
     super({
       nicknames: ["nbtFromFloat"],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Double",
-          },
-          to: {
-            type: "NBT",
-          },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Double",
         },
-        globalMap
-      ),
+        to: {
+          type: "NBT",
+        },
+      }),
       symbol: "NBT.from_float",
       interactName: "floatAsNbt",
       function: (float: Double): FloatTag => {

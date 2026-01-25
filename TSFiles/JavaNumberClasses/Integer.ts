@@ -1,8 +1,10 @@
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { Long } from "./Long";
 import { Double } from "./Double";
+import { ParsedSignature } from "HelperClasses/ParsedSignature";
 
 export class Integer implements NumberBase<Integer> {
+  private _signatureCache: ParsedSignature | null = null;
   readonly num: number;
 
   constructor(num: string | number | Integer) {
@@ -150,8 +152,13 @@ export class Integer implements NumberBase<Integer> {
     return this.toInteger();
   }
 
-  getSignatureNode(): { type: "Integer" } {
-    return { type: "Integer" };
+  getSignatureNode(): ParsedSignature {
+    if (this._signatureCache) {
+      return this._signatureCache;
+    }
+    const newSignature = new ParsedSignature({ type: "Integer" }, false);
+    this._signatureCache = newSignature;
+    return newSignature;
   }
 
   toJSNumber(): number {

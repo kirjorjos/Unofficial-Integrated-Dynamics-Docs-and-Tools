@@ -1,9 +1,11 @@
 import { Ingredients } from "./Ingredients";
+import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iBoolean } from "./typeWrappers/iBoolean";
 
 export class Recipe implements IntegratedValue {
   private input: Ingredients;
   private output: Ingredients;
+  private _signatureCache: ParsedSignature | null = null;
 
   constructor(input: Ingredients, output: Ingredients) {
     this.input = input;
@@ -31,9 +33,12 @@ export class Recipe implements IntegratedValue {
     return new iBoolean(true);
   }
 
-  getSignatureNode(): TypeRawSignatureAST.RawSignatureNode {
-    return {
-      type: "Recipe",
-    };
+  getSignatureNode(): ParsedSignature {
+    if (this._signatureCache) {
+      return this._signatureCache;
+    }
+    const newSignature = new ParsedSignature({ type: "Recipe" }, false);
+    this._signatureCache = newSignature;
+    return newSignature;
   }
 }

@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Item } from "IntegratedDynamicsClasses/Item";
@@ -9,7 +8,8 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISRAWITEMEQUAL extends BaseOperator<
   Item,
   Operator<Item, iBoolean>
 > {
-    static override internalName = "integrateddynamics:itemstack_israwitemequal"
+  static override internalName =
+    "integrateddynamics:itemstack_israwitemequal" as const;
   constructor() {
     super({
       nicknames: [
@@ -18,24 +18,21 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISRAWITEMEQUAL extends BaseOperator<
         "itemstackIsRawitemequal",
         "rawItemEquals",
       ],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Item",
+        },
+        to: {
           type: "Function",
           from: {
             type: "Item",
           },
           to: {
-            type: "Function",
-            from: {
-              type: "Item",
-            },
-            to: {
-              type: "Boolean",
-            },
+            type: "Boolean",
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "=Raw=",
       interactName: "itemstackIsEqualRaw",
       function: (item1: Item): TypeLambda<Item, iBoolean> => {

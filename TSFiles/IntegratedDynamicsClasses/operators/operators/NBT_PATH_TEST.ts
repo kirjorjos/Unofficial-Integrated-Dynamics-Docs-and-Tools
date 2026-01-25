@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { NbtPath } from "IntegratedDynamicsClasses/NBTFunctions/NbtPath";
 import { CompoundTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
 import { BaseOperator } from "../BaseOperator";
@@ -11,28 +10,25 @@ export class OPERATOR_NBT_PATH_TEST extends BaseOperator<
   iString,
   Operator<CompoundTag, iBoolean>
 > {
-    static override internalName = "integrateddynamics:nbt_path_test"
+  static override internalName = "integrateddynamics:nbt_path_test" as const;
   constructor() {
     super({
       nicknames: ["NBTPathTest"],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "String",
+        },
+        to: {
           type: "Function",
           from: {
-            type: "String",
+            type: "NBT",
           },
           to: {
-            type: "Function",
-            from: {
-              type: "NBT",
-            },
-            to: {
-              type: "Boolean",
-            },
+            type: "Boolean",
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "NBT.path_test",
       interactName: "stringNbtPathTest",
       function: (path: iString): TypeLambda<CompoundTag, iBoolean> => {

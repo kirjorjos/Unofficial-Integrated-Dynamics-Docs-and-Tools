@@ -6,6 +6,7 @@
  */
 
 import { Integer } from "../../JavaNumberClasses/Integer";
+import { ParsedSignature } from "../../HelperClasses/ParsedSignature";
 import { operatorRegistry } from "../../IntegratedDynamicsClasses/operators/operatorRegistry";
 import { iBoolean } from "../../IntegratedDynamicsClasses/typeWrappers/iBoolean";
 
@@ -77,7 +78,7 @@ describe("TestBinaryOperators", () => {
   it("testInvalidInputTypeAnd", () => {
     expect(() => {
       const nonNumeric: IntegratedValue = {
-        getSignatureNode: () => ({ type: "String" }),
+        getSignatureNode: () => new ParsedSignature({ type: "String" }, false),
         equals: (_that: IntegratedValue) => new iBoolean(false),
       };
       new operatorRegistry.BINARY_AND().evaluate(nonNumeric, nonNumeric);
@@ -129,7 +130,7 @@ describe("TestBinaryOperators", () => {
   it("testInvalidInputTypeOr", () => {
     expect(() => {
       const nonNumeric: IntegratedValue = {
-        getSignatureNode: () => ({ type: "String" }),
+        getSignatureNode: () => new ParsedSignature({ type: "String" }, false),
         equals: (_that: IntegratedValue) => new iBoolean(false),
       };
       new operatorRegistry.BINARY_OR().evaluate(nonNumeric, nonNumeric);
@@ -181,7 +182,7 @@ describe("TestBinaryOperators", () => {
   it("testInvalidInputTypeXor", () => {
     expect(() => {
       const nonNumeric: IntegratedValue = {
-        getSignatureNode: () => ({ type: "String" }),
+        getSignatureNode: () => new ParsedSignature({ type: "String" }, false),
         equals: (_that: IntegratedValue) => new iBoolean(false),
       };
       new operatorRegistry.BINARY_XOR().evaluate(nonNumeric, nonNumeric);
@@ -213,7 +214,7 @@ describe("TestBinaryOperators", () => {
   it("testInvalidInputTypeComplement", () => {
     expect(() => {
       const nonNumeric: IntegratedValue = {
-        getSignatureNode: () => ({ type: "String" }),
+        getSignatureNode: () => new ParsedSignature({ type: "String" }, false),
         equals: (_that: IntegratedValue) => new iBoolean(false),
       };
       new operatorRegistry.BINARY_COMPLEMENT().evaluate(nonNumeric);
@@ -265,7 +266,7 @@ describe("TestBinaryOperators", () => {
   it("testInvalidInputTypeLShift", () => {
     expect(() => {
       const nonNumeric: IntegratedValue = {
-        getSignatureNode: () => ({ type: "String" }),
+        getSignatureNode: () => new ParsedSignature({ type: "String" }, false),
         equals: (_that: IntegratedValue) => new iBoolean(false),
       };
       new operatorRegistry.BINARY_LSHIFT().evaluate(nonNumeric, nonNumeric);
@@ -317,7 +318,7 @@ describe("TestBinaryOperators", () => {
   it("testInvalidInputTypeRShift", () => {
     expect(() => {
       const nonNumeric: IntegratedValue = {
-        getSignatureNode: () => ({ type: "String" }),
+        getSignatureNode: () => new ParsedSignature({ type: "String" }, false),
         equals: (_that: IntegratedValue) => new iBoolean(false),
       };
       new operatorRegistry.BINARY_RSHIFT().evaluate(nonNumeric, nonNumeric);
@@ -369,7 +370,7 @@ describe("TestBinaryOperators", () => {
   it("testInvalidInputTypeRZShift", () => {
     expect(() => {
       const nonNumeric: IntegratedValue = {
-        getSignatureNode: () => ({ type: "String" }),
+        getSignatureNode: () => new ParsedSignature({ type: "String" }, false),
         equals: (_that: IntegratedValue) => new iBoolean(false),
       };
       new operatorRegistry.BINARY_RZSHIFT().evaluate(nonNumeric, nonNumeric);

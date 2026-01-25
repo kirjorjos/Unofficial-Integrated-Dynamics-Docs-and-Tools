@@ -1,5 +1,6 @@
 import { Integer } from "JavaNumberClasses/Integer";
 import { UniquelyNamed } from "./UniquelyNamed";
+import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Properties } from "./Properties";
 import { CompoundTag } from "./NBTFunctions/MinecraftClasses/CompoundTag";
 import { iBoolean } from "./typeWrappers/iBoolean";
@@ -40,6 +41,7 @@ export class Item implements UniquelyNamed, IntegratedValue {
     itemName: new iString(""),
     // block: new Block()
   });
+  private _signatureCache: any;
 
   constructor(newProps: Properties, oldItem?: Item) {
     let props = Item.defaultProps;
@@ -179,10 +181,13 @@ export class Item implements UniquelyNamed, IntegratedValue {
     }
   }
 
-  getSignatureNode(): TypeRawSignatureAST.RawSignatureNode {
-    return {
-      type: "Entity",
-    };
+  getSignatureNode(): ParsedSignature {
+    if (this._signatureCache) {
+      return this._signatureCache;
+    }
+    const newSignature = new ParsedSignature({ type: "Item" }, false);
+    this._signatureCache = newSignature;
+    return newSignature;
   }
 
   toString() {

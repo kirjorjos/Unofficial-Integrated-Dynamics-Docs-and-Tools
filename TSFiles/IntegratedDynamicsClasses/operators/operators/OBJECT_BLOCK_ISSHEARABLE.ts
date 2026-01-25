@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
@@ -7,7 +6,8 @@ export class OPERATOR_OBJECT_BLOCK_ISSHEARABLE extends BaseOperator<
   Block,
   iBoolean
 > {
-    static override internalName = "integrateddynamics:block_isshearable"
+  static override internalName =
+    "integrateddynamics:block_isshearable" as const;
   constructor() {
     super({
       nicknames: [
@@ -16,18 +16,15 @@ export class OPERATOR_OBJECT_BLOCK_ISSHEARABLE extends BaseOperator<
         "blockIsShearable",
         "blockIsShearable",
       ],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Block",
-          },
-          to: {
-            type: "Boolean",
-          },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Block",
         },
-        globalMap
-      ),
+        to: {
+          type: "Boolean",
+        },
+      }),
       symbol: "is_shearable",
       interactName: "blockIsShearable",
       function: (block: Block): iBoolean => {

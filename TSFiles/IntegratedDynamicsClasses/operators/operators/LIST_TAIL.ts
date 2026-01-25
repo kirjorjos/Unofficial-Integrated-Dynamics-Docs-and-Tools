@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 import { Integer } from "JavaNumberClasses/Integer";
 import { BaseOperator } from "../BaseOperator";
@@ -8,18 +7,15 @@ export class OPERATOR_LIST_TAIL extends BaseOperator<
   iArray<IntegratedValue>,
   iArray<IntegratedValue>
 > {
-    static override internalName = "integrateddynamics:list_tail"
+  static override internalName = "integrateddynamics:list_tail" as const;
   constructor() {
     super({
       nicknames: ["listTail", "tail"],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: { type: "List", listType: { type: "Any", typeID: 1 } },
-          to: { type: "List", listType: { type: "Any", typeID: 1 } },
-        },
-        globalMap
-      ),
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: { type: "List", listType: { type: "Any", typeID: 1 } },
+        to: { type: "List", listType: { type: "Any", typeID: 1 } },
+      }),
       symbol: "tail",
       interactName: "listTail",
       function: (list: iArray<IntegratedValue>): iArray<IntegratedValue> => {

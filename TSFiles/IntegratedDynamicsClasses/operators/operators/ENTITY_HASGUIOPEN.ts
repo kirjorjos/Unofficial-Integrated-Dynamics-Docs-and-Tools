@@ -1,10 +1,10 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 
 export class OPERATOR_ENTITY_HASGUIOPEN extends BaseOperator<Entity, iBoolean> {
-    static override internalName = "integrateddynamics:entity_hasguiopen"
+  static override internalName =
+    "integrateddynamics:entity_hasguiopen" as const;
   constructor() {
     super({
       nicknames: [
@@ -14,18 +14,15 @@ export class OPERATOR_ENTITY_HASGUIOPEN extends BaseOperator<Entity, iBoolean> {
         "has_gui_open",
         "entityHasGuiOpen",
       ],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Entity",
-          },
-          to: {
-            type: "Boolean",
-          },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Entity",
         },
-        globalMap
-      ),
+        to: {
+          type: "Boolean",
+        },
+      }),
       symbol: "has_gui_open",
       interactName: "entityHasGuiOpen",
       function: (entity: Entity): iBoolean => {

@@ -1,5 +1,4 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
-import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { Operator } from "../Operator";
 
@@ -7,28 +6,25 @@ export class OPERATOR_BINARY_XOR extends BaseOperator<
   Integer,
   Operator<Integer, Integer>
 > {
-    static override internalName = "integrateddynamics:binary_xor"
+  static override internalName = "integrateddynamics:binary_xor" as const;
   constructor() {
     super({
       nicknames: ["binaryXor", "^", "integerXor"],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Integer",
+        },
+        to: {
           type: "Function",
           from: {
             type: "Integer",
           },
           to: {
-            type: "Function",
-            from: {
-              type: "Integer",
-            },
-            to: {
-              type: "Integer",
-            },
+            type: "Integer",
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "^",
       interactName: "integerXor",
       function: (int1: Integer): TypeLambda<Integer, Integer> => {

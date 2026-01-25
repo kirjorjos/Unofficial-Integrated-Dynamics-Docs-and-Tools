@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Item } from "IntegratedDynamicsClasses/Item";
@@ -6,7 +5,7 @@ import { Block } from "IntegratedDynamicsClasses/Block";
 import { Properties } from "IntegratedDynamicsClasses/Properties";
 
 export class OPERATOR_OBJECT_ITEMSTACK_BLOCK extends BaseOperator<Item, Block> {
-    static override internalName = "integrateddynamics:itemstack_block"
+  static override internalName = "integrateddynamics:itemstack_block" as const;
   constructor() {
     super({
       nicknames: [
@@ -15,18 +14,15 @@ export class OPERATOR_OBJECT_ITEMSTACK_BLOCK extends BaseOperator<Item, Block> {
         "itemstackBlock",
         "itemBlock",
       ],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Item",
-          },
-          to: {
-            type: "Block",
-          },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Item",
         },
-        globalMap
-      ),
+        to: {
+          type: "Block",
+        },
+      }),
       symbol: "block",
       interactName: "itemstackBlock",
       function: (item: Item): Block => {

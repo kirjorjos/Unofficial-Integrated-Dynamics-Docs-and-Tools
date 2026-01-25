@@ -1,27 +1,24 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { BaseOperator } from "../BaseOperator";
-import { globalMap } from "HelperClasses/TypeMap";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { RE2 } from "re2-wasm";
 
 export class OPERATOR_PARSE_BOOLEAN extends BaseOperator<iString, iBoolean> {
-    static override internalName = "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.iBoolean"
+  static override internalName =
+    "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.iBoolean" as const;
   constructor() {
     super({
       nicknames: ["parseBoolean"],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "Boolean",
-          },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "String",
         },
-        globalMap
-      ),
+        to: {
+          type: "Boolean",
+        },
+      }),
       symbol: "parse_iBoolean",
       interactName: "stringParseAsBoolean",
       function: (value: iString): iBoolean => {

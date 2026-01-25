@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
@@ -8,7 +7,8 @@ export class OPERATOR_OBJECT_FLUIDSTACK_IS_LIGHTER_THAN_AIR extends BaseOperator
   Fluid,
   iBoolean
 > {
-    static override internalName = "integrateddynamics:fluidstack_lighter_than_air"
+  static override internalName =
+    "integrateddynamics:fluidstack_lighter_than_air" as const;
   constructor() {
     super({
       nicknames: [
@@ -21,18 +21,15 @@ export class OPERATOR_OBJECT_FLUIDSTACK_IS_LIGHTER_THAN_AIR extends BaseOperator
         "fluidIsLighterThanAir",
         "isLighterThanAir",
       ],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Fluid",
-          },
-          to: {
-            type: "Boolean",
-          },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Fluid",
         },
-        globalMap
-      ),
+        to: {
+          type: "Boolean",
+        },
+      }),
       symbol: "lighter_than_air",
       interactName: "fluidstackIsLighterThanAir",
       function: (fluid: Fluid): iBoolean => {

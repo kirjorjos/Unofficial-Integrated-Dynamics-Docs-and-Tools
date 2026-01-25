@@ -1,26 +1,23 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { BaseOperator } from "../BaseOperator";
-import { globalMap } from "HelperClasses/TypeMap";
 import { Double } from "JavaNumberClasses/Double";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 
 export class OPERATOR_PARSE_DOUBLE extends BaseOperator<iString, Double> {
-    static override internalName = "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.double"
+  static override internalName =
+    "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.double" as const;
   constructor() {
     super({
       nicknames: ["parseDouble"],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "Double",
-          },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "String",
         },
-        globalMap
-      ),
+        to: {
+          type: "Double",
+        },
+      }),
       symbol: "parse_double",
       interactName: "stringParseAsDouble",
       function: (data: iString): Double => {

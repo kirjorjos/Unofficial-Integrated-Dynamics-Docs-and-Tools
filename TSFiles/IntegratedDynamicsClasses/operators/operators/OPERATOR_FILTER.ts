@@ -1,7 +1,6 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { BaseOperator } from "../BaseOperator";
 import { Operator } from "../Operator";
-import { globalMap } from "HelperClasses/TypeMap";
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 
@@ -9,35 +8,32 @@ export class OPERATOR_OPERATOR_FILTER extends BaseOperator<
   Operator<IntegratedValue, iBoolean>,
   Operator<iArray<IntegratedValue>, iArray<IntegratedValue>>
 > {
-    static override internalName = "integrateddynamics:operator_filter"
+  static override internalName = "integrateddynamics:operator_filter" as const;
   constructor() {
     super({
       nicknames: ["operatorFilter", "filter"],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Operator",
-            obscured: {
-              type: "Function",
-              from: { type: "Any", typeID: 1 },
-              to: { type: "Boolean" },
-            },
-          },
-          to: {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Operator",
+          obscured: {
             type: "Function",
-            from: {
-              type: "List",
-              listType: { type: "Any", typeID: 1 },
-            },
-            to: {
-              type: "List",
-              listType: { type: "Any", typeID: 1 },
-            },
+            from: { type: "Any", typeID: 1 },
+            to: { type: "Boolean" },
           },
         },
-        globalMap
-      ),
+        to: {
+          type: "Function",
+          from: {
+            type: "List",
+            listType: { type: "Any", typeID: 1 },
+          },
+          to: {
+            type: "List",
+            listType: { type: "Any", typeID: 1 },
+          },
+        },
+      }),
       symbol: "filter",
       interactName: "operatorFilter",
       function: (

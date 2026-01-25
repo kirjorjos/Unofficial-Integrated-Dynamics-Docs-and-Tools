@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
@@ -8,7 +7,8 @@ export class OPERATOR_OBJECT_FLUIDSTACK_SOUND_BUCKET_EMPTY extends BaseOperator<
   Fluid,
   iString
 > {
-    static override internalName = "integrateddynamics:fluidstack_sound_bucket_empty"
+  static override internalName =
+    "integrateddynamics:fluidstack_sound_bucket_empty" as const;
   constructor() {
     super({
       nicknames: [
@@ -20,18 +20,15 @@ export class OPERATOR_OBJECT_FLUIDSTACK_SOUND_BUCKET_EMPTY extends BaseOperator<
         "fluid_sound_bucket_empty",
         "fluidSoundBucketEmpty",
       ],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Fluid",
-          },
-          to: {
-            type: "String",
-          },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Fluid",
         },
-        globalMap
-      ),
+        to: {
+          type: "String",
+        },
+      }),
       symbol: "sound_bucket_empty",
       interactName: "fluidstackBucketEmptySound",
       function: (fluid: Fluid): iString => {

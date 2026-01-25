@@ -1,52 +1,48 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { BaseOperator } from "../BaseOperator";
 import { Operator } from "../Operator";
-import { globalMap } from "HelperClasses/TypeMap";
 
 export class OPERATOR_OPERATOR_APPLY_2 extends BaseOperator<
   Operator<IntegratedValue, Operator<IntegratedValue, IntegratedValue>>,
   Operator<IntegratedValue, Operator<IntegratedValue, IntegratedValue>>
 > {
-    static override internalName = "integrateddynamics:operator_apply2"
+  static override internalName = "integrateddynamics:operator_apply2" as const;
   constructor() {
     super({
       nicknames: ["operatorApply_2", "apply2"],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Operator",
+          obscured: {
+            type: "Function",
+            from: { type: "Any", typeID: 1 },
+            to: {
+              type: "Function",
+              from: { type: "Any", typeID: 2 },
+              to: { type: "Any", typeID: 3 },
+            },
+          },
+        },
+        to: {
           type: "Function",
           from: {
-            type: "Operator",
-            obscured: {
-              type: "Function",
-              from: { type: "Any", typeID: 1 },
-              to: {
-                type: "Function",
-                from: { type: "Any", typeID: 2 },
-                to: { type: "Any", typeID: 3 },
-              },
-            },
+            type: "Any",
+            typeID: 1,
           },
           to: {
             type: "Function",
             from: {
               type: "Any",
-              typeID: 1,
+              typeID: 2,
             },
             to: {
-              type: "Function",
-              from: {
-                type: "Any",
-                typeID: 2,
-              },
-              to: {
-                type: "Any",
-                typeID: 3,
-              },
+              type: "Any",
+              typeID: 3,
             },
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "apply2",
       interactName: "operatorApply2",
       serializer: "integrateddynamics:curry",

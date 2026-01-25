@@ -1,7 +1,6 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { BaseOperator } from "../BaseOperator";
 import { Operator } from "../Operator";
-import { globalMap } from "HelperClasses/TypeMap";
 
 export class OPERATOR_OPERATOR_PIPE extends BaseOperator<
   Operator<IntegratedValue, IntegratedValue>,
@@ -10,43 +9,40 @@ export class OPERATOR_OPERATOR_PIPE extends BaseOperator<
     Operator<IntegratedValue, IntegratedValue>
   >
 > {
-    static override internalName = "integrateddynamics:operator_pipe"
+  static override internalName = "integrateddynamics:operator_pipe" as const;
   constructor() {
     super({
       nicknames: ["operatorPipe", "pipe"],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Operator",
+          obscured: {
+            type: "Function",
+            from: { type: "Any", typeID: 1 },
+            to: { type: "Any", typeID: 2 },
+          },
+        },
+        to: {
           type: "Function",
           from: {
             type: "Operator",
             obscured: {
               type: "Function",
-              from: { type: "Any", typeID: 1 },
-              to: { type: "Any", typeID: 2 },
+              from: { type: "Any", typeID: 2 },
+              to: { type: "Any", typeID: 3 },
             },
           },
           to: {
-            type: "Function",
-            from: {
-              type: "Operator",
-              obscured: {
-                type: "Function",
-                from: { type: "Any", typeID: 2 },
-                to: { type: "Any", typeID: 3 },
-              },
-            },
-            to: {
-              type: "Operator",
-              obscured: {
-                type: "Function",
-                from: { type: "Any", typeID: 1 },
-                to: { type: "Any", typeID: 3 },
-              },
+            type: "Operator",
+            obscured: {
+              type: "Function",
+              from: { type: "Any", typeID: 1 },
+              to: { type: "Any", typeID: 3 },
             },
           },
         },
-        globalMap
-      ),
+      }),
       symbol: ".",
       interactName: "operatorPipe",
       serializer: "integrateddynamics:combined.pipe",
@@ -63,5 +59,14 @@ export class OPERATOR_OPERATOR_PIPE extends BaseOperator<
         };
       },
     });
+  }
+
+  override evaluate(...args: IntegratedValue[]) {
+    if (args.length !== 2)
+      throw new Error(`Pipe expected 2 args, got ${args.length}`);
+    const [arg1, arg2] = args;
+    if (!(arg1 instanceof Operator && arg2 instanceof Operator))
+      throw new Error("Can't pipe a non-operator");
+    return arg1.pipe(arg2);
   }
 }

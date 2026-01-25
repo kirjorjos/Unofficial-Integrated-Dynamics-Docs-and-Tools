@@ -7,6 +7,7 @@
 
 import { Integer } from "../../JavaNumberClasses/Integer";
 import { Double } from "../../JavaNumberClasses/Double";
+import { ParsedSignature } from "../../HelperClasses/ParsedSignature";
 import { operatorRegistry } from "../../IntegratedDynamicsClasses/operators/operatorRegistry";
 
 const CyclopsCoreInstance = { MOD: {} };
@@ -125,7 +126,7 @@ describe("TestArithmeticOperators", () => {
   it("testInvalidInputTypeAdd", () => {
     expect(() => {
       const nonNumeric: IntegratedValue = {
-        getSignatureNode: () => ({ type: "String" }),
+        getSignatureNode: () => new ParsedSignature({ type: "String" }, false),
         equals: () => ({}) as any,
       };
       new operatorRegistry.ARITHMETIC_ADDITION().evaluate(
@@ -265,7 +266,7 @@ describe("TestArithmeticOperators", () => {
   it("testInvalidInputTypeMinus", () => {
     expect(() => {
       const nonNumeric: IntegratedValue = {
-        getSignatureNode: () => ({ type: "String" }),
+        getSignatureNode: () => new ParsedSignature({ type: "String" }, false),
         equals: () => ({}) as any,
       };
       new operatorRegistry.ARITHMETIC_SUBTRACTION().evaluate(
@@ -426,7 +427,7 @@ describe("TestArithmeticOperators", () => {
   it("testInvalidInputTypeMultiply", () => {
     expect(() => {
       const nonNumeric: IntegratedValue = {
-        getSignatureNode: () => ({ type: "String" }),
+        getSignatureNode: () => new ParsedSignature({ type: "String" }, false),
         equals: () => ({}) as any,
       };
       new operatorRegistry.ARITHMETIC_MULTIPLICATION().evaluate(
@@ -539,7 +540,7 @@ describe("TestArithmeticOperators", () => {
   it("testInvalidInputTypeDivide", () => {
     expect(() => {
       const nonNumeric: IntegratedValue = {
-        getSignatureNode: () => ({ type: "String" }),
+        getSignatureNode: () => new ParsedSignature({ type: "String" }, false),
         equals: () => ({}) as any,
       };
       new operatorRegistry.ARITHMETIC_DIVISION().evaluate(
@@ -634,7 +635,7 @@ describe("TestArithmeticOperators", () => {
   it("testInvalidInputTypeMax", () => {
     expect(() => {
       const nonNumeric: IntegratedValue = {
-        getSignatureNode: () => ({ type: "String" }),
+        getSignatureNode: () => new ParsedSignature({ type: "String" }, false),
         equals: () => ({}) as any,
       };
       new operatorRegistry.ARITHMETIC_MAXIMUM().evaluate(
@@ -729,7 +730,7 @@ describe("TestArithmeticOperators", () => {
   it("testInvalidInputTypeMin", () => {
     expect(() => {
       const nonNumeric: IntegratedValue = {
-        getSignatureNode: () => ({ type: "String" }),
+        getSignatureNode: () => new ParsedSignature({ type: "String" }, false),
         equals: () => ({}) as any,
       };
       new operatorRegistry.ARITHMETIC_MINIMUM().evaluate(
@@ -824,7 +825,7 @@ describe("TestArithmeticOperators", () => {
   it("testInvalidInputTypeModulo", () => {
     expect(() => {
       const nonNumeric: IntegratedValue = {
-        getSignatureNode: () => ({ type: "String" }),
+        getSignatureNode: () => new ParsedSignature({ type: "String" }, false),
         equals: () => ({}) as any,
       };
       new operatorRegistry.ARITHMETIC_MODULUS().evaluate(
@@ -867,7 +868,7 @@ describe("TestArithmeticOperators", () => {
   it("testInvalidInputTypeIncrement", () => {
     expect(() => {
       const nonNumeric: IntegratedValue = {
-        getSignatureNode: () => ({ type: "String" }),
+        getSignatureNode: () => new ParsedSignature({ type: "String" }, false),
         equals: () => ({}) as any,
       };
       new operatorRegistry.ARITHMETIC_INCREMENT().evaluate(nonNumeric);
@@ -907,7 +908,7 @@ describe("TestArithmeticOperators", () => {
   it("testInvalidInputTypeDecrement", () => {
     expect(() => {
       const nonNumeric: IntegratedValue = {
-        getSignatureNode: () => ({ type: "String" }),
+        getSignatureNode: () => new ParsedSignature({ type: "String" }, false),
         equals: () => ({}) as any,
       };
       new operatorRegistry.ARITHMETIC_DECREMENT().evaluate(nonNumeric);

@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { CompoundTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
 import { StringTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/StringTag";
 import { BaseOperator } from "../BaseOperator";
@@ -10,15 +9,20 @@ export class OPERATOR_NBT_COMPOUND_WITH_STRING extends BaseOperator<
   CompoundTag,
   Operator<iString, Operator<iString, CompoundTag>>
 > {
-    static override internalName = "integrateddynamics:nbt_compound_with_string"
+  static override internalName =
+    "integrateddynamics:nbt_compound_with_string" as const;
   constructor() {
     super({
       nicknames: ["nbtCompoundWithString", "NBTWithString"],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "NBT",
+        },
+        to: {
           type: "Function",
           from: {
-            type: "NBT",
+            type: "String",
           },
           to: {
             type: "Function",
@@ -26,18 +30,11 @@ export class OPERATOR_NBT_COMPOUND_WITH_STRING extends BaseOperator<
               type: "String",
             },
             to: {
-              type: "Function",
-              from: {
-                type: "String",
-              },
-              to: {
-                type: "NBT",
-              },
+              type: "NBT",
             },
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "NBT{}.with_string",
       interactName: "nbtWithString",
       function: (

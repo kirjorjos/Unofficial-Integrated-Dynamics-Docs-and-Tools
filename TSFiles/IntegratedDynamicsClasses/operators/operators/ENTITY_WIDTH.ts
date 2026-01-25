@@ -1,24 +1,20 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
-import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 
 export class OPERATOR_ENTITY_WIDTH extends BaseOperator<Entity, Double> {
-    static override internalName = "integrateddynamics:entity_width"
+  static override internalName = "integrateddynamics:entity_width" as const;
   constructor() {
     super({
       nicknames: ["EntityWidth", "entity_width", "entityWidth", "width"],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Entity",
-          },
-          to: {
-            type: "Double",
-          },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Entity",
         },
-        globalMap
-      ),
+        to: {
+          type: "Double",
+        },
+      }),
       symbol: "width",
       interactName: "entityWidth",
       function: (entity: Entity): Double => {

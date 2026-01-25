@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
@@ -9,20 +8,17 @@ export class OPERATOR_OBJECT_BLOCK_TAG extends BaseOperator<
   Block,
   iArray<iString>
 > {
-    static override internalName = "integrateddynamics:block_tag"
+  static override internalName = "integrateddynamics:block_tag" as const;
   constructor() {
     super({
       nicknames: ["BlockTag", "blockTag"],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Block",
-          },
-          to: { type: "List", listType: { type: "String" } },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Block",
         },
-        globalMap
-      ),
+        to: { type: "List", listType: { type: "String" } },
+      }),
       symbol: "block_tag_names",
       interactName: "blockTags",
       function: (block: Block): iArray<iString> => {

@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
@@ -9,7 +8,8 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISFLUIDSTACK extends BaseOperator<
   Item,
   iBoolean
 > {
-    static override internalName = "integrateddynamics:itemstack_isfluidstack"
+  static override internalName =
+    "integrateddynamics:itemstack_isfluidstack" as const;
   constructor() {
     super({
       nicknames: [
@@ -19,18 +19,15 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISFLUIDSTACK extends BaseOperator<
         "itemHasFluid",
         "isFluidstack",
       ],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Item",
-          },
-          to: {
-            type: "Boolean",
-          },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Item",
         },
-        globalMap
-      ),
+        to: {
+          type: "Boolean",
+        },
+      }),
       symbol: "is_fluidstack",
       interactName: "itemstackIsFluidStack",
       function: (item: Item): iBoolean => {

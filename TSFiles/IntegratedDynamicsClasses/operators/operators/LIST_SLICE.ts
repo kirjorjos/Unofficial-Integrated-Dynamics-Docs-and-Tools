@@ -1,5 +1,4 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
-import { globalMap } from "HelperClasses/TypeMap";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 import { Integer } from "JavaNumberClasses/Integer";
 import { BaseOperator } from "../BaseOperator";
@@ -10,30 +9,27 @@ export class OPERATOR_LIST_SLICE extends BaseOperator<
   iArray<IntegratedValue>,
   Operator<Integer, Operator<Integer, iArrayEager<IntegratedValue>>>
 > {
-    static override internalName = "integrateddynamics:list_slice"
+  static override internalName = "integrateddynamics:list_slice" as const;
   constructor() {
     super({
       nicknames: ["listSlice", "slice"],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: { type: "List", listType: { type: "Any", typeID: 1 } },
+        to: {
           type: "Function",
-          from: { type: "List", listType: { type: "Any", typeID: 1 } },
+          from: {
+            type: "Integer",
+          },
           to: {
             type: "Function",
             from: {
               type: "Integer",
             },
-            to: {
-              type: "Function",
-              from: {
-                type: "Integer",
-              },
-              to: { type: "List", listType: { type: "Any", typeID: 1 } },
-            },
+            to: { type: "List", listType: { type: "Any", typeID: 1 } },
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "slice",
       interactName: "listSlice",
       function: (

@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { CompoundTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
 import { Tag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/Tag";
 import { BaseOperator } from "../BaseOperator";
@@ -17,26 +16,24 @@ export class OPERATOR_NBT_COMPOUND_VALUE_LIST_INT extends BaseOperator<
   CompoundTag,
   Operator<iString, iArray<Integer>>
 > {
-    static override internalName = "integrateddynamics:nbt_compound_value_list_int"
+  static override internalName =
+    "integrateddynamics:nbt_compound_value_list_int" as const;
   constructor() {
     super({
       nicknames: ["nbtCompoundValueListInt", "compoundValueListInteger"],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "NBT",
+        },
+        to: {
           type: "Function",
           from: {
-            type: "NBT",
+            type: "String",
           },
-          to: {
-            type: "Function",
-            from: {
-              type: "String",
-            },
-            to: { type: "List", listType: { type: "Integer" } },
-          },
+          to: { type: "List", listType: { type: "Integer" } },
         },
-        globalMap
-      ),
+      }),
       symbol: "NBT{}.get_list_int",
       interactName: "nbtGetListInt",
       function: (nbt: CompoundTag): TypeLambda<iString, iArray<Integer>> => {
@@ -60,14 +57,11 @@ export class OPERATOR_NBT_COMPOUND_VALUE_LIST_INT extends BaseOperator<
               new Operator({
                 function: (e: Tag<IntegratedValue>) =>
                   e.valueOf() as IntegratedValue,
-                parsedSignature: new ParsedSignature(
-                  {
-                    type: "Function",
-                    from: { type: "NBT" },
-                    to: { type: "Integer" },
-                  },
-                  globalMap
-                ),
+                parsedSignature: new ParsedSignature({
+                  type: "Function",
+                  from: { type: "NBT" },
+                  to: { type: "Integer" },
+                }),
               })
             ) as iArray<Integer>;
           }

@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
@@ -11,26 +10,24 @@ export class OPERATOR_STRING_SPLIT_ON_REGEX extends BaseOperator<
   iString,
   Operator<iString, iArray<iString>>
 > {
-    static override internalName = "integrateddynamics:string_split_on_regex"
+  static override internalName =
+    "integrateddynamics:string_split_on_regex" as const;
   constructor() {
     super({
       nicknames: ["stringSplitOnRegex"],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "String",
+        },
+        to: {
           type: "Function",
           from: {
             type: "String",
           },
-          to: {
-            type: "Function",
-            from: {
-              type: "String",
-            },
-            to: { type: "List", listType: { type: "String" } },
-          },
+          to: { type: "List", listType: { type: "String" } },
         },
-        globalMap
-      ),
+      }),
       symbol: "split_on_regex",
       interactName: "stringSplitOnRegex",
       function: (

@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Entity } from "IntegratedDynamicsClasses/Entity";
@@ -11,7 +10,8 @@ export class OPERATOR_OBJECT_ENTITY_ENTITYITEMTOOLTIP extends BaseOperator<
   Entity,
   Operator<Item, iArray<iString>>
 > {
-    static override internalName = "integrateddynamics:entity_entityitemtooltip"
+  static override internalName =
+    "integrateddynamics:entity_entityitemtooltip" as const;
   constructor() {
     super({
       nicknames: [
@@ -21,22 +21,19 @@ export class OPERATOR_OBJECT_ENTITY_ENTITYITEMTOOLTIP extends BaseOperator<
         "item_entity_tooltip",
         "itemEntityTooltip",
       ],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Entity",
+        },
+        to: {
           type: "Function",
           from: {
-            type: "Entity",
+            type: "Item",
           },
-          to: {
-            type: "Function",
-            from: {
-              type: "Item",
-            },
-            to: { type: "List", listType: { type: "String" } },
-          },
+          to: { type: "List", listType: { type: "String" } },
         },
-        globalMap
-      ),
+      }),
       symbol: "entity_item_tooltip",
       interactName: "entityEntityItemTooltip",
       function: (entity: Entity): TypeLambda<Item, iArray<iString>> => {

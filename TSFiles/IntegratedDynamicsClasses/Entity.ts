@@ -1,4 +1,5 @@
 import { UniquelyNamed } from "./UniquelyNamed";
+import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Integer } from "../JavaNumberClasses/Integer";
 import { Double } from "../JavaNumberClasses/Double";
 import { Properties } from "./Properties";
@@ -55,6 +56,7 @@ export class Entity implements UniquelyNamed {
   });
 
   props: Properties;
+  private _signatureCache: any;
 
   constructor(newProps: Properties, oldEntity?: Entity) {
     let props = Entity.defaultProps;
@@ -238,10 +240,13 @@ export class Entity implements UniquelyNamed {
     return this.props;
   }
 
-  getSignatureNode(): TypeRawSignatureAST.RawSignatureNode {
-    return {
-      type: "Entity",
-    };
+  getSignatureNode(): ParsedSignature {
+    if (this._signatureCache) {
+      return this._signatureCache;
+    }
+    const newSignature = new ParsedSignature({ type: "Entity" }, false);
+    this._signatureCache = newSignature;
+    return newSignature;
   }
 
   equals(other: IntegratedValue) {

@@ -16,4 +16,10 @@ declare global {
   interface Item extends ItemType {}
   interface Fluid extends FluidType {}
   interface Entity extends EntityType {}
+
+  interface ErrorInfo {
+    message: string;
+    nodeA: ParsedSignature;
+    nodeB: ParsedSignature;
+  }
 }

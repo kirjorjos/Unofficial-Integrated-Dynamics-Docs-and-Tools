@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { Tag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/Tag";
 import { Long } from "JavaNumberClasses/Long";
 import { BaseOperator } from "../BaseOperator";
@@ -12,20 +11,17 @@ export class OPERATOR_NBT_AS_LONG_LIST extends BaseOperator<
   ListTag,
   iArray<Long>
 > {
-    static override internalName = "integrateddynamics:nbt_as_long_list"
+  static override internalName = "integrateddynamics:nbt_as_long_list" as const;
   constructor() {
     super({
       nicknames: ["nbtAsLongList"],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "NBT",
-          },
-          to: { type: "List", listType: { type: "Long" } },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "NBT",
         },
-        globalMap
-      ),
+        to: { type: "List", listType: { type: "Long" } },
+      }),
       symbol: "NBT.as_long_list",
       interactName: "nbtAsLongList",
       function: (nbt: ListTag): iArray<Long> => {
@@ -39,14 +35,11 @@ export class OPERATOR_NBT_AS_LONG_LIST extends BaseOperator<
                 IntegratedValue,
                 IntegratedValue
               >,
-              parsedSignature: new ParsedSignature(
-                {
-                  type: "Function",
-                  from: { type: "Any", typeID: 1 },
-                  to: { type: "Any", typeID: 2 },
-                } as TypeRawSignatureAST.RawSignatureDefiniteValue,
-                globalMap
-              ),
+              parsedSignature: new ParsedSignature({
+                type: "Function",
+                from: { type: "Any", typeID: 1 },
+                to: { type: "Any", typeID: 2 },
+              } as TypeRawSignatureAST.RawSignatureDefiniteValue),
             })
           ) as iArray<Long>;
         } else {

@@ -1,5 +1,6 @@
 import { Fluid } from "./Fluid";
 import { Item } from "./Item";
+import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Long } from "../JavaNumberClasses/Long";
 import { iBoolean } from "./typeWrappers/iBoolean";
 import { iArrayEager } from "./typeWrappers/iArrayEager";
@@ -9,6 +10,7 @@ export class Ingredients implements IntegratedValue {
   private items: iArray<Item>;
   private fluids: iArray<Fluid>;
   private energies: iArray<Long>;
+  private _signatureCache: any;
 
   constructor(
     items = new iArrayEager<Item>([]) as iArray<Item>,
@@ -86,10 +88,13 @@ export class Ingredients implements IntegratedValue {
     return this.energies;
   }
 
-  getSignatureNode(): TypeRawSignatureAST.RawSignatureNode {
-    return {
-      type: "Ingredients",
-    };
+  getSignatureNode(): ParsedSignature {
+    if (this._signatureCache) {
+      return this._signatureCache;
+    }
+    const newSignature = new ParsedSignature({ type: "Ingredients" }, false);
+    this._signatureCache = newSignature;
+    return newSignature;
   }
 
   equals(other: IntegratedValue) {

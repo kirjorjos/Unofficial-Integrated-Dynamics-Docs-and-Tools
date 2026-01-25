@@ -1,6 +1,5 @@
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { Operator } from "../Operator";
-import { globalMap } from "HelperClasses/TypeMap";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
@@ -9,7 +8,7 @@ export class OPERATOR_LIST_CONTAINS_PREDICATE extends BaseOperator<
   iArray<IntegratedValue>,
   Operator<Predicate<IntegratedValue>, iBoolean>
 > {
-    static override internalName = "integrateddynamics:list_contains_p"
+  static override internalName = "integrateddynamics:list_contains_p" as const;
   constructor() {
     super({
       nicknames: [
@@ -18,29 +17,26 @@ export class OPERATOR_LIST_CONTAINS_PREDICATE extends BaseOperator<
         "containsPredicate",
         "containsP",
       ],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: { type: "List", listType: { type: "Any", typeID: 1 } },
+        to: {
           type: "Function",
-          from: { type: "List", listType: { type: "Any", typeID: 1 } },
-          to: {
-            type: "Function",
-            from: {
-              type: "Operator",
-              obscured: {
-                type: "Function",
-                from: { type: "Any", typeID: 1 },
-                to: {
-                  type: "Boolean",
-                },
+          from: {
+            type: "Operator",
+            obscured: {
+              type: "Function",
+              from: { type: "Any", typeID: 1 },
+              to: {
+                type: "Boolean",
               },
             },
-            to: {
-              type: "Boolean",
-            },
+          },
+          to: {
+            type: "Boolean",
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "contains_p",
       interactName: "listContainsPredicate",
       function: (

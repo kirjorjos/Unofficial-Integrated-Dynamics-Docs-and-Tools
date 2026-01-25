@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { Tag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/Tag";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
@@ -10,20 +9,17 @@ export class OPERATOR_NBT_AS_TAG_LIST extends BaseOperator<
   ListTag,
   iArray<Tag<IntegratedValue>>
 > {
-    static override internalName = "integrateddynamics:nbt_as_tag_list"
+  static override internalName = "integrateddynamics:nbt_as_tag_list" as const;
   constructor() {
     super({
       nicknames: ["nbtAsTagList"],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "NBT",
-          },
-          to: { type: "List", listType: { type: "NBT" } },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "NBT",
         },
-        globalMap
-      ),
+        to: { type: "List", listType: { type: "NBT" } },
+      }),
       symbol: "NBT.as_tag_list",
       interactName: "nbtAsTagList",
       function: (nbt: ListTag): iArray<Tag<IntegratedValue>> => {

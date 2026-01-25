@@ -32,19 +32,19 @@ describe("TestCurryingComplex", () => {
     ) as Operator<IntegratedValue, IntegratedValue>;
     expect(oApply2Flipped).toBeInstanceOf(Operator);
     expect(oApply2Flipped.getParsedSignature().getArity()).toBe(3);
-    expect(oApply2Flipped.getParsedSignature().getInput(0)).toEqual({
+    expect(oApply2Flipped.getParsedSignature().getInput(0).getAst()).toEqual({
       type: "Any",
       typeID: expect.any(Number),
     });
-    expect(oApply2Flipped.getParsedSignature().getInput(1)).toEqual({
+    expect(oApply2Flipped.getParsedSignature().getInput(1).getAst()).toEqual({
       type: "Operator",
       obscured: expect.any(Object),
     });
-    expect(oApply2Flipped.getParsedSignature().getInput(2)).toEqual({
+    expect(oApply2Flipped.getParsedSignature().getInput(2).getAst()).toEqual({
       type: "Any",
       typeID: expect.any(Number),
     });
-    expect(oApply2Flipped.getParsedSignature().getOutput(-1)).toEqual({
+    expect(oApply2Flipped.getParsedSignature().getOutput(-1).getAst()).toEqual({
       type: "Any",
       typeID: expect.any(Number),
     });
@@ -55,7 +55,7 @@ describe("TestCurryingComplex", () => {
     ) as Operator<IntegratedValue, IntegratedValue>;
     expect(oBind2).toBeInstanceOf(Operator);
     expect(oBind2.getParsedSignature().getArity()).toBe(1);
-    expect(oBind2.getParsedSignature().getInput(0)).toEqual({
+    expect(oBind2.getParsedSignature().getInput(0).getAst()).toEqual({
       type: "Any",
       typeID: expect.any(Number),
     });

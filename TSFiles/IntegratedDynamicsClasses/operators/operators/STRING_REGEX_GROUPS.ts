@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
@@ -11,26 +10,24 @@ export class OPERATOR_STRING_REGEX_GROUPS extends BaseOperator<
   iString,
   Operator<iString, iArray<iString>>
 > {
-    static override internalName = "integrateddynamics:string_regex_groups"
+  static override internalName =
+    "integrateddynamics:string_regex_groups" as const;
   constructor() {
     super({
       nicknames: ["stringRegexGroups", "stringRegexGroups"],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "String",
+        },
+        to: {
           type: "Function",
           from: {
             type: "String",
           },
-          to: {
-            type: "Function",
-            from: {
-              type: "String",
-            },
-            to: { type: "List", listType: { type: "String" } },
-          },
+          to: { type: "List", listType: { type: "String" } },
         },
-        globalMap
-      ),
+      }),
       symbol: "regex_groups",
       interactName: "stringRegexGroups",
       function: (

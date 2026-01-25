@@ -31,8 +31,8 @@ export class LongTag extends NumericTag {
     return new iString("LONG");
   }
 
-  equals(tag: Tag<IntegratedValue>) {
-    if (tag.getType() != Tag.TAG_BYTE) return new iBoolean(false);
-    return new iBoolean(this.valueOf() == tag.valueOf());
+  equals(tag: Tag<IntegratedValue>): iBoolean {
+    if (tag.getType() != Tag.TAG_LONG) return new iBoolean(false);
+    return this.valueOf().equals(tag.valueOf());
   }
 }

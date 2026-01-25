@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iNull } from "IntegratedDynamicsClasses/typeWrappers/iNull";
@@ -8,20 +7,17 @@ export class OPERATOR_NULLABLE_ISNULL extends BaseOperator<
   IntegratedValue,
   iBoolean
 > {
-    static override internalName = "integrateddynamics:general_isnull"
+  static override internalName = "integrateddynamics:general_isnull" as const;
   constructor() {
     super({
       nicknames: ["isNull", "nullableIsnull", "GENERAL_IS_NULL"],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: { type: "Any", typeID: 1 },
-          to: {
-            type: "Boolean",
-          },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: { type: "Any", typeID: 1 },
+        to: {
+          type: "Boolean",
         },
-        globalMap
-      ),
+      }),
       symbol: "o",
       interactName: "anyIsNull",
       function: (value: IntegratedValue): iBoolean => {

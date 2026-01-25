@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Item } from "IntegratedDynamicsClasses/Item";
@@ -10,7 +9,8 @@ export class OPERATOR_OBJECT_ITEMSTACK_WITHSIZE extends BaseOperator<
   Item,
   Operator<Integer, Item>
 > {
-    static override internalName = "integrateddynamics:itemstack_withsize"
+  static override internalName =
+    "integrateddynamics:itemstack_withsize" as const;
   constructor() {
     super({
       nicknames: [
@@ -19,24 +19,21 @@ export class OPERATOR_OBJECT_ITEMSTACK_WITHSIZE extends BaseOperator<
         "itemstackWithSize",
         "itemWithSize",
       ],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Item",
+        },
+        to: {
           type: "Function",
           from: {
-            type: "Item",
+            type: "Integer",
           },
           to: {
-            type: "Function",
-            from: {
-              type: "Integer",
-            },
-            to: {
-              type: "Item",
-            },
+            type: "Item",
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "with_size",
       interactName: "itemstackWithSize",
       function: (item: Item): TypeLambda<Integer, Item> => {

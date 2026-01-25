@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { CompoundTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
@@ -10,28 +9,26 @@ export class OPERATOR_NBT_COMPOUND_HASKEY extends BaseOperator<
   CompoundTag,
   Operator<iString, iBoolean>
 > {
-    static override internalName = "integrateddynamics:nbt_compound_haskey"
+  static override internalName =
+    "integrateddynamics:nbt_compound_haskey" as const;
   constructor() {
     super({
       nicknames: ["nbtCompoundHaskey", "NBTHasKey"],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "NBT",
+        },
+        to: {
           type: "Function",
           from: {
-            type: "NBT",
+            type: "String",
           },
           to: {
-            type: "Function",
-            from: {
-              type: "String",
-            },
-            to: {
-              type: "Boolean",
-            },
+            type: "Boolean",
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "NBT{}.has_key",
       interactName: "nbtHasKey",
       function: (nbt: CompoundTag): TypeLambda<iString, iBoolean> => {

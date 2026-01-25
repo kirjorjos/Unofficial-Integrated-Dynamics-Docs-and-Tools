@@ -1,7 +1,6 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { BaseOperator } from "../BaseOperator";
 import { Operator } from "../Operator";
-import { globalMap } from "HelperClasses/TypeMap";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 import { operatorRegistry } from "../operatorRegistry";
 
@@ -9,27 +8,24 @@ export class OPERATOR_OPERATOR_BY_NAME extends BaseOperator<
   iString,
   Operator<IntegratedValue, IntegratedValue>
 > {
-    static override internalName = "integrateddynamics:operator_by_name"
+  static override internalName = "integrateddynamics:operator_by_name" as const;
   constructor() {
     super({
       nicknames: ["operatorByName", "opByName"],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "Operator",
-            obscured: {  
-              type: "Function",
-              from: { type: "Any", typeID: 1 },
-              to: { type: "Any", typeID: 2 },
-            }
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "String",
+        },
+        to: {
+          type: "Operator",
+          obscured: {
+            type: "Function",
+            from: { type: "Any", typeID: 1 },
+            to: { type: "Any", typeID: 2 },
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "op_by_name",
       interactName: "stringOperatorByName",
       function: (name: iString): Operator<IntegratedValue, IntegratedValue> => {

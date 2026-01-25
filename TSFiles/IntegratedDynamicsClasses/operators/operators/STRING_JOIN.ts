@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
@@ -9,26 +8,23 @@ export class OPERATOR_STRING_JOIN extends BaseOperator<
   iString,
   Operator<iArray<iString>, iString>
 > {
-    static override internalName = "integrateddynamics:string_join"
+  static override internalName = "integrateddynamics:string_join" as const;
   constructor() {
     super({
       nicknames: ["stringJoin"],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "String",
+        },
+        to: {
           type: "Function",
-          from: {
+          from: { type: "List", listType: { type: "String" } },
+          to: {
             type: "String",
           },
-          to: {
-            type: "Function",
-            from: { type: "List", listType: { type: "String" } },
-            to: {
-              type: "String",
-            },
-          },
         },
-        globalMap
-      ),
+      }),
       symbol: "join",
       interactName: "stringJoin",
       function: (delimiter: iString): TypeLambda<iArray<iString>, iString> => {

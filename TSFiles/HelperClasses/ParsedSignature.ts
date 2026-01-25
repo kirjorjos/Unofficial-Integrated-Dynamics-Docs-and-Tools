@@ -1,30 +1,18 @@
-import { TypeMap } from "./TypeMap";
+import { globalMap } from "./TypeMap";
 
 export class ParsedSignature {
-  
   private static maxTypeID = 0;
   private static NUMBER_TYPES = ["Integer", "Long", "Double", "Number"];
 
-  ast: TypeRawSignatureAST.RawSignatureNode;
-  typeMap: TypeMap;
-  flatArgs: (TypeRawSignatureAST.RawSignatureDefiniteValue["type"] | "Any")[];
+  private ast: TypeRawSignatureAST.RawSignatureNode;
+  public errorInfo: ErrorInfo | null = null;
+  private _cachedRewrite: ParsedSignature | null = null;
+  private _cachedAtVersion: number = -1;
+  private inputCache = [] as ParsedSignature[];
+  private outputCache = [] as ParsedSignature[];
 
-  constructor(
-    ast: TypeRawSignatureAST.RawSignatureNode,
-    typeMap: TypeMap = new TypeMap(),
-    normalize = true
-  ) {
+  constructor(ast: TypeRawSignatureAST.RawSignatureNode, normalize = true) {
     this.ast = normalize ? this._normalize(ast) : ast;
-    this.typeMap = typeMap;
-    this.flatArgs = this.toFlatSignature();
-  }
-
-  getTypeMap(): TypeMap {
-    return this.typeMap;
-  }
-
-  getAST() {
-    return this.ast;
   }
 
   _normalize(
@@ -79,45 +67,8 @@ export class ParsedSignature {
     return remap(node);
   }
 
-  rename(mapping: TypeTypeMap): ParsedSignature {
-    const renameNode = (
-      node: TypeRawSignatureAST.RawSignatureNode
-    ): TypeRawSignatureAST.RawSignatureNode => {
-      if (!node) return node;
-
-      if (node.type === "List") {
-        return Object.assign({}, node, {
-          listType: renameNode(node.listType),
-        });
-      }
-
-      if (node.type === "Any") {
-        const key = node.typeID;
-        if (mapping[key]) {
-          return {
-            type: mapping[key],
-          } as unknown as TypeRawSignatureAST.RawSignatureDefiniteValue;
-        } else return node;
-      }
-
-      if (node.type === "Function") {
-        return {
-          ...node,
-          from: renameNode(node.from),
-          to: renameNode(node.to),
-        };
-      }
-
-      return node;
-    };
-    return new ParsedSignature(renameNode(this.ast), this.typeMap);
-  }
-
-  clone() {
-    return new ParsedSignature(
-      JSON.parse(JSON.stringify(this.ast)),
-      this.typeMap
-    );
+  getAst() {
+    return this.ast;
   }
 
   getArity() {
@@ -134,6 +85,7 @@ export class ParsedSignature {
   }
 
   getInput(index = 0) {
+    if (index < this.inputCache.length) return this.inputCache[index]!;
     if (this.ast.type !== "Function") {
       throw new Error(
         `Cannot get input of a non-function signature. Got ${this.ast.type}`
@@ -151,10 +103,24 @@ export class ParsedSignature {
       }
     }
 
-    return current.from;
+    const result = new ParsedSignature(current.from, false);
+    this.inputCache[index] = result;
+    return result;
   }
 
-  getOutput(index = 0) {
+  getOutput(index = 0): ParsedSignature {
+    if (index < this.outputCache.length && this.outputCache[index])
+      return this.outputCache[index]!;
+    if (this.ast.type === "Operator") {
+      const result = new ParsedSignature(this.ast.obscured, false);
+      this.outputCache[0] = result;
+      return result;
+    }
+    if (this.ast.type === "List") {
+      const result = new ParsedSignature(this.ast.listType, false);
+      this.outputCache[0] = result;
+      return result;
+    }
     if (index < 0) index = this.getArity() + index;
     if (this.ast.type !== "Function") {
       throw new Error(
@@ -173,33 +139,84 @@ export class ParsedSignature {
       }
     }
 
-    return current.to;
+    const result = new ParsedSignature(current.to, false);
+    this.outputCache[index] = result;
+    return result;
   }
 
-  pipe(other: ParsedSignature) {
-    if (this.ast.type !== "Function" || other.ast.type !== "Function") {
-      throw new Error("Can only pipe operators, not values");
+  pipe(other: ParsedSignature): ParsedSignature {
+    if (this.errorInfo) {
+      const errorSig = new ParsedSignature(this.ast, false);
+      errorSig.errorInfo = this.errorInfo;
+      return errorSig;
+    }
+    if (other.errorInfo) {
+      const errorSig = new ParsedSignature(other.ast, false);
+      errorSig.errorInfo = other.errorInfo;
+      return errorSig;
     }
 
-    const newAST: TypeRawSignatureAST.RawSignatureFunction = {
+    if (this.ast.type !== "Function" || other.ast.type !== "Function") {
+      const errorSig = new ParsedSignature(this.ast, false);
+      errorSig.errorInfo = {
+        message:
+          "Can only pipe operators, not values (Inputs must be functions)",
+        nodeA: this,
+        nodeB: other,
+      };
+      return errorSig;
+    }
+
+    const unifyError = globalMap.unify(this.getOutput(), other.getInput());
+
+    const pipedAst: TypeRawSignatureAST.RawSignatureFunction = {
       type: "Function",
-      from: this.ast.from,
-      to: other.getOutput(),
+      from: this.getInput().ast,
+      to: other.getOutput().ast,
     };
 
-    return new ParsedSignature(newAST, this.typeMap);
+    const newSignature = new ParsedSignature(pipedAst, false);
+
+    if (unifyError && !newSignature.errorInfo) {
+      newSignature.errorInfo = unifyError;
+    }
+
+    return newSignature;
   }
 
-  apply(argType: TypeRawSignatureAST.RawSignatureNode): ParsedSignature {
+  apply(argType: ParsedSignature): ParsedSignature {
+    if (this.errorInfo) {
+      const errorSig = new ParsedSignature(this.ast, false);
+      errorSig.errorInfo = this.errorInfo;
+      return errorSig;
+    }
+    if (argType.errorInfo) {
+      const errorSig = new ParsedSignature(argType.ast, false);
+      errorSig.errorInfo = argType.errorInfo;
+      return errorSig;
+    }
+
     if (this.ast.type !== "Function") {
-      throw new Error("Cannot apply to a value");
+      const errorSig = new ParsedSignature(this.ast, false);
+      errorSig.errorInfo = {
+        message: "Cannot apply to a non-function signature",
+        nodeA: this,
+        nodeB: argType,
+      };
+      return errorSig;
     }
 
     const expected = this.getInput();
-    this.typeMap.unify(argType, expected);
+    const unifyError = globalMap.unify(argType, expected);
 
-    const newAst = this.typeMap.rewrite(this.ast.to);
-    return new ParsedSignature(newAst, this.typeMap, false);
+    const resultRawAst = this.getOutput().ast;
+    const resultSignature = new ParsedSignature(resultRawAst, false);
+
+    if (unifyError && !resultSignature.errorInfo) {
+      resultSignature.errorInfo = unifyError;
+    }
+
+    return resultSignature.rewrite();
   }
 
   flip() {
@@ -221,7 +238,7 @@ export class ParsedSignature {
       },
     };
 
-    return new ParsedSignature(flipped, this.typeMap);
+    return new ParsedSignature(flipped, false);
   }
 
   toFlatSignature(): TypeRawSignatureAST.RawSignatureNode["type"][] {
@@ -235,13 +252,84 @@ export class ParsedSignature {
     return arr as TypeRawSignatureAST.RawSignatureNode["type"][];
   }
 
+  getRootType() {
+    return this.ast.type;
+  }
+
+  getTypeID() {
+    if (this.ast.type !== "Any")
+      throw new Error("Can't get the type ID of a non-Any node");
+    return this.ast.typeID;
+  }
+
+  rewrite(): ParsedSignature {
+    if (this.errorInfo) {
+      throw new Error(`Type error during rewrite: ${this.errorInfo.message}`);
+    }
+    const currentVersion = globalMap.getUnificationVersion();
+    if (this._cachedRewrite && this._cachedAtVersion === currentVersion) {
+      return this._cachedRewrite;
+    }
+
+    let finalSignature: ParsedSignature;
+
+    if (this.ast.type === "Any") {
+      const alias = globalMap.findBase(this.ast.typeID);
+      if (alias instanceof ParsedSignature) {
+        finalSignature = alias.rewrite();
+      } else {
+        finalSignature = this;
+      }
+    } else if (this.ast.type === "Function") {
+      const rewrittenInput = this.getInput().rewrite();
+      const rewrittenOutput = this.getOutput().rewrite();
+      const newAst: TypeRawSignatureAST.RawSignatureFunction = {
+        type: "Function",
+        from: rewrittenInput.ast,
+        to: rewrittenOutput.ast,
+      };
+      finalSignature = new ParsedSignature(newAst, false);
+    } else if (this.ast.type === "List") {
+      const rewrittenListType = this.getOutput().rewrite();
+      const newAst: TypeRawSignatureAST.RawSignatureList = {
+        type: "List",
+        listType: rewrittenListType.ast,
+      };
+      finalSignature = new ParsedSignature(newAst, false);
+    } else if (this.ast.type === "Operator") {
+      const rewrittenObscured = this.getOutput().rewrite();
+      const newAst: TypeRawSignatureAST.RawSignatureOperator = {
+        type: "Operator",
+        obscured:
+          rewrittenObscured.ast as TypeRawSignatureAST.RawSignatureFunction,
+      };
+      finalSignature = new ParsedSignature(newAst, false);
+    } else {
+      finalSignature = this;
+    }
+
+    finalSignature.errorInfo = this.errorInfo;
+
+    this._cachedRewrite = finalSignature;
+    this._cachedAtVersion = currentVersion;
+
+    return finalSignature;
+  }
+
   static getNewTypeID(): number {
     return ParsedSignature.maxTypeID++;
   }
 
-  static typeEquals(a: TypeRawSignatureAST.RawSignatureNode, b: TypeRawSignatureAST.RawSignatureNode) {
-    if (a.type === b.type) return true;
-    if (ParsedSignature.NUMBER_TYPES.includes(a.type) && ParsedSignature.NUMBER_TYPES.includes(b.type)) return true;
+  static typeEquals(
+    a: TypeRawSignatureAST.RawSignatureNode["type"],
+    b: TypeRawSignatureAST.RawSignatureNode["type"]
+  ) {
+    if (a === b) return true;
+    if (
+      ParsedSignature.NUMBER_TYPES.includes(a) &&
+      ParsedSignature.NUMBER_TYPES.includes(b)
+    )
+      return true;
     return false;
   }
 }

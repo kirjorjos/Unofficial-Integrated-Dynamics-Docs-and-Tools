@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { Item } from "IntegratedDynamicsClasses/Item";
 import { CompoundTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
 import { Properties } from "IntegratedDynamicsClasses/Properties";
@@ -11,7 +10,8 @@ export class OPERATOR_ITEMSTACK_WITHDATA extends BaseOperator<
   Item,
   Operator<iString, Operator<CompoundTag, Item>>
 > {
-    static override internalName = "integrateddynamics:itemstack_withdata"
+  static override internalName =
+    "integrateddynamics:itemstack_withdata" as const;
   constructor() {
     super({
       nicknames: [
@@ -22,30 +22,27 @@ export class OPERATOR_ITEMSTACK_WITHDATA extends BaseOperator<
         "itemWithData",
         "itemWithNBT",
       ],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Item",
+        },
+        to: {
           type: "Function",
           from: {
-            type: "Item",
+            type: "String",
           },
           to: {
             type: "Function",
             from: {
-              type: "String",
+              type: "NBT",
             },
             to: {
-              type: "Function",
-              from: {
-                type: "NBT",
-              },
-              to: {
-                type: "Item",
-              },
+              type: "Item",
             },
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "with_data",
       interactName: "itemstackWithData",
       function: (

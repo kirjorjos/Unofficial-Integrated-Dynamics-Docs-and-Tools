@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { CompoundTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
@@ -8,22 +7,19 @@ export class OPERATOR_OBJECT_ENTITY_NBT extends BaseOperator<
   Entity,
   CompoundTag
 > {
-    static override internalName = "integrateddynamics:entity_nbt"
+  static override internalName = "integrateddynamics:entity_nbt" as const;
   constructor() {
     super({
       nicknames: ["EntityNbt", "entity_nbt", "canBreed", "entityNBT"],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Entity",
-          },
-          to: {
-            type: "NBT",
-          },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Entity",
         },
-        globalMap
-      ),
+        to: {
+          type: "NBT",
+        },
+      }),
       symbol: "NBT()",
       interactName: "entityNbt",
       function: (entity: Entity): CompoundTag => {

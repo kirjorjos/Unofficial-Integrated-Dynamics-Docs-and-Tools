@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
@@ -7,7 +6,8 @@ export class OPERATOR_ITEMSTACK_ISFECONTAINER extends BaseOperator<
   Item,
   iBoolean
 > {
-    static override internalName = "integrateddynamics:itemstack_isfecontainer"
+  static override internalName =
+    "integrateddynamics:itemstack_isfecontainer" as const;
   constructor() {
     super({
       nicknames: [
@@ -18,18 +18,15 @@ export class OPERATOR_ITEMSTACK_ISFECONTAINER extends BaseOperator<
         "itemIsFecontainer",
         "isFeContainer",
       ],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Item",
-          },
-          to: {
-            type: "Boolean",
-          },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Item",
         },
-        globalMap
-      ),
+        to: {
+          type: "Boolean",
+        },
+      }),
       symbol: "is_fe_container",
       interactName: "itemstackIsFeContainer",
       function: (item: Item): iBoolean => {

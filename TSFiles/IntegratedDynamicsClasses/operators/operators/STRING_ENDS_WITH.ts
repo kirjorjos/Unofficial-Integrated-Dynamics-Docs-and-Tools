@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
@@ -9,28 +8,25 @@ export class OPERATOR_STRING_ENDS_WITH extends BaseOperator<
   iString,
   Operator<iString, iBoolean>
 > {
-    static override internalName = "integrateddynamics:string_ends_with"
+  static override internalName = "integrateddynamics:string_ends_with" as const;
   constructor() {
     super({
       nicknames: ["endsWith", "stringEndsWith"],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "String",
+        },
+        to: {
           type: "Function",
           from: {
             type: "String",
           },
           to: {
-            type: "Function",
-            from: {
-              type: "String",
-            },
-            to: {
-              type: "Boolean",
-            },
+            type: "Boolean",
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "ends_with",
       interactName: "stringEndsWith",
       function: (substring: iString): TypeLambda<iString, iBoolean> => {

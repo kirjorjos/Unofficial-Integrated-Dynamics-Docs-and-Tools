@@ -33,6 +33,6 @@ export class DoubleTag extends NumericTag {
 
   equals(tag: Tag<IntegratedValue>): iBoolean {
     if (tag.getType() != Tag.TAG_DOUBLE) return new iBoolean(false);
-    return new iBoolean(this.getAsDouble() == (tag as DoubleTag).getAsDouble());
+    return this.valueOf().equals(tag.valueOf());
   }
 }

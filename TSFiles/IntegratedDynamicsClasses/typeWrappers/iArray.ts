@@ -2,6 +2,7 @@ import { Integer } from "JavaNumberClasses/Integer";
 import { iBoolean } from "./iBoolean";
 import { Operator } from "IntegratedDynamicsClasses/operators/Operator";
 import { iArrayEager } from "./iArrayEager";
+import { ParsedSignature } from "HelperClasses/ParsedSignature";
 
 export interface iArray<
   Source extends IntegratedValue,
@@ -41,5 +42,5 @@ export interface iArray<
 
   equals(other: IntegratedValue): iBoolean;
 
-  getSignatureNode(): TypeRawSignatureAST.RawSignatureList;
+  getSignatureNode(): ParsedSignature;
 }

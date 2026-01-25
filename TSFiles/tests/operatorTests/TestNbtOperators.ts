@@ -221,10 +221,14 @@ describe("TestNbtOperators", () => {
   it("testNbtKeys", () => {
     const res1 = new operatorRegistry.NBT_COMPOUND_KEYS().evaluate(nempty);
     expect(res1).toBeInstanceOf(iArrayEager);
-    expect((res1 as iArrayEager<iString>).size()).toEqual(new Integer(0));
+    expect(
+      (res1 as iArrayEager<iString>).size().equals(new Integer(0)).valueOf()
+    ).toBe(true);
 
     const res2 = new operatorRegistry.NBT_COMPOUND_KEYS().evaluate(nsasasbsc);
-    expect((res2 as iArrayEager<iString>).size()).toEqual(new Integer(2));
+    expect(
+      (res2 as iArrayEager<iString>).size().equals(new Integer(2)).valueOf()
+    ).toBe(true);
     expect((res2 as iArrayEager<iString>).get(new Integer(0)).valueOf()).toBe(
       "a"
     );
@@ -972,7 +976,9 @@ describe("TestNbtOperators", () => {
     );
     let tsbc = new CompoundTag({});
     tsbc = tsbc.set("b", new StringTag(new iString("c")));
-    expect((res2 as CompoundTag).valueOf()).toEqual(tsbc.valueOf());
+    expect(
+      (res2 as CompoundTag).valueOf().equals(tsbc.valueOf()).valueOf()
+    ).toBe(true);
   });
 
   it("testInvalidInputNbtWithoutSizeLarge", () => {
@@ -1010,7 +1016,7 @@ describe("TestNbtOperators", () => {
     let t1 = new CompoundTag({});
     t1 = t1.set("a", new StringTag(new iString("a")));
     t1 = t1.set("c", ByteTag.ONE);
-    expect((res1 as CompoundTag).valueOf()).toEqual(t1.valueOf());
+    expect(res1.equals(t1).valueOf()).toBe(true);
 
     const res2 = new operatorRegistry.NBT_COMPOUND_WITH_BOOLEAN().evaluate(
       nsasasbsc,
@@ -1020,7 +1026,9 @@ describe("TestNbtOperators", () => {
     let t2 = new CompoundTag({});
     t2 = t2.set("a", ByteTag.ONE);
     t2 = t2.set("b", new StringTag(new iString("c")));
-    expect((res2 as CompoundTag).valueOf()).toEqual(t2.valueOf());
+    expect((res2 as CompoundTag).valueOf().equals(t2.valueOf()).valueOf()).toBe(
+      true
+    );
   });
 
   it("testInvalidInputNbtWithBooleanSizeLarge", () => {
@@ -1058,7 +1066,7 @@ describe("TestNbtOperators", () => {
     let t1 = new CompoundTag({});
     t1 = t1.set("a", new StringTag(new iString("a")));
     t1 = t1.set("c", new ShortTag(new Integer(1)));
-    expect((res1 as CompoundTag).valueOf()).toEqual(t1.valueOf());
+    expect(res1.equals(t1).valueOf()).toBe(true);
 
     const res2 = new operatorRegistry.NBT_COMPOUND_WITH_SHORT().evaluate(
       nsasasbsc,
@@ -1068,7 +1076,9 @@ describe("TestNbtOperators", () => {
     let t2 = new CompoundTag({});
     t2 = t2.set("a", new ShortTag(new Integer(1)));
     t2 = t2.set("b", new StringTag(new iString("c")));
-    expect((res2 as CompoundTag).valueOf()).toEqual(t2.valueOf());
+    expect((res2 as CompoundTag).valueOf().equals(t2.valueOf()).valueOf()).toBe(
+      true
+    );
   });
 
   it("testInvalidInputNbtWithShortSizeLarge", () => {
@@ -1106,7 +1116,7 @@ describe("TestNbtOperators", () => {
     let t1 = new CompoundTag({});
     t1 = t1.set("a", new StringTag(new iString("a")));
     t1 = t1.set("c", new IntTag(new Integer(1)));
-    expect((res1 as CompoundTag).valueOf()).toEqual(t1.valueOf());
+    expect(res1.equals(t1).valueOf()).toBe(true);
 
     const res2 = new operatorRegistry.NBT_COMPOUND_WITH_INTEGER().evaluate(
       nsasasbsc,
@@ -1116,7 +1126,9 @@ describe("TestNbtOperators", () => {
     let t2 = new CompoundTag({});
     t2 = t2.set("a", new IntTag(new Integer(1)));
     t2 = t2.set("b", new StringTag(new iString("c")));
-    expect((res2 as CompoundTag).valueOf()).toEqual(t2.valueOf());
+    expect((res2 as CompoundTag).valueOf().equals(t2.valueOf()).valueOf()).toBe(
+      true
+    );
   });
 
   it("testInvalidInputNbtWithIntegerSizeLarge", () => {
@@ -1154,7 +1166,7 @@ describe("TestNbtOperators", () => {
     let t1 = new CompoundTag({});
     t1 = t1.set("a", new StringTag(new iString("a")));
     t1 = t1.set("c", new LongTag(new Long(1)));
-    expect((res1 as CompoundTag).valueOf()).toEqual(t1.valueOf());
+    expect(res1.equals(t1).valueOf()).toBe(true);
 
     const res2 = new operatorRegistry.NBT_COMPOUND_WITH_LONG().evaluate(
       nsasasbsc,
@@ -1164,7 +1176,9 @@ describe("TestNbtOperators", () => {
     let t2 = new CompoundTag({});
     t2 = t2.set("a", new LongTag(new Long(1)));
     t2 = t2.set("b", new StringTag(new iString("c")));
-    expect((res2 as CompoundTag).valueOf()).toEqual(t2.valueOf());
+    expect((res2 as CompoundTag).valueOf().equals(t2.valueOf()).valueOf()).toBe(
+      true
+    );
   });
 
   it("testInvalidInputNbtWithLongSizeLarge", () => {
@@ -1202,7 +1216,7 @@ describe("TestNbtOperators", () => {
     let t1 = new CompoundTag({});
     t1 = t1.set("a", new StringTag(new iString("a")));
     t1 = t1.set("c", new DoubleTag(new Double(1.5)));
-    expect((res1 as CompoundTag).valueOf()).toEqual(t1.valueOf());
+    expect(res1.equals(t1).valueOf()).toBe(true);
 
     const res2 = new operatorRegistry.NBT_COMPOUND_WITH_DOUBLE().evaluate(
       nsasasbsc,
@@ -1212,7 +1226,9 @@ describe("TestNbtOperators", () => {
     let t2 = new CompoundTag({});
     t2 = t2.set("a", new DoubleTag(new Double(1.5)));
     t2 = t2.set("b", new StringTag(new iString("c")));
-    expect((res2 as CompoundTag).valueOf()).toEqual(t2.valueOf());
+    expect((res2 as CompoundTag).valueOf().equals(t2.valueOf()).valueOf()).toBe(
+      true
+    );
   });
 
   it("testInvalidInputNbtWithDoubleSizeLarge", () => {
@@ -1250,7 +1266,7 @@ describe("TestNbtOperators", () => {
     let t1 = new CompoundTag({});
     t1 = t1.set("a", new StringTag(new iString("a")));
     t1 = t1.set("c", new FloatTag(new Double(1.5)));
-    expect((res1 as CompoundTag).valueOf()).toEqual(t1.valueOf());
+    expect(res1.equals(t1).valueOf()).toBe(true);
 
     const res2 = new operatorRegistry.NBT_COMPOUND_WITH_FLOAT().evaluate(
       nsasasbsc,
@@ -1260,7 +1276,9 @@ describe("TestNbtOperators", () => {
     let t2 = new CompoundTag({});
     t2 = t2.set("a", new FloatTag(new Double(1.5)));
     t2 = t2.set("b", new StringTag(new iString("c")));
-    expect((res2 as CompoundTag).valueOf()).toEqual(t2.valueOf());
+    expect((res2 as CompoundTag).valueOf().equals(t2.valueOf()).valueOf()).toBe(
+      true
+    );
   });
 
   it("testInvalidInputNbtWithFloatSizeLarge", () => {
@@ -1298,7 +1316,7 @@ describe("TestNbtOperators", () => {
     let t1 = new CompoundTag({});
     t1 = t1.set("a", new StringTag(new iString("a")));
     t1 = t1.set("c", new StringTag(new iString("c")));
-    expect((res1 as CompoundTag).valueOf()).toEqual(t1.valueOf());
+    expect(res1.equals(t1).valueOf()).toBe(true);
 
     const res2 = new operatorRegistry.NBT_COMPOUND_WITH_STRING().evaluate(
       nsasasbsc,
@@ -1308,7 +1326,9 @@ describe("TestNbtOperators", () => {
     let t2 = new CompoundTag({});
     t2 = t2.set("a", new StringTag(new iString("c")));
     t2 = t2.set("b", new StringTag(new iString("c")));
-    expect((res2 as CompoundTag).valueOf()).toEqual(t2.valueOf());
+    expect((res2 as CompoundTag).valueOf().equals(t2.valueOf()).valueOf()).toBe(
+      true
+    );
   });
 
   it("testInvalidInputNbtWithStringSizeLarge", () => {
@@ -1349,7 +1369,7 @@ describe("TestNbtOperators", () => {
     let t1 = new CompoundTag({});
     t1 = t1.set("a", new StringTag(new iString("a")));
     t1 = t1.set("c", tsasa);
-    expect((res1 as CompoundTag).valueOf()).toEqual(t1.valueOf());
+    expect(res1.equals(t1).valueOf()).toBe(true);
 
     const res2 = new operatorRegistry.NBT_COMPOUND_WITH_COMPOUND().evaluate(
       nsasasbsc,
@@ -1359,7 +1379,9 @@ describe("TestNbtOperators", () => {
     let t2 = new CompoundTag({});
     t2 = t2.set("a", tsasa);
     t2 = t2.set("b", new StringTag(new iString("c")));
-    expect((res2 as CompoundTag).valueOf()).toEqual(t2.valueOf());
+    expect((res2 as CompoundTag).valueOf().equals(t2.valueOf()).valueOf()).toBe(
+      true
+    );
   });
 
   it("testInvalidInputNbtWithTagSizeLarge", () => {
@@ -1408,7 +1430,7 @@ describe("TestNbtOperators", () => {
     let t1 = new CompoundTag({});
     t1 = t1.set("a", new StringTag(new iString("a")));
     t1 = t1.set("c", tlist);
-    expect((res1 as CompoundTag).valueOf()).toEqual(t1.valueOf());
+    expect(res1.equals(t1).valueOf()).toBe(true);
 
     const res2 = new operatorRegistry.NBT_COMPOUND_WITH_LIST_TAG().evaluate(
       nsasasbsc,
@@ -1418,7 +1440,9 @@ describe("TestNbtOperators", () => {
     let t2 = new CompoundTag({});
     t2 = t2.set("a", tlist);
     t2 = t2.set("b", new StringTag(new iString("c")));
-    expect((res2 as CompoundTag).valueOf()).toEqual(t2.valueOf());
+    expect((res2 as CompoundTag).valueOf().equals(t2.valueOf()).valueOf()).toBe(
+      true
+    );
   });
 
   it("testInvalidInputNbtWithListTagSizeLarge", () => {
@@ -1466,7 +1490,7 @@ describe("TestNbtOperators", () => {
     let t1 = new CompoundTag({});
     t1 = t1.set("a", new StringTag(new iString("a")));
     t1 = t1.set("c", tlist);
-    expect((res1 as CompoundTag).valueOf()).toEqual(t1.valueOf());
+    expect(res1.equals(t1).valueOf()).toBe(true);
 
     const res2 = new operatorRegistry.NBT_COMPOUND_WITH_LIST_BYTE().evaluate(
       nsasasbsc,
@@ -1476,7 +1500,9 @@ describe("TestNbtOperators", () => {
     let t2 = new CompoundTag({});
     t2 = t2.set("a", tlist);
     t2 = t2.set("b", new StringTag(new iString("c")));
-    expect((res2 as CompoundTag).valueOf()).toEqual(t2.valueOf());
+    expect((res2 as CompoundTag).valueOf().equals(t2.valueOf()).valueOf()).toBe(
+      true
+    );
   });
 
   it("testInvalidInputNbtWithListByteSizeLarge", () => {
@@ -1524,7 +1550,7 @@ describe("TestNbtOperators", () => {
     let t1 = new CompoundTag({});
     t1 = t1.set("a", new StringTag(new iString("a")));
     t1 = t1.set("c", tlist);
-    expect((res1 as CompoundTag).valueOf()).toEqual(t1.valueOf());
+    expect(res1.equals(t1).valueOf()).toBe(true);
 
     const res2 = new operatorRegistry.NBT_COMPOUND_WITH_LIST_INT().evaluate(
       nsasasbsc,
@@ -1534,7 +1560,9 @@ describe("TestNbtOperators", () => {
     let t2 = new CompoundTag({});
     t2 = t2.set("a", tlist);
     t2 = t2.set("b", new StringTag(new iString("c")));
-    expect((res2 as CompoundTag).valueOf()).toEqual(t2.valueOf());
+    expect((res2 as CompoundTag).valueOf().equals(t2.valueOf()).valueOf()).toBe(
+      true
+    );
   });
 
   it("testInvalidInputNbtWithListIntSizeLarge", () => {
@@ -1582,7 +1610,7 @@ describe("TestNbtOperators", () => {
     let t1 = new CompoundTag({});
     t1 = t1.set("a", new StringTag(new iString("a")));
     t1 = t1.set("c", tlist);
-    expect((res1 as CompoundTag).valueOf()).toEqual(t1.valueOf());
+    expect(res1.equals(t1).valueOf()).toBe(true);
 
     const res2 = new operatorRegistry.NBT_COMPOUND_WITH_LIST_LONG().evaluate(
       nsasasbsc,
@@ -1592,7 +1620,9 @@ describe("TestNbtOperators", () => {
     let t2 = new CompoundTag({});
     t2 = t2.set("a", tlist);
     t2 = t2.set("b", new StringTag(new iString("c")));
-    expect((res2 as CompoundTag).valueOf()).toEqual(t2.valueOf());
+    expect((res2 as CompoundTag).valueOf().equals(t2.valueOf()).valueOf()).toBe(
+      true
+    );
   });
 
   it("testInvalidInputNbtWithListLongSizeLarge", () => {
@@ -1680,19 +1710,25 @@ describe("TestNbtOperators", () => {
       nall
     );
     expect(res1).toBeInstanceOf(CompoundTag);
-    expect((res1 as CompoundTag).valueOf()).toEqual(nall.valueOf());
+    expect(
+      (res1 as CompoundTag).valueOf().equals(nall.valueOf()).valueOf()
+    ).toBe(true);
 
     const res2 = new operatorRegistry.NBT_COMPOUND_UNION().evaluate(
       nall,
       nempty
     );
-    expect((res2 as CompoundTag).valueOf()).toEqual(nall.valueOf());
+    expect(
+      (res2 as CompoundTag).valueOf().equals(nall.valueOf()).valueOf()
+    ).toBe(true);
 
     const res3 = new operatorRegistry.NBT_COMPOUND_UNION().evaluate(
       nsome,
       nall
     );
-    expect((res3 as CompoundTag).valueOf()).toEqual(nall.valueOf());
+    expect(
+      (res3 as CompoundTag).valueOf().equals(nall.valueOf()).valueOf()
+    ).toBe(true);
 
     const res4 = new operatorRegistry.NBT_COMPOUND_UNION().evaluate(
       nsasa,
@@ -1701,7 +1737,9 @@ describe("TestNbtOperators", () => {
     let tsasasbsb = new CompoundTag({});
     tsasasbsb = tsasasbsb.set("a", new StringTag(new iString("a")));
     tsasasbsb = tsasasbsb.set("b", new StringTag(new iString("b")));
-    expect((res4 as CompoundTag).valueOf()).toEqual(tsasasbsb.valueOf());
+    expect(
+      (res4 as CompoundTag).valueOf().equals(tsasasbsb.valueOf()).valueOf()
+    ).toBe(true);
   });
 
   it("testInvalidInputNbtUnionSizeLarge", () => {
@@ -1755,7 +1793,9 @@ describe("TestNbtOperators", () => {
       nsome,
       nall
     );
-    expect((res3 as CompoundTag).valueOf()).toEqual(nsome.valueOf());
+    expect(
+      (res3 as CompoundTag).valueOf().equals(nsome.valueOf()).valueOf()
+    ).toBe(true);
 
     const res4 = new operatorRegistry.NBT_COMPOUND_INTERSECTION().evaluate(
       nsasa,
@@ -1769,7 +1809,9 @@ describe("TestNbtOperators", () => {
       nsasa,
       nsasasbsc
     );
-    expect((res5 as CompoundTag).valueOf()).toEqual(nsasa.valueOf());
+    expect(
+      (res5 as CompoundTag).valueOf().equals(nsasa.valueOf()).valueOf()
+    ).toBe(true);
   });
 
   it("testInvalidInputNbtIntersectionSizeLarge", () => {
@@ -1815,7 +1857,9 @@ describe("TestNbtOperators", () => {
       nall,
       nempty
     );
-    expect((res2 as CompoundTag).valueOf()).toEqual(nall.valueOf());
+    expect(
+      (res2 as CompoundTag).valueOf().equals(nall.valueOf()).valueOf()
+    ).toBe(true);
 
     const res3 = new operatorRegistry.NBT_COMPOUND_MINUS().evaluate(
       nsome,
@@ -1829,7 +1873,9 @@ describe("TestNbtOperators", () => {
       nsasa,
       nsbsb
     );
-    expect((res4 as CompoundTag).valueOf()).toEqual(nsasa.valueOf());
+    expect(
+      (res4 as CompoundTag).valueOf().equals(nsasa.valueOf()).valueOf()
+    ).toBe(true);
 
     const res5 = new operatorRegistry.NBT_COMPOUND_MINUS().evaluate(
       nsasasbsc,
@@ -1837,7 +1883,9 @@ describe("TestNbtOperators", () => {
     );
     let tsbsc = new CompoundTag({});
     tsbsc = tsbsc.set("b", new StringTag(new iString("c")));
-    expect((res5 as CompoundTag).valueOf()).toEqual(tsbsc.valueOf());
+    expect(
+      (res5 as CompoundTag).valueOf().equals(tsbsc.valueOf()).valueOf()
+    ).toBe(true);
   });
 
   it("testInvalidInputNbtMinusSizeLarge", () => {
@@ -2123,17 +2171,22 @@ describe("TestNbtOperators", () => {
 
     const res1 = new operatorRegistry.NBT_AS_TAG_LIST().evaluate(ntaglist);
     expect(res1).toBeInstanceOf(iArrayEager);
-    expect(
-      (res1.getSignatureNode() as TypeRawSignatureAST.RawSignatureList).listType
-        .type
-    ).toBe("NBT");
+    expect(res1.getSignatureNode().getOutput().getRootType()).toBe("NBT");
     expect((res1 as iArrayEager<any>).size().toJSNumber()).toBe(2);
-    expect((res1 as iArrayEager<any>).get(new Integer(0)).valueOf()).toEqual(
-      subCompound.valueOf()
-    );
-    expect((res1 as iArrayEager<any>).get(new Integer(1)).valueOf()).toEqual(
-      subCompound.valueOf()
-    );
+    expect(
+      (res1 as iArrayEager<any>)
+        .get(new Integer(0))
+        .valueOf()
+        .equals(subCompound.valueOf())
+        .valueOf()
+    ).toBe(true);
+    expect(
+      (res1 as iArrayEager<any>)
+        .get(new Integer(1))
+        .valueOf()
+        .equals(subCompound.valueOf())
+        .valueOf()
+    ).toBe(true);
 
     const res2 = new operatorRegistry.NBT_AS_TAG_LIST().evaluate(nempty);
     expect((res2 as iArrayEager<any>).size().toJSNumber()).toBe(0);
@@ -2164,10 +2217,7 @@ describe("TestNbtOperators", () => {
   it("testNbtAsByteList", () => {
     const res1 = new operatorRegistry.NBT_AS_BYTE_LIST().evaluate(nbytelist);
     expect(res1).toBeInstanceOf(iArrayEager);
-    expect(
-      (res1.getSignatureNode() as TypeRawSignatureAST.RawSignatureList).listType
-        .type
-    ).toBe("Integer");
+    expect(res1.getSignatureNode().getOutput().getRootType()).toBe("Integer");
     expect((res1 as iArrayEager<any>).size().toJSNumber()).toBe(3);
     expect((res1 as iArrayEager<any>).get(new Integer(0)).toJSNumber()).toBe(0);
     expect((res1 as iArrayEager<any>).get(new Integer(1)).toJSNumber()).toBe(1);
@@ -2202,10 +2252,7 @@ describe("TestNbtOperators", () => {
   it("testNbtAsIntList", () => {
     const res1 = new operatorRegistry.NBT_AS_INT_LIST().evaluate(nintlist);
     expect(res1).toBeInstanceOf(iArrayEager);
-    expect(
-      (res1.getSignatureNode() as TypeRawSignatureAST.RawSignatureList).listType
-        .type
-    ).toBe("Integer");
+    expect(res1.getSignatureNode().getOutput().getRootType()).toBe("Integer");
     expect((res1 as iArrayEager<any>).size().toJSNumber()).toBe(3);
     expect((res1 as iArrayEager<any>).get(new Integer(0)).toJSNumber()).toBe(0);
     expect((res1 as iArrayEager<any>).get(new Integer(1)).toJSNumber()).toBe(1);
@@ -2240,10 +2287,7 @@ describe("TestNbtOperators", () => {
   it("testNbtAsLongList", () => {
     const res1 = new operatorRegistry.NBT_AS_LONG_LIST().evaluate(nlonglist);
     expect(res1).toBeInstanceOf(iArrayEager);
-    expect(
-      (res1.getSignatureNode() as TypeRawSignatureAST.RawSignatureList).listType
-        .type
-    ).toBe("Long");
+    expect(res1.getSignatureNode().getOutput().getRootType()).toBe("Long");
     expect((res1 as iArrayEager<any>).size().toJSNumber()).toBe(3);
     expect((res1 as iArrayEager<any>).get(new Integer(0)).toJSNumber()).toBe(0);
     expect((res1 as iArrayEager<any>).get(new Integer(1)).toJSNumber()).toBe(1);
@@ -2280,7 +2324,9 @@ describe("TestNbtOperators", () => {
       new iBoolean(true)
     );
     expect(res1).toBeInstanceOf(ByteTag);
-    expect((res1 as ByteTag).valueOf()).toEqual(nboolean.valueOf());
+    expect(
+      (res1 as ByteTag).valueOf().equals(nboolean.valueOf()).valueOf()
+    ).toBe(true);
   });
 
   it("testInvalidInputNbtFromBooleanSizeLarge", () => {
@@ -2308,7 +2354,9 @@ describe("TestNbtOperators", () => {
   it("testNbtFromByte", () => {
     const res1 = new operatorRegistry.NBT_FROM_BYTE().evaluate(new Integer(1));
     expect(res1).toBeInstanceOf(ByteTag);
-    expect((res1 as ByteTag).valueOf()).toEqual(nbyte.valueOf());
+    expect((res1 as ByteTag).valueOf().equals(nbyte.valueOf()).valueOf()).toBe(
+      true
+    );
   });
 
   it("testInvalidInputNbtFromByteSizeLarge", () => {
@@ -2336,7 +2384,9 @@ describe("TestNbtOperators", () => {
   it("testNbtFromShort", () => {
     const res1 = new operatorRegistry.NBT_FROM_SHORT().evaluate(new Integer(2));
     expect(res1).toBeInstanceOf(ShortTag);
-    expect((res1 as ShortTag).valueOf()).toEqual(nshort.valueOf());
+    expect(
+      (res1 as ShortTag).valueOf().equals(nshort.valueOf()).valueOf()
+    ).toBe(true);
   });
 
   it("testInvalidInputNbtFromShortSizeLarge", () => {
@@ -2364,7 +2414,9 @@ describe("TestNbtOperators", () => {
   it("testNbtFromInt", () => {
     const res1 = new operatorRegistry.NBT_FROM_INT().evaluate(new Integer(3));
     expect(res1).toBeInstanceOf(IntTag);
-    expect((res1 as IntTag).valueOf()).toEqual(nint.valueOf());
+    expect((res1 as IntTag).valueOf().equals(nint.valueOf()).valueOf()).toBe(
+      true
+    );
   });
 
   it("testInvalidInputNbtFromIntSizeLarge", () => {
@@ -2392,7 +2444,9 @@ describe("TestNbtOperators", () => {
   it("testNbtFromLong", () => {
     const res1 = new operatorRegistry.NBT_FROM_LONG().evaluate(new Long(4));
     expect(res1).toBeInstanceOf(LongTag);
-    expect((res1 as LongTag).valueOf()).toEqual(nlong.valueOf());
+    expect((res1 as LongTag).valueOf().equals(nlong.valueOf()).valueOf()).toBe(
+      true
+    );
   });
 
   it("testInvalidInputNbtFromLongSizeLarge", () => {
@@ -2422,7 +2476,9 @@ describe("TestNbtOperators", () => {
       new Double(5.5)
     );
     expect(res1).toBeInstanceOf(DoubleTag);
-    expect((res1 as DoubleTag).valueOf()).toEqual(ndouble.valueOf());
+    expect(
+      (res1 as DoubleTag).valueOf().equals(ndouble.valueOf()).valueOf()
+    ).toBe(true);
   });
 
   it("testInvalidInputNbtFromDoubleSizeLarge", () => {
@@ -2452,7 +2508,9 @@ describe("TestNbtOperators", () => {
       new Double(6.5)
     );
     expect(res1).toBeInstanceOf(FloatTag);
-    expect((res1 as FloatTag).valueOf()).toEqual(nfloat.valueOf());
+    expect(
+      (res1 as FloatTag).valueOf().equals(nfloat.valueOf()).valueOf()
+    ).toBe(true);
   });
 
   it("testInvalidInputNbtFromFloatSizeLarge", () => {
@@ -2482,7 +2540,9 @@ describe("TestNbtOperators", () => {
       new iString("7")
     );
     expect(res1).toBeInstanceOf(StringTag);
-    expect((res1 as StringTag).valueOf()).toEqual(nstring.valueOf());
+    expect(
+      (res1 as StringTag).valueOf().equals(nstring.valueOf()).valueOf()
+    ).toBe(true);
   });
 
   it("testInvalidInputNbtFromStringSizeLarge", () => {
@@ -2514,9 +2574,14 @@ describe("TestNbtOperators", () => {
       new iArrayEager([subCompound, subCompound])
     );
     expect(res1).toBeInstanceOf(ListTag);
-    expect((res1 as ListTag).valueOf().get(new Integer(0)).valueOf()).toEqual(
-      ntaglist.valueOf().get(new Integer(0)).valueOf()
-    );
+    expect(
+      (res1 as ListTag)
+        .valueOf()
+        .get(new Integer(0))
+        .valueOf()
+        .equals(ntaglist.valueOf().get(new Integer(0)).valueOf())
+        .valueOf()
+    ).toBe(true);
   });
 
   it("testInvalidInputNbtFromTagListSizeLarge", () => {
@@ -2548,7 +2613,9 @@ describe("TestNbtOperators", () => {
       new iArrayEager([new Integer(0), new Integer(1), new Integer(2)])
     );
     expect(res1).toBeInstanceOf(ByteArrayTag);
-    expect((res1 as ByteArrayTag).valueOf()).toEqual(nbytelist.valueOf());
+    expect(
+      (res1 as ByteArrayTag).valueOf().equals(nbytelist.valueOf()).valueOf()
+    ).toBe(true);
   });
 
   it("testInvalidInputNbtFromByteListSizeLarge", () => {
@@ -2580,7 +2647,9 @@ describe("TestNbtOperators", () => {
       new iArrayEager([new Integer(0), new Integer(1), new Integer(2)])
     );
     expect(res1).toBeInstanceOf(IntArrayTag);
-    expect((res1 as IntArrayTag).valueOf()).toEqual(nintlist.valueOf());
+    expect(
+      (res1 as IntArrayTag).valueOf().equals(nintlist.valueOf()).valueOf()
+    ).toBe(true);
   });
 
   it("testNbtFromIntListAny", () => {
@@ -2590,7 +2659,9 @@ describe("TestNbtOperators", () => {
       new iArrayEager([new Integer(0), new Integer(1), new Integer(2)])
     );
     expect(res1).toBeInstanceOf(IntArrayTag);
-    expect((res1 as IntArrayTag).valueOf()).toEqual(nintlist.valueOf());
+    expect(
+      (res1 as IntArrayTag).valueOf().equals(nintlist.valueOf()).valueOf()
+    ).toBe(true);
   });
 
   it("testInvalidInputNbtFromIntListSizeLarge", () => {
@@ -2622,7 +2693,9 @@ describe("TestNbtOperators", () => {
       new iArrayEager([new Long(0), new Long(1), new Long(2)])
     );
     expect(res1).toBeInstanceOf(LongArrayTag);
-    expect((res1 as LongArrayTag).valueOf()).toEqual(nlonglist.valueOf());
+    expect(
+      (res1 as LongArrayTag).valueOf().equals(nlonglist.valueOf()).valueOf()
+    ).toBe(true);
   });
 
   it("testInvalidInputNbtFromLongListSizeLarge", () => {

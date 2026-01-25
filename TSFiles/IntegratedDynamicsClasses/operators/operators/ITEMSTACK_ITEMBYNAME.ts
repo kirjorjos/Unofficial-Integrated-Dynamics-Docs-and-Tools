@@ -1,10 +1,10 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
-import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 
 export class OPERATOR_ITEMSTACK_ITEMBYNAME extends BaseOperator<iString, Item> {
-    static override internalName = "integrateddynamics:itemstack_itembyname"
+  static override internalName =
+    "integrateddynamics:itemstack_itembyname" as const;
   constructor() {
     super({
       nicknames: [
@@ -14,18 +14,15 @@ export class OPERATOR_ITEMSTACK_ITEMBYNAME extends BaseOperator<iString, Item> {
         "item_by_name",
         "itemByName",
       ],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "Item",
-          },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "String",
         },
-        globalMap
-      ),
+        to: {
+          type: "Item",
+        },
+      }),
       symbol: "item_by_name",
       interactName: "stringItemByName",
       function: (): never => {

@@ -2,29 +2,26 @@ import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Operator } from "../Operator";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 import { BaseOperator } from "../BaseOperator";
-import { globalMap } from "HelperClasses/TypeMap";
 import { iArrayEager } from "IntegratedDynamicsClasses/typeWrappers/iArrayEager";
 
 export class OPERATOR_LIST_INTERSECTION extends BaseOperator<
   iArray<IntegratedValue>,
   Operator<iArray<IntegratedValue>, iArray<IntegratedValue>>
 > {
-    static override internalName = "integrateddynamics:list_intersection"
+  static override internalName =
+    "integrateddynamics:list_intersection" as const;
   constructor() {
     super({
       nicknames: ["listIntersection", "intersection"],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: { type: "List", listType: { type: "Any", typeID: 1 } },
+        to: {
           type: "Function",
           from: { type: "List", listType: { type: "Any", typeID: 1 } },
-          to: {
-            type: "Function",
-            from: { type: "List", listType: { type: "Any", typeID: 1 } },
-            to: { type: "List", listType: { type: "Any", typeID: 1 } },
-          },
+          to: { type: "List", listType: { type: "Any", typeID: 1 } },
         },
-        globalMap
-      ),
+      }),
       symbol: "∩",
       interactName: "listIntersection",
       function: (

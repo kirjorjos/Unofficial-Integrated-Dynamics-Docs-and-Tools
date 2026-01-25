@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Tag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/Tag";
@@ -8,7 +7,8 @@ export class OPERATOR_OBJECT_BLOCK_POSSIBLE_PROPERTIES extends BaseOperator<
   Block,
   Tag<any>
 > {
-    static override internalName = "integrateddynamics:block_blockpossibleproperties"
+  static override internalName =
+    "integrateddynamics:block_blockpossibleproperties" as const;
   constructor() {
     super({
       nicknames: [
@@ -16,18 +16,15 @@ export class OPERATOR_OBJECT_BLOCK_POSSIBLE_PROPERTIES extends BaseOperator<
         "block_possible_properties",
         "blockPossibleProperties",
       ],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Block",
-          },
-          to: {
-            type: "NBT",
-          },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Block",
         },
-        globalMap
-      ),
+        to: {
+          type: "NBT",
+        },
+      }),
       symbol: "block_all_props",
       interactName: "blockPossibleProperties",
       function: (_block: Block): never => {

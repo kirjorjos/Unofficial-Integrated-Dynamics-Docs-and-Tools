@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Entity } from "IntegratedDynamicsClasses/Entity";
@@ -7,7 +6,8 @@ export class OPERATOR_OBJECT_PLAYER_TARGETENTITY extends BaseOperator<
   Entity,
   Entity
 > {
-    static override internalName = "integrateddynamics:entity_targetentity"
+  static override internalName =
+    "integrateddynamics:entity_targetentity" as const;
   constructor() {
     super({
       nicknames: [
@@ -16,18 +16,15 @@ export class OPERATOR_OBJECT_PLAYER_TARGETENTITY extends BaseOperator<
         "entityTargetEntity",
         "playerTargetEntity",
       ],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Entity",
-          },
-          to: {
-            type: "Entity",
-          },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Entity",
         },
-        globalMap
-      ),
+        to: {
+          type: "Entity",
+        },
+      }),
       symbol: "target_entity",
       interactName: "entityTargetEntity",
       function: (entity: Entity): Entity => {

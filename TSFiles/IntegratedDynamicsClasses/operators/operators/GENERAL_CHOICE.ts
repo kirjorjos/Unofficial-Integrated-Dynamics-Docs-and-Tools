@@ -1,4 +1,3 @@
-import { globalMap } from "HelperClasses/TypeMap";
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
@@ -8,7 +7,7 @@ export class OPERATOR_GENERAL_CHOICE extends BaseOperator<
   iBoolean,
   Operator<IntegratedValue, Operator<IntegratedValue, IntegratedValue>>
 > {
-    static override internalName = "integrateddynamics:general_choice"
+  static override internalName = "integrateddynamics:general_choice" as const;
   constructor() {
     super({
       nicknames: [
@@ -20,11 +19,16 @@ export class OPERATOR_GENERAL_CHOICE extends BaseOperator<
         "ifElse",
         "if_else",
       ],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Boolean",
+        },
+        to: {
           type: "Function",
           from: {
-            type: "Boolean",
+            type: "Any",
+            typeID: 1,
           },
           to: {
             type: "Function",
@@ -33,20 +37,12 @@ export class OPERATOR_GENERAL_CHOICE extends BaseOperator<
               typeID: 1,
             },
             to: {
-              type: "Function",
-              from: {
-                type: "Any",
-                typeID: 1,
-              },
-              to: {
-                type: "Any",
-                typeID: 1,
-              },
+              type: "Any",
+              typeID: 1,
             },
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "?",
       interactName: "booleanChoice",
       function: (
@@ -59,9 +55,6 @@ export class OPERATOR_GENERAL_CHOICE extends BaseOperator<
           trueValue: IntegratedValue
         ): TypeLambda<IntegratedValue, IntegratedValue> => {
           return (falseValue: IntegratedValue): IntegratedValue => {
-            const trueValueNode = trueValue.getSignatureNode();
-            const falseValueNode = falseValue.getSignatureNode();
-            if (!ParsedSignature.typeEquals(trueValueNode, falseValueNode)) throw new Error(`Choice trueValue and falseValue must be the same type. Got ${trueValueNode.type} and ${falseValueNode.type}`);
             return bool.valueOf() ? trueValue : falseValue;
           };
         };

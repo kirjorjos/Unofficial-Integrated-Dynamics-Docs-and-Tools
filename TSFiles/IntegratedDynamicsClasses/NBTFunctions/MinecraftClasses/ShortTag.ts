@@ -31,8 +31,8 @@ export class ShortTag extends NumericTag {
     return new iString("SHORT");
   }
 
-  equals(tag: Tag<IntegratedValue>) {
+  equals(tag: Tag<IntegratedValue>): iBoolean {
     if (tag.getType() != Tag.TAG_SHORT) return new iBoolean(false);
-    return new iBoolean(this.valueOf() == tag.valueOf());
+    return this.valueOf().equals(tag.valueOf());
   }
 }
