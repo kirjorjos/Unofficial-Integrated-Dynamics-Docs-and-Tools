@@ -101,9 +101,9 @@ export class Operator<I extends IntegratedValue, O extends IntegratedValue>
 
   /**
    * pipe2(arg1, arg2, arg3)
-   * @param op1 arg1
-   * @param op2 arg2
-   * @param this arg3
+   * @param this arg1
+   * @param op1 arg2
+   * @param op2 arg3
    */
   pipe2<V extends IntegratedValue>(
     op1: Operator<V, I>,
@@ -119,15 +119,7 @@ export class Operator<I extends IntegratedValue, O extends IntegratedValue>
         >
       ).apply(op2.apply(x, false), false);
     };
-    globalMap.unify(
-      this.getParsedSignature().getInput(),
-      op1.getParsedSignature().getOutput()
-    );
-    globalMap.unify(
-      this.getParsedSignature().getInput(1),
-      op2.getParsedSignature().getOutput()
-    );
-    const parsedSignature = this.parsedSignature.getOutput();
+    const parsedSignature = this.parsedSignature.pipe2(op1.parsedSignature, op2.parsedSignature);
     return new Operator<V, IntegratedValue>({
       function: newFn,
       parsedSignature: parsedSignature,
