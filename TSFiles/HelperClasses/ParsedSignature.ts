@@ -219,9 +219,9 @@ export class ParsedSignature {
       return errorSig;
     }
 
-    const unifyError1 = globalMap.unify(op1.getInput(), op2.getInput());
-    const unifyError2 = globalMap.unify(op1.getOutput(), this.getInput());
-    const unifyError3 = globalMap.unify(op2.getOutput(), this.getInput(1));
+    const unifyError1 = globalMap.unify(this.getInput(), op1.getInput());
+    const unifyError2 = globalMap.unify(this.getOutput(), op2.getInput());
+    const unifyError3 = globalMap.unify(op1.getOutput(), op2.getInput(1));
 
     const pipedAst: TypeRawSignatureAST.RawSignatureFunction = {
       type: "Function",
