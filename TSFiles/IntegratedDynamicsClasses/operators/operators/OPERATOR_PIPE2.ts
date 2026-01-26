@@ -76,7 +76,7 @@ export class OPERATOR_OPERATOR_PIPE2 extends BaseOperator<any, any> {
               Operator<IntegratedValue, IntegratedValue>
             >
           ): IntegratedValue => {
-            return h.pipe2(f, g);
+            return f.pipe2(g, h);
           };
         };
       },

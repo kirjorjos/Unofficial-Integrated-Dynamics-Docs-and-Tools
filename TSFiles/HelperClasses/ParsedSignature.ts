@@ -184,6 +184,66 @@ export class ParsedSignature {
     return newSignature;
   }
 
+  /**
+   * pipe2(arg1, arg2, arg3)
+   * @param this arg1
+   * @param op1 arg2
+   * @param op2 arg3
+   */
+  pipe2(op1: ParsedSignature, op2: ParsedSignature): ParsedSignature {
+    if (this.errorInfo) {
+      const errorSig = new ParsedSignature(this.ast, false);
+      errorSig.errorInfo = this.errorInfo;
+      return errorSig;
+    }
+    if (op1.errorInfo) {
+      const errorSig = new ParsedSignature(op1.ast, false);
+      errorSig.errorInfo = op1.errorInfo;
+      return errorSig;
+    }
+    if (op2.errorInfo) {
+      const errorSig = new ParsedSignature(op2.ast, false);
+      errorSig.errorInfo = op2.errorInfo;
+      return errorSig;
+    }
+
+    if (this.ast.type !== "Function" || op1.ast.type !== "Function" || op2.ast.type !== "Function") {
+      const errorSig = new ParsedSignature(this.ast, false);
+      errorSig.errorInfo = {
+        message:
+          "Can only pipe operators, not values (Inputs must be functions)",
+        nodeA: this,
+        nodeB: op1,
+        nodeC: op2
+      };
+      return errorSig;
+    }
+
+    const unifyError1 = globalMap.unify(op1.getInput(), op2.getInput());
+    const unifyError2 = globalMap.unify(op1.getOutput(), this.getInput());
+    const unifyError3 = globalMap.unify(op2.getOutput(), this.getInput(1));
+
+    const pipedAst: TypeRawSignatureAST.RawSignatureFunction = {
+      type: "Function",
+      from: op1.getInput().ast,
+      to: this.getOutput().ast,
+    };
+
+    const newSignature = new ParsedSignature(pipedAst, false);
+
+    if (unifyError1 && !newSignature.errorInfo) {
+      newSignature.errorInfo = unifyError1;
+    }
+    if (unifyError2 && !newSignature.errorInfo) {
+      newSignature.errorInfo = unifyError2;
+    }
+    if (unifyError3 && !newSignature.errorInfo) {
+      newSignature.errorInfo = unifyError3;
+    }
+
+    return newSignature;
+  }
+
   apply(argType: ParsedSignature): ParsedSignature {
     if (this.errorInfo) {
       const errorSig = new ParsedSignature(this.ast, false);
