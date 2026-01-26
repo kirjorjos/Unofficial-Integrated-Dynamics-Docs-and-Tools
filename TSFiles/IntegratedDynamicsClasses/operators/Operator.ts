@@ -112,9 +112,7 @@ export class Operator<I extends IntegratedValue, O extends IntegratedValue>
     if (op1.varID === this.varID || op2.varID === this.varID)
       throw new Error("Tried to pipe an operator into it's self");
     const newFn = (x: I): IntegratedValue => {
-      return op2
-        .apply(this.apply(x, false), false)
-        .apply(op1.apply(x, false), false);
+      return op2.apply(this.apply(x), false).apply(op1.apply(x), false);
     };
     const parsedSignature = this.parsedSignature.pipe2(
       op1.parsedSignature,
