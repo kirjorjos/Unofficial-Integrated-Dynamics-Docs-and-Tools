@@ -105,21 +105,21 @@ export class Operator<I extends IntegratedValue, O extends IntegratedValue>
    * @param op1 arg2
    * @param op2 arg3
    */
-  pipe2<V extends IntegratedValue>(
-    op1: Operator<V, I>,
-    op2: Operator<V, I>
+  pipe2<O2 extends IntegratedValue, V extends IntegratedValue>(
+    op1: Operator<I, O2>,
+    op2: Operator<O, Operator<O2, V>>
   ): IntegratedValue {
     if (op1.varID === this.varID || op2.varID === this.varID)
       throw new Error("Tried to pipe an operator into it's self");
-    const newFn = (x: V): IntegratedValue => {
-      return (
-        this.apply(op1.apply(x, false) as I, false) as unknown as Operator<
-          IntegratedValue,
-          IntegratedValue
-        >
-      ).apply(op2.apply(x, false), false);
+    const newFn = (x: I): IntegratedValue => {
+      return op2
+        .apply(this.apply(x, false), false)
+        .apply(op1.apply(x, false), false);
     };
-    const parsedSignature = this.parsedSignature.pipe2(op1.parsedSignature, op2.parsedSignature);
+    const parsedSignature = this.parsedSignature.pipe2(
+      op1.parsedSignature,
+      op2.parsedSignature
+    );
     return new Operator<V, IntegratedValue>({
       function: newFn,
       parsedSignature: parsedSignature,
