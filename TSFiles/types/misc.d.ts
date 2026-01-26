@@ -4,6 +4,7 @@ import type { Item as ItemType } from "IntegratedDynamicsClasses/Item";
 import type { Fluid as FluidType } from "IntegratedDynamicsClasses/Fluid";
 import type { Entity as EntityType } from "IntegratedDynamicsClasses/Entity";
 import type { iOperatorRegistry } from "IntegratedDynamicsClasses/operators/iOperatorRegistry";
+import { ParsedSignature } from "HelperClasses/ParsedSignature";
 
 declare global {
   type TypeTypeMap = {
@@ -21,5 +22,6 @@ declare global {
     message: string;
     nodeA: ParsedSignature;
     nodeB: ParsedSignature;
+    nodeC?: ParsedSignature;
   }
 }
