@@ -207,26 +207,30 @@ export class ParsedSignature {
       return errorSig;
     }
 
-    if (this.ast.type !== "Function" || op1.ast.type !== "Function" || op2.ast.type !== "Function") {
+    if (
+      this.ast.type !== "Function" ||
+      op1.ast.type !== "Function" ||
+      op2.ast.type !== "Function"
+    ) {
       const errorSig = new ParsedSignature(this.ast, false);
       errorSig.errorInfo = {
         message:
-          "Can only pipe operators, not values (Inputs must be functions)",
+          "Can only pipe2 operators, not values (Inputs must be functions)",
         nodeA: this,
         nodeB: op1,
-        nodeC: op2
+        nodeC: op2,
       };
       return errorSig;
     }
 
-    const unifyError1 = globalMap.unify(op1.getInput(), op2.getInput());
-    const unifyError2 = globalMap.unify(op1.getOutput(), this.getInput());
-    const unifyError3 = globalMap.unify(op2.getOutput(), this.getInput(1));
+    const unifyError1 = globalMap.unify(this.getInput(), op1.getInput());
+    const unifyError2 = globalMap.unify(this.getOutput(), op2.getInput());
+    const unifyError3 = globalMap.unify(op1.getOutput(), op2.getInput(1));
 
     const pipedAst: TypeRawSignatureAST.RawSignatureFunction = {
       type: "Function",
       from: op1.getInput().ast,
-      to: this.getOutput().ast,
+      to: op2.getOutput(1).ast,
     };
 
     const newSignature = new ParsedSignature(pipedAst, false);

@@ -82,4 +82,19 @@ export class OPERATOR_OPERATOR_PIPE2 extends BaseOperator<any, any> {
       },
     });
   }
+
+  override evaluate(...args: IntegratedValue[]) {
+    if (args.length !== 3)
+      throw new Error(`Pipe2 expected 3 args, got ${args.length}`);
+    const [arg1, arg2, arg3] = args;
+    if (
+      !(
+        arg1 instanceof Operator &&
+        arg2 instanceof Operator &&
+        arg3 instanceof Operator
+      )
+    )
+      throw new Error("Can't pipe2 a non-operator");
+    return arg1.pipe2(arg2, arg3);
+  }
 }
