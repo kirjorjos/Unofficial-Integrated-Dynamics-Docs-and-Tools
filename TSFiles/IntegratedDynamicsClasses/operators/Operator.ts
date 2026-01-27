@@ -5,7 +5,6 @@ import { globalMap } from "../../HelperClasses/TypeMap";
 export class Operator<I extends IntegratedValue, O extends IntegratedValue>
   implements IntegratedValue
 {
-  private _signatureCache: ParsedSignature | null = null;
   private fn: Function;
   private parsedSignature: ParsedSignature;
   readonly _output!: O;
@@ -38,6 +37,7 @@ export class Operator<I extends IntegratedValue, O extends IntegratedValue>
       );
     }
 
+    result.getSignatureNode().rewrite();
     return result;
   }
 
@@ -50,7 +50,10 @@ export class Operator<I extends IntegratedValue, O extends IntegratedValue>
       parsedSignature = parsedSignature.apply(arg.getSignatureNode());
 
     let newOp = this.fn(arg);
-    if (typeof newOp != "function") return newOp as O;
+    if (typeof newOp != "function") {
+      parsedSignature.rewrite();
+      return newOp as O;
+    };
     return new Operator<IntegratedValue, IntegratedValue>({
       function: newOp,
       parsedSignature,
@@ -129,17 +132,7 @@ export class Operator<I extends IntegratedValue, O extends IntegratedValue>
   }
 
   getSignatureNode(): ParsedSignature {
-    if (this._signatureCache) {
-      return this._signatureCache;
-    }
-    const operatorAst: TypeRawSignatureAST.RawSignatureOperator = {
-      type: "Operator",
-      obscured:
-        this.parsedSignature.getAst() as TypeRawSignatureAST.RawSignatureFunction,
-    };
-    const newSignature = new ParsedSignature(operatorAst, false);
-    this._signatureCache = newSignature;
-    return newSignature;
+    return this.parsedSignature;
   }
 
   private static unwrapOperatorSignature(parsedSignature: ParsedSignature) {

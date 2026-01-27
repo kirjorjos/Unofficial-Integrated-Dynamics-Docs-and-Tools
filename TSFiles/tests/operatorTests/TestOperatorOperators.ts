@@ -362,14 +362,15 @@ describe("TestOperatorOperators", () => {
 
   it("testApply3ThreeAnd", () => {
     const oPipeFlip = new operatorRegistry.OPERATOR_FLIP().evaluate(oPipe);
+    const oPipeFlip2 = new operatorRegistry.OPERATOR_FLIP().evaluate(new operatorRegistry.OPERATOR_PIPE());
     const oThreeAnd_1 = new operatorRegistry.OPERATOR_APPLY().evaluate(
       oPipeFlip,
       oLogicalAnd
     );
     const oThreeAnd = new operatorRegistry.OPERATOR_APPLY_2().evaluate(
-      oPipeFlip,
+      oPipeFlip2,
       oThreeAnd_1,
-      oLogicalAnd
+      new operatorRegistry.LOGICAL_AND()
     );
 
     const res1 = new operatorRegistry.OPERATOR_APPLY_3().evaluate(
@@ -1327,5 +1328,36 @@ describe("TestOperatorOperators", () => {
     expect(() => {
       new operatorRegistry.OPERATOR_BY_NAME().evaluate(oArithmeticIncrement);
     }).toThrow();
+  });
+
+  /**
+   * ----------------------------------- COMMUNITY_TESTS -----------------------------------
+   */
+
+  it("testReduce1ComplexMiner", () => {
+    const flipChoice = new operatorRegistry.OPERATOR_FLIP().evaluate(
+      new operatorRegistry.GENERAL_CHOICE()
+    );
+
+    const flipPipe2 = new operatorRegistry.OPERATOR_FLIP().evaluate(
+      new operatorRegistry.OPERATOR_PIPE2()
+    );
+    const cQ2I = new operatorRegistry.OPERATOR_APPLY().evaluate(
+      flipPipe2,
+      new operatorRegistry.GENERAL_IDENTITY()
+    );
+
+    const reducer = new operatorRegistry.OPERATOR_PIPE2().evaluate(
+      new operatorRegistry.RELATIONAL_GT(),
+      flipChoice,
+      cQ2I
+    );
+
+    const res1 = new operatorRegistry.OPERATOR_REDUCE1().evaluate(
+      reducer,
+      lintegers
+    );
+    expect(res1).toBeInstanceOf(Integer);
+    expect((res1 as Integer).toJSNumber()).toBe(3);
   });
 });

@@ -104,6 +104,7 @@ export class ParsedSignature {
     }
 
     const result = new ParsedSignature(current.from, false);
+    if (this.errorInfo) result.errorInfo = this.errorInfo;
     this.inputCache[index] = result;
     return result;
   }
@@ -113,11 +114,13 @@ export class ParsedSignature {
       return this.outputCache[index]!;
     if (this.ast.type === "Operator") {
       const result = new ParsedSignature(this.ast.obscured, false);
+      if (this.errorInfo) result.errorInfo = this.errorInfo;
       this.outputCache[0] = result;
       return result;
     }
     if (this.ast.type === "List") {
       const result = new ParsedSignature(this.ast.listType, false);
+      if (this.errorInfo) result.errorInfo = this.errorInfo;
       this.outputCache[0] = result;
       return result;
     }
@@ -140,6 +143,7 @@ export class ParsedSignature {
     }
 
     const result = new ParsedSignature(current.to, false);
+    if (this.errorInfo) result.errorInfo = this.errorInfo;
     this.outputCache[index] = result;
     return result;
   }
@@ -280,7 +284,8 @@ export class ParsedSignature {
       resultSignature.errorInfo = unifyError;
     }
 
-    return resultSignature.rewrite();
+    // const rewrittenSignature = resultSignature.rewrite();
+    return resultSignature;
   }
 
   flip() {

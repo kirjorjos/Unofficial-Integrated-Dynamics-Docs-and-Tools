@@ -966,9 +966,9 @@ describe("TestNbtOperators", () => {
       sa
     );
     expect(res1).toBeInstanceOf(CompoundTag);
-    expect((res1 as CompoundTag).valueOf()).toEqual(
+    expect((res1 as CompoundTag).valueOf().equals(
       new CompoundTag({}).valueOf()
-    );
+    ).valueOf()).toBe(true);
 
     const res2 = new operatorRegistry.NBT_COMPOUND_WITHOUT().evaluate(
       nsasasbsc,
@@ -1777,17 +1777,17 @@ describe("TestNbtOperators", () => {
       nall
     );
     expect(res1).toBeInstanceOf(CompoundTag);
-    expect((res1 as CompoundTag).valueOf()).toEqual(
+    expect((res1 as CompoundTag).valueOf().equals(
       new CompoundTag({}).valueOf()
-    );
+    ).valueOf()).toBe(true);
 
     const res2 = new operatorRegistry.NBT_COMPOUND_INTERSECTION().evaluate(
       nall,
       nempty
     );
-    expect((res2 as CompoundTag).valueOf()).toEqual(
+    expect((res2 as CompoundTag).valueOf().equals(
       new CompoundTag({}).valueOf()
-    );
+    ).valueOf()).toBe(true);
 
     const res3 = new operatorRegistry.NBT_COMPOUND_INTERSECTION().evaluate(
       nsome,
@@ -1801,9 +1801,9 @@ describe("TestNbtOperators", () => {
       nsasa,
       nsbsb
     );
-    expect((res4 as CompoundTag).valueOf()).toEqual(
+    expect((res4 as CompoundTag).valueOf().equals(
       new CompoundTag({}).valueOf()
-    );
+    ).valueOf()).toBe(true);
 
     const res5 = new operatorRegistry.NBT_COMPOUND_INTERSECTION().evaluate(
       nsasa,
@@ -1849,9 +1849,9 @@ describe("TestNbtOperators", () => {
       nall
     );
     expect(res1).toBeInstanceOf(CompoundTag);
-    expect((res1 as CompoundTag).valueOf()).toEqual(
+    expect((res1 as CompoundTag).valueOf().equals(
       new CompoundTag({}).valueOf()
-    );
+    ).valueOf()).toBe(true);
 
     const res2 = new operatorRegistry.NBT_COMPOUND_MINUS().evaluate(
       nall,
@@ -1865,9 +1865,9 @@ describe("TestNbtOperators", () => {
       nsome,
       nall
     );
-    expect((res3 as CompoundTag).valueOf()).toEqual(
+    expect((res3 as CompoundTag).valueOf().equals(
       new CompoundTag({}).valueOf()
-    );
+    ).valueOf()).toBe(true);
 
     const res4 = new operatorRegistry.NBT_COMPOUND_MINUS().evaluate(
       nsasa,

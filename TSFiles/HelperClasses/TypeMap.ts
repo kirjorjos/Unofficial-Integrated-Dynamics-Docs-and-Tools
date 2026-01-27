@@ -82,9 +82,6 @@ export class TypeMap {
       return null;
     }
 
-    if (ParsedSignature.typeEquals(a.getRootType(), b.getRootType()))
-      return null;
-
     if (a.getRootType() === "Any" && b.getRootType() === "Any") {
       const aBaseID = this.findBaseID(a.getTypeID());
       const bBaseID = this.findBaseID(b.getTypeID());
@@ -94,13 +91,19 @@ export class TypeMap {
     }
 
     if (a.getRootType() === "Any" && b.getRootType() !== "Any") {
-      this.aliases.set(this.findBaseID(a.getTypeID()), b);
-      return null;
+      return this.unify(b, a, false); // reuse the logic below
     }
     if (a.getRootType() !== "Any" && b.getRootType() === "Any") {
-      this.aliases.set(this.findBaseID(b.getTypeID()), a);
+      const bBaseAlias = this.findBase(b.getTypeID());
+      if (bBaseAlias instanceof ParsedSignature) { // b has an solid type alias
+        return this.unify(a, bBaseAlias, false);
+      }
+      this.aliases.set(bBaseAlias, a);
       return null;
     }
+    
+    if (ParsedSignature.typeEquals(a.getRootType(), b.getRootType()))
+      return null;
 
     if (a.getRootType() !== b.getRootType()) {
       return {
