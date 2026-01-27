@@ -42,7 +42,10 @@
     "assumeChangesOnlyAffectDirectDependencies": false,
     "useDefineForClassFields": true,
     "noErrorTruncation": false,
-    "traceResolution": false
+    "traceResolution": false,
+    "sourceMap": true,
+    "inlineSourceMap": false,
+    "inlineSources": true
   },
   "compileOnSave": false
 }

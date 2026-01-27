@@ -16,12 +16,11 @@
     "typescript": "^5.9.3"
   },
   "scripts": {
-    "test:build": "",
-    "test:run": "jest",
-    "test": "npm run test:build && npm run test:run",
+    "test:debug": "jest --runInBand --no-cache",
+    "test": "jest",
     "format": "prettier --write .",
     "bundle": "esbuild TSFiles/index.ts --bundle --outfile=docs/index.js --platform=browser --loader:.wasm=file --external:fs --external:path",
-    "build": "npm run bundle && npm run format && npm run test"
+    "build": "npm run format && npm run test && npm run bundle"
   },
   "prettier": {
     "tabWidth": 2,
