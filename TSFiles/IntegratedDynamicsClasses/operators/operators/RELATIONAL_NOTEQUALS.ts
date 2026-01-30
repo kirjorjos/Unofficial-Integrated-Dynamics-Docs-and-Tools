@@ -29,7 +29,7 @@ export class OPERATOR_RELATIONAL_NOTEQUALS extends BaseOperator<
         value1: IntegratedValue
       ): TypeLambda<IntegratedValue, iBoolean> => {
         return (value2: IntegratedValue): iBoolean => {
-          return new iBoolean(!value1.equals(value2));
+          return value1.equals(value2).negate();
         };
       },
     });

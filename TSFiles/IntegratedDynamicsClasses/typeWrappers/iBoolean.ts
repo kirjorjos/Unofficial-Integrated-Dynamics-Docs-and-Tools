@@ -25,4 +25,8 @@ export class iBoolean implements IntegratedValue {
     if (!(other instanceof iBoolean)) return new iBoolean(false);
     return new iBoolean(this.bool == other.valueOf());
   }
+
+  negate() {
+    return new iBoolean(!this.bool);
+  }
 }
