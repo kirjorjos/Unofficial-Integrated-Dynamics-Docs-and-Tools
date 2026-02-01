@@ -42,7 +42,7 @@ export class OPERATOR_STRING_REPLACE extends BaseOperator<
             return new iString(
               fullString
                 .valueOf()
-                .replace(searchString.valueOf(), replacementString.valueOf())
+                .replaceAll(searchString.valueOf(), replacementString.valueOf())
             );
           };
         };

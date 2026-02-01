@@ -5,6 +5,7 @@ import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 import { iArrayEager } from "IntegratedDynamicsClasses/typeWrappers/iArrayEager";
 import { Operator } from "../Operator";
 import { RE2 } from "re2-wasm";
+import { sanitizeForRe2 } from "HelperClasses/UtilityFunctions";
 
 export class OPERATOR_STRING_REGEX_GROUPS extends BaseOperator<
   iString,
@@ -34,14 +35,12 @@ export class OPERATOR_STRING_REGEX_GROUPS extends BaseOperator<
         regexString: iString
       ): TypeLambda<iString, iArray<iString>> => {
         return (fullString: iString): iArray<iString> => {
-          const regex = new RE2(regexString.valueOf(), "u");
+          const regex = new RE2(sanitizeForRe2(regexString.valueOf()),  "u");
           const match = regex.exec(fullString.valueOf());
           if (match) {
-            return new iArrayEager(match.map((m) => new iString(m ?? "")));
+            return new iArrayEager(match.map((m) => new iString(m ?? "u")));
           } else {
-            throw new Error(
-              `No match found for group in regex "${regexString.valueOf()}" on string "${fullString.valueOf()}"`
-            );
+            return new iArrayEager([]);
           }
         };
       },

@@ -5,7 +5,8 @@ import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 import { iArrayEager } from "IntegratedDynamicsClasses/typeWrappers/iArrayEager";
 import { Integer } from "JavaNumberClasses/Integer";
 import { Operator } from "../Operator";
-import { RE2 } from "re2-wasm";
+import { RE2, RE2ExecArray } from "re2-wasm";
+import { sanitizeForRe2 } from "HelperClasses/UtilityFunctions";
 
 export class OPERATOR_STRING_REGEX_SCAN extends BaseOperator<
   iString,
@@ -40,15 +41,22 @@ export class OPERATOR_STRING_REGEX_SCAN extends BaseOperator<
       function: (regexString: iString) => {
         return (groupIndex: Integer): TypeLambda<iString, iArray<iString>> => {
           return (fullString: iString): iArray<iString> => {
-            const regex = new RE2(regexString.valueOf(), "gu");
+            const regex = new RE2(sanitizeForRe2(regexString.valueOf()),  "gu");
             let results = [];
-            let match;
+            let match: RE2ExecArray | null = null;
             regex.lastIndex = 0;
 
-            while ((match = regex.exec(fullString.valueOf())) !== null) {
+            while (true) {
+              match = regex.exec(fullString.valueOf());
+              if (match === null) break;
+
               const groupValue = match[groupIndex.toJSNumber()];
-              if (groupValue !== undefined && groupValue !== null) {
+              if (groupValue != null) {
                 results.push(new iString(groupValue));
+              }
+
+              if (match[0]?.length === 0) {
+                regex.lastIndex++;
               }
             }
 

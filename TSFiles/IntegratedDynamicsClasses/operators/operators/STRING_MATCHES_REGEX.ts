@@ -4,6 +4,7 @@ import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { Operator } from "../Operator";
 import { RE2 } from "re2-wasm";
+import { sanitizeForRe2 } from "HelperClasses/UtilityFunctions";
 
 export class OPERATOR_STRING_MATCHES_REGEX extends BaseOperator<
   iString,
@@ -33,10 +34,8 @@ export class OPERATOR_STRING_MATCHES_REGEX extends BaseOperator<
       interactName: "stringMatchesRegex",
       function: (regexString: iString): TypeLambda<iString, iBoolean> => {
         return (fullString: iString): iBoolean => {
-          let regex = regexString.valueOf();
-          if (regex.startsWith("^")) regex = regex.slice(1);
-          if (regex.endsWith("$")) regex = regex.slice(0, -1);
-          const re2 = new RE2(`^(?:${regex})$`, "u");
+          const regex = regexString.valueOf();
+          const re2 = new RE2(sanitizeForRe2(`^(?:${regex})$`),  "u");
           return new iBoolean(re2.test(fullString.valueOf()));
         };
       },
