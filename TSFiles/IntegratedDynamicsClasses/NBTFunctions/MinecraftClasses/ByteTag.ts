@@ -37,5 +37,9 @@ export class ByteTag extends NumericTag {
     return this.valueOf().equals(tag.valueOf());
   }
 
+  toJSON(): number {
+    return this.data.toJSNumber();
+  }
+
   static ONE: ByteTag = new ByteTag(Integer.ONE);
 }

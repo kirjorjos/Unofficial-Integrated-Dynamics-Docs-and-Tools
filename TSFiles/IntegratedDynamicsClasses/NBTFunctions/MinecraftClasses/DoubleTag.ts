@@ -35,4 +35,8 @@ export class DoubleTag extends NumericTag {
     if (tag.getType() != Tag.TAG_DOUBLE) return new iBoolean(false);
     return this.valueOf().equals(tag.valueOf());
   }
+
+  toJSON(): number {
+    return this.data.toJSNumber();
+  }
 }

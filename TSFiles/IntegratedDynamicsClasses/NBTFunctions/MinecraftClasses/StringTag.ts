@@ -26,4 +26,8 @@ export class StringTag extends Tag<iString> {
     if (other.getType() != Tag.TAG_STRING) return new iBoolean(false);
     return this.data.equals(other.valueOf());
   }
+
+  toJSON(): string {
+    return this.data.valueOf();
+  }
 }

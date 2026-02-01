@@ -33,4 +33,8 @@ export class ByteArrayTag extends Tag<iArray<Integer>> {
     let otherArrayTag = other as ByteArrayTag;
     return this.valueOf().equals(otherArrayTag.valueOf());
   }
+
+  toJSON(): jsonArray {
+    return this.data.valueOf().map((v) => v.toJSNumber());
+  }
 }

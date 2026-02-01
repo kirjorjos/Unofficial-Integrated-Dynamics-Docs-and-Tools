@@ -33,4 +33,8 @@ export class LongArrayTag extends Tag<iArray<Long>> {
     let otherArrayTag = other as LongArrayTag;
     return this.valueOf().equals(otherArrayTag.valueOf());
   }
+
+  toJSON(): jsonArray {
+    return this.data.valueOf().map((v) => v.toJSNumber());
+  }
 }

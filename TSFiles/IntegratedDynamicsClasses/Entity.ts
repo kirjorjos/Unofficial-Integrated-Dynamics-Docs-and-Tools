@@ -1,4 +1,5 @@
 import { UniquelyNamed } from "./UniquelyNamed";
+import { Named } from "./Named";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Integer } from "../JavaNumberClasses/Integer";
 import { Double } from "../JavaNumberClasses/Double";
@@ -12,9 +13,10 @@ import { Block } from "./Block";
 import { Item } from "./Item";
 import { iArray } from "./typeWrappers/iArray";
 
-export class Entity implements UniquelyNamed {
+export class Entity implements UniquelyNamed, Named {
   static defaultProps = new Properties({
     uname: new iString(""),
+    displayName: new iString(""),
     mob: new iBoolean(false),
     animal: new iBoolean(false),
     player: new iBoolean(false),
@@ -238,6 +240,10 @@ export class Entity implements UniquelyNamed {
 
   getProperties(): Properties {
     return this.props;
+  }
+
+  getName(): iString {
+    return this.props.get("displayName");
   }
 
   getSignatureNode(): ParsedSignature {

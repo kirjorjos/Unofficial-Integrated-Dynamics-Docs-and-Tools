@@ -7,8 +7,9 @@ import { iBoolean } from "./typeWrappers/iBoolean";
 import { Item } from "./Item";
 import { Block } from "./Block";
 import { iString } from "./typeWrappers/iString";
+import { Named } from "./Named";
 
-export class Fluid implements UniquelyNamed {
+export class Fluid implements Named, UniquelyNamed {
   static defaultProps = new Properties({
     uname: "",
     amount: Integer.ZERO,
@@ -26,6 +27,7 @@ export class Fluid implements UniquelyNamed {
     modName: "",
     nbt: null,
     tagNames: [] as Array<string>,
+    displayName: new iString("")
   });
   props: Properties;
   private _signatureCache: any;
@@ -134,5 +136,9 @@ export class Fluid implements UniquelyNamed {
       }
       return new iBoolean(true);
     }
+  }
+
+  getName(): iString {
+    return this.props.get("displayName");
   }
 }

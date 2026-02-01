@@ -1,4 +1,5 @@
 import { UniquelyNamed } from "./UniquelyNamed";
+import { Named } from "./Named";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Integer } from "JavaNumberClasses/Integer";
 import { Properties } from "./Properties";
@@ -9,7 +10,7 @@ import { iString } from "./typeWrappers/iString";
 import { iArrayEager } from "./typeWrappers/iArrayEager";
 import { iArray } from "./typeWrappers/iArray";
 
-export class Block implements UniquelyNamed {
+export class Block implements UniquelyNamed, Named {
   static defaultProps = new Properties({
     opaque: new iBoolean(true),
     // item: new Item(),
@@ -28,6 +29,7 @@ export class Block implements UniquelyNamed {
     feStored: Integer.ZERO,
     inventory: new iArrayEager<Item>([]),
     blockName: "",
+    displayName: new iString(""),
   });
   props: Properties;
   private _signatureCache: any;
@@ -75,6 +77,10 @@ export class Block implements UniquelyNamed {
 
   getProperties(): Properties {
     return this.props;
+  }
+
+  getName(): iString {
+    return this.props.get("displayName");
   }
 
   getFluid(): Fluid {

@@ -35,4 +35,8 @@ export class LongTag extends NumericTag {
     if (tag.getType() != Tag.TAG_LONG) return new iBoolean(false);
     return this.valueOf().equals(tag.valueOf());
   }
+
+  toJSON(): number {
+    return this.data.toJSNumber();
+  }
 }

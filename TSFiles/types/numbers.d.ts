@@ -2,6 +2,7 @@ import type { Integer } from "JavaNumberClasses/Integer";
 import type { Long } from "JavaNumberClasses/Long";
 import type { Double } from "JavaNumberClasses/Double";
 import type { ParsedSignature } from "HelperClasses/ParsedSignature";
+import type { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 
 declare global {
   type Integer = InstanceType<typeof Integer>;
@@ -33,6 +34,7 @@ declare global {
     floor(): Integer;
     getSignatureNode(): ParsedSignature;
     toJSNumber(): number;
+    getName(): iString;
   }
 
   type TypeNumber = Integer | Long | Double;

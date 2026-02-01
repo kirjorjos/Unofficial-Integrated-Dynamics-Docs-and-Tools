@@ -1,25 +1,33 @@
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { ParsedSignature } from "../../HelperClasses/ParsedSignature";
 import { globalMap } from "../../HelperClasses/TypeMap";
+import { UniquelyNamed } from "IntegratedDynamicsClasses/UniquelyNamed";
+import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
+import { Named } from "IntegratedDynamicsClasses/Named";
 
 export class Operator<I extends IntegratedValue, O extends IntegratedValue>
-  implements IntegratedValue
+  implements IntegratedValue, UniquelyNamed, Named
 {
   private fn: Function;
   private parsedSignature: ParsedSignature;
+  static readonly internalName: string;
   readonly _output!: O;
   private varID: number;
+  interactName: string;
 
   constructor({
     parsedSignature,
     function: fn,
+    interactName
   }: {
     parsedSignature: ParsedSignature;
     function: Function;
+    interactName?: string;
   }) {
     this.fn = fn;
     this.parsedSignature = Operator.unwrapOperatorSignature(parsedSignature);
     this.varID = globalMap.getNewVarID();
+    this.interactName = interactName ?? "curried_operator";
   }
 
   evaluate(...args: IntegratedValue[]) {
@@ -148,5 +156,13 @@ export class Operator<I extends IntegratedValue, O extends IntegratedValue>
   equals(other: IntegratedValue) {
     if (!(other instanceof Operator)) return new iBoolean(false);
     return new iBoolean(this.fn.toString() == other.getFn().toString());
+  }
+
+  getUniqueName() {
+    return new iString((this.constructor as typeof Operator).internalName ?? "integrateddynamics:curried_operator");
+  }
+
+  getName(): iString {
+    return new iString(this.interactName);
   }
 }

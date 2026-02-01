@@ -95,4 +95,8 @@ export class ListTag extends Tag<iArray<Tag<IntegratedValue>>> {
     }
     return new iBoolean(true);
   }
+
+  toJSON(): jsonArray {
+    return this.data.valueOf().map((tag) => tag.toJSON());
+  }
 }

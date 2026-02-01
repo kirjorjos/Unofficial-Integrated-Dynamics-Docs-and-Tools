@@ -35,4 +35,8 @@ export class ShortTag extends NumericTag {
     if (tag.getType() != Tag.TAG_SHORT) return new iBoolean(false);
     return this.valueOf().equals(tag.valueOf());
   }
+
+  toJSON(): number {
+    return this.data.toJSNumber();
+  }
 }

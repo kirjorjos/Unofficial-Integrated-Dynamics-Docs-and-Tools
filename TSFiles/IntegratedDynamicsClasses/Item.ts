@@ -10,8 +10,9 @@ import { iArrayEager } from "./typeWrappers/iArrayEager";
 import { Block } from "./Block";
 import { Fluid } from "./Fluid";
 import { iArray } from "./typeWrappers/iArray";
+import { Named } from "./Named";
 
-export class Item implements UniquelyNamed, IntegratedValue {
+export class Item implements UniquelyNamed, Named, IntegratedValue {
   props: Properties;
 
   static defaultProps = new Properties({
@@ -190,7 +191,11 @@ export class Item implements UniquelyNamed, IntegratedValue {
     return newSignature;
   }
 
-  toString() {
+  toString(): string {
+    return this.props.get("itemName").valueOf();
+  }
+
+  getName(): iString {
     return this.props.get("itemName");
   }
 }

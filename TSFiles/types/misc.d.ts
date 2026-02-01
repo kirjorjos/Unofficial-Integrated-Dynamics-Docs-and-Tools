@@ -24,4 +24,8 @@ declare global {
     nodeB: ParsedSignature;
     nodeC?: ParsedSignature;
   }
+
+  type jsonData = string | number | boolean | null | jsonObject | jsonArray;
+  type jsonObject = { [key: string]: jsonData };
+  type jsonArray = jsonData[];
 }

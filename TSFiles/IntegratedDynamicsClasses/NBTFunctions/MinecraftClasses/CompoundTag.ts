@@ -80,8 +80,8 @@ export class CompoundTag extends Tag<CompoundTag> {
     return new iString("COMPOUND");
   }
 
-  toJSON(): any {
-    let obj: Record<string, any> = {};
+  toJSON(): jsonObject {
+    let obj: jsonObject = {};
 
     for (const [key, value] of Object.entries(this.data)) {
       if (value instanceof CompoundTag) {
@@ -102,7 +102,14 @@ export class CompoundTag extends Tag<CompoundTag> {
       ) {
         obj[key] = (value as any).toJSON();
       } else {
-        obj[key] = value.valueOf();
+        const val = value.valueOf();
+        if(typeof val === "object" && val !== null && "toJSNumber" in val) {
+          obj[key] = (val as any).toJSNumber();
+        } else if (typeof val === "object" && val !== null && "valueOf" in val) {
+          obj[key] = (val as any).valueOf();
+        } else {
+          obj[key] = val as any;
+        }
       }
     }
     return obj;

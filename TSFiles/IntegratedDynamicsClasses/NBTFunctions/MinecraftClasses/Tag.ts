@@ -1,9 +1,10 @@
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
+import { Named } from "../../Named";
 
 export abstract class Tag<T extends IntegratedValue>
-  implements IntegratedValue
+  implements IntegratedValue, Named
 {
   private _signatureCache: ParsedSignature | null = null;
   static TAG_END = 0;
@@ -32,6 +33,12 @@ export abstract class Tag<T extends IntegratedValue>
   abstract equals(tag: IntegratedValue): iBoolean;
 
   abstract getTypeAsString(): iString;
+
+  abstract toJSON(): jsonData;
+
+  getName(): iString {
+    return new iString(JSON.stringify(this.toJSON()));
+  }
 
   getSignatureNode(): ParsedSignature {
     if (this._signatureCache) {

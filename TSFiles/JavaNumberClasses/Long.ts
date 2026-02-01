@@ -2,8 +2,10 @@ import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { Double } from "./Double";
 import { Integer } from "./Integer";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
+import { Named } from "IntegratedDynamicsClasses/Named";
+import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 
-export class Long implements NumberBase<Long> {
+export class Long implements NumberBase<Long>, Named {
   private _signatureCache: ParsedSignature | null = null;
   private num: bigint;
 
@@ -130,6 +132,10 @@ export class Long implements NumberBase<Long> {
     const newSignature = new ParsedSignature({ type: "Long" }, false);
     this._signatureCache = newSignature;
     return newSignature;
+  }
+
+  getName(): iString {
+    return new iString(this.compact());
   }
 
   toJSNumber(): number {

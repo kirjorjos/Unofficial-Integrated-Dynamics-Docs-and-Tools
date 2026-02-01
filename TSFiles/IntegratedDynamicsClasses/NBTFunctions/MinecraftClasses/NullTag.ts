@@ -23,4 +23,8 @@ export class NullTag extends Tag<iNull> {
   override equals(tag: Tag<iNull>): iBoolean {
     return new iBoolean(tag.getType() == Tag.TAG_NULL);
   }
+
+  toJSON(): null {
+    return null;
+  }
 }

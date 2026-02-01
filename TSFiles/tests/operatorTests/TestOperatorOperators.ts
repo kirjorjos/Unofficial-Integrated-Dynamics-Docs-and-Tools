@@ -1301,7 +1301,7 @@ describe("TestOperatorOperators", () => {
   it("testByName", () => {
     const res1 = new operatorRegistry.OPERATOR_BY_NAME().evaluate(sAnd);
     expect(res1).toBeInstanceOf(Operator);
-    expect((res1 as BaseOperator<any, any>).getUname()).toBe(
+    expect((res1 as BaseOperator<any, any>).getUniqueName()).toBe(
       "integrateddynamics:logical_and"
     );
   });
