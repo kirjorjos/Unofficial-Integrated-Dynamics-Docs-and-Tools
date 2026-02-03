@@ -1,4 +1,4 @@
-import { operatorRegistry } from "./IntegratedDynamicsClasses/operators/operatorRegistry";
+import { operatorRegistry } from "IntegratedDynamicsClasses/registries/operatorRegistry";
 // import { ASTtoNBT } from "./ASTTransformers/ASTtoNBT";
 // import { NBTtoAST } from "./ASTTransformers/NBTtoAST";
 

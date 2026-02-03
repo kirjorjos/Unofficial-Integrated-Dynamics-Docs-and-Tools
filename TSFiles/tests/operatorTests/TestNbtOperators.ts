@@ -1,4 +1,4 @@
-import { operatorRegistry } from "../../IntegratedDynamicsClasses/operators/operatorRegistry";
+import { operatorRegistry } from "IntegratedDynamicsClasses/registries/operatorRegistry";
 import { CompoundTag } from "../../IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
 import { ByteTag } from "../../IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ByteTag";
 import { ShortTag } from "../../IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ShortTag";

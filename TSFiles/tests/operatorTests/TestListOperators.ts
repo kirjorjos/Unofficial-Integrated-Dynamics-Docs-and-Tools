@@ -11,7 +11,7 @@ import { Long } from "../../JavaNumberClasses/Long";
 import { iString } from "../../IntegratedDynamicsClasses/typeWrappers/iString";
 import { iArrayEager } from "../../IntegratedDynamicsClasses/typeWrappers/iArrayEager";
 import { iArrayLazy } from "../../IntegratedDynamicsClasses/typeWrappers/iArrayLazy";
-import { operatorRegistry } from "../../IntegratedDynamicsClasses/operators/operatorRegistry";
+import { operatorRegistry } from "IntegratedDynamicsClasses/registries/operatorRegistry";
 import { BaseOperator } from "../../IntegratedDynamicsClasses/operators/BaseOperator";
 import { Operator } from "IntegratedDynamicsClasses/operators/Operator";
 

@@ -8,7 +8,7 @@
 import { Integer } from "../../JavaNumberClasses/Integer";
 import { Double } from "../../JavaNumberClasses/Double";
 import { ParsedSignature } from "../../HelperClasses/ParsedSignature";
-import { operatorRegistry } from "../../IntegratedDynamicsClasses/operators/operatorRegistry";
+import { operatorRegistry } from "IntegratedDynamicsClasses/registries/operatorRegistry";
 
 const CyclopsCoreInstance = { MOD: {} };
 class ModBaseMocked {}

@@ -6,7 +6,7 @@
  */
 
 import { Double } from "../../JavaNumberClasses/Double";
-import { operatorRegistry } from "../../IntegratedDynamicsClasses/operators/operatorRegistry";
+import { operatorRegistry } from "IntegratedDynamicsClasses/registries/operatorRegistry";
 import { iString } from "../../IntegratedDynamicsClasses/typeWrappers/iString";
 
 const CyclopsCoreInstance = { MOD: {} };

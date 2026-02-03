@@ -1,4 +1,4 @@
-import { operatorRegistry } from "../../IntegratedDynamicsClasses/operators/operatorRegistry";
+import { operatorRegistry } from "IntegratedDynamicsClasses/registries/operatorRegistry";
 import { iArrayEager } from "../../IntegratedDynamicsClasses/typeWrappers/iArrayEager";
 import { iArrayLazy } from "../../IntegratedDynamicsClasses/typeWrappers/iArrayLazy";
 import { iBoolean } from "../../IntegratedDynamicsClasses/typeWrappers/iBoolean";

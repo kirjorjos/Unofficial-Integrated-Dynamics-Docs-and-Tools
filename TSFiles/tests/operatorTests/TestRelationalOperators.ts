@@ -5,7 +5,7 @@
  * @originalAuthor rubensworks
  */
 
-import { operatorRegistry } from "IntegratedDynamicsClasses/operators/operatorRegistry";
+import { operatorRegistry } from "IntegratedDynamicsClasses/registries/operatorRegistry";
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 import { Double } from "JavaNumberClasses/Double";

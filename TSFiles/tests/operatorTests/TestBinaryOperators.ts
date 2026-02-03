@@ -7,7 +7,7 @@
 
 import { Integer } from "../../JavaNumberClasses/Integer";
 import { ParsedSignature } from "../../HelperClasses/ParsedSignature";
-import { operatorRegistry } from "../../IntegratedDynamicsClasses/operators/operatorRegistry";
+import { operatorRegistry } from "IntegratedDynamicsClasses/registries/operatorRegistry";
 import { iBoolean } from "../../IntegratedDynamicsClasses/typeWrappers/iBoolean";
 
 describe("TestBinaryOperators", () => {

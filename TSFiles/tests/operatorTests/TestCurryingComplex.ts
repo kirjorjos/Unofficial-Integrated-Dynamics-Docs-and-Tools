@@ -6,7 +6,7 @@
  */
 
 import { Integer } from "../../JavaNumberClasses/Integer";
-import { operatorRegistry } from "../../IntegratedDynamicsClasses/operators/operatorRegistry";
+import { operatorRegistry } from "IntegratedDynamicsClasses/registries/operatorRegistry";
 import { Operator } from "../../IntegratedDynamicsClasses/operators/Operator";
 
 describe("TestCurryingComplex", () => {

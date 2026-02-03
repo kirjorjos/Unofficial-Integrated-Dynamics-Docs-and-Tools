@@ -9,7 +9,7 @@
 import { Integer } from "../../JavaNumberClasses/Integer";
 import { Long } from "../../JavaNumberClasses/Long";
 import { Double } from "../../JavaNumberClasses/Double";
-import { operatorRegistry } from "../../IntegratedDynamicsClasses/operators/operatorRegistry";
+import { operatorRegistry } from "IntegratedDynamicsClasses/registries/operatorRegistry";
 
 const CyclopsCoreInstance = { MOD: {} };
 class ModBaseMocked {}

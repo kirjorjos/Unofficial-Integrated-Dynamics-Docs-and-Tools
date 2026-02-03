@@ -1,4 +1,4 @@
-import type { operatorRegistry } from "./operatorRegistry";
+import type { operatorRegistry } from "TSFiles/IntegratedDynamicsClasses/registries/operatorRegistry";
 import type { Block as BlockType } from "IntegratedDynamicsClasses/Block";
 import type { Item as ItemType } from "IntegratedDynamicsClasses/Item";
 import type { Fluid as FluidType } from "IntegratedDynamicsClasses/Fluid";

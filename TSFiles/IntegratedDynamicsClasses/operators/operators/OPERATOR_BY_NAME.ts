@@ -2,7 +2,7 @@ import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { BaseOperator } from "../BaseOperator";
 import { Operator } from "../Operator";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
-import { operatorRegistry } from "../operatorRegistry";
+import { operatorRegistry } from "IntegratedDynamicsClasses/registries/operatorRegistry";
 
 export class OPERATOR_OPERATOR_BY_NAME extends BaseOperator<
   iString,

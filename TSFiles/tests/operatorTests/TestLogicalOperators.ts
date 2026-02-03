@@ -7,7 +7,7 @@
 
 import { iBoolean } from "../../IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { iString } from "../../IntegratedDynamicsClasses/typeWrappers/iString";
-import { operatorRegistry } from "../../IntegratedDynamicsClasses/operators/operatorRegistry";
+import { operatorRegistry } from "IntegratedDynamicsClasses/registries/operatorRegistry";
 
 const CyclopsCoreInstance = { MOD: {} };
 class ModBaseMocked {}
