@@ -27,7 +27,7 @@ export class Fluid implements Named, UniquelyNamed {
     modName: "",
     nbt: null,
     tagNames: [] as Array<string>,
-    displayName: new iString("")
+    displayName: new iString(""),
   });
   props: Properties;
   private _signatureCache: any;

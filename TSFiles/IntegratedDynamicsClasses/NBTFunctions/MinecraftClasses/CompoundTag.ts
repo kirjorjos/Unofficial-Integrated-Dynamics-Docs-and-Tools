@@ -103,9 +103,13 @@ export class CompoundTag extends Tag<CompoundTag> {
         obj[key] = (value as any).toJSON();
       } else {
         const val = value.valueOf();
-        if(typeof val === "object" && val !== null && "toJSNumber" in val) {
+        if (typeof val === "object" && val !== null && "toJSNumber" in val) {
           obj[key] = (val as any).toJSNumber();
-        } else if (typeof val === "object" && val !== null && "valueOf" in val) {
+        } else if (
+          typeof val === "object" &&
+          val !== null &&
+          "valueOf" in val
+        ) {
           obj[key] = (val as any).valueOf();
         } else {
           obj[key] = val as any;

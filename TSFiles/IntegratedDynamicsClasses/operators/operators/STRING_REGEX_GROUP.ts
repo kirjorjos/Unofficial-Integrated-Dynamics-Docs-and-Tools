@@ -41,10 +41,12 @@ export class OPERATOR_STRING_REGEX_GROUP extends BaseOperator<
       function: (regexString: iString) => {
         return (groupIndex: Integer) => {
           return (fullString: iString) => {
+            if (groupIndex.toJSNumber() < 0)
+              throw new Error(
+                `Group index cannot be negative, got ${groupIndex.toJSNumber()}`
+              );
 
-            if (groupIndex.toJSNumber() < 0) throw new Error(`Group index cannot be negative, got ${groupIndex.toJSNumber()}`);
-
-            const regex = new RE2(sanitizeForRe2(regexString.valueOf()),  "u");
+            const regex = new RE2(sanitizeForRe2(regexString.valueOf()), "u");
             const match = regex.exec(fullString.valueOf());
 
             if (!match) {
@@ -53,7 +55,10 @@ export class OPERATOR_STRING_REGEX_GROUP extends BaseOperator<
               );
             }
 
-            if (groupIndex.toJSNumber() > match.length -1) throw new Error(`Index ${groupIndex} not found in regex ${regexString.valueOf()}`);
+            if (groupIndex.toJSNumber() > match.length - 1)
+              throw new Error(
+                `Index ${groupIndex} not found in regex ${regexString.valueOf()}`
+              );
 
             const m = match[groupIndex.toJSNumber()];
             return new iString(m ?? "");

@@ -35,14 +35,14 @@ export class OPERATOR_STRING_SPLIT_ON_REGEX extends BaseOperator<
         regexString: iString
       ): TypeLambda<iString, iArray<iString>> => {
         return (fullString: iString): iArray<iString> => {
-          const regex = new RE2(sanitizeForRe2(regexString.valueOf()),  "u");
+          const regex = new RE2(sanitizeForRe2(regexString.valueOf()), "u");
           let parts = regex.split(fullString.valueOf()) as string[];
 
           while (parts.length && parts[parts.length - 1] === "") {
             parts.pop();
           }
 
-          return new iArrayEager(parts.map(s => new iString(s)));
+          return new iArrayEager(parts.map((s) => new iString(s)));
         };
       },
     });

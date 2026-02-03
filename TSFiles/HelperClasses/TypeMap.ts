@@ -95,13 +95,14 @@ export class TypeMap {
     }
     if (a.getRootType() !== "Any" && b.getRootType() === "Any") {
       const bBaseAlias = this.findBase(b.getTypeID());
-      if (bBaseAlias instanceof ParsedSignature) { // b has an solid type alias
+      if (bBaseAlias instanceof ParsedSignature) {
+        // b has an solid type alias
         return this.unify(a, bBaseAlias, false);
       }
       this.aliases.set(bBaseAlias, a);
       return null;
     }
-    
+
     if (ParsedSignature.typeEquals(a.getRootType(), b.getRootType()))
       return null;
 

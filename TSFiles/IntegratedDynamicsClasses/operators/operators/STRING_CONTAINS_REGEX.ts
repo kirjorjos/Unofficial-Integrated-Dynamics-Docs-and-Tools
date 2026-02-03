@@ -34,7 +34,7 @@ export class OPERATOR_STRING_CONTAINS_REGEX extends BaseOperator<
       interactName: "stringContainsRegex",
       function: (regexString: iString): TypeLambda<iString, iBoolean> => {
         return (fullString: iString): iBoolean => {
-          const regex = new RE2(sanitizeForRe2(regexString.valueOf()),  "u");
+          const regex = new RE2(sanitizeForRe2(regexString.valueOf()), "u");
           return new iBoolean(regex.test(fullString.valueOf()));
         };
       },

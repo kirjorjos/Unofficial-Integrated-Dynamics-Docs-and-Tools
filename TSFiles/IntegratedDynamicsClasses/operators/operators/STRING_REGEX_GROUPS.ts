@@ -35,7 +35,7 @@ export class OPERATOR_STRING_REGEX_GROUPS extends BaseOperator<
         regexString: iString
       ): TypeLambda<iString, iArray<iString>> => {
         return (fullString: iString): iArray<iString> => {
-          const regex = new RE2(sanitizeForRe2(regexString.valueOf()),  "u");
+          const regex = new RE2(sanitizeForRe2(regexString.valueOf()), "u");
           const match = regex.exec(fullString.valueOf());
           if (match) {
             return new iArrayEager(match.map((m) => new iString(m ?? "u")));

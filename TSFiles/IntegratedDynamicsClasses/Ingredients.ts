@@ -5,8 +5,10 @@ import { Long } from "../JavaNumberClasses/Long";
 import { iBoolean } from "./typeWrappers/iBoolean";
 import { iArrayEager } from "./typeWrappers/iArrayEager";
 import { iArray } from "./typeWrappers/iArray";
+import { Named } from "./Named";
+import { iString } from "./typeWrappers/iString";
 
-export class Ingredients implements IntegratedValue {
+export class Ingredients implements IntegratedValue, Named {
   private items: iArray<Item>;
   private fluids: iArray<Fluid>;
   private energies: iArray<Long>;
@@ -107,5 +109,15 @@ export class Ingredients implements IntegratedValue {
         return new iBoolean(false);
     }
     return new iBoolean(true);
+  }
+
+  getName() {
+    return new iString(
+      [
+        ...this.fluids.valueOf().map((e) => e.getName()),
+        ...this.energies.valueOf().map((e) => e.getName()),
+        ...this.items.valueOf().map((e) => e.getName()),
+      ].join(", ")
+    );
   }
 }

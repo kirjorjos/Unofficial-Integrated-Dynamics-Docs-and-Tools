@@ -41,7 +41,7 @@ export class OPERATOR_STRING_REGEX_SCAN extends BaseOperator<
       function: (regexString: iString) => {
         return (groupIndex: Integer): TypeLambda<iString, iArray<iString>> => {
           return (fullString: iString): iArray<iString> => {
-            const regex = new RE2(sanitizeForRe2(regexString.valueOf()),  "gu");
+            const regex = new RE2(sanitizeForRe2(regexString.valueOf()), "gu");
             let results = [];
             let match: RE2ExecArray | null = null;
             regex.lastIndex = 0;

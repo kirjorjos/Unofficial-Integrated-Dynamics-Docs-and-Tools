@@ -34,7 +34,7 @@ export class OPERATOR_STRING_INDEX_OF_REGEX extends BaseOperator<
       interactName: "stringIndexOfRegex",
       function: (regexString: iString): TypeLambda<iString, Integer> => {
         return (fullString: iString): Integer => {
-          const regex = new RE2(sanitizeForRe2(regexString.valueOf()),  "u");
+          const regex = new RE2(sanitizeForRe2(regexString.valueOf()), "u");
           const match = regex.exec(fullString.valueOf());
           return new Integer(match ? match.index : -1);
         };

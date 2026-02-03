@@ -1,8 +1,10 @@
 import { Ingredients } from "./Ingredients";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iBoolean } from "./typeWrappers/iBoolean";
+import { iString } from "./typeWrappers/iString";
+import { Named } from "./Named";
 
-export class Recipe implements IntegratedValue {
+export class Recipe implements IntegratedValue, Named {
   private input: Ingredients;
   private output: Ingredients;
   private _signatureCache: ParsedSignature | null = null;
@@ -40,5 +42,9 @@ export class Recipe implements IntegratedValue {
     const newSignature = new ParsedSignature({ type: "Recipe" }, false);
     this._signatureCache = newSignature;
     return newSignature;
+  }
+
+  getName() {
+    return new iString(`${this.output.getName()} <- ${this.input.getName()}`);
   }
 }

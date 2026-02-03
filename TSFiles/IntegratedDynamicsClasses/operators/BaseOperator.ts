@@ -29,5 +29,4 @@ export class BaseOperator<
     this.symbol = symbol;
     this.serializer = serializer;
   }
-
 }

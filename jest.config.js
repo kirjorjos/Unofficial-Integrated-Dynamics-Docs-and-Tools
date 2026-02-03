@@ -15,5 +15,5 @@ module.exports = {
       "<rootDir>/TSFiles/IntegratedDynamicsClasses/$1",
     "^HelperClasses/(.*)$": "<rootDir>/TSFiles/HelperClasses/$1",
     "^JavaNumberClasses/(.*)$": "<rootDir>/TSFiles/JavaNumberClasses/$1",
-  }
+  },
 };

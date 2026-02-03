@@ -4,6 +4,7 @@ import { globalMap } from "../../HelperClasses/TypeMap";
 import { UniquelyNamed } from "IntegratedDynamicsClasses/UniquelyNamed";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 import { Named } from "IntegratedDynamicsClasses/Named";
+import { BaseOperator } from "./BaseOperator";
 
 export class Operator<I extends IntegratedValue, O extends IntegratedValue>
   implements IntegratedValue, UniquelyNamed, Named
@@ -14,20 +15,32 @@ export class Operator<I extends IntegratedValue, O extends IntegratedValue>
   readonly _output!: O;
   private varID: number;
   interactName: string;
+  lastSeralizer: "apply" | "pipe" | "pipe2" | "flip" | null;
+  argTypes: string[];
+  baseDisplayName: string;
 
   constructor({
     parsedSignature,
     function: fn,
-    interactName
+    interactName,
+    lastSerializer,
+    argTypes,
+    baseDisplayName,
   }: {
     parsedSignature: ParsedSignature;
     function: Function;
     interactName?: string;
+    lastSerializer?: "apply" | "pipe" | "pipe2" | "flip";
+    argTypes?: string[];
+    baseDisplayName?: string;
   }) {
     this.fn = fn;
     this.parsedSignature = Operator.unwrapOperatorSignature(parsedSignature);
     this.varID = globalMap.getNewVarID();
     this.interactName = interactName ?? "curried_operator";
+    this.lastSeralizer = lastSerializer ?? null;
+    this.argTypes = argTypes ?? [];
+    this.baseDisplayName = baseDisplayName ?? this.interactName;
   }
 
   evaluate(...args: IntegratedValue[]) {
@@ -61,10 +74,15 @@ export class Operator<I extends IntegratedValue, O extends IntegratedValue>
     if (typeof newOp != "function") {
       parsedSignature.rewrite();
       return newOp as O;
-    };
+    }
+    const typesArr = [...this.argTypes];
+    typesArr.push(arg.getSignatureNode().getRootType());
     return new Operator<IntegratedValue, IntegratedValue>({
       function: newOp,
       parsedSignature,
+      lastSerializer: "apply",
+      argTypes: typesArr,
+      baseDisplayName: this.baseDisplayName,
     }) as unknown as O;
   }
 
@@ -94,6 +112,8 @@ export class Operator<I extends IntegratedValue, O extends IntegratedValue>
         IntegratedValue,
         Operator<IntegratedValue, IntegratedValue>
       >,
+      lastSerializer: "flip",
+      baseDisplayName: "Virtual Fliped Operator",
     });
   }
 
@@ -107,6 +127,8 @@ export class Operator<I extends IntegratedValue, O extends IntegratedValue>
     return new Operator<I, V>({
       parsedSignature: newSignature,
       function: newFn,
+      lastSerializer: "pipe",
+      baseDisplayName: "Virtual Piped Operator",
     });
   }
 
@@ -132,6 +154,8 @@ export class Operator<I extends IntegratedValue, O extends IntegratedValue>
     return new Operator<V, IntegratedValue>({
       function: newFn,
       parsedSignature: parsedSignature,
+      lastSerializer: "pipe2",
+      baseDisplayName: "Virtual Piped 2 Operator",
     });
   }
 
@@ -159,10 +183,20 @@ export class Operator<I extends IntegratedValue, O extends IntegratedValue>
   }
 
   getUniqueName() {
-    return new iString((this.constructor as typeof Operator).internalName ?? "integrateddynamics:curried_operator");
+    return new iString(
+      (this.constructor as typeof Operator).internalName ??
+        "integrateddynamics:curried_operator"
+    );
   }
 
   getName(): iString {
-    return new iString(this.interactName);
+    if (this instanceof BaseOperator) return new iString(this.interactName);
+    if (this.lastSeralizer === "apply") {
+      return new iString(
+        `Applied ${this.baseDisplayName} [${this.argTypes.join("; ")}]`
+      );
+    } else {
+      return new iString(this.baseDisplayName);
+    }
   }
 }
