@@ -3,6 +3,8 @@ import { globalMap } from "./TypeMap";
 export class ParsedSignature {
   private static maxTypeID = 0;
   private static NUMBER_TYPES = ["Integer", "Long", "Double", "Number"];
+  private static NAMED_TYPES = ["String", "Ingredients", "Recipe", "NBT", ...this.NUMBER_TYPES, "Block", "Item", "Fluid", "Entity", "List", "Operator"];
+  private static UNIQUELY_NAMED_TYPES = ["Block", "Entity", "Operator", "Item", "Fluid"]
 
   private ast: TypeRawSignatureAST.RawSignatureNode;
   public errorInfo: ErrorInfo | null = null;
@@ -392,13 +394,16 @@ export class ParsedSignature {
   static typeEquals(
     a: TypeRawSignatureAST.RawSignatureNode["type"],
     b: TypeRawSignatureAST.RawSignatureNode["type"]
-  ) {
+  ): boolean {
     if (a === b) return true;
     if (
       ParsedSignature.NUMBER_TYPES.includes(a) &&
       ParsedSignature.NUMBER_TYPES.includes(b)
     )
       return true;
+    if (["Named", "UniquelyNamed"].includes(b)) return ParsedSignature.typeEquals(b, a); // ensure that "a" is the generic type
+    if (a === "Named") return ParsedSignature.NAMED_TYPES.includes(b);
+    if (a === "UniquelyNamed") return ParsedSignature.UNIQUELY_NAMED_TYPES.includes(b);
     return false;
   }
 }
