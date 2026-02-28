@@ -5,10 +5,12 @@ import { RegistryHub } from "./registryHub";
 
 type FluidConstructor = new (customData?: Record<string, any>) => Fluid;
 type RawFluids = typeof gameData.fluids;
+import { Integer } from "JavaNumberClasses/Integer";
+
 type FluidNames = {
-  [Group in keyof RawFluids]: keyof RawFluids[Group];
+  [Mod in keyof RawFluids]: `${Mod & string}:${keyof RawFluids[Mod] & string}`;
 }[keyof RawFluids];
-export type FluidKeys = Lowercase<FluidNames & string>;
+export type FluidKeys = Lowercase<FluidNames>;
 type FluidRegistryMap = {
   [K in FluidKeys]: FluidConstructor;
 };
@@ -25,8 +27,9 @@ class FluidRegistry {
     let classObj = {} as FluidRegistryMap;
     for (const [mod, data] of Object.entries(rawData)) {
       for (const [fluid, fluidData] of Object.entries(data)) {
-        const key = fluid.toLowerCase() as FluidKeys;
-        const fullData = { ...fluidData, id: `${mod}:${fluid}` };
+        const id = `${mod}:${fluid}`;
+        const key = id.toLowerCase() as FluidKeys;
+        const fullData = { ...fluidData, id: id, amount: new Integer(1000) };
         classObj[key] = FluidRegistry.createFluidClass(fullData);
       }
     }
@@ -60,6 +63,16 @@ class FluidRegistry {
     }
     if (data["name"]) flattened["displayName"] = data["name"];
     if (!data["rarity"]) flattened["rarity"] = "COMMON";
+
+    if (data["sounds"]) {
+      if (data["sounds"]["bucketEmpty"])
+        flattened["bucketEmptySound"] = data["sounds"]["bucketEmpty"];
+      if (data["sounds"]["bucketFill"])
+        flattened["bucketFillSound"] = data["sounds"]["bucketFill"];
+      if (data["sounds"]["vaporize"])
+        flattened["fluidVaporizeSound"] = data["sounds"]["vaporize"];
+      delete flattened["sounds"];
+    }
 
     return flattened;
   }

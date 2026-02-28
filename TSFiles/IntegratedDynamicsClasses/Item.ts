@@ -1,4 +1,5 @@
 import { Integer } from "JavaNumberClasses/Integer";
+import { Double } from "JavaNumberClasses/Double";
 import { UniquelyNamed } from "./UniquelyNamed";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Properties } from "./Properties";
@@ -44,6 +45,8 @@ export class Item implements UniquelyNamed, Named, IntegratedValue {
     itemName: new iString(""),
     block: new iString(""),
     inventorySize: Integer.ZERO,
+    efficiency: new Double(1.0),
+    toolTier: Integer.ZERO,
   });
   private _signatureCache: any;
 
@@ -186,6 +189,14 @@ export class Item implements UniquelyNamed, Named, IntegratedValue {
     return this.props.get("itemName");
   }
 
+  getEfficiency(): Double {
+    return this.props.get("efficiency");
+  }
+
+  getToolTier(): Integer {
+    return this.props.get("toolTier");
+  }
+
   getBlock(): Block {
     const blockRegistry = RegistryHub.blockRegistry;
     let key = (this.props.get("block") as iString).valueOf().toLowerCase();
@@ -200,14 +211,72 @@ export class Item implements UniquelyNamed, Named, IntegratedValue {
     return this.props;
   }
 
-  getStrengthVsBlock(block: Block) {
+  getStrengthVsBlock(block: Block): Double {
     if (block.getSignatureNode().getRootType() !== "Block")
       throw new Error("block is not a Block");
-    throw new Error("getStrengthVsBlock method not implemented");
+
+    const blockTags = block
+      .getTagNames()
+      .valueOf()
+      .map((t) => t.valueOf());
+    const itemTags = this.getTagNames()
+      .valueOf()
+      .map((t) => t.valueOf());
+
+    let isCorrectTool = false;
+    const toolTypes = ["pickaxe", "axe", "shovel", "hoe"];
+    for (const type of toolTypes) {
+      if (
+        blockTags.includes(`minecraft:mineable/${type}`) &&
+        (itemTags.includes(`forge:tools/${type}s`) ||
+          itemTags.includes(`minecraft:${type}s`))
+      ) {
+        isCorrectTool = true;
+        break;
+      }
+    }
+
+    if (isCorrectTool) {
+      const efficiency = this.getEfficiency();
+      return efficiency;
+    }
+    return new Double(1.0);
   }
 
-  canHarvestBlock(_block: Block) {
-    throw new Error("canHarvestBlock method not implemented");
+  canHarvestBlock(block: Block): iBoolean {
+    const blockTags = block
+      .getTagNames()
+      .valueOf()
+      .map((t) => t.valueOf());
+    const itemTags = this.getTagNames()
+      .valueOf()
+      .map((t) => t.valueOf());
+
+    let requiresTool = blockTags.some((t) => t.startsWith("minecraft:needs_"));
+    if (blockTags.includes("minecraft:mineable/pickaxe")) requiresTool = true;
+
+    if (!requiresTool) return new iBoolean(true);
+
+    let toolType: string | null = null;
+    const toolTypes = ["pickaxe", "axe", "shovel", "hoe"];
+    for (const type of toolTypes) {
+      if (blockTags.includes(`minecraft:mineable/${type}`)) {
+        toolType = type;
+        break;
+      }
+    }
+
+    if (!toolType) return new iBoolean(true);
+
+    const isCorrectType =
+      itemTags.includes(`forge:tools/${toolType}s`) ||
+      itemTags.includes(`minecraft:${toolType}s`);
+    if (!isCorrectType) return new iBoolean(false);
+
+    const blockLevel = block.getRequiredTier().toJSNumber();
+    const itemLevel = this.getToolTier().toJSNumber();
+
+    return new iBoolean(itemLevel >= blockLevel);
   }
 
   equals(other: IntegratedValue) {

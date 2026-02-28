@@ -44,7 +44,10 @@ export class Fluid implements Named, UniquelyNamed, IntegratedValue {
 
   getUniqueName(): iString {
     const id = this.props.get("id") as iString;
-    return id.add(" (").add(this.getAmount().toString()).add(")");
+    if (id.valueOf() === "") return id;
+    const amount = this.getAmount();
+    if (amount.toJSNumber() === 0) return id;
+    return id.add(" (").add(amount.toString()).add(")");
   }
 
   getAmount(): Integer {

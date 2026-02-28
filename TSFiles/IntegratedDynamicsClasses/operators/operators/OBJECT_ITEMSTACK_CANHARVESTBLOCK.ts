@@ -36,10 +36,9 @@ export class OPERATOR_OBJECT_ITEMSTACK_CANHARVESTBLOCK extends BaseOperator<
       }),
       symbol: "can_harvest",
       interactName: "itemstackCanHarvest",
-      function: (_item: Item): TypeLambda<Block, iBoolean> => {
-        return (_block: Block): iBoolean => {
-          throw new Error("Can harvest block not currently implemented");
-          // return item.canHarvestBlock(block);
+      function: (item: Item): TypeLambda<Block, iBoolean> => {
+        return (block: Block): iBoolean => {
+          return item.canHarvestBlock(block);
         };
       },
     });

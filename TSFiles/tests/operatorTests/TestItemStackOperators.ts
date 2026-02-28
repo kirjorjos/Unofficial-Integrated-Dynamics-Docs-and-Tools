@@ -536,7 +536,7 @@ describe("TestItemStackOperators", () => {
    * ----------------------------------- STRENGTH_VS_BLOCK -----------------------------------
    */
 
-  it.skip("testItemStackStrengthVsBlock", () => {
+  it("testItemStackStrengthVsBlock", () => {
     const res1 =
       new operatorRegistry.OBJECT_ITEMSTACK_STRENGTH_VS_BLOCK().evaluate(
         iHoe,
@@ -591,7 +591,7 @@ describe("TestItemStackOperators", () => {
    * ----------------------------------- CAN_HARVEST_BLOCK -----------------------------------
    */
 
-  it.skip("testItemStackCanHarvestBlock", () => {
+  it("testItemStackCanHarvestBlock", () => {
     const res1 =
       new operatorRegistry.OBJECT_ITEMSTACK_CANHARVESTBLOCK().evaluate(
         iHoe,
@@ -679,7 +679,7 @@ describe("TestItemStackOperators", () => {
    * ----------------------------------- ISFLUIDSTACK -----------------------------------
    */
 
-  it.skip("testItemStackIsFluidStack", () => {
+  it("testItemStackIsFluidStack", () => {
     const res1 = new operatorRegistry.OBJECT_ITEMSTACK_ISFLUIDSTACK().evaluate(
       iHoe
     );
@@ -719,7 +719,7 @@ describe("TestItemStackOperators", () => {
    * ----------------------------------- FLUIDSTACK -----------------------------------
    */
 
-  it.skip("testItemStackFluidStack", () => {
+  it("testItemStackFluidStack", () => {
     const res1 = new operatorRegistry.OBJECT_ITEMSTACK_FLUIDSTACK().evaluate(
       iHoe
     );
@@ -729,7 +729,9 @@ describe("TestItemStackOperators", () => {
     const res2 = new operatorRegistry.OBJECT_ITEMSTACK_FLUIDSTACK().evaluate(
       iBucketLava
     );
-    expect((res2 as Fluid).getUniqueName().valueOf()).toBe("minecraft:lava");
+    expect((res2 as Fluid).getUniqueName().valueOf()).toBe(
+      "minecraft:lava (1000)"
+    );
 
     const res3 = new operatorRegistry.OBJECT_ITEMSTACK_FLUIDSTACK().evaluate(
       iEmpty
@@ -764,7 +766,7 @@ describe("TestItemStackOperators", () => {
    * ----------------------------------- FLUIDSTACK_CAPACITY -----------------------------------
    */
 
-  it.skip("testItemStackFluidStackCapacity", () => {
+  it("testItemStackFluidStackCapacity", () => {
     const res1 =
       new operatorRegistry.OBJECT_ITEMSTACK_FLUIDSTACKCAPACITY().evaluate(iHoe);
     expect(res1).toBeInstanceOf(Integer);
@@ -914,7 +916,7 @@ describe("TestItemStackOperators", () => {
    * ----------------------------------- MODNAME -----------------------------------
    */
 
-  it.skip("testItemStackModName", () => {
+  it("testItemStackModName", () => {
     const res1 = new operatorRegistry.OBJECT_ITEMSTACK_MODNAME().evaluate(iHoe);
     expect(res1).toBeInstanceOf(iString);
     expect((res1 as iString).valueOf()).toBe("Minecraft");
@@ -1306,7 +1308,7 @@ describe("TestItemStackOperators", () => {
    * ----------------------------------- INVENTORYSIZE -----------------------------------
    */
 
-  it.skip("testItemStackInventorySize", () => {
+  it("testItemStackInventorySize", () => {
     const res1 = new operatorRegistry.OBJECT_ITEMSTACK_INVENTORYSIZE().evaluate(
       iApple
     );

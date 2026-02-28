@@ -2,6 +2,7 @@ import { UniquelyNamed } from "./UniquelyNamed";
 import { Named } from "./Named";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Integer } from "JavaNumberClasses/Integer";
+import { Double } from "JavaNumberClasses/Double";
 import { Properties } from "./Properties";
 import { iBoolean } from "./typeWrappers/iBoolean";
 import { iString } from "./typeWrappers/iString";
@@ -31,6 +32,8 @@ export class Block implements UniquelyNamed, Named, IntegratedValue {
     inventory: new iArrayEager<Item>([]),
     blockName: new iString(""),
     displayName: new iString(""),
+    destroySpeed: new Double(1.0),
+    requiredTier: Integer.ZERO,
   });
   props: Properties;
   private _signatureCache: any;
@@ -78,6 +81,14 @@ export class Block implements UniquelyNamed, Named, IntegratedValue {
 
   getPlantAge(): Integer {
     return this.props.get("plantAge");
+  }
+
+  getDestroySpeed(): Double {
+    return this.props.get("destroySpeed");
+  }
+
+  getRequiredTier(): Integer {
+    return this.props.get("requiredTier");
   }
 
   getProperties(): Properties {

@@ -36,10 +36,9 @@ export class OPERATOR_OBJECT_ITEMSTACK_STRENGTH_VS_BLOCK extends BaseOperator<
       }),
       symbol: "strength",
       interactName: "itemstackStrength",
-      function: (_item: Item): TypeLambda<Block, Double> => {
-        return (_block: Block): Double => {
-          throw new Error("Strength vs Block not currently implemented");
-          // return item.getStrengthVsBlock(block);
+      function: (item: Item): TypeLambda<Block, Double> => {
+        return (block: Block): Double => {
+          return item.getStrengthVsBlock(block);
         };
       },
     });
