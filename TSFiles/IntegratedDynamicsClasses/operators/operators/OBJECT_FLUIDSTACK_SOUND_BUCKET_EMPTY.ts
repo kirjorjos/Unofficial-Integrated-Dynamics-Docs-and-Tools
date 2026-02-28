@@ -32,7 +32,7 @@ export class OPERATOR_OBJECT_FLUIDSTACK_SOUND_BUCKET_EMPTY extends BaseOperator<
       symbol: "sound_bucket_empty",
       interactName: "fluidstackBucketEmptySound",
       function: (fluid: Fluid): iString => {
-        return new iString(fluid.getBucketEmptySound());
+        return fluid.getBucketEmptySound();
       },
     });
   }

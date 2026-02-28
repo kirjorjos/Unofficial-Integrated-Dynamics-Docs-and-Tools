@@ -31,7 +31,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_INVENTORYSIZE extends BaseOperator<
       symbol: "inventory_size",
       interactName: "itemstackInventorySize",
       function: (item: Item): Integer => {
-        return item.getInventory().size();
+        return item.getInventorySize();
       },
     });
   }

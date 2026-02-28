@@ -3,10 +3,12 @@ import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 import { Item } from "IntegratedDynamicsClasses/Item";
+import { iArrayEager } from "IntegratedDynamicsClasses/typeWrappers/iArrayEager";
+import { RegistryHub } from "IntegratedDynamicsClasses/registries/registryHub";
 
 export class OPERATOR_OBJECT_ITEMSTACK_TAG_STACKS extends BaseOperator<
-  Item,
-  iArray<iString>
+  iString,
+  iArray<Item>
 > {
   static override internalName = "integrateddynamics:itemstack_tags" as const;
   constructor() {
@@ -21,19 +23,29 @@ export class OPERATOR_OBJECT_ITEMSTACK_TAG_STACKS extends BaseOperator<
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
-          type: "Item",
+          type: "String",
         },
         to: {
           type: "List",
           listType: {
-            type: "String",
+            type: "Item",
           },
         },
       }),
       symbol: "item_tag_val",
       interactName: "itemstackTagVal",
-      function: (item: Item): iArray<iString> => {
-        return item.getTagNames();
+      function: (tag: iString): iArray<Item> => {
+        const matches: Item[] = [];
+        const itemRegistry = RegistryHub.itemRegistry;
+        if (itemRegistry) {
+          for (const ItemClass of Object.values(itemRegistry.items)) {
+            const item = new (ItemClass as any)();
+            if (item.getTagNames().includes(tag).valueOf()) {
+              matches.push(item);
+            }
+          }
+        }
+        return new iArrayEager(matches);
       },
     });
   }

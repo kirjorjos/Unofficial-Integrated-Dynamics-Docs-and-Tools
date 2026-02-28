@@ -234,6 +234,7 @@ import { OPERATOR_OBJECT_ITEMSTACK_REPAIRCOST } from "IntegratedDynamicsClasses/
 import { OPERATOR_OBJECT_ITEMSTACK_SIZE } from "IntegratedDynamicsClasses/operators/operators/OBJECT_ITEMSTACK_SIZE";
 import { OPERATOR_OBJECT_ITEMSTACK_STORED_FE } from "IntegratedDynamicsClasses/operators/operators/OBJECT_ITEMSTACK_STORED_FE";
 import { OPERATOR_OBJECT_ITEMSTACK_STRENGTH_VS_BLOCK } from "IntegratedDynamicsClasses/operators/operators/OBJECT_ITEMSTACK_STRENGTH_VS_BLOCK";
+import { OPERATOR_OBJECT_ITEMSTACK_TAG } from "IntegratedDynamicsClasses/operators/operators/OBJECT_ITEMSTACK_TAG";
 import { OPERATOR_OBJECT_ITEMSTACK_TAG_STACKS } from "IntegratedDynamicsClasses/operators/operators/OBJECT_ITEMSTACK_TAG_STACKS";
 import { OPERATOR_OBJECT_ITEMSTACK_WITHSIZE } from "IntegratedDynamicsClasses/operators/operators/OBJECT_ITEMSTACK_WITHSIZE";
 import { OPERATOR_OBJECT_PLAYER_TARGETBLOCK } from "IntegratedDynamicsClasses/operators/operators/OBJECT_PLAYER_TARGETBLOCK";
@@ -294,7 +295,6 @@ import { OPERATOR_UNIQUELY_NAMED_UNIQUE_NAME } from "IntegratedDynamicsClasses/o
 import { OPERATOR_BINARY_RZSHIFT } from "IntegratedDynamicsClasses/operators/operators/BINARY_RZSHIFT";
 import { OPERATOR_LIST_LAZYBUILT } from "IntegratedDynamicsClasses/operators/operators/LIST_LAZYBUILT";
 import { BaseOperator } from "IntegratedDynamicsClasses/operators/BaseOperator";
-
 
 class operatorRegistryClass {
   constructor() {}
@@ -440,6 +440,7 @@ class operatorRegistryClass {
   ITEMSTACK_DATAVALUE = OPERATOR_ITEMSTACK_DATAVALUE;
   ITEMSTACK_WITHDATA = OPERATOR_ITEMSTACK_WITHDATA;
   ITEMSTACK_TOOLTIP = OPERATOR_ITEMSTACK_TOOLTIP;
+  OBJECT_ITEMSTACK_TAG = OPERATOR_OBJECT_ITEMSTACK_TAG;
   OBJECT_ENTITY_ENTITYITEMTOOLTIP = OPERATOR_OBJECT_ENTITY_ENTITYITEMTOOLTIP;
   OBJECT_ENTITY_ISMOB = OPERATOR_OBJECT_ENTITY_ISMOB;
   OBJECT_ENTITY_ISANIMAL = OPERATOR_OBJECT_ENTITY_ISANIMAL;

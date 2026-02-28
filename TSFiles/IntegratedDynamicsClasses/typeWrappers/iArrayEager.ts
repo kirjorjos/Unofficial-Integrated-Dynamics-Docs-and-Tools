@@ -27,16 +27,28 @@ export class iArrayEager<
     return new iArrayEager<Source, Result>(returnValue);
   }
 
-  some(
-    fn: (value: Source, index: number, array: Source[]) => unknown
-  ): iBoolean {
-    return new iBoolean(this.arr.some(fn));
+  some(fn: (value: Source, index: number, array: Source[]) => any): iBoolean {
+    return new iBoolean(
+      this.arr.some((v, i, a) => {
+        const res = fn(v, i, a);
+        const val =
+          typeof res === "object" && res !== null && "valueOf" in res
+            ? res.valueOf()
+            : res;
+        return val;
+      })
+    );
   }
 
-  every(
-    fn: (value: Source, index: number, array: Source[]) => unknown
-  ): iBoolean {
-    return new iBoolean(this.arr.every(fn));
+  every(fn: (value: Source, index: number, array: Source[]) => any): iBoolean {
+    return new iBoolean(
+      this.arr.every((v, i, a) => {
+        const res = fn(v, i, a);
+        return typeof res === "object" && res !== null && "valueOf" in res
+          ? res.valueOf()
+          : res;
+      })
+    );
   }
 
   map<U extends IntegratedValue>(
@@ -48,9 +60,16 @@ export class iArrayEager<
   }
 
   filter(
-    fn: (value: Source, index: number, array: Source[]) => unknown
+    fn: (value: Source, index: number, array: Source[]) => any
   ): iArray<Source, Result> {
-    return new iArrayEager<Source, Result>(this.arr.filter(fn));
+    return new iArrayEager<Source, Result>(
+      this.arr.filter((v, i, a) => {
+        const res = fn(v, i, a);
+        return typeof res === "object" && res !== null && "valueOf" in res
+          ? res.valueOf()
+          : res;
+      })
+    );
   }
 
   size(): Integer {
@@ -111,6 +130,8 @@ export class iArrayEager<
     if (!(other instanceof iArrayEager)) return new iBoolean(false);
     const otherArr = other.valueOf();
     if (this.arr.length !== otherArr.length) return new iBoolean(false);
-    return new iBoolean(this.arr.every((e, i) => e.equals(otherArr[i])));
+    return new iBoolean(
+      this.arr.every((e, i) => e.equals(otherArr[i]).valueOf())
+    );
   }
 }

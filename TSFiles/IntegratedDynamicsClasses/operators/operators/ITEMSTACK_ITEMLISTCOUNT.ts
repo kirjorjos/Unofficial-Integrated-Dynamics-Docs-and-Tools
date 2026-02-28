@@ -37,15 +37,17 @@ export class OPERATOR_ITEMSTACK_ITEMLISTCOUNT extends BaseOperator<
       interactName: "listItemListCount",
       function: (items: iArray<Item>): TypeLambda<Item, Integer> => {
         return (item: Item): Integer => {
-          return items
-            .filter((i) => {
-              try {
-                return i.equals(item);
-              } catch (e) {
-                return false;
+          let totalCount = Integer.ZERO;
+          for (const i of items.valueOf()) {
+            try {
+              if (i.getUniqueName().equals(item.getUniqueName()).valueOf()) {
+                totalCount = totalCount.add(i.getSize());
               }
-            })
-            .size();
+            } catch (e) {
+              continue;
+            }
+          }
+          return totalCount;
         };
       },
     });

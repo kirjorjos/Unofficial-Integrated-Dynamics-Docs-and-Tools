@@ -65,7 +65,7 @@ describe("TestStringOperators", () => {
     ]);
     lint = new iArrayEager([new Integer(123)]);
     lstringinvalidtypes = new iArrayEager([new Integer(123)]);
-    DUMMY_VARIABLE = new iNull;
+    DUMMY_VARIABLE = new iNull();
 
     lstring_inf = new iArrayLazy(
       new iString("a"),

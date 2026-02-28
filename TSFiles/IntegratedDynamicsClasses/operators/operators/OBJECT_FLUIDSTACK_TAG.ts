@@ -29,7 +29,12 @@ export class OPERATOR_OBJECT_FLUIDSTACK_TAG extends BaseOperator<
       symbol: "fluid_tag_names",
       interactName: "fluidstackTags",
       function: (fluid: Fluid): iArray<iString> => {
-        return new iArrayEager(fluid.getTagNames().map((e) => new iString(e)));
+        return new iArrayEager(
+          fluid
+            .getTagNames()
+            .valueOf()
+            .map((e: iString) => new iString(e.valueOf()))
+        );
       },
     });
   }

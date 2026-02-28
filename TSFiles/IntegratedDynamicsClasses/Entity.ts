@@ -15,7 +15,7 @@ import { iArray } from "./typeWrappers/iArray";
 
 export class Entity implements UniquelyNamed, Named {
   static defaultProps = new Properties({
-    uname: new iString(""),
+    id: new iString(""),
     displayName: new iString(""),
     mob: new iBoolean(false),
     animal: new iBoolean(false),
@@ -61,13 +61,13 @@ export class Entity implements UniquelyNamed, Named {
   private _signatureCache: any;
 
   constructor(newProps: Properties, oldEntity?: Entity) {
-    let props = Entity.defaultProps;
-    props.setAll(newProps);
+    let props = Entity.defaultProps.clone();
     if (oldEntity) props.setAll(oldEntity.getProperties());
+    props.setAll(newProps);
     if (!props.has("heldItemMain"))
       props.set("heldItemMain", new Item(new Properties({})));
-    if (!props.has("helpItemOffHand"))
-      props.set("helpItemOffHand", new Item(new Properties({})));
+    if (!props.has("heldItemOffHand"))
+      props.set("heldItemOffHand", new Item(new Properties({})));
     if (!props.has("itemFrameContents"))
       props.set("itemFrameContents", new Item(new Properties({})));
     if (!props.has("targetBlock"))
@@ -76,7 +76,7 @@ export class Entity implements UniquelyNamed, Named {
   }
 
   getUniqueName(): iString {
-    return this.props.get("uname");
+    return this.props.get("id");
   }
 
   isMob(): iBoolean {
@@ -88,7 +88,7 @@ export class Entity implements UniquelyNamed, Named {
   }
 
   isItem(): iBoolean {
-    return new iBoolean(!this.props.get("isItem").valueOf());
+    return this.props.get("isItem");
   }
 
   isPlayer(): iBoolean {
@@ -209,8 +209,8 @@ export class Entity implements UniquelyNamed, Named {
 
   getBreadableList(): iArray<iString> {
     return new iArrayEager<iString>([
-      ...this.props.get("breedableList"),
-      this.props.get("uname"),
+      ...this.props.get("breedableList").valueOf(),
+      this.getUniqueName(),
     ]);
   }
 
@@ -258,13 +258,21 @@ export class Entity implements UniquelyNamed, Named {
   equals(other: IntegratedValue) {
     if (!(other instanceof Entity)) return new iBoolean(false);
     else {
-      for (const key of Object.keys(this) as Array<keyof Entity>) {
-        if (key == "equals") continue; // prevent recursion
+      const keys = Object.getOwnPropertyNames(
+        Object.getPrototypeOf(this)
+      ).filter(
+        (k) => !["constructor", "equals", "getSignatureNode"].includes(k)
+      );
+      for (const key of keys as Array<keyof Entity>) {
         if (this[key] instanceof Function) {
-          const thisResult = (this[key] as Function)() as IntegratedValue;
-          const otherResult = (other[key] as Function)() as IntegratedValue;
-          if (!thisResult.equals(otherResult).valueOf())
-            return new iBoolean(false);
+          try {
+            const thisResult = (this[key] as Function)() as IntegratedValue;
+            const otherResult = (other[key] as Function)() as IntegratedValue;
+            if (!thisResult.equals(otherResult).valueOf())
+              return new iBoolean(false);
+          } catch {
+            continue;
+          }
         }
       }
       return new iBoolean(true);

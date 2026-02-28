@@ -44,10 +44,12 @@ export class OPERATOR_OBJECT_FLUIDSTACK_ISRAWFLUIDEQUAL extends BaseOperator<
           return new iBoolean(
             fluid1
               .getUname()
+              .valueOf()
               .replace(new RegExp("\\s\\d+$"), "")
               .toLowerCase() ===
               fluid2
                 .getUname()
+                .valueOf()
                 .replace(new RegExp("\\s\\d+$"), "")
                 .toLowerCase()
           );

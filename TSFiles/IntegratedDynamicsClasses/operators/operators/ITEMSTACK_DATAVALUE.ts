@@ -4,6 +4,7 @@ import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
+import { CompoundTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
 
 export class OPERATOR_ITEMSTACK_DATAVALUE extends BaseOperator<Item, iBoolean> {
   static override internalName =
@@ -38,10 +39,10 @@ export class OPERATOR_ITEMSTACK_DATAVALUE extends BaseOperator<Item, iBoolean> {
       function: (item: Item): TypeLambda<iString, Tag<IntegratedValue>> => {
         return (key: iString): Tag<IntegratedValue> => {
           const nbt = item.getNBT();
-          if (!nbt || !nbt.has(key)) {
-            return new NullTag();
+          if (nbt instanceof CompoundTag && nbt.has(key)) {
+            return nbt.get(key);
           }
-          return nbt.get(key);
+          return new NullTag();
         };
       },
     });

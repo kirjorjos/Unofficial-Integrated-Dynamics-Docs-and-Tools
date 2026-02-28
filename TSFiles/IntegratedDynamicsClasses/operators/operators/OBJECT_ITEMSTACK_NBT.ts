@@ -1,11 +1,11 @@
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
-import { CompoundTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
 import { Item } from "IntegratedDynamicsClasses/Item";
+import { Tag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/Tag";
 
 export class OPERATOR_OBJECT_ITEMSTACK_NBT extends BaseOperator<
   Item,
-  CompoundTag
+  Tag<IntegratedValue>
 > {
   static override internalName = "integrateddynamics:itemstack_nbt" as const;
   constructor() {
@@ -22,7 +22,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_NBT extends BaseOperator<
       }),
       symbol: "nbt",
       interactName: "itemStackNBT",
-      function: (item: Item): CompoundTag => {
+      function: (item: Item): Tag<IntegratedValue> => {
         return item.getNBT();
       },
     });

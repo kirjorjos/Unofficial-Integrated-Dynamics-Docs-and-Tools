@@ -2,15 +2,17 @@ import { Integer } from "JavaNumberClasses/Integer";
 import { UniquelyNamed } from "./UniquelyNamed";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Properties } from "./Properties";
-import { CompoundTag } from "./NBTFunctions/MinecraftClasses/CompoundTag";
+import { Tag } from "./NBTFunctions/MinecraftClasses/Tag";
 import { iBoolean } from "./typeWrappers/iBoolean";
 import { iString } from "./typeWrappers/iString";
 import { NullTag } from "./NBTFunctions/MinecraftClasses/NullTag";
 import { iArrayEager } from "./typeWrappers/iArrayEager";
-import { Block } from "./Block";
-import { Fluid } from "./Fluid";
 import { iArray } from "./typeWrappers/iArray";
 import { Named } from "./Named";
+import { RegistryHub } from "./registries/registryHub";
+import { CompoundTag } from "./NBTFunctions/MinecraftClasses/CompoundTag";
+import { Fluid } from "./Fluid";
+import { Block } from "./Block";
 
 export class Item implements UniquelyNamed, Named, IntegratedValue {
   props: Properties;
@@ -26,10 +28,10 @@ export class Item implements UniquelyNamed, Named, IntegratedValue {
     enchantable: new iBoolean(false),
     repairCost: Integer.ZERO,
     rarity: new iString(""),
-    // fluid: new Fluid(),
+    fluid: new iString(""),
     fluidCapacity: Integer.ZERO,
     NBT: new NullTag(),
-    uname: new iString(""),
+    id: new iString(""),
     modName: new iString(""),
     fuelBurnTime: Integer.ZERO,
     fuel: new iBoolean(false),
@@ -40,16 +42,28 @@ export class Item implements UniquelyNamed, Named, IntegratedValue {
     inventory: new iArrayEager<IntegratedValue>([]),
     tooltip: new iArrayEager<iString>([]),
     itemName: new iString(""),
-    // block: new Block()
+    block: new iString(""),
+    inventorySize: Integer.ZERO,
   });
   private _signatureCache: any;
 
   constructor(newProps: Properties, oldItem?: Item) {
-    let props = Item.defaultProps;
-    props.setAll(newProps);
+    let props = Item.defaultProps.clone();
     if (oldItem) props.setAll(oldItem.getProperties());
-    if (!props.has("block")) props.set("block", new Block(new Properties({})));
-    if (!props.has("fluid")) props.set("fluid", new Fluid(new Properties({})));
+
+    const baseNbt = props.get("NBT");
+    const newNbt = newProps.get("NBT");
+    if (
+      baseNbt?.getType() === Tag.TAG_COMPOUND &&
+      newNbt?.getType() === Tag.TAG_COMPOUND
+    ) {
+      newProps.set(
+        "NBT",
+        (baseNbt as CompoundTag).compoundUnion(newNbt as CompoundTag)
+      );
+    }
+
+    props.setAll(newProps);
     this.props = props;
   }
 
@@ -62,11 +76,11 @@ export class Item implements UniquelyNamed, Named, IntegratedValue {
   }
 
   isStackable(): iBoolean {
-    return this.props.get("stackable");
+    return new iBoolean(this.getMaxSize().gt(Integer.ONE));
   }
 
   isDamageable(): iBoolean {
-    return this.props.get("damageable");
+    return new iBoolean(this.getMaxDamage().gt(Integer.ZERO));
   }
 
   getDamage(): Integer {
@@ -74,7 +88,9 @@ export class Item implements UniquelyNamed, Named, IntegratedValue {
   }
 
   getMaxDamage(): Integer {
-    return this.props.get("maxDamage");
+    const maxDamage = this.props.get("maxDamage") as Integer;
+    if (maxDamage.toJSNumber() === -1) return Integer.ZERO;
+    return maxDamage;
   }
 
   isEnchanted(): iBoolean {
@@ -90,23 +106,40 @@ export class Item implements UniquelyNamed, Named, IntegratedValue {
   }
 
   getRarity(): iString {
-    return this.props.get("rarity");
+    const rarity = this.props.get("rarity") as iString;
+    if (this.isEnchanted().valueOf() && rarity.valueOf() === "COMMON") {
+      return new iString("RARE");
+    }
+    return rarity;
   }
 
   getFluid(): Fluid {
-    return this.props.get("fluid");
+    const fluidRegistry = RegistryHub.fluidRegistry;
+    let key = (this.props.get("fluid") as iString).valueOf().toLowerCase();
+    if (!key) return new Fluid(new Properties({}));
+    const FluidConstructor =
+      fluidRegistry.items[key as keyof typeof fluidRegistry.items];
+    if (!FluidConstructor) return new Fluid(new Properties({}));
+    return new FluidConstructor();
   }
 
   getFluidCapacity(): Integer {
-    return this.props.get("fluidCapacity");
+    const capacity = this.props.get("fluidCapacity") as Integer;
+    if (
+      capacity.toJSNumber() === 0 &&
+      (this.props.get("fluid") as iString).valueOf() !== ""
+    ) {
+      return new Integer(1000);
+    }
+    return capacity;
   }
 
-  getNBT(): CompoundTag {
+  getNBT(): Tag<IntegratedValue> {
     return this.props.get("NBT");
   }
 
   getUniqueName(): iString {
-    return this.props.get("uname");
+    return this.props.get("id");
   }
 
   getModName(): iString {
@@ -138,7 +171,11 @@ export class Item implements UniquelyNamed, Named, IntegratedValue {
   }
 
   getInventory(): iArray<IntegratedValue> {
-    return this.props.get("inventory") || [];
+    return this.props.get("inventory") || new iArrayEager([]);
+  }
+
+  getInventorySize(): Integer {
+    return this.props.get("inventorySize");
   }
 
   getTooltip(_player?: Entity): iArray<iString> {
@@ -150,7 +187,13 @@ export class Item implements UniquelyNamed, Named, IntegratedValue {
   }
 
   getBlock(): Block {
-    return this.props.get("block");
+    const blockRegistry = RegistryHub.blockRegistry;
+    let key = (this.props.get("block") as iString).valueOf().toLowerCase();
+    if (!key) return new Block(new Properties({}));
+    const BlockConstructor =
+      blockRegistry.items[key as keyof typeof blockRegistry.items];
+    if (!BlockConstructor) return new Block(new Properties({}));
+    return new BlockConstructor();
   }
 
   getProperties(): Properties {
@@ -158,7 +201,8 @@ export class Item implements UniquelyNamed, Named, IntegratedValue {
   }
 
   getStrengthVsBlock(block: Block) {
-    if (!(block instanceof Block)) throw new Error("block is not a Block");
+    if (block.getSignatureNode().getRootType() !== "Block")
+      throw new Error("block is not a Block");
     throw new Error("getStrengthVsBlock method not implemented");
   }
 
@@ -168,18 +212,42 @@ export class Item implements UniquelyNamed, Named, IntegratedValue {
 
   equals(other: IntegratedValue) {
     if (!(other instanceof Item)) return new iBoolean(false);
-    else {
-      for (const key of Object.keys(this) as Array<keyof Item>) {
-        if (key == "equals") continue; // prevent recursion
-        if (this[key] instanceof Function) {
+
+    if (!this.getUniqueName().equals(other.getUniqueName()).valueOf())
+      return new iBoolean(false);
+    if (!this.props.get("fluid").equals(other.props.get("fluid")).valueOf())
+      return new iBoolean(false);
+    if (!this.props.get("block").equals(other.props.get("block")).valueOf())
+      return new iBoolean(false);
+
+    const keys = Object.getOwnPropertyNames(Item.prototype).filter(
+      (k) =>
+        ![
+          "constructor",
+          "equals",
+          "getSignatureNode",
+          "getProperties",
+          "getFluid",
+          "getBlock",
+          "getInventory",
+          "getUniqueName",
+        ].includes(k)
+    );
+    for (const key of keys as Array<keyof Item>) {
+      if (this[key] instanceof Function && this[key].length === 0) {
+        try {
           const thisResult = (this[key] as Function)() as IntegratedValue;
           const otherResult = (other[key] as Function)() as IntegratedValue;
-          if (!thisResult.equals(otherResult).valueOf())
+
+          if (!thisResult.equals(otherResult).valueOf()) {
             return new iBoolean(false);
+          }
+        } catch (e: any) {
+          continue;
         }
       }
-      return new iBoolean(true);
     }
+    return new iBoolean(true);
   }
 
   getSignatureNode(): ParsedSignature {
@@ -191,8 +259,8 @@ export class Item implements UniquelyNamed, Named, IntegratedValue {
     return newSignature;
   }
 
-  toString(): string {
-    return this.props.get("itemName").valueOf();
+  toString(): iString {
+    return this.props.get("itemName");
   }
 
   getName(): iString {

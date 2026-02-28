@@ -3,6 +3,8 @@ import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 import { Item } from "IntegratedDynamicsClasses/Item";
+import { CompoundTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
+import { iArrayEager } from "IntegratedDynamicsClasses/typeWrappers/iArrayEager";
 
 export class OPERATOR_OBJECT_ITEMSTACK_DATA_KEYS extends BaseOperator<
   Item,
@@ -28,7 +30,11 @@ export class OPERATOR_OBJECT_ITEMSTACK_DATA_KEYS extends BaseOperator<
       symbol: "data_keys",
       interactName: "itemStackDataKeys",
       function: (item: Item): iArray<iString> => {
-        return item.getNBT().getAllKeys();
+        const nbt = item.getNBT();
+        if (nbt instanceof CompoundTag) {
+          return nbt.getAllKeys();
+        }
+        return new iArrayEager<iString>([]);
       },
     });
   }

@@ -32,7 +32,7 @@ export class OPERATOR_OBJECT_FLUIDSTACK_RARITY extends BaseOperator<
       symbol: "rarity",
       interactName: "fluidstackRarity",
       function: (fluid: Fluid): iString => {
-        return new iString(fluid.getRarity());
+        return fluid.getRarity();
       },
     });
   }

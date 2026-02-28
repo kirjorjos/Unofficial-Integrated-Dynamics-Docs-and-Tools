@@ -13,9 +13,9 @@ declare global {
   type TypeLambda<P, R> = (arg: P) => R;
   type TypeNumericString = `${number}` | `-${number}`;
 
-  interface Block extends BlockType {}
-  interface Item extends ItemType {}
-  interface Fluid extends FluidType {}
+  interface Block extends BlockType, IntegratedValue {}
+  interface Item extends ItemType, IntegratedValue {}
+  interface Fluid extends FluidType, IntegratedValue {}
   interface Entity extends EntityType {}
 
   interface ErrorInfo {

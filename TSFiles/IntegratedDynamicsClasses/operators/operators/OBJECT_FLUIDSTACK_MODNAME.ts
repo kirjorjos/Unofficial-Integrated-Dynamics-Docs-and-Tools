@@ -31,7 +31,7 @@ export class OPERATOR_OBJECT_FLUIDSTACK_MODNAME extends BaseOperator<
       symbol: "mod",
       interactName: "fluidstackMod",
       function: (fluid: Fluid): iString => {
-        return new iString(fluid.getModName());
+        return fluid.getModName();
       },
     });
   }

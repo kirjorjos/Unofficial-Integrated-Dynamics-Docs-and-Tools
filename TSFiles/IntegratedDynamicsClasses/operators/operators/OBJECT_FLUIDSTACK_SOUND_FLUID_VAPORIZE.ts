@@ -32,7 +32,7 @@ export class OPERATOR_OBJECT_FLUIDSTACK_SOUND_FLUID_VAPORIZE extends BaseOperato
       symbol: "sound_fluid_vaporize",
       interactName: "fluidstackFluidVaporizeSound",
       function: (fluid: Fluid): iString => {
-        return new iString(fluid.getFluidVaporizeSound());
+        return fluid.getFluidVaporizeSound();
       },
     });
   }

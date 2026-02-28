@@ -45,7 +45,8 @@
     "traceResolution": false,
     "sourceMap": true,
     "inlineSourceMap": false,
-    "inlineSources": true
+    "inlineSources": true,
+    "resolveJsonModule": true
   },
   "compileOnSave": false
 }

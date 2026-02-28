@@ -5,10 +5,11 @@ import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Operator } from "../Operator";
+import { Tag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/Tag";
 
 export class OPERATOR_ITEMSTACK_WITHDATA extends BaseOperator<
   Item,
-  Operator<iString, Operator<CompoundTag, Item>>
+  Operator<iString, Operator<Tag<IntegratedValue>, Item>>
 > {
   static override internalName =
     "integrateddynamics:itemstack_withdata" as const;
@@ -47,12 +48,15 @@ export class OPERATOR_ITEMSTACK_WITHDATA extends BaseOperator<
       interactName: "itemstackWithData",
       function: (
         item: Item
-      ): TypeLambda<string, TypeLambda<CompoundTag, Item>> => {
-        return (key: string): TypeLambda<CompoundTag, Item> => {
-          return (value: CompoundTag): Item => {
-            let nbt = item.getNBT() || {};
-            nbt = nbt.set(key, value);
-            return new Item(new Properties({ nbt }), item);
+      ): TypeLambda<iString, TypeLambda<Tag<IntegratedValue>, Item>> => {
+        return (key: iString): TypeLambda<Tag<IntegratedValue>, Item> => {
+          return (value: Tag<IntegratedValue>): Item => {
+            let nbt = item.getNBT();
+            if (!(nbt instanceof CompoundTag)) {
+              nbt = new CompoundTag({});
+            }
+            const newNbt = (nbt as CompoundTag).set(key.valueOf(), value);
+            return new Item(new Properties({ NBT: newNbt }), item);
           };
         };
       },

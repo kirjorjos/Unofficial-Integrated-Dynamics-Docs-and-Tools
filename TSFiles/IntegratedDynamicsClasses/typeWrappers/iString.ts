@@ -13,6 +13,10 @@ export class iString implements IntegratedValue {
     return this.str;
   }
 
+  toString(): string {
+    return this.str;
+  }
+
   getSignatureNode(): ParsedSignature {
     if (this._signatureCache) {
       return this._signatureCache;

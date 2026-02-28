@@ -4,45 +4,47 @@ import { Integer } from "../JavaNumberClasses/Integer";
 import { Properties } from "./Properties";
 import { CompoundTag } from "./NBTFunctions/MinecraftClasses/CompoundTag";
 import { iBoolean } from "./typeWrappers/iBoolean";
-import { Item } from "./Item";
-import { Block } from "./Block";
 import { iString } from "./typeWrappers/iString";
 import { Named } from "./Named";
+import { RegistryHub } from "./registries/registryHub";
+import { iArrayEager } from "./typeWrappers/iArrayEager";
+import { iArray } from "./typeWrappers/iArray";
+import { Block } from "./Block";
+import { Item } from "./Item";
 
-export class Fluid implements Named, UniquelyNamed {
+export class Fluid implements Named, UniquelyNamed, IntegratedValue {
   static defaultProps = new Properties({
-    uname: "",
+    id: new iString(""),
     amount: Integer.ZERO,
-    // block: new Block(),
+    block: new iString(""),
     lightLevel: Integer.ZERO,
     density: Integer.ZERO,
     temperature: Integer.ZERO,
     viscosity: Integer.ZERO,
     lighterThanAir: new iBoolean(false),
-    rarity: "",
-    bucketEmptySound: "",
-    fluidVaporizeSound: "",
-    bucketFillSound: "",
-    // bucket: new Item(),
-    modName: "",
+    rarity: new iString(""),
+    bucketEmptySound: new iString(""),
+    fluidVaporizeSound: new iString(""),
+    bucketFillSound: new iString(""),
+    bucket: new iString(""),
+    modName: new iString(""),
     nbt: null,
-    tagNames: [] as Array<string>,
+    tagNames: new iArrayEager<iString>([]),
     displayName: new iString(""),
   });
   props: Properties;
   private _signatureCache: any;
 
   constructor(newProps: Properties, oldFluid?: Fluid) {
-    let props = Fluid.defaultProps;
-    props.setAll(newProps);
+    let props = Fluid.defaultProps.clone();
     if (oldFluid) props.setAll(oldFluid.getProperties());
-    if (!props.has("block")) props.set("block", new Block(new Properties({})));
-    if (!props.has("item")) props.set("item", new Item(new Properties({})));
+    props.setAll(newProps);
     this.props = props;
   }
 
   getUniqueName(): iString {
-    return this.props.get("uname");
+    const id = this.props.get("id") as iString;
+    return id.add(" (").add(this.getAmount().toString()).add(")");
   }
 
   getAmount(): Integer {
@@ -50,7 +52,13 @@ export class Fluid implements Named, UniquelyNamed {
   }
 
   getBlock(): Block {
-    return this.props.get("block");
+    const blockRegistry = RegistryHub.blockRegistry;
+    const key = (this.props.get("block") as iString).valueOf();
+    if (!key) return new Block(new Properties({}));
+    const BlockConstructor =
+      blockRegistry.items[key as keyof typeof blockRegistry.items];
+    if (!BlockConstructor) return new Block(new Properties({}));
+    return new BlockConstructor();
   }
 
   getLightLevel(): Integer {
@@ -73,31 +81,37 @@ export class Fluid implements Named, UniquelyNamed {
     return this.props.get("lighterThanAir");
   }
 
-  getRarity(): string {
+  getRarity(): iString {
     return this.props.get("rarity");
   }
 
-  getBucketEmptySound(): string {
+  getBucketEmptySound(): iString {
     return this.props.get("bucketEmptySound");
   }
 
-  getFluidVaporizeSound(): string {
+  getFluidVaporizeSound(): iString {
     return this.props.get("fluidVaporizeSound");
   }
 
-  getBucketFillSound(): string {
+  getBucketFillSound(): iString {
     return this.props.get("bucketFillSound");
   }
 
   getBucket(): Item {
-    return this.props.get("bucket");
+    const itemRegistry = RegistryHub.itemRegistry;
+    const key = (this.props.get("bucket") as iString).valueOf();
+    if (!key) return new Item(new Properties({}));
+    const ItemConstructor =
+      itemRegistry.items[key as keyof typeof itemRegistry.items];
+    if (!ItemConstructor) return new Item(new Properties({}));
+    return new ItemConstructor();
   }
 
-  getUname(): string {
-    return this.props.get("uname");
+  getUname(): iString {
+    return this.props.get("id");
   }
 
-  getModName(): string {
+  getModName(): iString {
     return this.props.get("modName");
   }
 
@@ -105,7 +119,7 @@ export class Fluid implements Named, UniquelyNamed {
     return this.props.get("nbt");
   }
 
-  getTagNames(): string[] {
+  getTagNames(): iArray<iString> {
     return this.props.get("tagNames");
   }
 
@@ -124,18 +138,39 @@ export class Fluid implements Named, UniquelyNamed {
 
   equals(other: IntegratedValue) {
     if (!(other instanceof Fluid)) return new iBoolean(false);
-    else {
-      for (const key of Object.keys(this) as Array<keyof Fluid>) {
-        if (key == "equals") continue; // prevent recursion
-        if (this[key] instanceof Function) {
+
+    if (!this.getUniqueName().equals(other.getUniqueName()).valueOf())
+      return new iBoolean(false);
+    if (!this.props.get("block").equals(other.props.get("block")).valueOf())
+      return new iBoolean(false);
+    if (!this.props.get("bucket").equals(other.props.get("bucket")).valueOf())
+      return new iBoolean(false);
+
+    const keys = Object.getOwnPropertyNames(Fluid.prototype).filter(
+      (k) =>
+        ![
+          "constructor",
+          "equals",
+          "getSignatureNode",
+          "getProperties",
+          "getBlock",
+          "getBucket",
+          "getUniqueName",
+        ].includes(k)
+    );
+    for (const key of keys as Array<keyof Fluid>) {
+      if (this[key] instanceof Function && this[key].length === 0) {
+        try {
           const thisResult = (this[key] as Function)() as IntegratedValue;
           const otherResult = (other[key] as Function)() as IntegratedValue;
           if (!thisResult.equals(otherResult).valueOf())
             return new iBoolean(false);
+        } catch (e: any) {
+          continue;
         }
       }
-      return new iBoolean(true);
     }
+    return new iBoolean(true);
   }
 
   getName(): iString {
