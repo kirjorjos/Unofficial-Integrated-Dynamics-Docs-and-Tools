@@ -11,6 +11,9 @@ import { iNull } from "../../IntegratedDynamicsClasses/typeWrappers/iNull";
 import { Integer } from "../../JavaNumberClasses/Integer";
 import { CompoundTag } from "../../IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
 import { IntTag } from "../../IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/IntTag";
+import { StringTag } from "../../IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/StringTag";
+import { ListTag } from "../../IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ListTag";
+import { Tag } from "../../IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/Tag";
 
 /**
  * Test the different block operators.
@@ -33,6 +36,7 @@ describe("TestBlockOperators", () => {
   let bDarkOakLeaves: Block;
   let bLogicProgrammer: Block;
   let bLeaves: Block;
+  let bReed: Block;
   let bSand: Block;
   let bCarrot: Block;
   let bCarrotGrown: Block;
@@ -52,6 +56,7 @@ describe("TestBlockOperators", () => {
       "integrateddynamics:logic_programmer"
     ]();
     bLeaves = new blockRegistry.items["minecraft:oak_leaves"]();
+    bReed = new blockRegistry.items["minecraft:sugar_cane"]();
     bSand = new blockRegistry.items["minecraft:sand"]();
     bCarrot = new blockRegistry.items["minecraft:carrots"]();
     bCarrotGrown = new blockRegistry.items["minecraft:carrots"]({
@@ -63,6 +68,7 @@ describe("TestBlockOperators", () => {
     sSand = new iString("minecraft:sand");
 
     nbtCarrotGrown = new CompoundTag({
+      age: new IntTag(new Integer(1)),
       plantAge: new IntTag(new Integer(1)),
     });
 
@@ -259,6 +265,103 @@ describe("TestBlockOperators", () => {
   });
 
   /**
+   * ----------------------------------- ISPLANTABLE -----------------------------------
+   */
+
+  it("testBlockIsPlantable", () => {
+    const res1 = new operatorRegistry.OBJECT_BLOCK_ISPLANTABLE().evaluate(bAir);
+    expect(res1).toBeInstanceOf(iBoolean);
+    expect((res1 as iBoolean).valueOf()).toBe(false);
+
+    const res2 = new operatorRegistry.OBJECT_BLOCK_ISPLANTABLE().evaluate(
+      bReed
+    );
+    expect((res2 as iBoolean).valueOf()).toBe(true);
+  });
+
+  it("testInvalidInputSizeIsPlantableLarge", () => {
+    expect(() => {
+      new operatorRegistry.OBJECT_BLOCK_ISPLANTABLE().evaluate(bAir, bAir);
+    }).toThrow();
+  });
+
+  it("testInvalidInputSizeIsPlantableSmall", () => {
+    expect(() => {
+      new operatorRegistry.OBJECT_BLOCK_ISPLANTABLE().evaluate();
+    }).toThrow();
+  });
+
+  it("testInvalidInputTypeIsPlantable", () => {
+    expect(() => {
+      new operatorRegistry.OBJECT_BLOCK_ISPLANTABLE().evaluate(DUMMY_VARIABLE);
+    }).toThrow();
+  });
+
+  /**
+   * ----------------------------------- PLANTTYPE -----------------------------------
+   */
+
+  it("testBlockPlantType", () => {
+    const res1 = new operatorRegistry.OBJECT_BLOCK_PLANTTYPE().evaluate(bAir);
+    expect(res1).toBeInstanceOf(iString);
+    expect((res1 as iString).valueOf()).toBe("none");
+
+    const res2 = new operatorRegistry.OBJECT_BLOCK_PLANTTYPE().evaluate(bReed);
+    expect((res2 as iString).valueOf()).toBe("beach");
+  });
+
+  it("testInvalidInputSizePlantTypeLarge", () => {
+    expect(() => {
+      new operatorRegistry.OBJECT_BLOCK_PLANTTYPE().evaluate(bAir, bAir);
+    }).toThrow();
+  });
+
+  it("testInvalidInputSizePlantTypeSmall", () => {
+    expect(() => {
+      new operatorRegistry.OBJECT_BLOCK_PLANTTYPE().evaluate();
+    }).toThrow();
+  });
+
+  it("testInvalidInputTypePlantType", () => {
+    expect(() => {
+      new operatorRegistry.OBJECT_BLOCK_PLANTTYPE().evaluate(DUMMY_VARIABLE);
+    }).toThrow();
+  });
+
+  /**
+   * ----------------------------------- PLANT -----------------------------------
+   */
+
+  it("testBlockPlant", () => {
+    const res1 = new operatorRegistry.OBJECT_BLOCK_PLANT().evaluate(bAir);
+    expect(res1).toBeInstanceOf(Block);
+    expect((res1 as Block).getUniqueName().valueOf()).toBe("");
+
+    const res2 = new operatorRegistry.OBJECT_BLOCK_PLANT().evaluate(bReed);
+    expect((res2 as Block).getUniqueName().valueOf()).toBe(
+      "minecraft:sugar_cane"
+    );
+  });
+
+  it("testInvalidInputSizePlantLarge", () => {
+    expect(() => {
+      new operatorRegistry.OBJECT_BLOCK_PLANT().evaluate(bAir, bAir);
+    }).toThrow();
+  });
+
+  it("testInvalidInputSizePlantSmall", () => {
+    expect(() => {
+      new operatorRegistry.OBJECT_BLOCK_PLANT().evaluate();
+    }).toThrow();
+  });
+
+  it("testInvalidInputTypePlant", () => {
+    expect(() => {
+      new operatorRegistry.OBJECT_BLOCK_PLANT().evaluate(DUMMY_VARIABLE);
+    }).toThrow();
+  });
+
+  /**
    * ----------------------------------- PLANTAGE -----------------------------------
    */
 
@@ -336,6 +439,11 @@ describe("TestBlockOperators", () => {
         .valueOf()
         .toJSNumber()
     ).toBe(1);
+    expect(
+      ((res1 as CompoundTag).get(new iString("plantAge")) as IntTag)
+        .valueOf()
+        .toJSNumber()
+    ).toBe(1);
   });
 
   it("testInvalidInputSizeBlockPropertiesLarge", () => {
@@ -404,6 +512,13 @@ describe("TestBlockOperators", () => {
         bCarrotGrown
       );
     expect(res1).toBeInstanceOf(CompoundTag);
+
+    const ageList = (res1 as CompoundTag).get(new iString("age")) as ListTag;
+    expect(ageList).toBeInstanceOf(ListTag);
+    const vals = (ageList.valueOf().valueOf() as Array<Tag<any>>).map((v) =>
+      (v as StringTag).valueOf().valueOf()
+    );
+    expect(vals).toEqual(["0", "1", "2", "3", "4", "5", "6", "7"]);
   });
 
   it("testInvalidInputSizeBlockPossiblePropertiesLarge", () => {

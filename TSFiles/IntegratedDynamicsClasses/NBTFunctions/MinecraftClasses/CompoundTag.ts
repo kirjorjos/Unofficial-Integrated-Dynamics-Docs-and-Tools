@@ -50,6 +50,10 @@ export class CompoundTag extends Tag<CompoundTag> {
         if (value instanceof Long) return new LongTag(value);
         if (value instanceof iBoolean)
           return new ByteTag(new Integer(+value.valueOf()));
+        const val = value.valueOf();
+        if (Array.isArray(val)) {
+          return new ListTag(value as iArray<Tag<IntegratedValue>>);
+        }
       }
       return new CompoundTag(value);
     }

@@ -12,6 +12,7 @@ import { iArrayEager } from "./typeWrappers/iArrayEager";
 import { Block } from "./Block";
 import { Item } from "./Item";
 import { iArray } from "./typeWrappers/iArray";
+import { Fluid } from "./Fluid";
 
 export class Entity implements UniquelyNamed, Named {
   static defaultProps = new Properties({
@@ -40,10 +41,11 @@ export class Entity implements UniquelyNamed, Named {
     hurtSound: new iString(""),
     deathSound: new iString(""),
     age: Integer.ZERO,
+    breedingAge: Integer.ZERO,
     child: new iBoolean(false),
-    breedable: new iBoolean(false),
     inLove: new iBoolean(false),
     shearable: new iBoolean(false),
+    isSheared: new iBoolean(false),
     breedableList: new iArrayEager<iString>([]),
     NBT: new iNull(),
     entityType: new iString(""),
@@ -198,7 +200,8 @@ export class Entity implements UniquelyNamed, Named {
   }
 
   canBreed(): iBoolean {
-    return this.props.get("breedable");
+    const breedingAge = this.props.get("breedingAge") as Integer;
+    return new iBoolean(breedingAge.toJSNumber() === 0);
   }
 
   isInLove(): iBoolean {
@@ -206,7 +209,8 @@ export class Entity implements UniquelyNamed, Named {
   }
 
   isShearable(): iBoolean {
-    return this.props.get("shearable");
+    if (!this.props.get("shearable").valueOf()) return new iBoolean(false);
+    return new iBoolean(!this.props.get("isSheared").valueOf());
   }
 
   getBreadableList(): iArray<iString> {
@@ -217,7 +221,9 @@ export class Entity implements UniquelyNamed, Named {
   }
 
   getNBT(): CompoundTag {
-    return this.props.get("NBT");
+    const nbt = this.props.get("NBT");
+    if (nbt instanceof CompoundTag) return nbt;
+    return new CompoundTag({});
   }
 
   getEntityType(): iString {
@@ -266,7 +272,7 @@ export class Entity implements UniquelyNamed, Named {
         (k) => !["constructor", "equals", "getSignatureNode"].includes(k)
       );
       for (const key of keys as Array<keyof Entity>) {
-        if (this[key] instanceof Function) {
+        if (this[key] instanceof Function && this[key].length === 0) {
           try {
             const thisResult = (this[key] as Function)() as IntegratedValue;
             const otherResult = (other[key] as Function)() as IntegratedValue;

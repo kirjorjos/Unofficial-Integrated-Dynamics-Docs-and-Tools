@@ -11,6 +11,7 @@ import { iArray } from "./typeWrappers/iArray";
 import { RegistryHub } from "./registries/registryHub";
 import { Item } from "./Item";
 import { Fluid } from "./Fluid";
+import { CompoundTag } from "./NBTFunctions/MinecraftClasses/CompoundTag";
 
 export class Block implements UniquelyNamed, Named, IntegratedValue {
   static defaultProps = new Properties({
@@ -22,6 +23,10 @@ export class Block implements UniquelyNamed, Named, IntegratedValue {
     stepSound: new iString(""),
     shearable: new iBoolean(false),
     plantAge: new Integer(-1),
+    age: new Integer(-1),
+    isPlantable: new iBoolean(false),
+    plantType: new iString("none"),
+    plant: new iString(""),
     fluid: new iString(""),
     fluidCapacity: Integer.ZERO,
     id: new iString(""),
@@ -36,6 +41,7 @@ export class Block implements UniquelyNamed, Named, IntegratedValue {
     requiredTier: Integer.ZERO,
   });
   props: Properties;
+  possibleProperties: Properties;
   private _signatureCache: any;
 
   constructor(newProps: Properties, oldBlock?: Block) {
@@ -43,6 +49,19 @@ export class Block implements UniquelyNamed, Named, IntegratedValue {
     if (oldBlock) props.setAll(oldBlock.getProperties());
     props.setAll(newProps);
     this.props = props;
+
+    if (newProps.has("possibleProperties")) {
+      const rawPossible = newProps.get("possibleProperties");
+      if (rawPossible instanceof CompoundTag) {
+        this.possibleProperties = new Properties(rawPossible.valueOf());
+      } else if (rawPossible instanceof Properties) {
+        this.possibleProperties = rawPossible;
+      } else {
+        this.possibleProperties = this.props;
+      }
+    } else {
+      this.possibleProperties = this.props;
+    }
   }
 
   isOpaque(): iBoolean {
@@ -83,6 +102,30 @@ export class Block implements UniquelyNamed, Named, IntegratedValue {
     return this.props.get("plantAge");
   }
 
+  getAge(): Integer {
+    return this.props.get("age");
+  }
+
+  isPlantable(): iBoolean {
+    return this.props.get("isPlantable");
+  }
+
+  getPlantType(): iString {
+    return this.props.get("plantType");
+  }
+
+  getPlant(): Block {
+    const blockRegistry = RegistryHub.blockRegistry;
+    const key = (this.props.get("plant") as iString).valueOf();
+    if (!key) return new Block(new Properties({}));
+    const BlockConstructor =
+      blockRegistry.items[
+        key.toLowerCase() as keyof typeof blockRegistry.items
+      ];
+    if (!BlockConstructor) return new Block(new Properties({}));
+    return new BlockConstructor();
+  }
+
   getDestroySpeed(): Double {
     return this.props.get("destroySpeed");
   }
@@ -93,6 +136,10 @@ export class Block implements UniquelyNamed, Named, IntegratedValue {
 
   getProperties(): Properties {
     return this.props;
+  }
+
+  getPossibleProperties(): Properties {
+    return this.possibleProperties;
   }
 
   getName(): iString {
@@ -166,6 +213,7 @@ export class Block implements UniquelyNamed, Named, IntegratedValue {
           "equals",
           "getSignatureNode",
           "getProperties",
+          "getPossibleProperties",
           "getItem",
           "getFluid",
           "getUniqueName",

@@ -12,6 +12,7 @@ import { iNull } from "../../IntegratedDynamicsClasses/typeWrappers/iNull";
 import { Integer } from "../../JavaNumberClasses/Integer";
 import { CompoundTag } from "../../IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
 import { IntTag } from "../../IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/IntTag";
+import { StringTag } from "../../IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/StringTag";
 import { NullTag } from "../../IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/NullTag";
 
 /**
@@ -36,29 +37,36 @@ describe("TestFluidStackOperators", () => {
   let eWater100: Fluid;
   let eWater100Tag: Fluid;
   let i99: Integer;
-  let sDamage: iString;
-  let t4: IntTag;
   let sWater: iString;
+  let sHoeNbt: CompoundTag;
 
   let DUMMY_VARIABLE: iNull;
 
   beforeEach(() => {
-    eBucketLava = new fluidRegistry.items["minecraft:lava"]();
-    eBucketWater = new fluidRegistry.items["minecraft:water"]();
+    eBucketLava = new fluidRegistry.items["minecraft:lava"]({
+      amount: new Integer(1000),
+    });
+    eBucketWater = new fluidRegistry.items["minecraft:water"]({
+      amount: new Integer(1000),
+    });
     eBucketEmpty = new fluidRegistry.items["minecraft:empty"]({
       amount: Integer.ZERO,
     });
     eWater100 = new fluidRegistry.items["minecraft:water"]({
       amount: new Integer(100),
     });
+
     eWater100Tag = new fluidRegistry.items["minecraft:water"]({
       amount: new Integer(100),
-      nbt: new CompoundTag({ "minecraft:damage": new IntTag(new Integer(3)) }),
+      nbt: new CompoundTag({ a: new StringTag(new iString("abc")) }),
     });
+
     i99 = new Integer(99);
-    sDamage = new iString("minecraft:damage");
-    t4 = new IntTag(new Integer(4));
     sWater = new iString("minecraft:water");
+
+    sHoeNbt = new CompoundTag({
+      Damage: new IntTag(new Integer(51)),
+    });
 
     DUMMY_VARIABLE = new iNull();
   });
@@ -115,12 +123,12 @@ describe("TestFluidStackOperators", () => {
       eBucketLava
     );
     expect(res1).toBeInstanceOf(Block);
-    expect((res1 as Block).getBlockName().valueOf()).toBe("minecraft:lava");
+    expect((res1 as Block).getUniqueName().valueOf()).toBe("minecraft:lava");
 
     const res2 = new operatorRegistry.OBJECT_FLUIDSTACK_BLOCK().evaluate(
       eBucketWater
     );
-    expect((res2 as Block).getBlockName().valueOf()).toBe("minecraft:water");
+    expect((res2 as Block).getUniqueName().valueOf()).toBe("minecraft:water");
   });
 
   it("testInvalidInputSizeBlockLarge", () => {
@@ -641,14 +649,13 @@ describe("TestFluidStackOperators", () => {
   });
 
   /**
-   * ----------------------------------- DATA -----------------------------------
+   * ----------------------------------- NBT -----------------------------------
    */
 
   it("testFluidNbt", () => {
     const res1 = new operatorRegistry.OBJECT_FLUIDSTACK_DATA().evaluate(
       eBucketLava
     );
-    // Fluid.ts defaults nbt to NullTag now
     expect(res1).toBeInstanceOf(NullTag);
 
     const res2 = new operatorRegistry.OBJECT_FLUIDSTACK_DATA().evaluate(
@@ -656,8 +663,10 @@ describe("TestFluidStackOperators", () => {
     );
     expect(res2).toBeInstanceOf(CompoundTag);
     expect(
-      ((res2 as CompoundTag).get(sDamage) as IntTag).valueOf().toJSNumber()
-    ).toBe(3);
+      ((res2 as CompoundTag).get(new iString("a")) as StringTag)
+        .valueOf()
+        .valueOf()
+    ).toBe("abc");
   });
 
   it("testInvalidInputSizeNbtLarge", () => {
@@ -719,160 +728,6 @@ describe("TestFluidStackOperators", () => {
   it("testInvalidInputTypeWithAmount", () => {
     expect(() => {
       new operatorRegistry.OBJECT_FLUIDSTACK_WITH_AMOUNT().evaluate(
-        DUMMY_VARIABLE,
-        DUMMY_VARIABLE
-      );
-    }).toThrow();
-  });
-
-  /**
-   * ----------------------------------- DATA_KEYS -----------------------------------
-   */
-
-  it("testFluidStackDataKeys", () => {
-    const res1 = new operatorRegistry.OBJECT_FLUIDSTACK_DATAKEYS().evaluate(
-      eWater100
-    );
-    expect(res1).toBeInstanceOf(iArrayEager);
-    expect((res1 as iArrayEager<any>).size().toJSNumber()).toBe(0);
-
-    const res2 = new operatorRegistry.OBJECT_FLUIDSTACK_DATAKEYS().evaluate(
-      eWater100Tag
-    );
-    expect(res2).toBeInstanceOf(iArrayEager);
-    expect((res2 as iArrayEager<any>).size().toJSNumber()).toBe(1);
-    expect(
-      ((res2 as iArrayEager<any>).get(Integer.ZERO) as iString).valueOf()
-    ).toBe("minecraft:damage");
-  });
-
-  it("testInvalidInputDataKeysDataKeysLarge", () => {
-    expect(() => {
-      new operatorRegistry.OBJECT_FLUIDSTACK_DATAKEYS().evaluate(
-        eWater100Tag,
-        eWater100Tag
-      );
-    }).toThrow();
-  });
-
-  it("testInvalidInputDataKeysDataKeysSmall", () => {
-    expect(() => {
-      new operatorRegistry.OBJECT_FLUIDSTACK_DATAKEYS().evaluate();
-    }).toThrow();
-  });
-
-  it("testInvalidInputTypeDataKeys", () => {
-    expect(() => {
-      new operatorRegistry.OBJECT_FLUIDSTACK_DATAKEYS().evaluate(
-        DUMMY_VARIABLE
-      );
-    }).toThrow();
-  });
-
-  /**
-   * ----------------------------------- DATA_VALUE -----------------------------------
-   */
-
-  it("testFluidStackDataValue", () => {
-    const res1 = new operatorRegistry.OBJECT_FLUIDSTACK_DATA_VALUE().evaluate(
-      eWater100,
-      sDamage
-    );
-    expect(res1).toBeInstanceOf(NullTag);
-
-    const res2 = new operatorRegistry.OBJECT_FLUIDSTACK_DATA_VALUE().evaluate(
-      eWater100Tag,
-      sDamage
-    );
-    expect(res2).toBeInstanceOf(IntTag);
-    expect((res2 as IntTag).valueOf().toJSNumber()).toBe(3);
-  });
-
-  it("testInvalidInputDataValueDataValueLarge", () => {
-    expect(() => {
-      new operatorRegistry.OBJECT_FLUIDSTACK_DATA_VALUE().evaluate(
-        eWater100Tag,
-        sDamage,
-        eWater100Tag
-      );
-    }).toThrow();
-  });
-
-  it("testInvalidInputDataValueDataValueSmall", () => {
-    expect(() => {
-      new operatorRegistry.OBJECT_FLUIDSTACK_DATA_VALUE().evaluate(
-        eWater100Tag
-      );
-    }).toThrow();
-  });
-
-  it("testInvalidInputTypeDataValue", () => {
-    expect(() => {
-      new operatorRegistry.OBJECT_FLUIDSTACK_DATA_VALUE().evaluate(
-        DUMMY_VARIABLE,
-        DUMMY_VARIABLE
-      );
-    }).toThrow();
-  });
-
-  /**
-   * ----------------------------------- WITH_DATA -----------------------------------
-   */
-
-  it("testFluidStackWithData", () => {
-    const res1 = new operatorRegistry.OBJECT_FLUIDSTACK_WITH_DATA().evaluate(
-      eWater100,
-      sDamage,
-      t4
-    );
-    expect(res1).toBeInstanceOf(Fluid);
-    const outFluid1 = res1 as Fluid;
-    expect(outFluid1.getUniqueName().valueOf()).toBe("minecraft:water (100)");
-    expect(
-      ((outFluid1.getNBT() as CompoundTag).get(sDamage) as IntTag)
-        .valueOf()
-        .toJSNumber()
-    ).toBe(4);
-
-    const res2 = new operatorRegistry.OBJECT_FLUIDSTACK_WITH_DATA().evaluate(
-      eWater100Tag,
-      sDamage,
-      t4
-    );
-    expect(res2).toBeInstanceOf(Fluid);
-    const outFluid2 = res2 as Fluid;
-    expect(outFluid2.getUniqueName().valueOf()).toBe("minecraft:water (100)");
-    expect(
-      ((outFluid2.getNBT() as CompoundTag).get(sDamage) as IntTag)
-        .valueOf()
-        .toJSNumber()
-    ).toBe(4);
-  });
-
-  it("testInvalidInputWithDataWithDataLarge", () => {
-    expect(() => {
-      new operatorRegistry.OBJECT_FLUIDSTACK_WITH_DATA().evaluate(
-        eWater100Tag,
-        sDamage,
-        t4,
-        eWater100Tag
-      );
-    }).toThrow();
-  });
-
-  it("testInvalidInputWithDataWithDataSmall", () => {
-    expect(() => {
-      new operatorRegistry.OBJECT_FLUIDSTACK_WITH_DATA().evaluate(
-        eWater100Tag,
-        sDamage
-      );
-    }).toThrow();
-  });
-
-  it("testInvalidInputTypeWithData", () => {
-    expect(() => {
-      new operatorRegistry.OBJECT_FLUIDSTACK_WITH_DATA().evaluate(
-        DUMMY_VARIABLE,
         DUMMY_VARIABLE,
         DUMMY_VARIABLE
       );
@@ -947,6 +802,45 @@ describe("TestFluidStackOperators", () => {
   it("testInvalidInputTypeTagStacks", () => {
     expect(() => {
       new operatorRegistry.OBJECT_FLUIDSTACK_TAG_STACKS().evaluate(
+        DUMMY_VARIABLE
+      );
+    }).toThrow();
+  });
+
+  /**
+   * ----------------------------------- WITHNBT -----------------------------------
+   */
+
+  it("testFluidStackWithNbt", () => {
+    const res1 = new operatorRegistry.OBJECT_FLUIDSTACK_WITH_NBT().evaluate(
+      eBucketWater,
+      sHoeNbt
+    );
+    expect(res1).toBeInstanceOf(Fluid);
+    expect(
+      ((res1 as Fluid).getNBT() as CompoundTag).equals(sHoeNbt).valueOf()
+    ).toBe(true);
+  });
+
+  it("testInvalidFluidStackWithNbtLarge", () => {
+    expect(() => {
+      new operatorRegistry.OBJECT_FLUIDSTACK_WITH_NBT().evaluate(
+        eBucketWater,
+        sHoeNbt,
+        eBucketWater
+      );
+    }).toThrow();
+  });
+
+  it("testInvalidFluidStackWithNbtSmall", () => {
+    expect(() => {
+      new operatorRegistry.OBJECT_FLUIDSTACK_WITH_NBT().evaluate(eBucketWater);
+    }).toThrow();
+  });
+
+  it("testInvalidFluidStackWithNbt", () => {
+    expect(() => {
+      new operatorRegistry.OBJECT_FLUIDSTACK_WITH_NBT().evaluate(
         DUMMY_VARIABLE
       );
     }).toThrow();

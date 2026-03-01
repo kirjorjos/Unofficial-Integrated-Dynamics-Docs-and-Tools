@@ -28,7 +28,7 @@ export class OPERATOR_OBJECT_BLOCK_POSSIBLE_PROPERTIES extends BaseOperator<
       symbol: "block_all_props",
       interactName: "blockPossibleProperties",
       function: (block: Block): CompoundTag => {
-        return block.getProperties().toCompoundTag();
+        return block.getPossibleProperties().toCompoundTag();
       },
     });
   }

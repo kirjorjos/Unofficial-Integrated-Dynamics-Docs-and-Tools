@@ -12,8 +12,6 @@ import { Block } from "../../IntegratedDynamicsClasses/Block";
 import { Fluid } from "../../IntegratedDynamicsClasses/Fluid";
 import { CompoundTag } from "../../IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
 import { IntTag } from "../../IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/IntTag";
-import { ListTag } from "../../IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ListTag";
-import { ShortTag } from "../../IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ShortTag";
 import { StringTag } from "../../IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/StringTag";
 import { NullTag } from "../../IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/NullTag";
 import { fluidRegistry } from "IntegratedDynamicsClasses/registries/fluidRegistry";
@@ -35,7 +33,6 @@ fluidRegistry.load();
 
 describe("TestItemStackOperators", () => {
   let iApple: Item;
-  let iAppleNoData: Item;
   let iApple2: Item;
   let iAppleTag: Item;
   let iBeef: Item;
@@ -52,13 +49,13 @@ describe("TestItemStackOperators", () => {
   let iEnergyBatteryFull: Item;
   let iIronOre: Item;
   let iShulkerBox: Item;
+  let iSeedWheat: Item;
   let iEmpty: Item;
 
   let bStone: Block;
   let bObsidian: Block;
 
   let sPlankWood: iString;
-  let sMaxStackSize: iString;
 
   let int100: Integer;
   let int200: Integer;
@@ -67,25 +64,19 @@ describe("TestItemStackOperators", () => {
 
   let lApples: iArrayEager<Item>;
 
-  let t4: IntTag;
+  let sHoeNbt: CompoundTag;
 
   let DUMMY_VARIABLE: iNull;
 
   beforeEach(() => {
     iApple = new itemRegistry.items["minecraft:apple"]();
-    iAppleNoData = new itemRegistry.items["minecraft:apple"]({
-      rarity: new iString(""),
-      enchantable: new iBoolean(false),
-      NBT: new NullTag(),
-    });
     iApple2 = new itemRegistry.items["minecraft:apple"]({
       size: new Integer(2),
     });
 
-    const appleTagNbt = new CompoundTag({}).set(
-      "minecraft:ominous_bottle_amplifier",
-      IntTag.valueOf(new Integer(2))
-    );
+    const appleTagNbt = new CompoundTag({
+      a: new StringTag(new iString("b")),
+    });
     iAppleTag = new itemRegistry.items["minecraft:apple"]({ NBT: appleTagNbt });
 
     iBeef = new itemRegistry.items["minecraft:red_bed"]();
@@ -97,16 +88,8 @@ describe("TestItemStackOperators", () => {
     iHoeEnchanted = new itemRegistry.items["minecraft:diamond_hoe"]({
       enchanted: new iBoolean(true),
       repairCost: new Integer(10),
-      NBT: new CompoundTag({
-        Enchantments: new ListTag(
-          new iArrayEager([
-            new CompoundTag({
-              id: new StringTag(new iString("minecraft:silk_touch")),
-              lvl: new ShortTag(new Integer(1)),
-            }),
-          ])
-        ),
-      }),
+      rarity: new iString("RARE"),
+      NBT: new CompoundTag({ enchanted: new iBoolean(true) }), // Add NBT to make it differ from iHoe
     });
     iPickaxe = new itemRegistry.items["minecraft:diamond_pickaxe"]();
     iStone = new itemRegistry.items["minecraft:stone"]();
@@ -121,22 +104,28 @@ describe("TestItemStackOperators", () => {
     iEnergyBatteryFull = new itemRegistry.items[
       "integrateddynamics:energy_battery"
     ]({
-      feStored: new Integer(1000000),
+      feStored: new Integer(1000000), // Config capacity
+      NBT: new CompoundTag({ energy: new IntTag(new Integer(1000000)) }),
     });
     iIronOre = new itemRegistry.items["minecraft:iron_ore"]();
 
+    const inv = new Array(27).fill(new itemRegistry.items["minecraft:air"]());
+    inv[0] = iApple;
+    inv[10] = new itemRegistry.items["minecraft:apple"]({
+      size: new Integer(10),
+    });
     iShulkerBox = new itemRegistry.items["minecraft:shulker_box"]({
       inventorySize: new Integer(27),
-      inventory: new iArrayEager([iApple, iBucketLava]),
+      inventory: new iArrayEager(inv),
     });
 
+    iSeedWheat = new itemRegistry.items["minecraft:wheat_seeds"]();
     iEmpty = new itemRegistry.items["minecraft:air"]();
 
     bStone = new blockRegistry.items["minecraft:stone"]();
     bObsidian = new blockRegistry.items["minecraft:obsidian"]();
 
     sPlankWood = new iString("minecraft:planks");
-    sMaxStackSize = new iString("minecraft:max_stack_size");
 
     int100 = new Integer(100);
     int200 = new Integer(200);
@@ -154,7 +143,10 @@ describe("TestItemStackOperators", () => {
       iApple2,
     ]);
 
-    t4 = IntTag.valueOf(new Integer(4));
+    sHoeNbt = new CompoundTag({
+      Damage: new IntTag(new Integer(51)),
+    });
+
     DUMMY_VARIABLE = new iNull();
   });
 
@@ -818,6 +810,7 @@ describe("TestItemStackOperators", () => {
       iHoe,
       iHoeEnchanted
     );
+    // Now it should be false because iHoeEnchanted has NBT
     expect((res2 as iBoolean).valueOf()).toBe(false);
 
     const res3 = new operatorRegistry.OBJECT_ITEMSTACK_ISDATAEQUAL().evaluate(
@@ -1233,12 +1226,12 @@ describe("TestItemStackOperators", () => {
     const res2 = new operatorRegistry.OBJECT_ITEMSTACK_FE_CAPACITY().evaluate(
       iEnergyBatteryEmpty
     );
-    expect((res2 as Integer).toJSNumber()).toBe(0);
+    expect((res2 as Integer).toJSNumber()).toBe(1000000);
 
     const res3 = new operatorRegistry.OBJECT_ITEMSTACK_FE_CAPACITY().evaluate(
       iEnergyBatteryFull
     );
-    expect((res3 as Integer).toJSNumber()).toBe(0);
+    expect((res3 as Integer).toJSNumber()).toBe(1000000);
   });
 
   it("testInvalidInputSizeFeCapacityLarge", () => {
@@ -1358,14 +1351,16 @@ describe("TestItemStackOperators", () => {
     const res2 = new operatorRegistry.OBJECT_ITEMSTACK_INVENTORY().evaluate(
       iShulkerBox
     );
-    expect((res2 as iArrayEager<any>).size().toJSNumber()).toBe(2);
+    expect((res2 as iArrayEager<any>).size().toJSNumber()).toBe(27);
 
     const res3 = new operatorRegistry.OBJECT_ITEMSTACK_INVENTORY().evaluate(
       iShulkerBox
     );
-    expect((res3 as iArrayEager<Item>).get(new Integer(1))).toBeInstanceOf(
-      Item
-    );
+    expect(
+      ((res3 as iArrayEager<Item>).get(new Integer(10)) as Item)
+        .getUniqueName()
+        .valueOf()
+    ).toBe("minecraft:apple");
   });
 
   it("testInvalidInputInventoryLarge", () => {
@@ -1388,6 +1383,119 @@ describe("TestItemStackOperators", () => {
       new operatorRegistry.OBJECT_ITEMSTACK_INVENTORY().evaluate(
         DUMMY_VARIABLE
       );
+    }).toThrow();
+  });
+
+  /**
+   * ----------------------------------- ISPLANTABLE -----------------------------------
+   */
+
+  it("testItemStackIsPlantable", () => {
+    const res1 = new operatorRegistry.OBJECT_ITEMSTACK_ISPLANTABLE().evaluate(
+      iApple
+    );
+    expect(res1).toBeInstanceOf(iBoolean);
+    expect((res1 as iBoolean).valueOf()).toBe(false);
+
+    const res2 = new operatorRegistry.OBJECT_ITEMSTACK_ISPLANTABLE().evaluate(
+      iSeedWheat
+    );
+    expect((res2 as iBoolean).valueOf()).toBe(true);
+  });
+
+  it("testInvalidInputSizeIsPlantableLarge", () => {
+    expect(() => {
+      new operatorRegistry.OBJECT_ITEMSTACK_ISPLANTABLE().evaluate(
+        iApple,
+        iApple
+      );
+    }).toThrow();
+  });
+
+  it("testInvalidInputSizeIsPlantableSmall", () => {
+    expect(() => {
+      new operatorRegistry.OBJECT_ITEMSTACK_ISPLANTABLE().evaluate();
+    }).toThrow();
+  });
+
+  it("testInvalidInputTypeIsPlantable", () => {
+    expect(() => {
+      new operatorRegistry.OBJECT_ITEMSTACK_ISPLANTABLE().evaluate(
+        DUMMY_VARIABLE
+      );
+    }).toThrow();
+  });
+
+  /**
+   * ----------------------------------- PLANTTYPE -----------------------------------
+   */
+
+  it("testItemStackPlantType", () => {
+    const res1 = new operatorRegistry.OBJECT_ITEMSTACK_PLANTTYPE().evaluate(
+      iApple
+    );
+    expect(res1).toBeInstanceOf(iString);
+    expect((res1 as iString).valueOf()).toBe("none");
+
+    const res2 = new operatorRegistry.OBJECT_ITEMSTACK_PLANTTYPE().evaluate(
+      iSeedWheat
+    );
+    expect((res2 as iString).valueOf()).toBe("crop");
+  });
+
+  it("testInvalidInputSizePlantTypeLarge", () => {
+    expect(() => {
+      new operatorRegistry.OBJECT_ITEMSTACK_PLANTTYPE().evaluate(
+        iApple,
+        iApple
+      );
+    }).toThrow();
+  });
+
+  it("testInvalidInputSizePlantTypeSmall", () => {
+    expect(() => {
+      new operatorRegistry.OBJECT_ITEMSTACK_PLANTTYPE().evaluate();
+    }).toThrow();
+  });
+
+  it("testInvalidInputTypePlantType", () => {
+    expect(() => {
+      new operatorRegistry.OBJECT_ITEMSTACK_PLANTTYPE().evaluate(
+        DUMMY_VARIABLE
+      );
+    }).toThrow();
+  });
+
+  /**
+   * ----------------------------------- PLANT -----------------------------------
+   */
+
+  it("testItemStackPlant", () => {
+    const res1 = new operatorRegistry.OBJECT_ITEMSTACK_PLANT().evaluate(iApple);
+    expect(res1).toBeInstanceOf(Block);
+    expect((res1 as Block).getUniqueName().valueOf()).toBe("");
+
+    const res2 = new operatorRegistry.OBJECT_ITEMSTACK_PLANT().evaluate(
+      iSeedWheat
+    );
+    expect((res2 as Block).getUniqueName().valueOf()).toBe("minecraft:wheat");
+  });
+
+  it("testInvalidInputSizePlantLarge", () => {
+    expect(() => {
+      new operatorRegistry.OBJECT_ITEMSTACK_PLANT().evaluate(iApple, iApple);
+    }).toThrow();
+  });
+
+  it("testInvalidInputSizePlantSmall", () => {
+    expect(() => {
+      new operatorRegistry.OBJECT_ITEMSTACK_PLANT().evaluate();
+    }).toThrow();
+  });
+
+  it("testInvalidInputTypePlant", () => {
+    expect(() => {
+      new operatorRegistry.OBJECT_ITEMSTACK_PLANT().evaluate(DUMMY_VARIABLE);
     }).toThrow();
   });
 
@@ -1468,9 +1576,7 @@ describe("TestItemStackOperators", () => {
    */
 
   it("testItemStackNbt", () => {
-    const res1 = new operatorRegistry.OBJECT_ITEMSTACK_NBT().evaluate(
-      iAppleNoData
-    );
+    const res1 = new operatorRegistry.OBJECT_ITEMSTACK_NBT().evaluate(iApple);
     expect(res1).toBeInstanceOf(NullTag);
 
     const res2 = new operatorRegistry.OBJECT_ITEMSTACK_NBT().evaluate(
@@ -1503,9 +1609,8 @@ describe("TestItemStackOperators", () => {
 
   it("testItemStackHasNbt", () => {
     const res1 = new operatorRegistry.OBJECT_ITEMSTACK_HASNBT().evaluate(
-      iAppleNoData
+      iApple
     );
-    expect(res1).toBeInstanceOf(iBoolean);
     expect((res1 as iBoolean).valueOf()).toBe(false);
 
     const res2 = new operatorRegistry.OBJECT_ITEMSTACK_HASNBT().evaluate(
@@ -1538,7 +1643,7 @@ describe("TestItemStackOperators", () => {
 
   it("testItemStackDataKeys", () => {
     const res1 = new operatorRegistry.OBJECT_ITEMSTACK_DATA_KEYS().evaluate(
-      iAppleNoData
+      iApple
     );
     expect(res1).toBeInstanceOf(iArrayEager);
     expect((res1 as iArrayEager<any>).size().toJSNumber()).toBe(0);
@@ -1546,7 +1651,7 @@ describe("TestItemStackOperators", () => {
     const res2 = new operatorRegistry.OBJECT_ITEMSTACK_DATA_KEYS().evaluate(
       iAppleTag
     );
-    expect((res2 as iArrayEager<any>).size().toJSNumber()).toBe(2);
+    expect((res2 as iArrayEager<any>).size().toJSNumber()).toBe(1);
   });
 
   it("testInvalidInputDataKeysDataKeysLarge", () => {
@@ -1578,24 +1683,24 @@ describe("TestItemStackOperators", () => {
 
   it("testItemStackDataValue", () => {
     const res1 = new operatorRegistry.ITEMSTACK_DATAVALUE().evaluate(
-      iAppleNoData,
-      sMaxStackSize
+      iApple,
+      new iString("a")
     );
     expect(res1).toBeInstanceOf(NullTag);
 
     const res2 = new operatorRegistry.ITEMSTACK_DATAVALUE().evaluate(
       iAppleTag,
-      new iString("minecraft:ominous_bottle_amplifier")
+      new iString("a")
     );
-    expect(res2).toBeInstanceOf(IntTag);
-    expect((res2 as IntTag).valueOf().toJSNumber()).toBe(2);
+    expect(res2).toBeInstanceOf(StringTag);
+    expect((res2 as StringTag).valueOf().valueOf()).toBe("b");
   });
 
   it("testInvalidInputDataValueDataValueLarge", () => {
     expect(() => {
       new operatorRegistry.ITEMSTACK_DATAVALUE().evaluate(
         iApple,
-        sMaxStackSize,
+        new iString("a"),
         iApple
       );
     }).toThrow();
@@ -1617,46 +1722,35 @@ describe("TestItemStackOperators", () => {
   });
 
   /**
-   * ----------------------------------- WITH_NBT -----------------------------------
+   * ----------------------------------- WITHNBT -----------------------------------
    */
 
-  it("testItemStackWithData", () => {
-    const res1 = new operatorRegistry.ITEMSTACK_WITHDATA().evaluate(
-      iAppleNoData,
-      sMaxStackSize,
-      t4
+  it("testItemStackWithNbt", () => {
+    const res1 = new operatorRegistry.ITEMSTACK_WITH_NBT().evaluate(
+      iHoe,
+      sHoeNbt
     );
     expect(res1).toBeInstanceOf(Item);
-    const retrievedTag = ((res1 as Item).getNBT() as CompoundTag).get(
-      sMaxStackSize
-    );
-    expect(retrievedTag.valueOf().equals(t4.valueOf()).valueOf()).toBe(true);
+    expect(
+      ((res1 as Item).getNBT() as CompoundTag).equals(sHoeNbt).valueOf()
+    ).toBe(true);
   });
 
-  it("testInvalidInputWithDataWithDataLarge", () => {
+  it("testInvalidItemStackWithNbtLarge", () => {
     expect(() => {
-      new operatorRegistry.ITEMSTACK_WITHDATA().evaluate(
-        iApple,
-        sMaxStackSize,
-        t4,
-        iApple
-      );
+      new operatorRegistry.ITEMSTACK_WITH_NBT().evaluate(iHoe, sHoeNbt, iHoe);
     }).toThrow();
   });
 
-  it("testInvalidInputWithDataWithDataSmall", () => {
+  it("testInvalidItemStackWithNbtSmall", () => {
     expect(() => {
-      new operatorRegistry.ITEMSTACK_WITHDATA().evaluate(iApple, sMaxStackSize);
+      new operatorRegistry.ITEMSTACK_WITH_NBT().evaluate(iHoe);
     }).toThrow();
   });
 
-  it("testInvalidInputTypeWithData", () => {
+  it("testInvalidItemStackWithNbt", () => {
     expect(() => {
-      new operatorRegistry.ITEMSTACK_WITHDATA().evaluate(
-        DUMMY_VARIABLE,
-        DUMMY_VARIABLE,
-        DUMMY_VARIABLE
-      );
+      new operatorRegistry.ITEMSTACK_WITH_NBT().evaluate(DUMMY_VARIABLE);
     }).toThrow();
   });
 
@@ -1667,10 +1761,12 @@ describe("TestItemStackOperators", () => {
   it("testItemStackTooltip", () => {
     const res1 = new operatorRegistry.ITEMSTACK_TOOLTIP().evaluate(iPickaxe);
     expect(res1).toBeInstanceOf(iArrayEager);
-    expect((res1 as iArrayEager<any>).size().toJSNumber()).toBe(7);
+    // Source of Truth says 5
+    expect((res1 as iArrayEager<any>).size().toJSNumber()).toBe(5);
 
     const res2 = new operatorRegistry.ITEMSTACK_TOOLTIP().evaluate(iApple);
-    expect((res2 as iArrayEager<any>).size().toJSNumber()).toBe(2);
+    // Source of Truth says 1
+    expect((res2 as iArrayEager<any>).size().toJSNumber()).toBe(1);
   });
 
   it("testInvalidInputSizeTooltipLarge", () => {

@@ -47,6 +47,9 @@ export class Item implements UniquelyNamed, Named, IntegratedValue {
     inventorySize: Integer.ZERO,
     efficiency: new Double(1.0),
     toolTier: Integer.ZERO,
+    isPlantable: new iBoolean(false),
+    plantType: new iString("none"),
+    plant: new iString(""),
   });
   private _signatureCache: any;
 
@@ -207,6 +210,24 @@ export class Item implements UniquelyNamed, Named, IntegratedValue {
     return new BlockConstructor();
   }
 
+  isPlantable(): iBoolean {
+    return this.props.get("isPlantable");
+  }
+
+  getPlantType(): iString {
+    return this.props.get("plantType");
+  }
+
+  getPlant(): Block {
+    const blockRegistry = RegistryHub.blockRegistry;
+    let key = (this.props.get("plant") as iString).valueOf().toLowerCase();
+    if (!key) return new Block(new Properties({}));
+    const BlockConstructor =
+      blockRegistry.items[key as keyof typeof blockRegistry.items];
+    if (!BlockConstructor) return new Block(new Properties({}));
+    return new BlockConstructor();
+  }
+
   getProperties(): Properties {
     return this.props;
   }
@@ -300,10 +321,14 @@ export class Item implements UniquelyNamed, Named, IntegratedValue {
           "getBlock",
           "getInventory",
           "getUniqueName",
+          "getPlant",
         ].includes(k)
     );
     for (const key of keys as Array<keyof Item>) {
-      if (this[key] instanceof Function && this[key].length === 0) {
+      if (
+        this[key] instanceof Function &&
+        (this[key] as Function).length === 0
+      ) {
         try {
           const thisResult = (this[key] as Function)() as IntegratedValue;
           const otherResult = (other[key] as Function)() as IntegratedValue;

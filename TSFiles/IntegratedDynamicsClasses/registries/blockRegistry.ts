@@ -79,6 +79,15 @@ class BlockRegistry {
     }
     if (data["name"]) flattened["displayName"] = data["name"];
     if (data["tags"]) flattened["tagNames"] = data["tags"];
+    if (data["possibleProperties"]) {
+      if (data["possibleProperties"] instanceof Properties) {
+        flattened["possibleProperties"] = data["possibleProperties"];
+      } else {
+        flattened["possibleProperties"] = new Properties(
+          data["possibleProperties"]
+        );
+      }
+    }
     if (!data["rarity"]) flattened["rarity"] = "COMMON";
 
     return flattened;

@@ -20,7 +20,6 @@ export class OPERATOR_OBJECT_FLUIDSTACK_WITH_DATA extends BaseOperator<
         "fluidstackWithData",
         "fluid_stack_with_data",
         "fluidStackWithData",
-        "fluidWithNBT",
       ],
       parsedSignature: new ParsedSignature({
         type: "Function",

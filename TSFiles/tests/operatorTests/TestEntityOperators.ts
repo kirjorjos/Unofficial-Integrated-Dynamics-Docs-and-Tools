@@ -9,6 +9,7 @@ import { Double } from "../../JavaNumberClasses/Double";
 import { Integer } from "../../JavaNumberClasses/Integer";
 import { iNull } from "../../IntegratedDynamicsClasses/typeWrappers/iNull";
 import { iArrayEager } from "../../IntegratedDynamicsClasses/typeWrappers/iArrayEager";
+import { CompoundTag } from "../../IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
 
 /**
  * Test the different entity operators.
@@ -40,9 +41,12 @@ describe("TestEntityOperators", () => {
   let eZombieAged: Entity;
   let eZombieBaby: Entity;
   let eCow: Entity;
+  let eCowAlreadyBred: Entity;
+  let eCowBaby: Entity;
   let eCowInLove: Entity;
   let ePig: Entity;
   let eSheep: Entity;
+  let eSheepSheared: Entity;
 
   let iCarrot: Item;
   let iWheat: Item;
@@ -52,14 +56,14 @@ describe("TestEntityOperators", () => {
   beforeEach(() => {
     eZombie = new entityRegistry.items["minecraft:zombie"]();
     eZombieBurning = new entityRegistry.items["minecraft:zombie"]({
-      isBurning: true,
+      burning: true,
     });
-    eZombieWet = new entityRegistry.items["minecraft:zombie"]({ isWet: true });
+    eZombieWet = new entityRegistry.items["minecraft:zombie"]({ wet: true });
     eZombieCrouching = new entityRegistry.items["minecraft:zombie"]({
-      isCrouching: true,
+      crouching: true,
     });
     eZombieEating = new entityRegistry.items["minecraft:zombie"]({
-      isEating: true,
+      eating: true,
     });
     eChicken = new entityRegistry.items["minecraft:chicken"]();
     eItem = new entityRegistry.items["minecraft:item"]();
@@ -79,12 +83,21 @@ describe("TestEntityOperators", () => {
       age: new Integer(3),
     });
     eZombieBaby = new entityRegistry.items["minecraft:zombie"]({
-      isChild: true,
+      child: true,
     });
     eCow = new entityRegistry.items["minecraft:cow"]();
-    eCowInLove = new entityRegistry.items["minecraft:cow"]({ isInLove: true });
+    eCowAlreadyBred = new entityRegistry.items["minecraft:cow"]({
+      breedingAge: new Integer(10),
+    });
+    eCowBaby = new entityRegistry.items["minecraft:cow"]({
+      breedingAge: new Integer(-10),
+    });
+    eCowInLove = new entityRegistry.items["minecraft:cow"]({ inLove: true });
     ePig = new entityRegistry.items["minecraft:pig"]();
     eSheep = new entityRegistry.items["minecraft:sheep"]();
+    eSheepSheared = new entityRegistry.items["minecraft:sheep"]({
+      isSheared: true,
+    });
 
     iCarrot = new itemRegistry.items["minecraft:carrot"]();
     iWheat = new itemRegistry.items["minecraft:wheat"]();
@@ -310,7 +323,7 @@ describe("TestEntityOperators", () => {
   it("testBlockHealth", () => {
     const res1 = new operatorRegistry.ENTITY_HEALTH().evaluate(eZombie);
     expect(res1).toBeInstanceOf(Double);
-    expect((res1 as Double).toJSNumber()).toBe(20.0); // Registry has 20 health
+    expect((res1 as Double).toJSNumber()).toBe(20.0);
 
     const res2 = new operatorRegistry.ENTITY_HEALTH().evaluate(eItem);
     expect((res2 as Double).toJSNumber()).toBe(0);
@@ -372,7 +385,7 @@ describe("TestEntityOperators", () => {
   it("testBlockHeight", () => {
     const res1 = new operatorRegistry.OBJECT_ENTITY_HEIGHT().evaluate(eZombie);
     expect(res1).toBeInstanceOf(Double);
-    expect((res1 as Double).toJSNumber()).toBe(1.95); // Registry has 1.95
+    expect((res1 as Double).toJSNumber()).toBe(1.95);
 
     const res2 = new operatorRegistry.OBJECT_ENTITY_HEIGHT().evaluate(eItem);
     expect((res2 as Double).toJSNumber()).toBe(0.25);
@@ -636,10 +649,27 @@ describe("TestEntityOperators", () => {
    */
 
   it("testEntityMounted", () => {
-    // In TS OPERATOR_OBJECT_ENTITY_MOUNTED returns iArray<Entity>
     const res1 = new operatorRegistry.OBJECT_ENTITY_MOUNTED().evaluate(eBoat);
     expect(res1).toBeInstanceOf(iArrayEager);
-    expect((res1 as iArrayEager<Entity>).size().toJSNumber()).toBe(0); // Boat has no mounted entities by default
+    expect((res1 as iArrayEager<Entity>).size().toJSNumber()).toBe(0);
+  });
+
+  it("testInvalidInputSizeMountedLarge", () => {
+    expect(() => {
+      new operatorRegistry.OBJECT_ENTITY_MOUNTED().evaluate(eBoat, eBoat);
+    }).toThrow();
+  });
+
+  it("testInvalidInputSizeMountedSmall", () => {
+    expect(() => {
+      new operatorRegistry.OBJECT_ENTITY_MOUNTED().evaluate();
+    }).toThrow();
+  });
+
+  it("testInvalidInputTypeMounted", () => {
+    expect(() => {
+      new operatorRegistry.OBJECT_ENTITY_MOUNTED().evaluate(DUMMY_VARIABLE);
+    }).toThrow();
   });
 
   /**
@@ -843,6 +873,16 @@ describe("TestEntityOperators", () => {
     const res1 = new operatorRegistry.OBJECT_ENTITY_CANBREED().evaluate(eCow);
     expect(res1).toBeInstanceOf(iBoolean);
     expect((res1 as iBoolean).valueOf()).toBe(true);
+
+    const res2 = new operatorRegistry.OBJECT_ENTITY_CANBREED().evaluate(
+      eCowAlreadyBred
+    );
+    expect((res2 as iBoolean).valueOf()).toBe(false);
+
+    const res3 = new operatorRegistry.OBJECT_ENTITY_CANBREED().evaluate(
+      eCowBaby
+    );
+    expect((res3 as iBoolean).valueOf()).toBe(false);
   });
 
   it("testInvalidInputSizeCanBreedLarge", () => {
@@ -965,7 +1005,12 @@ describe("TestEntityOperators", () => {
     const res2 = new operatorRegistry.OBJECT_ENTITY_ISSHEARABLE().evaluate(
       eSheep
     );
-    expect(res2).toBeInstanceOf(iBoolean);
+    expect((res2 as iBoolean).valueOf()).toBe(true);
+
+    const res3 = new operatorRegistry.OBJECT_ENTITY_ISSHEARABLE().evaluate(
+      eSheepSheared
+    );
+    expect((res3 as iBoolean).valueOf()).toBe(false);
   });
 
   it("testInvalidInputSizeIsShearableLarge", () => {
@@ -992,7 +1037,10 @@ describe("TestEntityOperators", () => {
 
   it("testBlockNbt", () => {
     const res1 = new operatorRegistry.OBJECT_ENTITY_NBT().evaluate(eZombie);
-    expect(res1 === null || res1 instanceof iNull).toBe(true);
+    expect(res1).toBeInstanceOf(CompoundTag);
+    expect((res1 as CompoundTag).equals(new CompoundTag()).valueOf()).toBe(
+      true
+    );
   });
 
   it("testInvalidInputSizeNbtLarge", () => {

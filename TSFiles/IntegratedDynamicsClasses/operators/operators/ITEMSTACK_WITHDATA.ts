@@ -21,7 +21,6 @@ export class OPERATOR_ITEMSTACK_WITHDATA extends BaseOperator<
         "itemstackWithData",
         "item_with_data",
         "itemWithData",
-        "itemWithNBT",
       ],
       parsedSignature: new ParsedSignature({
         type: "Function",

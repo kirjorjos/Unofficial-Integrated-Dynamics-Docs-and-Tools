@@ -3,8 +3,6 @@ import { gameData } from "./registry";
 import { Item } from "IntegratedDynamicsClasses/Item";
 import { RegistryHub } from "./registryHub";
 import { CompoundTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
-import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
-import { StringTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/StringTag";
 
 type ItemConstructor = new (customData?: Record<string, any>) => Item;
 type RawItems = typeof gameData.items;
@@ -68,9 +66,6 @@ class ItemRegistry {
     const flattened = ItemRegistry.flattenCustomItemData(data);
 
     let nbt = flattened["NBT"];
-    if (!nbt && data["id"] && data["id"] !== "minecraft:air") {
-      nbt = new CompoundTag({ id: new StringTag(new iString(data["id"])) });
-    }
     if (nbt) flattened["NBT"] = nbt;
 
     return flattened;
@@ -95,6 +90,8 @@ class ItemRegistry {
       flattened["fuel"] = true;
     if (data["inventorySize"] !== undefined)
       flattened["inventorySize"] = data["inventorySize"];
+    if (data["feCapacity"] !== undefined)
+      flattened["feCapacity"] = data["feCapacity"];
 
     if (flattened["NBT"] === null || flattened["NBT"] === undefined) {
       delete flattened["NBT"];

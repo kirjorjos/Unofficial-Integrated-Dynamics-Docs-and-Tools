@@ -37,6 +37,11 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISDATAEQUAL extends BaseOperator<
       interactName: "itemstackIsNbtEqual",
       function: (item1: Item): TypeLambda<Item, iBoolean> => {
         return (item2: Item): iBoolean => {
+          const itemsEqual = item1
+            .getUniqueName()
+            .equals(item2.getUniqueName())
+            .valueOf();
+          if (!itemsEqual) return new iBoolean(false);
           return item1.getNBT().equals(item2.getNBT());
         };
       },
