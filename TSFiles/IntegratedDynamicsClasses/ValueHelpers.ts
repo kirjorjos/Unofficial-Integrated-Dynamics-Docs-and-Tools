@@ -15,7 +15,7 @@ import { Item } from "./Item";
 import { Fluid } from "./Fluid";
 import { Ingredients } from "./Ingredients";
 import { Recipe } from "./Recipe";
-import { BaseOperator } from "./operators/BaseOperator";
+import { Operator, OperatorSerializationRegistry } from "./operators/Operator";
 import { CompoundTag } from "./NBTFunctions/MinecraftClasses/CompoundTag";
 
 export class ValueHelpers {
@@ -30,7 +30,8 @@ export class ValueHelpers {
     if (value instanceof Fluid) return value.serializeNBT();
     if (value instanceof Ingredients) return value.serializeNBT();
     if (value instanceof Recipe) return value.serializeNBT();
-    if (value instanceof BaseOperator) return value.serializeNBT();
+    if (value instanceof Operator)
+      return OperatorSerializationRegistry.serialize(value);
     if (value instanceof Tag) return value;
     if (value instanceof iArrayEager) {
       return new ListTag(
@@ -72,7 +73,7 @@ export class ValueHelpers {
       case "integrateddynamics:recipe":
         return Recipe.deserializeNBT(tag);
       case "integrateddynamics:operator":
-        return BaseOperator.deserializeNBT(tag);
+        return OperatorSerializationRegistry.deserialize(tag);
       case "integrateddynamics:nbt":
         return tag;
       case "integrateddynamics:list":
@@ -111,7 +112,7 @@ export class ValueHelpers {
     if (value instanceof Fluid) return "integrateddynamics:fluidstack";
     if (value instanceof Ingredients) return "integrateddynamics:ingredients";
     if (value instanceof Recipe) return "integrateddynamics:recipe";
-    if (value instanceof BaseOperator) return "integrateddynamics:operator";
+    if (value instanceof Operator) return "integrateddynamics:operator";
     if (value instanceof iArrayEager) return "integrateddynamics:list";
     if (value instanceof Tag) return "integrateddynamics:nbt";
     throw new Error(

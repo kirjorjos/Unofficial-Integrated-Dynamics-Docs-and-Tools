@@ -180,5 +180,22 @@ describe("TestVariables", () => {
       const opId = new operatorRegistry.GENERAL_IDENTITY();
       testRoundTrip(opId);
     });
+
+    it("testFunctionalOperatorRoundTrip", () => {
+      const opAdd = new operatorRegistry.ARITHMETIC_ADDITION();
+      const opMul = new operatorRegistry.ARITHMETIC_MULTIPLICATION();
+
+      const opCurried = opAdd.apply(new Integer(10));
+      testRoundTrip(opCurried);
+
+      const add10 = opAdd.apply(new Integer(10));
+      const mul2 = opMul.apply(new Integer(2));
+      const opPiped = add10.pipe(mul2);
+      testRoundTrip(opPiped);
+
+      const opSub = new operatorRegistry.ARITHMETIC_SUBTRACTION();
+      const opFlipped = opSub.flip();
+      testRoundTrip(opFlipped);
+    });
   });
 });

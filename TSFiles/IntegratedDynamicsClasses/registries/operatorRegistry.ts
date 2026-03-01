@@ -1,3 +1,7 @@
+import "IntegratedDynamicsClasses/operators/CurriedOperator";
+import "IntegratedDynamicsClasses/operators/PipeOperator";
+import "IntegratedDynamicsClasses/operators/Pipe2Operator";
+import "IntegratedDynamicsClasses/operators/FlipOperator";
 import { OPERATOR_ARITHMETIC_ADDITION } from "IntegratedDynamicsClasses/operators/operators/ARITHMETIC_ADDITION";
 import { OPERATOR_ARITHMETIC_DECREMENT } from "IntegratedDynamicsClasses/operators/operators/ARITHMETIC_DECREMENT";
 import { OPERATOR_ARITHMETIC_DIVISION } from "IntegratedDynamicsClasses/operators/operators/ARITHMETIC_DIVISION";
