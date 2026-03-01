@@ -43,4 +43,8 @@ export interface iArray<
   equals(other: IntegratedValue): iBoolean;
 
   getSignatureNode(): ParsedSignature;
+
+  isInfinite(): boolean;
+
+  getProxyName(): string;
 }

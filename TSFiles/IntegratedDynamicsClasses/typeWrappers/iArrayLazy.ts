@@ -135,4 +135,12 @@ export class iArrayLazy<
   valueOf(): Source[] {
     throw new Error("Value of not supported for Infinite List");
   }
+
+  isInfinite(): boolean {
+    return true;
+  }
+
+  getProxyName(): string {
+    return "integrateddynamics:lazybuilt";
+  }
 }

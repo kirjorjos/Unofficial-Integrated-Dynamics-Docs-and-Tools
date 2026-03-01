@@ -134,4 +134,12 @@ export class iArrayEager<
       this.arr.every((e, i) => e.equals(otherArr[i]).valueOf())
     );
   }
+
+  isInfinite(): boolean {
+    return false;
+  }
+
+  getProxyName(): string {
+    return "integrateddynamics:materialized";
+  }
 }
