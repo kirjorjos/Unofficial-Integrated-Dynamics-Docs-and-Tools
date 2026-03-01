@@ -12,6 +12,8 @@ import { ListTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses
 import { ByteArrayTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ByteArrayTag";
 import { IntArrayTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/IntArrayTag";
 import { NullTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/NullTag";
+import { ValueHelpers } from "./ValueHelpers";
+import { BaseOperator } from "./operators/BaseOperator";
 
 /**
  * A proxy for a list of values.
@@ -1012,14 +1014,37 @@ export class ValueTypeListProxyFactories {
     this.REGISTRY.set("integrateddynamics:materialized", {
       getName: () => "integrateddynamics:materialized",
       serialize: (proxy: ValueTypeListProxyMaterialized<any>) => {
-        return new ListTag(
-          new iArrayEager(
-            proxy.valueOf().map((v) => new StringTag(new iString(v.toString())))
-          )
-        );
+        const values = proxy.valueOf();
+        const valueType =
+          values.length > 0
+            ? ValueHelpers.getTypeName(values[0])
+            : "integrateddynamics:any";
+        return new CompoundTag({
+          valueType: new StringTag(new iString(valueType)),
+          values: new ListTag(
+            new iArrayEager(values.map((v) => ValueHelpers.serializeRaw(v)))
+          ),
+        });
       },
-      deserialize: (_serialized: Tag<any>) => {
-        return new ValueTypeListProxyMaterialized([]);
+      deserialize: (serialized: Tag<any>) => {
+        if (!(serialized instanceof CompoundTag)) {
+          return new ValueTypeListProxyMaterialized([]);
+        }
+        const compound = serialized as CompoundTag;
+        const valueTypeNode = compound.get(new iString("valueType"));
+        const valueTypeName =
+          valueTypeNode instanceof StringTag
+            ? valueTypeNode.valueOf().valueOf()
+            : "integrateddynamics:any";
+        const listNode = compound.get(new iString("values"));
+        if (!(listNode instanceof ListTag)) {
+          return new ValueTypeListProxyMaterialized([]);
+        }
+        const list = listNode
+          .valueOf()
+          .valueOf()
+          .map((t) => ValueHelpers.deserializeRaw(valueTypeName, t));
+        return new ValueTypeListProxyMaterialized(list);
       },
     });
 
@@ -1027,14 +1052,31 @@ export class ValueTypeListProxyFactories {
       getName: () => "integrateddynamics:append",
       serialize: (proxy: ValueTypeListProxyAppend<any>) => {
         return new CompoundTag({
-          value: new StringTag(new iString(proxy.value.toString())),
+          valueType: new StringTag(
+            new iString(ValueHelpers.getTypeName(proxy.value))
+          ),
+          value: ValueHelpers.serializeRaw(proxy.value),
           sublist: ValueTypeListProxyFactories.serialize(proxy.list as any),
         });
       },
-      deserialize: (_serialized: CompoundTag) => {
+      deserialize: (serialized: Tag<any>) => {
+        if (!(serialized instanceof CompoundTag)) {
+          return new ValueTypeListProxyAppend(
+            new ValueTypeListProxyMaterialized([]),
+            new iBoolean(false)
+          );
+        }
+        const compound = serialized as CompoundTag;
+        const valueTypeNode = compound.get(new iString("valueType"));
+        const valueTypeName =
+          valueTypeNode instanceof StringTag
+            ? valueTypeNode.valueOf().valueOf()
+            : "integrateddynamics:any";
+        const valueNode = compound.get(new iString("value"));
+        const sublistNode = compound.get(new iString("sublist"));
         return new ValueTypeListProxyAppend(
-          new ValueTypeListProxyMaterialized([]),
-          new iBoolean(true)
+          ValueTypeListProxyFactories.deserialize(sublistNode),
+          ValueHelpers.deserializeRaw(valueTypeName, valueNode)
         );
       },
     });
@@ -1044,14 +1086,22 @@ export class ValueTypeListProxyFactories {
       serialize: (proxy: ValueTypeListProxyConcat<any>) => {
         return new ListTag(
           new iArrayEager(
-            (proxy as any).lists.map((l: any) =>
+            proxy.lists.map((l: any) =>
               ValueTypeListProxyFactories.serialize(l)
             )
           )
         );
       },
-      deserialize: (_serialized: Tag<any>) => {
-        return new ValueTypeListProxyConcat();
+      deserialize: (serialized: Tag<any>) => {
+        if (!(serialized instanceof ListTag)) {
+          return new ValueTypeListProxyConcat();
+        }
+        const listTag = serialized as ListTag;
+        const lists = listTag
+          .valueOf()
+          .valueOf()
+          .map((t) => ValueTypeListProxyFactories.deserialize(t));
+        return new ValueTypeListProxyConcat(...lists);
       },
     });
 
@@ -1059,20 +1109,29 @@ export class ValueTypeListProxyFactories {
       getName: () => "integrateddynamics:lazybuilt",
       serialize: (proxy: ValueTypeListProxyLazyBuilt<any>) => {
         return new CompoundTag({
-          initial: new StringTag(new iString(proxy.initial.toString())),
-          operator: new StringTag(
-            new iString((proxy.operator as any).symbol || "op")
+          valueType: new StringTag(
+            new iString(ValueHelpers.getTypeName(proxy.initial))
           ),
+          initial: ValueHelpers.serializeRaw(proxy.initial),
+          operator: (proxy.operator as any).serializeNBT(),
         });
       },
-      deserialize: (_serialized: CompoundTag) => {
-        const mockOp = {
-          equals: () => new iBoolean(true),
-          apply: (v: IntegratedValue) => v,
-          getSignatureNode: () =>
-            new ParsedSignature({ type: "Any", typeID: 0 }),
-        } as unknown as Operator<IntegratedValue, IntegratedValue>;
-        return new ValueTypeListProxyLazyBuilt(new iBoolean(true), mockOp);
+      deserialize: (serialized: Tag<any>) => {
+        if (!(serialized instanceof CompoundTag)) {
+          throw new Error("Cannot deserialize lazybuilt: not a CompoundTag");
+        }
+        const compound = serialized as CompoundTag;
+        const valueTypeNode = compound.get(new iString("valueType"));
+        const valueTypeName =
+          valueTypeNode instanceof StringTag
+            ? valueTypeNode.valueOf().valueOf()
+            : "integrateddynamics:any";
+        const initialNode = compound.get(new iString("initial"));
+        const operatorNode = compound.get(new iString("operator"));
+        return new ValueTypeListProxyLazyBuilt(
+          ValueHelpers.deserializeRaw(valueTypeName, initialNode),
+          BaseOperator.deserializeNBT(operatorNode)
+        );
       },
     });
 
@@ -1152,24 +1211,22 @@ export class ValueTypeListProxyFactories {
       getName: () => "integrateddynamics:mapped",
       serialize: (proxy: ValueTypeListProxyOperatorMapped<any, any>) => {
         return new CompoundTag({
-          operator: new StringTag(
-            new iString((proxy.operator as any).symbol || "op")
-          ),
+          operator: (proxy.operator as any).serializeNBT(),
           sublist: ValueTypeListProxyFactories.serialize(
             proxy.listProxy as any
           ),
         });
       },
-      deserialize: (_serialized: CompoundTag) => {
-        const mockOp = {
-          equals: () => new iBoolean(true),
-          apply: (v: IntegratedValue) => v,
-          getSignatureNode: () =>
-            new ParsedSignature({ type: "Any", typeID: 0 }),
-        } as unknown as Operator<IntegratedValue, IntegratedValue>;
+      deserialize: (serialized: Tag<any>) => {
+        if (!(serialized instanceof CompoundTag)) {
+          throw new Error("Cannot deserialize mapped: not a CompoundTag");
+        }
+        const compound = serialized as CompoundTag;
+        const operatorNode = compound.get(new iString("operator"));
+        const sublistNode = compound.get(new iString("sublist"));
         return new ValueTypeListProxyOperatorMapped(
-          mockOp,
-          new ValueTypeListProxyMaterialized([])
+          BaseOperator.deserializeNBT(operatorNode),
+          ValueTypeListProxyFactories.deserialize(sublistNode)
         );
       },
     });

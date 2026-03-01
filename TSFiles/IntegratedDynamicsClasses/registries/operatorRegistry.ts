@@ -303,6 +303,7 @@ import { OPERATOR_UNIQUELY_NAMED_UNIQUE_NAME } from "IntegratedDynamicsClasses/o
 import { OPERATOR_BINARY_RZSHIFT } from "IntegratedDynamicsClasses/operators/operators/BINARY_RZSHIFT";
 import { OPERATOR_LIST_LAZYBUILT } from "IntegratedDynamicsClasses/operators/operators/LIST_LAZYBUILT";
 import { BaseOperator } from "IntegratedDynamicsClasses/operators/BaseOperator";
+import { RegistryHub } from "./registryHub";
 
 class operatorRegistryClass {
   constructor() {}
@@ -630,4 +631,5 @@ class operatorRegistryClass {
 }
 
 const operatorRegistry = new operatorRegistryClass();
+RegistryHub.operatorRegistry = operatorRegistry;
 export { operatorRegistry };

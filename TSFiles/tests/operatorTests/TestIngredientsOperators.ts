@@ -32,6 +32,8 @@ describe("TestIngredientsOperators", () => {
   let i3: Integer;
 
   let lItems: iArrayEager<Item>;
+  let iEmpty: Ingredients;
+  let iItems: Ingredients;
   let iFluids: Ingredients;
   let lFluids: iArrayEager<Fluid>;
   let iEnergies: Ingredients;
@@ -53,6 +55,9 @@ describe("TestIngredientsOperators", () => {
     const iAir = new itemRegistry.items["minecraft:air"]();
     const iBoat = new itemRegistry.items["minecraft:oak_boat"]();
     const iStone = new itemRegistry.items["minecraft:stone"]();
+
+    iEmpty = new Ingredients();
+    iItems = new Ingredients(new iArrayEager([iAir, iBoat, iStone, iAir]));
 
     lItems = new iArrayEager([iAir, iBoat, iStone, iAir]);
 
@@ -89,6 +94,11 @@ describe("TestIngredientsOperators", () => {
     iEnergy = new Long(123);
 
     DUMMY_VARIABLE = new iNull();
+  });
+
+  it("testConsistencyData", () => {
+    expect(iEmpty).toBeDefined();
+    expect(iItems).toBeDefined();
   });
 
   /**

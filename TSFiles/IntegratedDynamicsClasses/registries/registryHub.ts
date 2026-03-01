@@ -3,4 +3,5 @@ export const RegistryHub = {
   itemRegistry: null as any,
   fluidRegistry: null as any,
   entityRegistry: null as any,
+  operatorRegistry: null as any,
 };

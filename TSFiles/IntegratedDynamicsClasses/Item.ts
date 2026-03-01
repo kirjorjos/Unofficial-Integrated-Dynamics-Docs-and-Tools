@@ -14,6 +14,8 @@ import { RegistryHub } from "./registries/registryHub";
 import { CompoundTag } from "./NBTFunctions/MinecraftClasses/CompoundTag";
 import { Fluid } from "./Fluid";
 import { Block } from "./Block";
+import { StringTag } from "./NBTFunctions/MinecraftClasses/StringTag";
+import { ByteTag } from "./NBTFunctions/MinecraftClasses/ByteTag";
 
 export class Item implements UniquelyNamed, Named, IntegratedValue {
   props: Properties;
@@ -230,6 +232,49 @@ export class Item implements UniquelyNamed, Named, IntegratedValue {
 
   getProperties(): Properties {
     return this.props;
+  }
+
+  serializeNBT(): CompoundTag {
+    const data: Record<string, Tag<IntegratedValue>> = {
+      id: new StringTag(this.getUniqueName()),
+      Count: new ByteTag(this.getSize()),
+    };
+    const nbt = this.getNBT();
+    if (!(nbt instanceof NullTag)) {
+      data["tag"] = nbt;
+    }
+    return new CompoundTag(data);
+  }
+
+  static deserializeNBT(tag: Tag<IntegratedValue>): Item {
+    if (!(tag instanceof CompoundTag)) {
+      return new Item(new Properties({}));
+    }
+    const compound = tag as CompoundTag;
+    const idNode = compound.get(new iString("id"));
+    const id =
+      idNode instanceof StringTag
+        ? (idNode as StringTag).valueOf().valueOf().toLowerCase()
+        : "";
+    const ItemConstructor =
+      RegistryHub.itemRegistry.items[
+        id as keyof typeof RegistryHub.itemRegistry.items
+      ];
+
+    const countNode = compound.get(new iString("Count"));
+    const size =
+      countNode instanceof ByteTag
+        ? (countNode as ByteTag).valueOf()
+        : Integer.ONE;
+
+    const nbtNode = compound.get(new iString("tag"));
+    const nbt =
+      nbtNode instanceof CompoundTag ? (nbtNode as CompoundTag) : new NullTag();
+
+    if (ItemConstructor) {
+      return new ItemConstructor({ size, NBT: nbt });
+    }
+    return new Item(new Properties({ id: new iString(id), size, NBT: nbt }));
   }
 
   getStrengthVsBlock(block: Block): Double {

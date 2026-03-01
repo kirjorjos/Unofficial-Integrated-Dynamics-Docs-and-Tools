@@ -12,6 +12,9 @@ import { iArrayEager } from "./typeWrappers/iArrayEager";
 import { iArray } from "./typeWrappers/iArray";
 import { Block } from "./Block";
 import { Item } from "./Item";
+import { StringTag } from "./NBTFunctions/MinecraftClasses/StringTag";
+import { IntTag } from "./NBTFunctions/MinecraftClasses/IntTag";
+import { CompoundTag } from "./NBTFunctions/MinecraftClasses/CompoundTag";
 
 export class Fluid implements Named, UniquelyNamed, IntegratedValue {
   static defaultProps = new Properties({
@@ -125,6 +128,49 @@ export class Fluid implements Named, UniquelyNamed, IntegratedValue {
 
   getProperties(): Properties {
     return this.props;
+  }
+
+  serializeNBT(): CompoundTag {
+    const data: Record<string, Tag<IntegratedValue>> = {
+      FluidName: new StringTag(this.props.get("id") as iString),
+      Amount: new IntTag(this.getAmount()),
+    };
+    const nbt = this.getNBT();
+    if (!(nbt instanceof NullTag)) {
+      data["Tag"] = nbt;
+    }
+    return new CompoundTag(data);
+  }
+
+  static deserializeNBT(tag: Tag<IntegratedValue>): Fluid {
+    if (!(tag instanceof CompoundTag)) {
+      return new Fluid(new Properties({}));
+    }
+    const compound = tag as CompoundTag;
+    const idNode = compound.get(new iString("FluidName"));
+    const id =
+      idNode instanceof StringTag
+        ? (idNode as StringTag).valueOf().valueOf().toLowerCase()
+        : "";
+    const FluidConstructor =
+      RegistryHub.fluidRegistry.items[
+        id as keyof typeof RegistryHub.fluidRegistry.items
+      ];
+
+    const amountNode = compound.get(new iString("Amount"));
+    const amount =
+      amountNode instanceof IntTag
+        ? (amountNode as IntTag).valueOf()
+        : Integer.ZERO;
+
+    const nbtNode = compound.get(new iString("Tag"));
+    const nbt =
+      nbtNode instanceof CompoundTag ? (nbtNode as CompoundTag) : new NullTag();
+
+    if (FluidConstructor) {
+      return new FluidConstructor({ amount, nbt });
+    }
+    return new Fluid(new Properties({ id: new iString(id), amount, nbt }));
   }
 
   getSignatureNode(): ParsedSignature {
