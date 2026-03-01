@@ -1,11 +1,11 @@
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
-import { Tag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/Tag";
+import { CompoundTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
 import { Block } from "IntegratedDynamicsClasses/Block";
 
 export class OPERATOR_OBJECT_BLOCK_POSSIBLE_PROPERTIES extends BaseOperator<
   Block,
-  Tag<any>
+  CompoundTag
 > {
   static override internalName =
     "integrateddynamics:block_blockpossibleproperties" as const;
@@ -27,10 +27,8 @@ export class OPERATOR_OBJECT_BLOCK_POSSIBLE_PROPERTIES extends BaseOperator<
       }),
       symbol: "block_all_props",
       interactName: "blockPossibleProperties",
-      function: (_block: Block): never => {
-        throw new Error(
-          "Block possible properties is infeasible without a registry. This is a placeholder function."
-        );
+      function: (block: Block): CompoundTag => {
+        return block.getProperties().toCompoundTag();
       },
     });
   }

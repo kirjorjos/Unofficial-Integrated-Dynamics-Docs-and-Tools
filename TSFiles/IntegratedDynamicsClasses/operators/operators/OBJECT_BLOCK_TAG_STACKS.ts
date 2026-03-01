@@ -3,6 +3,9 @@ import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 import { Block } from "IntegratedDynamicsClasses/Block";
+import { RegistryHub } from "IntegratedDynamicsClasses/registries/registryHub";
+import { iArrayEager } from "IntegratedDynamicsClasses/typeWrappers/iArrayEager";
+import { BlockConstructor } from "IntegratedDynamicsClasses/registries/blockRegistry";
 
 export class OPERATOR_OBJECT_BLOCK_TAG_STACKS extends BaseOperator<
   iString,
@@ -21,10 +24,18 @@ export class OPERATOR_OBJECT_BLOCK_TAG_STACKS extends BaseOperator<
       }),
       symbol: "block_tag_values",
       interactName: "stringBlocksByTag",
-      function: (_name: iString): never => {
-        throw new Error(
-          "Block tag values is infeasible without a registry. This is a placeholder function."
-        );
+      function: (name: iString): iArray<Block> => {
+        const blockRegistry = RegistryHub.blockRegistry;
+        const blocks: Block[] = [];
+        for (const BlockConstructor of Object.values(
+          blockRegistry.items
+        ) as BlockConstructor[]) {
+          const block = new BlockConstructor();
+          if (block.getTagNames().includes(name).valueOf()) {
+            blocks.push(block);
+          }
+        }
+        return new iArrayEager(blocks);
       },
     });
   }

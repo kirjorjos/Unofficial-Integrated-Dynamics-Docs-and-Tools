@@ -2,8 +2,10 @@ import { Properties } from "IntegratedDynamicsClasses/Properties";
 import { gameData } from "./registry";
 import { Fluid } from "IntegratedDynamicsClasses/Fluid";
 import { RegistryHub } from "./registryHub";
+import { iArrayEager } from "IntegratedDynamicsClasses/typeWrappers/iArrayEager";
+import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 
-type FluidConstructor = new (customData?: Record<string, any>) => Fluid;
+export type FluidConstructor = new (customData?: Record<string, any>) => Fluid;
 type RawFluids = typeof gameData.fluids;
 import { Integer } from "JavaNumberClasses/Integer";
 
@@ -60,6 +62,14 @@ class FluidRegistry {
     if (data["mod"]) flattened["modName"] = data["mod"];
     if (data["id"]) {
       flattened["id"] = data["id"];
+    }
+    if (data["tags"]) {
+      flattened["tagNames"] = new iArrayEager(
+        data["tags"].map((t: string) => new iString(t))
+      );
+    }
+    if (data["lightLevel"] !== undefined) {
+      flattened["lightLevel"] = new Integer(data["lightLevel"]);
     }
     if (data["name"]) flattened["displayName"] = data["name"];
     if (!data["rarity"]) flattened["rarity"] = "COMMON";

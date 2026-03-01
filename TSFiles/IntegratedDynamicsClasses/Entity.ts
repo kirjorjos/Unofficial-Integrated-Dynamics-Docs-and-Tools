@@ -20,8 +20,6 @@ export class Entity implements UniquelyNamed, Named {
     mob: new iBoolean(false),
     animal: new iBoolean(false),
     player: new iBoolean(false),
-    minecart: new iBoolean(false),
-    isItem: new iBoolean(false),
     health: Integer.ZERO,
     width: Integer.ZERO,
     height: Integer.ZERO,
@@ -32,14 +30,12 @@ export class Entity implements UniquelyNamed, Named {
     armorInventory: new iArrayEager<Item>([]),
     inventory: [] as Array<Item>,
     modName: new iString(""),
-    // targetBlock: new Block(),
-    targetEntity: new Entity(new Properties({})),
+    targetBlock: new Block(new Properties({})),
     guiOpen: new iBoolean(false),
-    // heldItemMain: new Item(),
-    // heldItemOffHand: new Item(),
+    heldItemMain: new Item(new Properties({})),
+    heldItemOffHand: new Item(new Properties({})),
     entityMounted: new iBoolean(false),
-    itemFrame: new iBoolean(false),
-    // itemFrameContents: new Item(),
+    itemFrameContents: new Item(new Properties({})),
     itemFrameRotation: Integer.ZERO,
     hurtSound: new iString(""),
     deathSound: new iString(""),
@@ -88,7 +84,7 @@ export class Entity implements UniquelyNamed, Named {
   }
 
   isItem(): iBoolean {
-    return this.props.get("isItem");
+    return new iBoolean(this.getUniqueName().valueOf() === "minecraft:item");
   }
 
   isPlayer(): iBoolean {
@@ -96,7 +92,9 @@ export class Entity implements UniquelyNamed, Named {
   }
 
   isMinecart(): iBoolean {
-    return this.props.get("minecart");
+    return new iBoolean(
+      this.getUniqueName().valueOf().includes("minecraft:minecart")
+    );
   }
 
   getItem(): Item {
@@ -148,6 +146,7 @@ export class Entity implements UniquelyNamed, Named {
   }
 
   getTargetEntity(): Entity {
+    if (!this.props.has("targetEntity")) return new Entity(new Properties({}));
     return this.props.get("targetEntity");
   }
 
@@ -163,12 +162,15 @@ export class Entity implements UniquelyNamed, Named {
     return this.props.get("heldItemOffHand");
   }
 
-  isEntityMounted(): iBoolean {
-    return this.props.get("entityMounted");
+  getMountedEntities(): Array<Entity> {
+    return [];
   }
 
   isItemFrame(): iBoolean {
-    return this.props.get("itemFrame");
+    const name = this.getUniqueName().valueOf();
+    return new iBoolean(
+      name === "minecraft:item_frame" || name === "minecraft:glow_item_frame"
+    );
   }
 
   getItemFrameContents(): Item {

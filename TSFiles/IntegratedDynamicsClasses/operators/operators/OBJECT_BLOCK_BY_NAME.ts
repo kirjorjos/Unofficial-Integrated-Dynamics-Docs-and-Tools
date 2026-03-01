@@ -1,6 +1,9 @@
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
+import { Block } from "IntegratedDynamicsClasses/Block";
+import { RegistryHub } from "IntegratedDynamicsClasses/registries/registryHub";
+import { Properties } from "IntegratedDynamicsClasses/Properties";
 
 export class OPERATOR_OBJECT_BLOCK_BY_NAME extends BaseOperator<
   iString,
@@ -22,10 +25,13 @@ export class OPERATOR_OBJECT_BLOCK_BY_NAME extends BaseOperator<
       }),
       symbol: "block_by_name",
       interactName: "stringBlockByName",
-      function: (_name: iString): Block => {
-        throw new Error(
-          "Block by name is infeasible without a registry. This is a placeholder function."
-        );
+      function: (name: iString): Block => {
+        const blockRegistry = RegistryHub.blockRegistry;
+        const key = name.valueOf().toLowerCase();
+        const BlockConstructor =
+          blockRegistry.items[key as keyof typeof blockRegistry.items];
+        if (!BlockConstructor) return new Block(new Properties({}));
+        return new BlockConstructor();
       },
     });
   }

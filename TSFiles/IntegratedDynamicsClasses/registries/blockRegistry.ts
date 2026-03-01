@@ -3,7 +3,7 @@ import { gameData } from "./registry";
 import { Block } from "IntegratedDynamicsClasses/Block";
 import { RegistryHub } from "./registryHub";
 
-type BlockConstructor = new (customData?: Record<string, any>) => Block;
+export type BlockConstructor = new (customData?: Record<string, any>) => Block;
 type RawBlocks = typeof gameData.blocks;
 type BlockNames = {
   [Mod in keyof RawBlocks]: `${Mod & string}:${keyof RawBlocks[Mod] & string}`;

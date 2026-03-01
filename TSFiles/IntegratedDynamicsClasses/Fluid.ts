@@ -2,7 +2,8 @@ import { UniquelyNamed } from "./UniquelyNamed";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Integer } from "../JavaNumberClasses/Integer";
 import { Properties } from "./Properties";
-import { CompoundTag } from "./NBTFunctions/MinecraftClasses/CompoundTag";
+import { Tag } from "./NBTFunctions/MinecraftClasses/Tag";
+import { NullTag } from "./NBTFunctions/MinecraftClasses/NullTag";
 import { iBoolean } from "./typeWrappers/iBoolean";
 import { iString } from "./typeWrappers/iString";
 import { Named } from "./Named";
@@ -28,7 +29,7 @@ export class Fluid implements Named, UniquelyNamed, IntegratedValue {
     bucketFillSound: new iString(""),
     bucket: new iString(""),
     modName: new iString(""),
-    nbt: null,
+    nbt: new NullTag(),
     tagNames: new iArrayEager<iString>([]),
     displayName: new iString(""),
   });
@@ -110,15 +111,11 @@ export class Fluid implements Named, UniquelyNamed, IntegratedValue {
     return new ItemConstructor();
   }
 
-  getUname(): iString {
-    return this.props.get("id");
-  }
-
   getModName(): iString {
     return this.props.get("modName");
   }
 
-  getNBT(): CompoundTag {
+  getNBT(): Tag<IntegratedValue> {
     return this.props.get("nbt");
   }
 

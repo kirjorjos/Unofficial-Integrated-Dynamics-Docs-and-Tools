@@ -5,7 +5,7 @@ import { Operator } from "../Operator";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 import { CompoundTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
 import { Properties } from "IntegratedDynamicsClasses/Properties";
-import { NullTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/NullTag";
+import { Tag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/Tag";
 
 export class OPERATOR_OBJECT_FLUIDSTACK_WITH_DATA extends BaseOperator<
   Fluid,
@@ -47,15 +47,15 @@ export class OPERATOR_OBJECT_FLUIDSTACK_WITH_DATA extends BaseOperator<
       interactName: "fluidstackWithData",
       function: (
         fluid: Fluid
-      ): TypeLambda<iString, TypeLambda<CompoundTag, Fluid>> => {
-        return (key: iString): TypeLambda<CompoundTag, Fluid> => {
-          return (value: CompoundTag): Fluid => {
-            let nbt: CompoundTag =
-              fluid.getNBT() instanceof NullTag
-                ? new CompoundTag({})
-                : (fluid.getNBT() as CompoundTag);
-            nbt = nbt.set(key.valueOf(), value);
-            return new Fluid(new Properties({ nbt }), fluid);
+      ): TypeLambda<iString, TypeLambda<Tag<IntegratedValue>, Fluid>> => {
+        return (key: iString): TypeLambda<Tag<IntegratedValue>, Fluid> => {
+          return (value: Tag<IntegratedValue>): Fluid => {
+            let nbt = fluid.getNBT();
+            if (!(nbt instanceof CompoundTag)) {
+              nbt = new CompoundTag({});
+            }
+            const newNbt = (nbt as CompoundTag).set(key.valueOf(), value);
+            return new Fluid(new Properties({ nbt: newNbt }), fluid);
           };
         };
       },

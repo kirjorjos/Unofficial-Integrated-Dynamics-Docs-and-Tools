@@ -19,9 +19,72 @@ import { StringTag } from "./StringTag";
 export class CompoundTag extends Tag<CompoundTag> {
   data: Record<string, Tag<IntegratedValue>>;
 
-  constructor(data: Record<string, Tag<IntegratedValue>>) {
+  constructor(data: Record<string, any> = {}) {
     super();
-    this.data = data;
+    this.data = {};
+    for (const [key, value] of Object.entries(data)) {
+      if (value instanceof Tag) {
+        this.data[key] = value;
+      } else {
+        this.data[key] = CompoundTag.wrap(value);
+      }
+    }
+  }
+
+  static wrap(value: any): Tag<IntegratedValue> {
+    if (value instanceof Tag) return value;
+    if (value === null || value === undefined) return new NullTag();
+
+    if (Array.isArray(value)) {
+      return new ListTag(
+        new iArrayEager(value.map((v) => CompoundTag.wrap(v)))
+      );
+    }
+
+    if (typeof value === "object") {
+      // Check if it's already a wrapper but not a Tag (unlikely for NBT but good for safety)
+      if ("getSignatureNode" in value && !(value instanceof Tag)) {
+        if (value instanceof iString) return new StringTag(value);
+        if (value instanceof Integer) return new IntTag(value);
+        if (value instanceof Double) return new DoubleTag(value);
+        if (value instanceof Long) return new LongTag(value);
+        if (value instanceof iBoolean)
+          return new ByteTag(new Integer(+value.valueOf()));
+      }
+      return new CompoundTag(value);
+    }
+
+    // Base JS types
+    switch (typeof value) {
+      case "number":
+        if (Number.isInteger(value)) {
+          if (value >= -2147483648 && value <= 2147483647) {
+            return new IntTag(new Integer(value));
+          } else {
+            return new LongTag(new Long(value));
+          }
+        } else {
+          return new DoubleTag(new Double(value));
+        }
+      case "boolean":
+        return new ByteTag(new Integer(+value));
+      case "string":
+        const str = value as string;
+        if (str.match(/^-?\d+b$/i)) {
+          return new ByteTag(new Integer(parseInt(str.slice(0, -1))));
+        } else if (str.match(/^-?\d+s$/i)) {
+          return new ShortTag(new Integer(parseInt(str.slice(0, -1))));
+        } else if (str.match(/^-?\d+l$/i)) {
+          return new LongTag(new Long(parseInt(str.slice(0, -1))));
+        } else if (str.match(/^-?\d+(\.\d+)?[fF]$/)) {
+          return new FloatTag(new Double(parseFloat(str.slice(0, -1))));
+        } else if (str.match(/^-?\d+(\.\d+)?[dD]$/)) {
+          return new DoubleTag(new Double(parseFloat(str.slice(0, -1))));
+        }
+        return new StringTag(new iString(str));
+      default:
+        return new NullTag();
+    }
   }
 
   getType(): number {
@@ -135,65 +198,7 @@ export class CompoundTag extends Tag<CompoundTag> {
       );
 
     const json = JSON.parse(jsonStr);
-
-    function objectCase(obj: { [k: string]: any }): CompoundTag {
-      const newObj: Record<string, Tag<IntegratedValue>> = {};
-      for (const key of Object.keys(obj)) {
-        if (Array.isArray(obj[key]))
-          newObj[key] = new ListTag(new iArrayEager(arrayCase(obj[key])));
-        else if (obj[key] instanceof Object) newObj[key] = objectCase(obj[key]);
-        else newObj[key] = baseCase(obj[key]);
-      }
-      return new CompoundTag(newObj);
-    }
-
-    function baseCase(value: any): Tag<IntegratedValue> {
-      switch (typeof value) {
-        case "number":
-          if (Number.isInteger(value)) {
-            if (value >= -2147483648 && value <= 2147483647) {
-              return new IntTag(new Integer(value));
-            } else {
-              return new LongTag(new Long(value));
-            }
-          } else {
-            return new DoubleTag(new Double(value));
-          }
-        case "boolean":
-          return new ByteTag(new Integer(+value));
-        case "string":
-          const str = value as string;
-          if (str.match(/^-?\d+b$/i)) {
-            return new ByteTag(new Integer(parseInt(str.slice(0, -1))));
-          } else if (str.match(/^-?\d+s$/i)) {
-            return new ShortTag(new Integer(parseInt(str.slice(0, -1))));
-          } else if (str.match(/^-?\d+l$/i)) {
-            return new LongTag(new Long(parseInt(str.slice(0, -1))));
-          } else if (str.match(/^-?\d+(\.\d+)?[fF]$/)) {
-            return new FloatTag(new Double(parseFloat(str.slice(0, -1))));
-          } else if (str.match(/^-?\d+(\.\d+)?[dD]$/)) {
-            return new DoubleTag(new Double(parseFloat(str.slice(0, -1))));
-          } else if (str.match(/^-?\d+(\.\d+)?$/)) {
-            return new StringTag(new iString(str));
-          }
-          return new StringTag(new iString(str));
-        default:
-          throw new Error(`Unknown type for NBT baseCase: ${typeof value}`);
-      }
-    }
-
-    function arrayCase(arr: any[]): Tag<IntegratedValue>[] {
-      const newArr: Tag<IntegratedValue>[] = [];
-      for (const v of arr) {
-        if (Array.isArray(v))
-          newArr.push(new ListTag(new iArrayEager(arrayCase(v))));
-        else if (v instanceof Object) newArr.push(objectCase(v));
-        else newArr.push(baseCase(v));
-      }
-      return newArr;
-    }
-
-    return objectCase(json);
+    return new CompoundTag(json);
   }
 
   compoundSubset(subset: CompoundTag): boolean {

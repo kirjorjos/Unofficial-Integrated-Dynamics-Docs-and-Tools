@@ -2,6 +2,8 @@ import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 import { Fluid } from "IntegratedDynamicsClasses/Fluid";
+import { RegistryHub } from "IntegratedDynamicsClasses/registries/registryHub";
+import { Properties } from "IntegratedDynamicsClasses/Properties";
 
 export class OPERATOR_OBJECT_FLUIDSTACK_BY_NAME extends BaseOperator<
   iString,
@@ -29,10 +31,13 @@ export class OPERATOR_OBJECT_FLUIDSTACK_BY_NAME extends BaseOperator<
       }),
       symbol: "fluid_by_name",
       interactName: "stringFluidByName",
-      function: (_name: iString): never => {
-        throw new Error(
-          "Fluid by name is infeasible without a registry. This is a placeholder function."
-        );
+      function: (name: iString): Fluid => {
+        const fluidRegistry = RegistryHub.fluidRegistry;
+        const key = name.valueOf().toLowerCase();
+        const FluidConstructor =
+          fluidRegistry.items[key as keyof typeof fluidRegistry.items];
+        if (!FluidConstructor) return new Fluid(new Properties({}));
+        return new FluidConstructor();
       },
     });
   }

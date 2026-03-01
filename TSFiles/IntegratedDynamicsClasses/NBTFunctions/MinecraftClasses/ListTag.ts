@@ -12,12 +12,18 @@ import { ByteTag } from "./ByteTag";
 import { IntTag } from "./IntTag";
 import { LongTag } from "./LongTag";
 
+import { CompoundTag } from "./CompoundTag";
+
 export class ListTag extends Tag<iArray<Tag<IntegratedValue>>> {
   data: iArray<Tag<IntegratedValue>>;
 
   constructor(data: iArray<Tag<IntegratedValue>>) {
     super();
-    this.data = data;
+    if (Array.isArray(data)) {
+      this.data = new iArrayEager(data.map((v) => CompoundTag.wrap(v)));
+    } else {
+      this.data = data;
+    }
   }
 
   static override valueOf(value: iArray<Tag<IntegratedValue>>): ListTag {

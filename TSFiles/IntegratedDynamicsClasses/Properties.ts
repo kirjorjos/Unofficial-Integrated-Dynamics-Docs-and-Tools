@@ -59,6 +59,10 @@ export class Properties implements IntegratedValue {
       return new iArrayEager(val.map((v: any) => Properties.wrapValue(v)));
     }
 
+    if (typeof val === "object" && val !== null) {
+      return new CompoundTag(val);
+    }
+
     throw new Error(
       `Unsupported value type in Properties: ${typeof val} (value: ${JSON.stringify(val)})`
     );
