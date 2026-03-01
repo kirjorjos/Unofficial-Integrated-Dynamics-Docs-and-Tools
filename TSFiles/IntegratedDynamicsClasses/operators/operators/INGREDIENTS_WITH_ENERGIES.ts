@@ -32,7 +32,7 @@ export class OPERATOR_INGREDIENTS_WITH_ENERGIES extends BaseOperator<
         ingredients: Ingredients
       ): TypeLambda<iArray<Long>, Ingredients> => {
         return (energyList: iArray<Long>): Ingredients => {
-          return ingredients.appendEnergies(energyList);
+          return ingredients.withEnergies(energyList);
         };
       },
     });

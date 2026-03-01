@@ -32,7 +32,7 @@ export class OPERATOR_INGREDIENTS_WITH_FLUIDS extends BaseOperator<
         ingredients: Ingredients
       ): TypeLambda<iArray<Fluid>, Ingredients> => {
         return (fluidList: iArray<Fluid>): Ingredients => {
-          return ingredients.appendFluids(fluidList);
+          return ingredients.withFluids(fluidList);
         };
       },
     });

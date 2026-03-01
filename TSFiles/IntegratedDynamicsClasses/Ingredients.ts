@@ -7,6 +7,8 @@ import { iArrayEager } from "./typeWrappers/iArrayEager";
 import { iArray } from "./typeWrappers/iArray";
 import { Named } from "./Named";
 import { iString } from "./typeWrappers/iString";
+import { Integer } from "../JavaNumberClasses/Integer";
+import { Properties } from "./Properties";
 
 export class Ingredients implements IntegratedValue, Named {
   private items: iArray<Item>;
@@ -26,7 +28,11 @@ export class Ingredients implements IntegratedValue, Named {
 
   setItem(item: Item, index: Integer): Ingredients {
     let items = [...this.items.valueOf()];
-    items[index.toJSNumber()] = item;
+    let idx = index.toJSNumber();
+    for (let i = items.length; i < idx; i++) {
+      items[i] = new Item(new Properties({}));
+    }
+    items[idx] = item;
     return new Ingredients(
       new iArrayEager<Item>(items),
       this.fluids,
@@ -36,7 +42,11 @@ export class Ingredients implements IntegratedValue, Named {
 
   setFluid(fluid: Fluid, index: Integer): Ingredients {
     let fluids = [...this.fluids.valueOf()];
-    fluids[index.toJSNumber()] = fluid;
+    let idx = index.toJSNumber();
+    for (let i = fluids.length; i < idx; i++) {
+      fluids[i] = new Fluid(new Properties({}));
+    }
+    fluids[idx] = fluid;
     return new Ingredients(
       this.items,
       new iArrayEager<Fluid>(fluids),
@@ -46,12 +56,28 @@ export class Ingredients implements IntegratedValue, Named {
 
   setEnergy(energy: Long, index: Integer): Ingredients {
     let energies = [...this.energies.valueOf()];
-    energies[index.toJSNumber()] = energy;
+    let idx = index.toJSNumber();
+    for (let i = energies.length; i < idx; i++) {
+      energies[i] = Long.ZERO;
+    }
+    energies[idx] = energy;
     return new Ingredients(
       this.items,
       this.fluids,
       new iArrayEager<Long>(energies)
     );
+  }
+
+  withItems(items: iArray<Item>): Ingredients {
+    return new Ingredients(items, this.fluids, this.energies);
+  }
+
+  withFluids(fluids: iArray<Fluid>): Ingredients {
+    return new Ingredients(this.items, fluids, this.energies);
+  }
+
+  withEnergies(energies: iArray<Long>): Ingredients {
+    return new Ingredients(this.items, this.fluids, energies);
   }
 
   appendItems(items: iArray<Item>): Ingredients {
