@@ -8,6 +8,7 @@ import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 import { INbtPathExpression } from "../INbtPathExpression";
 import { CompoundTag } from "../MinecraftClasses/CompoundTag";
 import { Tag } from "../MinecraftClasses/Tag";
+import { NullTag } from "../MinecraftClasses/NullTag";
 import { INbtPathNavigation } from "../navigate/INbtPathNavigation";
 import { NbtPathNavigationAdapter } from "../navigate/NbtPathNavigationAdapter";
 import { NbtPathExpressionMatches } from "../NbtPathExpressionMatches";
@@ -70,7 +71,7 @@ class Expression extends INbtPathExpression {
           if (nbt.getType() == Tag.TAG_COMPOUND) {
             let tag = nbt as CompoundTag;
             let childTag = tag.get(this.childName);
-            if (childTag != null) {
+            if (!(childTag instanceof NullTag)) {
               return new NbtPathExpressionExecutionContext(
                 childTag,
                 executionContext

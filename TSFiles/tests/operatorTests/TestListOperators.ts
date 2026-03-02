@@ -17,6 +17,7 @@ import {
   IValueTypeListProxy,
 } from "IntegratedDynamicsClasses/ValueTypeListProxy";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
+import { iNull } from "IntegratedDynamicsClasses/typeWrappers/iNull";
 
 describe("TestListOperators", () => {
   let labc: iArrayEager<iString>;
@@ -27,6 +28,8 @@ describe("TestListOperators", () => {
   let lintegers_rev_dup: iArrayEager<Integer>;
   let llongs_hash_collision: iArrayEager<Long>;
   let lintegers_inf: IValueTypeListProxy<IntegratedValue>;
+
+  let DUMMY_VARIABLE: IntegratedValue;
 
   let im1: Integer;
   let i0: Integer;
@@ -45,6 +48,7 @@ describe("TestListOperators", () => {
   let oArithmeticIncrement: Operator<TypeNumber, TypeNumber>;
 
   beforeEach(() => {
+    DUMMY_VARIABLE = new iNull();
     im1 = new Integer(-1);
     i0 = new Integer(0);
     i1 = new Integer(1);
@@ -107,6 +111,12 @@ describe("TestListOperators", () => {
     it("testInvalidInputSizeLengthSmall", () => {
       expect(() => new operatorRegistry.LIST_LENGTH().evaluate()).toThrow();
     });
+
+    it("testInvalidInputTypeLength", () => {
+      expect(() =>
+        new operatorRegistry.LIST_LENGTH().evaluate(DUMMY_VARIABLE)
+      ).toThrow();
+    });
   });
 
   describe("EMPTY", () => {
@@ -119,6 +129,22 @@ describe("TestListOperators", () => {
         lempty
       ) as iBoolean;
       expect(res2.valueOf()).toBe(true);
+    });
+
+    it("testInvalidInputSizeEmptyLarge", () => {
+      expect(() =>
+        new operatorRegistry.LIST_EMPTY().evaluate(labc, labc)
+      ).toThrow();
+    });
+
+    it("testInvalidInputSizeEmptySmall", () => {
+      expect(() => new operatorRegistry.LIST_EMPTY().evaluate()).toThrow();
+    });
+
+    it("testInvalidInputTypeEmpty", () => {
+      expect(() =>
+        new operatorRegistry.LIST_EMPTY().evaluate(DUMMY_VARIABLE)
+      ).toThrow();
     });
   });
 
@@ -134,6 +160,22 @@ describe("TestListOperators", () => {
         lempty
       ) as iBoolean;
       expect(res2.valueOf()).toBe(false);
+    });
+
+    it("testInvalidInputSizeNotEmptyLarge", () => {
+      expect(() =>
+        new operatorRegistry.LIST_NOT_EMPTY().evaluate(labc, labc)
+      ).toThrow();
+    });
+
+    it("testInvalidInputSizeNotEmptySmall", () => {
+      expect(() => new operatorRegistry.LIST_NOT_EMPTY().evaluate()).toThrow();
+    });
+
+    it("testInvalidInputTypeNotEmpty", () => {
+      expect(() =>
+        new operatorRegistry.LIST_NOT_EMPTY().evaluate(DUMMY_VARIABLE)
+      ).toThrow();
     });
   });
 
@@ -162,6 +204,27 @@ describe("TestListOperators", () => {
     it("testListElementIndexOutOfBounds", () => {
       expect(() =>
         new operatorRegistry.LIST_ELEMENT().evaluate(labc, i3)
+      ).toThrow();
+    });
+
+    it("testInvalidInputSizeElementLarge", () => {
+      expect(() =>
+        new operatorRegistry.LIST_ELEMENT().evaluate(labc, labc, labc)
+      ).toThrow();
+    });
+
+    it("testInvalidInputSizeElementSmall", () => {
+      expect(() =>
+        new operatorRegistry.LIST_ELEMENT().evaluate(labc)
+      ).toThrow();
+    });
+
+    it("testInvalidInputTypeElement", () => {
+      expect(() =>
+        new operatorRegistry.LIST_ELEMENT().evaluate(
+          DUMMY_VARIABLE,
+          DUMMY_VARIABLE
+        )
       ).toThrow();
     });
   });
@@ -199,6 +262,28 @@ describe("TestListOperators", () => {
       ) as iString;
       expect(res2.valueOf()).toBe("x");
     });
+
+    it("testInvalidInputSizeElementOrDefaultLarge", () => {
+      expect(() =>
+        new operatorRegistry.LIST_ELEMENT_DEFAULT().evaluate(labc, i0, sx, sx)
+      ).toThrow();
+    });
+
+    it("testInvalidInputSizeElementOrDefaultSmall", () => {
+      expect(() =>
+        new operatorRegistry.LIST_ELEMENT_DEFAULT().evaluate(labc, i0)
+      ).toThrow();
+    });
+
+    it("testInvalidInputTypeElementOrDefault", () => {
+      expect(() =>
+        new operatorRegistry.LIST_ELEMENT_DEFAULT().evaluate(
+          DUMMY_VARIABLE,
+          DUMMY_VARIABLE,
+          DUMMY_VARIABLE
+        )
+      ).toThrow();
+    });
   });
 
   describe("CONTAINS", () => {
@@ -215,6 +300,27 @@ describe("TestListOperators", () => {
         i4
       ) as iBoolean;
       expect(res5.valueOf()).toBe(false);
+    });
+
+    it("testInvalidInputSizeContainsLarge", () => {
+      expect(() =>
+        new operatorRegistry.LIST_CONTAINS().evaluate(lintegers, i2, i0)
+      ).toThrow();
+    });
+
+    it("testInvalidInputSizeContainsSmall", () => {
+      expect(() =>
+        new operatorRegistry.LIST_CONTAINS().evaluate(lintegers)
+      ).toThrow();
+    });
+
+    it("testInvalidInputTypeContains", () => {
+      expect(() =>
+        new operatorRegistry.LIST_CONTAINS().evaluate(
+          DUMMY_VARIABLE,
+          DUMMY_VARIABLE
+        )
+      ).toThrow();
     });
   });
 
@@ -242,6 +348,31 @@ describe("TestListOperators", () => {
       ) as iBoolean;
       expect(res5.valueOf()).toBe(false);
     });
+
+    it("testInvalidInputSizeContainsPredicateLarge", () => {
+      expect(() =>
+        new operatorRegistry.LIST_CONTAINS_PREDICATE().evaluate(
+          lintegers,
+          oRelationalEquals,
+          i2
+        )
+      ).toThrow();
+    });
+
+    it("testInvalidInputSizeContainsPredicateSmall", () => {
+      expect(() =>
+        new operatorRegistry.LIST_CONTAINS_PREDICATE().evaluate(lintegers)
+      ).toThrow();
+    });
+
+    it("testInvalidInputTypeContainsPredicate", () => {
+      expect(() =>
+        new operatorRegistry.LIST_CONTAINS_PREDICATE().evaluate(
+          DUMMY_VARIABLE,
+          DUMMY_VARIABLE
+        )
+      ).toThrow();
+    });
   });
 
   describe("COUNT", () => {
@@ -258,6 +389,27 @@ describe("TestListOperators", () => {
         i2
       ) as Integer;
       expect(res3.toJSNumber()).toBe(3);
+    });
+
+    it("testInvalidInputSizeCountLarge", () => {
+      expect(() =>
+        new operatorRegistry.LIST_COUNT().evaluate(lintegers, i2, i0)
+      ).toThrow();
+    });
+
+    it("testInvalidInputSizeCountSmall", () => {
+      expect(() =>
+        new operatorRegistry.LIST_COUNT().evaluate(lintegers)
+      ).toThrow();
+    });
+
+    it("testInvalidInputTypeCount", () => {
+      expect(() =>
+        new operatorRegistry.LIST_COUNT().evaluate(
+          DUMMY_VARIABLE,
+          DUMMY_VARIABLE
+        )
+      ).toThrow();
     });
 
     it("testListCountInfinite", () => {
@@ -280,6 +432,33 @@ describe("TestListOperators", () => {
       expect(res1).toBeInstanceOf(Integer);
       expect(res1.toJSNumber()).toBe(1);
     });
+
+    it("testInvalidInputSizeCountPredicateLarge", () => {
+      expect(() =>
+        new operatorRegistry.LIST_COUNT_PREDICATE().evaluate(lintegers, i2, i0)
+      ).toThrow();
+    });
+
+    it("testInvalidInputSizeCountPredicateSmall", () => {
+      expect(() =>
+        new operatorRegistry.LIST_COUNT_PREDICATE().evaluate(lintegers)
+      ).toThrow();
+    });
+
+    it("testInvalidInputTypeCountPredicate", () => {
+      expect(() =>
+        new operatorRegistry.LIST_COUNT_PREDICATE().evaluate(
+          DUMMY_VARIABLE,
+          DUMMY_VARIABLE
+        )
+      ).toThrow();
+    });
+
+    it("testListCountPredicateInfinite", () => {
+      expect(() =>
+        new operatorRegistry.LIST_COUNT_PREDICATE().evaluate(lintegers_inf, i0)
+      ).toThrow();
+    });
   });
 
   describe("APPEND", () => {
@@ -291,6 +470,36 @@ describe("TestListOperators", () => {
       expect(list.get(i0).toJSNumber()).toBe(0);
       expect(list.get(i3).toJSNumber()).toBe(3);
       expect(list.size().toJSNumber()).toBe(4);
+    });
+
+    it("testInvalidInputSizeAppendInvalidType", () => {
+      expect(() =>
+        new operatorRegistry.LIST_APPEND().evaluate(
+          lintegers_012,
+          oRelationalEquals
+        )
+      ).toThrow();
+    });
+
+    it("testInvalidInputSizeAppendLarge", () => {
+      expect(() =>
+        new operatorRegistry.LIST_APPEND().evaluate(lintegers, i2, i0)
+      ).toThrow();
+    });
+
+    it("testInvalidInputSizeAppendSmall", () => {
+      expect(() =>
+        new operatorRegistry.LIST_APPEND().evaluate(lintegers)
+      ).toThrow();
+    });
+
+    it("testInvalidInputTypeAppend", () => {
+      expect(() =>
+        new operatorRegistry.LIST_APPEND().evaluate(
+          DUMMY_VARIABLE,
+          DUMMY_VARIABLE
+        )
+      ).toThrow();
     });
   });
 
@@ -304,6 +513,46 @@ describe("TestListOperators", () => {
       expect(list.get(i3).toJSNumber()).toBe(0);
       expect(list.get(new Integer(6)).toJSNumber()).toBe(3);
       expect(list.size().toJSNumber()).toBe(7);
+    });
+
+    it("testInvalidInputSizeConcatInvalidType", () => {
+      expect(() =>
+        new operatorRegistry.LIST_CONCAT().evaluate(
+          lintegers_012,
+          oRelationalEquals
+        )
+      ).toThrow();
+      expect(() =>
+        new operatorRegistry.LIST_CONCAT().evaluate(
+          oRelationalEquals,
+          lintegers_012
+        )
+      ).toThrow();
+    });
+
+    it("testInvalidInputSizeConcatLarge", () => {
+      expect(() =>
+        new operatorRegistry.LIST_CONCAT().evaluate(
+          lintegers,
+          lintegers_012,
+          lintegers_012
+        )
+      ).toThrow();
+    });
+
+    it("testInvalidInputSizeConcatSmall", () => {
+      expect(() =>
+        new operatorRegistry.LIST_CONCAT().evaluate(lintegers)
+      ).toThrow();
+    });
+
+    it("testInvalidInputTypeConcat", () => {
+      expect(() =>
+        new operatorRegistry.LIST_CONCAT().evaluate(
+          DUMMY_VARIABLE,
+          DUMMY_VARIABLE
+        )
+      ).toThrow();
     });
   });
 
@@ -320,6 +569,33 @@ describe("TestListOperators", () => {
       expect((list.get(new Integer(100)) as Integer).toJSNumber()).toBe(103);
       expect(list.size().toJSNumber()).toBe(2147483647);
     });
+
+    it("testInvalidInputSizeLazyBuiltInvalidType", () => {
+      expect(() =>
+        new operatorRegistry.LIST_LAZYBUILT().evaluate(i3, oRelationalEquals)
+      ).toThrow();
+    });
+
+    it("testInvalidInputSizeLazyBuiltLarge", () => {
+      expect(() =>
+        new operatorRegistry.LIST_LAZYBUILT().evaluate(lintegers, i2, i0)
+      ).toThrow();
+    });
+
+    it("testInvalidInputSizeLazyBuiltSmall", () => {
+      expect(() =>
+        new operatorRegistry.LIST_LAZYBUILT().evaluate(lintegers)
+      ).toThrow();
+    });
+
+    it("testInvalidInputTypeLazyBuilt", () => {
+      expect(() =>
+        new operatorRegistry.LIST_LAZYBUILT().evaluate(
+          DUMMY_VARIABLE,
+          DUMMY_VARIABLE
+        )
+      ).toThrow();
+    });
   });
 
   describe("HEAD", () => {
@@ -327,6 +603,22 @@ describe("TestListOperators", () => {
       const res1 = new operatorRegistry.LIST_HEAD().evaluate(labc) as iString;
       expect(res1).toBeInstanceOf(iString);
       expect(res1.valueOf()).toBe("a");
+    });
+
+    it("testInvalidInputSizeHeadLarge", () => {
+      expect(() =>
+        new operatorRegistry.LIST_HEAD().evaluate(labc, labc)
+      ).toThrow();
+    });
+
+    it("testInvalidInputSizeHeadSmall", () => {
+      expect(() => new operatorRegistry.LIST_HEAD().evaluate()).toThrow();
+    });
+
+    it("testInvalidInputTypeHead", () => {
+      expect(() =>
+        new operatorRegistry.LIST_HEAD().evaluate(DUMMY_VARIABLE)
+      ).toThrow();
     });
   });
 
@@ -338,6 +630,22 @@ describe("TestListOperators", () => {
       expect(list.get(i0).toJSNumber()).toBe(1);
       expect(list.get(i2).toJSNumber()).toBe(3);
       expect(list.size().toJSNumber()).toBe(3);
+    });
+
+    it("testInvalidInputSizeTailLarge", () => {
+      expect(() =>
+        new operatorRegistry.LIST_TAIL().evaluate(lintegers, i2)
+      ).toThrow();
+    });
+
+    it("testInvalidInputSizeTailSmall", () => {
+      expect(() => new operatorRegistry.LIST_TAIL().evaluate()).toThrow();
+    });
+
+    it("testInvalidInputTypeTail", () => {
+      expect(() =>
+        new operatorRegistry.LIST_TAIL().evaluate(DUMMY_VARIABLE)
+      ).toThrow();
     });
   });
 
@@ -369,6 +677,28 @@ describe("TestListOperators", () => {
       ) as iArray<Long>;
       expect(list.size().toJSNumber()).toBe(4);
     });
+
+    it("testInvalidInputSizeUniqPredicateLarge", () => {
+      expect(() =>
+        new operatorRegistry.LIST_UNIQ_PREDICATE().evaluate(
+          lintegers,
+          oRelationalEquals,
+          i2
+        )
+      ).toThrow();
+    });
+
+    it("testInvalidInputSizeUniqPredicateSmall", () => {
+      expect(() =>
+        new operatorRegistry.LIST_UNIQ_PREDICATE().evaluate(lintegers)
+      ).toThrow();
+    });
+
+    it("testInvalidInputTypeUniqPredicate", () => {
+      expect(() =>
+        new operatorRegistry.LIST_UNIQ_PREDICATE().evaluate(DUMMY_VARIABLE)
+      ).toThrow();
+    });
   });
 
   describe("UNIQ", () => {
@@ -396,6 +726,22 @@ describe("TestListOperators", () => {
       ) as iArray<Long>;
       expect(list.size().toJSNumber()).toBe(4);
     });
+
+    it("testInvalidInputSizeUniqLarge", () => {
+      expect(() =>
+        new operatorRegistry.LIST_UNIQ().evaluate(lintegers, i2)
+      ).toThrow();
+    });
+
+    it("testInvalidInputSizeUniqSmall", () => {
+      expect(() => new operatorRegistry.LIST_UNIQ().evaluate()).toThrow();
+    });
+
+    it("testInvalidInputTypeUniq", () => {
+      expect(() =>
+        new operatorRegistry.LIST_UNIQ().evaluate(DUMMY_VARIABLE)
+      ).toThrow();
+    });
   });
 
   describe("SLICE", () => {
@@ -420,6 +766,40 @@ describe("TestListOperators", () => {
     it("testInvalidInputSizeSliceNegative1", () => {
       expect(() =>
         new operatorRegistry.LIST_SLICE().evaluate(lintegers, i0, im1)
+      ).toThrow();
+    });
+
+    it("testInvalidInputSizeSliceNegative2", () => {
+      expect(() =>
+        new operatorRegistry.LIST_SLICE().evaluate(lintegers, im1, i1)
+      ).toThrow();
+    });
+
+    it("testInvalidInputSizeSliceToNotLargerThanFrom", () => {
+      expect(() =>
+        new operatorRegistry.LIST_SLICE().evaluate(lintegers, i1, i1)
+      ).toThrow();
+    });
+
+    it("testInvalidInputSizeSliceLarge", () => {
+      expect(() =>
+        new operatorRegistry.LIST_SLICE().evaluate(lintegers, i2, i2, i2)
+      ).toThrow();
+    });
+
+    it("testInvalidInputSizeSliceSmall", () => {
+      expect(() =>
+        new operatorRegistry.LIST_SLICE().evaluate(lintegers, i2)
+      ).toThrow();
+    });
+
+    it("testInvalidInputTypeSlice", () => {
+      expect(() =>
+        new operatorRegistry.LIST_SLICE().evaluate(
+          DUMMY_VARIABLE,
+          DUMMY_VARIABLE,
+          DUMMY_VARIABLE
+        )
       ).toThrow();
     });
   });
@@ -455,6 +835,46 @@ describe("TestListOperators", () => {
       expect(res1).toBeInstanceOf(iBoolean);
       expect(res1.valueOf()).toBe(true);
     });
+
+    it("testInvalidInputSizeEqualsSetInvalidType", () => {
+      expect(() =>
+        new operatorRegistry.LIST_EQUALS_SET().evaluate(
+          lintegers_012,
+          oRelationalEquals
+        )
+      ).toThrow();
+      expect(() =>
+        new operatorRegistry.LIST_EQUALS_SET().evaluate(
+          oRelationalEquals,
+          lintegers_012
+        )
+      ).toThrow();
+    });
+
+    it("testInvalidInputSizeEqualsSetLarge", () => {
+      expect(() =>
+        new operatorRegistry.LIST_EQUALS_SET().evaluate(
+          lintegers,
+          lintegers_012,
+          lintegers_012
+        )
+      ).toThrow();
+    });
+
+    it("testInvalidInputSizeEqualsSetSmall", () => {
+      expect(() =>
+        new operatorRegistry.LIST_EQUALS_SET().evaluate(lintegers)
+      ).toThrow();
+    });
+
+    it("testInvalidInputTypeEqualsSet", () => {
+      expect(() =>
+        new operatorRegistry.LIST_EQUALS_SET().evaluate(
+          DUMMY_VARIABLE,
+          DUMMY_VARIABLE
+        )
+      ).toThrow();
+    });
   });
 
   describe("EQUALS_MULTISET", () => {
@@ -470,6 +890,46 @@ describe("TestListOperators", () => {
         new iArrayEager([i0, i1, i2, i3, i3])
       ) as iBoolean;
       expect(res2.valueOf()).toBe(true);
+    });
+
+    it("testInvalidInputSizeEqualsMultiSetInvalidType", () => {
+      expect(() =>
+        new operatorRegistry.LIST_EQUALS_MULTISET().evaluate(
+          lintegers_012,
+          oRelationalEquals
+        )
+      ).toThrow();
+      expect(() =>
+        new operatorRegistry.LIST_EQUALS_MULTISET().evaluate(
+          oRelationalEquals,
+          lintegers_012
+        )
+      ).toThrow();
+    });
+
+    it("testInvalidInputSizeEqualsMultiSetLarge", () => {
+      expect(() =>
+        new operatorRegistry.LIST_EQUALS_MULTISET().evaluate(
+          lintegers,
+          lintegers_012,
+          lintegers_012
+        )
+      ).toThrow();
+    });
+
+    it("testInvalidInputSizeEqualsMultiSetSmall", () => {
+      expect(() =>
+        new operatorRegistry.LIST_EQUALS_MULTISET().evaluate(lintegers)
+      ).toThrow();
+    });
+
+    it("testInvalidInputTypeEqualsMultiSet", () => {
+      expect(() =>
+        new operatorRegistry.LIST_EQUALS_MULTISET().evaluate(
+          DUMMY_VARIABLE,
+          DUMMY_VARIABLE
+        )
+      ).toThrow();
     });
   });
 });

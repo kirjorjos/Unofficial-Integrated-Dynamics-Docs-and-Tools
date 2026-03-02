@@ -25,13 +25,18 @@ export class NbtPathExpressionParseHandlerAllChildren
   implements INbtPathExpressionParseHandler
 {
   handlePrefixOf(nbtPathExpression: string, pos: number): HandleResult {
-    if (nbtPathExpression.charAt(pos) != "*") {
+    let offset = 0;
+    if (nbtPathExpression.charAt(pos) === ".") {
+      offset = 1;
+    }
+
+    if (nbtPathExpression.charAt(pos + offset) != "*") {
       return HandleResult.INVALID;
     }
 
     return new HandleResult(
       NbtPathExpressionParseHandlerAllChildren.Expression.INSTANCE,
-      1
+      offset + 1
     );
   }
 

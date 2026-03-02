@@ -7,6 +7,14 @@ import { iArray } from "../../IntegratedDynamicsClasses/typeWrappers/iArray";
 import { Operator } from "../../IntegratedDynamicsClasses/operators/Operator";
 import { BaseOperator } from "../../IntegratedDynamicsClasses/operators/BaseOperator";
 import { ParsedSignature } from "../../HelperClasses/ParsedSignature";
+import { globalMap } from "../../HelperClasses/TypeMap";
+
+/**
+ * Test the different recipe operators.
+ * Transpiled from github.com/CyclopsMC/IntegratedDynamics with minimal changes
+ * @transpiler kirjorjos
+ * @originalAuthor rubensworks
+ */
 
 const CyclopsCoreInstance = { MOD: {} };
 class ModBaseMocked {}
@@ -24,33 +32,28 @@ describe("TestOperatorOperators", () => {
   let i3: Integer;
   let i4Any: Integer;
 
-  let oGeneralIdentity: Operator<any, any>;
-  let oLogicalNot: Operator<any, any>;
-  let oLogicalAnd: Operator<any, any>;
-  let oParseInt: Operator<any, any>;
-  let oRelationalEquals: Operator<any, any>;
-  let oRelationalGreaterThan: Operator<any, any>;
-  let oRelationalLessThan: Operator<any, any>;
-  let oArithmeticIncrement: Operator<any, any>;
-  let oArithmeticIncrement2: Operator<any, any>;
-  let oArithmeticModulus: Operator<any, any>;
-  let oArithmeticAddition: Operator<any, any>;
-  // let oArithmeticAddition2: Operator<any, any>;
-  let oArithmeticMultiplication: Operator<any, any>;
-  let oChoice: Operator<any, any>;
-  let oPipe: Operator<any, any>;
-  let oListLength: Operator<any, any>;
-  let oListContains: Operator<any, any>;
-  let oOperatorMap: Operator<any, any>;
-  let oSubStr: Operator<any, any>;
-  let oGetConstStr: Operator<any, any>;
+  let oGeneralIdentity: Operator<IntegratedValue, IntegratedValue>;
+  let oLogicalNot: Operator<IntegratedValue, IntegratedValue>;
+  let oLogicalAnd: Operator<IntegratedValue, IntegratedValue>;
+  let oRelationalEquals: Operator<IntegratedValue, IntegratedValue>;
+  let oRelationalLessThan: Operator<IntegratedValue, IntegratedValue>;
+  let oArithmeticIncrement: Operator<IntegratedValue, IntegratedValue>;
+  let oArithmeticAddition: Operator<IntegratedValue, IntegratedValue>;
+  let oSubStr: Operator<IntegratedValue, IntegratedValue>;
+  let oGetConstStr: Operator<IntegratedValue, IntegratedValue>;
 
-  let lempty: iArray<any>;
-  let lintegers: iArray<any>;
-  let lbooleans: iArray<any>;
+  let lempty: iArray<IntegratedValue>;
+  let lintegers: iArray<IntegratedValue>;
+  let lbooleans: iArray<IntegratedValue>;
 
   let sAnd: iString;
   let sOther: iString;
+
+  let sigOperator: ParsedSignature;
+  let sigBoolean: ParsedSignature;
+  let sigInteger: ParsedSignature;
+  let sigList: ParsedSignature;
+  let sigAny: ParsedSignature;
 
   beforeEach(() => {
     bFalse = new iBoolean(false);
@@ -67,22 +70,10 @@ describe("TestOperatorOperators", () => {
     oGeneralIdentity = new operatorRegistry.GENERAL_IDENTITY();
     oLogicalNot = new operatorRegistry.LOGICAL_NOT();
     oLogicalAnd = new operatorRegistry.LOGICAL_AND();
-    oParseInt = new operatorRegistry.PARSE_INTEGER();
     oRelationalEquals = new operatorRegistry.RELATIONAL_EQUALS();
-    oRelationalGreaterThan = new operatorRegistry.RELATIONAL_GT();
     oRelationalLessThan = new operatorRegistry.RELATIONAL_LT();
     oArithmeticIncrement = new operatorRegistry.ARITHMETIC_INCREMENT();
-    oArithmeticIncrement2 = new operatorRegistry.ARITHMETIC_INCREMENT();
-    oArithmeticModulus = new operatorRegistry.ARITHMETIC_MODULUS();
     oArithmeticAddition = new operatorRegistry.ARITHMETIC_ADDITION();
-    // oArithmeticAddition2      = new operatorRegistry.ARITHMETIC_ADDITION();
-    oArithmeticMultiplication =
-      new operatorRegistry.ARITHMETIC_MULTIPLICATION();
-    oChoice = new operatorRegistry.GENERAL_CHOICE();
-    oPipe = new operatorRegistry.OPERATOR_PIPE();
-    oListLength = new operatorRegistry.LIST_LENGTH();
-    oListContains = new operatorRegistry.LIST_CONTAINS();
-    oOperatorMap = new operatorRegistry.OPERATOR_MAP();
     oSubStr = new operatorRegistry.STRING_SUBSTRING();
     oGetConstStr = new BaseOperator({
       nicknames: ["NONE"],
@@ -97,6 +88,24 @@ describe("TestOperatorOperators", () => {
 
     sAnd = new iString("integrateddynamics:logical_and");
     sOther = new iString("integrateddynamics:other");
+
+    sigOperator = new ParsedSignature({
+      type: "Operator",
+      obscured: {
+        type: "Function",
+        from: { type: "Any", typeID: 0 },
+        to: { type: "Any", typeID: 1 },
+      },
+    });
+    sigBoolean = new ParsedSignature({ type: "Boolean" });
+    sigInteger = new ParsedSignature({ type: "Integer" });
+    sigList = new ParsedSignature({
+      type: "List",
+      listType: { type: "Any", typeID: 0 },
+    });
+    sigAny = new ParsedSignature({ type: "Any", typeID: 0 });
+
+    globalMap.clear();
   });
 
   /**
@@ -105,26 +114,26 @@ describe("TestOperatorOperators", () => {
 
   it("testApply", () => {
     const res1 = new operatorRegistry.OPERATOR_APPLY().evaluate(
-      oGeneralIdentity,
+      new operatorRegistry.GENERAL_IDENTITY(),
       bFalse
     );
     expect(res1).toBeInstanceOf(iBoolean);
     expect((res1 as iBoolean).bool).toBe(false);
 
     const res2 = new operatorRegistry.OPERATOR_APPLY().evaluate(
-      oGeneralIdentity,
+      new operatorRegistry.GENERAL_IDENTITY(),
       bTrue
     );
     expect((res2 as iBoolean).bool).toBe(true);
 
     const res3 = new operatorRegistry.OPERATOR_APPLY().evaluate(
-      oLogicalNot,
+      new operatorRegistry.LOGICAL_NOT(),
       bTrue
     );
     expect((res3 as iBoolean).bool).toBe(false);
 
     const res4 = new operatorRegistry.OPERATOR_APPLY().evaluate(
-      oLogicalNot,
+      new operatorRegistry.LOGICAL_NOT(),
       bFalse
     );
     expect((res4 as iBoolean).bool).toBe(true);
@@ -132,7 +141,7 @@ describe("TestOperatorOperators", () => {
 
   it("testApplyCurring", () => {
     const res1 = new operatorRegistry.OPERATOR_APPLY().evaluate(
-      oLogicalAnd,
+      new operatorRegistry.LOGICAL_AND(),
       bTrue
     );
     expect(res1).toBeInstanceOf(Operator);
@@ -151,7 +160,7 @@ describe("TestOperatorOperators", () => {
     expect((res2_2 as iBoolean).bool).toBe(false);
 
     const res3 = new operatorRegistry.OPERATOR_APPLY().evaluate(
-      oLogicalAnd,
+      new operatorRegistry.LOGICAL_AND(),
       bFalse
     );
     expect(res3).toBeInstanceOf(Operator);
@@ -182,7 +191,7 @@ describe("TestOperatorOperators", () => {
 
   it("testInvalidInputSizeApplyCurryingLarge", () => {
     const curriedOperatorValue = new operatorRegistry.OPERATOR_APPLY().evaluate(
-      oLogicalAnd,
+      new operatorRegistry.LOGICAL_AND(),
       bTrue
     );
     expect(() => {
@@ -202,7 +211,7 @@ describe("TestOperatorOperators", () => {
 
   it("testInvalidInputSizeApplyCurringSmall", () => {
     const curriedOperatorValue = new operatorRegistry.OPERATOR_APPLY().evaluate(
-      oLogicalAnd,
+      new operatorRegistry.LOGICAL_AND(),
       bTrue
     );
     expect(() => {
@@ -233,7 +242,7 @@ describe("TestOperatorOperators", () => {
 
   it("testConditionalOutputTypesApplyCurring", () => {
     const curriedOperatorValue = new operatorRegistry.OPERATOR_APPLY().evaluate(
-      oLogicalAnd,
+      new operatorRegistry.LOGICAL_AND(),
       bTrue
     );
     const curriedSignature = (
@@ -250,7 +259,7 @@ describe("TestOperatorOperators", () => {
 
   it("testApply2", () => {
     const res1 = new operatorRegistry.OPERATOR_APPLY_2().evaluate(
-      oLogicalAnd,
+      new operatorRegistry.LOGICAL_AND(),
       bTrue,
       bFalse
     );
@@ -258,21 +267,21 @@ describe("TestOperatorOperators", () => {
     expect((res1 as iBoolean).bool).toBe(false);
 
     const res2 = new operatorRegistry.OPERATOR_APPLY_2().evaluate(
-      oLogicalAnd,
+      new operatorRegistry.LOGICAL_AND(),
       bTrue,
       bTrue
     );
     expect((res2 as iBoolean).bool).toBe(true);
 
     const res3 = new operatorRegistry.OPERATOR_APPLY_2().evaluate(
-      oRelationalGreaterThan,
+      new operatorRegistry.RELATIONAL_GT(),
       i0,
       i1
     );
     expect((res3 as iBoolean).bool).toBe(false);
 
     const res4 = new operatorRegistry.OPERATOR_APPLY_2().evaluate(
-      oRelationalGreaterThan,
+      new operatorRegistry.RELATIONAL_GT(),
       i2,
       i1
     );
@@ -281,7 +290,7 @@ describe("TestOperatorOperators", () => {
 
   it("testApply2OnOpWith3Inputs", () => {
     const res1 = new operatorRegistry.OPERATOR_APPLY_2().evaluate(
-      oChoice,
+      new operatorRegistry.GENERAL_CHOICE(),
       bTrue,
       i1
     );
@@ -351,7 +360,7 @@ describe("TestOperatorOperators", () => {
 
   it("testApply3", () => {
     const res1 = new operatorRegistry.OPERATOR_APPLY_3().evaluate(
-      oSubStr,
+      new operatorRegistry.STRING_SUBSTRING(),
       i0,
       i1,
       sAnd
@@ -361,13 +370,15 @@ describe("TestOperatorOperators", () => {
   });
 
   it("testApply3ThreeAnd", () => {
-    const oPipeFlip = new operatorRegistry.OPERATOR_FLIP().evaluate(oPipe);
+    const oPipeFlip = new operatorRegistry.OPERATOR_FLIP().evaluate(
+      new operatorRegistry.OPERATOR_PIPE()
+    );
     const oPipeFlip2 = new operatorRegistry.OPERATOR_FLIP().evaluate(
       new operatorRegistry.OPERATOR_PIPE()
     );
     const oThreeAnd_1 = new operatorRegistry.OPERATOR_APPLY().evaluate(
       oPipeFlip,
-      oLogicalAnd
+      new operatorRegistry.LOGICAL_AND()
     );
     const oThreeAnd = new operatorRegistry.OPERATOR_APPLY_2().evaluate(
       oPipeFlip2,
@@ -392,7 +403,7 @@ describe("TestOperatorOperators", () => {
   it("testApplyN", () => {
     const applyArgs = new iArrayEager([i0, i1, sAnd]);
     const res1 = new operatorRegistry.OPERATOR_APPLY_N().evaluate(
-      oSubStr,
+      new operatorRegistry.STRING_SUBSTRING(),
       applyArgs
     );
     expect(res1).toBeInstanceOf(iString);
@@ -432,7 +443,7 @@ describe("TestOperatorOperators", () => {
 
   it("testMap", () => {
     const res1 = new operatorRegistry.OPERATOR_MAP().evaluate(
-      oArithmeticIncrement,
+      new operatorRegistry.ARITHMETIC_INCREMENT(),
       lintegers
     );
     expect(res1).toBeInstanceOf(iArrayEager);
@@ -443,7 +454,7 @@ describe("TestOperatorOperators", () => {
     expect((list1.get(new Integer(3)) as Integer).toJSNumber()).toBe(4);
 
     const res2 = new operatorRegistry.OPERATOR_MAP().evaluate(
-      oLogicalNot,
+      new operatorRegistry.LOGICAL_NOT(),
       lbooleans
     );
     const list2 = res2 as iArray<iBoolean>;
@@ -453,7 +464,7 @@ describe("TestOperatorOperators", () => {
     expect((list2.get(new Integer(3)) as iBoolean).bool).toBe(false);
 
     const curriedOperatorValue = new operatorRegistry.OPERATOR_APPLY().evaluate(
-      oLogicalAnd,
+      new operatorRegistry.LOGICAL_AND(),
       bTrue
     );
     const res3 = new operatorRegistry.OPERATOR_MAP().evaluate(
@@ -467,7 +478,7 @@ describe("TestOperatorOperators", () => {
     expect((list3.get(new Integer(3)) as iBoolean).bool).toBe(true);
 
     const res4 = new operatorRegistry.OPERATOR_MAP().evaluate(
-      oLogicalAnd,
+      new operatorRegistry.LOGICAL_AND(),
       lbooleans
     );
     const list4 = res4 as iArray<Operator<any, any>>;
@@ -524,11 +535,11 @@ describe("TestOperatorOperators", () => {
 
   it("testPredicateConjunction", () => {
     const zeroLessThan = new operatorRegistry.OPERATOR_APPLY().evaluate(
-      oRelationalLessThan,
+      new operatorRegistry.RELATIONAL_LT(),
       i0
     );
     const twoGreaterThan = new operatorRegistry.OPERATOR_APPLY().evaluate(
-      oRelationalGreaterThan,
+      new operatorRegistry.RELATIONAL_GT(),
       i2
     );
     const zeroLessThanandTwoGreaterThan =
@@ -608,11 +619,11 @@ describe("TestOperatorOperators", () => {
 
   it("testPredicateDisjunction", () => {
     const zeroLessThan = new operatorRegistry.OPERATOR_APPLY().evaluate(
-      oRelationalLessThan,
+      new operatorRegistry.RELATIONAL_LT(),
       i0
     );
     const twoGreaterThan = new operatorRegistry.OPERATOR_APPLY().evaluate(
-      oRelationalGreaterThan,
+      new operatorRegistry.RELATIONAL_GT(),
       i2
     );
     const zeroLessThanorTwoGreaterThan =
@@ -692,7 +703,7 @@ describe("TestOperatorOperators", () => {
 
   it("testPredicateNegation", () => {
     const twoGreaterThan = new operatorRegistry.OPERATOR_APPLY().evaluate(
-      oRelationalGreaterThan,
+      new operatorRegistry.RELATIONAL_GT(),
       i2
     );
     const notTwoGreaterThan = new operatorRegistry.OPERATOR_NEGATION().evaluate(
@@ -753,8 +764,8 @@ describe("TestOperatorOperators", () => {
 
   it("testPredicatePipe", () => {
     const increment2 = new operatorRegistry.OPERATOR_PIPE().evaluate(
-      oArithmeticIncrement,
-      oArithmeticIncrement2
+      new operatorRegistry.ARITHMETIC_INCREMENT(),
+      new operatorRegistry.ARITHMETIC_INCREMENT()
     );
 
     const res1 = new operatorRegistry.OPERATOR_APPLY().evaluate(increment2, i0);
@@ -766,11 +777,11 @@ describe("TestOperatorOperators", () => {
 
   it("testPredicatePipe3Incr", () => {
     const innerPipe = new operatorRegistry.OPERATOR_PIPE().evaluate(
-      oArithmeticIncrement,
-      oArithmeticIncrement2
+      new operatorRegistry.ARITHMETIC_INCREMENT(),
+      new operatorRegistry.ARITHMETIC_INCREMENT()
     );
     const op = new operatorRegistry.OPERATOR_PIPE().evaluate(
-      oArithmeticIncrement,
+      new operatorRegistry.ARITHMETIC_INCREMENT(),
       innerPipe
     ) as Operator<any, any>;
 
@@ -786,7 +797,7 @@ describe("TestOperatorOperators", () => {
 
   it("testPredicatePipeAddAddError", () => {
     const op = new operatorRegistry.OPERATOR_PIPE().evaluate(
-      oArithmeticAddition,
+      new operatorRegistry.ARITHMETIC_ADDITION(),
       new operatorRegistry.ARITHMETIC_ADDITION()
     );
     expect(() => {
@@ -796,8 +807,8 @@ describe("TestOperatorOperators", () => {
 
   it("testPredicatePipeMapContains", () => {
     const mapContains = new operatorRegistry.OPERATOR_PIPE().evaluate(
-      oListContains,
-      oOperatorMap
+      new operatorRegistry.LIST_CONTAINS(),
+      new operatorRegistry.OPERATOR_MAP()
     );
 
     const signature = (mapContains as Operator<any, any>).getParsedSignature();
@@ -823,8 +834,8 @@ describe("TestOperatorOperators", () => {
 
   it("testPredicatePipeLargeInputCount", () => {
     const incrementAndAdd = new operatorRegistry.OPERATOR_PIPE().evaluate(
-      oParseInt,
-      oArithmeticAddition
+      new operatorRegistry.PARSE_INTEGER(),
+      new operatorRegistry.ARITHMETIC_ADDITION()
     );
     expect(
       (incrementAndAdd as Operator<any, any>).getParsedSignature().getArity()
@@ -845,8 +856,8 @@ describe("TestOperatorOperators", () => {
 
   it("testPredicatePipeMixed", () => {
     const listLengthIncr = new operatorRegistry.OPERATOR_PIPE().evaluate(
-      oListLength,
-      oArithmeticAddition
+      new operatorRegistry.LIST_LENGTH(),
+      new operatorRegistry.ARITHMETIC_ADDITION()
     ) as Operator<any, any>;
 
     const signature = listLengthIncr.getParsedSignature();
@@ -866,11 +877,11 @@ describe("TestOperatorOperators", () => {
 
   it("testPredicatePipeLenAddMap", () => {
     const innerPipe = new operatorRegistry.OPERATOR_PIPE().evaluate(
-      oArithmeticAddition,
-      oOperatorMap
+      new operatorRegistry.ARITHMETIC_ADDITION(),
+      new operatorRegistry.OPERATOR_MAP()
     );
     const op = new operatorRegistry.OPERATOR_PIPE().evaluate(
-      oListLength,
+      new operatorRegistry.LIST_LENGTH(),
       innerPipe
     ) as Operator<any, any>;
 
@@ -933,9 +944,9 @@ describe("TestOperatorOperators", () => {
   it("testPredicatePipe2", () => {
     const addOneAndSelfMultiply =
       new operatorRegistry.OPERATOR_PIPE2().evaluate(
-        oGeneralIdentity,
-        oArithmeticIncrement,
-        oArithmeticMultiplication
+        new operatorRegistry.GENERAL_IDENTITY(),
+        new operatorRegistry.ARITHMETIC_INCREMENT(),
+        new operatorRegistry.ARITHMETIC_MULTIPLICATION()
       ) as Operator<any, any>;
 
     const signature = addOneAndSelfMultiply.getParsedSignature();
@@ -972,7 +983,7 @@ describe("TestOperatorOperators", () => {
 
   it("testPredicateFlip", () => {
     const lessThanFlipped = new operatorRegistry.OPERATOR_FLIP().evaluate(
-      oRelationalLessThan
+      new operatorRegistry.RELATIONAL_LT()
     );
     const lessThan2 = new operatorRegistry.OPERATOR_APPLY().evaluate(
       lessThanFlipped,
@@ -992,7 +1003,7 @@ describe("TestOperatorOperators", () => {
 
   it("testPredicateFlipOperatorWithThreeInputs", () => {
     const choiceFlipped = new operatorRegistry.OPERATOR_FLIP().evaluate(
-      oChoice
+      new operatorRegistry.GENERAL_CHOICE()
     );
     const choiceFlipped0 = new operatorRegistry.OPERATOR_APPLY().evaluate(
       choiceFlipped,
@@ -1047,7 +1058,7 @@ describe("TestOperatorOperators", () => {
 
   it("testFilter", () => {
     const equalsTwo = new operatorRegistry.OPERATOR_APPLY().evaluate(
-      oRelationalEquals,
+      new operatorRegistry.RELATIONAL_EQUALS(),
       i2
     );
 
@@ -1061,11 +1072,11 @@ describe("TestOperatorOperators", () => {
     expect((list1.get(new Integer(0)) as Integer).toJSNumber()).toBe(2);
 
     const zeroLessThan = new operatorRegistry.OPERATOR_APPLY().evaluate(
-      oRelationalLessThan,
+      new operatorRegistry.RELATIONAL_LT(),
       i0
     );
     const twoGreaterThan = new operatorRegistry.OPERATOR_APPLY().evaluate(
-      oRelationalGreaterThan,
+      new operatorRegistry.RELATIONAL_GT(),
       i2
     );
     const zeroLessThanandTwoGreaterThan =
@@ -1084,14 +1095,14 @@ describe("TestOperatorOperators", () => {
 
   it("testFilterEvenNumbers", () => {
     const modulusFlipped = new operatorRegistry.OPERATOR_FLIP().evaluate(
-      oArithmeticModulus
+      new operatorRegistry.ARITHMETIC_MODULUS()
     );
     const modulus2 = new operatorRegistry.OPERATOR_APPLY().evaluate(
       modulusFlipped,
       i2
     );
     const isZero = new operatorRegistry.OPERATOR_APPLY().evaluate(
-      oRelationalEquals,
+      new operatorRegistry.RELATIONAL_EQUALS(),
       i0
     );
     const isEvenUnsafe = new operatorRegistry.OPERATOR_PIPE().evaluate(
@@ -1165,7 +1176,7 @@ describe("TestOperatorOperators", () => {
 
   it("testReduce", () => {
     const res1 = new operatorRegistry.OPERATOR_REDUCE().evaluate(
-      oArithmeticAddition,
+      new operatorRegistry.ARITHMETIC_ADDITION(),
       lintegers,
       i0
     );
@@ -1225,7 +1236,7 @@ describe("TestOperatorOperators", () => {
 
   it("testReduce1", () => {
     const res1 = new operatorRegistry.OPERATOR_REDUCE1().evaluate(
-      oArithmeticAddition,
+      new operatorRegistry.ARITHMETIC_ADDITION(),
       lintegers
     );
     expect(res1).toBeInstanceOf(Integer);
@@ -1234,7 +1245,7 @@ describe("TestOperatorOperators", () => {
 
   it("testReduce1Complex", () => {
     const flippedChoice = new operatorRegistry.OPERATOR_FLIP().evaluate(
-      oChoice
+      new operatorRegistry.GENERAL_CHOICE()
     );
     const pipedFlip = new operatorRegistry.OPERATOR_PIPE().evaluate(
       flippedChoice,
@@ -1242,7 +1253,7 @@ describe("TestOperatorOperators", () => {
     );
     const appliedPipe2 = new operatorRegistry.OPERATOR_APPLY().evaluate(
       new operatorRegistry.OPERATOR_PIPE2(),
-      oGeneralIdentity
+      new operatorRegistry.GENERAL_IDENTITY()
     );
 
     const reducer = new operatorRegistry.OPERATOR_PIPE2().evaluate(
@@ -1361,5 +1372,368 @@ describe("TestOperatorOperators", () => {
     );
     expect(res1).toBeInstanceOf(Integer);
     expect((res1 as Integer).toJSNumber()).toBe(3);
+  });
+
+  describe("Validation and Conditional Output Types", () => {
+    it("testValidateTypesApply", () => {
+      const op = new operatorRegistry.OPERATOR_APPLY();
+      expect(op.validateTypes([])).not.toBeNull();
+      expect(op.validateTypes([sigOperator])).not.toBeNull();
+      expect(op.validateTypes([sigInteger])).not.toBeNull();
+      expect(op.validateTypes([sigOperator, sigAny])).toBeNull();
+    });
+
+    it("testConditionalOutputTypesApply", () => {
+      const op = new operatorRegistry.OPERATOR_APPLY();
+      expect(
+        op
+          .getConditionalOutputType([
+            new operatorRegistry.GENERAL_IDENTITY(),
+            bFalse,
+          ])
+          .getRootType()
+      ).toBe("Boolean");
+      globalMap.clear();
+      expect(
+        op
+          .getConditionalOutputType([
+            new operatorRegistry.GENERAL_IDENTITY(),
+            i0,
+          ])
+          .getRootType()
+      ).toBe("Integer");
+      globalMap.clear();
+      expect(
+        op
+          .getConditionalOutputType([
+            new operatorRegistry.GENERAL_IDENTITY(),
+            new operatorRegistry.GENERAL_IDENTITY(),
+          ])
+          .getRootType()
+      ).toBe("Function");
+      globalMap.clear();
+
+      expect(
+        op
+          .getConditionalOutputType([
+            new operatorRegistry.LOGICAL_NOT(),
+            bFalse,
+          ])
+          .getRootType()
+      ).toBe("Boolean");
+    });
+
+    it("testConditionalOutputTypesApplyCurring", () => {
+      const curriedOperatorValue =
+        new operatorRegistry.OPERATOR_APPLY().evaluate(
+          new operatorRegistry.LOGICAL_AND(),
+          bTrue
+        ) as Operator<any, any>;
+      const op = new operatorRegistry.OPERATOR_APPLY();
+      expect(
+        op
+          .getConditionalOutputType([curriedOperatorValue, bFalse])
+          .getRootType()
+      ).toBe("Boolean");
+    });
+
+    it("testValidateTypesApply2", () => {
+      const op = new operatorRegistry.OPERATOR_APPLY_2();
+      expect(op.validateTypes([])).not.toBeNull();
+      expect(op.validateTypes([sigOperator])).not.toBeNull();
+      expect(op.validateTypes([sigOperator, sigAny])).not.toBeNull();
+      expect(op.validateTypes([sigOperator, sigAny, sigAny])).toBeNull();
+    });
+
+    it("testConditionalOutputTypesApply2", () => {
+      const op = new operatorRegistry.OPERATOR_APPLY_2();
+      expect(
+        op
+          .getConditionalOutputType([
+            new operatorRegistry.LOGICAL_AND(),
+            bFalse,
+            bFalse,
+          ])
+          .getRootType()
+      ).toBe("Boolean");
+      globalMap.clear();
+      expect(
+        op
+          .getConditionalOutputType([
+            new operatorRegistry.ARITHMETIC_MODULUS(),
+            i0,
+            i0,
+          ])
+          .getRootType()
+      ).toBe("Number");
+      globalMap.clear();
+      expect(
+        op
+          .getConditionalOutputType([
+            new operatorRegistry.RELATIONAL_EQUALS(),
+            bFalse,
+            bFalse,
+          ])
+          .getRootType()
+      ).toBe("Boolean");
+    });
+
+    it("testConditionalOutputTypesApply3", () => {
+      const op = new operatorRegistry.OPERATOR_APPLY_3();
+      expect(
+        op
+          .getConditionalOutputType([
+            new operatorRegistry.STRING_SUBSTRING(),
+            i0,
+            i1,
+            sAnd,
+          ])
+          .getRootType()
+      ).toBe("String");
+    });
+
+    it("testValidateTypesApply3", () => {
+      const op = new operatorRegistry.OPERATOR_APPLY_3();
+      expect(op.validateTypes([])).not.toBeNull();
+      expect(op.validateTypes([sigOperator])).not.toBeNull();
+      expect(op.validateTypes([sigOperator, sigAny])).not.toBeNull();
+      expect(op.validateTypes([sigOperator, sigAny, sigAny])).not.toBeNull();
+      expect(
+        op.validateTypes([sigOperator, sigAny, sigAny, sigAny])
+      ).toBeNull();
+    });
+
+    it("testConditionalOutputTypesApplyN", () => {
+      const op = new operatorRegistry.OPERATOR_APPLY_N();
+      const applyArgs = new iArrayEager([i0, i1, sAnd]);
+      expect(
+        op
+          .getConditionalOutputType([
+            new operatorRegistry.STRING_SUBSTRING(),
+            applyArgs,
+          ])
+          .getRootType()
+      ).toBe("Function");
+    });
+
+    it("testValidateTypesApplyN", () => {
+      const op = new operatorRegistry.OPERATOR_APPLY_N();
+      expect(op.validateTypes([])).not.toBeNull();
+      expect(op.validateTypes([sigOperator])).not.toBeNull();
+      expect(op.validateTypes([sigOperator, sigList])).toBeNull();
+    });
+
+    it("testConditionalOutputTypesApply0", () => {
+      const op = new operatorRegistry.OPERATOR_APPLY_0();
+      const opAny = new operatorRegistry.GENERAL_IDENTITY();
+      expect(op.getConditionalOutputType([opAny]).getRootType()).toBe("Any");
+    });
+
+    it("testValidateTypesApply0", () => {
+      const op = new operatorRegistry.OPERATOR_APPLY_0();
+      expect(op.validateTypes([])).not.toBeNull();
+      expect(op.validateTypes([sigOperator])).toBeNull();
+      expect(op.validateTypes([sigOperator, sigAny])).not.toBeNull();
+    });
+
+    it("testValidateTypesMap", () => {
+      const op = new operatorRegistry.OPERATOR_MAP();
+      expect(op.validateTypes([])).not.toBeNull();
+      expect(op.validateTypes([sigOperator])).not.toBeNull();
+      expect(op.validateTypes([sigOperator, sigBoolean])).not.toBeNull();
+      expect(op.validateTypes([sigOperator, sigAny])).toBeNull();
+    });
+
+    it("testConditionalOutputTypesMap", () => {
+      const op = new operatorRegistry.OPERATOR_MAP();
+      expect(
+        op
+          .getConditionalOutputType([
+            new operatorRegistry.ARITHMETIC_INCREMENT(),
+            lintegers,
+          ])
+          .getRootType()
+      ).toBe("List");
+      globalMap.clear();
+      expect(
+        op
+          .getConditionalOutputType([
+            new operatorRegistry.LOGICAL_NOT(),
+            lbooleans,
+          ])
+          .getRootType()
+      ).toBe("List");
+      globalMap.clear();
+
+      const curriedOperatorValue =
+        new operatorRegistry.OPERATOR_APPLY().evaluate(
+          new operatorRegistry.LOGICAL_AND(),
+          bTrue
+        ) as Operator<IntegratedValue, IntegratedValue>;
+      expect(
+        op
+          .getConditionalOutputType([curriedOperatorValue, lbooleans])
+          .getRootType()
+      ).toBe("List");
+    });
+
+    it("testValidateTypesPredicateConjunction", () => {
+      const op = new operatorRegistry.OPERATOR_CONJUNCTION();
+      expect(op.validateTypes([])).not.toBeNull();
+      expect(op.validateTypes([sigOperator])).not.toBeNull();
+      expect(op.validateTypes([sigOperator, sigBoolean])).not.toBeNull();
+      expect(op.validateTypes([sigOperator, sigOperator])).toBeNull();
+    });
+
+    it("testConditionalOutputTypesPredicateConjunction", () => {
+      const equalsTwo = new operatorRegistry.OPERATOR_APPLY().evaluate(
+        new operatorRegistry.RELATIONAL_EQUALS(),
+        i2
+      ) as Operator<any, any>;
+      const op = new operatorRegistry.OPERATOR_CONJUNCTION();
+      expect(
+        op.getConditionalOutputType([equalsTwo, equalsTwo]).getRootType()
+      ).toBe("Operator");
+    });
+
+    it("testValidateTypesPredicateDisjunction", () => {
+      const op = new operatorRegistry.OPERATOR_DISJUNCTION();
+      expect(op.validateTypes([])).not.toBeNull();
+      expect(op.validateTypes([sigOperator])).not.toBeNull();
+      expect(op.validateTypes([sigOperator, sigBoolean])).not.toBeNull();
+      expect(op.validateTypes([sigOperator, sigOperator])).toBeNull();
+    });
+
+    it("testConditionalOutputTypesPredicateDisjunction", () => {
+      const equalsTwo = new operatorRegistry.OPERATOR_APPLY().evaluate(
+        new operatorRegistry.RELATIONAL_EQUALS(),
+        i2
+      ) as Operator<any, any>;
+      const op = new operatorRegistry.OPERATOR_DISJUNCTION();
+      expect(
+        op.getConditionalOutputType([equalsTwo, equalsTwo]).getRootType()
+      ).toBe("Operator");
+    });
+
+    it("testValidateTypesPredicateNegation", () => {
+      const op = new operatorRegistry.OPERATOR_NEGATION();
+      expect(op.validateTypes([])).not.toBeNull();
+      expect(op.validateTypes([sigBoolean])).not.toBeNull();
+      expect(op.validateTypes([sigOperator])).toBeNull();
+    });
+
+    it("testConditionalOutputTypesPredicateNegation", () => {
+      const equalsTwo = new operatorRegistry.OPERATOR_APPLY().evaluate(
+        new operatorRegistry.RELATIONAL_EQUALS(),
+        i2
+      ) as Operator<any, any>;
+      const op = new operatorRegistry.OPERATOR_NEGATION();
+      expect(op.getConditionalOutputType([equalsTwo]).getRootType()).toBe(
+        "Operator"
+      );
+    });
+
+    it("testValidateTypesPredicatePipe", () => {
+      const op = new operatorRegistry.OPERATOR_PIPE();
+      expect(op.validateTypes([])).not.toBeNull();
+      expect(op.validateTypes([sigOperator])).not.toBeNull();
+      expect(op.validateTypes([sigOperator, sigBoolean])).not.toBeNull();
+      expect(op.validateTypes([sigOperator, sigOperator])).toBeNull();
+    });
+
+    it("testConditionalOutputTypesPredicatePipe", () => {
+      const op = new operatorRegistry.OPERATOR_PIPE();
+      expect(
+        op
+          .getConditionalOutputType([
+            new operatorRegistry.ARITHMETIC_INCREMENT(),
+            new operatorRegistry.ARITHMETIC_INCREMENT(),
+          ])
+          .getRootType()
+      ).toBe("Operator");
+    });
+
+    it("testValidateTypesPredicateFlip", () => {
+      const op = new operatorRegistry.OPERATOR_FLIP();
+      expect(op.validateTypes([])).not.toBeNull();
+      expect(op.validateTypes([sigBoolean])).not.toBeNull();
+      expect(op.validateTypes([sigOperator])).toBeNull();
+    });
+
+    it("testConditionalOutputTypesPredicateFlip", () => {
+      const lessThanFlipped = new operatorRegistry.OPERATOR_FLIP().evaluate(
+        new operatorRegistry.RELATIONAL_LT()
+      ) as Operator<any, any>;
+      const op = new operatorRegistry.OPERATOR_FLIP();
+      expect(op.getConditionalOutputType([lessThanFlipped]).getRootType()).toBe(
+        "Operator"
+      );
+    });
+
+    it("testValidateTypesFilter", () => {
+      const op = new operatorRegistry.OPERATOR_FILTER();
+      expect(op.validateTypes([])).not.toBeNull();
+      expect(op.validateTypes([sigOperator])).not.toBeNull();
+      expect(op.validateTypes([sigOperator, sigBoolean])).not.toBeNull();
+      expect(op.validateTypes([sigOperator, sigList])).toBeNull();
+    });
+
+    it("testConditionalOutputTypesFilter", () => {
+      const equalsTwo = new operatorRegistry.OPERATOR_APPLY().evaluate(
+        new operatorRegistry.RELATIONAL_EQUALS(),
+        i2
+      ) as Operator<any, any>;
+      const op = new operatorRegistry.OPERATOR_FILTER();
+      expect(
+        op.getConditionalOutputType([equalsTwo, lintegers]).getRootType()
+      ).toBe("List");
+    });
+
+    it("testValidateTypesReduce", () => {
+      const op = new operatorRegistry.OPERATOR_REDUCE();
+      expect(op.validateTypes([])).not.toBeNull();
+      expect(op.validateTypes([sigOperator])).not.toBeNull();
+      expect(op.validateTypes([sigOperator, sigBoolean])).not.toBeNull();
+      expect(
+        op.validateTypes([sigOperator, sigBoolean, sigInteger])
+      ).not.toBeNull();
+      expect(op.validateTypes([sigOperator, sigList, sigAny])).toBeNull();
+    });
+
+    it("testConditionalOutputTypesReduce", () => {
+      const op = new operatorRegistry.OPERATOR_REDUCE();
+      expect(
+        op
+          .getConditionalOutputType([
+            new operatorRegistry.ARITHMETIC_ADDITION(),
+            lintegers,
+            i0,
+          ])
+          .getRootType()
+      ).toBe("Number");
+    });
+
+    it("testValidateTypesReduce1", () => {
+      const op = new operatorRegistry.OPERATOR_REDUCE1();
+      expect(op.validateTypes([])).not.toBeNull();
+      expect(op.validateTypes([sigOperator])).not.toBeNull();
+      expect(op.validateTypes([sigOperator, sigBoolean])).not.toBeNull();
+      expect(
+        op.validateTypes([sigOperator, sigBoolean, sigInteger])
+      ).not.toBeNull();
+      expect(op.validateTypes([sigOperator, sigList])).toBeNull();
+    });
+
+    it("testConditionalOutputTypesReduce1", () => {
+      const op = new operatorRegistry.OPERATOR_REDUCE1();
+      expect(
+        op
+          .getConditionalOutputType([
+            new operatorRegistry.ARITHMETIC_ADDITION(),
+            lintegers,
+          ])
+          .getRootType()
+      ).toBe("Number");
+    });
   });
 });

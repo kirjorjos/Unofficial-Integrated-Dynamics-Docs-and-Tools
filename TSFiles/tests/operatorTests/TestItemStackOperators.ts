@@ -846,10 +846,10 @@ describe("TestItemStackOperators", () => {
   });
 
   /**
-   * ----------------------------------- ISRAWITEMEQUAL -----------------------------------
+   * ----------------------------------- ISITEMEQUALNONBT -----------------------------------
    */
 
-  it("testItemStackIsRawItemEqual", () => {
+  it("testItemStackIsItemEqualNoNBT", () => {
     const res1 =
       new operatorRegistry.OBJECT_ITEMSTACK_ISRAWITEMEQUAL().evaluate(
         iHoe,
@@ -880,7 +880,7 @@ describe("TestItemStackOperators", () => {
     expect((res4 as iBoolean).valueOf()).toBe(true);
   });
 
-  it("testInvalidInputIsRawItemEqualIsRawItemEqualLarge", () => {
+  it("testInvalidInputIsItemEqualNoNBTLarge", () => {
     expect(() => {
       new operatorRegistry.OBJECT_ITEMSTACK_ISRAWITEMEQUAL().evaluate(
         iApple,
@@ -890,13 +890,13 @@ describe("TestItemStackOperators", () => {
     }).toThrow();
   });
 
-  it("testInvalidInputIsRawItemEqualIsRawItemEqualSmall", () => {
+  it("testInvalidInputIsItemEqualNoNBTSmall", () => {
     expect(() => {
       new operatorRegistry.OBJECT_ITEMSTACK_ISRAWITEMEQUAL().evaluate(iApple);
     }).toThrow();
   });
 
-  it("testInvalidInputTypeIsRawItemEqual", () => {
+  it("testInvalidInputTypeIsItemEqualNoNBT", () => {
     expect(() => {
       new operatorRegistry.OBJECT_ITEMSTACK_ISRAWITEMEQUAL().evaluate(
         DUMMY_VARIABLE,

@@ -72,6 +72,32 @@ export class Operator<I extends IntegratedValue, O extends IntegratedValue>
     this.baseDisplayName = baseDisplayName ?? this.interactName;
   }
 
+  validateTypes(input: ParsedSignature[]): string | null {
+    const arity = this.parsedSignature.getArity();
+    if (input.length !== arity) {
+      return `Operator expected ${arity} args, got ${input.length}`;
+    }
+
+    let currentSignature = this.parsedSignature;
+    let i = 1;
+    for (const sig of input) {
+      currentSignature = currentSignature.apply(sig);
+      if (currentSignature.errorInfo) {
+        return `Type mismatch at argument ${i}: ${currentSignature.errorInfo.message}`;
+      }
+      i++;
+    }
+    return null;
+  }
+
+  getConditionalOutputType(input: IntegratedValue[]): ParsedSignature {
+    let currentSignature = this.parsedSignature;
+    for (const val of input) {
+      currentSignature = currentSignature.apply(val.getSignatureNode());
+    }
+    return currentSignature.rewrite();
+  }
+
   evaluate(...args: IntegratedValue[]) {
     const arity = this.parsedSignature.getArity();
     if (args.length !== arity) {

@@ -276,6 +276,24 @@ describe("TestParseOperators", () => {
       );
       expect((res1 as Double).toJSNumber()).toBe(Number.MAX_VALUE);
     });
+    it("testParseDoubleMaxP1", () => {
+      const res1 = new operatorRegistry.PARSE_DOUBLE().evaluate(
+        s("1.7976931348623157e+309")
+      );
+      expect((res1 as Double).toJSNumber()).toBe(Infinity);
+    });
+    it("testParseDoubleMin", () => {
+      const res1 = new operatorRegistry.PARSE_DOUBLE().evaluate(
+        s(String(Number.MIN_VALUE))
+      );
+      expect((res1 as Double).toJSNumber()).toBe(Number.MIN_VALUE);
+    });
+    it("testParseDoubleMinM1", () => {
+      const res1 = new operatorRegistry.PARSE_DOUBLE().evaluate(
+        s("-1.7976931348623157e+309")
+      );
+      expect((res1 as Double).toJSNumber()).toBe(-Infinity);
+    });
     it("testParseDoubleInf", () => {
       const res1 = new operatorRegistry.PARSE_DOUBLE().evaluate(s("Inf"));
       expect((res1 as Double).toJSNumber()).toBe(Infinity);

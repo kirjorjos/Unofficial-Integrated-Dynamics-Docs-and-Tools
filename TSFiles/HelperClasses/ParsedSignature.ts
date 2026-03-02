@@ -31,6 +31,10 @@ export class ParsedSignature {
   private inputCache = [] as ParsedSignature[];
   private outputCache = [] as ParsedSignature[];
 
+  public static resetTypeIDCounter() {
+    ParsedSignature.maxTypeID = 0;
+  }
+
   constructor(ast: TypeRawSignatureAST.RawSignatureNode, normalize = true) {
     this.ast = normalize ? this._normalize(ast) : ast;
   }

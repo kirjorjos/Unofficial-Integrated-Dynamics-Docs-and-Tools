@@ -12,7 +12,7 @@ import { NbtPathExpressionExecutionContext } from "./parse/NBTPathExecutionConte
  * an NBT path expression against an NBT tag.
  */
 export class NbtPathExpressionMatches {
-  EMPTY = NbtPathExpressionMatches.forAll();
+  public static readonly EMPTY = NbtPathExpressionMatches.forAll();
 
   private matches: Array<NbtPathExpressionExecutionContext>;
 

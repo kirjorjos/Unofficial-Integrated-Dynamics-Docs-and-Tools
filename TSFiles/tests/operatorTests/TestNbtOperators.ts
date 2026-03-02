@@ -19,6 +19,7 @@ import { iBoolean } from "../../IntegratedDynamicsClasses/typeWrappers/iBoolean"
 import { iArrayEager } from "../../IntegratedDynamicsClasses/typeWrappers/iArrayEager";
 import { iNull } from "../../IntegratedDynamicsClasses/typeWrappers/iNull";
 import { NullTag } from "../../IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/NullTag";
+import { Tag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/Tag";
 
 describe("TestNbtOperators", () => {
   let sa: iString,
@@ -2731,6 +2732,184 @@ describe("TestNbtOperators", () => {
   it("testInvalidInputTypeNbtFromLongList", () => {
     expect(() => {
       new operatorRegistry.NBT_FROM_LONG_LIST().evaluate(DUMMY_VARIABLE);
+    }).toThrow();
+  });
+
+  /**
+   * ----------------------------------- PATH_MATCH_FIRST -----------------------------------
+   */
+
+  it("testNbtPathMatchFirst", () => {
+    let tag3 = new CompoundTag({});
+    let tag4 = new StringTag(new iString("x"));
+    tag3 = tag3.set("b", tag4);
+    let tag2 = new CompoundTag({});
+    tag2 = tag2.set("a", tag3);
+
+    const res1 = new operatorRegistry.NBT_PATH_MATCH_FIRST().evaluate(
+      new iString("$.a.b"),
+      tag2
+    );
+    expect(res1).toBeInstanceOf(Tag);
+    expect((res1 as Tag<any>).equals(tag4).valueOf()).toBe(true);
+
+    const res2 = new operatorRegistry.NBT_PATH_MATCH_FIRST().evaluate(
+      new iString("$.a.b"),
+      nempty
+    );
+    expect((res2 as Tag<any>).valueOf().valueOf()).toBeNull();
+  });
+
+  it("testInvalidInputNbtPathMatchFirstInvalidPathExpression", () => {
+    expect(() => {
+      new operatorRegistry.NBT_PATH_MATCH_FIRST().evaluate(nstring, nempty);
+    }).toThrow();
+  });
+
+  it("testInvalidInputNbtPathMatchFirstSizeLarge", () => {
+    expect(() => {
+      new operatorRegistry.NBT_PATH_MATCH_FIRST().evaluate(
+        new iString("$.a.b"),
+        nempty,
+        nempty
+      );
+    }).toThrow();
+  });
+
+  it("testInvalidInputNbtPathMatchFirstSizeSmall", () => {
+    expect(() => {
+      new operatorRegistry.NBT_PATH_MATCH_FIRST().evaluate(
+        new iString("$.a.b")
+      );
+    }).toThrow();
+  });
+
+  it("testInvalidInputTypeNbtPathMatchFirst", () => {
+    expect(() => {
+      new operatorRegistry.NBT_PATH_MATCH_FIRST().evaluate(
+        DUMMY_VARIABLE,
+        DUMMY_VARIABLE
+      );
+    }).toThrow();
+  });
+
+  /**
+   * ----------------------------------- PATH_MATCH_ALL -----------------------------------
+   */
+
+  it("testNbtPathMatchAll", () => {
+    let tag3 = new CompoundTag({});
+    let tag4 = new StringTag(new iString("x"));
+    let tag5 = new StringTag(new iString("y"));
+    tag3 = tag3.set("b", tag4);
+    tag3 = tag3.set("c", tag5);
+    let tag2 = new CompoundTag({});
+    tag2 = tag2.set("a", tag3);
+
+    const res1 = new operatorRegistry.NBT_PATH_MATCH_ALL().evaluate(
+      new iString("$.a.*"),
+      tag2
+    );
+    expect(res1).toBeInstanceOf(iArrayEager);
+    expect((res1 as iArrayEager<Tag<any>>).size().toJSNumber()).toBe(2);
+    expect(
+      (res1 as iArrayEager<Tag<any>>).get(new Integer(0)).equals(tag4).valueOf()
+    ).toBe(true);
+    expect(
+      (res1 as iArrayEager<Tag<any>>).get(new Integer(1)).equals(tag5).valueOf()
+    ).toBe(true);
+
+    const res2 = new operatorRegistry.NBT_PATH_MATCH_ALL().evaluate(
+      new iString("$.a.*"),
+      nempty
+    );
+    expect((res2 as iArrayEager<Tag<any>>).size().toJSNumber()).toBe(0);
+  });
+
+  it("testInvalidInputNbtPathMatchAllInvalidPathExpression", () => {
+    expect(() => {
+      new operatorRegistry.NBT_PATH_MATCH_ALL().evaluate(nstring, nempty);
+    }).toThrow();
+  });
+
+  it("testInvalidInputNbtPathMatchAllSizeLarge", () => {
+    expect(() => {
+      new operatorRegistry.NBT_PATH_MATCH_ALL().evaluate(
+        new iString("$.a.*"),
+        nempty,
+        nempty
+      );
+    }).toThrow();
+  });
+
+  it("testInvalidInputNbtPathMatchAllSizeSmall", () => {
+    expect(() => {
+      new operatorRegistry.NBT_PATH_MATCH_ALL().evaluate(new iString("$.a.*"));
+    }).toThrow();
+  });
+
+  it("testInvalidInputTypeNbtPathMatchAll", () => {
+    expect(() => {
+      new operatorRegistry.NBT_PATH_MATCH_ALL().evaluate(
+        DUMMY_VARIABLE,
+        DUMMY_VARIABLE
+      );
+    }).toThrow();
+  });
+
+  /**
+   * ----------------------------------- PATH_TEST -----------------------------------
+   */
+
+  it("testNbtPathTest", () => {
+    let tag3 = new CompoundTag({});
+    let tag4 = new StringTag(new iString("x"));
+    tag3 = tag3.set("b", tag4);
+    let tag2 = new CompoundTag({});
+    tag2 = tag2.set("a", tag3);
+
+    const res1 = new operatorRegistry.NBT_PATH_TEST().evaluate(
+      new iString("$.a.b"),
+      tag2
+    );
+    expect(res1).toBeInstanceOf(iBoolean);
+    expect((res1 as iBoolean).valueOf()).toBe(true);
+
+    const res2 = new operatorRegistry.NBT_PATH_TEST().evaluate(
+      new iString("$.a.b"),
+      nempty
+    );
+    expect((res2 as iBoolean).valueOf()).toBe(false);
+  });
+
+  it("testInvalidInputNbtPathTestInvalidPathExpression", () => {
+    expect(() => {
+      new operatorRegistry.NBT_PATH_TEST().evaluate(nstring, nempty);
+    }).toThrow();
+  });
+
+  it("testInvalidInputNbtPathTestSizeLarge", () => {
+    expect(() => {
+      new operatorRegistry.NBT_PATH_TEST().evaluate(
+        new iString("$.a.b"),
+        nempty,
+        nempty
+      );
+    }).toThrow();
+  });
+
+  it("testInvalidInputNbtPathTestSizeSmall", () => {
+    expect(() => {
+      new operatorRegistry.NBT_PATH_TEST().evaluate(new iString("$.a.b"));
+    }).toThrow();
+  });
+
+  it("testInvalidInputTypeNbtPathTest", () => {
+    expect(() => {
+      new operatorRegistry.NBT_PATH_TEST().evaluate(
+        DUMMY_VARIABLE,
+        DUMMY_VARIABLE
+      );
     }).toThrow();
   });
 });

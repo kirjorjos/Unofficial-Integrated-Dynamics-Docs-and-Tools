@@ -13,6 +13,12 @@ export class TypeMap {
     this.aliases = new Map();
   }
 
+  clear() {
+    this.aliases.clear();
+    TypeMap.maxVarID = 0;
+    TypeMap.unificationVersion++;
+  }
+
   findBaseID(typeID: number) {
     while (this.aliases.has(typeID)) {
       let newValue = this.aliases.get(typeID);
