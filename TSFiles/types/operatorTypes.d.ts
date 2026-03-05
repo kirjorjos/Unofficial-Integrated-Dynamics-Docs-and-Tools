@@ -1,6 +1,6 @@
 import { Operator } from "IntegratedDynamicsClasses/operators/Operator";
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
-import { operatorRegistry } from "TSFiles/IntegratedDynamicsClasses/registries/operatorRegistry";
+import { operatorRegistry } from "IntegratedDynamicsClasses/registries/operatorRegistry";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 
 declare global {
