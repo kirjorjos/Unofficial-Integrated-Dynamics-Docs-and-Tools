@@ -1,27 +1,23 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { BaseOperator } from "../BaseOperator";
-import { TypeMap } from "HelperClasses/TypeMap";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 import { CompoundTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
 
 export class OPERATOR_PARSE_NBT extends BaseOperator<iString, CompoundTag> {
-  constructor(globalMap: TypeMap) {
+  static override internalName =
+    "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.nbt" as const;
+  constructor() {
     super({
-      internalName:
-        "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.nbt",
       nicknames: ["parseNBT"],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "NBT",
-          },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "String",
         },
-        globalMap
-      ),
+        to: {
+          type: "NBT",
+        },
+      }),
       symbol: "parse_nbt",
       interactName: "stringParseAsNbt",
       function: (data: iString): CompoundTag => {

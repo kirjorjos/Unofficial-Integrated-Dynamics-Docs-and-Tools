@@ -1,8 +1,16 @@
-import { operatorRegistry } from "./IntegratedDynamicsClasses/operators/operatorRegistry";
+import { blockRegistry } from "IntegratedDynamicsClasses/registries/blockRegistry";
+import { fluidRegistry } from "IntegratedDynamicsClasses/registries/fluidRegistry";
+import { itemRegistry } from "IntegratedDynamicsClasses/registries/itemRegistry";
+import { entityRegistry } from "IntegratedDynamicsClasses/registries/entityRegistry";
+import { operatorRegistry } from "IntegratedDynamicsClasses/registries/operatorRegistry";
 // import { ASTtoNBT } from "./ASTTransformers/ASTtoNBT";
 // import { NBTtoAST } from "./ASTTransformers/NBTtoAST";
 
 (window as any).operatorRegistry = operatorRegistry;
+(window as any).itemRegistry = itemRegistry;
+(window as any).fluidRegistry = fluidRegistry;
+(window as any).blockRegistry = blockRegistry;
+(window as any).entityRegistry = entityRegistry;
 
 //  AST to NBT
 window.addEventListener("DOMContentLoaded", () => {

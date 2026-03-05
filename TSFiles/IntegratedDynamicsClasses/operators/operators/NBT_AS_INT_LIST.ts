@@ -1,33 +1,30 @@
-import { TypeMap } from "HelperClasses/TypeMap";
-import { ListTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ListTag";
 import { Tag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/Tag";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Operator } from "../Operator";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 import { iArrayEager } from "IntegratedDynamicsClasses/typeWrappers/iArrayEager";
+import { ListTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ListTag";
+import { Integer } from "JavaNumberClasses/Integer";
 
 export class OPERATOR_NBT_AS_INT_LIST extends BaseOperator<ListTag, Integer> {
-  constructor(globalMap: TypeMap) {
+  static override internalName = "integrateddynamics:nbt_as_int_list" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:nbt_as_int_list",
       nicknames: ["nbtAsIntList"],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "NBT",
-          },
-          to: { type: "List", listType: { type: "Integer" } },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "NBT",
         },
-        globalMap
-      ),
+        to: { type: "List", listType: { type: "Integer" } },
+      }),
       symbol: "NBT.as_int_list",
       interactName: "nbtAsIntList",
       function: (nbt: ListTag): iArray<Integer> => {
-        if (nbt.getType() === Tag.TAG_LIST) {
+        if (nbt.getType() === Tag.TAG_INT_ARRAY) {
           const list = nbt.valueOf();
-          if (!list.every((e) => e.getType() == Tag.TAG_INT))
+          if (!list.every((e: Tag<any>) => e.getType() == Tag.TAG_INT))
             return new iArrayEager<Integer>([]);
           return list.map(
             new Operator({
@@ -35,14 +32,11 @@ export class OPERATOR_NBT_AS_INT_LIST extends BaseOperator<ListTag, Integer> {
                 IntegratedValue,
                 IntegratedValue
               >,
-              parsedSignature: new ParsedSignature(
-                {
-                  type: "Function",
-                  from: { type: "Any", typeID: 1 },
-                  to: { type: "Any", typeID: 2 },
-                } as TypeRawSignatureAST.RawSignatureDefiniteValue,
-                globalMap
-              ),
+              parsedSignature: new ParsedSignature({
+                type: "Function",
+                from: { type: "Any", typeID: 1 },
+                to: { type: "Any", typeID: 2 },
+              } as TypeRawSignatureAST.RawSignatureDefiniteValue),
             })
           ) as iArray<Integer>;
         } else {

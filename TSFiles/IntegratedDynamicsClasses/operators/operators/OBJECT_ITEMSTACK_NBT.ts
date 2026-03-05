@@ -1,32 +1,28 @@
-import { TypeMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
-import { CompoundTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
 import { Item } from "IntegratedDynamicsClasses/Item";
+import { Tag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/Tag";
 
 export class OPERATOR_OBJECT_ITEMSTACK_NBT extends BaseOperator<
   Item,
-  CompoundTag
+  Tag<IntegratedValue>
 > {
-  constructor(globalMap: TypeMap) {
+  static override internalName = "integrateddynamics:itemstack_nbt" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:itemstack_nbt",
       nicknames: ["ItemstackNbt", "itemstack_nbt", "itemstackNBT", "itemNBT"],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Item",
-          },
-          to: {
-            type: "NBT",
-          },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Item",
         },
-        globalMap
-      ),
+        to: {
+          type: "NBT",
+        },
+      }),
       symbol: "nbt",
       interactName: "itemStackNBT",
-      function: (item: Item): CompoundTag => {
+      function: (item: Item): Tag<IntegratedValue> => {
         return item.getNBT();
       },
     });

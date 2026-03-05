@@ -1,4 +1,3 @@
-import { TypeMap } from "HelperClasses/TypeMap";
 import { CompoundTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
@@ -9,34 +8,32 @@ export class OPERATOR_NBT_COMPOUND_VALUE_TYPE extends BaseOperator<
   CompoundTag,
   Operator<iString, iString>
 > {
-  constructor(globalMap: TypeMap) {
+  static override internalName =
+    "integrateddynamics:nbt_compound_type" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:nbt_compound_type",
       nicknames: ["nbtCompoundValueType", "NBTValueType"],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "NBT",
+        },
+        to: {
           type: "Function",
           from: {
-            type: "NBT",
+            type: "String",
           },
           to: {
-            type: "Function",
-            from: {
-              type: "String",
-            },
-            to: {
-              type: "String",
-            },
+            type: "String",
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "NBT{}.type",
       interactName: "nbtType",
       function: (nbt: CompoundTag): TypeLambda<iString, iString> => {
         return (key: iString): iString => {
           if (!nbt.has(key)) {
-            throw new Error(`${key} does not exist in ${JSON.stringify(nbt)}`);
+            return new iString("null");
           }
           return nbt.get(key).getTypeAsString();
         };

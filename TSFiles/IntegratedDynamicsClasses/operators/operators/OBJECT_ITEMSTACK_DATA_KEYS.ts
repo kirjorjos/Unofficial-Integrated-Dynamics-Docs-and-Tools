@@ -1,37 +1,40 @@
-import { TypeMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 import { Item } from "IntegratedDynamicsClasses/Item";
+import { CompoundTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
+import { iArrayEager } from "IntegratedDynamicsClasses/typeWrappers/iArrayEager";
 
 export class OPERATOR_OBJECT_ITEMSTACK_DATA_KEYS extends BaseOperator<
   Item,
   iArray<iString>
 > {
-  constructor(globalMap: TypeMap) {
+  static override internalName =
+    "integrateddynamics:itemstack_datakeys" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:itemstack_datakeys",
       nicknames: [
         "ItemstackDatakeys",
         "itemstack_data_keys",
         "itemstackDataKeys",
         "itemNBTKeys",
       ],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Item",
-          },
-          to: { type: "List", listType: { type: "String" } },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Item",
         },
-        globalMap
-      ),
+        to: { type: "List", listType: { type: "String" } },
+      }),
       symbol: "data_keys",
       interactName: "itemStackDataKeys",
       function: (item: Item): iArray<iString> => {
-        return item.getNBT().getAllKeys();
+        const nbt = item.getNBT();
+        if (nbt instanceof CompoundTag) {
+          return nbt.getAllKeys();
+        }
+        return new iArrayEager<iString>([]);
       },
     });
   }

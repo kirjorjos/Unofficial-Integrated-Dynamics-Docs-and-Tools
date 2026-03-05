@@ -1,7 +1,6 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { BaseOperator } from "../BaseOperator";
 import { Operator } from "../Operator";
-import { TypeMap } from "HelperClasses/TypeMap";
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 
 export class OPERATOR_OPERATOR_CONJUNCTION extends BaseOperator<
@@ -11,12 +10,22 @@ export class OPERATOR_OPERATOR_CONJUNCTION extends BaseOperator<
     Operator<IntegratedValue, iBoolean>
   >
 > {
-  constructor(globalMap: TypeMap) {
+  static override internalName =
+    "integrateddynamics:operator_conjunction" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:operator_conjunction",
       nicknames: ["operatorConjunction", "conjunction"],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Operator",
+          obscured: {
+            type: "Function",
+            from: { type: "Any", typeID: 1 },
+            to: { type: "Boolean" },
+          },
+        },
+        to: {
           type: "Function",
           from: {
             type: "Operator",
@@ -27,27 +36,15 @@ export class OPERATOR_OPERATOR_CONJUNCTION extends BaseOperator<
             },
           },
           to: {
-            type: "Function",
-            from: {
-              type: "Operator",
-              obscured: {
-                type: "Function",
-                from: { type: "Any", typeID: 1 },
-                to: { type: "Boolean" },
-              },
-            },
-            to: {
-              type: "Operator",
-              obscured: {
-                type: "Function",
-                from: { type: "Any", typeID: 1 },
-                to: { type: "Boolean" },
-              },
+            type: "Operator",
+            obscured: {
+              type: "Function",
+              from: { type: "Any", typeID: 1 },
+              to: { type: "Boolean" },
             },
           },
         },
-        globalMap
-      ),
+      }),
       symbol: ".&&.",
       interactName: "operatorConjunction",
       function: (

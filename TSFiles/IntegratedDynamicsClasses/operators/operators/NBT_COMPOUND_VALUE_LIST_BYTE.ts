@@ -1,61 +1,75 @@
-import { TypeMap } from "HelperClasses/TypeMap";
 import { CompoundTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
-import { ListTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ListTag";
 import { Tag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/Tag";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
-import { iArrayEager } from "IntegratedDynamicsClasses/typeWrappers/iArrayEager";
 import { Integer } from "JavaNumberClasses/Integer";
-import { ByteTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ByteTag";
 import { Operator } from "../Operator";
+import { ListTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ListTag";
+import { ByteArrayTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ByteArrayTag";
+import { iArrayEager } from "IntegratedDynamicsClasses/typeWrappers/iArrayEager";
+import { NullTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/NullTag";
+import { ByteTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ByteTag";
 
 export class OPERATOR_NBT_COMPOUND_VALUE_LIST_BYTE extends BaseOperator<
   CompoundTag,
   Operator<iString, iArray<Integer>>
 > {
-  constructor(globalMap: TypeMap) {
+  static override internalName =
+    "integrateddynamics:nbt_compound_value_list_byte" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:nbt_compound_value_list_byte",
       nicknames: ["nbtCompoundValueListByte", "compoundValueListByte"],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "NBT",
+        },
+        to: {
           type: "Function",
           from: {
-            type: "NBT",
+            type: "String",
           },
-          to: {
-            type: "Function",
-            from: {
-              type: "String",
-            },
-            to: { type: "List", listType: { type: "Integer" } },
-          },
+          to: { type: "List", listType: { type: "Integer" } },
         },
-        globalMap
-      ),
+      }),
       symbol: "NBT{}.get_list_byte",
       interactName: "nbtGetListByte",
-      function: (nbt: CompoundTag) => {
+      function: (nbt: CompoundTag): TypeLambda<iString, iArray<Integer>> => {
         return (key: iString): iArray<Integer> => {
-          let value = nbt.get(key) as ListTag;
-          if (value.getType() !== Tag.TAG_LIST)
-            return new iArrayEager([Integer.ZERO]);
-          let list = value.valueOf() as iArray<ByteTag>;
-          return list.map(
-            new Operator({
-              function: (e: ByteTag) => e.valueOf() as Integer,
-              parsedSignature: new ParsedSignature(
-                {
+          let value = nbt.get(key);
+          if (value instanceof ByteArrayTag) {
+            return value.valueOf();
+          }
+          if (value instanceof NullTag) {
+            return new iArrayEager([]);
+          }
+          if (value instanceof ListTag) {
+            let list = value.getArray();
+            if (!list.every((e) => e instanceof ByteTag))
+              throw new Error(
+                `${key.valueOf()} is not a list of byte in ${JSON.stringify(
+                  nbt.toJSON()
+                )}`
+              );
+            return list.map(
+              new Operator({
+                function: (e: Tag<IntegratedValue>) =>
+                  e.valueOf() as IntegratedValue,
+                parsedSignature: new ParsedSignature({
                   type: "Function",
                   from: { type: "NBT" },
                   to: { type: "Integer" },
-                },
-                globalMap
-              ),
-            })
-          ) as iArray<Integer>;
+                }),
+              })
+            ) as iArray<Integer>;
+          }
+          throw new Error(
+            `${key.valueOf()} is not a list of byte in ${JSON.stringify(
+              nbt.toJSON()
+            )}`
+          );
         };
       },
     });

@@ -1,37 +1,32 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { BaseOperator } from "../BaseOperator";
-import { TypeMap } from "HelperClasses/TypeMap";
 import { Integer } from "JavaNumberClasses/Integer";
+import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 
-export class OPERATOR_PARSE_INTEGER extends BaseOperator<
-  IntegratedValue,
-  Integer
-> {
-  constructor(globalMap: TypeMap) {
+export class OPERATOR_PARSE_INTEGER extends BaseOperator<iString, Integer> {
+  static override internalName =
+    "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.integer" as const;
+  constructor() {
     super({
-      internalName:
-        "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.integer",
       nicknames: ["parseInteger"],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Any",
-            typeID: 1,
-          },
-          to: {
-            type: "Integer",
-          },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "String",
         },
-        globalMap
-      ),
+        to: {
+          type: "Integer",
+        },
+      }),
       symbol: "parse_integer",
       interactName: "stringParseAsInteger",
-      function: (data: IntegratedValue): Integer => {
+      function: (data: iString): Integer => {
         try {
-          return new Integer(data as Integer);
-        } catch (e) {
-          return Integer.ZERO;
+          return new Integer(data.valueOf());
+        } catch (e: any) {
+          throw new Error(
+            `Could not parse integer from "${data.valueOf()}": ${e.message}`
+          );
         }
       },
     });

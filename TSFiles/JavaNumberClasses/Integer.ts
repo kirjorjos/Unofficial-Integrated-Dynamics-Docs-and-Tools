@@ -1,13 +1,17 @@
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { Long } from "./Long";
 import { Double } from "./Double";
+import { ParsedSignature } from "HelperClasses/ParsedSignature";
+import { Named } from "IntegratedDynamicsClasses/Named";
+import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 
-export class Integer implements NumberBase<Integer> {
+export class Integer implements NumberBase<Integer>, Named {
+  private _signatureCache: ParsedSignature | null = null;
   readonly num: number;
 
-  constructor(num: TypeNumericString | number | Integer) {
+  constructor(num: string | number | Integer) {
     if (num instanceof Integer) num = num.toJSNumber();
-    if (typeof num === "string") num = parseInt(num);
+    if (typeof num === "string") num = Integer.parseInteger(num);
     this.num = Integer.limitToInteger(num);
   }
 
@@ -31,6 +35,10 @@ export class Integer implements NumberBase<Integer> {
 
   toType(value: TypeNumber) {
     return value.toInteger();
+  }
+
+  toDecimal() {
+    return `${this.num}`;
   }
 
   // Integer → Long
@@ -64,10 +72,16 @@ export class Integer implements NumberBase<Integer> {
   }
 
   divide(num: TypeNumber): Integer {
+    if (num.toJSNumber() === 0) {
+      throw new Error("Division by zero");
+    }
     return new Integer(this.toJSNumber() / num.toJSNumber());
   }
 
   mod(num: TypeNumber): Integer {
+    if (num.toJSNumber() === 0) {
+      throw new Error("Division by zero");
+    }
     return new Integer(this.toJSNumber() % num.toJSNumber());
   }
 
@@ -140,11 +154,77 @@ export class Integer implements NumberBase<Integer> {
     return this.toInteger();
   }
 
-  getSignatureNode(): { type: "Integer" } {
-    return { type: "Integer" };
+  getSignatureNode(): ParsedSignature {
+    if (this._signatureCache) {
+      return this._signatureCache;
+    }
+    const newSignature = new ParsedSignature({ type: "Integer" }, false);
+    this._signatureCache = newSignature;
+    return newSignature;
+  }
+
+  getName(): iString {
+    return new iString(this.compact());
   }
 
   toJSNumber(): number {
-    return this.toJSNumber();
+    return this.num;
+  }
+
+  compact(): string {
+    const n = this.num;
+    if (n >= 1000000) {
+      const val = n / 1000000;
+      return val.toFixed(1).replace(/\.0$/, "") + "M";
+    }
+    if (n >= 1000) {
+      const val = n / 1000;
+      return val.toFixed(1).replace(/\.0$/, "") + "K";
+    }
+    return n.toString();
+  }
+
+  private static parseInteger(s: string): number {
+    s = s.trim();
+    if (s.length === 0) {
+      throw new Error("Zero length string");
+    }
+    let i = 0;
+    let radix = 10;
+    let negative = false;
+
+    const firstChar = s.charAt(0);
+    if (firstChar === "-") {
+      negative = true;
+      i++;
+    } else if (firstChar === "+") {
+      i++;
+    }
+
+    if (s.toLowerCase().startsWith("0x", i)) {
+      i += 2;
+      radix = 16;
+    } else if (s.startsWith("#", i)) {
+      i++;
+      radix = 16;
+    } else if (s.startsWith("0", i) && s.length > i + 1) {
+      i++;
+      radix = 8;
+    }
+
+    const numStr = s.substring(i);
+    const result = parseInt(numStr, radix);
+
+    if (isNaN(result)) {
+      throw new Error("Invalid number format");
+    }
+
+    const finalResult = negative ? -result : result;
+
+    if ((finalResult | 0) !== finalResult) {
+      throw new Error(`Value "${s}" is out of range for a 32-bit integer`);
+    }
+
+    return finalResult;
   }
 }

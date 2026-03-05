@@ -1,4 +1,3 @@
-import { TypeMap } from "HelperClasses/TypeMap";
 import { CompoundTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
@@ -9,28 +8,26 @@ export class OPERATOR_NBT_COMPOUND_WITHOUT extends BaseOperator<
   CompoundTag,
   Operator<iString, CompoundTag>
 > {
-  constructor(globalMap: TypeMap) {
+  static override internalName =
+    "integrateddynamics:nbt_compound_without" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:nbt_compound_without",
       nicknames: ["nbtCompoundWithout", "NBTWithout"],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "NBT",
+        },
+        to: {
           type: "Function",
           from: {
-            type: "NBT",
+            type: "String",
           },
           to: {
-            type: "Function",
-            from: {
-              type: "String",
-            },
-            to: {
-              type: "NBT",
-            },
+            type: "NBT",
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "NBT{}.without",
       interactName: "nbtWithout",
       function: (nbt: CompoundTag): TypeLambda<iString, CompoundTag> => {

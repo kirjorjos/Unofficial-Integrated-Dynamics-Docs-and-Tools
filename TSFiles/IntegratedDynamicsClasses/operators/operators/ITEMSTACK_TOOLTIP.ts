@@ -1,4 +1,3 @@
-import { TypeMap } from "HelperClasses/TypeMap";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 import { BaseOperator } from "../BaseOperator";
@@ -8,9 +7,10 @@ export class OPERATOR_ITEMSTACK_TOOLTIP extends BaseOperator<
   Item,
   iArray<iString>
 > {
-  constructor(globalMap: TypeMap) {
+  static override internalName =
+    "integrateddynamics:itemstack_tooltip" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:itemstack_tooltip",
       nicknames: [
         "ItemstackTooltip",
         "itemstack_tooltip",
@@ -18,16 +18,13 @@ export class OPERATOR_ITEMSTACK_TOOLTIP extends BaseOperator<
         "item_tooltip",
         "itemTooltip",
       ],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Item",
-          },
-          to: { type: "List", listType: { type: "String" } },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Item",
         },
-        globalMap
-      ),
+        to: { type: "List", listType: { type: "String" } },
+      }),
       symbol: "tooltip",
       interactName: "itemstackTooltip",
       function: (item: Item): iArray<iString> => {

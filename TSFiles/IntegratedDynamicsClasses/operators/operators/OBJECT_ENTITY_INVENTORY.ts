@@ -1,4 +1,3 @@
-import { TypeMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Entity } from "IntegratedDynamicsClasses/Entity";
@@ -9,25 +8,22 @@ export class OPERATOR_OBJECT_ENTITY_INVENTORY extends BaseOperator<
   Entity,
   iArray<Item>
 > {
-  constructor(globalMap: TypeMap) {
+  static override internalName = "integrateddynamics:entity_inventory" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:entity_inventory",
       nicknames: [
         "EntityInventoryContents",
         "entity_inventory_contents",
         "entityInventoryContents",
         "entityInventoryContents",
       ],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Entity",
-          },
-          to: { type: "List", listType: { type: "Item" } },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Entity",
         },
-        globalMap
-      ),
+        to: { type: "List", listType: { type: "Item" } },
+      }),
       symbol: "entity_inventory",
       interactName: "entityInventory",
       function: (entity: Entity): iArray<Item> => {

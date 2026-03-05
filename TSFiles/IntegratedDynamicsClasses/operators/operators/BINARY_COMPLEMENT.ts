@@ -1,24 +1,21 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { BaseOperator } from "../BaseOperator";
-import { TypeMap } from "HelperClasses/TypeMap";
 
 export class OPERATOR_BINARY_COMPLEMENT extends BaseOperator<Integer, Integer> {
-  constructor(globalMap: TypeMap) {
+  static override internalName =
+    "integrateddynamics:binary_complement" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:binary_complement",
       nicknames: ["binaryComplement", "~", "integerComplement"],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Integer",
-          },
-          to: {
-            type: "Integer",
-          },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Integer",
         },
-        globalMap
-      ),
+        to: {
+          type: "Integer",
+        },
+      }),
       symbol: "~",
       interactName: "integerComplement",
       function: (int: Integer): Integer => {

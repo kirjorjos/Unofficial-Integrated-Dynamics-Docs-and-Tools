@@ -1,4 +1,3 @@
-import { TypeMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
@@ -8,31 +7,29 @@ export class OPERATOR_RELATIONAL_NOTEQUALS extends BaseOperator<
   IntegratedValue,
   Operator<IntegratedValue, iBoolean>
 > {
-  constructor(globalMap: TypeMap) {
+  static override internalName =
+    "integrateddynamics:relational_notequals" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:relational_notequals",
       nicknames: ["relationalNotequals", "!="],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: { type: "Any", typeID: 1 },
+        to: {
           type: "Function",
           from: { type: "Any", typeID: 1 },
           to: {
-            type: "Function",
-            from: { type: "Any", typeID: 1 },
-            to: {
-              type: "Boolean",
-            },
+            type: "Boolean",
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "!=",
       interactName: "anyNotEquals",
       function: (
         value1: IntegratedValue
       ): TypeLambda<IntegratedValue, iBoolean> => {
         return (value2: IntegratedValue): iBoolean => {
-          return new iBoolean(!value1.equals(value2));
+          return value1.equals(value2).negate();
         };
       },
     });

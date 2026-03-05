@@ -1,4 +1,3 @@
-import { TypeMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 
@@ -6,24 +5,21 @@ export class OPERATOR_GENERAL_IDENTITY extends BaseOperator<
   IntegratedValue,
   IntegratedValue
 > {
-  constructor(globalMap: TypeMap) {
+  static override internalName = "integrateddynamics:general_identity" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:general_identity",
       nicknames: ["generalIdentity", "id", "identity", "anyIdentity"],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Any",
-            typeID: 1,
-          },
-          to: {
-            type: "Any",
-            typeID: 1,
-          },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Any",
+          typeID: 1,
         },
-        globalMap
-      ),
+        to: {
+          type: "Any",
+          typeID: 1,
+        },
+      }),
       symbol: "id",
       interactName: "anyIdentity",
       function: (value: IntegratedValue): IntegratedValue => {

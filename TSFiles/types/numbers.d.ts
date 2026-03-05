@@ -1,6 +1,8 @@
 import type { Integer } from "JavaNumberClasses/Integer";
 import type { Long } from "JavaNumberClasses/Long";
 import type { Double } from "JavaNumberClasses/Double";
+import type { ParsedSignature } from "HelperClasses/ParsedSignature";
+import type { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 
 declare global {
   type Integer = InstanceType<typeof Integer>;
@@ -15,23 +17,24 @@ declare global {
     toDouble(): Double;
     toString(): TypeNumericString;
     leftShift(num: Integer): Self;
-    add(num: Self): Self;
-    subtract(num: Self): Self;
-    multiply(num: Self): Self;
-    divide(num: Self): Self;
-    max(num: Self): Self;
-    min(num: Self): Self;
-    mod(num: Self): Self;
-    gt(num: Self): boolean;
-    lt(num: Self): boolean;
-    gte(num: Self): boolean;
-    lte(num: Self): boolean;
+    add(num: TypeNumber): TypeNumber;
+    subtract(num: TypeNumber): TypeNumber;
+    multiply(num: TypeNumber): TypeNumber;
+    divide(num: TypeNumber): TypeNumber;
+    max(num: TypeNumber): TypeNumber;
+    min(num: TypeNumber): TypeNumber;
+    mod(num: TypeNumber): TypeNumber;
+    gt(num: TypeNumber): boolean;
+    lt(num: TypeNumber): boolean;
+    gte(num: TypeNumber): boolean;
+    lte(num: TypeNumber): boolean;
     equals(num: Self): iBoolean;
     round(): Integer;
     ceil(): Integer;
     floor(): Integer;
-    getSignatureNode(): { type: "Integer" | "Long" | "Double" };
+    getSignatureNode(): ParsedSignature;
     toJSNumber(): number;
+    getName(): iString;
   }
 
   type TypeNumber = Integer | Long | Double;

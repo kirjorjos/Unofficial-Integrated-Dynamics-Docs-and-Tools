@@ -1,4 +1,3 @@
-import { TypeMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
@@ -9,28 +8,25 @@ export class OPERATOR_STRING_CONTAINS extends BaseOperator<
   iString,
   Operator<iString, iBoolean>
 > {
-  constructor(globalMap: TypeMap) {
+  static override internalName = "integrateddynamics:string_contains" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:string_contains",
       nicknames: ["stringContains"],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "String",
+        },
+        to: {
           type: "Function",
           from: {
             type: "String",
           },
           to: {
-            type: "Function",
-            from: {
-              type: "String",
-            },
-            to: {
-              type: "Boolean",
-            },
+            type: "Boolean",
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "contains",
       interactName: "stringContains",
       function: (substring: iString): TypeLambda<iString, iBoolean> => {

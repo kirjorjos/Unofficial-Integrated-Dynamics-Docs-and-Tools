@@ -1,4 +1,3 @@
-import { TypeMap } from "HelperClasses/TypeMap";
 import { CompoundTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
 import { Integer } from "JavaNumberClasses/Integer";
 import { BaseOperator } from "../BaseOperator";
@@ -8,22 +7,20 @@ export class OPERATOR_NBT_COMPOUND_SIZE extends BaseOperator<
   CompoundTag,
   Integer
 > {
-  constructor(globalMap: TypeMap) {
+  static override internalName =
+    "integrateddynamics:nbt_compound_size" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:nbt_compound_size",
       nicknames: ["nbtCompoundSize", "NBTSize"],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "NBT",
-          },
-          to: {
-            type: "Integer",
-          },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "NBT",
         },
-        globalMap
-      ),
+        to: {
+          type: "Integer",
+        },
+      }),
       symbol: "NBT{}.size",
       interactName: "nbtSize",
       function: (nbt: CompoundTag): Integer => {

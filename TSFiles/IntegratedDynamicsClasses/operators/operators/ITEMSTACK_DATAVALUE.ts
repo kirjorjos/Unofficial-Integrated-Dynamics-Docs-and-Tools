@@ -1,15 +1,16 @@
-import { TypeMap } from "HelperClasses/TypeMap";
 import { NullTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/NullTag";
 import { Tag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/Tag";
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
+import { CompoundTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
 
 export class OPERATOR_ITEMSTACK_DATAVALUE extends BaseOperator<Item, iBoolean> {
-  constructor(globalMap: TypeMap) {
+  static override internalName =
+    "integrateddynamics:itemstack_datavalue" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:itemstack_datavalue",
       nicknames: [
         "ItemstackDataValue",
         "itemstack_data_value",
@@ -18,33 +19,30 @@ export class OPERATOR_ITEMSTACK_DATAVALUE extends BaseOperator<Item, iBoolean> {
         "itemDataValue",
         "itemNBTValue",
       ],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Item",
+        },
+        to: {
           type: "Function",
           from: {
-            type: "Item",
+            type: "String",
           },
           to: {
-            type: "Function",
-            from: {
-              type: "String",
-            },
-            to: {
-              type: "NBT",
-            },
+            type: "NBT",
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "data_value",
       interactName: "itemstackDataValue",
       function: (item: Item): TypeLambda<iString, Tag<IntegratedValue>> => {
         return (key: iString): Tag<IntegratedValue> => {
           const nbt = item.getNBT();
-          if (!nbt || !nbt.has(key)) {
-            return new NullTag();
+          if (nbt instanceof CompoundTag && nbt.has(key)) {
+            return nbt.get(key);
           }
-          return nbt.get(key);
+          return new NullTag();
         };
       },
     });

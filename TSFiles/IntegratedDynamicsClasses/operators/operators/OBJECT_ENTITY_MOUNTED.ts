@@ -1,31 +1,28 @@
-import { TypeMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
-import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
+import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 import { Entity } from "IntegratedDynamicsClasses/Entity";
+import { iArrayEager } from "IntegratedDynamicsClasses/typeWrappers/iArrayEager";
 
 export class OPERATOR_OBJECT_ENTITY_MOUNTED extends BaseOperator<
   Entity,
-  iBoolean
+  iArray<Entity>
 > {
-  constructor(globalMap: TypeMap) {
+  static override internalName = "integrateddynamics:entity_mounted" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:entity_mounted",
       nicknames: ["EntityMounted", "entitys_mounted", "entitysMounted"],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Entity",
-          },
-          to: { type: "Boolean" },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Entity",
         },
-        globalMap
-      ),
+        to: { type: "List", listType: { type: "Entity" } },
+      }),
       symbol: "mounted",
       interactName: "entityMounted",
-      function: (entity: Entity): iBoolean => {
-        return entity.isEntityMounted();
+      function: (entity: Entity): iArray<Entity> => {
+        return new iArrayEager(entity.getMountedEntities());
       },
     });
   }

@@ -7,7 +7,6 @@
 import { iArrayEager } from "IntegratedDynamicsClasses/typeWrappers/iArrayEager";
 import { INbtPathExpression } from "../INbtPathExpression";
 import { CompoundTag } from "../MinecraftClasses/CompoundTag";
-import { ListTag } from "../MinecraftClasses/ListTag";
 import { Tag } from "../MinecraftClasses/Tag";
 import { NbtParseException } from "../NbtParseException";
 import { NbtPath } from "../NbtPath";
@@ -17,6 +16,7 @@ import {
   INbtPathExpressionParseHandler,
 } from "./INbtPathExpressionParseHandler";
 import { NbtPathExpressionExecutionContext } from "./NBTPathExecutionContext";
+import { ListTag } from "../MinecraftClasses/ListTag";
 
 /**
  * A handler that handles filter expressions in the form of "[?(expression)]", such as "[?(@.childName)]" or "[?(@.childName &lt; 10)]".

@@ -1,4 +1,3 @@
-import { TypeMap } from "HelperClasses/TypeMap";
 import { FloatTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/FloatTag";
 import { Tag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/Tag";
 import { Double } from "JavaNumberClasses/Double";
@@ -6,26 +5,23 @@ import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 
 export class OPERATOR_NBT_AS_FLOAT extends BaseOperator<FloatTag, Double> {
-  constructor(globalMap: TypeMap) {
+  static override internalName = "integrateddynamics:nbt_as_float" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:nbt_as_float",
       nicknames: ["nbtAsFloat"],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "NBT",
-          },
-          to: {
-            type: "Double",
-          },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "NBT",
         },
-        globalMap
-      ),
+        to: {
+          type: "Double",
+        },
+      }),
       symbol: "NBT.as_float",
       interactName: "nbtAsFloat",
       function: (nbt: FloatTag): Double => {
-        if (nbt.getType() === Tag.TAG_DOUBLE) {
+        if (nbt.getType() === Tag.TAG_FLOAT) {
           return nbt.valueOf();
         } else {
           return Double.ZERO;

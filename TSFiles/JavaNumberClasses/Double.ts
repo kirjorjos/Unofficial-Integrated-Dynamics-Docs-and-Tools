@@ -1,13 +1,17 @@
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { Integer } from "./Integer";
 import { Long } from "./Long";
+import { ParsedSignature } from "HelperClasses/ParsedSignature";
+import { Named } from "IntegratedDynamicsClasses/Named";
+import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 
-export class Double implements NumberBase<Double> {
+export class Double implements NumberBase<Double>, Named {
+  private _signatureCache: ParsedSignature | null = null;
   private num: number;
 
-  constructor(data: TypeNumericString | number | Double) {
+  constructor(data: string | number | Double) {
     if (data instanceof Double) data = data.num;
-    if (typeof data === "string") data = parseFloat(data);
+    if (typeof data === "string") data = Double.parseDouble(data);
     this.num = data;
   }
 
@@ -19,6 +23,10 @@ export class Double implements NumberBase<Double> {
 
   getOrder(): 2 {
     return 2;
+  }
+
+  toDecimal() {
+    return `${this.num}`;
   }
 
   // Double → Double
@@ -56,10 +64,16 @@ export class Double implements NumberBase<Double> {
   }
 
   divide(num: TypeNumber): Double {
+    if (num.toJSNumber() === 0) {
+      throw new Error("Division by zero");
+    }
     return new Double(this.num / num.toJSNumber());
   }
 
   mod(num: TypeNumber): Double {
+    if (num.toJSNumber() === 0) {
+      throw new Error("Division by zero");
+    }
     return new Double(this.num % num.toJSNumber());
   }
 
@@ -112,11 +126,67 @@ export class Double implements NumberBase<Double> {
     return new Integer(Math.floor(this.num));
   }
 
-  getSignatureNode(): { type: "Double" } {
-    return { type: "Double" };
+  getSignatureNode(): ParsedSignature {
+    if (this._signatureCache) {
+      return this._signatureCache;
+    }
+    const newSignature = new ParsedSignature({ type: "Double" }, false);
+    this._signatureCache = newSignature;
+    return newSignature;
+  }
+
+  getName(): iString {
+    return new iString(this.compact());
   }
 
   toJSNumber(): number {
     return this.num;
+  }
+
+  compact(): string {
+    const n = this.num;
+    if (n >= 1000000) {
+      const val = n / 1000000;
+      return val.toFixed(1).replace(/\.0$/, "") + "M";
+    }
+    if (n >= 1000) {
+      const val = n / 1000;
+      return val.toFixed(1).replace(/\.0$/, "") + "K";
+    }
+    return n.toString();
+  }
+
+  private static parseDouble(s: string): number {
+    s = s.trim();
+    if (s.length === 0) {
+      throw new Error("Zero length string");
+    }
+
+    const infinityMatch = s.match(/^([+-])?\s*(Infinity|inf|\u221e)$/i);
+    if (infinityMatch) {
+      const sign = infinityMatch[1] === "-" ? -1 : 1;
+      return sign * Infinity;
+    }
+
+    let negative = false;
+    let numPart = s;
+    if (s.startsWith("-")) {
+      negative = true;
+      numPart = s.substring(1);
+    } else if (s.startsWith("+")) {
+      numPart = s.substring(1);
+    }
+
+    if (numPart.startsWith("#")) {
+      numPart = "0x" + numPart.substring(1);
+    }
+
+    const result = Number(numPart);
+
+    if (isNaN(result)) {
+      throw new Error(`Invalid number format for string "${s}"`);
+    }
+
+    return negative ? -result : result;
   }
 }

@@ -2,16 +2,16 @@ import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Operator } from "../Operator";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 import { BaseOperator } from "../BaseOperator";
-import { TypeMap } from "HelperClasses/TypeMap";
 import { Integer } from "JavaNumberClasses/Integer";
 
 export class OPERATOR_ITEMSTACK_ITEMLISTCOUNT extends BaseOperator<
   iArray<Item>,
   Operator<Item, Integer>
 > {
-  constructor(globalMap: TypeMap) {
+  static override internalName =
+    "integrateddynamics:itemstack_itemlistcount" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:itemstack_itemlistcount",
       nicknames: [
         "ItemstackListCount",
         "itemstack_list_count",
@@ -19,36 +19,35 @@ export class OPERATOR_ITEMSTACK_ITEMLISTCOUNT extends BaseOperator<
         "item_list_count",
         "itemListCount",
       ],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "List",
+          listType: { type: "Item" },
+        },
+        to: {
           type: "Function",
-          from: {
-            type: "List",
-            listType: { type: "Item" },
-          },
+          from: { type: "Item" },
           to: {
-            type: "Function",
-            from: { type: "Item" },
-            to: {
-              type: "Integer",
-            },
+            type: "Integer",
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "item_list_count",
       interactName: "listItemListCount",
       function: (items: iArray<Item>): TypeLambda<Item, Integer> => {
         return (item: Item): Integer => {
-          return items
-            .filter((i) => {
-              try {
-                return i.equals(item);
-              } catch (e) {
-                return false;
+          let totalCount = Integer.ZERO;
+          for (const i of items.valueOf()) {
+            try {
+              if (i.getUniqueName().equals(item.getUniqueName()).valueOf()) {
+                totalCount = totalCount.add(i.getSize());
               }
-            })
-            .size();
+            } catch (e) {
+              continue;
+            }
+          }
+          return totalCount;
         };
       },
     });

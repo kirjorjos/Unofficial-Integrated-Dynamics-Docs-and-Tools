@@ -1,4 +1,3 @@
-import { TypeMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
@@ -8,22 +7,19 @@ export class OPERATOR_OBJECT_ENTITY_HURTSOUND extends BaseOperator<
   Entity,
   iString
 > {
-  constructor(globalMap: TypeMap) {
+  static override internalName = "integrateddynamics:entity_hurtsound" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:entity_hurtsound",
       nicknames: ["EntityHurtsound", "entity_hurt_sound", "entityHurtSound"],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Entity",
-          },
-          to: {
-            type: "String",
-          },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Entity",
         },
-        globalMap
-      ),
+        to: {
+          type: "String",
+        },
+      }),
       symbol: "hurtsound",
       interactName: "entityHurtSound",
       function: (entity: Entity): iString => {

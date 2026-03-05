@@ -28,11 +28,15 @@ export class DoubleTag extends NumericTag {
   }
 
   override getTypeAsString(): iString {
-    return new iString("DoubleTag");
+    return new iString("DOUBLE");
   }
 
   equals(tag: Tag<IntegratedValue>): iBoolean {
     if (tag.getType() != Tag.TAG_DOUBLE) return new iBoolean(false);
-    return new iBoolean(this.getAsDouble() == (tag as DoubleTag).getAsDouble());
+    return this.valueOf().equals(tag.valueOf());
+  }
+
+  toJSON(): number {
+    return this.data.toJSNumber();
   }
 }

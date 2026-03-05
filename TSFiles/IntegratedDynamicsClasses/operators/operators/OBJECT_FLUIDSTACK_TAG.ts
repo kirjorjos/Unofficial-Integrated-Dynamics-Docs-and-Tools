@@ -1,4 +1,3 @@
-import { TypeMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
@@ -10,9 +9,9 @@ export class OPERATOR_OBJECT_FLUIDSTACK_TAG extends BaseOperator<
   Fluid,
   iArray<iString>
 > {
-  constructor(globalMap: TypeMap) {
+  static override internalName = "integrateddynamics:fluidstack_tag" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:fluidstack_tag",
       nicknames: [
         "FluidstackTag",
         "fluidstackTag",
@@ -20,20 +19,22 @@ export class OPERATOR_OBJECT_FLUIDSTACK_TAG extends BaseOperator<
         "fluidstackTagStack",
         "fluidTag",
       ],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Fluid",
-          },
-          to: { type: "List", listType: { type: "String" } },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Fluid",
         },
-        globalMap
-      ),
+        to: { type: "List", listType: { type: "String" } },
+      }),
       symbol: "fluid_tag_names",
       interactName: "fluidstackTags",
       function: (fluid: Fluid): iArray<iString> => {
-        return new iArrayEager(fluid.getTagNames().map((e) => new iString(e)));
+        return new iArrayEager(
+          fluid
+            .getTagNames()
+            .valueOf()
+            .map((e: iString) => new iString(e.valueOf()))
+        );
       },
     });
   }

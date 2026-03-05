@@ -1,4 +1,3 @@
-import { TypeMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Block } from "IntegratedDynamicsClasses/Block";
@@ -8,9 +7,9 @@ export class OPERATOR_OBJECT_FLUIDSTACK_BLOCK extends BaseOperator<
   Fluid,
   Block
 > {
-  constructor(globalMap: TypeMap) {
+  static override internalName = "integrateddynamics:fluidstack_block" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:fluidstack_block",
       nicknames: [
         "FluidstackBlock",
         "fluidstackBlock",
@@ -20,18 +19,15 @@ export class OPERATOR_OBJECT_FLUIDSTACK_BLOCK extends BaseOperator<
         "fluid_block",
         "fluidBlock",
       ],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Fluid",
-          },
-          to: {
-            type: "Block",
-          },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Fluid",
         },
-        globalMap
-      ),
+        to: {
+          type: "Block",
+        },
+      }),
       symbol: "block",
       interactName: "fluidstackBlock",
       function: (fluid: Fluid): Block => {

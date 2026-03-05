@@ -79,9 +79,7 @@ export class NbtPath {
           `Failed to parse expression at pos '${pos}': ${nbtPathExpression}`
         );
       }
-
-      return new NbtPathExpressionList(...expressions);
     }
-    return undefined;
+    return new NbtPathExpressionList(...expressions);
   }
 }

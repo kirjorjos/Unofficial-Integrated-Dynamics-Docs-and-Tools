@@ -1,4 +1,3 @@
-import { TypeMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Entity } from "IntegratedDynamicsClasses/Entity";
@@ -10,20 +9,18 @@ export class OPERATOR_OBJECT_ENTITY_FLUIDS extends BaseOperator<
   Entity,
   iArray<Fluid>
 > {
-  constructor(globalMap: TypeMap) {
+  static override internalName =
+    "integrateddynamics:entity_entityfluids" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:entity_entityfluids",
       nicknames: ["EntityFluids", "entity_fluids", "entityFluids"],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Entity",
-          },
-          to: { type: "List", listType: { type: "Fluid" } },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Entity",
         },
-        globalMap
-      ),
+        to: { type: "List", listType: { type: "Fluid" } },
+      }),
       symbol: "entity_fluids",
       interactName: "entityFluids",
       function: (entity: Entity): iArray<Fluid> => {

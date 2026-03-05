@@ -1,6 +1,8 @@
+import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iBoolean } from "./iBoolean";
 
 export class iString implements IntegratedValue {
+  private _signatureCache: ParsedSignature | null = null;
   str: string;
 
   constructor(str: string) {
@@ -11,8 +13,17 @@ export class iString implements IntegratedValue {
     return this.str;
   }
 
-  getSignatureNode(): TypeRawSignatureAST.RawSignatureDefiniteValue {
-    return { type: "String" };
+  toString(): string {
+    return this.str;
+  }
+
+  getSignatureNode(): ParsedSignature {
+    if (this._signatureCache) {
+      return this._signatureCache;
+    }
+    const newSignature = new ParsedSignature({ type: "String" }, false);
+    this._signatureCache = newSignature;
+    return newSignature;
   }
 
   equals(other: IntegratedValue) {

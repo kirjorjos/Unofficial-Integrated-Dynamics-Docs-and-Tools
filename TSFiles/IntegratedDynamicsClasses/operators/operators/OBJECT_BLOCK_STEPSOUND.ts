@@ -1,4 +1,3 @@
-import { TypeMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
@@ -8,27 +7,24 @@ export class OPERATOR_OBJECT_BLOCK_STEPSOUND extends BaseOperator<
   Block,
   iString
 > {
-  constructor(globalMap: TypeMap) {
+  static override internalName = "integrateddynamics:block_stepsound" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:block_stepsound",
       nicknames: [
         "BlockStepsound",
         "blockStepSound",
         "block_step_sound",
         "stepSound",
       ],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Block",
-          },
-          to: {
-            type: "String",
-          },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Block",
         },
-        globalMap
-      ),
+        to: {
+          type: "String",
+        },
+      }),
       symbol: "step_sound",
       interactName: "blockStepSound",
       function: (block: Block): iString => {

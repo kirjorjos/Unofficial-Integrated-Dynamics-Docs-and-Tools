@@ -1,4 +1,3 @@
-import { TypeMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
@@ -8,12 +7,16 @@ export class OPERATOR_STRING_REPLACE extends BaseOperator<
   iString,
   Operator<iString, Operator<iString, iString>>
 > {
-  constructor(globalMap: TypeMap) {
+  static override internalName = "integrateddynamics:string_replace" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:string_replace",
       nicknames: ["stringReplace"],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "String",
+        },
+        to: {
           type: "Function",
           from: {
             type: "String",
@@ -24,18 +27,11 @@ export class OPERATOR_STRING_REPLACE extends BaseOperator<
               type: "String",
             },
             to: {
-              type: "Function",
-              from: {
-                type: "String",
-              },
-              to: {
-                type: "String",
-              },
+              type: "String",
             },
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "replace",
       interactName: "stringReplace",
       function: (
@@ -46,7 +42,7 @@ export class OPERATOR_STRING_REPLACE extends BaseOperator<
             return new iString(
               fullString
                 .valueOf()
-                .replace(searchString.valueOf(), replacementString.valueOf())
+                .replaceAll(searchString.valueOf(), replacementString.valueOf())
             );
           };
         };

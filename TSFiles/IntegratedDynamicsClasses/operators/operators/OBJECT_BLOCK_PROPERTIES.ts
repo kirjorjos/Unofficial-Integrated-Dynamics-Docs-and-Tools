@@ -1,4 +1,3 @@
-import { TypeMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Block } from "IntegratedDynamicsClasses/Block";
@@ -8,22 +7,20 @@ export class OPERATOR_OBJECT_BLOCK_PROPERTIES extends BaseOperator<
   Block,
   CompoundTag
 > {
-  constructor(globalMap: TypeMap) {
+  static override internalName =
+    "integrateddynamics:block_blockproperties" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:block_blockproperties",
       nicknames: ["BlockProperties", "block_properties", "blockProperties"],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Block",
-          },
-          to: {
-            type: "NBT",
-          },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Block",
         },
-        globalMap
-      ),
+        to: {
+          type: "NBT",
+        },
+      }),
       symbol: "block_props",
       interactName: "blockProperties",
       function: (block: Block): CompoundTag => {

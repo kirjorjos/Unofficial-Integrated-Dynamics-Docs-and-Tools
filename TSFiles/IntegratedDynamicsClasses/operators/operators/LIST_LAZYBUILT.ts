@@ -1,7 +1,6 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Operator } from "../Operator";
 import { iArrayLazy } from "IntegratedDynamicsClasses/typeWrappers/iArrayLazy";
-import { TypeMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { OPERATOR_GENERAL_IDENTITY } from "./GENERAL_IDENTITY";
 
@@ -12,29 +11,26 @@ export class OPERATOR_LIST_LAZYBUILT extends BaseOperator<
     iArrayLazy<IntegratedValue>
   >
 > {
-  constructor(globalMap: TypeMap) {
+  static override internalName = "integrateddynamics:list_lazybuilt" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:list_lazybuilt",
       nicknames: ["listLazybuilt", "lazybuilt", "anyLazyBuilt"],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: { type: "Any", typeID: 1 },
+        to: {
           type: "Function",
-          from: { type: "Any", typeID: 1 },
-          to: {
-            type: "Function",
-            from: {
-              type: "Operator",
-              obscured: {
-                type: "Function",
-                from: { type: "Any", typeID: 1 },
-                to: { type: "Any", typeID: 1 },
-              },
+          from: {
+            type: "Operator",
+            obscured: {
+              type: "Function",
+              from: { type: "Any", typeID: 1 },
+              to: { type: "Any", typeID: 1 },
             },
-            to: { type: "List", listType: { type: "Any", typeID: 1 } },
           },
+          to: { type: "List", listType: { type: "Any", typeID: 1 } },
         },
-        globalMap
-      ),
+      }),
       symbol: "lazybuilt",
       interactName: "anyLazyBuilt",
       function: (
@@ -49,7 +45,7 @@ export class OPERATOR_LIST_LAZYBUILT extends BaseOperator<
           return new iArrayLazy(
             initial,
             builder,
-            new OPERATOR_GENERAL_IDENTITY(globalMap)
+            new OPERATOR_GENERAL_IDENTITY()
           );
         };
       },

@@ -1,4 +1,3 @@
-import { TypeMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Integer } from "JavaNumberClasses/Integer";
@@ -8,27 +7,24 @@ export class OPERATOR_OBJECT_BLOCK_PLANTAGE extends BaseOperator<
   Block,
   Integer
 > {
-  constructor(globalMap: TypeMap) {
+  static override internalName = "integrateddynamics:block_plantage" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:block_plantage",
       nicknames: [
         "BlockPlantage",
         "block_plant_age",
         "blockPlantAge",
         "plantAge",
       ],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Block",
-          },
-          to: {
-            type: "Integer",
-          },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Block",
         },
-        globalMap
-      ),
+        to: {
+          type: "Integer",
+        },
+      }),
       symbol: "plant_age",
       interactName: "blockPlantAge",
       function: (block: Block): Integer => {

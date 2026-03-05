@@ -1,34 +1,32 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { BaseOperator } from "../BaseOperator";
-import { TypeMap } from "HelperClasses/TypeMap";
 import { Long } from "JavaNumberClasses/Long";
+import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 
-export class OPERATOR_PARSE_LONG extends BaseOperator<IntegratedValue, Long> {
-  constructor(globalMap: TypeMap) {
+export class OPERATOR_PARSE_LONG extends BaseOperator<iString, Long> {
+  static override internalName =
+    "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.long" as const;
+  constructor() {
     super({
-      internalName:
-        "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.long",
       nicknames: ["parseLong"],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Any",
-            typeID: 1,
-          },
-          to: {
-            type: "Long",
-          },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "String",
         },
-        globalMap
-      ),
+        to: {
+          type: "Long",
+        },
+      }),
       symbol: "parse_long",
       interactName: "stringParseAsLong",
-      function: (data: IntegratedValue): Long => {
+      function: (data: iString): Long => {
         try {
-          return new Long(data as Long);
-        } catch (e) {
-          return Long.ZERO;
+          return new Long(data.valueOf());
+        } catch (e: any) {
+          throw new Error(
+            `Could not parse long from "${data.valueOf()}": ${e.message}`
+          );
         }
       },
     });

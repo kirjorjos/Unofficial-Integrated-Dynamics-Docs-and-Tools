@@ -1,4 +1,6 @@
 import { UniquelyNamed } from "./UniquelyNamed";
+import { Named } from "./Named";
+import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Integer } from "../JavaNumberClasses/Integer";
 import { Double } from "../JavaNumberClasses/Double";
 import { Properties } from "./Properties";
@@ -10,15 +12,15 @@ import { iArrayEager } from "./typeWrappers/iArrayEager";
 import { Block } from "./Block";
 import { Item } from "./Item";
 import { iArray } from "./typeWrappers/iArray";
+import { Fluid } from "./Fluid";
 
-export class Entity implements UniquelyNamed {
+export class Entity implements UniquelyNamed, Named {
   static defaultProps = new Properties({
-    uname: new iString(""),
+    id: new iString(""),
+    displayName: new iString(""),
     mob: new iBoolean(false),
     animal: new iBoolean(false),
     player: new iBoolean(false),
-    minecart: new iBoolean(false),
-    isItem: new iBoolean(false),
     health: Integer.ZERO,
     width: Integer.ZERO,
     height: Integer.ZERO,
@@ -29,22 +31,21 @@ export class Entity implements UniquelyNamed {
     armorInventory: new iArrayEager<Item>([]),
     inventory: [] as Array<Item>,
     modName: new iString(""),
-    // targetBlock: new Block(),
-    targetEntity: new Entity(new Properties({})),
+    targetBlock: new Block(new Properties({})),
     guiOpen: new iBoolean(false),
-    // heldItemMain: new Item(),
-    // heldItemOffHand: new Item(),
+    heldItemMain: new Item(new Properties({})),
+    heldItemOffHand: new Item(new Properties({})),
     entityMounted: new iBoolean(false),
-    itemFrame: new iBoolean(false),
-    // itemFrameContents: new Item(),
+    itemFrameContents: new Item(new Properties({})),
     itemFrameRotation: Integer.ZERO,
     hurtSound: new iString(""),
     deathSound: new iString(""),
     age: Integer.ZERO,
+    breedingAge: Integer.ZERO,
     child: new iBoolean(false),
-    breedable: new iBoolean(false),
     inLove: new iBoolean(false),
     shearable: new iBoolean(false),
+    isSheared: new iBoolean(false),
     breedableList: new iArrayEager<iString>([]),
     NBT: new iNull(),
     entityType: new iString(""),
@@ -55,15 +56,16 @@ export class Entity implements UniquelyNamed {
   });
 
   props: Properties;
+  private _signatureCache: any;
 
   constructor(newProps: Properties, oldEntity?: Entity) {
-    let props = Entity.defaultProps;
-    props.setAll(newProps);
+    let props = Entity.defaultProps.clone();
     if (oldEntity) props.setAll(oldEntity.getProperties());
+    props.setAll(newProps);
     if (!props.has("heldItemMain"))
       props.set("heldItemMain", new Item(new Properties({})));
-    if (!props.has("helpItemOffHand"))
-      props.set("helpItemOffHand", new Item(new Properties({})));
+    if (!props.has("heldItemOffHand"))
+      props.set("heldItemOffHand", new Item(new Properties({})));
     if (!props.has("itemFrameContents"))
       props.set("itemFrameContents", new Item(new Properties({})));
     if (!props.has("targetBlock"))
@@ -72,7 +74,7 @@ export class Entity implements UniquelyNamed {
   }
 
   getUniqueName(): iString {
-    return this.props.get("uname");
+    return this.props.get("id");
   }
 
   isMob(): iBoolean {
@@ -84,7 +86,7 @@ export class Entity implements UniquelyNamed {
   }
 
   isItem(): iBoolean {
-    return new iBoolean(!this.props.get("isItem").valueOf());
+    return new iBoolean(this.getUniqueName().valueOf() === "minecraft:item");
   }
 
   isPlayer(): iBoolean {
@@ -92,7 +94,9 @@ export class Entity implements UniquelyNamed {
   }
 
   isMinecart(): iBoolean {
-    return this.props.get("minecart");
+    return new iBoolean(
+      this.getUniqueName().valueOf().includes("minecraft:minecart")
+    );
   }
 
   getItem(): Item {
@@ -144,6 +148,7 @@ export class Entity implements UniquelyNamed {
   }
 
   getTargetEntity(): Entity {
+    if (!this.props.has("targetEntity")) return new Entity(new Properties({}));
     return this.props.get("targetEntity");
   }
 
@@ -159,12 +164,15 @@ export class Entity implements UniquelyNamed {
     return this.props.get("heldItemOffHand");
   }
 
-  isEntityMounted(): iBoolean {
-    return this.props.get("entityMounted");
+  getMountedEntities(): Array<Entity> {
+    return [];
   }
 
   isItemFrame(): iBoolean {
-    return this.props.get("itemFrame");
+    const name = this.getUniqueName().valueOf();
+    return new iBoolean(
+      name === "minecraft:item_frame" || name === "minecraft:glow_item_frame"
+    );
   }
 
   getItemFrameContents(): Item {
@@ -192,7 +200,8 @@ export class Entity implements UniquelyNamed {
   }
 
   canBreed(): iBoolean {
-    return this.props.get("breedable");
+    const breedingAge = this.props.get("breedingAge") as Integer;
+    return new iBoolean(breedingAge.toJSNumber() === 0);
   }
 
   isInLove(): iBoolean {
@@ -200,18 +209,21 @@ export class Entity implements UniquelyNamed {
   }
 
   isShearable(): iBoolean {
-    return this.props.get("shearable");
+    if (!this.props.get("shearable").valueOf()) return new iBoolean(false);
+    return new iBoolean(!this.props.get("isSheared").valueOf());
   }
 
   getBreadableList(): iArray<iString> {
     return new iArrayEager<iString>([
-      ...this.props.get("breedableList"),
-      this.props.get("uname"),
+      ...this.props.get("breedableList").valueOf(),
+      this.getUniqueName(),
     ]);
   }
 
   getNBT(): CompoundTag {
-    return this.props.get("NBT");
+    const nbt = this.props.get("NBT");
+    if (nbt instanceof CompoundTag) return nbt;
+    return new CompoundTag({});
   }
 
   getEntityType(): iString {
@@ -238,22 +250,37 @@ export class Entity implements UniquelyNamed {
     return this.props;
   }
 
-  getSignatureNode(): TypeRawSignatureAST.RawSignatureNode {
-    return {
-      type: "Entity",
-    };
+  getName(): iString {
+    return this.props.get("displayName");
+  }
+
+  getSignatureNode(): ParsedSignature {
+    if (this._signatureCache) {
+      return this._signatureCache;
+    }
+    const newSignature = new ParsedSignature({ type: "Entity" }, false);
+    this._signatureCache = newSignature;
+    return newSignature;
   }
 
   equals(other: IntegratedValue) {
     if (!(other instanceof Entity)) return new iBoolean(false);
     else {
-      for (const key of Object.keys(this) as Array<keyof Entity>) {
-        if (key == "equals") continue; // prevent recursion
-        if (this[key] instanceof Function) {
-          const thisResult = (this[key] as Function)() as IntegratedValue;
-          const otherResult = (other[key] as Function)() as IntegratedValue;
-          if (!thisResult.equals(otherResult).valueOf())
-            return new iBoolean(false);
+      const keys = Object.getOwnPropertyNames(
+        Object.getPrototypeOf(this)
+      ).filter(
+        (k) => !["constructor", "equals", "getSignatureNode"].includes(k)
+      );
+      for (const key of keys as Array<keyof Entity>) {
+        if (this[key] instanceof Function && this[key].length === 0) {
+          try {
+            const thisResult = (this[key] as Function)() as IntegratedValue;
+            const otherResult = (other[key] as Function)() as IntegratedValue;
+            if (!thisResult.equals(otherResult).valueOf())
+              return new iBoolean(false);
+          } catch {
+            continue;
+          }
         }
       }
       return new iBoolean(true);

@@ -6,7 +6,6 @@
 
 import { Integer } from "JavaNumberClasses/Integer";
 import { INbtPathExpression } from "../INbtPathExpression";
-import { ListTag } from "../MinecraftClasses/ListTag";
 import { Tag } from "../MinecraftClasses/Tag";
 import { NbtPathExpressionMatches } from "../NbtPathExpressionMatches";
 import {
@@ -14,6 +13,7 @@ import {
   INbtPathExpressionParseHandler,
 } from "./INbtPathExpressionParseHandler";
 import { NbtPathExpressionExecutionContext } from "./NBTPathExecutionContext";
+import { ListTag } from "../MinecraftClasses/ListTag";
 
 /**
  * A handler that handles list slice expressions in the form of "[start:end:step]" such as "[2:3:2]".

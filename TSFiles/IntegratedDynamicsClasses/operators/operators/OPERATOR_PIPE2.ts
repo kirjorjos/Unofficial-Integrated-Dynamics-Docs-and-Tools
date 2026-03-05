@@ -1,22 +1,30 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { BaseOperator } from "../BaseOperator";
 import { Operator } from "../Operator";
-import { TypeMap } from "HelperClasses/TypeMap";
 
 export class OPERATOR_OPERATOR_PIPE2 extends BaseOperator<any, any> {
-  constructor(globalMap: TypeMap) {
+  static override internalName = "integrateddynamics:operator_pipe2" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:operator_pipe2",
       nicknames: ["operatorPipe2", "pipe.2", "pipe2"],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Operator",
+          obscured: {
+            type: "Function",
+            from: { type: "Any", typeID: 1 },
+            to: { type: "Any", typeID: 2 },
+          },
+        },
+        to: {
           type: "Function",
           from: {
             type: "Operator",
             obscured: {
               type: "Function",
               from: { type: "Any", typeID: 1 },
-              to: { type: "Any", typeID: 2 },
+              to: { type: "Any", typeID: 3 },
             },
           },
           to: {
@@ -25,37 +33,25 @@ export class OPERATOR_OPERATOR_PIPE2 extends BaseOperator<any, any> {
               type: "Operator",
               obscured: {
                 type: "Function",
-                from: { type: "Any", typeID: 1 },
-                to: { type: "Any", typeID: 3 },
-              },
-            },
-            to: {
-              type: "Function",
-              from: {
-                type: "Operator",
-                obscured: {
+                from: { type: "Any", typeID: 2 },
+                to: {
                   type: "Function",
-                  from: { type: "Any", typeID: 2 },
-                  to: {
-                    type: "Function",
-                    from: { type: "Any", typeID: 3 },
-                    to: { type: "Any", typeID: 4 },
-                  },
-                },
-              },
-              to: {
-                type: "Operator",
-                obscured: {
-                  type: "Function",
-                  from: { type: "Any", typeID: 1 },
+                  from: { type: "Any", typeID: 3 },
                   to: { type: "Any", typeID: 4 },
                 },
               },
             },
+            to: {
+              type: "Operator",
+              obscured: {
+                type: "Function",
+                from: { type: "Any", typeID: 1 },
+                to: { type: "Any", typeID: 4 },
+              },
+            },
           },
         },
-        globalMap
-      ),
+      }),
       symbol: ".2",
       interactName: "operatorPipe2",
       serializer: "integrateddynamics:combined.pipe",
@@ -65,27 +61,40 @@ export class OPERATOR_OPERATOR_PIPE2 extends BaseOperator<any, any> {
         Operator<IntegratedValue, IntegratedValue>,
         TypeLambda<
           Operator<IntegratedValue, Operator<IntegratedValue, IntegratedValue>>,
-          TypeLambda<IntegratedValue, IntegratedValue>
+          IntegratedValue
         >
       > => {
         return (
           g: Operator<IntegratedValue, IntegratedValue>
         ): TypeLambda<
           Operator<IntegratedValue, Operator<IntegratedValue, IntegratedValue>>,
-          TypeLambda<IntegratedValue, IntegratedValue>
+          IntegratedValue
         > => {
           return (
             h: Operator<
               IntegratedValue,
               Operator<IntegratedValue, IntegratedValue>
             >
-          ): TypeLambda<IntegratedValue, IntegratedValue> => {
-            return (x: IntegratedValue): IntegratedValue => {
-              return h.apply(f.apply(x)).apply(g.apply(x));
-            };
+          ): IntegratedValue => {
+            return f.pipe2(g, h);
           };
         };
       },
     });
+  }
+
+  override evaluate(...args: IntegratedValue[]) {
+    if (args.length !== 3)
+      throw new Error(`Pipe2 expected 3 args, got ${args.length}`);
+    const [arg1, arg2, arg3] = args;
+    if (
+      !(
+        arg1 instanceof Operator &&
+        arg2 instanceof Operator &&
+        arg3 instanceof Operator
+      )
+    )
+      throw new Error("Can't pipe2 a non-operator");
+    return arg1.pipe2(arg2, arg3);
   }
 }

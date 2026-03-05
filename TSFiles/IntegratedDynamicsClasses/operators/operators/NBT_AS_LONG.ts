@@ -1,4 +1,3 @@
-import { TypeMap } from "HelperClasses/TypeMap";
 import { LongTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/LongTag";
 import { Tag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/Tag";
 import { Long } from "JavaNumberClasses/Long";
@@ -6,22 +5,19 @@ import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 
 export class OPERATOR_NBT_AS_LONG extends BaseOperator<LongTag, Long> {
-  constructor(globalMap: TypeMap) {
+  static override internalName = "integrateddynamics:nbt_as_long" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:nbt_as_long",
       nicknames: ["nbtAsLong"],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "NBT",
-          },
-          to: {
-            type: "Long",
-          },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "NBT",
         },
-        globalMap
-      ),
+        to: {
+          type: "Long",
+        },
+      }),
       symbol: "NBT.as_long",
       interactName: "nbtAsLong",
       function: (nbt: LongTag): Long => {

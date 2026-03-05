@@ -1,4 +1,3 @@
-import { TypeMap } from "HelperClasses/TypeMap";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
@@ -8,22 +7,19 @@ export class OPERATOR_LIST_HEAD extends BaseOperator<
   iArray<IntegratedValue>,
   IntegratedValue
 > {
-  constructor(globalMap: TypeMap) {
+  static override internalName = "integrateddynamics:list_head" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:list_head",
       nicknames: ["listHead", "head"],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: { type: "List", listType: { type: "Any", typeID: 1 } },
-          to: { type: "Any", typeID: 1 },
-        },
-        globalMap
-      ),
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: { type: "List", listType: { type: "Any", typeID: 1 } },
+        to: { type: "Any", typeID: 1 },
+      }),
       symbol: "head",
       interactName: "listHead",
       function: (list: iArray<IntegratedValue>): IntegratedValue => {
-        if (list.size().equals(Integer.ZERO)) {
+        if (list.size().equals(Integer.ZERO).valueOf()) {
           throw new Error("head called on an empty list");
         }
         return list.get(Integer.ZERO);

@@ -7,7 +7,6 @@
 import { INbtPathExpression } from "../INbtPathExpression";
 import { INbtPathNavigation } from "../navigate/INbtPathNavigation";
 import { CompoundTag } from "../MinecraftClasses/CompoundTag";
-import { ListTag } from "../MinecraftClasses/ListTag";
 import { Tag } from "../MinecraftClasses/Tag";
 import { NbtPathExpressionMatches } from "../NbtPathExpressionMatches";
 import {
@@ -18,6 +17,7 @@ import { NbtPathExpressionExecutionContext } from "./NBTPathExecutionContext";
 import { NbtPathNavigationAdapter } from "../navigate/NbtPathNavigationAdapter";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 import { Integer } from "JavaNumberClasses/Integer";
+import { ListTag } from "../MinecraftClasses/ListTag";
 
 /**
  * A handler that handles union expressions in the form of "[10,12]" or "[10,]" or "[,12]",
@@ -94,9 +94,12 @@ class Expression extends INbtPathExpression {
             let tag = nbt as ListTag;
             return this.getChildIndexes()
               .map((i) => tag.get(new Integer(i)))
-              .filter((subTag) => subTag.getType() == Tag.TAG_COMPOUND)
+              .filter(
+                (subTag: Tag<IntegratedValue>) =>
+                  subTag.getType() == Tag.TAG_COMPOUND
+              )
               .map(
-                (subTag) =>
+                (subTag: Tag<IntegratedValue>) =>
                   new NbtPathExpressionExecutionContext(
                     subTag,
                     executionContext

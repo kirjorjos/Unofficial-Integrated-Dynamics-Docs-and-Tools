@@ -1,45 +1,53 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { BaseOperator } from "../BaseOperator";
 import { Operator } from "../Operator";
-import { TypeMap } from "HelperClasses/TypeMap";
 
 export class OPERATOR_OPERATOR_APPLY_0 extends BaseOperator<
   Operator<IntegratedValue, IntegratedValue>,
-  Operator<IntegratedValue, IntegratedValue>
+  IntegratedValue
 > {
-  constructor(globalMap: TypeMap) {
+  static override internalName = "integrateddynamics:operator_apply0" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:operator_apply0",
       nicknames: ["operatorApply_0", "apply0"],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Operator",
-            obscured: {
-              type: "Function",
-              from: { type: "Any", typeID: 1 },
-              to: { type: "Any", typeID: 2 },
-            },
-          },
-          to: {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Operator",
+          obscured: {
             type: "Function",
-            from: { type: "Any", typeID: 3 },
+            from: { type: "Any", typeID: 1 },
             to: { type: "Any", typeID: 2 },
           },
         },
-        globalMap
-      ),
+        to: {
+          type: "Any",
+          typeID: 2,
+        },
+      }),
       symbol: "apply0",
       interactName: "operatorApply0",
       serializer: "integrateddynamics:curry",
       function: (
-        _op: Operator<IntegratedValue, IntegratedValue>
-      ): TypeLambda<undefined, IntegratedValue> => {
-        return () => {
-          throw new Error(`apply0 doesn't make sense to implement`);
-        };
+        op: Operator<IntegratedValue, IntegratedValue>
+      ): IntegratedValue => {
+        return new Operator<IntegratedValue, IntegratedValue>({
+          function:
+            op.getParsedSignature().getArity() > 0 ? op.getFn() : op.getFn()(),
+          parsedSignature: op.getParsedSignature(),
+        });
       },
+    });
+  }
+
+  override evaluate(...args: IntegratedValue[]): IntegratedValue {
+    if (args.length !== 1)
+      throw new Error(`Operator expected 1 arg, got ${args.length}`);
+    const op = args[0] as Operator<IntegratedValue, IntegratedValue>;
+    if (op.getParsedSignature().getArity() === 0) return op.getFn()();
+    return new Operator<IntegratedValue, IntegratedValue>({
+      function: op.getFn(),
+      parsedSignature: op.getParsedSignature(),
     });
   }
 }

@@ -1,4 +1,3 @@
-import { TypeMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Integer } from "JavaNumberClasses/Integer";
@@ -8,27 +7,25 @@ export class OPERATOR_OBJECT_ITEMSTACK_FUELBURNTIME extends BaseOperator<
   Item,
   Integer
 > {
-  constructor(globalMap: TypeMap) {
+  static override internalName =
+    "integrateddynamics:itemstack_burntime" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:itemstack_burntime",
       nicknames: [
         "ItemstackFuelburntime",
         "item_fuel_burn_time",
         "itemFuelBurnTime",
         "fuelBurnTime",
       ],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Item",
-          },
-          to: {
-            type: "Integer",
-          },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Item",
         },
-        globalMap
-      ),
+        to: {
+          type: "Integer",
+        },
+      }),
       symbol: "burn_time",
       interactName: "itemstackBurnTime",
       function: (item: Item): Integer => {

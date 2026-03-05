@@ -1,52 +1,53 @@
-import { TypeMap } from "HelperClasses/TypeMap";
 import { CompoundTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
-import { ListTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ListTag";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 import { Operator } from "../Operator";
+import { ListTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ListTag";
+import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
+import { Tag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/Tag";
 
 export class OPERATOR_NBT_COMPOUND_WITH_LIST_TAG extends BaseOperator<
   CompoundTag,
-  Operator<iString, Operator<ListTag, CompoundTag>>
+  Operator<iString, Operator<iArray<Tag<IntegratedValue>>, CompoundTag>>
 > {
-  constructor(globalMap: TypeMap) {
+  static override internalName =
+    "integrateddynamics:nbt_compound_with_list_tag" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:nbt_compound_with_list_tag",
       nicknames: ["nbtCompoundWithListTag", "NBTWithNBTList"],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "NBT",
+        },
+        to: {
           type: "Function",
           from: {
-            type: "NBT",
+            type: "String",
           },
           to: {
             type: "Function",
-            from: {
-              type: "String",
-            },
+            from: { type: "List", listType: { type: "NBT" } },
             to: {
-              type: "Function",
-              from: { type: "List", listType: { type: "NBT" } },
-              to: {
-                type: "NBT",
-              },
+              type: "NBT",
             },
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "NBT{}.with_tag_list",
       interactName: "nbtWithTagList",
-      function: (
-        nbt: CompoundTag
-      ): TypeLambda<iString, TypeLambda<ListTag, CompoundTag>> => {
-        return (key: iString): TypeLambda<ListTag, CompoundTag> => {
-          return (value: ListTag): CompoundTag => {
-            return nbt.set(key.valueOf(), value);
-          };
-        };
-      },
+      function:
+        (
+          nbt: CompoundTag
+        ): TypeLambda<
+          iString,
+          TypeLambda<iArray<Tag<IntegratedValue>>, CompoundTag>
+        > =>
+        (key: iString): TypeLambda<iArray<Tag<IntegratedValue>>, CompoundTag> =>
+        (value: iArray<Tag<IntegratedValue>>): CompoundTag => {
+          return nbt.set(key.valueOf(), new ListTag(value));
+        },
     });
   }
 }

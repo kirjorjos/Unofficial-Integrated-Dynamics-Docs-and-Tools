@@ -1,7 +1,22 @@
+import { ParsedSignature } from "./ParsedSignature";
+
 export class TypeMap {
-  aliases: Map<number, number | TypeRawSignatureAST.RawSignatureDefiniteValue>;
+  private static maxVarID = 0;
+  private static unificationVersion = 0;
+
+  getNewVarID(): number {
+    return TypeMap.maxVarID++;
+  }
+
+  aliases: Map<number, number | ParsedSignature>;
   constructor() {
     this.aliases = new Map();
+  }
+
+  clear() {
+    this.aliases.clear();
+    TypeMap.maxVarID = 0;
+    TypeMap.unificationVersion++;
   }
 
   findBaseID(typeID: number) {
@@ -13,118 +28,104 @@ export class TypeMap {
     return typeID;
   }
 
+  findBase(typeID: number) {
+    const baseID = this.findBaseID(typeID);
+    if (this.aliases.has(baseID)) return this.aliases.get(baseID)!;
+    return baseID;
+  }
+
+  /**
+   * Sets a and b to be equal in the alias map
+   * @param a The first node
+   * @param b The second node
+   */
   unify(
-    a: TypeRawSignatureAST.RawSignatureNode,
-    b: TypeRawSignatureAST.RawSignatureNode
-  ): void {
-    if (a.type === "Any" && b.type === "Any") {
-      this.aliases.set(this.findBaseID(a.typeID), this.findBaseID(b.typeID));
-      return;
+    a: ParsedSignature,
+    b: ParsedSignature,
+    isRoot = true
+  ): ErrorInfo | null {
+    if (isRoot) TypeMap.unificationVersion++;
+
+    if (a.getRootType() === "Function" && b.getRootType() === "Function") {
+      const inputError = this.unify(a.getInput(), b.getInput(), false);
+      if (inputError) return inputError;
+      const outputError = this.unify(a.getOutput(), b.getOutput(), false);
+      if (outputError) return outputError;
+      return null;
     }
 
-    if (a.type === "Any" && b.type !== "Any") {
-      this.aliases.set(this.findBaseID(a.typeID), b);
-      return;
-    }
-    if (a.type !== "Any" && b.type === "Any") {
-      this.aliases.set(this.findBaseID(b.typeID), a);
-      return;
+    if (a.getRootType() === "Operator" && b.getRootType() === "Operator") {
+      const outputError = this.unify(a.getOutput(), b.getOutput(), false);
+      if (outputError) return outputError;
+      return null;
     }
 
-    if (a.type === "List" && b.type === "List") {
-      this.unify(a.listType, b.listType);
-    }
+    if (
+      (a.getRootType() === "Operator" || b.getRootType() === "Operator") &&
+      a.getRootType() !== b.getRootType() &&
+      ![a.getRootType(), b.getRootType()].includes("Any")
+    ) {
+      const aIsOp = a.getRootType() === "Operator";
+      const operatorNode = aIsOp ? a : b;
+      const otherNode = aIsOp ? b : a;
 
-    if (a.type === "Function" && b.type === "Function") {
-      this.unify(a.from, b.from);
-      this.unify(a.to, b.to);
-      return;
-    }
-
-    if (a.type === "Operator" && b.type === "Operator") {
-      this.unify(a.obscured, b.obscured);
-      return;
-    }
-
-    if (a.type !== b.type) {
-      throw new Error(`Type mismatch: ${a.type} vs ${b.type}`);
-    }
-
-    return;
-  }
-
-  rewrite(
-    node: TypeRawSignatureAST.RawSignatureNode
-  ): TypeRawSignatureAST.RawSignatureNode {
-    if (node.type === "Any") {
-      return { type: "Any", typeID: this.findBaseID(node.typeID) };
-    }
-
-    if (node.type === "Function") {
-      return {
-        type: "Function",
-        from: this.rewrite(node.from),
-        to: this.rewrite(node.to),
-      };
-    }
-
-    if (node.type === "Operator") {
-      return {
-        type: "Operator",
-        obscured: this.rewrite(
-          node.obscured
-        ) as TypeRawSignatureAST.RawSignatureFunction,
-      };
-    }
-
-    if (node.type === "List") {
-      return {
-        type: "List",
-        listType: this.rewrite(node.listType),
-      };
-    }
-
-    return node;
-  }
-
-  resolve(node: TypeRawSignatureAST.RawSignatureNode): typeof node {
-    if (node.type === "Any") {
-      let alias = this.aliases.get(node.typeID);
-      if (alias) {
-        if (typeof alias === "number") {
-          alias = this.findBaseID(alias);
-          alias = this.aliases.get(alias);
-          if (typeof alias === "number") return node; // We don't know the type of this any yet
-        }
-        return this.resolve(alias!);
+      if (otherNode.getRootType() === "Function") {
+        const error = this.unify(otherNode, operatorNode.getOutput(), false);
+        if (error) return error;
+        return null;
       }
-      return node;
-    }
 
-    if (node.type === "Function") {
       return {
-        type: "Function",
-        from: this.resolve(node.from),
-        to: this.resolve(node.to),
+        message: `Tried to unify Operator with ${otherNode.getRootType()}`,
+        nodeA: a,
+        nodeB: b,
       };
     }
 
-    if (node.type === "List") {
+    if (a.getRootType() === "List" && b.getRootType() === "List") {
+      const outputError = this.unify(a.getOutput(), b.getOutput(), false);
+      if (outputError) return outputError;
+      return null;
+    }
+
+    if (a.getRootType() === "Any" && b.getRootType() === "Any") {
+      const aBaseID = this.findBaseID(a.getTypeID());
+      const bBaseID = this.findBaseID(b.getTypeID());
+      if (aBaseID === bBaseID) return null;
+      this.aliases.set(aBaseID, bBaseID);
+      return null;
+    }
+
+    if (a.getRootType() === "Any" && b.getRootType() !== "Any") {
+      return this.unify(b, a, false); // reuse the logic below
+    }
+    if (a.getRootType() !== "Any" && b.getRootType() === "Any") {
+      const bBaseAlias = this.findBase(b.getTypeID());
+      if (bBaseAlias instanceof ParsedSignature) {
+        // b has an solid type alias
+        return this.unify(a, bBaseAlias, false);
+      }
+      this.aliases.set(bBaseAlias, a);
+      return null;
+    }
+
+    if (ParsedSignature.typeEquals(a.getRootType(), b.getRootType()))
+      return null;
+
+    if (a.getRootType() !== b.getRootType()) {
       return {
-        type: "List",
-        listType: this.resolve(node.listType),
+        message: `Type Mismatch: ${a.getRootType()} vs ${b.getRootType()}`,
+        nodeA: a,
+        nodeB: b,
       };
     }
 
-    if (node.type === "Operator") {
-      return {
-        type: "Operator",
-        obscured: this.resolve(
-          node.obscured
-        ) as TypeRawSignatureAST.RawSignatureFunction,
-      };
-    }
+    return null;
+  }
 
-    return node;
+  getUnificationVersion() {
+    return TypeMap.unificationVersion;
   }
 }
+
+export const globalMap = new TypeMap();

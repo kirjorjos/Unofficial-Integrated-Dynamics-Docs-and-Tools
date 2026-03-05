@@ -1,4 +1,3 @@
-import { TypeMap } from "HelperClasses/TypeMap";
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
@@ -8,28 +7,25 @@ export class OPERATOR_LOGICAL_NOR extends BaseOperator<
   iBoolean,
   Operator<iBoolean, iBoolean>
 > {
-  constructor(globalMap: TypeMap) {
+  static override internalName = "integrateddynamics:logical_nor" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:logical_nor",
       nicknames: ["nor", "logicalNor"],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Boolean",
+        },
+        to: {
           type: "Function",
           from: {
             type: "Boolean",
           },
           to: {
-            type: "Function",
-            from: {
-              type: "Boolean",
-            },
-            to: {
-              type: "Boolean",
-            },
+            type: "Boolean",
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "!||",
       interactName: "booleanNor",
       function: (bool1: iBoolean): TypeLambda<iBoolean, iBoolean> => {

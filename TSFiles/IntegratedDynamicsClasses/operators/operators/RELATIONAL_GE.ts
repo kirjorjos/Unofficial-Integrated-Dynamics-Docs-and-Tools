@@ -1,4 +1,3 @@
-import { TypeMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
@@ -8,28 +7,25 @@ export class OPERATOR_RELATIONAL_GE extends BaseOperator<
   TypeNumber,
   Operator<TypeNumber, iBoolean>
 > {
-  constructor(globalMap: TypeMap) {
+  static override internalName = "integrateddynamics:relational_ge" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:relational_ge",
       nicknames: ["relationalGe", ">="],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Number",
+        },
+        to: {
           type: "Function",
           from: {
             type: "Number",
           },
           to: {
-            type: "Function",
-            from: {
-              type: "Number",
-            },
-            to: {
-              type: "Boolean",
-            },
+            type: "Boolean",
           },
         },
-        globalMap
-      ),
+      }),
       symbol: ">=",
       interactName: "anyGreaterThanOrEquals",
       function: (num1: TypeNumber): TypeLambda<TypeNumber, iBoolean> => {

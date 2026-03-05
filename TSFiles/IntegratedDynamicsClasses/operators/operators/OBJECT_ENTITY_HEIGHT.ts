@@ -1,4 +1,3 @@
-import { TypeMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Double } from "JavaNumberClasses/Double";
@@ -8,27 +7,24 @@ export class OPERATOR_OBJECT_ENTITY_HEIGHT extends BaseOperator<
   Entity,
   Double
 > {
-  constructor(globalMap: TypeMap) {
+  static override internalName = "integrateddynamics:entity_height" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:entity_height",
       nicknames: [
         "EntityHeight",
         "entity_height",
         "entityHeight",
         "entityHeight",
       ],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Entity",
-          },
-          to: {
-            type: "Double",
-          },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Entity",
         },
-        globalMap
-      ),
+        to: {
+          type: "Double",
+        },
+      }),
       symbol: "height",
       interactName: "entityHeight",
       function: (entity: Entity): Double => {

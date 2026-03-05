@@ -1,14 +1,14 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
-import { TypeMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 
 export class OPERATOR_ENTITY_HELDITEMOFFHAND extends BaseOperator<
   Entity,
   Item
 > {
-  constructor(globalMap: TypeMap) {
+  static override internalName =
+    "integrateddynamics:entity_helditemoffhand" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:entity_helditemoffhand",
       nicknames: [
         "EntityHelditemOff",
         "entity_held_item_off",
@@ -17,18 +17,15 @@ export class OPERATOR_ENTITY_HELDITEMOFFHAND extends BaseOperator<
         "entityHeldItemOffHand",
         "held_item_2",
       ],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Entity",
-          },
-          to: {
-            type: "Item",
-          },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Entity",
         },
-        globalMap
-      ),
+        to: {
+          type: "Item",
+        },
+      }),
       symbol: "held_item_2",
       interactName: "entityHeldItemOffHand",
       function: (entity: Entity): Item => {

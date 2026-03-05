@@ -1,35 +1,20 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { BaseOperator } from "../BaseOperator";
 import { Operator } from "../Operator";
-import { TypeMap } from "HelperClasses/TypeMap";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 
 export class OPERATOR_OPERATOR_REDUCE extends BaseOperator<any, any> {
-  constructor(globalMap: TypeMap) {
+  static override internalName = "integrateddynamics:operator_reduce" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:operator_reduce",
       nicknames: ["operatorReduce", "reduce"],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Operator",
-            obscured: {
-              type: "Function",
-              from: { type: "Any", typeID: 1 },
-              to: {
-                type: "Function",
-                from: { type: "Any", typeID: 1 },
-                to: { type: "Any", typeID: 1 },
-              },
-            },
-          },
-          to: {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Operator",
+          obscured: {
             type: "Function",
-            from: {
-              type: "List",
-              listType: { type: "Any", typeID: 1 },
-            },
+            from: { type: "Any", typeID: 1 },
             to: {
               type: "Function",
               from: { type: "Any", typeID: 1 },
@@ -37,8 +22,19 @@ export class OPERATOR_OPERATOR_REDUCE extends BaseOperator<any, any> {
             },
           },
         },
-        globalMap
-      ),
+        to: {
+          type: "Function",
+          from: {
+            type: "List",
+            listType: { type: "Any", typeID: 1 },
+          },
+          to: {
+            type: "Function",
+            from: { type: "Any", typeID: 1 },
+            to: { type: "Any", typeID: 1 },
+          },
+        },
+      }),
       symbol: "reduce",
       interactName: "operatorReduce",
       function: (

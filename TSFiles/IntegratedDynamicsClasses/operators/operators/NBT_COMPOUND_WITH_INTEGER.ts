@@ -1,4 +1,3 @@
-import { TypeMap } from "HelperClasses/TypeMap";
 import { CompoundTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
 import { IntTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/IntTag";
 import { BaseOperator } from "../BaseOperator";
@@ -11,34 +10,32 @@ export class OPERATOR_NBT_COMPOUND_WITH_INTEGER extends BaseOperator<
   CompoundTag,
   Operator<iString, Operator<Integer, CompoundTag>>
 > {
-  constructor(globalMap: TypeMap) {
+  static override internalName =
+    "integrateddynamics:nbt_compound_with_integer" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:nbt_compound_with_integer",
       nicknames: ["nbtCompoundWithInteger", "NBTWithInteger"],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "NBT",
+        },
+        to: {
           type: "Function",
           from: {
-            type: "NBT",
+            type: "String",
           },
           to: {
             type: "Function",
             from: {
-              type: "String",
+              type: "Integer",
             },
             to: {
-              type: "Function",
-              from: {
-                type: "Integer",
-              },
-              to: {
-                type: "NBT",
-              },
+              type: "NBT",
             },
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "NBT{}.with_integer",
       interactName: "nbtWithInteger",
       function: (

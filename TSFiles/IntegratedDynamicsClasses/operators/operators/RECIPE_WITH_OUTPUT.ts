@@ -1,4 +1,3 @@
-import { TypeMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Recipe } from "IntegratedDynamicsClasses/Recipe";
@@ -9,28 +8,26 @@ export class OPERATOR_RECIPE_WITH_OUTPUT extends BaseOperator<
   Recipe,
   Operator<Ingredients, Recipe>
 > {
-  constructor(globalMap: TypeMap) {
+  static override internalName =
+    "integrateddynamics:recipe_with_output" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:recipe_with_output",
       nicknames: ["recipeWithOutput"],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Recipe",
+        },
+        to: {
           type: "Function",
           from: {
-            type: "Recipe",
+            type: "Ingredients",
           },
           to: {
-            type: "Function",
-            from: {
-              type: "Ingredients",
-            },
-            to: {
-              type: "Recipe",
-            },
+            type: "Recipe",
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "Recipe.with_out",
       interactName: "recipeWithOutput",
       function: (recipe: Recipe): TypeLambda<Ingredients, Recipe> => {

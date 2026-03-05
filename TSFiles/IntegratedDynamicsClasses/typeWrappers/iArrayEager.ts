@@ -3,12 +3,14 @@ import { iBoolean } from "./iBoolean";
 import { Integer } from "JavaNumberClasses/Integer";
 import { Operator } from "IntegratedDynamicsClasses/operators/Operator";
 import { iArray } from "./iArray";
+import { ParsedSignature } from "HelperClasses/ParsedSignature";
 
 export class iArrayEager<
   Source extends IntegratedValue,
   Result extends IntegratedValue = Source,
 > implements iArray<Source, Result>
 {
+  private _signatureCache: ParsedSignature | null = null;
   protected arr: Array<Source>;
 
   constructor(arr: Array<Source>) {
@@ -16,7 +18,6 @@ export class iArrayEager<
   }
 
   valueOf(): Array<Source> {
-    console.warn("Calling this is probally a bug, ensure you're sure");
     return this.arr;
   }
 
@@ -26,16 +27,28 @@ export class iArrayEager<
     return new iArrayEager<Source, Result>(returnValue);
   }
 
-  some(
-    fn: (value: Source, index: number, array: Source[]) => unknown
-  ): iBoolean {
-    return new iBoolean(this.arr.some(fn));
+  some(fn: (value: Source, index: number, array: Source[]) => any): iBoolean {
+    return new iBoolean(
+      this.arr.some((v, i, a) => {
+        const res = fn(v, i, a);
+        const val =
+          typeof res === "object" && res !== null && "valueOf" in res
+            ? res.valueOf()
+            : res;
+        return val;
+      })
+    );
   }
 
-  every(
-    fn: (value: Source, index: number, array: Source[]) => unknown
-  ): iBoolean {
-    return new iBoolean(this.arr.every(fn));
+  every(fn: (value: Source, index: number, array: Source[]) => any): iBoolean {
+    return new iBoolean(
+      this.arr.every((v, i, a) => {
+        const res = fn(v, i, a);
+        return typeof res === "object" && res !== null && "valueOf" in res
+          ? res.valueOf()
+          : res;
+      })
+    );
   }
 
   map<U extends IntegratedValue>(
@@ -47,9 +60,16 @@ export class iArrayEager<
   }
 
   filter(
-    fn: (value: Source, index: number, array: Source[]) => unknown
+    fn: (value: Source, index: number, array: Source[]) => any
   ): iArray<Source, Result> {
-    return new iArrayEager<Source, Result>(this.arr.filter(fn));
+    return new iArrayEager<Source, Result>(
+      this.arr.filter((v, i, a) => {
+        const res = fn(v, i, a);
+        return typeof res === "object" && res !== null && "valueOf" in res
+          ? res.valueOf()
+          : res;
+      })
+    );
   }
 
   size(): Integer {
@@ -57,7 +77,7 @@ export class iArrayEager<
   }
 
   getOrDefault(index: Integer, backup: Result): Result {
-    if (this.size().lte(index)) return backup;
+    if (index.lt(Integer.ZERO) || this.size().lte(index)) return backup;
     return this.get(index);
   }
 
@@ -69,7 +89,7 @@ export class iArrayEager<
   }
 
   includes(element: Source) {
-    return this.some((e) => e.equals(element));
+    return this.some((e) => e.equals(element).valueOf());
   }
 
   concat(arr: iArray<Source, Result>): iArray<Source, Result> {
@@ -84,14 +104,42 @@ export class iArrayEager<
     return new iArrayEager(this.arr.slice(start, end) as unknown as Result[]);
   }
 
-  getSignatureNode(): TypeRawSignatureAST.RawSignatureDefiniteValue {
-    return { type: "Boolean" };
+  getSignatureNode(): ParsedSignature {
+    if (this._signatureCache) {
+      return this._signatureCache;
+    }
+
+    let listTypeAst: TypeRawSignatureAST.RawSignatureNode;
+    if (this.arr.length === 0) {
+      listTypeAst = { type: "Any", typeID: ParsedSignature.getNewTypeID() };
+    } else {
+      listTypeAst = this.arr[0]!.getSignatureNode().getAst();
+    }
+
+    const listAst: TypeRawSignatureAST.RawSignatureList = {
+      type: "List",
+      listType: listTypeAst,
+    };
+
+    const newSignature = new ParsedSignature(listAst, false);
+    this._signatureCache = newSignature;
+    return newSignature;
   }
 
   equals(other: IntegratedValue): iBoolean {
     if (!(other instanceof iArrayEager)) return new iBoolean(false);
     const otherArr = other.valueOf();
     if (this.arr.length !== otherArr.length) return new iBoolean(false);
-    return new iBoolean(this.arr.every((e, i) => e.equals(otherArr[i])));
+    return new iBoolean(
+      this.arr.every((e, i) => e.equals(otherArr[i]).valueOf())
+    );
+  }
+
+  isInfinite(): boolean {
+    return false;
+  }
+
+  getProxyName(): string {
+    return "integrateddynamics:materialized";
   }
 }

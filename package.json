@@ -8,19 +8,19 @@
   "devDependencies": {
     "@types/jest": "^30.0.0",
     "esbuild": "^0.27.0",
-    "jest": "^30.0.5",
+    "jest": "^30.2.0",
     "live-server": "^1.2.2",
     "nodemon": "^3.1.10",
     "prettier": "3.6.2",
+    "ts-jest": "^29.4.6",
     "typescript": "^5.9.3"
   },
   "scripts": {
-    "test:build": "",
-    "test:run": "jest",
-    "test": "npm run test:build && npm run test:run",
+    "test:debug": "jest --runInBand --no-cache",
+    "test": "jest",
     "format": "prettier --write .",
     "bundle": "esbuild TSFiles/index.ts --bundle --outfile=docs/index.js --platform=browser --loader:.wasm=file --external:fs --external:path",
-    "build": "npm run bundle && npm run format && npm run test"
+    "build": "npm run format && npm run test && npm run bundle"
   },
   "prettier": {
     "tabWidth": 2,

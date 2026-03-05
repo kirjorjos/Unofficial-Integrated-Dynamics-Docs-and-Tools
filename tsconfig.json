@@ -27,6 +27,7 @@
     "typeRoots": ["./TSFiles/types", "./node_modules/@types"],
     "types": ["jest"],
     "skipLibCheck": true,
+    "esModuleInterop": true,
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "noPropertyAccessFromIndexSignature": true,
@@ -41,7 +42,11 @@
     "assumeChangesOnlyAffectDirectDependencies": false,
     "useDefineForClassFields": true,
     "noErrorTruncation": false,
-    "traceResolution": false
+    "traceResolution": false,
+    "sourceMap": true,
+    "inlineSourceMap": false,
+    "inlineSources": true,
+    "resolveJsonModule": true
   },
   "compileOnSave": false
 }

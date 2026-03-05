@@ -1,7 +1,6 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { BaseOperator } from "../BaseOperator";
 import { Operator } from "../Operator";
-import { TypeMap } from "HelperClasses/TypeMap";
 
 export class OPERATOR_OPERATOR_APPLY_3 extends BaseOperator<
   Operator<
@@ -13,57 +12,54 @@ export class OPERATOR_OPERATOR_APPLY_3 extends BaseOperator<
     Operator<IntegratedValue, Operator<IntegratedValue, IntegratedValue>>
   >
 > {
-  constructor(globalMap: TypeMap) {
+  static override internalName = "integrateddynamics:operator_apply3" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:operator_apply3",
       nicknames: ["operatorApply_3", "apply3"],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Operator",
-            obscured: {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Operator",
+          obscured: {
+            type: "Function",
+            from: { type: "Any", typeID: 1 },
+            to: {
               type: "Function",
-              from: { type: "Any", typeID: 1 },
+              from: { type: "Any", typeID: 2 },
               to: {
                 type: "Function",
-                from: { type: "Any", typeID: 2 },
-                to: {
-                  type: "Function",
-                  from: { type: "Any", typeID: 3 },
-                  to: { type: "Any", typeID: 4 },
-                },
+                from: { type: "Any", typeID: 3 },
+                to: { type: "Any", typeID: 4 },
               },
             },
+          },
+        },
+        to: {
+          type: "Function",
+          from: {
+            type: "Any",
+            typeID: 1,
           },
           to: {
             type: "Function",
             from: {
               type: "Any",
-              typeID: 1,
+              typeID: 2,
             },
             to: {
               type: "Function",
               from: {
                 type: "Any",
-                typeID: 2,
+                typeID: 3,
               },
               to: {
-                type: "Function",
-                from: {
-                  type: "Any",
-                  typeID: 3,
-                },
-                to: {
-                  type: "Any",
-                  typeID: 4,
-                },
+                type: "Any",
+                typeID: 4,
               },
             },
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "apply3",
       interactName: "operatorApply3",
       serializer: "integrateddynamics:curry",

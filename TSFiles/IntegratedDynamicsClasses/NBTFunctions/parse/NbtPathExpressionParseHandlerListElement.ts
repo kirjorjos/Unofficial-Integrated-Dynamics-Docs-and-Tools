@@ -11,9 +11,9 @@ import {
   HandleResult,
 } from "./INbtPathExpressionParseHandler";
 import { NbtPathExpressionExecutionContext } from "./NBTPathExecutionContext";
-import { ListTag } from "../MinecraftClasses/ListTag";
 import { NbtPathExpressionMatches } from "../NbtPathExpressionMatches";
 import { Integer } from "JavaNumberClasses/Integer";
+import { ListTag } from "../MinecraftClasses/ListTag";
 
 /**
  * A handler that handles list element expressions in the form of "[10]",

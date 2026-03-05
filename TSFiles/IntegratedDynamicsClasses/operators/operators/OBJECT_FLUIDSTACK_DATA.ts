@@ -1,16 +1,15 @@
-import { TypeMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
-import { CompoundTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
+import { Tag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/Tag";
 import { Fluid } from "IntegratedDynamicsClasses/Fluid";
 
 export class OPERATOR_OBJECT_FLUIDSTACK_DATA extends BaseOperator<
   Fluid,
-  CompoundTag
+  Tag<IntegratedValue>
 > {
-  constructor(globalMap: TypeMap) {
+  static override internalName = "integrateddynamics:fluidstack_nbt" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:fluidstack_nbt",
       nicknames: [
         "FluidstackData",
         "fluidstackData",
@@ -27,21 +26,18 @@ export class OPERATOR_OBJECT_FLUIDSTACK_DATA extends BaseOperator<
         "fluidNBT",
         "fluidNBTKeys",
       ],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Fluid",
-          },
-          to: {
-            type: "NBT",
-          },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Fluid",
         },
-        globalMap
-      ),
+        to: {
+          type: "NBT",
+        },
+      }),
       symbol: "NBT()",
       interactName: "fluidstackNbt",
-      function: (fluid: Fluid): CompoundTag => {
+      function: (fluid: Fluid): Tag<IntegratedValue> => {
         return fluid.getNBT();
       },
     });

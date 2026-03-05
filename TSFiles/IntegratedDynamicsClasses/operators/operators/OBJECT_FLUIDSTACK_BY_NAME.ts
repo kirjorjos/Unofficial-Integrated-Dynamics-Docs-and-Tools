@@ -1,16 +1,18 @@
-import { TypeMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 import { Fluid } from "IntegratedDynamicsClasses/Fluid";
+import { RegistryHub } from "IntegratedDynamicsClasses/registries/registryHub";
+import { Properties } from "IntegratedDynamicsClasses/Properties";
 
 export class OPERATOR_OBJECT_FLUIDSTACK_BY_NAME extends BaseOperator<
   iString,
   Fluid
 > {
-  constructor(globalMap: TypeMap) {
+  static override internalName =
+    "integrateddynamics:fluidstack_by_name" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:fluidstack_by_name",
       nicknames: [
         "FluidstackByName",
         "fluidstack_by_name",
@@ -18,24 +20,24 @@ export class OPERATOR_OBJECT_FLUIDSTACK_BY_NAME extends BaseOperator<
         "fluid_by_name",
         "fluidByName",
       ],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "String",
-          },
-          to: {
-            type: "Fluid",
-          },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "String",
         },
-        globalMap
-      ),
+        to: {
+          type: "Fluid",
+        },
+      }),
       symbol: "fluid_by_name",
       interactName: "stringFluidByName",
-      function: (_name: iString): never => {
-        throw new Error(
-          "Fluid by name is infeasible without a registry. This is a placeholder function."
-        );
+      function: (name: iString): Fluid => {
+        const fluidRegistry = RegistryHub.fluidRegistry;
+        const key = name.valueOf().toLowerCase();
+        const FluidConstructor =
+          fluidRegistry.items[key as keyof typeof fluidRegistry.items];
+        if (!FluidConstructor) return new Fluid(new Properties({}));
+        return new FluidConstructor();
       },
     });
   }

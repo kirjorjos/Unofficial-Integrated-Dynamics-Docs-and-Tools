@@ -1,4 +1,3 @@
-import { TypeMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
@@ -8,22 +7,19 @@ export class OPERATOR_OBJECT_ITEMSTACK_MODNAME extends BaseOperator<
   Item,
   iString
 > {
-  constructor(globalMap: TypeMap) {
+  static override internalName = "integrateddynamics:itemstack_mod" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:itemstack_mod",
       nicknames: ["ItemstackModname", "item_mod", "itemModname", "itemMod"],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Item",
-          },
-          to: {
-            type: "String",
-          },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Item",
         },
-        globalMap
-      ),
+        to: {
+          type: "String",
+        },
+      }),
       symbol: "mod",
       interactName: "itemstackMod",
       function: (item: Item): iString => {

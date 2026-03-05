@@ -1,4 +1,3 @@
-import { TypeMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { Operator } from "../Operator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
@@ -7,28 +6,25 @@ export class OPERATOR_BINARY_OR extends BaseOperator<
   Integer,
   Operator<Integer, Integer>
 > {
-  constructor(globalMap: TypeMap) {
+  static override internalName = "integrateddynamics:binary_or" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:binary_or",
       nicknames: ["binaryOr", "|", "integerBinaryOr"],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Integer",
+        },
+        to: {
           type: "Function",
           from: {
             type: "Integer",
           },
           to: {
-            type: "Function",
-            from: {
-              type: "Integer",
-            },
-            to: {
-              type: "Integer",
-            },
+            type: "Integer",
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "|",
       interactName: "integerBinaryOr",
       function: (int1: Integer): TypeLambda<Integer, Integer> => {

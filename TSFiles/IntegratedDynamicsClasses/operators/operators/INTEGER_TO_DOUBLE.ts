@@ -1,25 +1,21 @@
-import { TypeMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 
 export class OPERATOR_INTEGER_TO_DOUBLE extends BaseOperator<Integer, Double> {
-  constructor(globalMap: TypeMap) {
+  static override internalName =
+    "integrateddynamics:operator.integrateddynamics.castintegrateddynamics_integer__integrateddynamics_double" as const;
+  constructor() {
     super({
-      internalName:
-        "integrateddynamics:operator.integrateddynamics.castintegrateddynamics_integer__integrateddynamics_double",
       nicknames: ["intToDouble", "integerToDouble", "integerIntegerToDouble"],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Integer",
-          },
-          to: {
-            type: "Double",
-          },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Integer",
         },
-        globalMap
-      ),
+        to: {
+          type: "Double",
+        },
+      }),
       symbol: "()",
       interactName: "integerIntegerToDouble",
       function: (int: Integer): Double => {

@@ -28,11 +28,15 @@ export class FloatTag extends NumericTag {
   }
 
   override getTypeAsString(): iString {
-    return new iString("FloatTag");
+    return new iString("FLOAT");
   }
 
   equals(tag: Tag<IntegratedValue>): iBoolean {
     if (tag.getType() != Tag.TAG_FLOAT) return new iBoolean(false);
-    return new iBoolean(this.getAsDouble() == (tag as FloatTag).getAsDouble());
+    return this.valueOf().equals(tag.valueOf());
+  }
+
+  toJSON(): number {
+    return this.data.toJSNumber();
   }
 }

@@ -1,4 +1,3 @@
-import { TypeMap } from "HelperClasses/TypeMap";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { BaseOperator } from "../BaseOperator";
@@ -10,24 +9,22 @@ export class OPERATOR_LIST_EQUALS_MULTISET extends BaseOperator<
   iArray<IntegratedValue>,
   Operator<iArray<IntegratedValue>, iBoolean>
 > {
-  constructor(globalMap: TypeMap) {
+  static override internalName =
+    "integrateddynamics:list_equals_multiset" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:list_equals_multiset",
       nicknames: ["listEqualsMultiset", "equalsMultiset"],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: { type: "List", listType: { type: "Any", typeID: 1 } },
+        to: {
           type: "Function",
           from: { type: "List", listType: { type: "Any", typeID: 1 } },
           to: {
-            type: "Function",
-            from: { type: "List", listType: { type: "Any", typeID: 1 } },
-            to: {
-              type: "Boolean",
-            },
+            type: "Boolean",
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "=multiset=",
       interactName: "listEquals_multiset",
       function: (

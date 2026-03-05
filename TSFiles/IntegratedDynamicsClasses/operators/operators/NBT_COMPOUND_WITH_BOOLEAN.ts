@@ -1,4 +1,3 @@
-import { TypeMap } from "HelperClasses/TypeMap";
 import { CompoundTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
 import { ByteTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ByteTag";
 import { BaseOperator } from "../BaseOperator";
@@ -12,34 +11,32 @@ export class OPERATOR_NBT_COMPOUND_WITH_BOOLEAN extends BaseOperator<
   CompoundTag,
   Operator<iString, Operator<iBoolean, CompoundTag>>
 > {
-  constructor(globalMap: TypeMap) {
+  static override internalName =
+    "integrateddynamics:nbt_compound_with_iBoolean" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:nbt_compound_with_iBoolean",
       nicknames: ["nbtCompoundWithBoolean", "NBTWithBoolean"],
-      parsedSignature: new ParsedSignature(
-        {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "NBT",
+        },
+        to: {
           type: "Function",
           from: {
-            type: "NBT",
+            type: "String",
           },
           to: {
             type: "Function",
             from: {
-              type: "String",
+              type: "Boolean",
             },
             to: {
-              type: "Function",
-              from: {
-                type: "Boolean",
-              },
-              to: {
-                type: "NBT",
-              },
+              type: "NBT",
             },
           },
         },
-        globalMap
-      ),
+      }),
       symbol: "NBT{}.with_iBoolean",
       interactName: "nbtWithBoolean",
       function: (

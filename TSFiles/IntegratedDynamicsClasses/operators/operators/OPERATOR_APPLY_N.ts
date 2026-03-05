@@ -1,42 +1,38 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { BaseOperator } from "../BaseOperator";
 import { Operator } from "../Operator";
-import { TypeMap } from "HelperClasses/TypeMap";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 
 export class OPERATOR_OPERATOR_APPLY_N extends BaseOperator<
   Operator<IntegratedValue, IntegratedValue>,
   Operator<iArray<IntegratedValue>, IntegratedValue>
 > {
-  constructor(globalMap: TypeMap) {
+  static override internalName = "integrateddynamics:operator_apply_n" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:operator_apply_n",
       nicknames: ["operatorApplyN", "applyn", "applyN"],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Operator",
-            obscured: {
-              type: "Function",
-              from: { type: "Any", typeID: 1 },
-              to: { type: "Any", typeID: 2 },
-            },
-          },
-          to: {
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Operator",
+          obscured: {
             type: "Function",
-            from: {
-              type: "List",
-              listType: {
-                type: "Any",
-                typeID: 1,
-              },
-            },
+            from: { type: "Any", typeID: 1 },
             to: { type: "Any", typeID: 2 },
           },
         },
-        globalMap
-      ),
+        to: {
+          type: "Function",
+          from: {
+            type: "List",
+            listType: {
+              type: "Any",
+              typeID: 1,
+            },
+          },
+          to: { type: "Any", typeID: 2 },
+        },
+      }),
       symbol: "apply_n",
       interactName: "operatorApply_n",
       serializer: "integrateddynamics:curry",

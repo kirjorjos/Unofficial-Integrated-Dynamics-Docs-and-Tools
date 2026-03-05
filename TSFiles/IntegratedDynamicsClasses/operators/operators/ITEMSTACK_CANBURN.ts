@@ -1,12 +1,12 @@
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
-import { TypeMap } from "HelperClasses/TypeMap";
 
 export class OPERATOR_ITEMSTACK_CANBURN extends BaseOperator<Item, iBoolean> {
-  constructor(globalMap: TypeMap) {
+  static override internalName =
+    "integrateddynamics:itemstack_canburn" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:itemstack_canburn",
       nicknames: [
         "ItemstackCanburn",
         "item_can_burn",
@@ -17,18 +17,15 @@ export class OPERATOR_ITEMSTACK_CANBURN extends BaseOperator<Item, iBoolean> {
         "can_burn",
         "itemstackCanBurn",
       ],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Item",
-          },
-          to: {
-            type: "Boolean",
-          },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Item",
         },
-        globalMap
-      ),
+        to: {
+          type: "Boolean",
+        },
+      }),
       symbol: "can_burn",
       interactName: "itemstackCanBurn",
       function: (item: Item): iBoolean => {

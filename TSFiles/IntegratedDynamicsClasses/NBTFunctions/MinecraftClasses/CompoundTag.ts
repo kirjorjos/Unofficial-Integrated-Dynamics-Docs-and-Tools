@@ -2,6 +2,8 @@ import { Integer } from "JavaNumberClasses/Integer";
 import { ListTag } from "./ListTag";
 import { Tag } from "./Tag";
 import { IntTag } from "./IntTag";
+import { ShortTag } from "./ShortTag";
+import { FloatTag } from "./FloatTag";
 import { ByteTag } from "./ByteTag";
 import { Long } from "JavaNumberClasses/Long";
 import { LongTag } from "./LongTag";
@@ -12,13 +14,81 @@ import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 import { iBoolean } from "IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 import { iArrayEager } from "IntegratedDynamicsClasses/typeWrappers/iArrayEager";
+import { StringTag } from "./StringTag";
 
-export class CompoundTag extends Tag<IntegratedValue> {
+export class CompoundTag extends Tag<CompoundTag> {
   data: Record<string, Tag<IntegratedValue>>;
 
-  constructor(data: Record<string, Tag<IntegratedValue>>) {
+  constructor(data: Record<string, any> = {}) {
     super();
-    this.data = data;
+    this.data = {};
+    for (const [key, value] of Object.entries(data)) {
+      if (value instanceof Tag) {
+        this.data[key] = value;
+      } else {
+        this.data[key] = CompoundTag.wrap(value);
+      }
+    }
+  }
+
+  static wrap(value: any): Tag<IntegratedValue> {
+    if (value instanceof Tag) return value;
+    if (value === null || value === undefined) return new NullTag();
+
+    if (Array.isArray(value)) {
+      return new ListTag(
+        new iArrayEager(value.map((v) => CompoundTag.wrap(v)))
+      );
+    }
+
+    if (typeof value === "object") {
+      // Check if it's already a wrapper but not a Tag (unlikely for NBT but good for safety)
+      if ("getSignatureNode" in value && !(value instanceof Tag)) {
+        if (value instanceof iString) return new StringTag(value);
+        if (value instanceof Integer) return new IntTag(value);
+        if (value instanceof Double) return new DoubleTag(value);
+        if (value instanceof Long) return new LongTag(value);
+        if (value instanceof iBoolean)
+          return new ByteTag(new Integer(+value.valueOf()));
+        const val = value.valueOf();
+        if (Array.isArray(val)) {
+          return new ListTag(value as iArray<Tag<IntegratedValue>>);
+        }
+      }
+      return new CompoundTag(value);
+    }
+
+    // Base JS types
+    switch (typeof value) {
+      case "number":
+        if (Number.isInteger(value)) {
+          if (value >= -2147483648 && value <= 2147483647) {
+            return new IntTag(new Integer(value));
+          } else {
+            return new LongTag(new Long(value));
+          }
+        } else {
+          return new DoubleTag(new Double(value));
+        }
+      case "boolean":
+        return new ByteTag(new Integer(+value));
+      case "string":
+        const str = value as string;
+        if (str.match(/^-?\d+b$/i)) {
+          return new ByteTag(new Integer(parseInt(str.slice(0, -1))));
+        } else if (str.match(/^-?\d+s$/i)) {
+          return new ShortTag(new Integer(parseInt(str.slice(0, -1))));
+        } else if (str.match(/^-?\d+l$/i)) {
+          return new LongTag(new Long(parseInt(str.slice(0, -1))));
+        } else if (str.match(/^-?\d+(\.\d+)?[fF]$/)) {
+          return new FloatTag(new Double(parseFloat(str.slice(0, -1))));
+        } else if (str.match(/^-?\d+(\.\d+)?[dD]$/)) {
+          return new DoubleTag(new Double(parseFloat(str.slice(0, -1))));
+        }
+        return new StringTag(new iString(str));
+      default:
+        return new NullTag();
+    }
   }
 
   getType(): number {
@@ -31,8 +101,8 @@ export class CompoundTag extends Tag<IntegratedValue> {
     return new CompoundTag(value);
   }
 
-  valueOf(): Record<string, Tag<IntegratedValue>> {
-    return this.data;
+  valueOf(): CompoundTag {
+    return this;
   }
 
   getAllKeys(): iArray<iString> {
@@ -74,43 +144,46 @@ export class CompoundTag extends Tag<IntegratedValue> {
   }
 
   getTypeAsString(): iString {
-    return new iString("CompoundTag");
+    return new iString("COMPOUND");
   }
 
-  toJSON(): any {
-    let obj = {} as any;
-
-    function mapTagArray(value: Tag<any>) {
-      (value as ListTag)
-        .getArray()
-        .valueOf()
-        .map((e) => {
-          if (e instanceof CompoundTag) return e.toJSON();
-          if (e instanceof ListTag) return mapTagArray(e);
-          let innerValue = value.valueOf();
-          while (
-            innerValue instanceof Object &&
-            innerValue.constructor.name != "Object"
-          ) {
-            innerValue = innerValue.toJSON();
-          }
-        });
-    }
+  toJSON(): jsonObject {
+    let obj: jsonObject = {};
 
     for (const [key, value] of Object.entries(this.data)) {
-      if (!(value instanceof CompoundTag || value instanceof ListTag)) {
-        let innerValue = value.valueOf() as IntegratedValue;
-        findBase: while (
-          innerValue instanceof Object &&
-          innerValue.constructor.name != "Object"
+      if (value instanceof CompoundTag) {
+        obj[key] = value.toJSON();
+      } else if (value instanceof ListTag) {
+        obj[key] = (value as ListTag)
+          .valueOf()
+          .valueOf()
+          .map((e: Tag<IntegratedValue>) => {
+            if ("toJSON" in e && typeof (e as any).toJSON === "function") {
+              return (e as any).toJSON();
+            }
+            return e.valueOf();
+          });
+      } else if (
+        "toJSON" in value &&
+        typeof (value as any).toJSON === "function"
+      ) {
+        obj[key] = (value as any).toJSON();
+      } else {
+        const val = value.valueOf();
+        if (typeof val === "object" && val !== null && "toJSNumber" in val) {
+          obj[key] = (val as any).toJSNumber();
+        } else if (
+          typeof val === "object" &&
+          val !== null &&
+          "valueOf" in val
         ) {
-          if (!("toJSON" in innerValue)) break findBase;
-          innerValue = (innerValue["toJSON"] as Function)();
+          obj[key] = (val as any).valueOf();
+        } else {
+          obj[key] = val as any;
         }
-        obj[key] = innerValue;
-      } else if (value instanceof CompoundTag) obj[key] = value.toJSON();
-      else obj[key] = mapTagArray(value);
+      }
     }
+    return obj;
   }
 
   static fromJSON(data: string): CompoundTag {
@@ -129,59 +202,7 @@ export class CompoundTag extends Tag<IntegratedValue> {
       );
 
     const json = JSON.parse(jsonStr);
-
-    function objectCase(obj: { [k: string]: any }): CompoundTag {
-      for (const key of Object.keys(obj)) {
-        if (Array.isArray(obj[key])) obj[key] = arrayCase(obj[key]);
-        if (obj[key] instanceof Object) obj[key] = objectCase(obj[key]);
-        else obj[key] = baseCase(obj[key]);
-      }
-      return new CompoundTag(obj);
-    }
-
-    function baseCase(obj: { [k: string]: any }): CompoundTag {
-      for (const key of Object.keys(obj)) {
-        switch (typeof obj[key]) {
-          case "number":
-            obj[key] = new IntTag(new Integer(obj[key]));
-            break;
-          case "boolean":
-            obj[key] = new ByteTag(new Integer(+obj[key]));
-            break;
-          case "string":
-            const str = obj[key] as string;
-            if (str.match(/\d*[Bb]/))
-              obj[key] = new ByteTag(new Integer(parseInt(str.slice(0, -1))));
-            if (str.match(/\d*[Ss]/))
-              obj[key] = new IntTag(new Integer(parseInt(str.slice(0, -1))));
-            else if (str.match(/\d*[Ll]/))
-              obj[key] = new LongTag(new Long(parseInt(str.slice(0, -1))));
-            else if (str.match(/\d*[FfDd]/))
-              obj[key] = new DoubleTag(
-                new Double(parseFloat(str.slice(0, -1)))
-              );
-            else if (str.match(/d{1,}/))
-              obj[key] = new IntTag(new Integer(parseInt(obj[key])));
-            break;
-          default:
-            throw new Error(`Unknown type: ${typeof obj[key]}`);
-        }
-      }
-      return new CompoundTag(obj);
-    }
-
-    function arrayCase(arr: any[]): Tag<any>[] {
-      for (const [k, v] of Object.entries(arr)) {
-        const i = parseInt(k);
-        if (Array.isArray(v))
-          arr[i] = new ListTag(new iArrayEager(arrayCase(v)));
-        else if (v instanceof Object) arr[i] = objectCase(v);
-        else arr[i] = baseCase(v);
-      }
-      return arr;
-    }
-
-    return objectCase(json);
+    return new CompoundTag(json);
   }
 
   compoundSubset(subset: CompoundTag): boolean {
@@ -189,18 +210,25 @@ export class CompoundTag extends Tag<IntegratedValue> {
       const subValue = subset.get(key);
       const superValue = this.get(key);
 
-      if (superValue === undefined) return false;
+      if (superValue instanceof NullTag) return false;
 
       if (
         subValue instanceof CompoundTag &&
         superValue instanceof CompoundTag
       ) {
         if (!superValue.compoundSubset(subValue)) return false;
-      } else if (subValue instanceof ListTag && superValue instanceof ListTag) {
-        let subValueArr = subValue.valueOf();
-        let superValueArr = superValue.valueOf();
+      } else if (
+        subValue.getType() === Tag.TAG_LIST &&
+        superValue.getType() === Tag.TAG_LIST
+      ) {
+        let subValueArr = (subValue as ListTag).valueOf();
+        let superValueArr = (superValue as ListTag).valueOf();
         if (!subValueArr.size().equals(superValueArr.size())) return false;
-        if (subValueArr.every((v, i) => superValueArr.valueOf()[i]?.equals(v)))
+        if (
+          subValueArr.every((v, i) =>
+            superValueArr.get(new Integer(i))?.equals(v)
+          )
+        )
           return true;
         return false;
       }
@@ -235,18 +263,28 @@ export class CompoundTag extends Tag<IntegratedValue> {
     const result: Record<string, Tag<IntegratedValue>> = {};
 
     for (const key of this.getAllKeys().valueOf()) {
-      const thisValue = this.get(key)!;
-      const otherValue = other.get(key);
+      if (other.has(key)) {
+        const thisValue = this.get(key)!;
+        const otherValue = other.get(key)!;
 
-      if (
-        thisValue instanceof CompoundTag &&
-        otherValue instanceof CompoundTag
-      ) {
-        const sub = thisValue.compoundIntersection(otherValue);
-        if (sub.getAllKeys().size().gt(Integer.ZERO))
-          result[key.valueOf()] = sub;
-      } else if (thisValue.equals(otherValue ?? new CompoundTag({}))) {
-        result[key.valueOf()] = thisValue;
+        if (
+          thisValue instanceof CompoundTag &&
+          otherValue instanceof CompoundTag
+        ) {
+          const sub = thisValue.compoundIntersection(otherValue);
+          if (sub.getAllKeys().size().gt(Integer.ZERO))
+            result[key.valueOf()] = sub;
+        } else if (
+          thisValue instanceof ListTag &&
+          otherValue instanceof ListTag
+        ) {
+          const thisList = thisValue.valueOf();
+          const otherList = otherValue.valueOf();
+          const intersection = thisList.filter((e) => otherList.includes(e));
+          result[key.valueOf()] = new ListTag(intersection);
+        } else if (thisValue.equals(otherValue).valueOf()) {
+          result[key.valueOf()] = thisValue;
+        }
       }
     }
 
@@ -258,6 +296,12 @@ export class CompoundTag extends Tag<IntegratedValue> {
 
     for (const key of this.getAllKeys().valueOf()) {
       const thisValue = this.get(key)!;
+
+      if (!other.has(key)) {
+        result[key.valueOf()] = thisValue;
+        continue;
+      }
+
       const otherValue = other.get(key);
 
       if (
@@ -267,7 +311,17 @@ export class CompoundTag extends Tag<IntegratedValue> {
         const sub = thisValue.compoundMinus(otherValue);
         if (sub.getAllKeys().size().gt(Integer.ZERO))
           result[key.valueOf()] = sub;
-      } else if (!thisValue.equals(otherValue ?? new CompoundTag({}))) {
+      } else if (
+        thisValue instanceof ListTag &&
+        otherValue instanceof ListTag
+      ) {
+        const thisList = thisValue.valueOf();
+        const otherList = otherValue.valueOf();
+        const difference = thisList.filter((e) => !otherList.includes(e));
+        if (difference.size().gt(Integer.ZERO)) {
+          result[key.valueOf()] = new ListTag(difference);
+        }
+      } else if (!thisValue.equals(otherValue).valueOf()) {
         result[key.valueOf()] = thisValue;
       }
     }
@@ -275,16 +329,32 @@ export class CompoundTag extends Tag<IntegratedValue> {
     return new CompoundTag(result);
   }
 
-  equals(tag: Tag<IntegratedValue>): iBoolean {
-    if (tag.getType() != Tag.TAG_COMPOUND) return new iBoolean(false);
-    let compoundTag = tag as CompoundTag;
-    for (const key of Object.values(
-      new Set([
-        ...this.getAllKeys().valueOf(),
-        ...compoundTag.getAllKeys().valueOf(),
-      ])
-    )) {
-      if (this.get(key) !== compoundTag.get(key)) return new iBoolean(false);
+  equals(other: Tag<IntegratedValue>): iBoolean {
+    if (other.getType() !== Tag.TAG_COMPOUND) return new iBoolean(false);
+    let otherCompound = other as CompoundTag;
+
+    const thisKeys = this.getAllKeys()
+      .valueOf()
+      .map((k) => k.valueOf());
+    const otherKeys = otherCompound
+      .getAllKeys()
+      .valueOf()
+      .map((k) => k.valueOf());
+
+    if (thisKeys.length !== otherKeys.length) return new iBoolean(false);
+
+    for (const keyString of thisKeys) {
+      const key = new iString(keyString);
+      const thisValue = this.get(key);
+      const otherValue = otherCompound.get(key);
+
+      if (
+        thisValue === undefined ||
+        otherValue === undefined ||
+        !thisValue.equals(otherValue).valueOf()
+      ) {
+        return new iBoolean(false);
+      }
     }
     return new iBoolean(true);
   }

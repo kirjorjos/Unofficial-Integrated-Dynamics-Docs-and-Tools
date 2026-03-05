@@ -1,4 +1,3 @@
-import { TypeMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { Integer } from "JavaNumberClasses/Integer";
@@ -8,9 +7,10 @@ export class OPERATOR_OBJECT_ITEMSTACK_INVENTORYSIZE extends BaseOperator<
   Item,
   Integer
 > {
-  constructor(globalMap: TypeMap) {
+  static override internalName =
+    "integrateddynamics:itemstack_inventorysize" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:itemstack_inventorysize",
       nicknames: [
         "ItemstackInventorysize",
         "itemstack_inventory_size",
@@ -19,22 +19,19 @@ export class OPERATOR_OBJECT_ITEMSTACK_INVENTORYSIZE extends BaseOperator<
         "itemInventorySize",
         "inventorySize",
       ],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Item",
-          },
-          to: {
-            type: "Integer",
-          },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Item",
         },
-        globalMap
-      ),
+        to: {
+          type: "Integer",
+        },
+      }),
       symbol: "inventory_size",
       interactName: "itemstackInventorySize",
       function: (item: Item): Integer => {
-        return item.getInventory().size();
+        return item.getInventorySize();
       },
     });
   }

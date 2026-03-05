@@ -1,11 +1,13 @@
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
-import { TypeMap } from "HelperClasses/TypeMap";
 import { BaseOperator } from "../BaseOperator";
+import { Item } from "IntegratedDynamicsClasses/Item";
+import { Properties } from "IntegratedDynamicsClasses/Properties";
+import { Entity } from "IntegratedDynamicsClasses/Entity";
 
 export class OPERATOR_ENTITY_ITEM extends BaseOperator<Entity, Item> {
-  constructor(globalMap: TypeMap) {
+  static override internalName = "integrateddynamics:entity_item" as const;
+  constructor() {
     super({
-      internalName: "integrateddynamics:entity_item",
       nicknames: [
         "EntityItemstack",
         "entity_itemstack",
@@ -15,25 +17,22 @@ export class OPERATOR_ENTITY_ITEM extends BaseOperator<Entity, Item> {
         "entity_item",
         "entityItem",
       ],
-      parsedSignature: new ParsedSignature(
-        {
-          type: "Function",
-          from: {
-            type: "Entity",
-          },
-          to: {
-            type: "Item",
-          },
+      parsedSignature: new ParsedSignature({
+        type: "Function",
+        from: {
+          type: "Entity",
         },
-        globalMap
-      ),
+        to: {
+          type: "Item",
+        },
+      }),
       symbol: "item",
       interactName: "entityItem",
       function: (entity: Entity): Item => {
-        if (entity.isItem()) {
-          return entity.getItem();
+        if (entity.isItem().valueOf()) {
+          return entity.getItem() || new Item(new Properties({}));
         } else {
-          throw new Error("Entity is not an item entity.");
+          return new Item(new Properties({}));
         }
       },
     });
