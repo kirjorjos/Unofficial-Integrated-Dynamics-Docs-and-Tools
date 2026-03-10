@@ -9,9 +9,15 @@ export class OPERATOR_OBJECT_ENTITY_DEATHSOUND extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:entity_deathsound" as const;
+  static override nicknames = [
+    "entityDeathSound",
+    "EntityDeathsound",
+    "entity_death_sound",
+  ];
+  static override symbol = "deathsound";
+  static override interactName = "entityDeathSound";
   constructor() {
     super({
-      nicknames: ["entityDeathSound", "EntityDeathsound", "entity_death_sound"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -21,8 +27,6 @@ export class OPERATOR_OBJECT_ENTITY_DEATHSOUND extends BaseOperator<
           type: "String",
         },
       }),
-      symbol: "deathsound",
-      interactName: "entityDeathSound",
       function: (entity: Entity): iString => {
         return entity.getDeathSound();
       },

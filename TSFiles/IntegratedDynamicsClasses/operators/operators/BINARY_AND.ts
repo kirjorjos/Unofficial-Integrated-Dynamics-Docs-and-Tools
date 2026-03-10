@@ -7,9 +7,11 @@ export class OPERATOR_BINARY_AND extends BaseOperator<
   Operator<Integer, Integer>
 > {
   static override internalName = "integrateddynamics:binary_and" as const;
+  static override nicknames = ["binaryAnd", "integerBinaryAnd"];
+  static override symbol = "&";
+  static override interactName = "integerBinaryAnd";
   constructor() {
     super({
-      nicknames: ["binaryAnd", "integerBinaryAnd"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -25,8 +27,6 @@ export class OPERATOR_BINARY_AND extends BaseOperator<
           },
         },
       }),
-      symbol: "&",
-      interactName: "integerBinaryAnd",
       function: (int1: Integer): TypeLambda<Integer, Integer> => {
         return (int2: Integer): Integer => {
           return int1.binaryAnd(int2);

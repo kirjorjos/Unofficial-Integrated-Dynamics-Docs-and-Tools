@@ -10,13 +10,15 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISITEMEQUALNODATA extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:itemstack_isitemequalnodata" as const;
+  static override nicknames = [
+    "ItemstackIsitemequalnodata",
+    "itemstack_is_itemequalnodata",
+    "itemstackIsItemequalnodata",
+  ];
+  static override symbol = "=NoNBT=";
+  static override interactName = "itemstackIsNbtEqual";
   constructor() {
     super({
-      nicknames: [
-        "ItemstackIsitemequalnodata",
-        "itemstack_is_itemequalnodata",
-        "itemstackIsItemequalnodata",
-      ],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -32,8 +34,6 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISITEMEQUALNODATA extends BaseOperator<
           },
         },
       }),
-      symbol: "=NoNBT=",
-      interactName: "itemstackIsNbtEqual",
       function: (item1: Item): TypeLambda<Item, iBoolean> => {
         return (item2: Item): iBoolean => {
           return new iBoolean(

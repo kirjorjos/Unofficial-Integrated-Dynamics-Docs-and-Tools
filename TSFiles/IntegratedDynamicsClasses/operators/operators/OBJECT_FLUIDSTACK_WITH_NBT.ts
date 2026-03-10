@@ -10,9 +10,15 @@ export class OPERATOR_OBJECT_FLUIDSTACK_WITH_NBT extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:fluidstack_withnbt" as const;
+  static override nicknames = [
+    "fluidWithNBT",
+    "fluid_stack_with_nbt",
+    "fluidStackWithNBT",
+  ];
+  static override symbol = "with_nbt";
+  static override interactName = "fluidstackWithNBT";
   constructor() {
     super({
-      nicknames: ["fluidWithNBT", "fluid_stack_with_nbt", "fluidStackWithNBT"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -28,8 +34,6 @@ export class OPERATOR_OBJECT_FLUIDSTACK_WITH_NBT extends BaseOperator<
           },
         },
       }),
-      symbol: "with_nbt",
-      interactName: "fluidstackWithNBT",
       function: (fluid: Fluid): TypeLambda<CompoundTag, Fluid> => {
         return (nbt: CompoundTag): Fluid => {
           return new Fluid(new Properties({ nbt: nbt }), fluid);

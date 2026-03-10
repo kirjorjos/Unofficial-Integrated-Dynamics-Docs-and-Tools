@@ -9,17 +9,19 @@ export class OPERATOR_OBJECT_FLUIDSTACK_IS_LIGHTER_THAN_AIR extends BaseOperator
 > {
   static override internalName =
     "integrateddynamics:fluidstack_lighter_than_air" as const;
+  static override nicknames = [
+    "FluidstackIsLighterThanAir",
+    "fluidstackIsLighterThanAir",
+    "fluid_stack_is_lighter_than_air",
+    "fluidStackIsLighterThanAir",
+    "fluid_is_lighter_than_air",
+    "fluidIsLighterThanAir",
+    "isLighterThanAir",
+  ];
+  static override symbol = "lighter_than_air";
+  static override interactName = "fluidstackIsLighterThanAir";
   constructor() {
     super({
-      nicknames: [
-        "FluidstackIsLighterThanAir",
-        "fluidstackIsLighterThanAir",
-        "fluid_stack_is_lighter_than_air",
-        "fluidStackIsLighterThanAir",
-        "fluid_is_lighter_than_air",
-        "fluidIsLighterThanAir",
-        "isLighterThanAir",
-      ],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -29,8 +31,6 @@ export class OPERATOR_OBJECT_FLUIDSTACK_IS_LIGHTER_THAN_AIR extends BaseOperator
           type: "Boolean",
         },
       }),
-      symbol: "lighter_than_air",
-      interactName: "fluidstackIsLighterThanAir",
       function: (fluid: Fluid): iBoolean => {
         return fluid.isLighterThanAir();
       },

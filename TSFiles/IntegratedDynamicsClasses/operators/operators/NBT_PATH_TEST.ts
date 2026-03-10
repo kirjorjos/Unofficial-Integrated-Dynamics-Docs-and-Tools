@@ -11,9 +11,11 @@ export class OPERATOR_NBT_PATH_TEST extends BaseOperator<
   Operator<CompoundTag, iBoolean>
 > {
   static override internalName = "integrateddynamics:nbt_path_test" as const;
+  static override nicknames = ["NBTPathTest"];
+  static override symbol = "NBT.path_test";
+  static override interactName = "stringNbtPathTest";
   constructor() {
     super({
-      nicknames: ["NBTPathTest"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -29,8 +31,6 @@ export class OPERATOR_NBT_PATH_TEST extends BaseOperator<
           },
         },
       }),
-      symbol: "NBT.path_test",
-      interactName: "stringNbtPathTest",
       function: (path: iString): TypeLambda<CompoundTag, iBoolean> => {
         return (nbt: CompoundTag): iBoolean => {
           let expression = NbtPath.parse(path.valueOf());

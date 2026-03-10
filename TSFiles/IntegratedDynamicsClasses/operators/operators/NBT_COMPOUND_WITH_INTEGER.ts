@@ -12,9 +12,11 @@ export class OPERATOR_NBT_COMPOUND_WITH_INTEGER extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:nbt_compound_with_integer" as const;
+  static override nicknames = ["nbtCompoundWithInteger", "NBTWithInteger"];
+  static override symbol = "NBT{}.with_integer";
+  static override interactName = "nbtWithInteger";
   constructor() {
     super({
-      nicknames: ["nbtCompoundWithInteger", "NBTWithInteger"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -36,8 +38,6 @@ export class OPERATOR_NBT_COMPOUND_WITH_INTEGER extends BaseOperator<
           },
         },
       }),
-      symbol: "NBT{}.with_integer",
-      interactName: "nbtWithInteger",
       function: (
         nbt: CompoundTag
       ): TypeLambda<iString, TypeLambda<Integer, CompoundTag>> => {

@@ -9,9 +9,11 @@ export class OPERATOR_OPERATOR_BY_NAME extends BaseOperator<
   Operator<IntegratedValue, IntegratedValue>
 > {
   static override internalName = "integrateddynamics:operator_by_name" as const;
+  static override nicknames = ["operatorByName", "opByName"];
+  static override symbol = "op_by_name";
+  static override interactName = "stringOperatorByName";
   constructor() {
     super({
-      nicknames: ["operatorByName", "opByName"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -26,8 +28,6 @@ export class OPERATOR_OPERATOR_BY_NAME extends BaseOperator<
           },
         },
       }),
-      symbol: "op_by_name",
-      interactName: "stringOperatorByName",
       function: (name: iString): Operator<IntegratedValue, IntegratedValue> => {
         const result = operatorRegistry.find(name.valueOf());
         if (!result) throw new Error(`No operator found: ${name.valueOf()}`);

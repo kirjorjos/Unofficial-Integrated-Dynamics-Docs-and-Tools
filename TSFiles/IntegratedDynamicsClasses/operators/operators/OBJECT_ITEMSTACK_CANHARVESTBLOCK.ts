@@ -11,14 +11,16 @@ export class OPERATOR_OBJECT_ITEMSTACK_CANHARVESTBLOCK extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:itemstack_canharvest" as const;
+  static override nicknames = [
+    "ItemstackCanHarvestBlock",
+    "itemstack_can_harvest_block",
+    "itemstackCanHarvestBlock",
+    "canHarvestBlock",
+  ];
+  static override symbol = "can_harvest";
+  static override interactName = "itemstackCanHarvest";
   constructor() {
     super({
-      nicknames: [
-        "ItemstackCanHarvestBlock",
-        "itemstack_can_harvest_block",
-        "itemstackCanHarvestBlock",
-        "canHarvestBlock",
-      ],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -34,8 +36,6 @@ export class OPERATOR_OBJECT_ITEMSTACK_CANHARVESTBLOCK extends BaseOperator<
           },
         },
       }),
-      symbol: "can_harvest",
-      interactName: "itemstackCanHarvest",
       function: (item: Item): TypeLambda<Block, iBoolean> => {
         return (block: Block): iBoolean => {
           return item.canHarvestBlock(block);

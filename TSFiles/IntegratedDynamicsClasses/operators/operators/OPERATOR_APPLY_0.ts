@@ -7,9 +7,11 @@ export class OPERATOR_OPERATOR_APPLY_0 extends BaseOperator<
   IntegratedValue
 > {
   static override internalName = "integrateddynamics:operator_apply0" as const;
+  static override nicknames = ["operatorApply_0", "apply0"];
+  static override symbol = "apply0";
+  static override interactName = "operatorApply0";
   constructor() {
     super({
-      nicknames: ["operatorApply_0", "apply0"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -25,8 +27,6 @@ export class OPERATOR_OPERATOR_APPLY_0 extends BaseOperator<
           typeID: 2,
         },
       }),
-      symbol: "apply0",
-      interactName: "operatorApply0",
       serializer: "integrateddynamics:curry",
       function: (
         op: Operator<IntegratedValue, IntegratedValue>

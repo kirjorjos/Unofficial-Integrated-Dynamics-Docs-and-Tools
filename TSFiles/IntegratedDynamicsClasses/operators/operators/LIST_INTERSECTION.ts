@@ -10,9 +10,11 @@ export class OPERATOR_LIST_INTERSECTION extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:list_intersection" as const;
+  static override nicknames = ["listIntersection", "intersection"];
+  static override symbol = "∩";
+  static override interactName = "listIntersection";
   constructor() {
     super({
-      nicknames: ["listIntersection", "intersection"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: { type: "List", listType: { type: "Any", typeID: 1 } },
@@ -22,8 +24,6 @@ export class OPERATOR_LIST_INTERSECTION extends BaseOperator<
           to: { type: "List", listType: { type: "Any", typeID: 1 } },
         },
       }),
-      symbol: "∩",
-      interactName: "listIntersection",
       function: (
         list1: iArray<IntegratedValue>
       ): TypeLambda<iArray<IntegratedValue>, iArray<IntegratedValue>> => {

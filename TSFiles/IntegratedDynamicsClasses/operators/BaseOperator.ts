@@ -10,30 +10,36 @@ export class BaseOperator<
   I extends IntegratedValue,
   O extends IntegratedValue,
 > extends Operator<I, O> {
-  nicknames: string[];
-  symbol: string;
+  static nicknames: string[] = [];
+  static symbol: string = "";
+  static interactName: string = "";
   serializer?: string;
   static readonly nicknameRegex = /^[A-Za-z0-9\\._]+$/;
 
   constructor({
-    nicknames,
     parsedSignature,
-    symbol,
-    interactName,
     function: fn,
     serializer,
   }: {
-    nicknames: string[];
-    symbol: string;
-    interactName: string;
     parsedSignature: ParsedSignature;
     function: TypeLambda<any, any>;
     serializer?: string;
   }) {
-    super({ parsedSignature, function: fn, interactName });
-    this.nicknames = nicknames;
-    this.symbol = symbol;
+    const staticThis = new.target as typeof BaseOperator;
+    super({
+      parsedSignature,
+      function: fn,
+      interactName: staticThis.interactName,
+    });
     this.serializer = serializer;
+  }
+
+  get nicknames(): string[] {
+    return (this.constructor as typeof BaseOperator).nicknames;
+  }
+
+  get symbol(): string {
+    return (this.constructor as typeof BaseOperator).symbol;
   }
 
   serializeNBT(): CompoundTag {

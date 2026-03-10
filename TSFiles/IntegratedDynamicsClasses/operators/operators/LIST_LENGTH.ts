@@ -7,9 +7,11 @@ export class OPERATOR_LIST_LENGTH extends BaseOperator<
   Integer
 > {
   static override internalName = "integrateddynamics:list_length" as const;
+  static override nicknames = ["listLength"];
+  static override symbol = "| |";
+  static override interactName = "listLength";
   constructor() {
     super({
-      nicknames: ["listLength"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: { type: "List", listType: { type: "Any", typeID: 1 } },
@@ -17,8 +19,6 @@ export class OPERATOR_LIST_LENGTH extends BaseOperator<
           type: "Integer",
         },
       }),
-      symbol: "| |",
-      interactName: "listLength",
       function: (list: iArray<IntegratedValue>): Integer => {
         return list.size();
       },

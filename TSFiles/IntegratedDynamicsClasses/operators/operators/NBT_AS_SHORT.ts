@@ -7,9 +7,11 @@ import { ParsedSignature } from "HelperClasses/ParsedSignature";
 
 export class OPERATOR_NBT_AS_SHORT extends BaseOperator<ShortTag, Integer> {
   static override internalName = "integrateddynamics:nbt_as_short" as const;
+  static override nicknames = ["nbtAsShort"];
+  static override symbol = "NBT.as_short";
+  static override interactName = "nbtAsShort";
   constructor() {
     super({
-      nicknames: ["nbtAsShort"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -19,8 +21,6 @@ export class OPERATOR_NBT_AS_SHORT extends BaseOperator<ShortTag, Integer> {
           type: "Integer",
         },
       }),
-      symbol: "NBT.as_short",
-      interactName: "nbtAsShort",
       function: (nbt: IntTag): Integer => {
         if (nbt.getType() === Tag.TAG_SHORT) {
           return nbt.valueOf();

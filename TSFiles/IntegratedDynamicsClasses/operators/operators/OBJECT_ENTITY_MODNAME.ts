@@ -8,9 +8,16 @@ export class OPERATOR_OBJECT_ENTITY_MODNAME extends BaseOperator<
   iString
 > {
   static override internalName = "integrateddynamics:entity_mod" as const;
+  static override nicknames = [
+    "EntityMod",
+    "entity_mod",
+    "entityMod",
+    "entityModName",
+  ];
+  static override symbol = "entity_mod";
+  static override interactName = "entityMod";
   constructor() {
     super({
-      nicknames: ["EntityMod", "entity_mod", "entityMod", "entityModName"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -20,8 +27,6 @@ export class OPERATOR_OBJECT_ENTITY_MODNAME extends BaseOperator<
           type: "String",
         },
       }),
-      symbol: "entity_mod",
-      interactName: "entityMod",
       function: (entity: Entity): iString => {
         return entity.getModName();
       },

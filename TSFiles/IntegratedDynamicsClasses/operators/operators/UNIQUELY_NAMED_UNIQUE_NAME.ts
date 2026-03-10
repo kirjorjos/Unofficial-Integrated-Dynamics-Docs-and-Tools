@@ -9,9 +9,11 @@ export class OPERATOR_UNIQUELY_NAMED_UNIQUE_NAME extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:string_unique_name" as const;
+  static override nicknames = ["uname", "uniquelynamedUniquename"];
+  static override symbol = "uname";
+  static override interactName = "uniquely_namedUniqueName";
   constructor() {
     super({
-      nicknames: ["uname", "uniquelynamedUniquename"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -21,8 +23,6 @@ export class OPERATOR_UNIQUELY_NAMED_UNIQUE_NAME extends BaseOperator<
           type: "String",
         },
       }),
-      symbol: "uname",
-      interactName: "uniquely_namedUniqueName",
       function: (uniquelyNamed: UniquelyNamed): iString => {
         return uniquelyNamed.getUniqueName();
       },

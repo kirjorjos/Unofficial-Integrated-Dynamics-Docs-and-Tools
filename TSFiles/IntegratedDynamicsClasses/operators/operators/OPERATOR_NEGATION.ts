@@ -9,9 +9,11 @@ export class OPERATOR_OPERATOR_NEGATION extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:operator_negation" as const;
+  static override nicknames = ["operatorNegation", "negation"];
+  static override symbol = "!.";
+  static override interactName = "operatorNegation";
   constructor() {
     super({
-      nicknames: ["operatorNegation", "negation"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -31,8 +33,6 @@ export class OPERATOR_OPERATOR_NEGATION extends BaseOperator<
           },
         },
       }),
-      symbol: "!.",
-      interactName: "operatorNegation",
       function: (
         predicate: Operator<IntegratedValue, iBoolean>
       ): TypeLambda<IntegratedValue, iBoolean> => {

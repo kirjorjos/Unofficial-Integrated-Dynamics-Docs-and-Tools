@@ -6,14 +6,16 @@ import { Properties } from "IntegratedDynamicsClasses/Properties";
 
 export class OPERATOR_OBJECT_ITEMSTACK_BLOCK extends BaseOperator<Item, Block> {
   static override internalName = "integrateddynamics:itemstack_block" as const;
+  static override nicknames = [
+    "ItemstackBlock",
+    "itemstack_block",
+    "itemstackBlock",
+    "itemBlock",
+  ];
+  static override symbol = "block";
+  static override interactName = "itemstackBlock";
   constructor() {
     super({
-      nicknames: [
-        "ItemstackBlock",
-        "itemstack_block",
-        "itemstackBlock",
-        "itemBlock",
-      ],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -23,8 +25,6 @@ export class OPERATOR_OBJECT_ITEMSTACK_BLOCK extends BaseOperator<Item, Block> {
           type: "Block",
         },
       }),
-      symbol: "block",
-      interactName: "itemstackBlock",
       function: (item: Item): Block => {
         return new Block(new Properties({}), item.getBlock());
       },

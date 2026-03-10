@@ -8,9 +8,11 @@ export class OPERATOR_OPERATOR_MAP extends BaseOperator<
   Operator<iArray<IntegratedValue>, iArray<IntegratedValue>>
 > {
   static override internalName = "integrateddynamics:operator_map" as const;
+  static override nicknames = ["operatorMap", "map"];
+  static override symbol = "map";
+  static override interactName = "operatorMap";
   constructor() {
     super({
-      nicknames: ["operatorMap", "map"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -33,8 +35,6 @@ export class OPERATOR_OPERATOR_MAP extends BaseOperator<
           },
         },
       }),
-      symbol: "map",
-      interactName: "operatorMap",
       function: (
         op: Operator<IntegratedValue, IntegratedValue>
       ): TypeLambda<iArray<IntegratedValue>, iArray<IntegratedValue>> => {

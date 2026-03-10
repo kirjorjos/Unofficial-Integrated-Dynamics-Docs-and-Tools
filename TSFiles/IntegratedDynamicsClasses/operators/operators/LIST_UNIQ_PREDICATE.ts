@@ -13,9 +13,11 @@ export class OPERATOR_LIST_UNIQ_PREDICATE extends BaseOperator<
   >
 > {
   static override internalName = "integrateddynamics:list_uniq_p" as const;
+  static override nicknames = ["listUniqPredicate", "uniq_p", "list_uniq_p"];
+  static override symbol = "uniq_p";
+  static override interactName = "listUniquePredicate";
   constructor() {
     super({
-      nicknames: ["listUniqPredicate", "uniq_p", "list_uniq_p"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: { type: "List", listType: { type: "Any", typeID: 1 } },
@@ -38,8 +40,6 @@ export class OPERATOR_LIST_UNIQ_PREDICATE extends BaseOperator<
           to: { type: "List", listType: { type: "Any", typeID: 1 } },
         },
       }),
-      symbol: "uniq_p",
-      interactName: "listUniquePredicate",
       function: (
         list: iArray<IntegratedValue>
       ): TypeLambda<

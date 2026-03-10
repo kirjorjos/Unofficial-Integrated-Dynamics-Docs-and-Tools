@@ -13,14 +13,16 @@ export class OPERATOR_OBJECT_FLUIDSTACK_WITH_DATA extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:fluidstack_withdata" as const;
+  static override nicknames = [
+    "FluidstackWithData",
+    "fluidstackWithData",
+    "fluid_stack_with_data",
+    "fluidStackWithData",
+  ];
+  static override symbol = "with_data";
+  static override interactName = "fluidstackWithData";
   constructor() {
     super({
-      nicknames: [
-        "FluidstackWithData",
-        "fluidstackWithData",
-        "fluid_stack_with_data",
-        "fluidStackWithData",
-      ],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -42,8 +44,6 @@ export class OPERATOR_OBJECT_FLUIDSTACK_WITH_DATA extends BaseOperator<
           },
         },
       }),
-      symbol: "with_data",
-      interactName: "fluidstackWithData",
       function: (
         fluid: Fluid
       ): TypeLambda<iString, TypeLambda<Tag<IntegratedValue>, Fluid>> => {

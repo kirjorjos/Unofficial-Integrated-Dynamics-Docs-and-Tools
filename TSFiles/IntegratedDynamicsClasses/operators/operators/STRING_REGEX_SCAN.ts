@@ -14,9 +14,11 @@ export class OPERATOR_STRING_REGEX_SCAN extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:string_regex_scan" as const;
+  static override nicknames = ["stringRegexScan"];
+  static override symbol = "regex_scan";
+  static override interactName = "stringRegexScan";
   constructor() {
     super({
-      nicknames: ["stringRegexScan"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -36,8 +38,6 @@ export class OPERATOR_STRING_REGEX_SCAN extends BaseOperator<
           },
         },
       }),
-      symbol: "regex_scan",
-      interactName: "stringRegexScan",
       function: (regexString: iString) => {
         return (groupIndex: Integer): TypeLambda<iString, iArray<iString>> => {
           return (fullString: iString): iArray<iString> => {

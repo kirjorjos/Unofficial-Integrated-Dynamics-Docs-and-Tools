@@ -5,15 +5,17 @@ import { ParsedSignature } from "HelperClasses/ParsedSignature";
 export class OPERATOR_ENTITY_HASGUIOPEN extends BaseOperator<Entity, iBoolean> {
   static override internalName =
     "integrateddynamics:entity_hasguiopen" as const;
+  static override nicknames = [
+    "PlayerHasguiopen",
+    "player_has_gui_open",
+    "playerHasGuiOpen",
+    "has_gui_open",
+    "entityHasGuiOpen",
+  ];
+  static override symbol = "has_gui_open";
+  static override interactName = "entityHasGuiOpen";
   constructor() {
     super({
-      nicknames: [
-        "PlayerHasguiopen",
-        "player_has_gui_open",
-        "playerHasGuiOpen",
-        "has_gui_open",
-        "entityHasGuiOpen",
-      ],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -23,8 +25,6 @@ export class OPERATOR_ENTITY_HASGUIOPEN extends BaseOperator<Entity, iBoolean> {
           type: "Boolean",
         },
       }),
-      symbol: "has_gui_open",
-      interactName: "entityHasGuiOpen",
       function: (entity: Entity): iBoolean => {
         return entity.hasGuiOpen();
       },

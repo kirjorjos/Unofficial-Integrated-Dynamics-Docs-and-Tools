@@ -9,9 +9,11 @@ export class OPERATOR_STRING_CONTAINS extends BaseOperator<
   Operator<iString, iBoolean>
 > {
   static override internalName = "integrateddynamics:string_contains" as const;
+  static override nicknames = ["stringContains"];
+  static override symbol = "contains";
+  static override interactName = "stringContains";
   constructor() {
     super({
-      nicknames: ["stringContains"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -27,8 +29,6 @@ export class OPERATOR_STRING_CONTAINS extends BaseOperator<
           },
         },
       }),
-      symbol: "contains",
-      interactName: "stringContains",
       function: (substring: iString): TypeLambda<iString, iBoolean> => {
         return (fullString: iString): iBoolean => {
           return new iBoolean(

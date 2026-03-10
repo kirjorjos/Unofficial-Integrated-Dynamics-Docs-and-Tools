@@ -10,9 +10,11 @@ export class OPERATOR_LIST_EQUALS_SET extends BaseOperator<
   Operator<iArray<IntegratedValue>, iBoolean>
 > {
   static override internalName = "integrateddynamics:list_equals_set" as const;
+  static override nicknames = ["listEqualsSet", "equalsSet"];
+  static override symbol = "=set=";
+  static override interactName = "listEquals_set";
   constructor() {
     super({
-      nicknames: ["listEqualsSet", "equalsSet"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: { type: "List", listType: { type: "Any", typeID: 1 } },
@@ -24,8 +26,6 @@ export class OPERATOR_LIST_EQUALS_SET extends BaseOperator<
           },
         },
       }),
-      symbol: "=set=",
-      interactName: "listEquals_set",
       function: (
         list1: iArray<IntegratedValue>
       ): TypeLambda<iArray<IntegratedValue>, iBoolean> => {

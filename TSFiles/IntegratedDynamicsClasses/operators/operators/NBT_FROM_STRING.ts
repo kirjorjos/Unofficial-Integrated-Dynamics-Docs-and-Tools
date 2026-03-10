@@ -5,9 +5,11 @@ import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 
 export class OPERATOR_NBT_FROM_STRING extends BaseOperator<iString, StringTag> {
   static override internalName = "integrateddynamics:nbt_from_string" as const;
+  static override nicknames = ["nbtFromString"];
+  static override symbol = "NBT.from_string";
+  static override interactName = "stringAsNbt";
   constructor() {
     super({
-      nicknames: ["nbtFromString"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -17,8 +19,6 @@ export class OPERATOR_NBT_FROM_STRING extends BaseOperator<iString, StringTag> {
           type: "NBT",
         },
       }),
-      symbol: "NBT.from_string",
-      interactName: "stringAsNbt",
       function: (str: iString): StringTag => {
         return new StringTag(str);
       },

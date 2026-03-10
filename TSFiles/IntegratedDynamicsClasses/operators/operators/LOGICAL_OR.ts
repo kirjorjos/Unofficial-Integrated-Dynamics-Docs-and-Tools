@@ -8,9 +8,11 @@ export class OPERATOR_LOGICAL_OR extends BaseOperator<
   Operator<iBoolean, iBoolean>
 > {
   static override internalName = "integrateddynamics:logical_or" as const;
+  static override nicknames = ["or", "logicalOr"];
+  static override symbol = "||";
+  static override interactName = "booleanOr";
   constructor() {
     super({
-      nicknames: ["or", "logicalOr"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -26,8 +28,6 @@ export class OPERATOR_LOGICAL_OR extends BaseOperator<
           },
         },
       }),
-      symbol: "||",
-      interactName: "booleanOr",
       function: (bool1: iBoolean): TypeLambda<iBoolean, iBoolean> => {
         return (bool2: iBoolean): iBoolean => {
           return new iBoolean(bool1.valueOf() || bool2.valueOf());

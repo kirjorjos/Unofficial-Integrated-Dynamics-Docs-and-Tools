@@ -9,9 +9,11 @@ import { Integer } from "JavaNumberClasses/Integer";
 
 export class OPERATOR_NBT_AS_INT_LIST extends BaseOperator<ListTag, Integer> {
   static override internalName = "integrateddynamics:nbt_as_int_list" as const;
+  static override nicknames = ["nbtAsIntList"];
+  static override symbol = "NBT.as_int_list";
+  static override interactName = "nbtAsIntList";
   constructor() {
     super({
-      nicknames: ["nbtAsIntList"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -19,8 +21,6 @@ export class OPERATOR_NBT_AS_INT_LIST extends BaseOperator<ListTag, Integer> {
         },
         to: { type: "List", listType: { type: "Integer" } },
       }),
-      symbol: "NBT.as_int_list",
-      interactName: "nbtAsIntList",
       function: (nbt: ListTag): iArray<Integer> => {
         if (nbt.getType() === Tag.TAG_INT_ARRAY) {
           const list = nbt.valueOf();

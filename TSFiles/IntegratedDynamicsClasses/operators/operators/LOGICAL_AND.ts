@@ -8,9 +8,11 @@ export class OPERATOR_LOGICAL_AND extends BaseOperator<
   Operator<iBoolean, iBoolean>
 > {
   static override internalName = "integrateddynamics:logical_and" as const;
+  static override nicknames = ["and", "logicalAnd"];
+  static override symbol = "&&";
+  static override interactName = "booleanAnd";
   constructor() {
     super({
-      nicknames: ["and", "logicalAnd"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -26,8 +28,6 @@ export class OPERATOR_LOGICAL_AND extends BaseOperator<
           },
         },
       }),
-      symbol: "&&",
-      interactName: "booleanAnd",
       function: (bool1: iBoolean): TypeLambda<iBoolean, iBoolean> => {
         return (bool2: iBoolean): iBoolean => {
           return new iBoolean(bool1.valueOf() && bool2.valueOf());

@@ -9,16 +9,18 @@ export class OPERATOR_OBJECT_FLUIDSTACK_TEMPERATURE extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:fluidstack_temperature" as const;
+  static override nicknames = [
+    "FluidstackTemperature",
+    "fluidstackTemperature",
+    "fluid_stack_temperature",
+    "fluidStackTemperature",
+    "fluid_temperature",
+    "fluidTemperature",
+  ];
+  static override symbol = "temperature";
+  static override interactName = "fluidstackTemperature";
   constructor() {
     super({
-      nicknames: [
-        "FluidstackTemperature",
-        "fluidstackTemperature",
-        "fluid_stack_temperature",
-        "fluidStackTemperature",
-        "fluid_temperature",
-        "fluidTemperature",
-      ],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -28,8 +30,6 @@ export class OPERATOR_OBJECT_FLUIDSTACK_TEMPERATURE extends BaseOperator<
           type: "Integer",
         },
       }),
-      symbol: "temperature",
-      interactName: "fluidstackTemperature",
       function: (fluid: Fluid): Integer => {
         return fluid.getTemperature();
       },

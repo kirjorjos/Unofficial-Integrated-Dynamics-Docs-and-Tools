@@ -13,15 +13,17 @@ export class OPERATOR_ITEMSTACK_WITHDATA extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:itemstack_withdata" as const;
+  static override nicknames = [
+    "ItemstackWithData",
+    "itemstack_with_data",
+    "itemstackWithData",
+    "item_with_data",
+    "itemWithData",
+  ];
+  static override symbol = "with_data";
+  static override interactName = "itemstackWithData";
   constructor() {
     super({
-      nicknames: [
-        "ItemstackWithData",
-        "itemstack_with_data",
-        "itemstackWithData",
-        "item_with_data",
-        "itemWithData",
-      ],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -43,8 +45,6 @@ export class OPERATOR_ITEMSTACK_WITHDATA extends BaseOperator<
           },
         },
       }),
-      symbol: "with_data",
-      interactName: "itemstackWithData",
       function: (
         item: Item
       ): TypeLambda<iString, TypeLambda<Tag<IntegratedValue>, Item>> => {

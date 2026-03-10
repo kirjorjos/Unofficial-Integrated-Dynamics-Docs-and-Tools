@@ -9,14 +9,16 @@ export class OPERATOR_OBJECT_ITEMSTACK_REPAIRCOST extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:itemstack_repaircost" as const;
+  static override nicknames = [
+    "ItemstackRepaircost",
+    "itemstack_repair_cost",
+    "itemstackRepairCost",
+    "repairCost",
+  ];
+  static override symbol = "repair_cost";
+  static override interactName = "itemstackRepairCost";
   constructor() {
     super({
-      nicknames: [
-        "ItemstackRepaircost",
-        "itemstack_repair_cost",
-        "itemstackRepairCost",
-        "repairCost",
-      ],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -26,8 +28,6 @@ export class OPERATOR_OBJECT_ITEMSTACK_REPAIRCOST extends BaseOperator<
           type: "Integer",
         },
       }),
-      symbol: "repair_cost",
-      interactName: "itemstackRepairCost",
       function: (item: Item): Integer => {
         return item.getRepairCost();
       },

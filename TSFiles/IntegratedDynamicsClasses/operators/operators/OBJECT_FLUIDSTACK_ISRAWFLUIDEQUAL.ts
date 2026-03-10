@@ -10,17 +10,19 @@ export class OPERATOR_OBJECT_FLUIDSTACK_ISRAWFLUIDEQUAL extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:fluidstack_israwfluidequal" as const;
+  static override nicknames = [
+    "FluidstackIsrawfluidequal",
+    "fluidstackIsrawfluidequal",
+    "fluid_stack_israwfluidequal",
+    "fluidStackIsrawfluidequal",
+    "fluid_israwfluidequal",
+    "isRawFluidEqual",
+    "rawFluidEquals",
+  ];
+  static override symbol = "=Raw=";
+  static override interactName = "fluidstackIsRawEqual";
   constructor() {
     super({
-      nicknames: [
-        "FluidstackIsrawfluidequal",
-        "fluidstackIsrawfluidequal",
-        "fluid_stack_israwfluidequal",
-        "fluidStackIsrawfluidequal",
-        "fluid_israwfluidequal",
-        "isRawFluidEqual",
-        "rawFluidEquals",
-      ],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -36,8 +38,6 @@ export class OPERATOR_OBJECT_FLUIDSTACK_ISRAWFLUIDEQUAL extends BaseOperator<
           },
         },
       }),
-      symbol: "=Raw=",
-      interactName: "fluidstackIsRawEqual",
       function: (fluid1: Fluid): TypeLambda<Fluid, iBoolean> => {
         return (fluid2: Fluid): iBoolean => {
           return new iBoolean(

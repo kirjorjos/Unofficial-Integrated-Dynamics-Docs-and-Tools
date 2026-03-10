@@ -9,14 +9,16 @@ export class OPERATOR_LIST_CONTAINS_PREDICATE extends BaseOperator<
   Operator<Predicate<IntegratedValue>, iBoolean>
 > {
   static override internalName = "integrateddynamics:list_contains_p" as const;
+  static override nicknames = [
+    "listContainsP",
+    "listContainsPredicate",
+    "containsPredicate",
+    "containsP",
+  ];
+  static override symbol = "contains_p";
+  static override interactName = "listContainsPredicate";
   constructor() {
     super({
-      nicknames: [
-        "listContainsP",
-        "listContainsPredicate",
-        "containsPredicate",
-        "containsP",
-      ],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: { type: "List", listType: { type: "Any", typeID: 1 } },
@@ -37,8 +39,6 @@ export class OPERATOR_LIST_CONTAINS_PREDICATE extends BaseOperator<
           },
         },
       }),
-      symbol: "contains_p",
-      interactName: "listContainsPredicate",
       function: (
         list: iArray<IntegratedValue>
       ): TypeLambda<Predicate<IntegratedValue>, iBoolean> => {

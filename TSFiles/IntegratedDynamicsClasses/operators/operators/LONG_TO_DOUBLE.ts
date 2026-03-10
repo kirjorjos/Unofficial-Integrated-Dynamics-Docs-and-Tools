@@ -6,9 +6,15 @@ import { Double } from "JavaNumberClasses/Double";
 export class OPERATOR_LONG_TO_DOUBLE extends BaseOperator<Long, Double> {
   static override internalName =
     "integrateddynamics:operator.integrateddynamics.castintegrateddynamics_long__integrateddynamics_double" as const;
+  static override nicknames = [
+    "longToDouble",
+    "longDouble",
+    "longLongToDouble",
+  ];
+  static override symbol = "()";
+  static override interactName = "longLongToDouble";
   constructor() {
     super({
-      nicknames: ["longToDouble", "longDouble", "longLongToDouble"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -18,8 +24,6 @@ export class OPERATOR_LONG_TO_DOUBLE extends BaseOperator<Long, Double> {
           type: "Double",
         },
       }),
-      symbol: "()",
-      interactName: "longLongToDouble",
       function: (long: Long): Double => {
         return long.toDouble();
       },

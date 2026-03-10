@@ -11,13 +11,15 @@ export class OPERATOR_OBJECT_BLOCK_WITH_PROPERTIES extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:block_blockfromproperties" as const;
+  static override nicknames = [
+    "BlockWithProperties",
+    "block_with_properties",
+    "blockWithProperties",
+  ];
+  static override symbol = "block_with_props";
+  static override interactName = "blockWithProperties";
   constructor() {
     super({
-      nicknames: [
-        "BlockWithProperties",
-        "block_with_properties",
-        "blockWithProperties",
-      ],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -33,8 +35,6 @@ export class OPERATOR_OBJECT_BLOCK_WITH_PROPERTIES extends BaseOperator<
           },
         },
       }),
-      symbol: "block_with_props",
-      interactName: "blockWithProperties",
       function: (block: Block): TypeLambda<CompoundTag, Block> => {
         return (nbtProperties: CompoundTag): Block => {
           const properties = new Properties(nbtProperties.toJSON());

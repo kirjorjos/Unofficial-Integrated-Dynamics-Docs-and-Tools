@@ -9,14 +9,16 @@ export class OPERATOR_OBJECT_ITEMSTACK_FE_CAPACITY extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:itemstack_fecapacity" as const;
+  static override nicknames = [
+    "ItemstackFecapacity",
+    "itemstack_fe_capacity",
+    "itemstackFECapacity",
+    "feCapacity",
+  ];
+  static override symbol = "fe_capacity";
+  static override interactName = "itemstackFECapacity";
   constructor() {
     super({
-      nicknames: [
-        "ItemstackFecapacity",
-        "itemstack_fe_capacity",
-        "itemstackFECapacity",
-        "feCapacity",
-      ],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -26,8 +28,6 @@ export class OPERATOR_OBJECT_ITEMSTACK_FE_CAPACITY extends BaseOperator<
           type: "Integer",
         },
       }),
-      symbol: "fe_capacity",
-      interactName: "itemstackFECapacity",
       function: (item: Item): Integer => {
         return item.getFeCapacity();
       },

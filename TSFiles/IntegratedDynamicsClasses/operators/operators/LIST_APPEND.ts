@@ -8,9 +8,11 @@ export class OPERATOR_LIST_APPEND extends BaseOperator<
   Operator<IntegratedValue, iArray<IntegratedValue>>
 > {
   static override internalName = "integrateddynamics:list_append" as const;
+  static override nicknames = ["listAppend", "append"];
+  static override symbol = "append";
+  static override interactName = "listAppend";
   constructor() {
     super({
-      nicknames: ["listAppend", "append"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: { type: "List", listType: { type: "Any", typeID: 1 } },
@@ -20,8 +22,6 @@ export class OPERATOR_LIST_APPEND extends BaseOperator<
           to: { type: "List", listType: { type: "Any", typeID: 1 } },
         },
       }),
-      symbol: "append",
-      interactName: "listAppend",
       function: (
         list: iArray<IntegratedValue>
       ): TypeLambda<IntegratedValue, iArray<IntegratedValue>> => {

@@ -7,9 +7,11 @@ export class OPERATOR_OBJECT_BLOCK_OPAQUE extends BaseOperator<
   iBoolean
 > {
   static override internalName = "integrateddynamics:block_opaque" as const;
+  static override nicknames = ["BlockOpaque", "opaque"];
+  static override symbol = "opaque";
+  static override interactName = "blockIsOpaque";
   constructor() {
     super({
-      nicknames: ["BlockOpaque", "opaque"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -19,8 +21,6 @@ export class OPERATOR_OBJECT_BLOCK_OPAQUE extends BaseOperator<
           type: "Boolean",
         },
       }),
-      symbol: "opaque",
-      interactName: "blockIsOpaque",
       function: (block: Block): iBoolean => {
         return block.isOpaque();
       },

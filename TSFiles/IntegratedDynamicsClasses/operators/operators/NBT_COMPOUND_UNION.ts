@@ -9,9 +9,11 @@ export class OPERATOR_NBT_COMPOUND_UNION extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:nbt_compound_union" as const;
+  static override nicknames = ["nbtCompoundUnion", "NBTUnion"];
+  static override symbol = "NBT{}.∪";
+  static override interactName = "nbtUnion";
   constructor() {
     super({
-      nicknames: ["nbtCompoundUnion", "NBTUnion"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -27,8 +29,6 @@ export class OPERATOR_NBT_COMPOUND_UNION extends BaseOperator<
           },
         },
       }),
-      symbol: "NBT{}.∪",
-      interactName: "nbtUnion",
       function: (nbt1: CompoundTag): TypeLambda<CompoundTag, CompoundTag> => {
         return (nbt2: CompoundTag): CompoundTag => {
           return nbt1.compoundUnion(nbt2);

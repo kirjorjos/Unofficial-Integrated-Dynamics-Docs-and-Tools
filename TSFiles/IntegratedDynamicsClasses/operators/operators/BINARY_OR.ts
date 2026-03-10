@@ -7,9 +7,11 @@ export class OPERATOR_BINARY_OR extends BaseOperator<
   Operator<Integer, Integer>
 > {
   static override internalName = "integrateddynamics:binary_or" as const;
+  static override nicknames = ["binaryOr", "integerBinaryOr"];
+  static override symbol = "|";
+  static override interactName = "integerBinaryOr";
   constructor() {
     super({
-      nicknames: ["binaryOr", "integerBinaryOr"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -25,8 +27,6 @@ export class OPERATOR_BINARY_OR extends BaseOperator<
           },
         },
       }),
-      symbol: "|",
-      interactName: "integerBinaryOr",
       function: (int1: Integer): TypeLambda<Integer, Integer> => {
         return (int2: Integer): Integer => {
           return int1.binaryOr(int2);

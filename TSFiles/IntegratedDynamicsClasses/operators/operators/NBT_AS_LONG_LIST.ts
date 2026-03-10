@@ -12,9 +12,11 @@ export class OPERATOR_NBT_AS_LONG_LIST extends BaseOperator<
   iArray<Long>
 > {
   static override internalName = "integrateddynamics:nbt_as_long_list" as const;
+  static override nicknames = ["nbtAsLongList"];
+  static override symbol = "NBT.as_long_list";
+  static override interactName = "nbtAsLongList";
   constructor() {
     super({
-      nicknames: ["nbtAsLongList"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -22,8 +24,6 @@ export class OPERATOR_NBT_AS_LONG_LIST extends BaseOperator<
         },
         to: { type: "List", listType: { type: "Long" } },
       }),
-      symbol: "NBT.as_long_list",
-      interactName: "nbtAsLongList",
       function: (nbt: ListTag): iArray<Long> => {
         if (nbt.getType() === Tag.TAG_LONG_ARRAY) {
           const list = nbt.valueOf();

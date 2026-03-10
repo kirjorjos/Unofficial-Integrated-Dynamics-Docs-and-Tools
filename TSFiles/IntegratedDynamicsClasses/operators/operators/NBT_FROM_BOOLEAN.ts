@@ -7,9 +7,11 @@ import { Integer } from "JavaNumberClasses/Integer";
 export class OPERATOR_NBT_FROM_BOOLEAN extends BaseOperator<iBoolean, ByteTag> {
   static override internalName =
     "integrateddynamics:nbt_from_iBoolean" as const;
+  static override nicknames = ["nbtFromBoolean"];
+  static override symbol = "NBT.from_iBoolean";
+  static override interactName = "booleanAsNbt";
   constructor() {
     super({
-      nicknames: ["nbtFromBoolean"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -19,8 +21,6 @@ export class OPERATOR_NBT_FROM_BOOLEAN extends BaseOperator<iBoolean, ByteTag> {
           type: "NBT",
         },
       }),
-      symbol: "NBT.from_iBoolean",
-      interactName: "booleanAsNbt",
       function: (bool: iBoolean): ByteTag => {
         return new ByteTag(new Integer(+bool.valueOf()));
       },

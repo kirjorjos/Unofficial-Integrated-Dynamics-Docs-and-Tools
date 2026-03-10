@@ -9,15 +9,17 @@ export class OPERATOR_ITEMSTACK_TOOLTIP extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:itemstack_tooltip" as const;
+  static override nicknames = [
+    "ItemstackTooltip",
+    "itemstack_tooltip",
+    "itemstackTooltip",
+    "item_tooltip",
+    "itemTooltip",
+  ];
+  static override symbol = "tooltip";
+  static override interactName = "itemstackTooltip";
   constructor() {
     super({
-      nicknames: [
-        "ItemstackTooltip",
-        "itemstack_tooltip",
-        "itemstackTooltip",
-        "item_tooltip",
-        "itemTooltip",
-      ],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -25,8 +27,6 @@ export class OPERATOR_ITEMSTACK_TOOLTIP extends BaseOperator<
         },
         to: { type: "List", listType: { type: "String" } },
       }),
-      symbol: "tooltip",
-      interactName: "itemstackTooltip",
       function: (item: Item): iArray<iString> => {
         return item.getTooltip();
       },

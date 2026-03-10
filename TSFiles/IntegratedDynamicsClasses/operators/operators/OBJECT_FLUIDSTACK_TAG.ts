@@ -10,15 +10,17 @@ export class OPERATOR_OBJECT_FLUIDSTACK_TAG extends BaseOperator<
   iArray<iString>
 > {
   static override internalName = "integrateddynamics:fluidstack_tag" as const;
+  static override nicknames = [
+    "FluidstackTag",
+    "fluidstackTag",
+    "fluidstackTagStacks",
+    "fluidstackTagStack",
+    "fluidTag",
+  ];
+  static override symbol = "fluid_tag_names";
+  static override interactName = "fluidstackTags";
   constructor() {
     super({
-      nicknames: [
-        "FluidstackTag",
-        "fluidstackTag",
-        "fluidstackTagStacks",
-        "fluidstackTagStack",
-        "fluidTag",
-      ],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -26,8 +28,6 @@ export class OPERATOR_OBJECT_FLUIDSTACK_TAG extends BaseOperator<
         },
         to: { type: "List", listType: { type: "String" } },
       }),
-      symbol: "fluid_tag_names",
-      interactName: "fluidstackTags",
       function: (fluid: Fluid): iArray<iString> => {
         return new iArrayEager(
           fluid

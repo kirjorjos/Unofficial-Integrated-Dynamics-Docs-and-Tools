@@ -10,9 +10,11 @@ export class OPERATOR_NBT_COMPOUND_WITHOUT extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:nbt_compound_without" as const;
+  static override nicknames = ["nbtCompoundWithout", "NBTWithout"];
+  static override symbol = "NBT{}.without";
+  static override interactName = "nbtWithout";
   constructor() {
     super({
-      nicknames: ["nbtCompoundWithout", "NBTWithout"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -28,8 +30,6 @@ export class OPERATOR_NBT_COMPOUND_WITHOUT extends BaseOperator<
           },
         },
       }),
-      symbol: "NBT{}.without",
-      interactName: "nbtWithout",
       function: (nbt: CompoundTag): TypeLambda<iString, CompoundTag> => {
         return (key: iString): CompoundTag => {
           return nbt.without(key.valueOf());

@@ -9,9 +9,11 @@ export class OPERATOR_OBJECT_ITEMSTACK_PLANTTYPE extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:itemstack_plant_type" as const;
+  static override nicknames = ["plant_type", "planttype", "plantType"];
+  static override symbol = "plant_type";
+  static override interactName = "plantType";
   constructor() {
     super({
-      nicknames: ["plant_type", "planttype", "plantType"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -21,8 +23,6 @@ export class OPERATOR_OBJECT_ITEMSTACK_PLANTTYPE extends BaseOperator<
           type: "String",
         },
       }),
-      symbol: "plant_type",
-      interactName: "plantType",
       function: (item: Item): iString => {
         return item.getPlantType();
       },

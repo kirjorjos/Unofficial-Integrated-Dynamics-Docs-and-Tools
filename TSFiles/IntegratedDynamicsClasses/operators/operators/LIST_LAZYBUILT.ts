@@ -12,9 +12,11 @@ export class OPERATOR_LIST_LAZYBUILT extends BaseOperator<
   >
 > {
   static override internalName = "integrateddynamics:list_lazybuilt" as const;
+  static override nicknames = ["listLazybuilt", "lazybuilt", "anyLazyBuilt"];
+  static override symbol = "lazybuilt";
+  static override interactName = "anyLazyBuilt";
   constructor() {
     super({
-      nicknames: ["listLazybuilt", "lazybuilt", "anyLazyBuilt"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: { type: "Any", typeID: 1 },
@@ -31,8 +33,6 @@ export class OPERATOR_LIST_LAZYBUILT extends BaseOperator<
           to: { type: "List", listType: { type: "Any", typeID: 1 } },
         },
       }),
-      symbol: "lazybuilt",
-      interactName: "anyLazyBuilt",
       function: (
         initial: IntegratedValue
       ): TypeLambda<

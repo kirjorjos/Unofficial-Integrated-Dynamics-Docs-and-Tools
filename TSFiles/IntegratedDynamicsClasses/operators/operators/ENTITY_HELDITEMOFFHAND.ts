@@ -7,16 +7,18 @@ export class OPERATOR_ENTITY_HELDITEMOFFHAND extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:entity_helditemoffhand" as const;
+  static override nicknames = [
+    "EntityHelditemOff",
+    "entity_held_item_off",
+    "entityHeldItemOff",
+    "heldItemOff",
+    "entityHeldItemOffHand",
+    "held_item_2",
+  ];
+  static override symbol = "held_item_2";
+  static override interactName = "entityHeldItemOffHand";
   constructor() {
     super({
-      nicknames: [
-        "EntityHelditemOff",
-        "entity_held_item_off",
-        "entityHeldItemOff",
-        "heldItemOff",
-        "entityHeldItemOffHand",
-        "held_item_2",
-      ],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -26,8 +28,6 @@ export class OPERATOR_ENTITY_HELDITEMOFFHAND extends BaseOperator<
           type: "Item",
         },
       }),
-      symbol: "held_item_2",
-      interactName: "entityHeldItemOffHand",
       function: (entity: Entity): Item => {
         return entity.getHeldItemOffHand();
       },

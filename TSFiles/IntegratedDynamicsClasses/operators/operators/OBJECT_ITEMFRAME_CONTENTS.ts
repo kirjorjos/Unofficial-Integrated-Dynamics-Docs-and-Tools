@@ -9,15 +9,17 @@ export class OPERATOR_OBJECT_ITEMFRAME_CONTENTS extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:entity_itemframecontents" as const;
+  static override nicknames = [
+    "ItemframeContents",
+    "itemframe_contents",
+    "itemframeContents",
+    "item_frame_contents",
+    "itemFrameContents",
+  ];
+  static override symbol = "itemframe_contents";
+  static override interactName = "entityItemFrameContents";
   constructor() {
     super({
-      nicknames: [
-        "ItemframeContents",
-        "itemframe_contents",
-        "itemframeContents",
-        "item_frame_contents",
-        "itemFrameContents",
-      ],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -27,8 +29,6 @@ export class OPERATOR_OBJECT_ITEMFRAME_CONTENTS extends BaseOperator<
           type: "Item",
         },
       }),
-      symbol: "itemframe_contents",
-      interactName: "entityItemFrameContents",
       function: (entity: Entity): Item => {
         if (entity.isItemFrame().valueOf()) {
           return entity.getItemFrameContents();

@@ -12,9 +12,11 @@ export class OPERATOR_STRING_REGEX_GROUP extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:string_regex_group" as const;
+  static override nicknames = ["stringRegexGroup"];
+  static override symbol = "regex_group";
+  static override interactName = "stringRegexGroup";
   constructor() {
     super({
-      nicknames: ["stringRegexGroup"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -36,8 +38,6 @@ export class OPERATOR_STRING_REGEX_GROUP extends BaseOperator<
           },
         },
       }),
-      symbol: "regex_group",
-      interactName: "stringRegexGroup",
       function: (regexString: iString) => {
         return (groupIndex: Integer) => {
           return (fullString: iString) => {

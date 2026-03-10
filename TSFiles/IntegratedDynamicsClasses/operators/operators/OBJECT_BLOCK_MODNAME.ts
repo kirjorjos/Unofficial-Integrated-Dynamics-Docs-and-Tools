@@ -7,9 +7,11 @@ export class OPERATOR_OBJECT_BLOCK_MODNAME extends BaseOperator<
   iString
 > {
   static override internalName = "integrateddynamics:block_mod" as const;
+  static override nicknames = ["blockMod", "block_mod"];
+  static override symbol = "mod";
+  static override interactName = "blockMod";
   constructor() {
     super({
-      nicknames: ["blockMod", "block_mod"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -19,8 +21,6 @@ export class OPERATOR_OBJECT_BLOCK_MODNAME extends BaseOperator<
           type: "String",
         },
       }),
-      symbol: "mod",
-      interactName: "blockMod",
       function: (block: Block): iString => {
         return block.getModName();
       },

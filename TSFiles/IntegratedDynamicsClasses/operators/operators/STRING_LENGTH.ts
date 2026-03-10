@@ -5,9 +5,11 @@ import { Integer } from "JavaNumberClasses/Integer";
 
 export class OPERATOR_STRING_LENGTH extends BaseOperator<iString, Integer> {
   static override internalName = "integrateddynamics:string_length" as const;
+  static override nicknames = ["stringLength"];
+  static override symbol = "len";
+  static override interactName = "stringLength";
   constructor() {
     super({
-      nicknames: ["stringLength"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -17,8 +19,6 @@ export class OPERATOR_STRING_LENGTH extends BaseOperator<iString, Integer> {
           type: "Integer",
         },
       }),
-      symbol: "len",
-      interactName: "stringLength",
       function: (str: iString): Integer => {
         return new Integer(str.valueOf().length);
       },

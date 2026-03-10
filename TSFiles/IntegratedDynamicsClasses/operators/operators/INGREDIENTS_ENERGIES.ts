@@ -9,9 +9,11 @@ export class OPERATOR_INGREDIENTS_ENERGIES extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:ingredients_energies" as const;
+  static override nicknames = ["ingredientsEnergies", "Ingr.energies"];
+  static override symbol = "Ingr.energies";
+  static override interactName = "ingredientsEnergies";
   constructor() {
     super({
-      nicknames: ["ingredientsEnergies", "Ingr.energies"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -19,8 +21,6 @@ export class OPERATOR_INGREDIENTS_ENERGIES extends BaseOperator<
         },
         to: { type: "List", listType: { type: "Long" } },
       }),
-      symbol: "Ingr.energies",
-      interactName: "ingredientsEnergies",
       function: (ingredients: Ingredients): iArray<Long> => {
         return ingredients.getEnergies();
       },

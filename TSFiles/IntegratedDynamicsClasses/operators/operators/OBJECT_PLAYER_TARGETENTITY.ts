@@ -8,14 +8,16 @@ export class OPERATOR_OBJECT_PLAYER_TARGETENTITY extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:entity_targetentity" as const;
+  static override nicknames = [
+    "EntityTargetentity",
+    "entity_target_entity",
+    "entityTargetEntity",
+    "playerTargetEntity",
+  ];
+  static override symbol = "target_entity";
+  static override interactName = "entityTargetEntity";
   constructor() {
     super({
-      nicknames: [
-        "EntityTargetentity",
-        "entity_target_entity",
-        "entityTargetEntity",
-        "playerTargetEntity",
-      ],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -25,8 +27,6 @@ export class OPERATOR_OBJECT_PLAYER_TARGETENTITY extends BaseOperator<
           type: "Entity",
         },
       }),
-      symbol: "target_entity",
-      interactName: "entityTargetEntity",
       function: (entity: Entity): Entity => {
         return entity.getTargetEntity();
       },

@@ -13,9 +13,11 @@ export class OPERATOR_NBT_COMPOUND_WITH_LIST_INT extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:nbt_compound_with_list_int" as const;
+  static override nicknames = ["nbtCompoundWithListInt", "NBTWithIntegerList"];
+  static override symbol = "NBT{}.with_int_list";
+  static override interactName = "nbtWithIntList";
   constructor() {
     super({
-      nicknames: ["nbtCompoundWithListInt", "NBTWithIntegerList"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -35,8 +37,6 @@ export class OPERATOR_NBT_COMPOUND_WITH_LIST_INT extends BaseOperator<
           },
         },
       }),
-      symbol: "NBT{}.with_int_list",
-      interactName: "nbtWithIntList",
       function: (
         nbt: CompoundTag
       ): TypeLambda<iString, TypeLambda<iArray<Integer>, CompoundTag>> => {

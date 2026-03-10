@@ -6,9 +6,11 @@ import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 export class OPERATOR_PARSE_DOUBLE extends BaseOperator<iString, Double> {
   static override internalName =
     "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.double" as const;
+  static override nicknames = ["parseDouble"];
+  static override symbol = "parse_double";
+  static override interactName = "stringParseAsDouble";
   constructor() {
     super({
-      nicknames: ["parseDouble"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -18,8 +20,6 @@ export class OPERATOR_PARSE_DOUBLE extends BaseOperator<iString, Double> {
           type: "Double",
         },
       }),
-      symbol: "parse_double",
-      interactName: "stringParseAsDouble",
       function: (data: iString): Double => {
         try {
           return new Double(data.valueOf());

@@ -12,9 +12,11 @@ export class OPERATOR_STRING_MATCHES_REGEX extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:string_matches_regex" as const;
+  static override nicknames = ["matchesRegex"];
+  static override symbol = "matches_regex";
+  static override interactName = "stringMatchesRegex";
   constructor() {
     super({
-      nicknames: ["matchesRegex"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -30,8 +32,6 @@ export class OPERATOR_STRING_MATCHES_REGEX extends BaseOperator<
           },
         },
       }),
-      symbol: "matches_regex",
-      interactName: "stringMatchesRegex",
       function: (regexString: iString): TypeLambda<iString, iBoolean> => {
         return (fullString: iString): iBoolean => {
           const regex = regexString.valueOf();

@@ -8,16 +8,16 @@ export class OPERATOR_LIST_HEAD extends BaseOperator<
   IntegratedValue
 > {
   static override internalName = "integrateddynamics:list_head" as const;
+  static override nicknames = ["listHead", "head"];
+  static override symbol = "head";
+  static override interactName = "listHead";
   constructor() {
     super({
-      nicknames: ["listHead", "head"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: { type: "List", listType: { type: "Any", typeID: 1 } },
         to: { type: "Any", typeID: 1 },
       }),
-      symbol: "head",
-      interactName: "listHead",
       function: (list: iArray<IntegratedValue>): IntegratedValue => {
         if (list.size().equals(Integer.ZERO).valueOf()) {
           throw new Error("head called on an empty list");

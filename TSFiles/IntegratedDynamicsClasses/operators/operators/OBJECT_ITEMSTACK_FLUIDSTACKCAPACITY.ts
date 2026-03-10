@@ -9,18 +9,20 @@ export class OPERATOR_OBJECT_ITEMSTACK_FLUIDSTACKCAPACITY extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:itemstack_fluidstackcapacity" as const;
+  static override nicknames = [
+    "ItemstackFluidstackcapacity",
+    "itemstack_fluidstack_capacity",
+    "itemstackFluidstackCapacity",
+    "item_fluid_capacity",
+    "itemFluidCapacity",
+    "item_fluidstack_capacity",
+    "itemFluidstackCapacity",
+    "fluidCapatity",
+  ];
+  static override symbol = "fluidstack_capacity";
+  static override interactName = "itemstackFluidCapacity";
   constructor() {
     super({
-      nicknames: [
-        "ItemstackFluidstackcapacity",
-        "itemstack_fluidstack_capacity",
-        "itemstackFluidstackCapacity",
-        "item_fluid_capacity",
-        "itemFluidCapacity",
-        "item_fluidstack_capacity",
-        "itemFluidstackCapacity",
-        "fluidCapatity",
-      ],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -30,8 +32,6 @@ export class OPERATOR_OBJECT_ITEMSTACK_FLUIDSTACKCAPACITY extends BaseOperator<
           type: "Integer",
         },
       }),
-      symbol: "fluidstack_capacity",
-      interactName: "itemstackFluidCapacity",
       function: (item: Item): Integer => {
         return item.getFluidCapacity();
       },

@@ -8,9 +8,11 @@ export class OPERATOR_ARITHMETIC_DIVISION extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:arithmetic_division" as const;
+  static override nicknames = ["divide", "arithmeticDivision", "numberDivide"];
+  static override symbol = "/";
+  static override interactName = "numberDivide";
   constructor() {
     super({
-      nicknames: ["divide", "arithmeticDivision", "numberDivide"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -26,8 +28,6 @@ export class OPERATOR_ARITHMETIC_DIVISION extends BaseOperator<
           },
         },
       }),
-      symbol: "/",
-      interactName: "numberDivide",
       function: (num1: TypeNumber): TypeLambda<TypeNumber, TypeNumber> => {
         return (num2: TypeNumber): TypeNumber => {
           if (num2.toJSNumber() === 0) {

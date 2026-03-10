@@ -4,9 +4,11 @@ import { BaseOperator } from "../BaseOperator";
 export class OPERATOR_BINARY_COMPLEMENT extends BaseOperator<Integer, Integer> {
   static override internalName =
     "integrateddynamics:binary_complement" as const;
+  static override nicknames = ["binaryComplement", "integerComplement"];
+  static override symbol = "~";
+  static override interactName = "integerComplement";
   constructor() {
     super({
-      nicknames: ["binaryComplement", "integerComplement"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -16,8 +18,6 @@ export class OPERATOR_BINARY_COMPLEMENT extends BaseOperator<Integer, Integer> {
           type: "Integer",
         },
       }),
-      symbol: "~",
-      interactName: "integerComplement",
       function: (int: Integer): Integer => {
         return int.binaryComplement();
       },

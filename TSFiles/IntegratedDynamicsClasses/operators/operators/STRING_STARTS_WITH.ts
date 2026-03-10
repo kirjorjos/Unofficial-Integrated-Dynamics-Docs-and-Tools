@@ -10,9 +10,11 @@ export class OPERATOR_STRING_STARTS_WITH extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:string_starts_with" as const;
+  static override nicknames = ["startsWith", "stringStartsWith"];
+  static override symbol = "starts_with";
+  static override interactName = "stringStartsWith";
   constructor() {
     super({
-      nicknames: ["startsWith", "stringStartsWith"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -28,8 +30,6 @@ export class OPERATOR_STRING_STARTS_WITH extends BaseOperator<
           },
         },
       }),
-      symbol: "starts_with",
-      interactName: "stringStartsWith",
       function: (substring: iString): TypeLambda<iString, iBoolean> => {
         return (fullString: iString): iBoolean => {
           return new iBoolean(

@@ -8,9 +8,16 @@ export class OPERATOR_OBJECT_ITEMSTACK_SIZE extends BaseOperator<
   Integer
 > {
   static override internalName = "integrateddynamics:itemstack_size" as const;
+  static override nicknames = [
+    "ItemstackSize",
+    "itemstack_size",
+    "itemstackSize",
+    "size",
+  ];
+  static override symbol = "size";
+  static override interactName = "itemstackSize";
   constructor() {
     super({
-      nicknames: ["ItemstackSize", "itemstack_size", "itemstackSize", "size"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -20,8 +27,6 @@ export class OPERATOR_OBJECT_ITEMSTACK_SIZE extends BaseOperator<
           type: "Integer",
         },
       }),
-      symbol: "size",
-      interactName: "itemstackSize",
       function: (item: Item): Integer => {
         return item.getSize();
       },

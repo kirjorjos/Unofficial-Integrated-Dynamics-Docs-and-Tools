@@ -9,16 +9,18 @@ export class OPERATOR_OBJECT_FLUIDSTACK_AMOUNT extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:fluidstack_amount" as const;
+  static override nicknames = [
+    "FluidstackAmount",
+    "fluidstackAmount",
+    "fluid_stack_amount",
+    "fluidStackAmount",
+    "fluid_amount",
+    "fluidAmount",
+  ];
+  static override symbol = "amount";
+  static override interactName = "fluidstackAmount";
   constructor() {
     super({
-      nicknames: [
-        "FluidstackAmount",
-        "fluidstackAmount",
-        "fluid_stack_amount",
-        "fluidStackAmount",
-        "fluid_amount",
-        "fluidAmount",
-      ],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -28,8 +30,6 @@ export class OPERATOR_OBJECT_FLUIDSTACK_AMOUNT extends BaseOperator<
           type: "Integer",
         },
       }),
-      symbol: "amount",
-      interactName: "fluidstackAmount",
       function: (fluid: Fluid): Integer => {
         return fluid.getAmount();
       },

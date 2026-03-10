@@ -12,14 +12,16 @@ export class OPERATOR_OBJECT_ITEMSTACK_DATA_KEYS extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:itemstack_datakeys" as const;
+  static override nicknames = [
+    "ItemstackDatakeys",
+    "itemstack_data_keys",
+    "itemstackDataKeys",
+    "itemNBTKeys",
+  ];
+  static override symbol = "data_keys";
+  static override interactName = "itemStackDataKeys";
   constructor() {
     super({
-      nicknames: [
-        "ItemstackDatakeys",
-        "itemstack_data_keys",
-        "itemstackDataKeys",
-        "itemNBTKeys",
-      ],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -27,8 +29,6 @@ export class OPERATOR_OBJECT_ITEMSTACK_DATA_KEYS extends BaseOperator<
         },
         to: { type: "List", listType: { type: "String" } },
       }),
-      symbol: "data_keys",
-      interactName: "itemStackDataKeys",
       function: (item: Item): iArray<iString> => {
         const nbt = item.getNBT();
         if (nbt instanceof CompoundTag) {

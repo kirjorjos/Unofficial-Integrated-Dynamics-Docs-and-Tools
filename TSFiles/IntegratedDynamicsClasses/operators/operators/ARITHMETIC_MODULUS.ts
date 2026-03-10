@@ -8,9 +8,11 @@ export class OPERATOR_ARITHMETIC_MODULUS extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:arithmetic_modulus" as const;
+  static override nicknames = ["modulus", "arithmeticModulus", "numberModulus"];
+  static override symbol = "%";
+  static override interactName = "numberModulus";
   constructor() {
     super({
-      nicknames: ["modulus", "arithmeticModulus", "numberModulus"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -26,8 +28,6 @@ export class OPERATOR_ARITHMETIC_MODULUS extends BaseOperator<
           },
         },
       }),
-      symbol: "%",
-      interactName: "numberModulus",
       function: (num1: TypeNumber): TypeLambda<TypeNumber, TypeNumber> => {
         return (num2: TypeNumber): TypeNumber => {
           if (num2.toJSNumber() === 0) {

@@ -10,9 +10,11 @@ export class OPERATOR_NBT_COMPOUND_KEYS extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:nbt_compound_keys" as const;
+  static override nicknames = ["nbtCompoundKeys", "NBTKeys"];
+  static override symbol = "NBT{}.keys";
+  static override interactName = "nbtKeys";
   constructor() {
     super({
-      nicknames: ["nbtCompoundKeys", "NBTKeys"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -20,8 +22,6 @@ export class OPERATOR_NBT_COMPOUND_KEYS extends BaseOperator<
         },
         to: { type: "List", listType: { type: "String" } },
       }),
-      symbol: "NBT{}.keys",
-      interactName: "nbtKeys",
       function: (nbt: CompoundTag): iArray<iString> => {
         return nbt.getAllKeys();
       },

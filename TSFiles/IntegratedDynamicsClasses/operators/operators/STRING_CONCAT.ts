@@ -8,9 +8,11 @@ export class OPERATOR_STRING_CONCAT extends BaseOperator<
   Operator<iString, iString>
 > {
   static override internalName = "integrateddynamics:string_concat" as const;
+  static override nicknames = ["stringConcat"];
+  static override symbol = "+";
+  static override interactName = "stringConcat";
   constructor() {
     super({
-      nicknames: ["stringConcat"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -26,8 +28,6 @@ export class OPERATOR_STRING_CONCAT extends BaseOperator<
           },
         },
       }),
-      symbol: "+",
-      interactName: "stringConcat",
       function: (str1: iString): TypeLambda<iString, iString> => {
         return (str2: iString): iString => {
           return new iString(str1.valueOf().concat(str2.valueOf()));

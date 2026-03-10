@@ -9,16 +9,18 @@ export class OPERATOR_OBJECT_FLUIDSTACK_BUCKET extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:fluidstack_bucket" as const;
+  static override nicknames = [
+    "FluidstackBucket",
+    "fluidstackBucket",
+    "fluid_stack_bucket",
+    "fluidStackBucket",
+    "fluid_bucket",
+    "fluidBucket",
+  ];
+  static override symbol = "bucket";
+  static override interactName = "fluidstackBucket";
   constructor() {
     super({
-      nicknames: [
-        "FluidstackBucket",
-        "fluidstackBucket",
-        "fluid_stack_bucket",
-        "fluidStackBucket",
-        "fluid_bucket",
-        "fluidBucket",
-      ],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -28,8 +30,6 @@ export class OPERATOR_OBJECT_FLUIDSTACK_BUCKET extends BaseOperator<
           type: "Item",
         },
       }),
-      symbol: "bucket",
-      interactName: "fluidstackBucket",
       function: (fluid: Fluid): Item => {
         return fluid.getBucket();
       },

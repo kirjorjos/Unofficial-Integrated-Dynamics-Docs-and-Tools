@@ -13,9 +13,11 @@ export class OPERATOR_NBT_COMPOUND_WITH_LIST_BYTE extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:nbt_compound_with_list_byte" as const;
+  static override nicknames = ["nbtCompoundWithListByte", "NBTWithByteList"];
+  static override symbol = "NBT{}.with_byte_list";
+  static override interactName = "nbtWithByteList";
   constructor() {
     super({
-      nicknames: ["nbtCompoundWithListByte", "NBTWithByteList"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -35,8 +37,6 @@ export class OPERATOR_NBT_COMPOUND_WITH_LIST_BYTE extends BaseOperator<
           },
         },
       }),
-      symbol: "NBT{}.with_byte_list",
-      interactName: "nbtWithByteList",
       function:
         (
           nbt: CompoundTag

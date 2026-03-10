@@ -5,9 +5,11 @@ import { ByteTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses
 
 export class OPERATOR_NBT_FROM_BYTE extends BaseOperator<Integer, ByteTag> {
   static override internalName = "integrateddynamics:nbt_from_byte" as const;
+  static override nicknames = ["nbtFromByte"];
+  static override symbol = "NBT.from_byte";
+  static override interactName = "byteAsNbt";
   constructor() {
     super({
-      nicknames: ["nbtFromByte"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -17,8 +19,6 @@ export class OPERATOR_NBT_FROM_BYTE extends BaseOperator<Integer, ByteTag> {
           type: "NBT",
         },
       }),
-      symbol: "NBT.from_byte",
-      interactName: "byteAsNbt",
       function: (byte: Integer): ByteTag => {
         return new ByteTag(byte);
       },

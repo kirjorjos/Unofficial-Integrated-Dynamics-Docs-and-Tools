@@ -9,9 +9,11 @@ export class OPERATOR_OBJECT_BLOCK_TAG extends BaseOperator<
   iArray<iString>
 > {
   static override internalName = "integrateddynamics:block_tag" as const;
+  static override nicknames = ["BlockTag", "blockTag"];
+  static override symbol = "block_tag_names";
+  static override interactName = "blockTags";
   constructor() {
     super({
-      nicknames: ["BlockTag", "blockTag"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -19,8 +21,6 @@ export class OPERATOR_OBJECT_BLOCK_TAG extends BaseOperator<
         },
         to: { type: "List", listType: { type: "String" } },
       }),
-      symbol: "block_tag_names",
-      interactName: "blockTags",
       function: (block: Block): iArray<iString> => {
         return block.getTagNames();
       },

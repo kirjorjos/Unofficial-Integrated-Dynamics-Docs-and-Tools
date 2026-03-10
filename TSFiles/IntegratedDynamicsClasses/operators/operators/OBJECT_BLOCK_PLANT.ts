@@ -4,9 +4,11 @@ import { Block } from "IntegratedDynamicsClasses/Block";
 
 export class OPERATOR_OBJECT_BLOCK_PLANT extends BaseOperator<Block, Block> {
   static override internalName = "integrateddynamics:block_plant" as const;
+  static override nicknames = ["plant"];
+  static override symbol = "plant";
+  static override interactName = "plant";
   constructor() {
     super({
-      nicknames: ["plant"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -16,8 +18,6 @@ export class OPERATOR_OBJECT_BLOCK_PLANT extends BaseOperator<Block, Block> {
           type: "Block",
         },
       }),
-      symbol: "plant",
-      interactName: "plant",
       function: (block: Block): Block => {
         return block.getPlant();
       },

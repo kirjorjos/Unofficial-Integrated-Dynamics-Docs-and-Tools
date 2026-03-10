@@ -10,9 +10,11 @@ export class OPERATOR_RECIPE_WITH_OUTPUT extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:recipe_with_output" as const;
+  static override nicknames = ["recipeWithOutput"];
+  static override symbol = "Recipe.with_out";
+  static override interactName = "recipeWithOutput";
   constructor() {
     super({
-      nicknames: ["recipeWithOutput"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -28,8 +30,6 @@ export class OPERATOR_RECIPE_WITH_OUTPUT extends BaseOperator<
           },
         },
       }),
-      symbol: "Recipe.with_out",
-      interactName: "recipeWithOutput",
       function: (recipe: Recipe): TypeLambda<Ingredients, Recipe> => {
         return (ingredients: Ingredients): Recipe => {
           return recipe.setOutput(ingredients);

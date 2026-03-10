@@ -8,16 +8,18 @@ export class OPERATOR_GENERAL_CHOICE extends BaseOperator<
   Operator<IntegratedValue, Operator<IntegratedValue, IntegratedValue>>
 > {
   static override internalName = "integrateddynamics:general_choice" as const;
+  static override nicknames = [
+    "generalChoice",
+    "choice",
+    "booleanChoice",
+    "if",
+    "ifElse",
+    "if_else",
+  ];
+  static override symbol = "?";
+  static override interactName = "booleanChoice";
   constructor() {
     super({
-      nicknames: [
-        "generalChoice",
-        "choice",
-        "booleanChoice",
-        "if",
-        "ifElse",
-        "if_else",
-      ],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -42,8 +44,6 @@ export class OPERATOR_GENERAL_CHOICE extends BaseOperator<
           },
         },
       }),
-      symbol: "?",
-      interactName: "booleanChoice",
       function: (
         bool: iBoolean
       ): TypeLambda<

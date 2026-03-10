@@ -8,14 +8,16 @@ export class OPERATOR_OBJECT_ENTITY_CANBREED extends BaseOperator<
   iBoolean
 > {
   static override internalName = "integrateddynamics:entity_canbreed" as const;
+  static override nicknames = [
+    "EntityCanbreed",
+    "entity_can_breed",
+    "entityCanBreed",
+    "canBreed",
+  ];
+  static override symbol = "canbreed";
+  static override interactName = "entityCanBreed";
   constructor() {
     super({
-      nicknames: [
-        "EntityCanbreed",
-        "entity_can_breed",
-        "entityCanBreed",
-        "canBreed",
-      ],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -25,8 +27,6 @@ export class OPERATOR_OBJECT_ENTITY_CANBREED extends BaseOperator<
           type: "Boolean",
         },
       }),
-      symbol: "canbreed",
-      interactName: "entityCanBreed",
       function: (entity: Entity): iBoolean => {
         return entity.canBreed();
       },

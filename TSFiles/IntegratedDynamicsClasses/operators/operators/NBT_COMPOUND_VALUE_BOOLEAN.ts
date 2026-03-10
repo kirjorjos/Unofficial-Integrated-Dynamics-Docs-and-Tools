@@ -13,9 +13,14 @@ export class OPERATOR_NBT_COMPOUND_VALUE_BOOLEAN extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:nbt_compound_value_iBoolean" as const;
+  static override nicknames = [
+    "nbtCompoundValueBoolean",
+    "compoundValueBoolean",
+  ];
+  static override symbol = "NBT{}.get_iBoolean";
+  static override interactName = "nbtGetBoolean";
   constructor() {
     super({
-      nicknames: ["nbtCompoundValueBoolean", "compoundValueBoolean"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -31,8 +36,6 @@ export class OPERATOR_NBT_COMPOUND_VALUE_BOOLEAN extends BaseOperator<
           },
         },
       }),
-      symbol: "NBT{}.get_iBoolean",
-      interactName: "nbtGetBoolean",
       function: (nbt: CompoundTag): TypeLambda<iString, iBoolean> => {
         return (key: iString): iBoolean => {
           const value = nbt.get(key);

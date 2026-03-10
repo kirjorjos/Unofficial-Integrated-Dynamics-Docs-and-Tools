@@ -9,14 +9,16 @@ export class OPERATOR_OBJECT_ITEMSTACK_HASNBT extends BaseOperator<
   iBoolean
 > {
   static override internalName = "integrateddynamics:itemstack_hasnbt" as const;
+  static override nicknames = [
+    "ItemstackHasnbt",
+    "itemstack_has_nbt",
+    "itemstackHasNBT",
+    "hasNBT",
+  ];
+  static override symbol = "has_nbt";
+  static override interactName = "itemStackHasNBT";
   constructor() {
     super({
-      nicknames: [
-        "ItemstackHasnbt",
-        "itemstack_has_nbt",
-        "itemstackHasNBT",
-        "hasNBT",
-      ],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -26,8 +28,6 @@ export class OPERATOR_OBJECT_ITEMSTACK_HASNBT extends BaseOperator<
           type: "Boolean",
         },
       }),
-      symbol: "has_nbt",
-      interactName: "itemStackHasNBT",
       function: (item: Item): iBoolean => {
         return new iBoolean(item.getNBT().getType() != Tag.TAG_NULL);
       },

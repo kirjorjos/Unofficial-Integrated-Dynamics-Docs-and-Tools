@@ -7,9 +7,11 @@ export class OPERATOR_BINARY_XOR extends BaseOperator<
   Operator<Integer, Integer>
 > {
   static override internalName = "integrateddynamics:binary_xor" as const;
+  static override nicknames = ["binaryXor", "integerXor"];
+  static override symbol = "^";
+  static override interactName = "integerXor";
   constructor() {
     super({
-      nicknames: ["binaryXor", "integerXor"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -25,8 +27,6 @@ export class OPERATOR_BINARY_XOR extends BaseOperator<
           },
         },
       }),
-      symbol: "^",
-      interactName: "integerXor",
       function: (int1: Integer): TypeLambda<Integer, Integer> => {
         return (int2: Integer): Integer => {
           return int1.binaryXor(int2);

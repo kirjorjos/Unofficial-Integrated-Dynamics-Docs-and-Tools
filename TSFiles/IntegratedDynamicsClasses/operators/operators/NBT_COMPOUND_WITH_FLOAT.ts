@@ -12,9 +12,11 @@ export class OPERATOR_NBT_COMPOUND_WITH_FLOAT extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:nbt_compound_with_float" as const;
+  static override nicknames = ["nbtCompoundWithFloat", "NBTWithFloat"];
+  static override symbol = "NBT{}.with_float";
+  static override interactName = "nbtWithFloat";
   constructor() {
     super({
-      nicknames: ["nbtCompoundWithFloat", "NBTWithFloat"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -36,8 +38,6 @@ export class OPERATOR_NBT_COMPOUND_WITH_FLOAT extends BaseOperator<
           },
         },
       }),
-      symbol: "NBT{}.with_float",
-      interactName: "nbtWithFloat",
       function: (
         nbt: CompoundTag
       ): TypeLambda<iString, TypeLambda<Double, CompoundTag>> => {

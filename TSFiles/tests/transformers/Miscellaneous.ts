@@ -6,25 +6,38 @@ import { BaseOperator } from "IntegratedDynamicsClasses/operators/BaseOperator";
  * @author kirjorjos
  */
 describe("MiscellaneousTests", () => {
-  let operators: BaseOperator<IntegratedValue, IntegratedValue>[];
+  const operatorClasses: (typeof BaseOperator)[] = [];
 
   beforeAll(() => {
-    operators = [];
     for (const opClass of Object.values(operatorRegistry)) {
       if (
         typeof opClass === "function" &&
         opClass.prototype instanceof BaseOperator
       ) {
-        operators.push(new opClass());
+        operatorClasses.push(opClass);
       }
     }
   });
 
   describe("UniquenessTests", () => {
+    it("testRegistryClassUniqueness", () => {
+      const classes = new Set<typeof BaseOperator>();
+      for (const [key, opClass] of Object.entries(operatorRegistry)) {
+        if (opClass.prototype instanceof BaseOperator) {
+          if (classes.has(opClass)) {
+            throw new Error(
+              `Duplicate class registration found in operatorRegistry for key "${key}"`
+            );
+          }
+          classes.add(opClass);
+        }
+      }
+    });
+
     it("testInternalNameUniqueness", () => {
       const names = new Set<string>();
-      for (const op of operators) {
-        const name = op.getUniqueName().valueOf();
+      for (const opClass of operatorClasses) {
+        const name = opClass.internalName;
         if (names.has(name)) {
           throw new Error(`Duplicate internal name found: "${name}"`);
         }
@@ -33,10 +46,10 @@ describe("MiscellaneousTests", () => {
     });
 
     it("testLocalNicknameUniqueness", () => {
-      for (const op of operators) {
-        const uniqueName = op.getUniqueName().valueOf();
+      for (const opClass of operatorClasses) {
+        const uniqueName = opClass.internalName;
         const seenNicknames = new Set<string>();
-        for (const nickname of op.nicknames) {
+        for (const nickname of opClass.nicknames) {
           if (seenNicknames.has(nickname)) {
             throw new Error(
               `Duplicate nickname "${nickname}" found within operator "${uniqueName}"`
@@ -50,11 +63,10 @@ describe("MiscellaneousTests", () => {
 
   describe("ValidationTests", () => {
     it("testNicknameRegex", () => {
-      const regex = BaseOperator.nicknameRegex;
-      for (const op of operators) {
-        const uniqueName = op.getUniqueName().valueOf();
-        for (const nickname of op.nicknames) {
-          if (!regex.test(nickname)) {
+      for (const opClass of operatorClasses) {
+        const uniqueName = opClass.internalName;
+        for (const nickname of opClass.nicknames) {
+          if (!BaseOperator.nicknameRegex.test(nickname)) {
             throw new Error(
               `Nickname "${nickname}" in operator "${uniqueName}" does not match regex ${BaseOperator.nicknameRegex}`
             );

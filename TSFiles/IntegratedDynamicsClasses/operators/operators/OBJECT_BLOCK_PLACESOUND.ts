@@ -8,14 +8,16 @@ export class OPERATOR_OBJECT_BLOCK_PLACESOUND extends BaseOperator<
   iString
 > {
   static override internalName = "integrateddynamics:block_placesound" as const;
+  static override nicknames = [
+    "BlockPlacesound",
+    "blockPlaceSound",
+    "block_place_sound",
+    "placeSound",
+  ];
+  static override symbol = "place_sound";
+  static override interactName = "blockPlaceSound";
   constructor() {
     super({
-      nicknames: [
-        "BlockPlacesound",
-        "blockPlaceSound",
-        "block_place_sound",
-        "placeSound",
-      ],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -25,8 +27,6 @@ export class OPERATOR_OBJECT_BLOCK_PLACESOUND extends BaseOperator<
           type: "String",
         },
       }),
-      symbol: "place_sound",
-      interactName: "blockPlaceSound",
       function: (block: Block): iString => {
         return block.getPlaceSound();
       },

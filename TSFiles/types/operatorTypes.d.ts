@@ -4,7 +4,10 @@ import { operatorRegistry } from "IntegratedDynamicsClasses/registries/operatorR
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 
 declare global {
-  type TypeOperatorKey = Exclude<keyof typeof operatorRegistry, "find">;
+  type TypeOperatorKey = Exclude<
+    keyof typeof operatorRegistry,
+    "find" | "operatorByNickname"
+  >;
   type TypeOperatorValue = (typeof operatorRegistry)[TypeOperatorKey];
   type TypeOperatorInternalName = TypeOperatorValue["internalName"];
 

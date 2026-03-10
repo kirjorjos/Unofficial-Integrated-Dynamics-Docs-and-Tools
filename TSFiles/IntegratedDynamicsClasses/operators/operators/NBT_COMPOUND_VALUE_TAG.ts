@@ -11,9 +11,11 @@ export class OPERATOR_NBT_COMPOUND_VALUE_TAG extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:nbt_compound_value_tag" as const;
+  static override nicknames = ["nbtCompoundValueTag", "compoundValueAny"];
+  static override symbol = "NBT{}.get_tag";
+  static override interactName = "nbtGetTag";
   constructor() {
     super({
-      nicknames: ["nbtCompoundValueTag", "compoundValueAny"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -29,8 +31,6 @@ export class OPERATOR_NBT_COMPOUND_VALUE_TAG extends BaseOperator<
           },
         },
       }),
-      symbol: "NBT{}.get_tag",
-      interactName: "nbtGetTag",
       function: (
         nbt: CompoundTag
       ): TypeLambda<iString, Tag<IntegratedValue>> => {

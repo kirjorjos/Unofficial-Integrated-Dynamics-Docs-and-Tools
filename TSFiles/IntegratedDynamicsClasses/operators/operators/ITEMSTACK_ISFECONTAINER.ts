@@ -8,16 +8,18 @@ export class OPERATOR_ITEMSTACK_ISFECONTAINER extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:itemstack_isfecontainer" as const;
+  static override nicknames = [
+    "ItemstackIsfecontainer",
+    "itemstack_is_fe_container",
+    "itemstackIsFecontainer",
+    "item_is_fe_container",
+    "itemIsFecontainer",
+    "isFeContainer",
+  ];
+  static override symbol = "is_fe_container";
+  static override interactName = "itemstackIsFeContainer";
   constructor() {
     super({
-      nicknames: [
-        "ItemstackIsfecontainer",
-        "itemstack_is_fe_container",
-        "itemstackIsFecontainer",
-        "item_is_fe_container",
-        "itemIsFecontainer",
-        "isFeContainer",
-      ],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -27,8 +29,6 @@ export class OPERATOR_ITEMSTACK_ISFECONTAINER extends BaseOperator<
           type: "Boolean",
         },
       }),
-      symbol: "is_fe_container",
-      interactName: "itemstackIsFeContainer",
       function: (item: Item): iBoolean => {
         return item.isFeContainer();
       },

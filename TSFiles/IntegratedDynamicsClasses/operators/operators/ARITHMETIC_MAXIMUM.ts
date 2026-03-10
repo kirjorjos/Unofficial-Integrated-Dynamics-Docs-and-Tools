@@ -8,9 +8,11 @@ export class OPERATOR_ARITHMETIC_MAXIMUM extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:arithmetic_maximum" as const;
+  static override nicknames = ["max", "arithmeticMaximum", "numberMax"];
+  static override symbol = "max";
+  static override interactName = "numberMax";
   constructor() {
     super({
-      nicknames: ["max", "arithmeticMaximum", "numberMax"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -26,8 +28,6 @@ export class OPERATOR_ARITHMETIC_MAXIMUM extends BaseOperator<
           },
         },
       }),
-      symbol: "max",
-      interactName: "numberMax",
       function: (num1: TypeNumber): TypeLambda<TypeNumber, TypeNumber> => {
         return (num2: TypeNumber): TypeNumber => {
           const [lowerOrder, higherOrder] =

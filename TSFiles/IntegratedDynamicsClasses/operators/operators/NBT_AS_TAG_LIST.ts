@@ -10,9 +10,11 @@ export class OPERATOR_NBT_AS_TAG_LIST extends BaseOperator<
   iArray<Tag<IntegratedValue>>
 > {
   static override internalName = "integrateddynamics:nbt_as_tag_list" as const;
+  static override nicknames = ["nbtAsTagList"];
+  static override symbol = "NBT.as_tag_list";
+  static override interactName = "nbtAsTagList";
   constructor() {
     super({
-      nicknames: ["nbtAsTagList"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -20,8 +22,6 @@ export class OPERATOR_NBT_AS_TAG_LIST extends BaseOperator<
         },
         to: { type: "List", listType: { type: "NBT" } },
       }),
-      symbol: "NBT.as_tag_list",
-      interactName: "nbtAsTagList",
       function: (nbt: ListTag): iArray<Tag<IntegratedValue>> => {
         if (nbt.getType() === Tag.TAG_LIST) {
           return nbt.valueOf();

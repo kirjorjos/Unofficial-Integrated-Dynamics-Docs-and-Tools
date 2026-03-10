@@ -9,15 +9,17 @@ import { Properties } from "IntegratedDynamicsClasses/Properties";
 export class OPERATOR_ITEMSTACK_ITEMBYNAME extends BaseOperator<iString, Item> {
   static override internalName =
     "integrateddynamics:itemstack_itembyname" as const;
+  static override nicknames = [
+    "ItemstackByName",
+    "itemstack_by_name",
+    "itemstackByName",
+    "item_by_name",
+    "itemByName",
+  ];
+  static override symbol = "item_by_name";
+  static override interactName = "stringItemByName";
   constructor() {
     super({
-      nicknames: [
-        "ItemstackByName",
-        "itemstack_by_name",
-        "itemstackByName",
-        "item_by_name",
-        "itemByName",
-      ],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -27,8 +29,6 @@ export class OPERATOR_ITEMSTACK_ITEMBYNAME extends BaseOperator<iString, Item> {
           type: "Item",
         },
       }),
-      symbol: "item_by_name",
-      interactName: "stringItemByName",
       function: (name: iString): Item => {
         const itemRegistry = RegistryHub.itemRegistry;
         let key = name.valueOf().toLowerCase();

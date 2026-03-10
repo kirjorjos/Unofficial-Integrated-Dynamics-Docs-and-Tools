@@ -9,9 +9,11 @@ export class OPERATOR_STRING_JOIN extends BaseOperator<
   Operator<iArray<iString>, iString>
 > {
   static override internalName = "integrateddynamics:string_join" as const;
+  static override nicknames = ["stringJoin"];
+  static override symbol = "join";
+  static override interactName = "stringJoin";
   constructor() {
     super({
-      nicknames: ["stringJoin"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -25,8 +27,6 @@ export class OPERATOR_STRING_JOIN extends BaseOperator<
           },
         },
       }),
-      symbol: "join",
-      interactName: "stringJoin",
       function: (delimiter: iString): TypeLambda<iArray<iString>, iString> => {
         return (stringList: iArray<iString>): iString => {
           if (

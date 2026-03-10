@@ -3,15 +3,17 @@ import { ParsedSignature } from "HelperClasses/ParsedSignature";
 
 export class OPERATOR_OBJECT_BLOCK_ITEMSTACK extends BaseOperator<Block, Item> {
   static override internalName = "integrateddynamics:block_itemstack" as const;
+  static override nicknames = [
+    "BlockItemstack",
+    "block_item",
+    "blockItemstack",
+    "block_itemstack",
+    "blockItem",
+  ];
+  static override symbol = "itemstack";
+  static override interactName = "blockItemStack";
   constructor() {
     super({
-      nicknames: [
-        "BlockItemstack",
-        "block_item",
-        "blockItemstack",
-        "block_itemstack",
-        "blockItem",
-      ],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -21,8 +23,6 @@ export class OPERATOR_OBJECT_BLOCK_ITEMSTACK extends BaseOperator<Block, Item> {
           type: "Item",
         },
       }),
-      symbol: "itemstack",
-      interactName: "blockItemStack",
       function: (block: Block): Item => {
         return block.getItem();
       },

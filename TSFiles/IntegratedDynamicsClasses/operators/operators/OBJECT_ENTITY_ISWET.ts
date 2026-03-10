@@ -8,9 +8,16 @@ export class OPERATOR_OBJECT_ENTITY_ISWET extends BaseOperator<
   iBoolean
 > {
   static override internalName = "integrateddynamics:entity_iswet" as const;
+  static override nicknames = [
+    "EntityIswet",
+    "entity_is_wet",
+    "entityIsWet",
+    "isWet",
+  ];
+  static override symbol = "is_wet";
+  static override interactName = "entityIsWet";
   constructor() {
     super({
-      nicknames: ["EntityIswet", "entity_is_wet", "entityIsWet", "isWet"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -20,8 +27,6 @@ export class OPERATOR_OBJECT_ENTITY_ISWET extends BaseOperator<
           type: "Boolean",
         },
       }),
-      symbol: "is_wet",
-      interactName: "entityIsWet",
       function: (entity: Entity): iBoolean => {
         return entity.isWet();
       },

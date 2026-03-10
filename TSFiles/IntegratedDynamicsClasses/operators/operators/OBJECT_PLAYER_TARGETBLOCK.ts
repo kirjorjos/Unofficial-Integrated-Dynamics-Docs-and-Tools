@@ -9,13 +9,15 @@ export class OPERATOR_OBJECT_PLAYER_TARGETBLOCK extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:entity_targetblock" as const;
+  static override nicknames = [
+    "PlayerTargetblock",
+    "player_target_block",
+    "playerTargetBlock",
+  ];
+  static override symbol = "target_block";
+  static override interactName = "entityTargetBlock";
   constructor() {
     super({
-      nicknames: [
-        "PlayerTargetblock",
-        "player_target_block",
-        "playerTargetBlock",
-      ],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -25,8 +27,6 @@ export class OPERATOR_OBJECT_PLAYER_TARGETBLOCK extends BaseOperator<
           type: "Block",
         },
       }),
-      symbol: "target_block",
-      interactName: "entityTargetBlock",
       function: (entity: Entity): Block => {
         return entity.getTargetBlock();
       },

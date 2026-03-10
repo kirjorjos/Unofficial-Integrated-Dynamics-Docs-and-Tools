@@ -8,9 +8,15 @@ export class OPERATOR_ARITHMETIC_DECREMENT extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:arithmetic_decrement" as const;
+  static override nicknames = [
+    "decrement",
+    "arithmeticDecrement",
+    "numberDecrement",
+  ];
+  static override symbol = "--";
+  static override interactName = "numberDecrement";
   constructor() {
     super({
-      nicknames: ["decrement", "arithmeticDecrement", "numberDecrement"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -20,8 +26,6 @@ export class OPERATOR_ARITHMETIC_DECREMENT extends BaseOperator<
           type: "Number",
         },
       }),
-      symbol: "--",
-      interactName: "numberDecrement",
       function: (num1: TypeNumber): TypeNumber => {
         return num1.subtract(Integer.ONE);
       },

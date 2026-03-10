@@ -6,15 +6,17 @@ import { Item } from "IntegratedDynamicsClasses/Item";
 
 export class OPERATOR_STRING_TAG extends BaseOperator<iString, iArray<Item>> {
   static override internalName = "integrateddynamics:string_tag" as const;
+  static override nicknames = [
+    "ItemstackTagStacks",
+    "itemstack_tag_values",
+    "itemstackTagValues",
+    "item_tag_names",
+    "itemTagNames",
+  ];
+  static override symbol = "item_tag_values";
+  static override interactName = "stringItemsByTag";
   constructor() {
     super({
-      nicknames: [
-        "ItemstackTagStacks",
-        "itemstack_tag_values",
-        "itemstackTagValues",
-        "item_tag_names",
-        "itemTagNames",
-      ],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -22,8 +24,6 @@ export class OPERATOR_STRING_TAG extends BaseOperator<iString, iArray<Item>> {
         },
         to: { type: "List", listType: { type: "Item" } },
       }),
-      symbol: "item_tag_values",
-      interactName: "stringItemsByTag",
       function: (): never => {
         throw new Error(
           "Item tag values is infeasible without a registry. This is a placeholder function."

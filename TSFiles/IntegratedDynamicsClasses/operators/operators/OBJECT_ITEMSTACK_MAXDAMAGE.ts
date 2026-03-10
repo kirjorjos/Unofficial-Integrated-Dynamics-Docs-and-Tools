@@ -9,14 +9,16 @@ export class OPERATOR_OBJECT_ITEMSTACK_MAXDAMAGE extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:itemstack_maxdamage" as const;
+  static override nicknames = [
+    "ItemstackMaxdamage",
+    "itemstack_max_damage",
+    "itemstackMaxDamage",
+    "maxDamage",
+  ];
+  static override symbol = "max_damage";
+  static override interactName = "itemstackMaxDamage";
   constructor() {
     super({
-      nicknames: [
-        "ItemstackMaxdamage",
-        "itemstack_max_damage",
-        "itemstackMaxDamage",
-        "maxDamage",
-      ],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -26,8 +28,6 @@ export class OPERATOR_OBJECT_ITEMSTACK_MAXDAMAGE extends BaseOperator<
           type: "Integer",
         },
       }),
-      symbol: "max_damage",
-      interactName: "itemstackMaxDamage",
       function: (item: Item): Integer => {
         return item.getMaxDamage();
       },

@@ -9,9 +9,11 @@ export class OPERATOR_NBT_COMPOUND_INTERSECTION extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:nbt_compound_intersection" as const;
+  static override nicknames = ["nbtCompoundIntersection", "NBTIntersection"];
+  static override symbol = "NBT{}.∩";
+  static override interactName = "nbtIntersection";
   constructor() {
     super({
-      nicknames: ["nbtCompoundIntersection", "NBTIntersection"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -27,8 +29,6 @@ export class OPERATOR_NBT_COMPOUND_INTERSECTION extends BaseOperator<
           },
         },
       }),
-      symbol: "NBT{}.∩",
-      interactName: "nbtIntersection",
       function: (nbt1: CompoundTag) => {
         return (nbt2: CompoundTag) => {
           return nbt1.compoundIntersection(nbt2);

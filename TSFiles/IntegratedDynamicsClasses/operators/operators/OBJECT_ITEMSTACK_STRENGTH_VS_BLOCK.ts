@@ -11,14 +11,16 @@ export class OPERATOR_OBJECT_ITEMSTACK_STRENGTH_VS_BLOCK extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:itemstack_strength" as const;
+  static override nicknames = [
+    "ItemstackStrengthVsBlock",
+    "itemstack_strength_vs_block",
+    "itemstackStrengthVsBlock",
+    "strengthVsBlock",
+  ];
+  static override symbol = "strength";
+  static override interactName = "itemstackStrength";
   constructor() {
     super({
-      nicknames: [
-        "ItemstackStrengthVsBlock",
-        "itemstack_strength_vs_block",
-        "itemstackStrengthVsBlock",
-        "strengthVsBlock",
-      ],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -34,8 +36,6 @@ export class OPERATOR_OBJECT_ITEMSTACK_STRENGTH_VS_BLOCK extends BaseOperator<
           },
         },
       }),
-      symbol: "strength",
-      interactName: "itemstackStrength",
       function: (item: Item): TypeLambda<Block, Double> => {
         return (block: Block): Double => {
           return item.getStrengthVsBlock(block);

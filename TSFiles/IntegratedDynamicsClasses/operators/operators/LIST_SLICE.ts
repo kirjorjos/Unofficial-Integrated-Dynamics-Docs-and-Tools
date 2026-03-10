@@ -10,9 +10,11 @@ export class OPERATOR_LIST_SLICE extends BaseOperator<
   Operator<Integer, Operator<Integer, iArrayEager<IntegratedValue>>>
 > {
   static override internalName = "integrateddynamics:list_slice" as const;
+  static override nicknames = ["listSlice", "slice"];
+  static override symbol = "slice";
+  static override interactName = "listSlice";
   constructor() {
     super({
-      nicknames: ["listSlice", "slice"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: { type: "List", listType: { type: "Any", typeID: 1 } },
@@ -30,8 +32,6 @@ export class OPERATOR_LIST_SLICE extends BaseOperator<
           },
         },
       }),
-      symbol: "slice",
-      interactName: "listSlice",
       function: (
         list: iArray<IntegratedValue>
       ): TypeLambda<Integer, TypeLambda<Integer, iArray<IntegratedValue>>> => {

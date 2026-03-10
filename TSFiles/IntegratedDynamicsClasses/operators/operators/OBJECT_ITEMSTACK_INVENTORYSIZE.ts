@@ -9,16 +9,18 @@ export class OPERATOR_OBJECT_ITEMSTACK_INVENTORYSIZE extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:itemstack_inventorysize" as const;
+  static override nicknames = [
+    "ItemstackInventorysize",
+    "itemstack_inventory_size",
+    "itemstackInventorySize",
+    "item_inventory_size",
+    "itemInventorySize",
+    "inventorySize",
+  ];
+  static override symbol = "inventory_size";
+  static override interactName = "itemstackInventorySize";
   constructor() {
     super({
-      nicknames: [
-        "ItemstackInventorysize",
-        "itemstack_inventory_size",
-        "itemstackInventorySize",
-        "item_inventory_size",
-        "itemInventorySize",
-        "inventorySize",
-      ],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -28,8 +30,6 @@ export class OPERATOR_OBJECT_ITEMSTACK_INVENTORYSIZE extends BaseOperator<
           type: "Integer",
         },
       }),
-      symbol: "inventory_size",
-      interactName: "itemstackInventorySize",
       function: (item: Item): Integer => {
         return item.getInventorySize();
       },

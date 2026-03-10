@@ -10,9 +10,15 @@ export class OPERATOR_ITEMSTACK_WITH_NBT extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:itemstack_withnbt" as const;
+  static override nicknames = [
+    "itemWithNBT",
+    "item_stack_with_nbt",
+    "itemStackWithNBT",
+  ];
+  static override symbol = "with_nbt";
+  static override interactName = "itemstackWithNBT";
   constructor() {
     super({
-      nicknames: ["itemWithNBT", "item_stack_with_nbt", "itemStackWithNBT"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -28,8 +34,6 @@ export class OPERATOR_ITEMSTACK_WITH_NBT extends BaseOperator<
           },
         },
       }),
-      symbol: "with_nbt",
-      interactName: "itemstackWithNBT",
       function: (item: Item): TypeLambda<CompoundTag, Item> => {
         return (nbt: CompoundTag): Item => {
           return new Item(new Properties({ NBT: nbt }), item);

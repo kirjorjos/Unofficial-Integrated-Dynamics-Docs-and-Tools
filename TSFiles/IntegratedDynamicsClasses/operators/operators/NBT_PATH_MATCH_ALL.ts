@@ -14,9 +14,11 @@ export class OPERATOR_NBT_PATH_MATCH_ALL extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:nbt_path_match_all" as const;
+  static override nicknames = ["nbtPathMatchAll"];
+  static override symbol = "NBT.path_match_all";
+  static override interactName = "stringNbtPathMatchAll";
   constructor() {
     super({
-      nicknames: ["nbtPathMatchAll"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -30,8 +32,6 @@ export class OPERATOR_NBT_PATH_MATCH_ALL extends BaseOperator<
           to: { type: "List", listType: { type: "NBT" } },
         },
       }),
-      symbol: "NBT.path_match_all",
-      interactName: "stringNbtPathMatchAll",
       function: (
         path: iString
       ): TypeLambda<CompoundTag, iArray<Tag<IntegratedValue>>> => {

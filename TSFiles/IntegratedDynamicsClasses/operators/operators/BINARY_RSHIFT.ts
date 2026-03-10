@@ -7,9 +7,11 @@ export class OPERATOR_BINARY_RSHIFT extends BaseOperator<
   Operator<Integer, Integer>
 > {
   static override internalName = "integrateddynamics:binary_rshift" as const;
+  static override nicknames = ["binaryRshift", "integerRightShift"];
+  static override symbol = ">>";
+  static override interactName = "integerRightShift";
   constructor() {
     super({
-      nicknames: ["binaryRshift", "integerRightShift"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -25,8 +27,6 @@ export class OPERATOR_BINARY_RSHIFT extends BaseOperator<
           },
         },
       }),
-      symbol: ">>",
-      interactName: "integerRightShift",
       function: (int1: Integer): TypeLambda<Integer, Integer> => {
         return (int2: Integer): Integer => {
           return int1.rightShift(int2);

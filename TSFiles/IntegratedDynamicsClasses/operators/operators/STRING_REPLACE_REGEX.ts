@@ -14,9 +14,11 @@ export class OPERATOR_STRING_REPLACE_REGEX extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:string_replace_regex" as const;
+  static override nicknames = ["stringReplaceRegex"];
+  static override symbol = "replace_regex";
+  static override interactName = "stringReplaceRegex";
   constructor() {
     super({
-      nicknames: ["stringReplaceRegex"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -38,8 +40,6 @@ export class OPERATOR_STRING_REPLACE_REGEX extends BaseOperator<
           },
         },
       }),
-      symbol: "replace_regex",
-      interactName: "stringReplaceRegex",
       function: (regexString: iString) => {
         return (replacementString: iString): TypeLambda<iString, iString> => {
           return (fullString: iString): iString => {

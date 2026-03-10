@@ -9,9 +9,11 @@ export class OPERATOR_INGREDIENTS_WITH_FLUID extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:ingredients_with_fluid" as const;
+  static override nicknames = ["ingredientsWithFluid", "Ingr.with_fluid"];
+  static override symbol = "Ingr.with_fluid";
+  static override interactName = "ingredientsWithFluid";
   constructor() {
     super({
-      nicknames: ["ingredientsWithFluid", "Ingr.with_fluid"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -33,8 +35,6 @@ export class OPERATOR_INGREDIENTS_WITH_FLUID extends BaseOperator<
           },
         },
       }),
-      symbol: "Ingr.with_fluid",
-      interactName: "ingredientsWithFluid",
       function: (
         ingredients: Ingredients
       ): TypeLambda<Integer, TypeLambda<Fluid, Ingredients>> => {

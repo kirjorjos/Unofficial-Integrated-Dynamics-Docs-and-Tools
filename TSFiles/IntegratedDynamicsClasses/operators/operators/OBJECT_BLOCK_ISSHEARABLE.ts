@@ -8,9 +8,15 @@ export class OPERATOR_OBJECT_BLOCK_ISSHEARABLE extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:block_isshearable" as const;
+  static override nicknames = [
+    "blockIsshearable",
+    "block_is_shearable",
+    "blockIsShearable",
+  ];
+  static override symbol = "is_shearable";
+  static override interactName = "blockIsShearable";
   constructor() {
     super({
-      nicknames: ["blockIsshearable", "block_is_shearable", "blockIsShearable"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -20,8 +26,6 @@ export class OPERATOR_OBJECT_BLOCK_ISSHEARABLE extends BaseOperator<
           type: "Boolean",
         },
       }),
-      symbol: "is_shearable",
-      interactName: "blockIsShearable",
       function: (block: Block): iBoolean => {
         return block.isShearable();
       },

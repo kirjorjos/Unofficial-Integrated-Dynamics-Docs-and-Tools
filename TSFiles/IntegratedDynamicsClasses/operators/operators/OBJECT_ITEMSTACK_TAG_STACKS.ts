@@ -12,15 +12,17 @@ export class OPERATOR_OBJECT_ITEMSTACK_TAG_STACKS extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:itemstack_tag_stacks" as const;
+  static override nicknames = [
+    "ItemstackTags",
+    "itemstack_tag_values",
+    "itemstackTagValues",
+    "item_tag_names",
+    "itemTagNames",
+  ];
+  static override symbol = "item_tag_val";
+  static override interactName = "itemstackTagVal";
   constructor() {
     super({
-      nicknames: [
-        "ItemstackTags",
-        "itemstack_tag_values",
-        "itemstackTagValues",
-        "item_tag_names",
-        "itemTagNames",
-      ],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -33,8 +35,6 @@ export class OPERATOR_OBJECT_ITEMSTACK_TAG_STACKS extends BaseOperator<
           },
         },
       }),
-      symbol: "item_tag_val",
-      interactName: "itemstackTagVal",
       function: (tag: iString): iArray<Item> => {
         const matches: Item[] = [];
         const itemRegistry = RegistryHub.itemRegistry;

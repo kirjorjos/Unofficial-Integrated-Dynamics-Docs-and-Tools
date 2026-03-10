@@ -5,9 +5,11 @@ import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 
 export class OPERATOR_OPERATOR_REDUCE extends BaseOperator<any, any> {
   static override internalName = "integrateddynamics:operator_reduce" as const;
+  static override nicknames = ["operatorReduce", "reduce"];
+  static override symbol = "reduce";
+  static override interactName = "operatorReduce";
   constructor() {
     super({
-      nicknames: ["operatorReduce", "reduce"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -35,8 +37,6 @@ export class OPERATOR_OPERATOR_REDUCE extends BaseOperator<any, any> {
           },
         },
       }),
-      symbol: "reduce",
-      interactName: "operatorReduce",
       function: (
         op: Operator<
           IntegratedValue,

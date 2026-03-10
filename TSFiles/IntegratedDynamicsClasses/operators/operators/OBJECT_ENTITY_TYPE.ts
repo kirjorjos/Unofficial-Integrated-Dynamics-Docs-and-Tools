@@ -6,9 +6,11 @@ import { Entity } from "IntegratedDynamicsClasses/Entity";
 export class OPERATOR_OBJECT_ENTITY_TYPE extends BaseOperator<Entity, iString> {
   static override internalName =
     "integrateddynamics:entity_entitytype" as const;
+  static override nicknames = ["EntityType", "entity_type", "entityType"];
+  static override symbol = "entity_type";
+  static override interactName = "entityType";
   constructor() {
     super({
-      nicknames: ["EntityType", "entity_type", "entityType"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -18,8 +20,6 @@ export class OPERATOR_OBJECT_ENTITY_TYPE extends BaseOperator<Entity, iString> {
           type: "String",
         },
       }),
-      symbol: "entity_type",
-      interactName: "entityType",
       function: (entity: Entity): iString => {
         return entity.getEntityType();
       },

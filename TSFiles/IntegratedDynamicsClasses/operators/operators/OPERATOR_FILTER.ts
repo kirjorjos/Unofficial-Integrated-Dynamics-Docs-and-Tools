@@ -9,9 +9,11 @@ export class OPERATOR_OPERATOR_FILTER extends BaseOperator<
   Operator<iArray<IntegratedValue>, iArray<IntegratedValue>>
 > {
   static override internalName = "integrateddynamics:operator_filter" as const;
+  static override nicknames = ["operatorFilter", "filter"];
+  static override symbol = "filter";
+  static override interactName = "operatorFilter";
   constructor() {
     super({
-      nicknames: ["operatorFilter", "filter"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -34,8 +36,6 @@ export class OPERATOR_OPERATOR_FILTER extends BaseOperator<
           },
         },
       }),
-      symbol: "filter",
-      interactName: "operatorFilter",
       function: (
         predicate: Operator<IntegratedValue, iBoolean>
       ): TypeLambda<iArray<IntegratedValue>, iArray<IntegratedValue>> => {

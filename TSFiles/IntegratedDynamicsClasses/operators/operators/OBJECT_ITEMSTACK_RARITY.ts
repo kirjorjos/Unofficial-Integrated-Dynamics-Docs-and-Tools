@@ -8,14 +8,16 @@ export class OPERATOR_OBJECT_ITEMSTACK_RARITY extends BaseOperator<
   iString
 > {
   static override internalName = "integrateddynamics:itemstack_rarity" as const;
+  static override nicknames = [
+    "ItemstackRarity",
+    "itemstack_rarity",
+    "itemstackRarity",
+    "rarity",
+  ];
+  static override symbol = "rarity";
+  static override interactName = "itemstackRarity";
   constructor() {
     super({
-      nicknames: [
-        "ItemstackRarity",
-        "itemstack_rarity",
-        "itemstackRarity",
-        "rarity",
-      ],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -25,8 +27,6 @@ export class OPERATOR_OBJECT_ITEMSTACK_RARITY extends BaseOperator<
           type: "String",
         },
       }),
-      symbol: "rarity",
-      interactName: "itemstackRarity",
       function: (item: Item): iString => {
         return item.getRarity();
       },

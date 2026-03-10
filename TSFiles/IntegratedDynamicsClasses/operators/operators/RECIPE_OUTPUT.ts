@@ -5,9 +5,11 @@ import { Ingredients } from "IntegratedDynamicsClasses/Ingredients";
 
 export class OPERATOR_RECIPE_OUTPUT extends BaseOperator<Recipe, Ingredients> {
   static override internalName = "integrateddynamics:recipe_output" as const;
+  static override nicknames = ["recipeOutput"];
+  static override symbol = "recipe_out";
+  static override interactName = "recipeOutput";
   constructor() {
     super({
-      nicknames: ["recipeOutput"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -17,8 +19,6 @@ export class OPERATOR_RECIPE_OUTPUT extends BaseOperator<Recipe, Ingredients> {
           type: "Ingredients",
         },
       }),
-      symbol: "recipe_out",
-      interactName: "recipeOutput",
       function: (recipe: Recipe): Ingredients => {
         return recipe.getOutput();
       },

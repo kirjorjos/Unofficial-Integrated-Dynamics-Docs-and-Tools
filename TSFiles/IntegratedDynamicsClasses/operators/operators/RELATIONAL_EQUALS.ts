@@ -9,9 +9,11 @@ export class OPERATOR_RELATIONAL_EQUALS extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:relational_equals" as const;
+  static override nicknames = ["relationalEquals"];
+  static override symbol = "==";
+  static override interactName = "anyEquals";
   constructor() {
     super({
-      nicknames: ["relationalEquals"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: { type: "Any", typeID: 1 },
@@ -23,8 +25,6 @@ export class OPERATOR_RELATIONAL_EQUALS extends BaseOperator<
           },
         },
       }),
-      symbol: "==",
-      interactName: "anyEquals",
       function: (
         value1: IntegratedValue
       ): TypeLambda<IntegratedValue, iBoolean> => {

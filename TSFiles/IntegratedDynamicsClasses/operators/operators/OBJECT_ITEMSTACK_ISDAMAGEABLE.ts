@@ -9,14 +9,16 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISDAMAGEABLE extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:itemstack_damageable" as const;
+  static override nicknames = [
+    "ItemstackIsdamageable",
+    "itemstack_is_damageable",
+    "itemstackIsDamageable",
+    "isDamageable",
+  ];
+  static override symbol = "damageable";
+  static override interactName = "itemstackIsDamageable";
   constructor() {
     super({
-      nicknames: [
-        "ItemstackIsdamageable",
-        "itemstack_is_damageable",
-        "itemstackIsDamageable",
-        "isDamageable",
-      ],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -26,8 +28,6 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISDAMAGEABLE extends BaseOperator<
           type: "Boolean",
         },
       }),
-      symbol: "damageable",
-      interactName: "itemstackIsDamageable",
       function: (item: Item): iBoolean => {
         return item.isDamageable();
       },

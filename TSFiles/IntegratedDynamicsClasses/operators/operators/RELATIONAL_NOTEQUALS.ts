@@ -9,9 +9,11 @@ export class OPERATOR_RELATIONAL_NOTEQUALS extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:relational_notequals" as const;
+  static override nicknames = ["relationalNotequals"];
+  static override symbol = "!=";
+  static override interactName = "anyNotEquals";
   constructor() {
     super({
-      nicknames: ["relationalNotequals"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: { type: "Any", typeID: 1 },
@@ -23,8 +25,6 @@ export class OPERATOR_RELATIONAL_NOTEQUALS extends BaseOperator<
           },
         },
       }),
-      symbol: "!=",
-      interactName: "anyNotEquals",
       function: (
         value1: IntegratedValue
       ): TypeLambda<IntegratedValue, iBoolean> => {

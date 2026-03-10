@@ -4,9 +4,11 @@ import { Integer } from "JavaNumberClasses/Integer";
 
 export class OPERATOR_NUMBER_CEIL extends BaseOperator<TypeNumber, Integer> {
   static override internalName = "integrateddynamics:number_ceil" as const;
+  static override nicknames = ["ceil", "numberCeil"];
+  static override symbol = "⌈ ⌉";
+  static override interactName = "numberCeil";
   constructor() {
     super({
-      nicknames: ["ceil", "numberCeil"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -16,8 +18,6 @@ export class OPERATOR_NUMBER_CEIL extends BaseOperator<TypeNumber, Integer> {
           type: "Integer",
         },
       }),
-      symbol: "⌈ ⌉",
-      interactName: "numberCeil",
       function: (number: TypeNumber): Integer => {
         return number.ceil();
       },

@@ -13,9 +13,11 @@ export class OPERATOR_STRING_SPLIT_ON_REGEX extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:string_split_on_regex" as const;
+  static override nicknames = ["stringSplitOnRegex"];
+  static override symbol = "split_on_regex";
+  static override interactName = "stringSplitOnRegex";
   constructor() {
     super({
-      nicknames: ["stringSplitOnRegex"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -29,8 +31,6 @@ export class OPERATOR_STRING_SPLIT_ON_REGEX extends BaseOperator<
           to: { type: "List", listType: { type: "String" } },
         },
       }),
-      symbol: "split_on_regex",
-      interactName: "stringSplitOnRegex",
       function: (
         regexString: iString
       ): TypeLambda<iString, iArray<iString>> => {

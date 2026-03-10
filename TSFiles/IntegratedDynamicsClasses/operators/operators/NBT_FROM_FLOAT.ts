@@ -5,9 +5,11 @@ import { Double } from "JavaNumberClasses/Double";
 
 export class OPERATOR_NBT_FROM_FLOAT extends BaseOperator<Double, FloatTag> {
   static override internalName = "integrateddynamics:nbt_from_float" as const;
+  static override nicknames = ["nbtFromFloat"];
+  static override symbol = "NBT.from_float";
+  static override interactName = "floatAsNbt";
   constructor() {
     super({
-      nicknames: ["nbtFromFloat"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -17,8 +19,6 @@ export class OPERATOR_NBT_FROM_FLOAT extends BaseOperator<Double, FloatTag> {
           type: "NBT",
         },
       }),
-      symbol: "NBT.from_float",
-      interactName: "floatAsNbt",
       function: (float: Double): FloatTag => {
         return new FloatTag(float);
       },

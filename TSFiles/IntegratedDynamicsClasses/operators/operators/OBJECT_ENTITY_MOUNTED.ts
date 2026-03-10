@@ -9,9 +9,15 @@ export class OPERATOR_OBJECT_ENTITY_MOUNTED extends BaseOperator<
   iArray<Entity>
 > {
   static override internalName = "integrateddynamics:entity_mounted" as const;
+  static override nicknames = [
+    "EntityMounted",
+    "entitys_mounted",
+    "entitysMounted",
+  ];
+  static override symbol = "mounted";
+  static override interactName = "entityMounted";
   constructor() {
     super({
-      nicknames: ["EntityMounted", "entitys_mounted", "entitysMounted"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -19,8 +25,6 @@ export class OPERATOR_OBJECT_ENTITY_MOUNTED extends BaseOperator<
         },
         to: { type: "List", listType: { type: "Entity" } },
       }),
-      symbol: "mounted",
-      interactName: "entityMounted",
       function: (entity: Entity): iArray<Entity> => {
         return new iArrayEager(entity.getMountedEntities());
       },

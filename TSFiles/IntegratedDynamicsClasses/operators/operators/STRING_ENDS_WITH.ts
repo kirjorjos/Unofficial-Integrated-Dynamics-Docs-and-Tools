@@ -9,9 +9,11 @@ export class OPERATOR_STRING_ENDS_WITH extends BaseOperator<
   Operator<iString, iBoolean>
 > {
   static override internalName = "integrateddynamics:string_ends_with" as const;
+  static override nicknames = ["endsWith", "stringEndsWith"];
+  static override symbol = "ends_with";
+  static override interactName = "stringEndsWith";
   constructor() {
     super({
-      nicknames: ["endsWith", "stringEndsWith"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -27,8 +29,6 @@ export class OPERATOR_STRING_ENDS_WITH extends BaseOperator<
           },
         },
       }),
-      symbol: "ends_with",
-      interactName: "stringEndsWith",
       function: (substring: iString): TypeLambda<iString, iBoolean> => {
         return (fullString: iString): iBoolean => {
           return new iBoolean(

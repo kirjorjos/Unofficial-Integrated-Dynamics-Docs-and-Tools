@@ -9,13 +9,15 @@ export class OPERATOR_OBJECT_ENTITY_ENERGY_STORED extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:entity_entityenergystored" as const;
+  static override nicknames = [
+    "EntityEnergyStored",
+    "entity_energy_stored",
+    "entityEnergyStored",
+  ];
+  static override symbol = "entity_stored_fe";
+  static override interactName = "entityEnergy";
   constructor() {
     super({
-      nicknames: [
-        "EntityEnergyStored",
-        "entity_energy_stored",
-        "entityEnergyStored",
-      ],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -25,8 +27,6 @@ export class OPERATOR_OBJECT_ENTITY_ENERGY_STORED extends BaseOperator<
           type: "Integer",
         },
       }),
-      symbol: "entity_stored_fe",
-      interactName: "entityEnergy",
       function: (entity: Entity): Integer => {
         return entity.getEnergyStored();
       },

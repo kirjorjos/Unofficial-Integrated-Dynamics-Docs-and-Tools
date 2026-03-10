@@ -8,9 +8,11 @@ export class OPERATOR_STRING_REPLACE extends BaseOperator<
   Operator<iString, Operator<iString, iString>>
 > {
   static override internalName = "integrateddynamics:string_replace" as const;
+  static override nicknames = ["stringReplace"];
+  static override symbol = "replace";
+  static override interactName = "stringReplace";
   constructor() {
     super({
-      nicknames: ["stringReplace"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -32,8 +34,6 @@ export class OPERATOR_STRING_REPLACE extends BaseOperator<
           },
         },
       }),
-      symbol: "replace",
-      interactName: "stringReplace",
       function: (
         searchString: iString
       ): TypeLambda<iString, TypeLambda<iString, iString>> => {

@@ -9,9 +9,11 @@ export class OPERATOR_STRING_INDEX_OF extends BaseOperator<
   Operator<iString, Integer>
 > {
   static override internalName = "integrateddynamics:string_index_of" as const;
+  static override nicknames = ["stringIndexOf"];
+  static override symbol = "index_of";
+  static override interactName = "stringIndexOf";
   constructor() {
     super({
-      nicknames: ["stringIndexOf"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -27,8 +29,6 @@ export class OPERATOR_STRING_INDEX_OF extends BaseOperator<
           },
         },
       }),
-      symbol: "index_of",
-      interactName: "stringIndexOf",
       function: (substring: iString): TypeLambda<iString, Integer> => {
         return (fullString: iString): Integer => {
           return new Integer(fullString.valueOf().indexOf(substring.valueOf()));

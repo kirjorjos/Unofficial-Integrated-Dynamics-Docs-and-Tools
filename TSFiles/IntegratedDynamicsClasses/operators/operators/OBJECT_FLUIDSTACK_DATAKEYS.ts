@@ -12,22 +12,24 @@ export class OPERATOR_OBJECT_FLUIDSTACK_DATAKEYS extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:fluidstack_datakeys" as const;
+  static override nicknames = [
+    "FluidstackDataKeys",
+    "fluidstackDataKeys",
+    "fluid_stack_data_keys",
+    "fluidStackDataKeys",
+    "fluid_data_keys",
+    "fluidDataKeys",
+    "fluid_NBT_keys",
+    "fluidStackNBTKeys",
+    "fluid_stack_NBT_keys",
+    "fluidstack_NBT_keys",
+    "fluidstackNBTKeys",
+    "fluidNBTKeys",
+  ];
+  static override symbol = "data_keys";
+  static override interactName = "fluidstackDataKeys";
   constructor() {
     super({
-      nicknames: [
-        "FluidstackDataKeys",
-        "fluidstackDataKeys",
-        "fluid_stack_data_keys",
-        "fluidStackDataKeys",
-        "fluid_data_keys",
-        "fluidDataKeys",
-        "fluid_NBT_keys",
-        "fluidStackNBTKeys",
-        "fluid_stack_NBT_keys",
-        "fluidstack_NBT_keys",
-        "fluidstackNBTKeys",
-        "fluidNBTKeys",
-      ],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -35,8 +37,6 @@ export class OPERATOR_OBJECT_FLUIDSTACK_DATAKEYS extends BaseOperator<
         },
         to: { type: "List", listType: { type: "String" } },
       }),
-      symbol: "data_keys",
-      interactName: "fluidstackDataKeys",
       function: (fluid: Fluid): iArray<iString> => {
         const nbt = fluid.getNBT();
         if (nbt instanceof CompoundTag) {

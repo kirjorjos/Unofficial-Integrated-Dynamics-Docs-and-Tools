@@ -9,13 +9,15 @@ export class OPERATOR_OBJECT_BLOCK_POSSIBLE_PROPERTIES extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:block_blockpossibleproperties" as const;
+  static override nicknames = [
+    "BlockPossibleProperties",
+    "block_possible_properties",
+    "blockPossibleProperties",
+  ];
+  static override symbol = "block_all_props";
+  static override interactName = "blockPossibleProperties";
   constructor() {
     super({
-      nicknames: [
-        "BlockPossibleProperties",
-        "block_possible_properties",
-        "blockPossibleProperties",
-      ],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -25,8 +27,6 @@ export class OPERATOR_OBJECT_BLOCK_POSSIBLE_PROPERTIES extends BaseOperator<
           type: "NBT",
         },
       }),
-      symbol: "block_all_props",
-      interactName: "blockPossibleProperties",
       function: (block: Block): CompoundTag => {
         return block.getPossibleProperties().toCompoundTag();
       },

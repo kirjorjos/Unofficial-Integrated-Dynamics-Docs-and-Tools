@@ -9,15 +9,17 @@ export class OPERATOR_OBJECT_ITEMSTACK_INVENTORY extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:itemstack_inventory" as const;
+  static override nicknames = [
+    "ItemstackInventory",
+    "itemstack_inventory",
+    "itemstackInventory",
+    "item_inventory",
+    "itemInventory",
+  ];
+  static override symbol = "inventory";
+  static override interactName = "itemstackInventory";
   constructor() {
     super({
-      nicknames: [
-        "ItemstackInventory",
-        "itemstack_inventory",
-        "itemstackInventory",
-        "item_inventory",
-        "itemInventory",
-      ],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -25,8 +27,6 @@ export class OPERATOR_OBJECT_ITEMSTACK_INVENTORY extends BaseOperator<
         },
         to: { type: "List", listType: { type: "Item" } },
       }),
-      symbol: "inventory",
-      interactName: "itemstackInventory",
       function: (item: Item): iArray<Item> => {
         return item.getInventory() as iArray<Item>;
       },

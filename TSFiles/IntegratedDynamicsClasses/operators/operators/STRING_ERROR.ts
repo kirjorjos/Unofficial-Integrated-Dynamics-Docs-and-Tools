@@ -8,9 +8,11 @@ export class OPERATOR_STRING_ERROR extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:string_string_error" as const;
+  static override nicknames = ["error", "string_error"];
+  static override symbol = "error";
+  static override interactName = "stringStringError";
   constructor() {
     super({
-      nicknames: ["error", "string_error"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -18,8 +20,6 @@ export class OPERATOR_STRING_ERROR extends BaseOperator<
         },
         to: { type: "Any", typeID: 1 },
       }),
-      symbol: "error",
-      interactName: "stringStringError",
       function: (message: iString): never => {
         throw new Error(`Error: ${message.valueOf()}`);
       },

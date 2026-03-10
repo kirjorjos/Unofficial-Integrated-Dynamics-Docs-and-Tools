@@ -12,9 +12,11 @@ export class OPERATOR_OPERATOR_CONJUNCTION extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:operator_conjunction" as const;
+  static override nicknames = ["operatorConjunction", "conjunction"];
+  static override symbol = ".&&.";
+  static override interactName = "operatorConjunction";
   constructor() {
     super({
-      nicknames: ["operatorConjunction", "conjunction"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -45,8 +47,6 @@ export class OPERATOR_OPERATOR_CONJUNCTION extends BaseOperator<
           },
         },
       }),
-      symbol: ".&&.",
-      interactName: "operatorConjunction",
       function: (
         predicate1: Operator<IntegratedValue, iBoolean>
       ): TypeLambda<

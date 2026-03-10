@@ -9,9 +9,11 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISPLANTABLE extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:itemstack_is_plantable" as const;
+  static override nicknames = ["is_plantable", "isplantable", "isPlantable"];
+  static override symbol = "is_plantable";
+  static override interactName = "isPlantable";
   constructor() {
     super({
-      nicknames: ["is_plantable", "isplantable", "isPlantable"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
@@ -21,8 +23,6 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISPLANTABLE extends BaseOperator<
           type: "Boolean",
         },
       }),
-      symbol: "is_plantable",
-      interactName: "isPlantable",
       function: (item: Item): iBoolean => {
         return item.isPlantable();
       },

@@ -320,6 +320,21 @@ const operatorRegistryClass = class operatorRegistryClass {
     }
   }
 
+  operatorByNickname(nickname: string): TypeOperatorKey | void {
+    for (const [key, opClass] of Object.entries(this)) {
+      if (key === "find" || key === "operatorByNickname") continue;
+      if (typeof opClass === "function") {
+        const staticOp = opClass as typeof BaseOperator;
+        if (staticOp.internalName === nickname) return key as TypeOperatorKey;
+
+        if (key === nickname) return key as TypeOperatorKey;
+
+        if (staticOp.nicknames.includes(nickname))
+          return key as TypeOperatorKey;
+      }
+    }
+  }
+
   LOGICAL_AND = OPERATOR_LOGICAL_AND;
   LOGICAL_OR = OPERATOR_LOGICAL_OR;
   LOGICAL_NOT = OPERATOR_LOGICAL_NOT;
