@@ -15,7 +15,6 @@ export class OPERATOR_OBJECT_ENTITY_INVENTORY extends BaseOperator<
         "EntityInventoryContents",
         "entity_inventory_contents",
         "entityInventoryContents",
-        "entityInventoryContents",
       ],
       parsedSignature: new ParsedSignature({
         type: "Function",

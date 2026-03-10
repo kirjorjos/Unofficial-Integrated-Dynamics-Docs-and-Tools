@@ -10,7 +10,7 @@ export class OPERATOR_ARITHMETIC_INCREMENT extends BaseOperator<
     "integrateddynamics:arithmetic_increment" as const;
   constructor() {
     super({
-      nicknames: ["increment", "arithmeticIncrement", "++", "numberIncrement"],
+      nicknames: ["increment", "arithmeticIncrement", "numberIncrement"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {

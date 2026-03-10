@@ -10,7 +10,7 @@ export class OPERATOR_ARITHMETIC_SUBTRACTION extends BaseOperator<
     "integrateddynamics:arithmetic_subtraction" as const;
   constructor() {
     super({
-      nicknames: ["subtract", "arithmeticSubtraction"],
+      nicknames: ["subtract", "arithmeticSubtraction", "numberSubtract"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {

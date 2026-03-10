@@ -19,7 +19,6 @@ export class OPERATOR_OBJECT_FLUIDSTACK_DATAKEYS extends BaseOperator<
         "fluidstackDataKeys",
         "fluid_stack_data_keys",
         "fluidStackDataKeys",
-        "fluid_stack_data_keys",
         "fluid_data_keys",
         "fluidDataKeys",
         "fluid_NBT_keys",

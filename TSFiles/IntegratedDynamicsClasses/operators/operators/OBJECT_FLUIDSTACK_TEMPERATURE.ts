@@ -16,7 +16,6 @@ export class OPERATOR_OBJECT_FLUIDSTACK_TEMPERATURE extends BaseOperator<
         "fluidstackTemperature",
         "fluid_stack_temperature",
         "fluidStackTemperature",
-        "fluid_stack_temperature",
         "fluid_temperature",
         "fluidTemperature",
       ],

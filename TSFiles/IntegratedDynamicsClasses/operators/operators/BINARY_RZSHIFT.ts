@@ -11,7 +11,6 @@ export class OPERATOR_BINARY_RZSHIFT extends BaseOperator<
   constructor() {
     super({
       nicknames: [
-        ">>>",
         "binaryRzshift",
         "integerUnsignedRightShift",
         "binaryUnsignedRightShift",

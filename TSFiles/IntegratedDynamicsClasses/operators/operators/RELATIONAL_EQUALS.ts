@@ -11,7 +11,7 @@ export class OPERATOR_RELATIONAL_EQUALS extends BaseOperator<
     "integrateddynamics:relational_equals" as const;
   constructor() {
     super({
-      nicknames: ["==", "relationalEquals"],
+      nicknames: ["relationalEquals"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: { type: "Any", typeID: 1 },

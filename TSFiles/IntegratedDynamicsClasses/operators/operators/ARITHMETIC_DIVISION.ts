@@ -10,7 +10,7 @@ export class OPERATOR_ARITHMETIC_DIVISION extends BaseOperator<
     "integrateddynamics:arithmetic_division" as const;
   constructor() {
     super({
-      nicknames: ["divide", "arithmeticDivision", "/", "numberDivide"],
+      nicknames: ["divide", "arithmeticDivision", "numberDivide"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {

@@ -11,7 +11,7 @@ export class OPERATOR_RELATIONAL_NOTEQUALS extends BaseOperator<
     "integrateddynamics:relational_notequals" as const;
   constructor() {
     super({
-      nicknames: ["relationalNotequals", "!="],
+      nicknames: ["relationalNotequals"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: { type: "Any", typeID: 1 },

@@ -16,7 +16,6 @@ export class OPERATOR_OBJECT_FLUIDSTACK_BUCKET extends BaseOperator<
         "fluidstackBucket",
         "fluid_stack_bucket",
         "fluidStackBucket",
-        "fluid_stack_bucket",
         "fluid_bucket",
         "fluidBucket",
       ],

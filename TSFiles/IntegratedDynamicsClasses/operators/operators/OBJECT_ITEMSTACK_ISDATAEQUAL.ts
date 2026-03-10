@@ -16,7 +16,6 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISDATAEQUAL extends BaseOperator<
         "ItemstackIsdataequal",
         "itemstack_is_dataequal",
         "itemstackIsDataequal",
-        "=NBT=",
       ],
       parsedSignature: new ParsedSignature({
         type: "Function",

@@ -15,7 +15,6 @@ export class OPERATOR_OBJECT_ENTITY_ISSHEARABLE extends BaseOperator<
         "EntityIsshearable",
         "entity_is_shearable",
         "entityIsShearable",
-        "entityIsShearable",
       ],
       parsedSignature: new ParsedSignature({
         type: "Function",

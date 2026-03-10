@@ -9,13 +9,7 @@ export class OPERATOR_OBJECT_BLOCK_MODNAME extends BaseOperator<
   static override internalName = "integrateddynamics:block_mod" as const;
   constructor() {
     super({
-      nicknames: [
-        "BlockItemstack",
-        "block_item",
-        "blockItemstack",
-        "block_itemstack",
-        "blockItem",
-      ],
+      nicknames: ["blockMod", "block_mod"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {

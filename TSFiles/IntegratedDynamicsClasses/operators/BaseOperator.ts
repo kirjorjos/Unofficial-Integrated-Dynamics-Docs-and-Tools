@@ -13,6 +13,7 @@ export class BaseOperator<
   nicknames: string[];
   symbol: string;
   serializer?: string;
+  static readonly nicknameRegex = /^[A-Za-z0-9\\._]+$/;
 
   constructor({
     nicknames,

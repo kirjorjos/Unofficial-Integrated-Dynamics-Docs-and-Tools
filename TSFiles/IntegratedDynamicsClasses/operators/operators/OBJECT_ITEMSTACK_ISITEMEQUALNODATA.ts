@@ -9,14 +9,13 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISITEMEQUALNODATA extends BaseOperator<
   Operator<Item, iBoolean>
 > {
   static override internalName =
-    "integrateddynamics:itemstack_isnbtequal" as const;
+    "integrateddynamics:itemstack_isitemequalnodata" as const;
   constructor() {
     super({
       nicknames: [
         "ItemstackIsitemequalnodata",
         "itemstack_is_itemequalnodata",
         "itemstackIsItemequalnodata",
-        "=NoNBT=",
       ],
       parsedSignature: new ParsedSignature({
         type: "Function",

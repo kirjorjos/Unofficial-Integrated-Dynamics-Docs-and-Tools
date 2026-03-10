@@ -16,7 +16,6 @@ export class OPERATOR_OBJECT_FLUIDSTACK_DENSITY extends BaseOperator<
         "fluidstackDensity",
         "fluid_stack_density",
         "fluidStackDensity",
-        "fluid_stack_density",
         "fluid_density",
         "fluidDensity",
       ],

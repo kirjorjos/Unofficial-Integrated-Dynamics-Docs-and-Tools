@@ -10,7 +10,7 @@ export class OPERATOR_RELATIONAL_GT extends BaseOperator<
   static override internalName = "integrateddynamics:relational_gt" as const;
   constructor() {
     super({
-      nicknames: ["relationalGt", ">"],
+      nicknames: ["relationalGt"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {

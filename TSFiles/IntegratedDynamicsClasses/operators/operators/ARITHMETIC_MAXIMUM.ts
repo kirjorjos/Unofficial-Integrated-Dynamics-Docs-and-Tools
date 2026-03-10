@@ -10,7 +10,7 @@ export class OPERATOR_ARITHMETIC_MAXIMUM extends BaseOperator<
     "integrateddynamics:arithmetic_maximum" as const;
   constructor() {
     super({
-      nicknames: ["max", "arithmeticMaximum", "max", "numberMax"],
+      nicknames: ["max", "arithmeticMaximum", "numberMax"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {

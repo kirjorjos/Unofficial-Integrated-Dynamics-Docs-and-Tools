@@ -21,7 +21,6 @@ export class OPERATOR_OBJECT_ITEMSTACK_FLUIDSTACK extends BaseOperator<
         "item_fluid",
         "itemstack_fluid",
         "itemstackFluid",
-        "itemFluid",
       ],
       parsedSignature: new ParsedSignature({
         type: "Function",

@@ -10,7 +10,7 @@ export class OPERATOR_ARITHMETIC_DECREMENT extends BaseOperator<
     "integrateddynamics:arithmetic_decrement" as const;
   constructor() {
     super({
-      nicknames: ["arithmeticDecrement", "decrement", "--", "numberDecrement"],
+      nicknames: ["decrement", "arithmeticDecrement", "numberDecrement"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {

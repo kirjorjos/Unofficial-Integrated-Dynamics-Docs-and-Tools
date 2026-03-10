@@ -10,12 +10,7 @@ export class OPERATOR_OBJECT_BLOCK_ISSHEARABLE extends BaseOperator<
     "integrateddynamics:block_isshearable" as const;
   constructor() {
     super({
-      nicknames: [
-        "BlockIsshearable",
-        "block_is_shearable",
-        "blockIsShearable",
-        "blockIsShearable",
-      ],
+      nicknames: ["blockIsshearable", "block_is_shearable", "blockIsShearable"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {

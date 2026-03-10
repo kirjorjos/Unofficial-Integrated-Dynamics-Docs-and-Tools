@@ -16,7 +16,6 @@ export class OPERATOR_OBJECT_FLUIDSTACK_VISCOSITY extends BaseOperator<
         "fluidstackViscosity",
         "fluid_stack_viscosity",
         "fluidStackViscosity",
-        "fluid_stack_viscosity",
         "fluid_viscosity",
         "fluidViscosity",
       ],

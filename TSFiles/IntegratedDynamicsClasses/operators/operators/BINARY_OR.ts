@@ -9,7 +9,7 @@ export class OPERATOR_BINARY_OR extends BaseOperator<
   static override internalName = "integrateddynamics:binary_or" as const;
   constructor() {
     super({
-      nicknames: ["binaryOr", "|", "integerBinaryOr"],
+      nicknames: ["binaryOr", "integerBinaryOr"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {

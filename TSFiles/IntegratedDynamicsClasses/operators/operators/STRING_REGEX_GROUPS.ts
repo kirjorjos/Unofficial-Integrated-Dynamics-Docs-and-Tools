@@ -15,7 +15,7 @@ export class OPERATOR_STRING_REGEX_GROUPS extends BaseOperator<
     "integrateddynamics:string_regex_groups" as const;
   constructor() {
     super({
-      nicknames: ["stringRegexGroups", "stringRegexGroups"],
+      nicknames: ["stringRegexGroups"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {

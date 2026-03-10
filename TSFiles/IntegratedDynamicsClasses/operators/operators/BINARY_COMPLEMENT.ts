@@ -6,7 +6,7 @@ export class OPERATOR_BINARY_COMPLEMENT extends BaseOperator<Integer, Integer> {
     "integrateddynamics:binary_complement" as const;
   constructor() {
     super({
-      nicknames: ["binaryComplement", "~", "integerComplement"],
+      nicknames: ["binaryComplement", "integerComplement"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {

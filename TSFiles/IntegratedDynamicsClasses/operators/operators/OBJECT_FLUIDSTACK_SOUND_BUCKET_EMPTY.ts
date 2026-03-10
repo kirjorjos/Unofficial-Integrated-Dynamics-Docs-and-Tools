@@ -16,7 +16,6 @@ export class OPERATOR_OBJECT_FLUIDSTACK_SOUND_BUCKET_EMPTY extends BaseOperator<
         "fluidstackSoundBucketEmpty",
         "fluid_stack_sound_bucket_empty",
         "fluidStackSoundBucketEmpty",
-        "fluid_stack_sound_bucket_empty",
         "fluid_sound_bucket_empty",
         "fluidSoundBucketEmpty",
       ],

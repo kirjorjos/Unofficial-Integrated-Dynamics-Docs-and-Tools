@@ -10,12 +10,7 @@ export class OPERATOR_ARITHMETIC_MULTIPLICATION extends BaseOperator<
     "integrateddynamics:arithmetic_multiplication" as const;
   constructor() {
     super({
-      nicknames: [
-        "multiply",
-        "arithmeticMultiplication",
-        "*",
-        "numberMultiply",
-      ],
+      nicknames: ["multiply", "arithmeticMultiplication", "numberMultiply"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {

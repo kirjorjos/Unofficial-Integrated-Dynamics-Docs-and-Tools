@@ -18,7 +18,6 @@ export class OPERATOR_OBJECT_FLUIDSTACK_WITH_AMOUNT extends BaseOperator<
         "fluidstackWithAmount",
         "fluid_stack_with_amount",
         "fluidStackWithAmount",
-        "fluid_stack_with_amount",
         "fluid_with_amount",
         "fluidWithAmount",
       ],

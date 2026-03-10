@@ -16,7 +16,6 @@ export class OPERATOR_OBJECT_FLUIDSTACK_LIGHT_LEVEL extends BaseOperator<
         "fluidstackLightLevel",
         "fluid_stack_light_level",
         "fluidStackLightLevel",
-        "fluid_stack_light_level",
         "fluid_light_level",
         "fluidLightLevel",
       ],

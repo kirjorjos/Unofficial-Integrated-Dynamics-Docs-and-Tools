@@ -16,7 +16,6 @@ export class OPERATOR_OBJECT_FLUIDSTACK_SOUND_FLUID_VAPORIZE extends BaseOperato
         "fluidstackSoundFluidVaporize",
         "fluid_stack_sound_fluid_vaporize",
         "fluidStackSoundFluidVaporize",
-        "fluid_stack_sound_fluid_vaporize",
         "fluid_sound_fluid_vaporize",
         "fluidSoundFluidVaporize",
       ],

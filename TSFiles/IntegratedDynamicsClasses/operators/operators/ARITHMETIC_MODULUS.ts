@@ -10,7 +10,7 @@ export class OPERATOR_ARITHMETIC_MODULUS extends BaseOperator<
     "integrateddynamics:arithmetic_modulus" as const;
   constructor() {
     super({
-      nicknames: ["modulus", "arithmeticModulus", "%", "numberModulus"],
+      nicknames: ["modulus", "arithmeticModulus", "numberModulus"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {

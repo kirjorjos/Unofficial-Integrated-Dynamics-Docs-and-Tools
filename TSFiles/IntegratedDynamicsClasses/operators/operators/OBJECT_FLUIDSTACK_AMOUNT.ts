@@ -16,7 +16,6 @@ export class OPERATOR_OBJECT_FLUIDSTACK_AMOUNT extends BaseOperator<
         "fluidstackAmount",
         "fluid_stack_amount",
         "fluidStackAmount",
-        "fluid_stack_amount",
         "fluid_amount",
         "fluidAmount",
       ],

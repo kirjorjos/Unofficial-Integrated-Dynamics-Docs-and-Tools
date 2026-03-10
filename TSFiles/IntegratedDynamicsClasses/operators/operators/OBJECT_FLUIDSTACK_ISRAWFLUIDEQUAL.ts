@@ -17,7 +17,6 @@ export class OPERATOR_OBJECT_FLUIDSTACK_ISRAWFLUIDEQUAL extends BaseOperator<
         "fluidstackIsrawfluidequal",
         "fluid_stack_israwfluidequal",
         "fluidStackIsrawfluidequal",
-        "fluid_stack_israwfluidequal",
         "fluid_israwfluidequal",
         "isRawFluidEqual",
         "rawFluidEquals",

@@ -14,7 +14,6 @@ export class OPERATOR_GENERAL_CHOICE extends BaseOperator<
         "generalChoice",
         "choice",
         "booleanChoice",
-        "?",
         "if",
         "ifElse",
         "if_else",

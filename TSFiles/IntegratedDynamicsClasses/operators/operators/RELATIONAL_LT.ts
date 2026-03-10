@@ -10,7 +10,7 @@ export class OPERATOR_RELATIONAL_LT extends BaseOperator<
   static override internalName = "integrateddynamics:relational_lt" as const;
   constructor() {
     super({
-      nicknames: ["relationalLt", "<"],
+      nicknames: ["relationalLt"],
       parsedSignature: new ParsedSignature({
         type: "Function",
         from: {
