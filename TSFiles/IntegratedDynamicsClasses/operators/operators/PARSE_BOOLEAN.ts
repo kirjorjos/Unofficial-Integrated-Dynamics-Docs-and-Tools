@@ -7,7 +7,7 @@ import { RE2 } from "re2-wasm";
 export class OPERATOR_PARSE_BOOLEAN extends BaseOperator<iString, iBoolean> {
   static override internalName =
     "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.iBoolean" as const;
-  static override nicknames = ["parseBoolean"];
+  static override nicknames = ["stringParseAsBoolean", "parseBoolean"];
   static override symbol = "parse_iBoolean";
   static override interactName = "stringParseAsBoolean";
   constructor() {

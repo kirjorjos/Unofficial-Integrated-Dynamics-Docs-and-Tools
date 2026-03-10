@@ -11,6 +11,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISDATAEQUAL extends BaseOperator<
   static override internalName =
     "integrateddynamics:itemstack_isnbtequal" as const;
   static override nicknames = [
+    "itemstackIsNbtEqual",
     "ItemstackIsdataequal",
     "itemstack_is_dataequal",
     "itemstackIsDataequal",

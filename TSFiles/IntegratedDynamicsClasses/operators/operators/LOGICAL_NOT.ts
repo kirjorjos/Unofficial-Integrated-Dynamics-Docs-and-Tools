@@ -4,7 +4,7 @@ import { ParsedSignature } from "HelperClasses/ParsedSignature";
 
 export class OPERATOR_LOGICAL_NOT extends BaseOperator<iBoolean, iBoolean> {
   static override internalName = "integrateddynamics:logical_not" as const;
-  static override nicknames = ["not", "logicalNot"];
+  static override nicknames = ["booleanNot", "not", "logicalNot"];
   static override symbol = "!";
   static override interactName = "booleanNot";
   constructor() {

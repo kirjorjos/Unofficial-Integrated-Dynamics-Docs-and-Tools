@@ -5,7 +5,7 @@ import { Integer } from "JavaNumberClasses/Integer";
 
 export class OPERATOR_NBT_FROM_SHORT extends BaseOperator<Integer, ShortTag> {
   static override internalName = "integrateddynamics:nbt_from_short" as const;
-  static override nicknames = ["nbtFromShort"];
+  static override nicknames = ["shortAsNbt", "nbtFromShort"];
   static override symbol = "NBT.from_short";
   static override interactName = "shortAsNbt";
   constructor() {

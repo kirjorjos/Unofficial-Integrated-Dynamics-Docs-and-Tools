@@ -12,6 +12,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_CANHARVESTBLOCK extends BaseOperator<
   static override internalName =
     "integrateddynamics:itemstack_canharvest" as const;
   static override nicknames = [
+    "itemstackCanHarvest",
     "ItemstackCanHarvestBlock",
     "itemstack_can_harvest_block",
     "itemstackCanHarvestBlock",

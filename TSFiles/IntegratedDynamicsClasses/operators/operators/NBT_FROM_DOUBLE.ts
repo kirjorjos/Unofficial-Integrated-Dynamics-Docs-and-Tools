@@ -5,7 +5,7 @@ import { Double } from "JavaNumberClasses/Double";
 
 export class OPERATOR_NBT_FROM_DOUBLE extends BaseOperator<Double, DoubleTag> {
   static override internalName = "integrateddynamics:nbt_from_double" as const;
-  static override nicknames = ["nbtFromDouble"];
+  static override nicknames = ["doubleAsNbt", "nbtFromDouble"];
   static override symbol = "NBT.from_double";
   static override interactName = "doubleAsNbt";
   constructor() {

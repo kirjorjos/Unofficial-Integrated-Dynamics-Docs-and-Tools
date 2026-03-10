@@ -12,7 +12,7 @@ export class OPERATOR_STRING_CONTAINS_REGEX extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:string_contains_regex" as const;
-  static override nicknames = ["containsRegex"];
+  static override nicknames = ["stringContainsRegex", "containsRegex"];
   static override symbol = "contains_regex";
   static override interactName = "stringContainsRegex";
   constructor() {

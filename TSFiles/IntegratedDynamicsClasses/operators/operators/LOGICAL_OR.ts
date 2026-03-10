@@ -8,7 +8,7 @@ export class OPERATOR_LOGICAL_OR extends BaseOperator<
   Operator<iBoolean, iBoolean>
 > {
   static override internalName = "integrateddynamics:logical_or" as const;
-  static override nicknames = ["or", "logicalOr"];
+  static override nicknames = ["booleanOr", "or", "logicalOr"];
   static override symbol = "||";
   static override interactName = "booleanOr";
   constructor() {

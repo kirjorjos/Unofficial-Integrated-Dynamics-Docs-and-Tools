@@ -14,7 +14,7 @@ export class OPERATOR_NBT_PATH_MATCH_ALL extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:nbt_path_match_all" as const;
-  static override nicknames = ["nbtPathMatchAll"];
+  static override nicknames = ["stringNbtPathMatchAll", "nbtPathMatchAll"];
   static override symbol = "NBT.path_match_all";
   static override interactName = "stringNbtPathMatchAll";
   constructor() {

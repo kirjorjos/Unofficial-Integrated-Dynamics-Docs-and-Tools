@@ -10,6 +10,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_FLUIDSTACKCAPACITY extends BaseOperator<
   static override internalName =
     "integrateddynamics:itemstack_fluidstackcapacity" as const;
   static override nicknames = [
+    "itemstackFluidCapacity",
     "ItemstackFluidstackcapacity",
     "itemstack_fluidstack_capacity",
     "itemstackFluidstackCapacity",

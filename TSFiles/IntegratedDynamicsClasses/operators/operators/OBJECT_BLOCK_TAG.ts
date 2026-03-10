@@ -9,7 +9,7 @@ export class OPERATOR_OBJECT_BLOCK_TAG extends BaseOperator<
   iArray<iString>
 > {
   static override internalName = "integrateddynamics:block_tag" as const;
-  static override nicknames = ["BlockTag", "blockTag"];
+  static override nicknames = ["blockTags", "BlockTag", "blockTag"];
   static override symbol = "block_tag_names";
   static override interactName = "blockTags";
   constructor() {

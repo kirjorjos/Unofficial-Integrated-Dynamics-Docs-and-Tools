@@ -9,6 +9,7 @@ export class OPERATOR_ITEMSTACK_ISFECONTAINER extends BaseOperator<
   static override internalName =
     "integrateddynamics:itemstack_isfecontainer" as const;
   static override nicknames = [
+    "itemstackIsFeContainer",
     "ItemstackIsfecontainer",
     "itemstack_is_fe_container",
     "itemstackIsFecontainer",

@@ -8,7 +8,7 @@ export class OPERATOR_LIST_UNIQ extends BaseOperator<
   Operator<IntegratedValue, iArray<IntegratedValue>>
 > {
   static override internalName = "integrateddynamics:list_uniq" as const;
-  static override nicknames = ["listUniq"];
+  static override nicknames = ["listUnique", "listUniq"];
   static override symbol = "uniq";
   static override interactName = "listUnique";
   constructor() {

@@ -9,7 +9,7 @@ export class OPERATOR_NBT_COMPOUND_UNION extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:nbt_compound_union" as const;
-  static override nicknames = ["nbtCompoundUnion", "NBTUnion"];
+  static override nicknames = ["nbtUnion", "nbtCompoundUnion", "NBTUnion"];
   static override symbol = "NBT{}.∪";
   static override interactName = "nbtUnion";
   constructor() {

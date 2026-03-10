@@ -9,7 +9,7 @@ export class OPERATOR_RELATIONAL_EQUALS extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:relational_equals" as const;
-  static override nicknames = ["relationalEquals"];
+  static override nicknames = ["anyEquals", "relationalEquals"];
   static override symbol = "==";
   static override interactName = "anyEquals";
   constructor() {

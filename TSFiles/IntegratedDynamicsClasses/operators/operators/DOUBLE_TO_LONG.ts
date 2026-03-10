@@ -4,7 +4,7 @@ import { BaseOperator } from "../BaseOperator";
 export class OPERATOR_DOUBLE_TO_LONG extends BaseOperator<Double, Long> {
   static override internalName =
     "integrateddynamics:operator.integrateddynamics.castintegrateddynamics_double__integrateddynamics_long" as const;
-  static override nicknames = ["doubleToLong"];
+  static override nicknames = ["doubleDoubleToLong", "doubleToLong"];
   static override symbol = "()";
   static override interactName = "doubleDoubleToLong";
   constructor() {

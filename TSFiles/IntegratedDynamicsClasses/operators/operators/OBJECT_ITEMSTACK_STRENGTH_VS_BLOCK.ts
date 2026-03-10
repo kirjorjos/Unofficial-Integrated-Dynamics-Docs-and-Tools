@@ -12,6 +12,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_STRENGTH_VS_BLOCK extends BaseOperator<
   static override internalName =
     "integrateddynamics:itemstack_strength" as const;
   static override nicknames = [
+    "itemstackStrength",
     "ItemstackStrengthVsBlock",
     "itemstack_strength_vs_block",
     "itemstackStrengthVsBlock",

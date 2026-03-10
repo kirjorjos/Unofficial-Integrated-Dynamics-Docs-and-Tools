@@ -8,7 +8,12 @@ export class OPERATOR_NULLABLE_ISNULL extends BaseOperator<
   iBoolean
 > {
   static override internalName = "integrateddynamics:general_isnull" as const;
-  static override nicknames = ["isNull", "nullableIsnull", "GENERAL_IS_NULL"];
+  static override nicknames = [
+    "anyIsNull",
+    "isNull",
+    "nullableIsnull",
+    "GENERAL_IS_NULL",
+  ];
   static override symbol = "o";
   static override interactName = "anyIsNull";
   constructor() {

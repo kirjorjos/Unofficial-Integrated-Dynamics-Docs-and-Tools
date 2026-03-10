@@ -10,6 +10,7 @@ export class OPERATOR_ITEMSTACK_ITEMBYNAME extends BaseOperator<iString, Item> {
   static override internalName =
     "integrateddynamics:itemstack_itembyname" as const;
   static override nicknames = [
+    "stringItemByName",
     "ItemstackByName",
     "itemstack_by_name",
     "itemstackByName",

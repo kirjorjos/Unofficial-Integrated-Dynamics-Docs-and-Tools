@@ -10,6 +10,7 @@ export class OPERATOR_OBJECT_ENTITY_MOUNTED extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:entity_mounted" as const;
   static override nicknames = [
+    "entityMounted",
     "EntityMounted",
     "entitys_mounted",
     "entitysMounted",

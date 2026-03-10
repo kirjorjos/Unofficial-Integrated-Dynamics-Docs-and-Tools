@@ -11,6 +11,7 @@ export class OPERATOR_OBJECT_FLUIDSTACK_WITH_NBT extends BaseOperator<
   static override internalName =
     "integrateddynamics:fluidstack_withnbt" as const;
   static override nicknames = [
+    "fluidstackWithNBT",
     "fluidWithNBT",
     "fluid_stack_with_nbt",
     "fluidStackWithNBT",

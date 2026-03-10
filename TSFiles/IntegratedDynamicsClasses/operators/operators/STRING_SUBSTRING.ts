@@ -9,7 +9,11 @@ export class OPERATOR_STRING_SUBSTRING extends BaseOperator<
   Operator<Integer, Operator<iString, iString>>
 > {
   static override internalName = "integrateddynamics:string_substring" as const;
-  static override nicknames = ["substring", "stringSubstring"];
+  static override nicknames = [
+    "integerSubstring",
+    "substring",
+    "stringSubstring",
+  ];
   static override symbol = "substring";
   static override interactName = "integerSubstring";
   constructor() {

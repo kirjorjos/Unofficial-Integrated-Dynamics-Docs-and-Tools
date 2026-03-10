@@ -13,6 +13,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_DATA_KEYS extends BaseOperator<
   static override internalName =
     "integrateddynamics:itemstack_datakeys" as const;
   static override nicknames = [
+    "itemStackDataKeys",
     "ItemstackDatakeys",
     "itemstack_data_keys",
     "itemstackDataKeys",

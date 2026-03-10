@@ -7,7 +7,7 @@ import { Integer } from "JavaNumberClasses/Integer";
 export class OPERATOR_NBT_FROM_BOOLEAN extends BaseOperator<iBoolean, ByteTag> {
   static override internalName =
     "integrateddynamics:nbt_from_iBoolean" as const;
-  static override nicknames = ["nbtFromBoolean"];
+  static override nicknames = ["booleanAsNbt", "nbtFromBoolean"];
   static override symbol = "NBT.from_iBoolean";
   static override interactName = "booleanAsNbt";
   constructor() {

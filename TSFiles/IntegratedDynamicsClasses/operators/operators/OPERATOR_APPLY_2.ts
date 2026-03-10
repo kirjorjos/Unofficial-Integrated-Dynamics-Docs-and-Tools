@@ -7,7 +7,7 @@ export class OPERATOR_OPERATOR_APPLY_2 extends BaseOperator<
   Operator<IntegratedValue, Operator<IntegratedValue, IntegratedValue>>
 > {
   static override internalName = "integrateddynamics:operator_apply2" as const;
-  static override nicknames = ["operatorApply_2", "apply2"];
+  static override nicknames = ["operatorApply2", "operatorApply_2", "apply2"];
   static override symbol = "apply2";
   static override interactName = "operatorApply2";
   constructor() {

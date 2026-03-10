@@ -7,6 +7,7 @@ import { Item } from "IntegratedDynamicsClasses/Item";
 export class OPERATOR_STRING_TAG extends BaseOperator<iString, iArray<Item>> {
   static override internalName = "integrateddynamics:string_tag" as const;
   static override nicknames = [
+    "stringItemsByTag",
     "ItemstackTagStacks",
     "itemstack_tag_values",
     "itemstackTagValues",

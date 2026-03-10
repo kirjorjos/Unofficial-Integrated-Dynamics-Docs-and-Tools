@@ -6,7 +6,7 @@ import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 export class OPERATOR_PARSE_LONG extends BaseOperator<iString, Long> {
   static override internalName =
     "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.long" as const;
-  static override nicknames = ["parseLong"];
+  static override nicknames = ["stringParseAsLong", "parseLong"];
   static override symbol = "parse_long";
   static override interactName = "stringParseAsLong";
   constructor() {

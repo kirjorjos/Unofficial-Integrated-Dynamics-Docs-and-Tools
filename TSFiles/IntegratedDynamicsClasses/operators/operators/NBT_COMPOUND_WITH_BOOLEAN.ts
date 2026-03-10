@@ -13,7 +13,11 @@ export class OPERATOR_NBT_COMPOUND_WITH_BOOLEAN extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:nbt_compound_with_iBoolean" as const;
-  static override nicknames = ["nbtCompoundWithBoolean", "NBTWithBoolean"];
+  static override nicknames = [
+    "nbtWithBoolean",
+    "nbtCompoundWithBoolean",
+    "NBTWithBoolean",
+  ];
   static override symbol = "NBT{}.with_iBoolean";
   static override interactName = "nbtWithBoolean";
   constructor() {

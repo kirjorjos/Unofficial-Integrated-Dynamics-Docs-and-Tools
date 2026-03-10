@@ -9,7 +9,7 @@ export class OPERATOR_NBT_COMPOUND_SIZE extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:nbt_compound_size" as const;
-  static override nicknames = ["nbtCompoundSize", "NBTSize"];
+  static override nicknames = ["nbtSize", "nbtCompoundSize", "NBTSize"];
   static override symbol = "NBT{}.size";
   static override interactName = "nbtSize";
   constructor() {

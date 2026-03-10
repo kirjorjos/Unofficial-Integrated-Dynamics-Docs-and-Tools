@@ -10,6 +10,7 @@ export class OPERATOR_OBJECT_ENTITY_ENERGY_STORED extends BaseOperator<
   static override internalName =
     "integrateddynamics:entity_entityenergystored" as const;
   static override nicknames = [
+    "entityEnergy",
     "EntityEnergyStored",
     "entity_energy_stored",
     "entityEnergyStored",

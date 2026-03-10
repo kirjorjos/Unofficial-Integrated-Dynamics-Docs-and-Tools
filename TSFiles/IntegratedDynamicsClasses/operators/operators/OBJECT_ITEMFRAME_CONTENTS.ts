@@ -10,6 +10,7 @@ export class OPERATOR_OBJECT_ITEMFRAME_CONTENTS extends BaseOperator<
   static override internalName =
     "integrateddynamics:entity_itemframecontents" as const;
   static override nicknames = [
+    "entityItemFrameContents",
     "ItemframeContents",
     "itemframe_contents",
     "itemframeContents",

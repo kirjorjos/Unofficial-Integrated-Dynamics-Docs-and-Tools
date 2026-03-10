@@ -10,6 +10,7 @@ export class OPERATOR_OBJECT_ITEMFRAME_ROTATION extends BaseOperator<
   static override internalName =
     "integrateddynamics:entity_itemframerotation" as const;
   static override nicknames = [
+    "entityItemFrameRotation",
     "ItemframeRotation",
     "itemframe_rotation",
     "itemframeRotation",

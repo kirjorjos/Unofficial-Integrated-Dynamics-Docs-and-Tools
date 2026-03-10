@@ -10,6 +10,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_HASNBT extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:itemstack_hasnbt" as const;
   static override nicknames = [
+    "itemStackHasNBT",
     "ItemstackHasnbt",
     "itemstack_has_nbt",
     "itemstackHasNBT",

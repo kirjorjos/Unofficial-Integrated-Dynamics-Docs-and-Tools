@@ -8,7 +8,7 @@ export class OPERATOR_STRING_ERROR extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:string_string_error" as const;
-  static override nicknames = ["error", "string_error"];
+  static override nicknames = ["stringStringError", "error", "string_error"];
   static override symbol = "error";
   static override interactName = "stringStringError";
   constructor() {

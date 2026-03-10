@@ -11,6 +11,7 @@ export class OPERATOR_OBJECT_FLUIDSTACK_TAG extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:fluidstack_tag" as const;
   static override nicknames = [
+    "fluidstackTags",
     "FluidstackTag",
     "fluidstackTag",
     "fluidstackTagStacks",

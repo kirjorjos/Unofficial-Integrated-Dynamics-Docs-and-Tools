@@ -8,7 +8,7 @@ export class OPERATOR_RELATIONAL_GT extends BaseOperator<
   Operator<TypeNumber, iBoolean>
 > {
   static override internalName = "integrateddynamics:relational_gt" as const;
-  static override nicknames = ["relationalGt"];
+  static override nicknames = ["numberGreaterThan", "relationalGt"];
   static override symbol = ">";
   static override interactName = "numberGreaterThan";
   constructor() {

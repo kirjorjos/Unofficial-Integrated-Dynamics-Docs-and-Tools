@@ -19,6 +19,7 @@ export class OPERATOR_NBT_COMPOUND_VALUE_LIST_LONG extends BaseOperator<
   static override internalName =
     "integrateddynamics:nbt_compound_value_list_long" as const;
   static override nicknames = [
+    "nbtGetListLong",
     "nbtCompoundValueListLong",
     "compoundValueListLong",
   ];

@@ -9,7 +9,11 @@ export class OPERATOR_NULLABLE_ISNOTNULL extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:general_isnotnull" as const;
-  static override nicknames = ["isNotNull", "nullableIsnotnull"];
+  static override nicknames = [
+    "anyIsNotNull",
+    "isNotNull",
+    "nullableIsnotnull",
+  ];
   static override symbol = "∅";
   static override interactName = "anyIsNotNull";
   constructor() {

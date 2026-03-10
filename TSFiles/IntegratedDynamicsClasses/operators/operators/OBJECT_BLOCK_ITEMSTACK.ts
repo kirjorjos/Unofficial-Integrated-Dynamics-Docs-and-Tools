@@ -4,6 +4,7 @@ import { ParsedSignature } from "HelperClasses/ParsedSignature";
 export class OPERATOR_OBJECT_BLOCK_ITEMSTACK extends BaseOperator<Block, Item> {
   static override internalName = "integrateddynamics:block_itemstack" as const;
   static override nicknames = [
+    "blockItemStack",
     "BlockItemstack",
     "block_item",
     "blockItemstack",

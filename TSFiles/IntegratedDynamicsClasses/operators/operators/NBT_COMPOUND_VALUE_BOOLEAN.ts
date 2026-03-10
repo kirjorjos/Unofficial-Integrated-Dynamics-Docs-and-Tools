@@ -14,6 +14,7 @@ export class OPERATOR_NBT_COMPOUND_VALUE_BOOLEAN extends BaseOperator<
   static override internalName =
     "integrateddynamics:nbt_compound_value_iBoolean" as const;
   static override nicknames = [
+    "nbtGetBoolean",
     "nbtCompoundValueBoolean",
     "compoundValueBoolean",
   ];

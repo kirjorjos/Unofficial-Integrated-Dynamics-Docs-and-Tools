@@ -9,6 +9,7 @@ export class OPERATOR_OBJECT_FLUIDSTACK_DATA extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:fluidstack_nbt" as const;
   static override nicknames = [
+    "fluidstackNbt",
     "FluidstackData",
     "fluidstackData",
     "fluid_stack_data",

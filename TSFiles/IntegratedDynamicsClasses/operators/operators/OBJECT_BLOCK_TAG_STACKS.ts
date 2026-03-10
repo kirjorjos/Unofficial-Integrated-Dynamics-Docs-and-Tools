@@ -13,6 +13,7 @@ export class OPERATOR_OBJECT_BLOCK_TAG_STACKS extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:string_blocktag" as const;
   static override nicknames = [
+    "stringBlocksByTag",
     "BlockTagStacks",
     "block_tag_stacks",
     "blockTagStacks",

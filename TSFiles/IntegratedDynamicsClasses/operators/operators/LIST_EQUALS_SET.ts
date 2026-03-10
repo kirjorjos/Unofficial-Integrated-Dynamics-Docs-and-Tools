@@ -10,7 +10,7 @@ export class OPERATOR_LIST_EQUALS_SET extends BaseOperator<
   Operator<iArray<IntegratedValue>, iBoolean>
 > {
   static override internalName = "integrateddynamics:list_equals_set" as const;
-  static override nicknames = ["listEqualsSet", "equalsSet"];
+  static override nicknames = ["listEquals_set", "listEqualsSet", "equalsSet"];
   static override symbol = "=set=";
   static override interactName = "listEquals_set";
   constructor() {

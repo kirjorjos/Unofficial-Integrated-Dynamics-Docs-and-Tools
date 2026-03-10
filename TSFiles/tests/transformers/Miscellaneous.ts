@@ -59,6 +59,18 @@ describe("MiscellaneousTests", () => {
         }
       }
     });
+
+    it("testInteractNameInNicknames", () => {
+      for (const opClass of operatorClasses) {
+        const uniqueName = opClass.internalName;
+        const interactName = opClass.interactName;
+        if (!opClass.nicknames.includes(interactName)) {
+          throw new Error(
+            `interactName "${interactName}" not found in nicknames for operator "${uniqueName}"`
+          );
+        }
+      }
+    });
   });
 
   describe("ValidationTests", () => {

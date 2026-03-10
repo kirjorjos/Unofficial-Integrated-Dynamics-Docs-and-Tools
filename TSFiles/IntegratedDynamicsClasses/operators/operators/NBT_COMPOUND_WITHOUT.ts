@@ -10,7 +10,11 @@ export class OPERATOR_NBT_COMPOUND_WITHOUT extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:nbt_compound_without" as const;
-  static override nicknames = ["nbtCompoundWithout", "NBTWithout"];
+  static override nicknames = [
+    "nbtWithout",
+    "nbtCompoundWithout",
+    "NBTWithout",
+  ];
   static override symbol = "NBT{}.without";
   static override interactName = "nbtWithout";
   constructor() {

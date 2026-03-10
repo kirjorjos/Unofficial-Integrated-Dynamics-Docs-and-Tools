@@ -13,7 +13,12 @@ export class OPERATOR_LIST_UNIQ_PREDICATE extends BaseOperator<
   >
 > {
   static override internalName = "integrateddynamics:list_uniq_p" as const;
-  static override nicknames = ["listUniqPredicate", "uniq_p", "list_uniq_p"];
+  static override nicknames = [
+    "listUniquePredicate",
+    "listUniqPredicate",
+    "uniq_p",
+    "list_uniq_p",
+  ];
   static override symbol = "uniq_p";
   static override interactName = "listUniquePredicate";
   constructor() {

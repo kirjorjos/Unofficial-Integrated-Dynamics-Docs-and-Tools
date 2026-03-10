@@ -12,7 +12,11 @@ export class OPERATOR_NBT_COMPOUND_WITH_LONG extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:nbt_compound_with_long" as const;
-  static override nicknames = ["nbtCompoundWithLong", "NBTWithLong"];
+  static override nicknames = [
+    "nbtWithLong",
+    "nbtCompoundWithLong",
+    "NBTWithLong",
+  ];
   static override symbol = "NBT{}.with_long";
   static override interactName = "nbtWithLong";
   constructor() {

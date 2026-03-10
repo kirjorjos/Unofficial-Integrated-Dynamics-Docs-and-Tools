@@ -11,7 +11,11 @@ export class OPERATOR_NBT_COMPOUND_VALUE_TAG extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:nbt_compound_value_tag" as const;
-  static override nicknames = ["nbtCompoundValueTag", "compoundValueAny"];
+  static override nicknames = [
+    "nbtGetTag",
+    "nbtCompoundValueTag",
+    "compoundValueAny",
+  ];
   static override symbol = "NBT{}.get_tag";
   static override interactName = "nbtGetTag";
   constructor() {

@@ -10,7 +10,7 @@ export class OPERATOR_NBT_FROM_LONG_LIST extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:nbt_from_long_list" as const;
-  static override nicknames = ["nbtFromLongList"];
+  static override nicknames = ["longListAsNbt", "nbtFromLongList"];
   static override symbol = "NBT.from_long_list";
   static override interactName = "longListAsNbt";
   constructor() {
