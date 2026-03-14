@@ -8,8 +8,9 @@ export class OPERATOR_LOGICAL_AND extends BaseOperator<
   Operator<iBoolean, iBoolean>
 > {
   static override internalName = "integrateddynamics:logical_and" as const;
-  static override nicknames = ["booleanAnd", "and", "logicalAnd"];
+  static override nicknames = ["booleanAnd", "and", "logicalAnd", "&&"];
   static override symbol = "&&";
+
   static override interactName = "booleanAnd";
   constructor() {
     super({
