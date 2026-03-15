@@ -14,7 +14,7 @@ describe("TestCodeLineTransformer", () => {
     const code = ASTToCodeLine(ast);
     expect(CodeLineToAST(code)).toEqual(ast);
   });
-  
+
   it("testComplicated1", () => {
     const code =
       'pipe2 (pipe (pipe (flip nbtCompoundValueString "AspectFilter") eq) (pipe (pipe itemNBT nbtGetTag))) (pipe (pipe (flip nbtCompoundValueInteger "Amount") (eq 0)) &&) pipe';
@@ -35,7 +35,9 @@ describe("TestCodeLineTransformer", () => {
     const code = "(eq 0)";
     const ast = CodeLineToAST(code);
     expect(ast.type).toBe("Curry");
-    expect(((ast as TypeAST.Curried).args[0] as TypeAST.Integer).value).toBe("0");
+    expect(((ast as TypeAST.Curried).args[0] as TypeAST.Integer).value).toBe(
+      "0"
+    );
   });
 
   it("testRoundTrip", () => {

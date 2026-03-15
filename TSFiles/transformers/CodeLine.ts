@@ -18,18 +18,27 @@ export const ASTToCodeLine = (ast: TypeAST.AST): string => {
       node.type === "NBT" ||
       node.type === "Operator";
 
-    const wrap = (node: TypeAST.AST) => (isAtomic(node) ? stringify(node) : `(${stringify(node)})`);
+    const wrap = (node: TypeAST.AST) =>
+      isAtomic(node) ? stringify(node) : `(${stringify(node)})`;
 
     switch (node.type) {
-      case "Integer": return node.value;
-      case "Long": return node.value + "l";
-      case "Double": return node.value.includes(".") ? node.value : node.value + ".0";
-      case "String": return JSON.stringify(node.value);
-      case "Boolean": return node.value ? "true" : "false";
-      case "Null": return "null";
-      case "NBT": return JSON.stringify(node.value);
+      case "Integer":
+        return node.value;
+      case "Long":
+        return node.value + "l";
+      case "Double":
+        return node.value.includes(".") ? node.value : node.value + ".0";
+      case "String":
+        return JSON.stringify(node.value);
+      case "Boolean":
+        return node.value ? "true" : "false";
+      case "Null":
+        return "null";
+      case "NBT":
+        return JSON.stringify(node.value);
 
-      case "Operator": return getOpName(node.opName);
+      case "Operator":
+        return getOpName(node.opName);
 
       case "Curry": {
         const base = stringify(node.base);
@@ -77,7 +86,10 @@ export const ASTToCodeLine = (ast: TypeAST.AST): string => {
   return stringify(ast, true);
 };
 
-export const CodeLineToAST = (codeLine: string): TypeAST.AST => {
+export const CodeLineToAST = (
+  codeLine: string,
+  externalScope: Map<string, TypeAST.AST> = new Map()
+): TypeAST.AST => {
   const tokens: string[] = [];
   let current = "";
   let inString = false;
@@ -118,7 +130,38 @@ export const CodeLineToAST = (codeLine: string): TypeAST.AST => {
 
   let pos = 0;
 
-  type InternalAST = TypeAST.AST | { type: "Variable"; name: string } | { type: "Identifier"; value: string };
+  type InternalAST =
+    | { type: "Integer"; value: TypeNumericString; varName?: string }
+    | { type: "Long"; value: TypeNumericString; varName?: string }
+    | { type: "Double"; value: TypeNumericString; varName?: string }
+    | { type: "String"; value: string; varName?: string }
+    | { type: "Boolean"; value: boolean; varName?: string }
+    | { type: "Null"; varName?: string }
+    | { type: "Block"; value: jsonObject; varName?: string }
+    | { type: "Item"; value: jsonObject; varName?: string }
+    | { type: "Fluid"; value: jsonObject; varName?: string }
+    | { type: "Entity"; value: jsonObject; varName?: string }
+    | { type: "Ingredients"; value: any; varName?: string }
+    | { type: "Recipe"; value: { in: any; out: any }; varName?: string }
+    | { type: "NBT"; value: jsonData; varName?: string }
+    | { type: "Operator"; opName: TypeOperatorKey; varName?: string }
+    | { type: "Flip"; arg: InternalAST; varName?: string }
+    | { type: "Pipe"; op1: InternalAST; op2: InternalAST; varName?: string }
+    | {
+        type: "Pipe2";
+        op1: InternalAST;
+        op2: InternalAST;
+        op3: InternalAST;
+        varName?: string;
+      }
+    | {
+        type: "Curry";
+        base: InternalAST;
+        args: InternalAST[];
+        varName?: string;
+      }
+    | { type: "Variable"; name: string }
+    | { type: "Identifier"; value: string };
 
   function tryParseParams(): string[] | null {
     const startPos = pos;
@@ -176,19 +219,27 @@ export const CodeLineToAST = (codeLine: string): TypeAST.AST => {
       return result;
     }
 
-    if (token.startsWith('"')) return { type: "String", value: JSON.parse(token) };
+    if (token.startsWith('"'))
+      return { type: "String", value: JSON.parse(token) };
     if (token.startsWith("{")) return { type: "NBT", value: JSON.parse(token) };
-    if (/^-?\d+$/.test(token)) return { type: "Integer", value: token as TypeNumericString };
-    if (/^-?\d+l$/i.test(token)) return { type: "Long", value: token.slice(0, -1) as TypeNumericString };
-    if (/^-?\d+\.\d+$/.test(token)) return { type: "Double", value: token as TypeNumericString };
+    if (/^-?\d+$/.test(token))
+      return { type: "Integer", value: token as TypeNumericString };
+    if (/^-?\d+l$/i.test(token))
+      return { type: "Long", value: token.slice(0, -1) as TypeNumericString };
+    if (/^-?\d+\.\d+$/.test(token))
+      return { type: "Double", value: token as TypeNumericString };
     if (token === "true") return { type: "Boolean", value: true };
     if (token === "false") return { type: "Boolean", value: false };
     if (token === "null") return { type: "Null" };
 
     if (scope.has(token)) return { type: "Variable", name: token };
+    if (externalScope.has(token))
+      return externalScope.get(token)! as InternalAST;
 
     const lowerToken = token.toLowerCase();
-    if (["block", "item", "fluid", "entity", "ingredients"].includes(lowerToken)) {
+    if (
+      ["block", "item", "fluid", "entity", "ingredients"].includes(lowerToken)
+    ) {
       return { type: "Identifier", value: token };
     }
 
@@ -221,11 +272,10 @@ export const CodeLineToAST = (codeLine: string): TypeAST.AST => {
 
     if (!isCombinator) {
       for (let i = 0; i < args.length - 1; i++) {
-        if (args[i]!.type === "Operator") {
+        const arg = args[i]!;
+        if (arg.type === "Operator") {
           throw new Error(
-            `Ambiguous expression: operator "${getOpName(
-              (args[i] as TypeAST.BaseOperator).opName
-            )}".`
+            `Ambiguous expression: operator "${getOpName(arg.opName)}".`
           );
         }
       }
@@ -234,22 +284,24 @@ export const CodeLineToAST = (codeLine: string): TypeAST.AST => {
     if (base.type === "Operator") {
       const name = base.opName;
       if (name === "OPERATOR_PIPE" && args.length === 2) {
-        return { type: "Pipe", op1: args[0] as TypeAST.AST, op2: args[1] as TypeAST.AST };
+        return { type: "Pipe", op1: args[0]!, op2: args[1]! };
       }
       if (name === "OPERATOR_PIPE2" && args.length === 3) {
-        return { type: "Pipe2", op1: args[0] as TypeAST.AST, op2: args[1] as TypeAST.AST, op3: args[2] as TypeAST.AST };
+        return { type: "Pipe2", op1: args[0]!, op2: args[1]!, op3: args[2]! };
       }
       if (name === "OPERATOR_FLIP" && args.length === 1) {
-        return { type: "Flip", arg: args[0] as TypeAST.AST };
+        return { type: "Flip", arg: args[0]! };
       }
     }
 
     if (base.type === "Identifier") {
       const name = base.value;
       const lowerName = name.toLowerCase();
-      if (["block", "item", "fluid", "entity", "ingredients"].includes(lowerName)) {
+      if (
+        ["block", "item", "fluid", "entity", "ingredients"].includes(lowerName)
+      ) {
         const arg = args[0]!;
-        let value: string | jsonData;
+        let value: jsonData | string;
         if (arg.type === "String") {
           value = { id: arg.value };
         } else if (arg.type === "NBT") {
@@ -258,64 +310,115 @@ export const CodeLineToAST = (codeLine: string): TypeAST.AST => {
           throw new Error(`${name} expects a string or NBT argument`);
         }
         const type = name.charAt(0).toUpperCase() + lowerName.slice(1);
-        return { type, value } as TypeAST.Constant;
+        return { type, value } as TypeAST.Identifier;
       }
     }
 
-    return { type: "Curry", base: base as TypeAST.AST, args: args as TypeAST.AST[] };
+    return { type: "Curry", base: base, args: args };
   }
 
   function containsVar(name: string, ast: InternalAST): boolean {
     if (ast.type === "Variable") return ast.name === name;
-    if (ast.type === "Curry") return containsVar(name, ast.base) || ast.args.some((a) => containsVar(name, a));
-    if (ast.type === "Pipe") return containsVar(name, ast.op1) || containsVar(name, ast.op2);
-    if (ast.type === "Pipe2") return containsVar(name, ast.op1) || containsVar(name, ast.op2) || containsVar(name, ast.op3);
+    if (ast.type === "Curry")
+      return (
+        containsVar(name, ast.base) ||
+        ast.args.some((a) => containsVar(name, a))
+      );
+    if (ast.type === "Pipe")
+      return containsVar(name, ast.op1) || containsVar(name, ast.op2);
+    if (ast.type === "Pipe2")
+      return (
+        containsVar(name, ast.op1) ||
+        containsVar(name, ast.op2) ||
+        containsVar(name, ast.op3)
+      );
     if (ast.type === "Flip") return containsVar(name, ast.arg);
     return false;
   }
 
-  const ID_OP = (opName: TypeOperatorKey): TypeAST.BaseOperator => ({ type: "Operator", opName });
+  const ID_OP = (opName: TypeOperatorKey): InternalAST => ({
+    type: "Operator",
+    opName,
+  });
   const APPLY_OP = ID_OP("OPERATOR_APPLY");
   const CONST_OP = ID_OP("GENERAL_CONSTANT");
   const IDEN_OP = ID_OP("GENERAL_IDENTITY");
 
   function abstract(param: string, body: InternalAST): InternalAST {
     if (body.type === "Curry" && body.args.length === 1) {
-      const f = body.base as InternalAST;
-      const arg = body.args[0]! as InternalAST;
-      if (arg.type === "Variable" && arg.name === param && !containsVar(param, f)) return f;
+      const f = body.base;
+      const arg = body.args[0]!;
+      if (
+        arg.type === "Variable" &&
+        arg.name === param &&
+        !containsVar(param, f)
+      )
+        return f;
     }
     if (body.type === "Variable" && body.name === param) return IDEN_OP;
-    if (!containsVar(param, body)) return { type: "Curry", base: CONST_OP, args: [body as TypeAST.AST] };
+    if (!containsVar(param, body))
+      return { type: "Curry", base: CONST_OP, args: [body] };
 
     if (body.type === "Curry") {
       if (body.args.length === 1) {
-        const E1 = body.base as InternalAST;
-        const E2 = body.args[0]! as InternalAST;
+        const E1 = body.base;
+        const E2 = body.args[0]!;
         const xInE1 = containsVar(param, E1);
         const xInE2 = containsVar(param, E2);
 
         if (xInE1 && xInE2) {
-          return { type: "Pipe2", op1: abstract(param, E1) as TypeAST.AST, op2: abstract(param, E2) as TypeAST.AST, op3: APPLY_OP };
+          return {
+            type: "Pipe2",
+            op1: abstract(param, E1),
+            op2: abstract(param, E2),
+            op3: APPLY_OP,
+          };
         } else if (xInE1) {
-          return { type: "Pipe", op1: abstract(param, E1) as TypeAST.AST, op2: { type: "Curry", base: { type: "Flip", arg: APPLY_OP } as TypeAST.AST, args: [E2 as TypeAST.AST] } as TypeAST.AST };
+          return {
+            type: "Pipe",
+            op1: abstract(param, E1),
+            op2: {
+              type: "Curry",
+              base: { type: "Flip", arg: APPLY_OP },
+              args: [E2],
+            },
+          };
         } else {
-          return { type: "Pipe", op1: abstract(param, E2) as TypeAST.AST, op2: { type: "Curry", base: APPLY_OP, args: [E1 as TypeAST.AST] } as TypeAST.AST };
+          return {
+            type: "Pipe",
+            op1: abstract(param, E2),
+            op2: { type: "Curry", base: APPLY_OP, args: [E1] },
+          };
         }
       } else {
         const lastArg = body.args[body.args.length - 1]!;
         const rest = { ...body, args: body.args.slice(0, -1) } as InternalAST;
-        return abstract(param, { type: "Curry", base: rest as TypeAST.AST, args: [lastArg] });
+        return abstract(param, { type: "Curry", base: rest, args: [lastArg] });
       }
     }
     if (body.type === "Pipe") {
-      return { type: "Pipe2", op1: abstract(param, body.op1) as TypeAST.AST, op2: abstract(param, body.op2) as TypeAST.AST, op3: ID_OP("OPERATOR_PIPE") };
+      return {
+        type: "Pipe2",
+        op1: abstract(param, body.op1),
+        op2: abstract(param, body.op2),
+        op3: ID_OP("OPERATOR_PIPE"),
+      };
     }
     if (body.type === "Flip") {
-      return { type: "Pipe", op1: abstract(param, body.arg) as TypeAST.AST, op2: ID_OP("OPERATOR_FLIP") };
+      return {
+        type: "Pipe",
+        op1: abstract(param, body.arg),
+        op2: ID_OP("OPERATOR_FLIP"),
+      };
     }
     throw new Error(`Could not abstract "${param}" from expression`);
   }
 
-  return parseSequence(new Set(), true) as TypeAST.AST;
+  const result = parseSequence(new Set(), true);
+  if (pos < tokens.length) {
+    throw new Error(
+      `Unexpected trailing tokens: ${tokens.slice(pos).join(" ")}`
+    );
+  }
+  return result as TypeAST.AST;
 };

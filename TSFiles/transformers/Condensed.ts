@@ -157,11 +157,44 @@ export const tokenize = (condensed: string) => {
   return tokens;
 };
 
-type InternalAST = TypeAST.AST | { type: "Variable"; name: string };
-
-export const CondensedToAST = (condensed: string): TypeAST.AST => {
+export const CondensedToAST = (
+  condensed: string,
+  externalScope: Map<string, TypeAST.AST> = new Map()
+): TypeAST.AST => {
   const tokens = tokenize(condensed);
   let pos = 0;
+
+  type InternalAST =
+    | { type: "Integer"; value: TypeNumericString; varName?: string }
+    | { type: "Long"; value: TypeNumericString; varName?: string }
+    | { type: "Double"; value: TypeNumericString; varName?: string }
+    | { type: "String"; value: string; varName?: string }
+    | { type: "Boolean"; value: boolean; varName?: string }
+    | { type: "Null"; varName?: string }
+    | { type: "Block"; value: jsonObject; varName?: string }
+    | { type: "Item"; value: jsonObject; varName?: string }
+    | { type: "Fluid"; value: jsonObject; varName?: string }
+    | { type: "Entity"; value: jsonObject; varName?: string }
+    | { type: "Ingredients"; value: any; varName?: string }
+    | { type: "Recipe"; value: { in: any; out: any }; varName?: string }
+    | { type: "NBT"; value: jsonData; varName?: string }
+    | { type: "Operator"; opName: TypeOperatorKey; varName?: string }
+    | { type: "Flip"; arg: InternalAST; varName?: string }
+    | { type: "Pipe"; op1: InternalAST; op2: InternalAST; varName?: string }
+    | {
+        type: "Pipe2";
+        op1: InternalAST;
+        op2: InternalAST;
+        op3: InternalAST;
+        varName?: string;
+      }
+    | {
+        type: "Curry";
+        base: InternalAST;
+        args: InternalAST[];
+        varName?: string;
+      }
+    | { type: "Variable"; name: string };
 
   function tryParseParams(): string[] | null {
     const startPos = pos;
@@ -274,7 +307,8 @@ export const CondensedToAST = (condensed: string): TypeAST.AST => {
         tokens[pos] &&
         !(tokens[pos]!.type === "structural" && tokens[pos]!.value === ")")
       ) {
-        args.push(parseExpression(scope));
+        const arg = parseExpression(scope);
+        args.push(arg);
         if (
           tokens[pos] &&
           tokens[pos]!.type === "structural" &&
@@ -311,7 +345,7 @@ export const CondensedToAST = (condensed: string): TypeAST.AST => {
     return false;
   }
 
-  const ID_OP = (opName: TypeOperatorKey): TypeAST.BaseOperator => ({
+  const ID_OP = (opName: TypeOperatorKey): InternalAST => ({
     type: "Operator",
     opName,
   });
@@ -321,8 +355,8 @@ export const CondensedToAST = (condensed: string): TypeAST.AST => {
 
   function abstract(param: string, body: InternalAST): InternalAST {
     if (body.type === "Curry" && body.args.length === 1) {
-      const f = body.base as InternalAST;
-      const arg = body.args[0]! as InternalAST;
+      const f = body.base;
+      const arg = body.args[0]!;
 
       if (
         arg.type === "Variable" &&
@@ -333,8 +367,8 @@ export const CondensedToAST = (condensed: string): TypeAST.AST => {
       }
 
       if (f.type === "Curry" && f.args.length === 1) {
-        const g = f.base as InternalAST;
-        const arg1 = f.args[0]! as InternalAST;
+        const g = f.base;
+        const arg1 = f.args[0]!;
         if (
           arg1.type === "Variable" &&
           arg1.name === param &&
@@ -343,8 +377,8 @@ export const CondensedToAST = (condensed: string): TypeAST.AST => {
         ) {
           return {
             type: "Curry",
-            base: { type: "Flip", arg: g as TypeAST.AST },
-            args: [arg as TypeAST.AST],
+            base: { type: "Flip", arg: g },
+            args: [arg],
           };
         }
       }
@@ -355,8 +389,8 @@ export const CondensedToAST = (condensed: string): TypeAST.AST => {
     }
 
     if (body.type === "Curry" && body.args.length === 1) {
-      const E1 = body.base as InternalAST;
-      const E2 = body.args[0]! as InternalAST;
+      const E1 = body.base;
+      const E2 = body.args[0]!;
       if (
         E2.type === "Variable" &&
         E2.name === param &&
@@ -367,13 +401,13 @@ export const CondensedToAST = (condensed: string): TypeAST.AST => {
     }
 
     if (!containsVar(param, body)) {
-      return { type: "Curry", base: CONST_OP, args: [body as TypeAST.AST] };
+      return { type: "Curry", base: CONST_OP, args: [body] };
     }
 
     if (body.type === "Curry") {
       if (body.args.length === 1) {
-        const E1 = body.base as InternalAST;
-        const E2 = body.args[0]! as InternalAST;
+        const E1 = body.base;
+        const E2 = body.args[0]!;
 
         const xInE1 = containsVar(param, E1);
         const xInE2 = containsVar(param, E2);
@@ -385,8 +419,8 @@ export const CondensedToAST = (condensed: string): TypeAST.AST => {
             E1.type === "Curry" &&
             E1.args.length === 1
           ) {
-            const f = E1.base as InternalAST;
-            const arg1 = E1.args[0]! as InternalAST;
+            const f = E1.base;
+            const arg1 = E1.args[0]!;
             if (
               arg1.type === "Variable" &&
               arg1.name === param &&
@@ -396,49 +430,49 @@ export const CondensedToAST = (condensed: string): TypeAST.AST => {
                 type: "Pipe2",
                 op1: IDEN_OP,
                 op2: IDEN_OP,
-                op3: f as TypeAST.AST,
+                op3: f,
               };
             }
           }
 
           return {
             type: "Pipe2",
-            op1: abstract(param, E1) as TypeAST.AST,
-            op2: abstract(param, E2) as TypeAST.AST,
+            op1: abstract(param, E1),
+            op2: abstract(param, E2),
             op3: APPLY_OP,
           };
         } else if (xInE1) {
-          const flipApply = { type: "Flip", arg: APPLY_OP } as TypeAST.AST;
-          const callback = {
+          const flipApply: InternalAST = { type: "Flip", arg: APPLY_OP };
+          const callback: InternalAST = {
             type: "Curry",
             base: flipApply,
-            args: [E2 as TypeAST.AST],
-          } as TypeAST.AST;
+            args: [E2],
+          };
           return {
             type: "Pipe",
-            op1: abstract(param, E1) as TypeAST.AST,
+            op1: abstract(param, E1),
             op2: callback,
           };
         } else if (xInE2) {
           return {
             type: "Pipe",
-            op1: abstract(param, E2) as TypeAST.AST,
+            op1: abstract(param, E2),
             op2: {
               type: "Curry",
               base: APPLY_OP,
-              args: [E1 as TypeAST.AST],
-            } as TypeAST.AST,
+              args: [E1],
+            },
           };
         }
       } else if (body.args.length > 1) {
         const lastArg = body.args[body.args.length - 1]!;
-        const rest = {
+        const rest: InternalAST = {
           ...body,
           args: body.args.slice(0, -1),
-        } as InternalAST;
+        };
         return abstract(param, {
           type: "Curry",
-          base: rest as any,
+          base: rest,
           args: [lastArg],
         });
       }
@@ -447,8 +481,8 @@ export const CondensedToAST = (condensed: string): TypeAST.AST => {
     if (body.type === "Pipe") {
       return {
         type: "Pipe2",
-        op1: abstract(param, body.op1) as TypeAST.AST,
-        op2: abstract(param, body.op2) as TypeAST.AST,
+        op1: abstract(param, body.op1),
+        op2: abstract(param, body.op2),
         op3: ID_OP("OPERATOR_PIPE"),
       };
     }
@@ -456,7 +490,7 @@ export const CondensedToAST = (condensed: string): TypeAST.AST => {
     if (body.type === "Flip") {
       return {
         type: "Pipe",
-        op1: abstract(param, body.arg) as TypeAST.AST,
+        op1: abstract(param, body.arg),
         op2: ID_OP("OPERATOR_FLIP"),
       };
     }
@@ -472,7 +506,7 @@ export const CondensedToAST = (condensed: string): TypeAST.AST => {
     const lowerName = name.toLowerCase();
 
     // Callable
-    if (!scope.has(name)) {
+    if (!scope.has(name) && !externalScope.has(name)) {
       if (
         lowerName === "block" ||
         lowerName === "item" ||
@@ -497,7 +531,7 @@ export const CondensedToAST = (condensed: string): TypeAST.AST => {
         const arg = args[0]!;
         if (arg.type !== "NBT")
           throw new Error("NBT() expects a SNBT/JSON argument");
-        return arg;
+        return arg as TypeAST.AST;
       }
 
       if (lowerName === "ingredients") {
@@ -508,7 +542,7 @@ export const CondensedToAST = (condensed: string): TypeAST.AST => {
           type: "Ingredients",
           value:
             typeof arg.value === "string" ? JSON.parse(arg.value) : arg.value,
-        };
+        } as TypeAST.AST;
       }
 
       if (lowerName === "recipe") {
@@ -516,46 +550,46 @@ export const CondensedToAST = (condensed: string): TypeAST.AST => {
         return {
           type: "Recipe",
           value: {
-            in: args[0] as TypeAST.Ingredients,
-            out: args[1] as TypeAST.Ingredients,
+            in: args[0],
+            out: args[1],
           },
-        };
+        } as TypeAST.AST;
       }
 
       if (lowerName === "pipe" && args.length === 2) {
         return {
           type: "Pipe",
-          op1: args[0] as TypeAST.AST,
-          op2: args[1] as TypeAST.AST,
+          op1: args[0]!,
+          op2: args[1]!,
         };
       }
       if (lowerName === "pipe2" && args.length === 3) {
         return {
           type: "Pipe2",
-          op1: args[0] as TypeAST.AST,
-          op2: args[1] as TypeAST.AST,
-          op3: args[2] as TypeAST.AST,
+          op1: args[0]!,
+          op2: args[1]!,
+          op3: args[2]!,
         };
       }
       if (lowerName === "flip" && args.length === 1) {
-        return { type: "Flip", arg: args[0] as TypeAST.AST };
+        return { type: "Flip", arg: args[0]! };
       }
       if (lowerName === "apply" && args.length >= 2) {
         return {
           type: "Curry",
-          base: args[0] as TypeAST.AST,
-          args: args.slice(1) as TypeAST.AST[],
+          base: args[0]!,
+          args: args.slice(1),
         };
       }
 
       const internalName = operatorRegistry.operatorByNickname(name);
       if (internalName) {
-        const baseOp: TypeAST.BaseOperator = {
+        const baseOp: InternalAST = {
           type: "Operator",
           opName: internalName,
         };
         if (args.length > 0) {
-          return { type: "Curry", base: baseOp, args: args as TypeAST.AST[] };
+          return { type: "Curry", base: baseOp, args: args };
         }
         return baseOp;
       }
@@ -563,12 +597,14 @@ export const CondensedToAST = (condensed: string): TypeAST.AST => {
 
     const base: InternalAST = scope.has(name)
       ? { type: "Variable", name }
-      : handleLiteral({ type: "identifier", value: name }, scope);
+      : externalScope.has(name)
+        ? (externalScope.get(name)! as InternalAST)
+        : handleLiteral({ type: "identifier", value: name }, scope);
     if (args.length > 0) {
       return {
         type: "Curry",
-        base: base as TypeAST.AST,
-        args: args as TypeAST.AST[],
+        base: base,
+        args: args,
       };
     }
     return base;
@@ -602,6 +638,8 @@ export const CondensedToAST = (condensed: string): TypeAST.AST => {
       case "identifier":
         if (scope.has(token.value))
           return { type: "Variable", name: token.value };
+        if (externalScope.has(token.value))
+          return externalScope.get(token.value)! as InternalAST;
         const internalName = operatorRegistry.operatorByNickname(token.value);
         if (internalName) return { type: "Operator", opName: internalName };
         throw new Error(`Unknown identifier: ${token.value}`);
@@ -610,7 +648,16 @@ export const CondensedToAST = (condensed: string): TypeAST.AST => {
     }
   }
 
-  return parseExpression(new Set()) as TypeAST.AST;
+  const result = parseExpression(new Set());
+  if (pos < tokens.length) {
+    throw new Error(
+      `Unexpected trailing tokens in Condensed: ${tokens
+        .slice(pos)
+        .map((t) => t.value)
+        .join(" ")}`
+    );
+  }
+  return result as TypeAST.AST;
 };
 
 export const ASTToCondensed = (ast: TypeAST.AST): string => {
@@ -669,8 +716,5 @@ export const ASTToCondensed = (ast: TypeAST.AST): string => {
 
     case "Flip":
       return `flip(${ASTToCondensed(ast.arg)})`;
-
-    default:
-      throw new Error(`Unsupported AST type: ${(ast as any).type}`);
   }
 };

@@ -1,15 +1,19 @@
 namespace TypeAST {
-  type Integer = { type: "Integer"; value: TypeNumericString };
-  type Long = { type: "Long"; value: TypeNumericString };
-  type Double = { type: "Double"; value: TypeNumericString };
-  type String = { type: "String"; value: string };
-  type Boolean = { type: "Boolean"; value: boolean };
-  type Null = { type: "Null" };
+  type Integer = {
+    type: "Integer";
+    value: TypeNumericString;
+    varName?: string;
+  };
+  type Long = { type: "Long"; value: TypeNumericString; varName?: string };
+  type Double = { type: "Double"; value: TypeNumericString; varName?: string };
+  type String = { type: "String"; value: string; varName?: string };
+  type Boolean = { type: "Boolean"; value: boolean; varName?: string };
+  type Null = { type: "Null"; varName?: string };
 
-  type Block = { type: "Block"; value: jsonObject };
-  type Item = { type: "Item"; value: jsonObject };
-  type Fluid = { type: "Fluid"; value: jsonObject };
-  type Entity = { type: "Entity"; value: jsonObject };
+  type Block = { type: "Block"; value: jsonObject; varName?: string };
+  type Item = { type: "Item"; value: jsonObject; varName?: string };
+  type Fluid = { type: "Fluid"; value: jsonObject; varName?: string };
+  type Entity = { type: "Entity"; value: jsonObject; varName?: string };
 
   type Ingredients = {
     type: "Ingredients";
@@ -18,6 +22,7 @@ namespace TypeAST {
       fluids?: Fluid[];
       energy?: Long[];
     };
+    varName?: string;
   };
 
   type Recipe = {
@@ -26,24 +31,28 @@ namespace TypeAST {
       in: Ingredients;
       out: Ingredients;
     };
+    varName?: string;
   };
 
-  type Nbt = { type: "NBT"; value: jsonData };
+  type Nbt = { type: "NBT"; value: jsonData; varName?: string };
 
   type BaseOperator = {
     type: "Operator";
     opName: TypeOperatorKey;
+    varName?: string;
   };
 
   type Flip = {
     type: "Flip";
     arg: AST;
+    varName?: string;
   };
 
   type Pipe = {
     type: "Pipe";
     op1: AST;
     op2: AST;
+    varName?: string;
   };
 
   type Pipe2 = {
@@ -51,13 +60,17 @@ namespace TypeAST {
     op1: AST;
     op2: AST;
     op3: AST;
+    varName?: string;
   };
 
   type Curried = {
     type: "Curry";
     base: AST;
     args: AST[];
+    varName?: string;
   };
+
+  type Identifier = Block | Item | Fluid | Entity | Ingredients | Recipe | Nbt;
 
   type Constant =
     | Integer
@@ -66,13 +79,7 @@ namespace TypeAST {
     | String
     | Boolean
     | Null
-    | Block
-    | Item
-    | Fluid
-    | Entity
-    | Ingredients
-    | Recipe
-    | Nbt;
+    | Identifier;
 
   type AST = Constant | BaseOperator | Flip | Pipe | Pipe2 | Curried;
 }
