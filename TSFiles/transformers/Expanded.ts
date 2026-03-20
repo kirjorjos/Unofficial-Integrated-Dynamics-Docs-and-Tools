@@ -3,6 +3,7 @@ import { ASTToCodeLine, CodeLineToAST } from "./CodeLine";
 import { ASTToCondensed, CondensedToAST } from "./Condensed";
 import { ParsedSignature } from "HelperClasses/ParsedSignature";
 import { BaseOperator } from "IntegratedDynamicsClasses/operators/BaseOperator";
+import { getOpName } from "HelperClasses/UtilityFunctions";
 
 const getLabel = (index: number): string => {
   let label = "";
@@ -78,7 +79,13 @@ const unwrapOperator = (sig: ParsedSignature): ParsedSignature => {
   return sig;
 };
 
-const computeSignature = (node: TypeAST.AST): ParsedSignature => {
+const computeSignature = (
+  node: TypeAST.AST,
+  scope?: Map<TypeAST.AST, ParsedSignature>
+): ParsedSignature => {
+  if (scope && scope.has(node)) return scope.get(node)!;
+
+  let signature: ParsedSignature;
   switch (node.type) {
     case "Integer":
     case "Long":
@@ -93,47 +100,69 @@ const computeSignature = (node: TypeAST.AST): ParsedSignature => {
     case "Entity":
     case "Ingredients":
     case "Recipe": {
-      return new ParsedSignature({ type: node.type }, false);
+      signature = new ParsedSignature({ type: node.type }, false);
+      break;
     }
     case "Operator": {
       const internalKey = operatorRegistry.operatorByNickname(node.opName);
       if (!internalKey) throw new Error(`Unknown operator: ${node.opName}`);
       const opClass = operatorRegistry[internalKey];
       const op = new opClass();
-      return wrapInOperator(op.getSignatureNode());
+      signature = wrapInOperator(op.getSignatureNode());
+      break;
     }
     case "Curry": {
-      let sig = computeSignature(node.base);
+      let currentSig = computeSignature(node.base, scope);
       for (const arg of node.args) {
-        const funcSig = unwrapOperator(sig);
-        sig = funcSig.apply(computeSignature(arg)).rewrite();
+        currentSig = unwrapOperator(currentSig)
+          .apply(computeSignature(arg, scope))
+          .rewrite();
       }
-      return sig.getRootType() === "Function" ? wrapInOperator(sig) : sig;
+      signature =
+        currentSig.getRootType() === "Function"
+          ? wrapInOperator(currentSig)
+          : currentSig;
+      break;
     }
     case "Pipe": {
-      const sig1 = unwrapOperator(computeSignature(node.op1));
-      const sig2 = unwrapOperator(computeSignature(node.op2));
-      return wrapInOperator(sig1.pipe(sig2).rewrite());
+      const sig1 = unwrapOperator(computeSignature(node.op1, scope));
+      const sig2 = unwrapOperator(computeSignature(node.op2, scope));
+      signature = wrapInOperator(sig1.pipe(sig2).rewrite());
+      break;
     }
     case "Pipe2": {
-      const sig1 = unwrapOperator(computeSignature(node.op1));
-      const sig2 = unwrapOperator(computeSignature(node.op2));
-      const sig3 = unwrapOperator(computeSignature(node.op3));
-      return wrapInOperator(sig1.pipe2(sig2, sig3).rewrite());
+      const sig1 = unwrapOperator(computeSignature(node.op1, scope));
+      const sig2 = unwrapOperator(computeSignature(node.op2, scope));
+      const sig3 = unwrapOperator(computeSignature(node.op3, scope));
+      signature = wrapInOperator(sig1.pipe2(sig2, sig3).rewrite());
+      break;
     }
     case "Flip": {
-      const sig = unwrapOperator(computeSignature(node.arg));
-      return wrapInOperator(sig.flip().rewrite());
+      const innerSignature = unwrapOperator(computeSignature(node.arg, scope));
+      signature = wrapInOperator(innerSignature.flip().rewrite());
+      break;
+    }
+    case "Variable": {
+      signature = new ParsedSignature(
+        { type: "Any", typeID: ParsedSignature.getNewTypeID() },
+        false
+      );
+      break;
     }
   }
+
+  if (scope) scope.set(node, signature);
+  return signature;
 };
 
 const collectVariables = (
   node: TypeAST.AST,
-  collected: TypeAST.AST[],
+  collected: Set<TypeAST.AST>,
   seen: Set<TypeAST.AST>
 ) => {
   if (seen.has(node)) return;
+  seen.add(node);
+
   switch (node.type) {
     case "Curry":
       collectVariables(node.base, collected, seen);
@@ -153,32 +182,160 @@ const collectVariables = (
       break;
   }
 
-  if (node.varName && !collected.includes(node)) {
-    collected.push(node);
-    seen.add(node);
+  if (node.varName) {
+    collected.add(node);
   }
 };
 
 let varCounter = 0;
-const getNextVarName = () => `varName${++varCounter}`;
 
-const getCallArity = (node: TypeAST.Operator): number => {
+const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
+const getInternalName = (node: TypeAST.AST): string | undefined => {
   if (node.type === "Operator") {
-    const opClass = operatorRegistry[node.opName];
-    let op: BaseOperator<IntegratedValue, IntegratedValue> | void = undefined;
-    if (opClass) {
-      try {
-        op = new opClass();
-      } catch (e) {}
+    const internalKey = operatorRegistry.operatorByNickname(node.opName);
+    if (internalKey) {
+      return operatorRegistry[internalKey].internalName;
     }
-    if (!op) op = operatorRegistry.find(node.opName);
-    if (op) {
-      if (op.serializer === "integrateddynamics:curry") return 0;
-      return op.getSignatureNode().getArity();
-    }
-    return 0;
   }
-  return 0;
+  return undefined;
+};
+
+const isPipeNode = (node: TypeAST.AST): boolean => {
+  if (node.type === "Pipe") return true;
+  const internalName = getInternalName(node);
+  if (internalName === "integrateddynamics:operator_pipe") return true;
+  if (node.type === "Operator") {
+    const n = node.opName;
+    return n === "OPERATOR_PIPE";
+  }
+  return false;
+};
+
+const isApplyNode = (node: TypeAST.AST): boolean => {
+  const internalName = getInternalName(node);
+  if (
+    internalName === "integrateddynamics:operator_apply" ||
+    internalName === "integrateddynamics:operator_apply_2" ||
+    internalName === "integrateddynamics:operator_apply_3"
+  )
+    return true;
+  if (node.type === "Operator") {
+    const n = node.opName;
+    return (
+      n === "OPERATOR_APPLY" ||
+      n === "OPERATOR_APPLY_2" ||
+      n === "OPERATOR_APPLY_3"
+    );
+  }
+  return false;
+};
+
+const getVarName = (node: TypeAST.AST): string => {
+  if (node.varName) return node.varName;
+
+  const sanitize = (s: string) => s.replace(/[^A-Za-z0-9\\._&|{}]/g, "");
+
+  switch (node.type) {
+    case "Integer":
+    case "Long":
+    case "Double":
+      return node.value.toString().replace(/^-/, "neg");
+    case "String":
+      return sanitize(node.value.slice(0, 10));
+    case "Boolean":
+      return node.value ? "true" : "false";
+    case "Null":
+      return "null";
+    case "Variable":
+      return node.name;
+    case "Operator": {
+      const formal = getOpName(node.opName);
+      return formal.charAt(0).toLowerCase() + formal.slice(1);
+    }
+    case "Curry": {
+      let base = node.base;
+      let args = node.args;
+
+      if (isApplyNode(base) && args.length >= 1) {
+        return getVarName({
+          type: "Curry",
+          base: args[0] as TypeAST.Operator,
+          args: args.slice(1),
+        });
+      }
+
+      const opInternalName = getInternalName(base);
+
+      if (
+        opInternalName === "integrateddynamics:operator_apply_n" &&
+        args.length >= 2
+      ) {
+        const fName = getVarName(args[0]!);
+        const listName = getVarName(args[1]!);
+        let res = `${fName}By_n${capitalize(listName)}`;
+        for (let i = 2; i < args.length; i++) {
+          res = `{${res}}by${capitalize(getVarName(args[i]!))}`;
+        }
+        return res;
+      }
+
+      if (isPipeNode(base) && args.length === 1) {
+        return `by${capitalize(getVarName(args[0]!))}`;
+      }
+      if (base.type === "Flip" && !base.varName) {
+        if (isPipeNode(base.arg) && args.length === 1) {
+          return `on${capitalize(getVarName(args[0]!))}`;
+        }
+      }
+
+      let name: string;
+      let connector = "By";
+
+      if (base.type === "Flip" && !base.varName) {
+        name = getVarName(base.arg);
+        connector = "On";
+      } else {
+        name = getVarName(base);
+        connector = name.endsWith("On") ? "On" : "By";
+      }
+
+      if (args.length === 0) return name;
+
+      let res: string;
+      if (base.varName) {
+        res = `{${base.varName}}${connector.toLowerCase()}${capitalize(
+          getVarName(args[0]!)
+        )}`;
+      } else if (base.type === "Curry") {
+        res = `{${getVarName(base)}}${connector.toLowerCase()}${capitalize(
+          getVarName(args[0]!)
+        )}`;
+      } else {
+        res = `${name}${connector}${capitalize(getVarName(args[0]!))}`;
+      }
+
+      for (let i = 1; i < args.length; i++) {
+        res = `{${res}}by${capitalize(getVarName(args[i]!))}`;
+      }
+      return res;
+    }
+    case "Pipe": {
+      const fName = getVarName(node.op1);
+      const gName = getVarName(node.op2);
+      return `${gName}With${capitalize(fName)}`;
+    }
+    case "Pipe2": {
+      const fName = getVarName(node.op1);
+      const gName = getVarName(node.op2);
+      const hName = getVarName(node.op3);
+      return `${hName}With${capitalize(fName)}And${capitalize(gName)}`;
+    }
+    case "Flip":
+      return `${getVarName(node.arg)}On`;
+  }
+
+  return `v${++varCounter}`;
 };
 
 const decomposeAST = (node: TypeAST.AST): TypeAST.AST => {
@@ -186,33 +343,38 @@ const decomposeAST = (node: TypeAST.AST): TypeAST.AST => {
     const base = decomposeAST(node.base) as TypeAST.Operator;
     const args = node.args.map(decomposeAST);
 
-    const arity = getCallArity(base);
-    const isBaseCall = base.type === "Operator" && args.length === arity;
-
-    if (
-      base.type === "Operator" &&
-      args.length <= 3 &&
-      (isBaseCall || args.length <= 1)
-    ) {
-      return { ...node, base, args };
+    if (base.type === "Operator" && args.length === 0) {
+      return base;
     }
 
-    if (!base.varName) {
-      base.varName = getNextVarName();
+    if (!base.varName && base.type !== "Operator") {
+      base.varName = getVarName(base);
     }
+
+    const opInternalName = getInternalName(base);
+    const isApplyN = opInternalName === "integrateddynamics:operator_apply_n";
 
     let current: TypeAST.Operator = base;
     let i = 0;
     while (i < args.length) {
-      const take = Math.min(args.length - i, 3);
+      let take = 1;
+      if (isApplyN && i === 0 && args.length >= 2) {
+        take = 2;
+      }
       const chunk = args.slice(i, i + take);
       const isLast = i + take === args.length;
 
-      const newNode: TypeAST.Curried = {
+      const chunkNode: TypeAST.Curried = {
         type: "Curry",
         base: current,
         args: chunk,
-        varName: isLast ? node.varName : getNextVarName(),
+      };
+
+      const newNode: TypeAST.Curried = {
+        ...chunkNode,
+        varName: isLast
+          ? node.varName || getVarName(chunkNode)
+          : getVarName(chunkNode),
       };
       current = newNode;
       i += take;
@@ -246,34 +408,39 @@ export const ASTToExpanded = (
 ): string => {
   varCounter = 0;
 
-  const initialVars: TypeAST.AST[] = [];
+  const initialVars = new Set<TypeAST.AST>();
   collectVariables(ast, initialVars, new Set());
-  if (!initialVars.includes(ast)) initialVars.push(ast);
+  initialVars.add(ast);
 
-  const finalVars: TypeAST.AST[] = [];
+  const finalVars = new Set<TypeAST.AST>();
   const finalSeen = new Set<TypeAST.AST>();
 
   const processAndCollect = (node: TypeAST.AST) => {
     const decomposed = decomposeAST(node);
     collectVariables(decomposed, finalVars, finalSeen);
-    if (!finalSeen.has(decomposed)) {
-      finalVars.push(decomposed);
-      finalSeen.add(decomposed);
-    }
+    finalVars.add(decomposed);
+    finalSeen.add(decomposed);
   };
 
   for (const v of initialVars) {
     processAndCollect(v);
   }
 
+  const finalVarsArray = Array.from(finalVars);
   const output: string[] = [];
   const formatter = new SignatureFormatter();
+  const signatureCache = new Map<TypeAST.AST, ParsedSignature>();
 
-  for (let i = 0; i < finalVars.length; i++) {
-    const v = finalVars[i]!;
-    const name =
-      v.varName || (i === finalVars.length - 1 ? "final" : getNextVarName());
-    const sig = computeSignature(v);
+  for (let i = 0; i < finalVarsArray.length; i++) {
+    const v = finalVarsArray[i]!;
+    if (
+      v.varName &&
+      output.some((line) => line.startsWith(`${v.varName} = `))
+    ) {
+      continue;
+    }
+    const name = v.varName || getVarName(v);
+    const sig = computeSignature(v, signatureCache);
     const sigStr = formatter.format(sig, name);
 
     const oldVarName = v.varName;
@@ -282,9 +449,12 @@ export const ASTToExpanded = (
       style === "CodeLine" ? ASTToCodeLine(v, true) : ASTToCondensed(v, true);
     if (oldVarName) v.varName = oldVarName;
 
+    const assignment = `${name} = ${exprStr}`;
+    if (output.includes(assignment)) continue;
+
     output.push(`${name} :: ${sigStr}`);
-    output.push(`${name} = ${exprStr}`);
-    if (i < finalVars.length - 1) {
+    output.push(assignment);
+    if (i < finalVarsArray.length - 1) {
       output.push("");
     }
   }

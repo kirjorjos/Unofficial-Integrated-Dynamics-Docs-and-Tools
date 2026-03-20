@@ -77,6 +77,8 @@ namespace TypeAST {
 
   type Identifier = Block | Item | Fluid | Entity | Ingredients | Recipe | Nbt;
 
+  type Variable = { type: "Variable"; name: string; varName?: string };
+
   type Constant =
     | Integer
     | Long
@@ -84,7 +86,8 @@ namespace TypeAST {
     | String
     | Boolean
     | Null
-    | Identifier;
+    | Identifier
+    | Variable;
 
   type Operator = BaseOperator | Flip | Pipe | Pipe2 | Curried;
 

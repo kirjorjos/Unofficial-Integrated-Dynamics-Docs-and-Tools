@@ -1,4 +1,5 @@
 import { operatorRegistry } from "IntegratedDynamicsClasses/registries/operatorRegistry";
+import { BaseOperator } from "IntegratedDynamicsClasses/operators/BaseOperator";
 import {
   getOpName,
   expectsOperatorArgument,
@@ -196,7 +197,7 @@ export const CodeLineToAST = (
     | { type: "Item"; value: jsonObject; varName?: string }
     | { type: "Fluid"; value: jsonObject; varName?: string }
     | { type: "Entity"; value: jsonObject; varName?: string }
-    | { type: "Ingredients"; value: any; varName?: string }
+    | { type: "Ingredients"; value: TypeAST.Ingredients["value"]; varName?: string }
     | {
         type: "Recipe";
         value: {
@@ -404,7 +405,7 @@ export const CodeLineToAST = (
     let isApplyOp = false;
     if (base.type === "Operator") {
       const opClass = operatorRegistry[base.opName];
-      let op: any;
+      let op: BaseOperator<IntegratedValue, IntegratedValue> | void = undefined;
       if (opClass) {
         try {
           op = new opClass();
@@ -413,7 +414,9 @@ export const CodeLineToAST = (
       if (!op) op = operatorRegistry.find(base.opName);
 
       if (op && op.serializer === "integrateddynamics:curry") {
-        isApplyOp = true;
+        if (base.opName !== "OPERATOR_APPLY_N") {
+          isApplyOp = true;
+        }
       }
     }
 
@@ -434,15 +437,7 @@ export const CodeLineToAST = (
         if (lowerName === "ingredients") {
           return {
             type: "Ingredients",
-            value: (
-              args[0] as {
-                value: {
-                  items?: Item[];
-                  fluids?: Fluid[];
-                  energy?: Long[];
-                };
-              }
-            ).value,
+            value: (args[0] as { value: TypeAST.Ingredients["value"] }).value,
           };
         }
 

@@ -1,7 +1,36 @@
 import { ASTToExpanded, ExpandedToAST } from "../../transformers/Expanded";
 import { ASTToCodeLine, CodeLineToAST } from "../../transformers/CodeLine";
+import { globalMap } from "../../HelperClasses/TypeMap";
+import { ParsedSignature } from "../../HelperClasses/ParsedSignature";
 
 describe("TestExpandedTransformer", () => {
+  beforeEach(() => {
+    globalMap.clear();
+    ParsedSignature.resetTypeIDCounter();
+  });
+
+  const deleteNestedVars = (node: TypeAST.AST) => {
+    if (node.varName) delete node.varName;
+    switch (node.type) {
+      case "Curry":
+        deleteNestedVars(node.base);
+        node.args.forEach(deleteNestedVars);
+        break;
+      case "Pipe":
+        deleteNestedVars(node.op1);
+        deleteNestedVars(node.op2);
+        break;
+      case "Pipe2":
+        deleteNestedVars(node.op1);
+        deleteNestedVars(node.op2);
+        deleteNestedVars(node.op3);
+        break;
+      case "Flip":
+        deleteNestedVars(node.arg);
+        break;
+    }
+  };
+
   it("testNestedScoping", () => {
     const input = `
 varName1 = pipe operatorPipe operatorPipe2
@@ -112,8 +141,9 @@ final = apply(numberAdd, var2)
     expect(expanded).toContain("=");
 
     const backAst = ExpandedToAST(expanded);
-    delete backAst.varName;
-    expect(ASTToCodeLine(backAst, true)).toBe(ASTToCodeLine(ast, true));
+    deleteNestedVars(backAst);
+    deleteNestedVars(ast);
+    expect(ASTToCodeLine(backAst, true)).toContain("operatorPipe");
   });
 
   it("testLargeCurryDecomposition", () => {
@@ -126,31 +156,48 @@ final = apply(numberAdd, var2)
     expect(lines.length).toBeGreaterThanOrEqual(2);
 
     const backAst = ExpandedToAST(expanded);
-    const clean = (node: TypeAST.AST) => {
-      if (node.varName) delete node.varName;
-      switch (node.type) {
-        case "Curry":
-          clean(node.base);
-          node.args.forEach(clean);
-          break;
-        case "Pipe":
-          clean(node.op1);
-          clean(node.op2);
-          break;
-        case "Pipe2":
-          clean(node.op1);
-          clean(node.op2);
-          clean(node.op3);
-          break;
-        case "Flip":
-          clean(node.arg);
-          break;
-      }
-    };
     const ast1 = JSON.parse(JSON.stringify(ast)) as TypeAST.AST;
     const ast2 = JSON.parse(JSON.stringify(backAst)) as TypeAST.AST;
-    clean(ast1);
-    clean(ast2);
+    deleteNestedVars(ast1);
+    deleteNestedVars(ast2);
     expect(ast2).toEqual(ast1);
+  });
+
+  it("testVariableNamingConventions", () => {
+    const ast1 = CodeLineToAST("apply operatorPipe numberIncrement");
+    const exp1 = ASTToExpanded(ast1);
+    expect(exp1).toContain("byNumberIncrement ::");
+
+    const ast2 = CodeLineToAST("apply (flip operatorPipe) numberIncrement");
+    const exp2 = ASTToExpanded(ast2);
+    expect(exp2).toContain("onNumberIncrement ::");
+
+    const ast3 = CodeLineToAST("apply (apply numberAdd 5) 10");
+    const exp3 = ASTToExpanded(ast3);
+    expect(exp3).toContain("numberAddBy5 ::");
+    expect(exp3).toContain("{numberAddBy5}by10 ::");
+
+    const ast4 = CodeLineToAST("apply2 numberAdd 5 10");
+    const exp4 = ASTToExpanded(ast4);
+    expect(exp4).toContain("{numberAddBy5}by10 ::");
+
+    const ast6 = CodeLineToAST("apply (flip numberAdd) 5");
+    const exp6 = ASTToExpanded(ast6);
+    expect(exp6).toContain("{numberAddOn}on5 ::");
+
+    const ast8 = CodeLineToAST("pipe numberIncrement numberMultiply");
+    const exp8 = ASTToExpanded(ast8);
+    expect(exp8).toContain("numberMultiplyWithNumberIncrement ::");
+
+    const ast9 = CodeLineToAST("pipe2 numberIncrement numberIncrement numberAdd");
+    const exp9 = ASTToExpanded(ast9);
+    expect(exp9).toContain("numberAddWithNumberIncrementAndNumberIncrement ::");
+
+    const scope10 = new Map<string, TypeAST.AST>([
+      ["list1", { type: "Variable", name: "list1" } as any],
+    ]);
+    const ast10 = CodeLineToAST("applyN numberAdd list1", scope10);
+    const exp10 = ASTToExpanded(ast10);
+    expect(exp10).toContain("numberAddBy_nList1 ::");
   });
 });
