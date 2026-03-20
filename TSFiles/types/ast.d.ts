@@ -28,8 +28,13 @@ namespace TypeAST {
   type Recipe = {
     type: "Recipe";
     value: {
-      in: Ingredients;
-      out: Ingredients;
+      input: Ingredients;
+      output: Ingredients;
+      inputReuseable: {
+        items: number[];
+        fluids: number[];
+        energies: number[];
+      };
     };
     varName?: string;
   };
@@ -44,28 +49,28 @@ namespace TypeAST {
 
   type Flip = {
     type: "Flip";
-    arg: AST;
+    arg: Operator;
     varName?: string;
   };
 
   type Pipe = {
     type: "Pipe";
-    op1: AST;
-    op2: AST;
+    op1: Operator;
+    op2: Operator;
     varName?: string;
   };
 
   type Pipe2 = {
     type: "Pipe2";
-    op1: AST;
-    op2: AST;
-    op3: AST;
+    op1: Operator;
+    op2: Operator;
+    op3: Operator;
     varName?: string;
   };
 
   type Curried = {
     type: "Curry";
-    base: AST;
+    base: Operator;
     args: AST[];
     varName?: string;
   };
@@ -81,5 +86,7 @@ namespace TypeAST {
     | Null
     | Identifier;
 
-  type AST = Constant | BaseOperator | Flip | Pipe | Pipe2 | Curried;
+  type Operator = BaseOperator | Flip | Pipe | Pipe2 | Curried;
+
+  type AST = Constant | Operator;
 }

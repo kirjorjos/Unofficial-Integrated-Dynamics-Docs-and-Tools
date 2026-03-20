@@ -63,9 +63,9 @@ export const ASTtoOperator = (ast: TypeAST.AST): IntegratedValue => {
       return new Ingredients(items, fluids, energies);
     }
     case "Recipe": {
-      const input = ASTtoOperator(ast.value.in) as Ingredients;
-      const output = ASTtoOperator(ast.value.out) as Ingredients;
-      return new Recipe(input, output);
+      const input = ASTtoOperator(ast.value.input) as Ingredients;
+      const output = ASTtoOperator(ast.value.output) as Ingredients;
+      return new Recipe(input, output, ast.value.inputReuseable);
     }
 
     case "Operator": {
@@ -123,7 +123,7 @@ export const ASTtoOperator = (ast: TypeAST.AST): IntegratedValue => {
       return new CompoundTag(ast.value as Record<string, any>);
 
     default:
-      throw new Error(`Unsupported AST type: `, (ast as any).type ?? ast);
+      throw new Error(`Unsupported AST type: ${(ast as any).type}`);
   }
 };
 
@@ -173,8 +173,9 @@ export const OperatortoAST = (val: IntegratedValue): TypeAST.AST => {
     return {
       type: "Recipe",
       value: {
-        in: OperatortoAST(val.getInput()) as TypeAST.Ingredients,
-        out: OperatortoAST(val.getOutput()) as TypeAST.Ingredients,
+        input: OperatortoAST(val.getInput()) as TypeAST.Ingredients,
+        output: OperatortoAST(val.getOutput()) as TypeAST.Ingredients,
+        inputReuseable: val.getInputReuseable(),
       },
     };
   }
@@ -182,7 +183,7 @@ export const OperatortoAST = (val: IntegratedValue): TypeAST.AST => {
   if (val instanceof CurriedOperator) {
     return {
       type: "Curry",
-      base: OperatortoAST(val.baseOperator),
+      base: OperatortoAST(val.baseOperator) as TypeAST.Operator,
       args: val.appliedArgs.map(OperatortoAST),
     };
   }
@@ -190,24 +191,24 @@ export const OperatortoAST = (val: IntegratedValue): TypeAST.AST => {
   if (val instanceof PipeOperator) {
     return {
       type: "Pipe",
-      op1: OperatortoAST(val.op1),
-      op2: OperatortoAST(val.op2),
+      op1: OperatortoAST(val.op1) as TypeAST.Operator,
+      op2: OperatortoAST(val.op2) as TypeAST.Operator,
     };
   }
 
   if (val instanceof Pipe2Operator) {
     return {
       type: "Pipe2",
-      op1: OperatortoAST(val.op1),
-      op2: OperatortoAST(val.op2),
-      op3: OperatortoAST(val.op3),
+      op1: OperatortoAST(val.op1) as TypeAST.Operator,
+      op2: OperatortoAST(val.op2) as TypeAST.Operator,
+      op3: OperatortoAST(val.op3) as TypeAST.Operator,
     };
   }
 
   if (val instanceof FlipOperator) {
     return {
       type: "Flip",
-      arg: OperatortoAST(val.op),
+      arg: OperatortoAST(val.op) as TypeAST.Operator,
     };
   }
 

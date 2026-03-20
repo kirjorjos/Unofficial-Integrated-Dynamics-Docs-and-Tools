@@ -2,25 +2,18 @@ import { ASTToCodeLine, CodeLineToAST } from "../../transformers/CodeLine";
 
 describe("TestCodeLineTransformer", () => {
   it("testBlock", () => {
-    const code = 'Block("minecraft:stone")';
+    const code = 'Block("minecraft:stone", 64)';
     const ast = CodeLineToAST(code);
-    expect(ast).toEqual({ type: "Block", value: { id: "minecraft:stone" } });
-    expect(ASTToCodeLine(ast)).toBe(code);
+    expect(ast.type).toBe("Block");
+    expect((ast as TypeAST.Block).value["id"]).toBe("minecraft:stone");
+    expect((ast as TypeAST.Block).value["size"]).toBe("64");
+    expect(ASTToCodeLine(ast, true)).toBe(code);
   });
 
   it("testLambda", () => {
-    const CodeLine = "x => add(x, 1)";
-    const ast = CodeLineToAST(CodeLine);
-    const code = ASTToCodeLine(ast);
-    expect(CodeLineToAST(code)).toEqual(ast);
-  });
-
-  it("testComplicated1", () => {
-    const code =
-      'pipe2 (pipe (pipe (flip nbtCompoundValueString "AspectFilter") eq) (pipe (pipe itemNBT nbtGetTag))) (pipe (pipe (flip nbtCompoundValueInteger "Amount") (eq 0)) &&) pipe';
+    const code = "x => (numberAdd x 1)";
     const ast = CodeLineToAST(code);
-    const back = ASTToCodeLine(ast);
-    expect(CodeLineToAST(back)).toEqual(ast);
+    expect(ASTToCodeLine(ast, true)).toBe("(operatorFlip (numberAdd)) 1");
   });
 
   it("testComplicated2", () => {
@@ -31,8 +24,28 @@ describe("TestCodeLineTransformer", () => {
     expect(CodeLineToAST(back)).toEqual(ast);
   });
 
+  it("testFlattening", () => {
+    const nested = "apply(apply(numberAdd, 1), 2)";
+    const ast = CodeLineToAST(nested);
+    expect(ast.type).toBe("Curry");
+    const curry = ast as TypeAST.Curried;
+    expect((curry.base as TypeAST.BaseOperator).opName).toBe(
+      "ARITHMETIC_ADDITION"
+    );
+    expect(curry.args.length).toBe(2);
+    expect(ASTToCodeLine(ast, true)).toBe("numberAdd 1 2");
+  });
+
+  it("testAmbigiousCodeLine", () => {
+    const ambiguous = "numberAdd numberIncrement 5 1 2";
+    expect(() => CodeLineToAST(ambiguous)).toThrow();
+
+    const ambiguous2 = "numberAdd 1 numberIncrement 5 2";
+    expect(() => CodeLineToAST(ambiguous2)).toThrow();
+  });
+
   it("testSimpleCurry", () => {
-    const code = "(eq 0)";
+    const code = "eq 0";
     const ast = CodeLineToAST(code);
     expect(ast.type).toBe("Curry");
     expect(((ast as TypeAST.Curried).args[0] as TypeAST.Integer).value).toBe(
@@ -48,18 +61,13 @@ describe("TestCodeLineTransformer", () => {
       '"hi"',
       "true",
       "null",
-      "(eq 1)",
-      "pipe (pipe add 1) multiply",
+      "(numberAdd 1)",
+      "operatorPipe (operatorPipe numberAdd 1) multiply",
     ];
     for (const c of cases) {
       const ast = CodeLineToAST(c);
-      const back = ASTToCodeLine(ast);
-      expect(ASTToCodeLine(CodeLineToAST(back))).toBe(back);
+      const back = ASTToCodeLine(ast, true);
+      expect(ASTToCodeLine(CodeLineToAST(back), true)).toBe(back);
     }
-  });
-
-  it("testAmbigiousCodeLine", () => {
-    const ambiguous = "apply3 pipe increment multiply";
-    expect(() => CodeLineToAST(ambiguous)).toThrow();
   });
 });

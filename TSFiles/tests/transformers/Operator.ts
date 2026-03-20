@@ -74,12 +74,17 @@ describe("Operator Transformer Tests", () => {
     recipeAST = {
       type: "Recipe",
       value: {
-        in: ingredientsAST,
-        out: {
+        input: ingredientsAST,
+        output: {
           type: "Ingredients",
           value: {
             items: [{ type: "Item", value: { displayName: "Iron Block" } }],
           },
+        },
+        inputReuseable: {
+          items: [],
+          fluids: [],
+          energies: [],
         },
       },
     };

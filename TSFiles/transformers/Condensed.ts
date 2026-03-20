@@ -1,5 +1,10 @@
 import { operatorRegistry } from "IntegratedDynamicsClasses/registries/operatorRegistry";
 import { BaseOperator } from "IntegratedDynamicsClasses/operators/BaseOperator";
+import {
+  getOpName,
+  getArity,
+  expectsOperatorArgument,
+} from "HelperClasses/UtilityFunctions";
 
 type char = string;
 interface State {
@@ -176,7 +181,11 @@ export const CondensedToAST = (
     | { type: "Fluid"; value: jsonObject; varName?: string }
     | { type: "Entity"; value: jsonObject; varName?: string }
     | { type: "Ingredients"; value: any; varName?: string }
-    | { type: "Recipe"; value: { in: any; out: any }; varName?: string }
+    | {
+        type: "Recipe";
+        value: TypeAST.Recipe["value"];
+        varName?: string;
+      }
     | { type: "NBT"; value: jsonData; varName?: string }
     | { type: "Operator"; opName: TypeOperatorKey; varName?: string }
     | { type: "Flip"; arg: InternalAST; varName?: string }
@@ -194,7 +203,8 @@ export const CondensedToAST = (
         args: InternalAST[];
         varName?: string;
       }
-    | { type: "Variable"; name: string };
+    | { type: "Variable"; name: string }
+    | { type: "Identifier"; value: string };
 
   function tryParseParams(): string[] | null {
     const startPos = pos;
@@ -326,6 +336,183 @@ export const CondensedToAST = (
     return handleLiteral(token, scope);
   }
 
+  function handleCall(
+    name: string,
+    args: InternalAST[],
+    scope: Set<string>
+  ): InternalAST {
+    const internalKey = operatorRegistry.operatorByNickname(name);
+    const base: InternalAST = scope.has(name)
+      ? { type: "Variable", name }
+      : externalScope.has(name)
+        ? (externalScope.get(name)! as InternalAST)
+        : internalKey
+          ? { type: "Operator", opName: internalKey }
+          : [
+                "block",
+                "item",
+                "fluid",
+                "entity",
+                "ingredients",
+                "recipe",
+              ].includes(name.toLowerCase())
+            ? { type: "Identifier", value: name }
+            : handleLiteral({ type: "identifier", value: name }, scope);
+
+    return handleCallInternal(base, args);
+  }
+
+  function handleCallInternal(
+    base: InternalAST,
+    args: InternalAST[]
+  ): InternalAST {
+    if (args.length > 1) {
+      for (let i = 0; i < args.length - 1; i++) {
+        const arg = args[i]!;
+        if (
+          arg.type === "Operator" ||
+          (arg.type === "Identifier" &&
+            operatorRegistry.operatorByNickname(arg.value))
+        ) {
+          if (!expectsOperatorArgument(base as TypeAST.AST, i)) {
+            throw new Error(
+              `Ambiguous expression in Condensed: operator used as non-final argument. Use parentheses to clarify.`
+            );
+          }
+        }
+      }
+    }
+
+    if (base.type === "Curry" && !base.varName) {
+      return handleCallInternal(base.base, [...base.args, ...args]);
+    }
+
+    let isApplyOp = false;
+    if (base.type === "Operator") {
+      const opClass = operatorRegistry[base.opName];
+      let op: BaseOperator<IntegratedValue, IntegratedValue>;
+      if (opClass) {
+        try {
+          op = new opClass();
+        } catch (e) {}
+      }
+      if (!op!) op = operatorRegistry.find(base.opName)!;
+
+      if (op && op.serializer === "integrateddynamics:curry") {
+        isApplyOp = true;
+      }
+    }
+
+    if (isApplyOp && args.length >= 1) {
+      const [newBase, ...rest] = args;
+      if (rest.length > 0) {
+        return handleCallInternal(newBase!, rest);
+      }
+      return newBase!;
+    }
+
+    if (base.type === "Identifier") {
+      const name = base.value;
+      const lowerName = name.toLowerCase();
+      if (
+        ["block", "item", "fluid", "entity", "ingredients"].includes(lowerName)
+      ) {
+        if (lowerName === "ingredients") {
+          return {
+            type: "Ingredients",
+            value: (args[0] as TypeAST.Ingredients).value,
+          };
+        }
+
+        const id = (args[0] as { value: string }).value;
+        let size: TypeNumericString | undefined = undefined;
+        let props: jsonData | undefined = undefined;
+
+        if (args.length > 1) {
+          const arg1 = args[1]!;
+          if (
+            arg1.type === "Integer" ||
+            arg1.type === "Long" ||
+            arg1.type === "Double"
+          ) {
+            size = arg1.value;
+            if (args.length > 2) {
+              const arg2 = args[2]!;
+              if (arg2.type === "NBT" || arg2.type === "Identifier") {
+                props = arg2.value;
+              }
+            }
+          } else if (arg1.type === "NBT") {
+            props = arg1.value;
+          }
+        }
+
+        const value: jsonObject = { id };
+        if (size !== undefined) {
+          if (lowerName === "block") value["size"] = size;
+          if (lowerName === "item") value["size"] = size;
+          if (lowerName === "fluid") value["amount"] = size;
+        }
+        if (props !== undefined) {
+          if (lowerName === "block") value["properties"] = props as jsonObject;
+          else value["tag"] = props;
+        }
+
+        const type = (name.charAt(0).toUpperCase() + lowerName.slice(1)) as
+          | "Block"
+          | "Item"
+          | "Fluid"
+          | "Entity";
+        return { type, value } as InternalAST;
+      }
+
+      if (lowerName === "recipe") {
+        const val = (args[0] as { value: TypeAST.Recipe["value"] }).value;
+        return {
+          type: "Recipe",
+          value: {
+            input: val.input,
+            output: val.output,
+            inputReuseable: val.inputReuseable || {
+              items: [],
+              fluids: [],
+              energies: [],
+            },
+          },
+        } as InternalAST;
+      }
+    }
+
+    if (base.type === "Operator") {
+      const name = base.opName;
+      if (name === "OPERATOR_PIPE" && args.length === 2) {
+        return {
+          type: "Pipe",
+          op1: args[0] as TypeAST.AST,
+          op2: args[1] as TypeAST.AST,
+        };
+      }
+      if (name === "OPERATOR_PIPE2" && args.length === 3) {
+        return {
+          type: "Pipe2",
+          op1: args[0] as TypeAST.AST,
+          op2: args[1] as TypeAST.AST,
+          op3: args[2] as TypeAST.AST,
+        };
+      }
+      if (name === "OPERATOR_FLIP" && args.length === 1) {
+        return { type: "Flip", arg: args[0] as TypeAST.AST };
+      }
+    }
+
+    if (args.length === 0) return base;
+    return {
+      type: "Curry",
+      base: base as TypeAST.AST,
+      args: args as TypeAST.AST[],
+    };
+  }
+
   function containsVar(name: string, ast: InternalAST): boolean {
     if (ast.type === "Variable") return ast.name === name;
     if (ast.type === "Curry")
@@ -349,9 +536,9 @@ export const CondensedToAST = (
     type: "Operator",
     opName,
   });
-  const APPLY_OP = ID_OP("OPERATOR_APPLY" as any);
-  const CONST_OP = ID_OP("GENERAL_CONSTANT" as any);
-  const IDEN_OP = ID_OP("GENERAL_IDENTITY" as any);
+  const APPLY_OP = ID_OP("OPERATOR_APPLY" as TypeOperatorKey);
+  const CONST_OP = ID_OP("GENERAL_CONSTANT" as TypeOperatorKey);
+  const IDEN_OP = ID_OP("GENERAL_IDENTITY" as TypeOperatorKey);
 
   function abstract(param: string, body: InternalAST): InternalAST {
     if (body.type === "Curry" && body.args.length === 1) {
@@ -361,9 +548,9 @@ export const CondensedToAST = (
       if (
         arg.type === "Variable" &&
         arg.name === param &&
-        !containsVar(param, f)
+        !containsVar(param, f as InternalAST)
       ) {
-        return f;
+        return f as InternalAST;
       }
 
       if (f.type === "Curry" && f.args.length === 1) {
@@ -372,14 +559,14 @@ export const CondensedToAST = (
         if (
           arg1.type === "Variable" &&
           arg1.name === param &&
-          !containsVar(param, g) &&
-          !containsVar(param, arg)
+          !containsVar(param, g as InternalAST) &&
+          !containsVar(param, arg as InternalAST)
         ) {
           return {
             type: "Curry",
-            base: { type: "Flip", arg: g },
-            args: [arg],
-          };
+            base: { type: "Flip", arg: g as TypeAST.AST } as TypeAST.AST,
+            args: [arg as TypeAST.AST],
+          } as InternalAST;
         }
       }
     }
@@ -388,226 +575,98 @@ export const CondensedToAST = (
       return IDEN_OP;
     }
 
+    if (!containsVar(param, body)) {
+      return { type: "Curry", base: CONST_OP, args: [body as TypeAST.AST] };
+    }
+
     if (body.type === "Curry" && body.args.length === 1) {
       const E1 = body.base;
       const E2 = body.args[0]!;
-      if (
-        E2.type === "Variable" &&
-        E2.name === param &&
-        !containsVar(param, E1)
-      ) {
-        return E1;
-      }
-    }
 
-    if (!containsVar(param, body)) {
-      return { type: "Curry", base: CONST_OP, args: [body] };
-    }
+      const xInE1 = containsVar(param, E1);
+      const xInE2 = containsVar(param, E2);
 
-    if (body.type === "Curry") {
-      if (body.args.length === 1) {
-        const E1 = body.base;
-        const E2 = body.args[0]!;
-
-        const xInE1 = containsVar(param, E1);
-        const xInE2 = containsVar(param, E2);
-
-        if (xInE1 && xInE2) {
-          if (
-            E2.type === "Variable" &&
-            E2.name === param &&
-            E1.type === "Curry" &&
-            E1.args.length === 1
-          ) {
-            const f = E1.base;
-            const arg1 = E1.args[0]!;
-            if (
-              arg1.type === "Variable" &&
-              arg1.name === param &&
-              !containsVar(param, f)
-            ) {
-              return {
-                type: "Pipe2",
-                op1: IDEN_OP,
-                op2: IDEN_OP,
-                op3: f,
-              };
-            }
-          }
-
+      if (xInE1 && xInE2) {
+        if (
+          E1.type === "Curry" &&
+          E1.args.length === 1 &&
+          !containsVar(param, E1.base)
+        ) {
           return {
             type: "Pipe2",
-            op1: abstract(param, E1),
-            op2: abstract(param, E2),
-            op3: APPLY_OP,
-          };
-        } else if (xInE1) {
-          const flipApply: InternalAST = { type: "Flip", arg: APPLY_OP };
-          const callback: InternalAST = {
-            type: "Curry",
-            base: flipApply,
-            args: [E2],
-          };
-          return {
-            type: "Pipe",
-            op1: abstract(param, E1),
-            op2: callback,
-          };
-        } else if (xInE2) {
-          return {
-            type: "Pipe",
-            op1: abstract(param, E2),
-            op2: {
-              type: "Curry",
-              base: APPLY_OP,
-              args: [E1],
-            },
+            op1: abstract(param, E1.args[0]!) as TypeAST.AST,
+            op2: abstract(param, E2) as TypeAST.AST,
+            op3: E1.base as TypeAST.AST,
           };
         }
-      } else if (body.args.length > 1) {
-        const lastArg = body.args[body.args.length - 1]!;
-        const rest: InternalAST = {
-          ...body,
-          args: body.args.slice(0, -1),
+
+        return {
+          type: "Pipe2",
+          op1: abstract(param, E1) as TypeAST.AST,
+          op2: abstract(param, E2) as TypeAST.AST,
+          op3: APPLY_OP as TypeAST.AST,
         };
-        return abstract(param, {
+      } else if (xInE1) {
+        const flipApply: InternalAST = {
+          type: "Flip",
+          arg: APPLY_OP as TypeAST.AST,
+        };
+        const callback: InternalAST = {
           type: "Curry",
-          base: rest,
-          args: [lastArg],
-        });
+          base: flipApply as TypeAST.AST,
+          args: [E2 as TypeAST.AST],
+        };
+        return {
+          type: "Pipe",
+          op1: abstract(param, E1) as TypeAST.AST,
+          op2: callback as TypeAST.AST,
+        };
+      } else {
+        if (E2.type === "Variable" && E2.name === param) {
+          return E1;
+        }
+
+        return {
+          type: "Pipe",
+          op1: abstract(param, E2) as TypeAST.AST,
+          op2: {
+            type: "Curry",
+            base: APPLY_OP as TypeAST.AST,
+            args: [E1 as TypeAST.AST],
+          } as TypeAST.AST,
+        };
       }
+    } else if (body.type === "Curry" && body.args.length > 1) {
+      const lastArg = body.args[body.args.length - 1]!;
+      const rest: InternalAST = {
+        ...body,
+        args: body.args.slice(0, -1),
+      };
+      return abstract(param, {
+        type: "Curry",
+        base: rest,
+        args: [lastArg],
+      });
     }
 
     if (body.type === "Pipe") {
       return {
         type: "Pipe2",
-        op1: abstract(param, body.op1),
-        op2: abstract(param, body.op2),
-        op3: ID_OP("OPERATOR_PIPE"),
+        op1: abstract(param, body.op1) as TypeAST.AST,
+        op2: abstract(param, body.op2) as TypeAST.AST,
+        op3: ID_OP("OPERATOR_PIPE") as TypeAST.AST,
       };
     }
 
     if (body.type === "Flip") {
       return {
         type: "Pipe",
-        op1: abstract(param, body.arg),
-        op2: ID_OP("OPERATOR_FLIP"),
+        op1: abstract(param, body.arg) as TypeAST.AST,
+        op2: ID_OP("OPERATOR_FLIP") as TypeAST.AST,
       };
     }
 
     throw new Error(`Could not abstract "${param}" from expression`);
-  }
-
-  function handleCall(
-    name: string,
-    args: InternalAST[],
-    scope: Set<string>
-  ): InternalAST {
-    const lowerName = name.toLowerCase();
-
-    // Callable
-    if (!scope.has(name) && !externalScope.has(name)) {
-      if (
-        lowerName === "block" ||
-        lowerName === "item" ||
-        lowerName === "fluid" ||
-        lowerName === "entity"
-      ) {
-        const arg = args[0]!;
-        let value: jsonData;
-        if (arg.type === "String") {
-          value = { id: arg.value };
-        } else if (arg.type === "NBT") {
-          value =
-            typeof arg.value === "string" ? JSON.parse(arg.value) : arg.value;
-        } else {
-          throw new Error(`${name} expects a string or Property argument`);
-        }
-        const type = name.charAt(0).toUpperCase() + lowerName.slice(1);
-        return { type, value } as TypeAST.AST;
-      }
-
-      if (lowerName === "nbt") {
-        const arg = args[0]!;
-        if (arg.type !== "NBT")
-          throw new Error("NBT() expects a SNBT/JSON argument");
-        return arg as TypeAST.AST;
-      }
-
-      if (lowerName === "ingredients") {
-        const arg = args[0]!;
-        if (arg.type !== "NBT")
-          throw new Error("Ingredients() expects a JSON argument");
-        return {
-          type: "Ingredients",
-          value:
-            typeof arg.value === "string" ? JSON.parse(arg.value) : arg.value,
-        } as TypeAST.AST;
-      }
-
-      if (lowerName === "recipe") {
-        if (args.length !== 2) throw new Error("Recipe() expects 2 arguments");
-        return {
-          type: "Recipe",
-          value: {
-            in: args[0],
-            out: args[1],
-          },
-        } as TypeAST.AST;
-      }
-
-      if (lowerName === "pipe" && args.length === 2) {
-        return {
-          type: "Pipe",
-          op1: args[0]!,
-          op2: args[1]!,
-        };
-      }
-      if (lowerName === "pipe2" && args.length === 3) {
-        return {
-          type: "Pipe2",
-          op1: args[0]!,
-          op2: args[1]!,
-          op3: args[2]!,
-        };
-      }
-      if (lowerName === "flip" && args.length === 1) {
-        return { type: "Flip", arg: args[0]! };
-      }
-      if (lowerName === "apply" && args.length >= 2) {
-        return {
-          type: "Curry",
-          base: args[0]!,
-          args: args.slice(1),
-        };
-      }
-
-      const internalName = operatorRegistry.operatorByNickname(name);
-      if (internalName) {
-        const baseOp: InternalAST = {
-          type: "Operator",
-          opName: internalName,
-        };
-        if (args.length > 0) {
-          return { type: "Curry", base: baseOp, args: args };
-        }
-        return baseOp;
-      }
-    }
-
-    const base: InternalAST = scope.has(name)
-      ? { type: "Variable", name }
-      : externalScope.has(name)
-        ? (externalScope.get(name)! as InternalAST)
-        : handleLiteral({ type: "identifier", value: name }, scope);
-    if (args.length > 0) {
-      return {
-        type: "Curry",
-        base: base,
-        args: args,
-      };
-    }
-    return base;
   }
 
   function handleLiteral(
@@ -640,6 +699,19 @@ export const CondensedToAST = (
           return { type: "Variable", name: token.value };
         if (externalScope.has(token.value))
           return externalScope.get(token.value)! as InternalAST;
+        const lower = token.value.toLowerCase();
+        if (
+          [
+            "block",
+            "item",
+            "fluid",
+            "entity",
+            "ingredients",
+            "recipe",
+          ].includes(lower)
+        ) {
+          return { type: "Identifier", value: token.value };
+        }
         const internalName = operatorRegistry.operatorByNickname(token.value);
         if (internalName) return { type: "Operator", opName: internalName };
         throw new Error(`Unknown identifier: ${token.value}`);
@@ -660,61 +732,132 @@ export const CondensedToAST = (
   return result as TypeAST.AST;
 };
 
-export const ASTToCondensed = (ast: TypeAST.AST): string => {
-  switch (ast.type) {
-    case "Integer":
-      return ast.value;
-    case "Long":
-      return ast.value + "l";
-    case "Double": {
-      let val = ast.value;
-      if (!val.includes(".") && !/[dD]$/.test(val)) {
-        val += ".0";
+export const ASTToCondensed = (
+  ast: TypeAST.AST,
+  isTopLevel = false
+): string => {
+  const stringify = (node: TypeAST.AST, topLevel = false): string => {
+    if (node.varName && !topLevel) {
+      return node.varName;
+    }
+
+    let result = "UNKNOWN";
+
+    switch (node.type) {
+      case "Integer":
+        result = node.value;
+        break;
+      case "Long":
+        result = node.value + "l";
+        break;
+      case "Double": {
+        let val = node.value;
+        if (!val.includes(".") && !/[dD]$/.test(val)) {
+          val += ".0";
+        }
+        result = val;
+        break;
       }
-      return val;
+      case "String":
+        result = JSON.stringify(node.value);
+        break;
+      case "Boolean":
+        result = node.value ? "true" : "false";
+        break;
+      case "Null":
+        result = "null";
+        break;
+      case "NBT":
+        result = JSON.stringify(node.value);
+        break;
+
+      case "Block":
+      case "Item":
+      case "Fluid":
+      case "Entity": {
+        const val = node.value as jsonObject;
+        const args = [JSON.stringify(val["id"])];
+        if (node.type === "Item" && val["size"] !== undefined) {
+          args.push(val["size"] as string);
+        }
+        if (node.type === "Fluid" && val["amount"] !== undefined) {
+          args.push(val["amount"] as string);
+        }
+        if (node.type === "Block" && val["properties"] !== undefined) {
+          args.push(JSON.stringify(val["properties"]));
+        } else if (val["tag"] !== undefined) {
+          args.push(JSON.stringify(val["tag"]));
+        }
+        result = `${node.type}(${args.join(", ")})`;
+        break;
+      }
+
+      case "Ingredients":
+        result = `${node.type}(${JSON.stringify(node.value)})`;
+        break;
+
+      case "Recipe":
+        result = `Recipe(${JSON.stringify(node.value)})`;
+        break;
+
+      case "Operator": {
+        result = getOpName(node.opName);
+        break;
+      }
+
+      case "Curry": {
+        const arity = getArity(node.base);
+        if (node.base.type === "Operator" && node.args.length === arity) {
+          const base = stringify(node.base, false);
+          const argsStr = node.args.map((a) => stringify(a, false)).join(", ");
+          result = `${base}(${argsStr})`;
+        } else {
+          let currentBase = stringify(node.base, false);
+          let i = 0;
+          const n = node.args.length;
+          if (n === 0) {
+            result = currentBase;
+          } else {
+            while (i < n) {
+              const take = Math.min(n - i, 3);
+              const argsChunk = node.args
+                .slice(i, i + take)
+                .map((a) => stringify(a, false))
+                .join(", ");
+              const applyName = take === 1 ? "apply" : `apply${take}`;
+              currentBase = `${applyName}(${currentBase}, ${argsChunk})`;
+              i += take;
+            }
+            result = currentBase;
+          }
+        }
+        break;
+      }
+
+      case "Pipe":
+        result = `${getOpName("OPERATOR_PIPE")}(${stringify(node.op1, false)}, ${stringify(
+          node.op2,
+          false
+        )})`;
+        break;
+
+      case "Pipe2":
+        result = `${getOpName("OPERATOR_PIPE2")}(${stringify(node.op1, false)}, ${stringify(
+          node.op2,
+          false
+        )}, ${stringify(node.op3, false)})`;
+        break;
+
+      case "Flip":
+        result = `${getOpName("OPERATOR_FLIP")}(${stringify(node.arg, false)})`;
+        break;
     }
-    case "String":
-      return JSON.stringify(ast.value);
-    case "Boolean":
-      return ast.value ? "true" : "false";
-    case "Null":
-      return "null";
-    case "NBT":
-      return JSON.stringify(ast.value);
 
-    case "Block":
-    case "Item":
-    case "Fluid":
-    case "Entity":
-    case "Ingredients":
-      return `${ast.type}(${JSON.stringify(ast.value)})`;
-
-    case "Recipe":
-      return `Recipe(${ASTToCondensed(ast.value.in)}, ${ASTToCondensed(
-        ast.value.out
-      )})`;
-
-    case "Operator": {
-      const opClass = operatorRegistry[ast.opName];
-      if (!opClass) throw new Error(`Unknown operator: ${ast.opName}`);
-      return opClass.interactName;
+    if (node.varName && topLevel) {
+      return `${node.varName} = ${result}`;
     }
+    return result;
+  };
 
-    case "Curry": {
-      const args = ast.args.map(ASTToCondensed).join(", ");
-      const base = ASTToCondensed(ast.base);
-      return `apply(${base}, ${args})`;
-    }
-
-    case "Pipe":
-      return `pipe(${ASTToCondensed(ast.op1)}, ${ASTToCondensed(ast.op2)})`;
-
-    case "Pipe2":
-      return `pipe2(${ASTToCondensed(ast.op1)}, ${ASTToCondensed(
-        ast.op2
-      )}, ${ASTToCondensed(ast.op3)})`;
-
-    case "Flip":
-      return `flip(${ASTToCondensed(ast.arg)})`;
-  }
+  return stringify(ast, isTopLevel);
 };
