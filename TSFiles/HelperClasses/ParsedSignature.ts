@@ -47,45 +47,55 @@ export class ParsedSignature {
     const remap = (
       node: TypeRawSignatureAST.RawSignatureNode
     ): TypeRawSignatureAST.RawSignatureNode => {
+      let result: TypeRawSignatureAST.RawSignatureNode;
       if (node.type === "Function") {
         if (!node.from || !node.to) {
           console.error("Malformed Function node in remap:", node);
           throw new Error("Malformed Function node in remap");
         }
-        return {
+        result = {
           type: "Function",
           from: remap(node.from),
           to: remap(node.to),
         };
-      }
-
-      if (node.type === "List") {
-        return {
+      } else if (node.type === "List") {
+        result = {
           type: "List",
           listType: remap(node.listType),
         };
-      }
-
-      if (node.type === "Any") {
+      } else if (node.type === "Any") {
         if (!id_map.has(node.typeID)) {
           id_map.set(node.typeID, ParsedSignature.getNewTypeID());
         }
-        return {
+        result = {
           type: "Any",
           typeID: id_map.get(node.typeID)!,
         };
-      }
-
-      if (node.type === "Operator") {
-        return {
+      } else if (node.type === "Operator") {
+        result = {
           type: "Operator",
           obscured: remap(
             node.obscured
           ) as TypeRawSignatureAST.RawSignatureFunction,
         };
+      } else {
+        result = { ...node };
       }
 
-      return node;
+      if (!(result as TypeRawSignatureAST.RawSignatureAny).typeID) {
+        const newID = ParsedSignature.getNewTypeID();
+        if (result.type === "Any") {
+          (result as TypeRawSignatureAST.RawSignatureAny).typeID = newID;
+        } else {
+          Object.defineProperty(result, "typeID", {
+            value: newID,
+            enumerable: false,
+            configurable: true,
+            writable: true,
+          });
+        }
+      }
+      return result;
     };
 
     return remap(node);

@@ -197,7 +197,11 @@ export const CodeLineToAST = (
     | { type: "Item"; value: jsonObject; varName?: string }
     | { type: "Fluid"; value: jsonObject; varName?: string }
     | { type: "Entity"; value: jsonObject; varName?: string }
-    | { type: "Ingredients"; value: TypeAST.Ingredients["value"]; varName?: string }
+    | {
+        type: "Ingredients";
+        value: TypeAST.Ingredients["value"];
+        varName?: string;
+      }
     | {
         type: "Recipe";
         value: {

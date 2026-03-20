@@ -19,35 +19,32 @@ class SignatureFormatter {
   private typeIDToLabel = new Map<number, string>();
   private counter = 0;
 
-  private getNextLabel(): string {
-    return getLabel(this.counter++);
+  private getLabelForID(typeID: number): string {
+    if (!this.typeIDToLabel.has(typeID)) {
+      this.typeIDToLabel.set(typeID, getLabel(this.counter++));
+    }
+    return this.typeIDToLabel.get(typeID)!;
   }
 
-  format(sig: ParsedSignature, rootLabel?: string): string {
-    const node = sig.getAst();
+  format(sig: ParsedSignature, isReturnType = false): string {
+    const node = sig.getAst() as TypeRawSignatureAST.RawSignatureNode;
 
     if (node.type === "Operator") {
       const inner = this.format(new ParsedSignature(node.obscured, false));
       return `Operator<${inner}>`;
     }
 
-    let label: string;
-    if (node.type === "Any") {
-      if (!this.typeIDToLabel.has(node.typeID)) {
-        this.typeIDToLabel.set(node.typeID, this.getNextLabel());
-      }
-      label = this.typeIDToLabel.get(node.typeID)!;
-    } else {
-      label = rootLabel || this.getNextLabel();
-    }
+    const label = this.getLabelForID(
+      (node as TypeRawSignatureAST.RawSignatureAny).typeID
+    );
 
     if (node.type === "Function") {
       const from = sig.getInput();
       const to = sig.getOutput();
       const fromStr = this.format(from);
-      const toStr = this.format(to);
-      const isToFunction = to.getRootType() === "Function";
-      return `${label}<${fromStr} -> ${isToFunction ? `(${toStr})` : toStr}>`;
+      const toStr = this.format(to, true);
+      const res = `${label}<${fromStr} -> ${toStr}>`;
+      return isReturnType ? `(${res})` : res;
     }
 
     if (node.type === "Any") {
@@ -66,7 +63,7 @@ class SignatureFormatter {
 const wrapInOperator = (sig: ParsedSignature): ParsedSignature => {
   const ast = sig.getAst();
   if (ast.type === "Function") {
-    return new ParsedSignature({ type: "Operator", obscured: ast }, false);
+    return new ParsedSignature({ type: "Operator", obscured: ast }, true);
   }
   return sig;
 };
@@ -441,7 +438,7 @@ export const ASTToExpanded = (
     }
     const name = v.varName || getVarName(v);
     const sig = computeSignature(v, signatureCache);
-    const sigStr = formatter.format(sig, name);
+    const sigStr = formatter.format(sig);
 
     const oldVarName = v.varName;
     delete v.varName;

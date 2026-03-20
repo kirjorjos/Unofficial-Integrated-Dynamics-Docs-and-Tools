@@ -189,15 +189,25 @@ final = apply(numberAdd, var2)
     const exp8 = ASTToExpanded(ast8);
     expect(exp8).toContain("numberMultiplyWithNumberIncrement ::");
 
-    const ast9 = CodeLineToAST("pipe2 numberIncrement numberIncrement numberAdd");
+    const ast9 = CodeLineToAST(
+      "pipe2 numberIncrement numberIncrement numberAdd"
+    );
     const exp9 = ASTToExpanded(ast9);
     expect(exp9).toContain("numberAddWithNumberIncrementAndNumberIncrement ::");
 
     const scope10 = new Map<string, TypeAST.AST>([
-      ["list1", { type: "Variable", name: "list1" } as any],
+      ["list1", { type: "Variable", name: "list1" }],
     ]);
     const ast10 = CodeLineToAST("applyN numberAdd list1", scope10);
     const exp10 = ASTToExpanded(ast10);
     expect(exp10).toContain("numberAddBy_nList1 ::");
+  });
+
+  it("testSignatureFormatting", () => {
+    const ast = CodeLineToAST("operatorApply3");
+    const expanded = ASTToExpanded(ast);
+    const expected =
+      "operatorApply3 :: Operator<a<Operator<b<c<Any<typeID14>> -> (d<e<Any<typeID15>> -> (f<g<Any<typeID16>> -> h<Any<typeID17>>>)>)>> -> (i<j<Any<typeID22>> -> (k<e<Any<typeID15>> -> (l<g<Any<typeID16>> -> h<Any<typeID17>>>)>)>)>>\noperatorApply3 = operatorApply3";
+    expect(expanded).toBe(expected);
   });
 });
