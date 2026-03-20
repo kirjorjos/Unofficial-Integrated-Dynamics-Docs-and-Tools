@@ -103,13 +103,50 @@ describe("TestCondensedTransformer", () => {
     expect(ast).toEqual({ type: "Operator", opName: "GENERAL_IDENTITY" });
   });
 
-  it("testLambdaConstant", () => {
+  it("testLambdaRule1", () => {
+    // x => constantInX  =>  K constantInX
     const ast = CondensedToAST("x => 5");
-    expect(ast).toEqual({
-      type: "Curry",
-      base: { type: "Operator", opName: "GENERAL_CONSTANT" },
-      args: [{ type: "Integer", value: "5" }],
-    });
+    expect(ASTToCondensed(ast)).toBe("apply(anyConstant, 5)");
+  });
+
+  it("testLambdaRule2", () => {
+    // x => f x  =>  f
+    const ast = CondensedToAST("x => numberIncrement(x)");
+    expect(ASTToCondensed(ast)).toBe("numberIncrement");
+  });
+
+  it("testLambdaRule3", () => {
+    // x => f x y  =>  flip f y
+    const ast = CondensedToAST("x => numberAdd(x, 1)");
+    expect(ASTToCondensed(ast)).toBe("apply(operatorFlip(numberAdd), 1)");
+  });
+
+  it("testLambdaRule4", () => {
+    // x => f gOfX  =>  pipe (x => gOfX) f
+    const ast = CondensedToAST("x => numberIncrement(numberIncrement(x))");
+    expect(ASTToCondensed(ast)).toBe(
+      "operatorPipe(numberIncrement, numberIncrement)"
+    );
+  });
+
+  it("testLambdaRule5", () => {
+    // x => f gOfX hOfX  =>  pipe2 (x => gOfX) (x => hOfX) f
+    const ast = CondensedToAST(
+      "x => numberAdd(numberIncrement(x), numberDecrement(x))"
+    );
+    expect(ASTToCondensed(ast)).toBe(
+      "operatorPipe2(numberIncrement, numberDecrement, numberAdd)"
+    );
+  });
+
+  it("testLambdaRule6", () => {
+    // x => fOfX gOfX  =>  pipe2 (x => fOfX) (x => gOfX) apply
+    const ast = CondensedToAST(
+      "x => operatorApply(booleanNot(x), booleanNot(x))"
+    );
+    expect(ASTToCondensed(ast)).toBe(
+      "operatorPipe2(anyIdentity, booleanNot, booleanNot)"
+    );
   });
 
   it("testLambdaFlip", () => {

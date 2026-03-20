@@ -28,6 +28,54 @@ describe("TestCodeLineTransformer", () => {
     expect(ASTToCodeLine(ast, true)).toBe("(operatorFlip (numberAdd)) 1");
   });
 
+  it("testLambdaRule1", () => {
+    // x => constantInX  =>  K constantInX
+    const code = "x => 5";
+    const ast = CodeLineToAST(code);
+    expect(ASTToCodeLine(ast, true)).toBe("anyConstant 5");
+  });
+
+  it("testLambdaRule2", () => {
+    // x => f x  =>  f
+    const code = "x => (numberIncrement x)";
+    const ast = CodeLineToAST(code);
+    expect(ASTToCodeLine(ast, true)).toBe("numberIncrement");
+  });
+
+  it("testLambdaRule3", () => {
+    // x => f x y  =>  flip f y
+    const code = "x => (numberAdd x 1)";
+    const ast = CodeLineToAST(code);
+    expect(ASTToCodeLine(ast, true)).toBe("(operatorFlip (numberAdd)) 1");
+  });
+
+  it("testLambdaRule4", () => {
+    // x => f gOfX  =>  pipe (x => gOfX) f
+    const code = "x => (numberIncrement (numberIncrement x))";
+    const ast = CodeLineToAST(code);
+    expect(ASTToCodeLine(ast, true)).toBe(
+      "operatorPipe (numberIncrement) (numberIncrement)"
+    );
+  });
+
+  it("testLambdaRule5", () => {
+    // x => f gOfX hOfX  =>  pipe2 (x => gOfX) (x => hOfX) f
+    const code = "x => (numberAdd (numberIncrement x) (numberDecrement x))";
+    const ast = CodeLineToAST(code);
+    expect(ASTToCodeLine(ast, true)).toBe(
+      "operatorPipe2 (numberIncrement) (numberDecrement) (numberAdd)"
+    );
+  });
+
+  it("testLambdaRule6", () => {
+    // x => fOfX gOfX  =>  pipe2 (x => fOfX) (x => gOfX) apply
+    const code = "x => (booleanNot x) (numberIncrement x)";
+    const ast = CodeLineToAST(code);
+    expect(ASTToCodeLine(ast, true)).toBe(
+      "operatorPipe2 (anyIdentity) (numberIncrement) (booleanNot)"
+    );
+  });
+
   it("testLambdaVarWithDot", () => {
     const code = "\\var.with.dot.numberAdd var.with.dot 1";
     const ast = CodeLineToAST(code);

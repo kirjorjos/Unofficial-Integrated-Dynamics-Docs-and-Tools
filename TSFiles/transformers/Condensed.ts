@@ -670,11 +670,7 @@ export const CondensedToAST = (
         return {
           type: "Pipe",
           op1: abstract(param, E2) as TypeAST.AST,
-          op2: {
-            type: "Curry",
-            base: APPLY_OP as TypeAST.AST,
-            args: [E1 as TypeAST.AST],
-          } as TypeAST.AST,
+          op2: E1 as TypeAST.AST,
         };
       }
     } else if (body.type === "Curry" && body.args.length > 1) {
