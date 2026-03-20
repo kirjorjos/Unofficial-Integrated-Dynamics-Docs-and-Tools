@@ -150,4 +150,19 @@ describe("TestCondensedTransformer", () => {
       "operatorPipe2(anyIdentity, anyIdentity, numberAdd)"
     );
   });
+
+  it("testLambdaShort", () => {
+    const ast = CondensedToAST("\\x.numberAdd(x, 1)");
+    expect(ASTToCondensed(ast)).toBe("apply(operatorFlip(numberAdd), 1)");
+  });
+
+  it("testLambdaArrow", () => {
+    const ast = CondensedToAST("x -> numberAdd(x, 1)");
+    expect(ASTToCondensed(ast)).toBe("apply(operatorFlip(numberAdd), 1)");
+  });
+
+  it("testLambdaVarWithDot", () => {
+    const ast = CondensedToAST("\\var.with.dot.numberAdd(var.with.dot, 1)");
+    expect(ASTToCondensed(ast)).toBe("apply(operatorFlip(numberAdd), 1)");
+  });
 });

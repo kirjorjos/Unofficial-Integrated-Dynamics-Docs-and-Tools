@@ -81,8 +81,28 @@ export const tokenize = (condensed: string) => {
       continue;
     }
 
+    if (
+      !state.inString &&
+      state.inJSON === 0 &&
+      char === "-" &&
+      condensed[i + 1] === ">"
+    ) {
+      if (currentToken) {
+        tokens.push({
+          type: resolveType(currentToken, possibleTypes),
+          value: currentToken,
+        });
+        currentToken = "";
+        state.isEscaped = false;
+        possibleTypes = Object.keys(charTokenCheckers);
+      }
+      tokens.push({ type: "structural", value: "->" });
+      i++; // Skip ">"
+      continue;
+    }
+
     const isStructural =
-      !state.inString && state.inJSON === 0 && /^[(),]$/.test(char);
+      !state.inString && state.inJSON === 0 && /^[(),\\]$/.test(char);
     const isWhitespace =
       !state.inString && state.inJSON === 0 && /^\s$/.test(char);
 
@@ -247,19 +267,39 @@ export const CondensedToAST = (
         return null;
       }
       pos++; // consume )
+      const arrow = tokens[pos];
       if (
-        tokens[pos] &&
-        tokens[pos]!.type === "structural" &&
-        tokens[pos]!.value === "=>"
+        arrow &&
+        arrow.type === "structural" &&
+        (arrow.value === "=>" || arrow.value === "->")
       ) {
         return params;
       }
+    } else if (next.type === "structural" && next.value === "\\") {
+      pos++; // consume \
+      const paramToken = tokens[pos];
+      if (!paramToken || paramToken.type !== "identifier") {
+        pos = startPos;
+        return null;
+      }
+      const dotIdx = paramToken.value.lastIndexOf(".");
+      if (dotIdx !== -1) {
+        const param = paramToken.value.substring(0, dotIdx);
+        const rest = paramToken.value.substring(dotIdx + 1);
+        tokens[pos] = { type: "structural", value: "." };
+        if (rest)
+          tokens.splice(pos + 1, 0, { type: "identifier", value: rest });
+        tokens.splice(pos, 0, { type: "identifier", value: param });
+        pos++;
+        return [param];
+      }
     } else if (next.type === "identifier") {
       const p = tokens[pos++];
+      const arrow = tokens[pos];
       if (
-        tokens[pos] &&
-        tokens[pos]!.type === "structural" &&
-        tokens[pos]!.value === "=>"
+        arrow &&
+        arrow.type === "structural" &&
+        (arrow.value === "=>" || arrow.value === "->")
       ) {
         if (operatorRegistry.operatorByNickname(p!.value)) {
           throw new Error(
@@ -276,12 +316,13 @@ export const CondensedToAST = (
   function parseExpression(scope: Set<string>): InternalAST {
     const params = tryParseParams();
     if (params !== null) {
+      const sep = tokens[pos];
       if (
-        tokens[pos] &&
-        tokens[pos]!.type === "structural" &&
-        tokens[pos]!.value === "=>"
+        sep &&
+        sep.type === "structural" &&
+        (sep.value === "=>" || sep.value === "->" || sep.value === ".")
       ) {
-        pos++; // consume =>
+        pos++; // consume separator
         const body = parseExpression(new Set([...scope, ...params]));
         let result = body;
         for (let i = params.length - 1; i >= 0; i--) {

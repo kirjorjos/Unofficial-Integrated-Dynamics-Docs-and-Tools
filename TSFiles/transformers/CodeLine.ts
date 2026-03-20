@@ -165,7 +165,12 @@ export const CodeLineToAST = (
       tokens.push("=>");
       current = "";
       i++;
-    } else if (char === "(" || char === ")" || char === ",") {
+    } else if (char === "-" && codeLine[i + 1] === ">") {
+      if (current.trim()) tokens.push(current.trim());
+      tokens.push("->");
+      current = "";
+      i++;
+    } else if (char === "(" || char === ")" || char === "," || char === "\\") {
       if (current.trim()) tokens.push(current.trim());
       tokens.push(char);
       current = "";
@@ -235,7 +240,7 @@ export const CodeLineToAST = (
       const params: string[] = [];
       while (tokens[pos] && tokens[pos] !== ")") {
         const p = tokens[pos++];
-        if (!p || !/^[A-Za-z_][A-Za-z0-9_]*$/.test(p)) {
+        if (!p || !/^[A-Za-z0-9\\._&|]+$/.test(p)) {
           pos = startPos;
           return null;
         }
@@ -249,10 +254,29 @@ export const CodeLineToAST = (
         return null;
       }
       pos++;
-      if (tokens[pos] === "=>") return params;
-    } else if (/^[A-Za-z_][A-Za-z0-9_]*$/.test(next)) {
+      const arrow = tokens[pos];
+      if (arrow === "=>" || arrow === "->") return params;
+    } else if (next === "\\") {
       pos++;
-      if (tokens[pos] === "=>") return [next];
+      const paramToken = tokens[pos];
+      if (!paramToken) {
+        pos = startPos;
+        return null;
+      }
+      const dotIdx = paramToken.lastIndexOf(".");
+      if (dotIdx !== -1) {
+        const param = paramToken.substring(0, dotIdx);
+        const rest = paramToken.substring(dotIdx + 1);
+        tokens[pos] = ".";
+        if (rest) tokens.splice(pos + 1, 0, rest);
+        tokens.splice(pos, 0, param);
+        pos++;
+        return [param];
+      }
+    } else if (/^[A-Za-z0-9\\._&|]+$/.test(next)) {
+      pos++;
+      const arrow = tokens[pos];
+      if (arrow === "=>" || arrow === "->") return [next];
     }
     pos = startPos;
     return null;
@@ -261,7 +285,8 @@ export const CodeLineToAST = (
   function parseExpression(scope: Set<string>): InternalAST {
     const params = tryParseParams();
     if (params !== null) {
-      if (tokens[pos] === "=>") {
+      const sep = tokens[pos];
+      if (sep === "=>" || sep === "->" || sep === ".") {
         pos++;
         const body = parseSequence(new Set([...scope, ...params]), true);
         let result = body;

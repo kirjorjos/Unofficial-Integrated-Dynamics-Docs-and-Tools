@@ -16,6 +16,24 @@ describe("TestCodeLineTransformer", () => {
     expect(ASTToCodeLine(ast, true)).toBe("(operatorFlip (numberAdd)) 1");
   });
 
+  it("testLambdaShort", () => {
+    const code = "\\x.numberAdd x 1";
+    const ast = CodeLineToAST(code);
+    expect(ASTToCodeLine(ast, true)).toBe("(operatorFlip (numberAdd)) 1");
+  });
+
+  it("testLambdaArrow", () => {
+    const code = "x -> numberAdd x 1";
+    const ast = CodeLineToAST(code);
+    expect(ASTToCodeLine(ast, true)).toBe("(operatorFlip (numberAdd)) 1");
+  });
+
+  it("testLambdaVarWithDot", () => {
+    const code = "\\var.with.dot.numberAdd var.with.dot 1";
+    const ast = CodeLineToAST(code);
+    expect(ASTToCodeLine(ast, true)).toBe("(operatorFlip (numberAdd)) 1");
+  });
+
   it("testComplicated2", () => {
     const code =
       "pipe (pipe (pipe lt (pipe listLength)) map) (flip pipe (reduce1 and)) min";
