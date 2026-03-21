@@ -19,17 +19,20 @@ export class OPERATOR_OBJECT_FLUIDSTACK_MODNAME extends BaseOperator<
   ];
   static override symbol = "mod";
   static override interactName = "fluidstackMod";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Fluid",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Fluid",
+          },
+          to: {
+            type: "String",
+          },
         },
-        to: {
-          type: "String",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (fluid: Fluid): iString => {
         return fluid.getModName();
       },

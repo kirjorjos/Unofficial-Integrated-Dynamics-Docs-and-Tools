@@ -19,23 +19,26 @@ export class OPERATOR_OBJECT_ITEMSTACK_WITHSIZE extends BaseOperator<
   ];
   static override symbol = "with_size";
   static override interactName = "itemstackWithSize";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
-            type: "Integer",
-          },
-          to: {
             type: "Item",
           },
+          to: {
+            type: "Function",
+            from: {
+              type: "Integer",
+            },
+            to: {
+              type: "Item",
+            },
+          },
         },
-      }),
+        normalizeSignature
+      ),
       function: (item: Item): TypeLambda<Integer, Item> => {
         return (size: Integer): Item => {
           return new Item(new Properties({ size }), item);

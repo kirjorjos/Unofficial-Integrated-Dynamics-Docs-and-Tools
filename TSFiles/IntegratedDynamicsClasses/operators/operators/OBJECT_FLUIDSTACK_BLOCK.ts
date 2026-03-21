@@ -18,17 +18,20 @@ export class OPERATOR_OBJECT_FLUIDSTACK_BLOCK extends BaseOperator<
   ];
   static override symbol = "block";
   static override interactName = "fluidstackBlock";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Fluid",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Fluid",
+          },
+          to: {
+            type: "Block",
+          },
         },
-        to: {
-          type: "Block",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (fluid: Fluid): Block => {
         return fluid.getBlock();
       },

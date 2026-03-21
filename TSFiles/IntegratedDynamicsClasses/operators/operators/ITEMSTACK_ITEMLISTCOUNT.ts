@@ -20,22 +20,25 @@ export class OPERATOR_ITEMSTACK_ITEMLISTCOUNT extends BaseOperator<
   ];
   static override symbol = "item_list_count";
   static override interactName = "listItemListCount";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "List",
-          listType: { type: "Item" },
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
-          from: { type: "Item" },
+          from: {
+            type: "List",
+            listType: { type: "Item" },
+          },
           to: {
-            type: "Integer",
+            type: "Function",
+            from: { type: "Item" },
+            to: {
+              type: "Integer",
+            },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (items: iArray<Item>): TypeLambda<Item, Integer> => {
         return (item: Item): Integer => {
           let totalCount = Integer.ZERO;

@@ -8,17 +8,20 @@ export class OPERATOR_NBT_FROM_INT extends BaseOperator<Integer, IntTag> {
   static override nicknames = ["integerAsNbt", "nbtFromInt"];
   static override symbol = "NBT.from_int";
   static override interactName = "integerAsNbt";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Integer",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Integer",
+          },
+          to: {
+            type: "NBT",
+          },
         },
-        to: {
-          type: "NBT",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (int: Integer): IntTag => {
         return new IntTag(int);
       },

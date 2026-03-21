@@ -21,15 +21,18 @@ export class OPERATOR_OBJECT_ITEMSTACK_DATA_KEYS extends BaseOperator<
   ];
   static override symbol = "data_keys";
   static override interactName = "itemStackDataKeys";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Item",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: { type: "List", listType: { type: "String" } },
         },
-        to: { type: "List", listType: { type: "String" } },
-      }),
+        normalizeSignature
+      ),
       function: (item: Item): iArray<iString> => {
         const nbt = item.getNBT();
         if (nbt instanceof CompoundTag) {

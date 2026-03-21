@@ -18,18 +18,13 @@ export class OPERATOR_GENERAL_CHOICE extends BaseOperator<
   ];
   static override symbol = "?";
   static override interactName = "booleanChoice";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Boolean",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
-            type: "Any",
-            typeID: 1,
+            type: "Boolean",
           },
           to: {
             type: "Function",
@@ -38,12 +33,20 @@ export class OPERATOR_GENERAL_CHOICE extends BaseOperator<
               typeID: 1,
             },
             to: {
-              type: "Any",
-              typeID: 1,
+              type: "Function",
+              from: {
+                type: "Any",
+                typeID: 1,
+              },
+              to: {
+                type: "Any",
+                typeID: 1,
+              },
             },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (
         bool: iBoolean
       ): TypeLambda<

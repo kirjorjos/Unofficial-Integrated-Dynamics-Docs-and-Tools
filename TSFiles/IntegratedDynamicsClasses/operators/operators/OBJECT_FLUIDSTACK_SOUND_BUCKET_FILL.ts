@@ -20,17 +20,20 @@ export class OPERATOR_OBJECT_FLUIDSTACK_SOUND_BUCKET_FILL extends BaseOperator<
   ];
   static override symbol = "sound_bucket_fill";
   static override interactName = "fluidstackBucketFillSound";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Fluid",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Fluid",
+          },
+          to: {
+            type: "String",
+          },
         },
-        to: {
-          type: "String",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (fluid: Fluid): iString => {
         return fluid.getBucketFillSound();
       },

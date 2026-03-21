@@ -20,23 +20,26 @@ export class OPERATOR_OBJECT_ITEMSTACK_CANHARVESTBLOCK extends BaseOperator<
   ];
   static override symbol = "can_harvest";
   static override interactName = "itemstackCanHarvest";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
-            type: "Block",
+            type: "Item",
           },
           to: {
-            type: "Boolean",
+            type: "Function",
+            from: {
+              type: "Block",
+            },
+            to: {
+              type: "Boolean",
+            },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (item: Item): TypeLambda<Block, iBoolean> => {
         return (block: Block): iBoolean => {
           return item.canHarvestBlock(block);

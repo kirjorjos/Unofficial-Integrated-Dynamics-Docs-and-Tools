@@ -21,29 +21,32 @@ export class OPERATOR_OBJECT_FLUIDSTACK_WITH_DATA extends BaseOperator<
   ];
   static override symbol = "with_data";
   static override interactName = "fluidstackWithData";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Fluid",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
-            type: "String",
+            type: "Fluid",
           },
           to: {
             type: "Function",
             from: {
-              type: "NBT",
+              type: "String",
             },
             to: {
-              type: "Fluid",
+              type: "Function",
+              from: {
+                type: "NBT",
+              },
+              to: {
+                type: "Fluid",
+              },
             },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (
         fluid: Fluid
       ): TypeLambda<iString, TypeLambda<Tag<IntegratedValue>, Fluid>> => {

@@ -13,15 +13,18 @@ export class OPERATOR_NBT_FROM_LONG_LIST extends BaseOperator<
   static override nicknames = ["longListAsNbt", "nbtFromLongList"];
   static override symbol = "NBT.from_long_list";
   static override interactName = "longListAsNbt";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: { type: "List", listType: { type: "Long" } },
-        to: {
-          type: "NBT",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: { type: "List", listType: { type: "Long" } },
+          to: {
+            type: "NBT",
+          },
         },
-      }),
+        normalizeSignature
+      ),
       function: (longList: iArray<Long>): LongArrayTag => {
         return new LongArrayTag(longList);
       },

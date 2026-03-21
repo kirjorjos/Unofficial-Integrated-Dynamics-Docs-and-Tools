@@ -16,17 +16,20 @@ export class OPERATOR_OBJECT_ENTITY_CANBREED extends BaseOperator<
   ];
   static override symbol = "canbreed";
   static override interactName = "entityCanBreed";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Entity",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
-        to: {
-          type: "Boolean",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (entity: Entity): iBoolean => {
         return entity.canBreed();
       },

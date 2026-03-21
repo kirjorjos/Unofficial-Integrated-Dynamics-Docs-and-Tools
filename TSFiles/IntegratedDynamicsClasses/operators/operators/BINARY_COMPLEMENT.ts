@@ -7,17 +7,20 @@ export class OPERATOR_BINARY_COMPLEMENT extends BaseOperator<Integer, Integer> {
   static override nicknames = ["binaryComplement", "integerComplement"];
   static override symbol = "~";
   static override interactName = "integerComplement";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Integer",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Integer",
+          },
+          to: {
+            type: "Integer",
+          },
         },
-        to: {
-          type: "Integer",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (int: Integer): Integer => {
         return int.binaryComplement();
       },

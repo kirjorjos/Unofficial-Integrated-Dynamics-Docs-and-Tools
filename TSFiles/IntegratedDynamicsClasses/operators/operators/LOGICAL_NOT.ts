@@ -7,17 +7,20 @@ export class OPERATOR_LOGICAL_NOT extends BaseOperator<iBoolean, iBoolean> {
   static override nicknames = ["booleanNot", "not", "logicalNot"];
   static override symbol = "!";
   static override interactName = "booleanNot";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Boolean",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Boolean",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
-        to: {
-          type: "Boolean",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (bool: iBoolean): iBoolean => {
         return new iBoolean(!bool.valueOf());
       },

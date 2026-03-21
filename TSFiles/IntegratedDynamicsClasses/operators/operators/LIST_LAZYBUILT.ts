@@ -15,24 +15,27 @@ export class OPERATOR_LIST_LAZYBUILT extends BaseOperator<
   static override nicknames = ["listLazybuilt", "lazybuilt", "anyLazyBuilt"];
   static override symbol = "lazybuilt";
   static override interactName = "anyLazyBuilt";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: { type: "Any", typeID: 1 },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
-          from: {
-            type: "Operator",
-            obscured: {
-              type: "Function",
-              from: { type: "Any", typeID: 1 },
-              to: { type: "Any", typeID: 1 },
+          from: { type: "Any", typeID: 1 },
+          to: {
+            type: "Function",
+            from: {
+              type: "Operator",
+              obscured: {
+                type: "Function",
+                from: { type: "Any", typeID: 1 },
+                to: { type: "Any", typeID: 1 },
+              },
             },
+            to: { type: "List", listType: { type: "Any", typeID: 1 } },
           },
-          to: { type: "List", listType: { type: "Any", typeID: 1 } },
         },
-      }),
+        normalizeSignature
+      ),
       function: (
         initial: IntegratedValue
       ): TypeLambda<

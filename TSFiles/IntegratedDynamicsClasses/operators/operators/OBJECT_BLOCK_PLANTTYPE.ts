@@ -11,17 +11,20 @@ export class OPERATOR_OBJECT_BLOCK_PLANTTYPE extends BaseOperator<
   static override nicknames = ["plant_type", "planttype", "plantType"];
   static override symbol = "plant_type";
   static override interactName = "plantType";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Block",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Block",
+          },
+          to: {
+            type: "String",
+          },
         },
-        to: {
-          type: "String",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (block: Block): iString => {
         return block.getPlantType();
       },

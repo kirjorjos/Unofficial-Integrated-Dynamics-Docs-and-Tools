@@ -19,17 +19,20 @@ export class OPERATOR_OBJECT_BLOCK_BY_NAME extends BaseOperator<
   ];
   static override symbol = "block_by_name";
   static override interactName = "stringBlockByName";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "String",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: {
+            type: "Block",
+          },
         },
-        to: {
-          type: "Block",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (name: iString): Block => {
         const blockRegistry = RegistryHub.blockRegistry;
         const key = name.valueOf().toLowerCase();

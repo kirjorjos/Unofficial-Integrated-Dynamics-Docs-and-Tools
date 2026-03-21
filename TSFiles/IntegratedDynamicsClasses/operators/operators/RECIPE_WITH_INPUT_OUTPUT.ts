@@ -16,23 +16,26 @@ export class OPERATOR_RECIPE_WITH_INPUT_OUTPUT extends BaseOperator<
   ];
   static override symbol = "Recipe.with_io";
   static override interactName = "ingredientsWithInputOutput";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Ingredients",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
             type: "Ingredients",
           },
           to: {
-            type: "Recipe",
+            type: "Function",
+            from: {
+              type: "Ingredients",
+            },
+            to: {
+              type: "Recipe",
+            },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (input: Ingredients): TypeLambda<Ingredients, Recipe> => {
         return (output: Ingredients): Recipe => {
           return new Recipe(input, output);

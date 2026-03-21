@@ -12,23 +12,26 @@ export class OPERATOR_STRING_ENDS_WITH extends BaseOperator<
   static override nicknames = ["endsWith", "stringEndsWith"];
   static override symbol = "ends_with";
   static override interactName = "stringEndsWith";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
             type: "String",
           },
           to: {
-            type: "Boolean",
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Boolean",
+            },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (substring: iString): TypeLambda<iString, iBoolean> => {
         return (fullString: iString): iBoolean => {
           return new iBoolean(

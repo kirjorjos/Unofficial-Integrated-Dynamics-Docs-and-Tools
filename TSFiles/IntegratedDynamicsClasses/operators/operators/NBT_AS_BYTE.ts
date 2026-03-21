@@ -9,17 +9,20 @@ export class OPERATOR_NBT_AS_BYTE extends BaseOperator<ByteTag, Integer> {
   static override nicknames = ["nbtAsByte"];
   static override symbol = "NBT.as_byte";
   static override interactName = "nbtAsByte";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "NBT",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "Integer",
+          },
         },
-        to: {
-          type: "Integer",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (nbt: ByteTag): Integer => {
         if (nbt.getType() === Tag.TAG_BYTE) {
           return nbt.valueOf();

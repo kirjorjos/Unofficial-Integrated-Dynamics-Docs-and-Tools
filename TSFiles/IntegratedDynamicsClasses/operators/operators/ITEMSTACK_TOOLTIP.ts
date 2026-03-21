@@ -18,15 +18,18 @@ export class OPERATOR_ITEMSTACK_TOOLTIP extends BaseOperator<
   ];
   static override symbol = "tooltip";
   static override interactName = "itemstackTooltip";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Item",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: { type: "List", listType: { type: "String" } },
         },
-        to: { type: "List", listType: { type: "String" } },
-      }),
+        normalizeSignature
+      ),
       function: (item: Item): iArray<iString> => {
         return item.getTooltip();
       },

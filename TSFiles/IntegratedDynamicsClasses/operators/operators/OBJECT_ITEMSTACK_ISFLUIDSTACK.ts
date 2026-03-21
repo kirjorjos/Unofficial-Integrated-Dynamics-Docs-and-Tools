@@ -20,17 +20,20 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISFLUIDSTACK extends BaseOperator<
   ];
   static override symbol = "is_fluidstack";
   static override interactName = "itemstackIsFluidStack";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Item",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
-        to: {
-          type: "Boolean",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (item: Item): iBoolean => {
         return new iBoolean(item.getFluid().getAmount().gt(Integer.ZERO));
       },

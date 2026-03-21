@@ -8,17 +8,20 @@ export class OPERATOR_RECIPE_INPUT extends BaseOperator<Recipe, Ingredients> {
   static override nicknames = ["recipeInput", "recipeWithInput"];
   static override symbol = "recipe_in";
   static override interactName = "recipeInput";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Recipe",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Recipe",
+          },
+          to: {
+            type: "Ingredients",
+          },
         },
-        to: {
-          type: "Ingredients",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (recipe: Recipe): Ingredients => {
         return recipe.getInput();
       },

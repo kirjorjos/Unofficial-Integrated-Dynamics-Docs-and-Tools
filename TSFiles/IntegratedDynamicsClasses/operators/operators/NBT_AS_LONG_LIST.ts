@@ -15,15 +15,18 @@ export class OPERATOR_NBT_AS_LONG_LIST extends BaseOperator<
   static override nicknames = ["nbtAsLongList"];
   static override symbol = "NBT.as_long_list";
   static override interactName = "nbtAsLongList";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "NBT",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: { type: "List", listType: { type: "Long" } },
         },
-        to: { type: "List", listType: { type: "Long" } },
-      }),
+        normalizeSignature
+      ),
       function: (nbt: ListTag): iArray<Long> => {
         if (nbt.getType() === Tag.TAG_LONG_ARRAY) {
           const list = nbt.valueOf();
@@ -35,11 +38,14 @@ export class OPERATOR_NBT_AS_LONG_LIST extends BaseOperator<
                 IntegratedValue,
                 IntegratedValue
               >,
-              parsedSignature: new ParsedSignature({
-                type: "Function",
-                from: { type: "Any", typeID: 1 },
-                to: { type: "Any", typeID: 2 },
-              } as TypeRawSignatureAST.RawSignatureDefiniteValue),
+              parsedSignature: new ParsedSignature(
+                {
+                  type: "Function",
+                  from: { type: "Any", typeID: 1 },
+                  to: { type: "Any", typeID: 2 },
+                } as TypeRawSignatureAST.RawSignatureDefiniteValue,
+                normalizeSignature
+              ),
             })
           ) as iArray<Long>;
         } else {

@@ -18,17 +18,20 @@ export class OPERATOR_OBJECT_ITEMSTACK_HASINVENTORY extends BaseOperator<
   ];
   static override symbol = "has_inventory";
   static override interactName = "itemstackHasInventory";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Item",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
-        to: {
-          type: "Boolean",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (item: Item): iBoolean => {
         return new iBoolean(item.getInventory().size().gt(Integer.ZERO));
       },

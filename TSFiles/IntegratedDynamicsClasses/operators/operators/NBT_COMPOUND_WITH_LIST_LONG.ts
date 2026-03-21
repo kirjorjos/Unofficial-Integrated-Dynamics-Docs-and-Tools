@@ -20,27 +20,30 @@ export class OPERATOR_NBT_COMPOUND_WITH_LIST_LONG extends BaseOperator<
   ];
   static override symbol = "NBT{}.with_long_list";
   static override interactName = "nbtWithLongList";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
-            type: "String",
+            type: "NBT",
           },
           to: {
             type: "Function",
-            from: { type: "List", listType: { type: "Long" } },
+            from: {
+              type: "String",
+            },
             to: {
-              type: "NBT",
+              type: "Function",
+              from: { type: "List", listType: { type: "Long" } },
+              to: {
+                type: "NBT",
+              },
             },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function:
         (
           nbt: CompoundTag

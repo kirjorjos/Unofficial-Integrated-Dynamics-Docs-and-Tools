@@ -19,17 +19,20 @@ export class OPERATOR_OBJECT_ITEMFRAME_ROTATION extends BaseOperator<
   ];
   static override symbol = "itemframe_rotation";
   static override interactName = "entityItemFrameRotation";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Entity",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Integer",
+          },
         },
-        to: {
-          type: "Integer",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (entity: Entity): Integer => {
         if (entity.isItemFrame().valueOf()) {
           return entity.getItemFrameRotation();

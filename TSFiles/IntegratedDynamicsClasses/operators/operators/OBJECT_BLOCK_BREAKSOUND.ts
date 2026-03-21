@@ -15,17 +15,20 @@ export class OPERATOR_OBJECT_BLOCK_BREAKSOUND extends BaseOperator<
   ];
   static override symbol = "break_sound";
   static override interactName = "blockBreakSound";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Block",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Block",
+          },
+          to: {
+            type: "String",
+          },
         },
-        to: {
-          type: "String",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (block: Block): iString => {
         return block.getBreakSound();
       },

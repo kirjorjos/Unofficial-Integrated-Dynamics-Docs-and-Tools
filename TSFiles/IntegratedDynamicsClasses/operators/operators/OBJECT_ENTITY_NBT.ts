@@ -17,17 +17,20 @@ export class OPERATOR_OBJECT_ENTITY_NBT extends BaseOperator<
   ];
   static override symbol = "NBT()";
   static override interactName = "entityNbt";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Entity",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "NBT",
+          },
         },
-        to: {
-          type: "NBT",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (entity: Entity): CompoundTag => {
         return entity.getNBT();
       },

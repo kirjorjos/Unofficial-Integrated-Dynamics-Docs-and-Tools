@@ -20,17 +20,20 @@ export class OPERATOR_OBJECT_FLUIDSTACK_SOUND_FLUID_VAPORIZE extends BaseOperato
   ];
   static override symbol = "sound_fluid_vaporize";
   static override interactName = "fluidstackFluidVaporizeSound";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Fluid",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Fluid",
+          },
+          to: {
+            type: "String",
+          },
         },
-        to: {
-          type: "String",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (fluid: Fluid): iString => {
         return fluid.getFluidVaporizeSound();
       },

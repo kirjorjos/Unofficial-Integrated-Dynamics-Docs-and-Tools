@@ -20,15 +20,18 @@ export class OPERATOR_OBJECT_ENTITY_ITEMS extends BaseOperator<
   ];
   static override symbol = "entity_items";
   static override interactName = "entityItems";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Entity",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: { type: "List", listType: { type: "Item" } },
         },
-        to: { type: "List", listType: { type: "Item" } },
-      }),
+        normalizeSignature
+      ),
       function: (entity: Entity): iArray<Item> => {
         return new iArrayEager(entity.getItemList());
       },

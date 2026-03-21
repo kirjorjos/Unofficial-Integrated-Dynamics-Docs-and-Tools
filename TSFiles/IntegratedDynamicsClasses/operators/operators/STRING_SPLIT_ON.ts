@@ -13,21 +13,24 @@ export class OPERATOR_STRING_SPLIT_ON extends BaseOperator<
   static override nicknames = ["stringSplitOn"];
   static override symbol = "split_on";
   static override interactName = "stringSplitOn";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
             type: "String",
           },
-          to: { type: "List", listType: { type: "String" } },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: { type: "List", listType: { type: "String" } },
+          },
         },
-      }),
+        normalizeSignature
+      ),
       function: (delimiter: iString): TypeLambda<iString, iArray<iString>> => {
         return (fullString: iString): iArray<iString> => {
           return new iArrayEager(

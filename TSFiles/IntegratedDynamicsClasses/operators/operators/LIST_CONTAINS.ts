@@ -12,19 +12,22 @@ export class OPERATOR_LIST_CONTAINS extends BaseOperator<
   static override nicknames = ["listContains", "contains"];
   static override symbol = "contains";
   static override interactName = "listContains";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
-          from: { type: "Any", typeID: 1 },
+          from: { type: "List", listType: { type: "Any", typeID: 1 } },
           to: {
-            type: "Boolean",
+            type: "Function",
+            from: { type: "Any", typeID: 1 },
+            to: {
+              type: "Boolean",
+            },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (
         list: iArray<IntegratedValue>
       ): TypeLambda<IntegratedValue, iBoolean> => {

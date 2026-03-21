@@ -11,13 +11,16 @@ export class OPERATOR_LIST_UNIQ extends BaseOperator<
   static override nicknames = ["listUnique", "listUniq"];
   static override symbol = "uniq";
   static override interactName = "listUnique";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: { type: "List", listType: { type: "Any", typeID: 1 } },
-      }),
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: { type: "List", listType: { type: "Any", typeID: 1 } },
+          to: { type: "List", listType: { type: "Any", typeID: 1 } },
+        },
+        normalizeSignature
+      ),
       function: (list: iArray<IntegratedValue>): iArray<IntegratedValue> => {
         const seen = new Set();
         return list.filter((item) => {

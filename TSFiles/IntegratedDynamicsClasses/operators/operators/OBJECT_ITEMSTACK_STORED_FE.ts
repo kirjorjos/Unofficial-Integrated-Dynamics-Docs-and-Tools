@@ -20,17 +20,20 @@ export class OPERATOR_OBJECT_ITEMSTACK_STORED_FE extends BaseOperator<
   ];
   static override symbol = "stored_fe";
   static override interactName = "itemstackFeStored";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Item",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "Integer",
+          },
         },
-        to: {
-          type: "Integer",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (item: Item): Integer => {
         return item.getFeStored();
       },

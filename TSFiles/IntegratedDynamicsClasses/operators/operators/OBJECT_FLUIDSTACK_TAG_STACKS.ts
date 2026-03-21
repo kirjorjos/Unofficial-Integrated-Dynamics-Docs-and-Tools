@@ -21,15 +21,18 @@ export class OPERATOR_OBJECT_FLUIDSTACK_TAG_STACKS extends BaseOperator<
   ];
   static override symbol = "fluid_tag_values";
   static override interactName = "stringFluidsByTag";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "String",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: { type: "List", listType: { type: "Fluid" } },
         },
-        to: { type: "List", listType: { type: "Fluid" } },
-      }),
+        normalizeSignature
+      ),
       function: (name: iString): iArray<Fluid> => {
         const fluidRegistry = RegistryHub.fluidRegistry;
         const fluids: Fluid[] = [];

@@ -49,12 +49,19 @@ describe("TestCondensedTransformer", () => {
     expect(ASTToCondensed(ast)).toBe("numberAdd(1, 2)");
   });
 
-  it("testAmbigiousCondensed", () => {
-    const ambiguous = "apply(numberAdd, 1, numberIncrement, 5)";
-    expect(() => CondensedToAST(ambiguous)).toThrow();
+  it("testIncorrectArityCondensed", () => {
+    // Over-expecting: numberIncrement takes 1 arg, given 2
+    const over = "numberIncrement(1, 2)";
+    expect(() => CondensedToAST(over)).toThrow();
 
-    const ambiguous2 = "numberAdd(1, numberIncrement, 5)";
-    expect(() => CondensedToAST(ambiguous2)).toThrow();
+    // Operator as value argument where not expected (incorrect arity of arguments)
+    const midOp = "numberAdd(numberIncrement, 1)";
+    expect(() => CondensedToAST(midOp)).toThrow();
+  });
+
+  it("testDirectVariableCallCondensed", () => {
+    const code = "x => x(1)";
+    expect(() => CondensedToAST(code)).toThrow();
   });
 
   it("testTokenizeStructural", () => {
@@ -145,7 +152,7 @@ describe("TestCondensedTransformer", () => {
       "x => operatorApply(booleanNot(x), booleanNot(x))"
     );
     expect(ASTToCondensed(ast)).toBe(
-      "operatorPipe2(anyIdentity, booleanNot, booleanNot)"
+      "operatorPipe2(booleanNot, booleanNot, operatorApply)"
     );
   });
 

@@ -16,15 +16,18 @@ export class OPERATOR_NULLABLE_ISNULL extends BaseOperator<
   ];
   static override symbol = "o";
   static override interactName = "anyIsNull";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: { type: "Any", typeID: 1 },
-        to: {
-          type: "Boolean",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: { type: "Any", typeID: 1 },
+          to: {
+            type: "Boolean",
+          },
         },
-      }),
+        normalizeSignature
+      ),
       function: (value: IntegratedValue): iBoolean => {
         return new iBoolean(value instanceof iNull);
       },

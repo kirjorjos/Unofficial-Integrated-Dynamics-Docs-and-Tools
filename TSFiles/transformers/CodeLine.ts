@@ -1,11 +1,8 @@
 import { operatorRegistry } from "IntegratedDynamicsClasses/registries/operatorRegistry";
 import { BaseOperator } from "IntegratedDynamicsClasses/operators/BaseOperator";
-import {
-  getOpName,
-  expectsOperatorArgument,
-} from "HelperClasses/UtilityFunctions";
+import { getOpName } from "HelperClasses/UtilityFunctions";
 
-export const ASTToCodeLine = (ast: TypeAST.AST, isTopLevel = false): string => {
+export const ASTToCodeLine = (ast: TypeAST.AST, isTopLevel = true): string => {
   const stringify = (node: TypeAST.AST, topLevel = false): string => {
     if (node.varName && !topLevel) {
       return node.varName;
@@ -30,7 +27,6 @@ export const ASTToCodeLine = (ast: TypeAST.AST, isTopLevel = false): string => {
 
     const wrap = (node: TypeAST.AST) => {
       if (isAtomic(node)) {
-        if (node.type === "Operator") return `(${stringify(node)})`;
         return stringify(node);
       }
       return `(${stringify(node)})`;
@@ -363,45 +359,32 @@ export const CodeLineToAST = (
   }
 
   function parseSequence(scope: Set<string>, consumeAll: boolean): InternalAST {
-    const exprs: InternalAST[] = [];
+    let result: InternalAST | undefined = undefined;
+
     while (pos < tokens.length && (consumeAll || tokens[pos] !== ")")) {
       const next = tokens[pos];
       if (next === ")") break;
 
-      exprs.push(parseExpression(scope));
+      const expr = parseExpression(scope);
+      if (result === undefined) {
+        result = expr;
+      } else {
+        result = handleCallInternal(result, [expr]);
+      }
+
       if (tokens[pos] === ",") {
         pos++;
       }
     }
 
-    if (exprs.length === 0) throw new Error("Empty sequence");
-    const [base, ...args] = exprs;
-    if (args.length === 0) return base!;
-
-    return handleCallInternal(base!, args);
+    if (result === undefined) throw new Error("Empty sequence");
+    return result;
   }
 
   function handleCallInternal(
     base: InternalAST,
     args: InternalAST[]
   ): InternalAST {
-    if (args.length > 1) {
-      for (let i = 0; i < args.length - 1; i++) {
-        const arg = args[i]!;
-        if (
-          arg.type === "Operator" ||
-          (arg.type === "Identifier" &&
-            operatorRegistry.operatorByNickname(arg.value))
-        ) {
-          if (!expectsOperatorArgument(base as TypeAST.AST, i)) {
-            throw new Error(
-              `Ambiguous expression: operator used as non-final argument in a sequence. Use parentheses to clarify nesting.`
-            );
-          }
-        }
-      }
-    }
-
     if (base.type === "Curry" && !base.varName) {
       return handleCallInternal(base.base, [...base.args, ...args]);
     }

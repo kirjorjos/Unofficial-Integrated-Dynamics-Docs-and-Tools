@@ -20,23 +20,26 @@ export class OPERATOR_OBJECT_ITEMSTACK_STRENGTH_VS_BLOCK extends BaseOperator<
   ];
   static override symbol = "strength";
   static override interactName = "itemstackStrength";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
-            type: "Block",
+            type: "Item",
           },
           to: {
-            type: "Double",
+            type: "Function",
+            from: {
+              type: "Block",
+            },
+            to: {
+              type: "Double",
+            },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (item: Item): TypeLambda<Block, Double> => {
         return (block: Block): Double => {
           return item.getStrengthVsBlock(block);

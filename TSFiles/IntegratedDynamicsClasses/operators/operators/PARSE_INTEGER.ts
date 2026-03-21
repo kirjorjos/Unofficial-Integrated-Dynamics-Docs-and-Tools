@@ -9,17 +9,20 @@ export class OPERATOR_PARSE_INTEGER extends BaseOperator<iString, Integer> {
   static override nicknames = ["stringParseAsInteger", "parseInteger"];
   static override symbol = "parse_integer";
   static override interactName = "stringParseAsInteger";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "String",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: {
+            type: "Integer",
+          },
         },
-        to: {
-          type: "Integer",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (data: iString): Integer => {
         try {
           return new Integer(data.valueOf());

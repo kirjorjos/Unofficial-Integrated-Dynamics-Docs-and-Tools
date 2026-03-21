@@ -14,17 +14,20 @@ export class OPERATOR_ENTITY_ISMINECART extends BaseOperator<Entity, iBoolean> {
   ];
   static override symbol = "is_minecart";
   static override interactName = "entityIsMinecart";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Entity",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
-        to: {
-          type: "Boolean",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (entity: Entity): iBoolean => {
         return entity.isMinecart();
       },

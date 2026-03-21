@@ -11,17 +11,20 @@ export class OPERATOR_DOUBLE_TO_INTEGER extends BaseOperator<Double, Integer> {
   ];
   static override symbol = "()";
   static override interactName = "doubleDoubleToInteger";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Double",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Double",
+          },
+          to: {
+            type: "Integer",
+          },
         },
-        to: {
-          type: "Integer",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (double: Double): Integer => {
         return double.toInteger();
       },

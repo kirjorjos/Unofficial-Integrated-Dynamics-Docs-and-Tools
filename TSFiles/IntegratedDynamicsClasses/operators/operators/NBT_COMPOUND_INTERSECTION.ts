@@ -16,23 +16,26 @@ export class OPERATOR_NBT_COMPOUND_INTERSECTION extends BaseOperator<
   ];
   static override symbol = "NBT{}.∩";
   static override interactName = "nbtIntersection";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
             type: "NBT",
           },
           to: {
-            type: "NBT",
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "NBT",
+            },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (nbt1: CompoundTag) => {
         return (nbt2: CompoundTag) => {
           return nbt1.compoundIntersection(nbt2);

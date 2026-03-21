@@ -19,15 +19,18 @@ export class OPERATOR_OBJECT_ITEMSTACK_TAG extends BaseOperator<
   ];
   static override symbol = "item_tag_names";
   static override interactName = "itemstackTags";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Item",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: { type: "List", listType: { type: "String" } },
         },
-        to: { type: "List", listType: { type: "String" } },
-      }),
+        normalizeSignature
+      ),
       function: (item: Item): iArray<iString> => {
         return item.getTagNames();
       },

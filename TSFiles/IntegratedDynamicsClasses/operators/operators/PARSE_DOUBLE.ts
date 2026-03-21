@@ -9,17 +9,20 @@ export class OPERATOR_PARSE_DOUBLE extends BaseOperator<iString, Double> {
   static override nicknames = ["stringParseAsDouble", "parseDouble"];
   static override symbol = "parse_double";
   static override interactName = "stringParseAsDouble";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "String",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: {
+            type: "Double",
+          },
         },
-        to: {
-          type: "Double",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (data: iString): Double => {
         try {
           return new Double(data.valueOf());

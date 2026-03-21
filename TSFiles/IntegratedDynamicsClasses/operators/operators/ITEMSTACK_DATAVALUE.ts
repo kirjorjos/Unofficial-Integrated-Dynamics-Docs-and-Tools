@@ -19,23 +19,26 @@ export class OPERATOR_ITEMSTACK_DATAVALUE extends BaseOperator<Item, iBoolean> {
   ];
   static override symbol = "data_value";
   static override interactName = "itemstackDataValue";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
-            type: "String",
+            type: "Item",
           },
           to: {
-            type: "NBT",
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "NBT",
+            },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (item: Item): TypeLambda<iString, Tag<IntegratedValue>> => {
         return (key: iString): Tag<IntegratedValue> => {
           const nbt = item.getNBT();

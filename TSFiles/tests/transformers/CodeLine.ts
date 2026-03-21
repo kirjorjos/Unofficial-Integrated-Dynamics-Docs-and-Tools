@@ -7,54 +7,54 @@ describe("TestCodeLineTransformer", () => {
     expect(ast.type).toBe("Block");
     expect((ast as TypeAST.Block).value["id"]).toBe("minecraft:stone");
     expect((ast as TypeAST.Block).value["size"]).toBe("64");
-    expect(ASTToCodeLine(ast, true)).toBe(code);
+    expect(ASTToCodeLine(ast)).toBe(code);
   });
 
   it("testLambda", () => {
     const code = "x => (numberAdd x 1)";
     const ast = CodeLineToAST(code);
-    expect(ASTToCodeLine(ast, true)).toBe("(operatorFlip (numberAdd)) 1");
+    expect(ASTToCodeLine(ast)).toBe("(operatorFlip numberAdd) 1");
   });
 
   it("testLambdaShort", () => {
     const code = "\\x.numberAdd x 1";
     const ast = CodeLineToAST(code);
-    expect(ASTToCodeLine(ast, true)).toBe("(operatorFlip (numberAdd)) 1");
+    expect(ASTToCodeLine(ast)).toBe("(operatorFlip numberAdd) 1");
   });
 
   it("testLambdaArrow", () => {
     const code = "x -> numberAdd x 1";
     const ast = CodeLineToAST(code);
-    expect(ASTToCodeLine(ast, true)).toBe("(operatorFlip (numberAdd)) 1");
+    expect(ASTToCodeLine(ast)).toBe("(operatorFlip numberAdd) 1");
   });
 
   it("testLambdaRule1", () => {
     // x => constantInX  =>  K constantInX
     const code = "x => 5";
     const ast = CodeLineToAST(code);
-    expect(ASTToCodeLine(ast, true)).toBe("anyConstant 5");
+    expect(ASTToCodeLine(ast)).toBe("anyConstant 5");
   });
 
   it("testLambdaRule2", () => {
     // x => f x  =>  f
     const code = "x => (numberIncrement x)";
     const ast = CodeLineToAST(code);
-    expect(ASTToCodeLine(ast, true)).toBe("numberIncrement");
+    expect(ASTToCodeLine(ast)).toBe("numberIncrement");
   });
 
   it("testLambdaRule3", () => {
     // x => f x y  =>  flip f y
     const code = "x => (numberAdd x 1)";
     const ast = CodeLineToAST(code);
-    expect(ASTToCodeLine(ast, true)).toBe("(operatorFlip (numberAdd)) 1");
+    expect(ASTToCodeLine(ast)).toBe("(operatorFlip numberAdd) 1");
   });
 
   it("testLambdaRule4", () => {
     // x => f gOfX  =>  pipe (x => gOfX) f
     const code = "x => (numberIncrement (numberIncrement x))";
     const ast = CodeLineToAST(code);
-    expect(ASTToCodeLine(ast, true)).toBe(
-      "operatorPipe (numberIncrement) (numberIncrement)"
+    expect(ASTToCodeLine(ast)).toBe(
+      "operatorPipe numberIncrement numberIncrement"
     );
   });
 
@@ -62,8 +62,8 @@ describe("TestCodeLineTransformer", () => {
     // x => f gOfX hOfX  =>  pipe2 (x => gOfX) (x => hOfX) f
     const code = "x => (numberAdd (numberIncrement x) (numberDecrement x))";
     const ast = CodeLineToAST(code);
-    expect(ASTToCodeLine(ast, true)).toBe(
-      "operatorPipe2 (numberIncrement) (numberDecrement) (numberAdd)"
+    expect(ASTToCodeLine(ast)).toBe(
+      "operatorPipe2 numberIncrement numberDecrement numberAdd"
     );
   });
 
@@ -71,15 +71,15 @@ describe("TestCodeLineTransformer", () => {
     // x => fOfX gOfX  =>  pipe2 (x => fOfX) (x => gOfX) apply
     const code = "x => (booleanNot x) (numberIncrement x)";
     const ast = CodeLineToAST(code);
-    expect(ASTToCodeLine(ast, true)).toBe(
-      "operatorPipe2 (anyIdentity) (numberIncrement) (booleanNot)"
+    expect(ASTToCodeLine(ast)).toBe(
+      "operatorPipe2 anyIdentity numberIncrement booleanNot"
     );
   });
 
   it("testLambdaVarWithDot", () => {
     const code = "\\var.with.dot.numberAdd var.with.dot 1";
     const ast = CodeLineToAST(code);
-    expect(ASTToCodeLine(ast, true)).toBe("(operatorFlip (numberAdd)) 1");
+    expect(ASTToCodeLine(ast)).toBe("(operatorFlip numberAdd) 1");
   });
 
   it("testComplicated2", () => {
@@ -99,15 +99,19 @@ describe("TestCodeLineTransformer", () => {
       "ARITHMETIC_ADDITION"
     );
     expect(curry.args.length).toBe(2);
-    expect(ASTToCodeLine(ast, true)).toBe("numberAdd 1 2");
+    expect(ASTToCodeLine(ast)).toBe("numberAdd 1 2");
   });
 
-  it("testAmbigiousCodeLine", () => {
-    const ambiguous = "numberAdd numberIncrement 5 1 2";
-    expect(() => CodeLineToAST(ambiguous)).toThrow();
+  it("testLeftAssociativeApply", () => {
+    const code = "numberAdd numberIncrement 5 1 2";
+    const ast = CodeLineToAST(code);
+    expect(ast.type).toBe("Curry");
+    expect(ASTToCodeLine(ast)).toBe(code);
 
-    const ambiguous2 = "numberAdd 1 numberIncrement 5 2";
-    expect(() => CodeLineToAST(ambiguous2)).toThrow();
+    const code2 = "numberAdd 1 numberIncrement 5 2";
+    const ast2 = CodeLineToAST(code2);
+    expect(ast2.type).toBe("Curry");
+    expect(ASTToCodeLine(ast2)).toBe(code2);
   });
 
   it("testSimpleCurry", () => {
@@ -132,8 +136,8 @@ describe("TestCodeLineTransformer", () => {
     ];
     for (const c of cases) {
       const ast = CodeLineToAST(c);
-      const back = ASTToCodeLine(ast, true);
-      expect(ASTToCodeLine(CodeLineToAST(back), true)).toBe(back);
+      const back = ASTToCodeLine(ast);
+      expect(ASTToCodeLine(CodeLineToAST(back))).toBe(back);
     }
   });
 });

@@ -11,17 +11,20 @@ export class OPERATOR_OBJECT_ENTITY_HEIGHT extends BaseOperator<
   static override nicknames = ["EntityHeight", "entity_height", "entityHeight"];
   static override symbol = "height";
   static override interactName = "entityHeight";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Entity",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Double",
+          },
         },
-        to: {
-          type: "Double",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (entity: Entity): Double => {
         return entity.getHeight();
       },

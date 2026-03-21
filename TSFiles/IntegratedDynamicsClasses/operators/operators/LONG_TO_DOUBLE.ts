@@ -13,17 +13,20 @@ export class OPERATOR_LONG_TO_DOUBLE extends BaseOperator<Long, Double> {
   ];
   static override symbol = "()";
   static override interactName = "longLongToDouble";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Long",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Long",
+          },
+          to: {
+            type: "Double",
+          },
         },
-        to: {
-          type: "Double",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (long: Long): Double => {
         return long.toDouble();
       },

@@ -16,17 +16,20 @@ export class OPERATOR_OBJECT_ENTITY_ISITEM extends BaseOperator<
   ];
   static override symbol = "is_item";
   static override interactName = "entityIsItem";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Entity",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
-        to: {
-          type: "Boolean",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (entity: Entity): iBoolean => {
         return entity.isItem();
       },

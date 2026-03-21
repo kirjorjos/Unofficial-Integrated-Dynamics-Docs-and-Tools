@@ -12,29 +12,32 @@ export class OPERATOR_INGREDIENTS_WITH_ENERGY extends BaseOperator<
   static override nicknames = ["ingredientsWithEnergy", "Ingr.with_energy"];
   static override symbol = "Ingr.with_energy";
   static override interactName = "ingredientsWithEnergy";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Ingredients",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
-            type: "Integer",
+            type: "Ingredients",
           },
           to: {
             type: "Function",
             from: {
-              type: "Long",
+              type: "Integer",
             },
             to: {
-              type: "Ingredients",
+              type: "Function",
+              from: {
+                type: "Long",
+              },
+              to: {
+                type: "Ingredients",
+              },
             },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (
         ingredients: Ingredients
       ): TypeLambda<Integer, TypeLambda<Long, Ingredients>> => {

@@ -13,19 +13,22 @@ export class OPERATOR_RELATIONAL_EQUALS extends BaseOperator<
   static override symbol = "==";
 
   static override interactName = "anyEquals";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: { type: "Any", typeID: 1 },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: { type: "Any", typeID: 1 },
           to: {
-            type: "Boolean",
+            type: "Function",
+            from: { type: "Any", typeID: 1 },
+            to: {
+              type: "Boolean",
+            },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (
         value1: IntegratedValue
       ): TypeLambda<IntegratedValue, iBoolean> => {

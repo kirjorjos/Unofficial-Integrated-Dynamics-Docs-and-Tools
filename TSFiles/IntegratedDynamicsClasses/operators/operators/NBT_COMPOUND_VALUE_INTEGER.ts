@@ -22,23 +22,26 @@ export class OPERATOR_NBT_COMPOUND_VALUE_INTEGER extends BaseOperator<
   ];
   static override symbol = "NBT{}.get_integer";
   static override interactName = "nbtGetInteger";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
-            type: "String",
+            type: "NBT",
           },
           to: {
-            type: "Integer",
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Integer",
+            },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (nbt: CompoundTag): TypeLambda<iString, Integer> => {
         return (key: iString): Integer => {
           let value = nbt.get(key);

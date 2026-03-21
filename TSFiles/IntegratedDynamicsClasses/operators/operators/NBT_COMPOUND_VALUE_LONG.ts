@@ -23,23 +23,26 @@ export class OPERATOR_NBT_COMPOUND_VALUE_LONG extends BaseOperator<
   ];
   static override symbol = "NBT{}.get_long";
   static override interactName = "nbtGetLong";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
-            type: "String",
+            type: "NBT",
           },
           to: {
-            type: "Long",
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Long",
+            },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (nbt: CompoundTag): TypeLambda<iString, Long> => {
         return (key: iString): Long => {
           let value = nbt.get(key);

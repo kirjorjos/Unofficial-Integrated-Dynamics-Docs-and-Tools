@@ -20,27 +20,30 @@ export class OPERATOR_NBT_COMPOUND_WITH_LIST_TAG extends BaseOperator<
   ];
   static override symbol = "NBT{}.with_tag_list";
   static override interactName = "nbtWithTagList";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
-            type: "String",
+            type: "NBT",
           },
           to: {
             type: "Function",
-            from: { type: "List", listType: { type: "NBT" } },
+            from: {
+              type: "String",
+            },
             to: {
-              type: "NBT",
+              type: "Function",
+              from: { type: "List", listType: { type: "NBT" } },
+              to: {
+                type: "NBT",
+              },
             },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function:
         (
           nbt: CompoundTag

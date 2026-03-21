@@ -16,30 +16,33 @@ export class OPERATOR_OPERATOR_APPLY_N extends BaseOperator<
   ];
   static override symbol = "apply_n";
   static override interactName = "operatorApply_n";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Operator",
-          obscured: {
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Operator",
+            obscured: {
+              type: "Function",
+              from: { type: "Any", typeID: 1 },
+              to: { type: "Any", typeID: 2 },
+            },
+          },
+          to: {
             type: "Function",
-            from: { type: "Any", typeID: 1 },
+            from: {
+              type: "List",
+              listType: {
+                type: "Any",
+                typeID: 1,
+              },
+            },
             to: { type: "Any", typeID: 2 },
           },
         },
-        to: {
-          type: "Function",
-          from: {
-            type: "List",
-            listType: {
-              type: "Any",
-              typeID: 1,
-            },
-          },
-          to: { type: "Any", typeID: 2 },
-        },
-      }),
+        normalizeSignature
+      ),
       serializer: "integrateddynamics:curry",
       function: (
         op: Operator<IntegratedValue, IntegratedValue>

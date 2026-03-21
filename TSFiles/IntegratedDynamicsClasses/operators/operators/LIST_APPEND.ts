@@ -11,17 +11,20 @@ export class OPERATOR_LIST_APPEND extends BaseOperator<
   static override nicknames = ["listAppend", "append"];
   static override symbol = "append";
   static override interactName = "listAppend";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
-          from: { type: "Any", typeID: 1 },
-          to: { type: "List", listType: { type: "Any", typeID: 1 } },
+          from: { type: "List", listType: { type: "Any", typeID: 1 } },
+          to: {
+            type: "Function",
+            from: { type: "Any", typeID: 1 },
+            to: { type: "List", listType: { type: "Any", typeID: 1 } },
+          },
         },
-      }),
+        normalizeSignature
+      ),
       function: (
         list: iArray<IntegratedValue>
       ): TypeLambda<IntegratedValue, iArray<IntegratedValue>> => {

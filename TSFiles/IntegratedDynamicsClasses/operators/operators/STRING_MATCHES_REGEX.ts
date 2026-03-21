@@ -15,23 +15,26 @@ export class OPERATOR_STRING_MATCHES_REGEX extends BaseOperator<
   static override nicknames = ["stringMatchesRegex", "matchesRegex"];
   static override symbol = "matches_regex";
   static override interactName = "stringMatchesRegex";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
             type: "String",
           },
           to: {
-            type: "Boolean",
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Boolean",
+            },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (regexString: iString): TypeLambda<iString, iBoolean> => {
         return (fullString: iString): iBoolean => {
           const regex = regexString.valueOf();

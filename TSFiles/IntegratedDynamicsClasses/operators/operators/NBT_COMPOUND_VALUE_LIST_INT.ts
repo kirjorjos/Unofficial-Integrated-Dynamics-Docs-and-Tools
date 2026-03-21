@@ -25,21 +25,24 @@ export class OPERATOR_NBT_COMPOUND_VALUE_LIST_INT extends BaseOperator<
   ];
   static override symbol = "NBT{}.get_list_int";
   static override interactName = "nbtGetListInt";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
-            type: "String",
+            type: "NBT",
           },
-          to: { type: "List", listType: { type: "Integer" } },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: { type: "List", listType: { type: "Integer" } },
+          },
         },
-      }),
+        normalizeSignature
+      ),
       function: (nbt: CompoundTag): TypeLambda<iString, iArray<Integer>> => {
         return (key: iString): iArray<Integer> => {
           let value = nbt.get(key);
@@ -61,11 +64,14 @@ export class OPERATOR_NBT_COMPOUND_VALUE_LIST_INT extends BaseOperator<
               new Operator({
                 function: (e: Tag<IntegratedValue>) =>
                   e.valueOf() as IntegratedValue,
-                parsedSignature: new ParsedSignature({
-                  type: "Function",
-                  from: { type: "NBT" },
-                  to: { type: "Integer" },
-                }),
+                parsedSignature: new ParsedSignature(
+                  {
+                    type: "Function",
+                    from: { type: "NBT" },
+                    to: { type: "Integer" },
+                  },
+                  normalizeSignature
+                ),
               })
             ) as iArray<Integer>;
           }

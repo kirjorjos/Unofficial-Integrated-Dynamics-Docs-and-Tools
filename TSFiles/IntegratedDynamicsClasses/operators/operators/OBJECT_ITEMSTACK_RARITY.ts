@@ -16,17 +16,20 @@ export class OPERATOR_OBJECT_ITEMSTACK_RARITY extends BaseOperator<
   ];
   static override symbol = "rarity";
   static override interactName = "itemstackRarity";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Item",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "String",
+          },
         },
-        to: {
-          type: "String",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (item: Item): iString => {
         return item.getRarity();
       },

@@ -9,17 +9,20 @@ export class OPERATOR_NBT_AS_LONG extends BaseOperator<LongTag, Long> {
   static override nicknames = ["nbtAsLong"];
   static override symbol = "NBT.as_long";
   static override interactName = "nbtAsLong";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "NBT",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "Long",
+          },
         },
-        to: {
-          type: "Long",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (nbt: LongTag): Long => {
         if (nbt.getType() === Tag.TAG_LONG) {
           return nbt.valueOf();

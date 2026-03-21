@@ -17,27 +17,30 @@ export class OPERATOR_STRING_REGEX_SCAN extends BaseOperator<
   static override nicknames = ["stringRegexScan"];
   static override symbol = "regex_scan";
   static override interactName = "stringRegexScan";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
-            type: "Integer",
+            type: "String",
           },
           to: {
             type: "Function",
             from: {
-              type: "String",
+              type: "Integer",
             },
-            to: { type: "List", listType: { type: "String" } },
+            to: {
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: { type: "List", listType: { type: "String" } },
+            },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (regexString: iString) => {
         return (groupIndex: Integer): TypeLambda<iString, iArray<iString>> => {
           return (fullString: iString): iArray<iString> => {

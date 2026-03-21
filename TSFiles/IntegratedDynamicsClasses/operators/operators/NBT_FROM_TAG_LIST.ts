@@ -13,15 +13,18 @@ export class OPERATOR_NBT_FROM_TAG_LIST extends BaseOperator<
   static override nicknames = ["tagListAsNbt", "nbtFromTagList"];
   static override symbol = "NBT.from_tag_list";
   static override interactName = "tagListAsNbt";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: { type: "List", listType: { type: "NBT" } },
-        to: {
-          type: "NBT",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: { type: "List", listType: { type: "NBT" } },
+          to: {
+            type: "NBT",
+          },
         },
-      }),
+        normalizeSignature
+      ),
       function: (tagList: iArray<Tag<IntegratedValue>>): ListTag => {
         return new ListTag(tagList);
       },

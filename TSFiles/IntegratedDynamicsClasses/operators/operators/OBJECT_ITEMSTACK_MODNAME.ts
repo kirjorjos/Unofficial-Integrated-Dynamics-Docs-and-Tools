@@ -17,17 +17,20 @@ export class OPERATOR_OBJECT_ITEMSTACK_MODNAME extends BaseOperator<
   ];
   static override symbol = "mod";
   static override interactName = "itemstackMod";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Item",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "String",
+          },
         },
-        to: {
-          type: "String",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (item: Item): iString => {
         return item.getModName();
       },

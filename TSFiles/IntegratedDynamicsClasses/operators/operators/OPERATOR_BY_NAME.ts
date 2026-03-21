@@ -16,22 +16,25 @@ export class OPERATOR_OPERATOR_BY_NAME extends BaseOperator<
   ];
   static override symbol = "op_by_name";
   static override interactName = "stringOperatorByName";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
-          type: "Operator",
-          obscured: {
-            type: "Function",
-            from: { type: "Any", typeID: 1 },
-            to: { type: "Any", typeID: 2 },
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: {
+            type: "Operator",
+            obscured: {
+              type: "Function",
+              from: { type: "Any", typeID: 1 },
+              to: { type: "Any", typeID: 2 },
+            },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (name: iString): Operator<IntegratedValue, IntegratedValue> => {
         const result = operatorRegistry.find(name.valueOf());
         if (!result) throw new Error(`No operator found: ${name.valueOf()}`);

@@ -383,22 +383,23 @@ export const CondensedToAST = (
     scope: Set<string>
   ): InternalAST {
     const internalKey = operatorRegistry.operatorByNickname(name);
-    const base: InternalAST = scope.has(name)
-      ? { type: "Variable", name }
-      : externalScope.has(name)
-        ? (externalScope.get(name)! as InternalAST)
-        : internalKey
-          ? { type: "Operator", opName: internalKey }
-          : [
-                "block",
-                "item",
-                "fluid",
-                "entity",
-                "ingredients",
-                "recipe",
-              ].includes(name.toLowerCase())
-            ? { type: "Identifier", value: name }
-            : handleLiteral({ type: "identifier", value: name }, scope);
+    if (scope.has(name)) {
+      throw new Error(`Non-base operator not directly callable, use apply`);
+    }
+    const base: InternalAST = externalScope.has(name)
+      ? (externalScope.get(name)! as InternalAST)
+      : internalKey
+        ? { type: "Operator", opName: internalKey }
+        : [
+              "block",
+              "item",
+              "fluid",
+              "entity",
+              "ingredients",
+              "recipe",
+            ].includes(name.toLowerCase())
+          ? { type: "Identifier", value: name }
+          : handleLiteral({ type: "identifier", value: name }, scope);
 
     return handleCallInternal(base, args);
   }
@@ -416,9 +417,7 @@ export const CondensedToAST = (
             operatorRegistry.operatorByNickname(arg.value))
         ) {
           if (!expectsOperatorArgument(base as TypeAST.AST, i)) {
-            throw new Error(
-              `Ambiguous expression in Condensed: operator used as non-final argument. Use parentheses to clarify.`
-            );
+            throw new Error(`Incorrect arity`);
           }
         }
       }
@@ -428,28 +427,42 @@ export const CondensedToAST = (
       return handleCallInternal(base.base, [...base.args, ...args]);
     }
 
-    let isApplyOp = false;
+    let op: BaseOperator<IntegratedValue, IntegratedValue> | void = undefined;
     if (base.type === "Operator") {
       const opClass = operatorRegistry[base.opName];
-      let op: BaseOperator<IntegratedValue, IntegratedValue>;
       if (opClass) {
         try {
-          op = new opClass();
+          op = new opClass(false);
         } catch (e) {}
       }
-      if (!op!) op = operatorRegistry.find(base.opName)!;
+      if (!op) op = operatorRegistry.find(base.opName);
 
-      if (op && op.serializer === "integrateddynamics:curry") {
-        isApplyOp = true;
+      const arity = getArity(base as TypeAST.Operator);
+      if (args.length > arity && arity !== 0) {
+        if (!op || op.serializer !== "integrateddynamics:curry") {
+          throw new Error(
+            `Incorrect arity: operator expects ${arity} arguments but received ${args.length}.`
+          );
+        }
       }
+    }
+
+    let isApplyOp = false;
+    if (op && (op as any).serializer === "integrateddynamics:curry") {
+      isApplyOp = true;
     }
 
     if (isApplyOp && args.length >= 1) {
       const [newBase, ...rest] = args;
-      if (rest.length > 0) {
-        return handleCallInternal(newBase!, rest);
+      if (
+        newBase!.type === "Operator" ||
+        (newBase!.type === "Curry" && !newBase.varName)
+      ) {
+        const remainingArity = getArity(newBase as any);
+        if (rest.length <= remainingArity) {
+          return handleCallInternal(newBase!, rest);
+        }
       }
-      return newBase!;
     }
 
     if (base.type === "Identifier") {
@@ -769,10 +782,7 @@ export const CondensedToAST = (
   return result as TypeAST.AST;
 };
 
-export const ASTToCondensed = (
-  ast: TypeAST.AST,
-  isTopLevel = false
-): string => {
+export const ASTToCondensed = (ast: TypeAST.AST, isTopLevel = true): string => {
   const stringify = (node: TypeAST.AST, topLevel = false): string => {
     if (node.varName && !topLevel) {
       return node.varName;

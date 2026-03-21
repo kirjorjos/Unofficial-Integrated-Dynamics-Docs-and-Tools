@@ -11,17 +11,20 @@ export class OPERATOR_INTEGER_TO_LONG extends BaseOperator<Integer, Long> {
   ];
   static override symbol = "()";
   static override interactName = "integerIntegerToLong";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Integer",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Integer",
+          },
+          to: {
+            type: "Long",
+          },
         },
-        to: {
-          type: "Long",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (int: Integer): Long => {
         return int.toLong();
       },

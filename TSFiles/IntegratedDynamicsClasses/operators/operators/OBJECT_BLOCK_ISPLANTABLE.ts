@@ -12,17 +12,20 @@ export class OPERATOR_OBJECT_BLOCK_ISPLANTABLE extends BaseOperator<
   static override nicknames = ["is_plantable", "isplantable", "isPlantable"];
   static override symbol = "is_plantable";
   static override interactName = "isPlantable";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Block",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Block",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
-        to: {
-          type: "Boolean",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (block: Block): iBoolean => {
         return block.isPlantable();
       },

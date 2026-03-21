@@ -28,23 +28,26 @@ export class OPERATOR_OBJECT_FLUIDSTACK_DATA_VALUE extends BaseOperator<
   ];
   static override symbol = "data_value";
   static override interactName = "fluidstackDataValue";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Fluid",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
-            type: "String",
+            type: "Fluid",
           },
           to: {
-            type: "NBT",
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "NBT",
+            },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (fluid: Fluid): TypeLambda<iString, Tag<IntegratedValue>> => {
         return (key: iString): Tag<IntegratedValue> => {
           const nbt = fluid.getNBT();

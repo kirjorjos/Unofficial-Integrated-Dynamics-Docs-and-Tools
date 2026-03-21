@@ -15,29 +15,32 @@ export class OPERATOR_STRING_REGEX_GROUP extends BaseOperator<
   static override nicknames = ["stringRegexGroup"];
   static override symbol = "regex_group";
   static override interactName = "stringRegexGroup";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
-            type: "Integer",
+            type: "String",
           },
           to: {
             type: "Function",
             from: {
-              type: "String",
+              type: "Integer",
             },
             to: {
-              type: "String",
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: {
+                type: "String",
+              },
             },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (regexString: iString) => {
         return (groupIndex: Integer) => {
           return (fullString: iString) => {

@@ -17,15 +17,18 @@ export class OPERATOR_OBJECT_ENTITY_MOUNTED extends BaseOperator<
   ];
   static override symbol = "mounted";
   static override interactName = "entityMounted";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Entity",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: { type: "List", listType: { type: "Entity" } },
         },
-        to: { type: "List", listType: { type: "Entity" } },
-      }),
+        normalizeSignature
+      ),
       function: (entity: Entity): iArray<Entity> => {
         return new iArrayEager(entity.getMountedEntities());
       },

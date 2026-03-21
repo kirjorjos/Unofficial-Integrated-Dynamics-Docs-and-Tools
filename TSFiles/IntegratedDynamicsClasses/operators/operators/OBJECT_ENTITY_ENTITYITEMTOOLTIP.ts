@@ -22,21 +22,24 @@ export class OPERATOR_OBJECT_ENTITY_ENTITYITEMTOOLTIP extends BaseOperator<
   ];
   static override symbol = "entity_item_tooltip";
   static override interactName = "entityEntityItemTooltip";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
-            type: "Item",
+            type: "Entity",
           },
-          to: { type: "List", listType: { type: "String" } },
+          to: {
+            type: "Function",
+            from: {
+              type: "Item",
+            },
+            to: { type: "List", listType: { type: "String" } },
+          },
         },
-      }),
+        normalizeSignature
+      ),
       function: (entity: Entity): TypeLambda<Item, iArray<iString>> => {
         return (item: Item): iArray<iString> => {
           if (entity.isPlayer().valueOf()) {

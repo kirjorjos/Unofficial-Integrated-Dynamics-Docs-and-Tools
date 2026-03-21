@@ -28,15 +28,18 @@ export class OPERATOR_OBJECT_FLUIDSTACK_DATAKEYS extends BaseOperator<
   ];
   static override symbol = "data_keys";
   static override interactName = "fluidstackDataKeys";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Fluid",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Fluid",
+          },
+          to: { type: "List", listType: { type: "String" } },
         },
-        to: { type: "List", listType: { type: "String" } },
-      }),
+        normalizeSignature
+      ),
       function: (fluid: Fluid): iArray<iString> => {
         const nbt = fluid.getNBT();
         if (nbt instanceof CompoundTag) {

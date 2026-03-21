@@ -11,23 +11,26 @@ export class OPERATOR_ARITHMETIC_MODULUS extends BaseOperator<
   static override nicknames = ["modulus", "arithmeticModulus", "numberModulus"];
   static override symbol = "%";
   static override interactName = "numberModulus";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Number",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
             type: "Number",
           },
           to: {
-            type: "Number",
+            type: "Function",
+            from: {
+              type: "Number",
+            },
+            to: {
+              type: "Number",
+            },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (num1: TypeNumber): TypeLambda<TypeNumber, TypeNumber> => {
         return (num2: TypeNumber): TypeNumber => {
           if (num2.toJSNumber() === 0) {

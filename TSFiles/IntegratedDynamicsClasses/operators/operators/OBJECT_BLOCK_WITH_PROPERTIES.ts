@@ -18,23 +18,26 @@ export class OPERATOR_OBJECT_BLOCK_WITH_PROPERTIES extends BaseOperator<
   ];
   static override symbol = "block_with_props";
   static override interactName = "blockWithProperties";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Block",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
-            type: "NBT",
-          },
-          to: {
             type: "Block",
           },
+          to: {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "Block",
+            },
+          },
         },
-      }),
+        normalizeSignature
+      ),
       function: (block: Block): TypeLambda<CompoundTag, Block> => {
         return (nbtProperties: CompoundTag): Block => {
           const properties = new Properties(nbtProperties.toJSON());

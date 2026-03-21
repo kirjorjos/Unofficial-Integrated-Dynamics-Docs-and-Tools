@@ -13,15 +13,18 @@ export class OPERATOR_NBT_COMPOUND_KEYS extends BaseOperator<
   static override nicknames = ["nbtKeys", "nbtCompoundKeys", "NBTKeys"];
   static override symbol = "NBT{}.keys";
   static override interactName = "nbtKeys";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "NBT",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: { type: "List", listType: { type: "String" } },
         },
-        to: { type: "List", listType: { type: "String" } },
-      }),
+        normalizeSignature
+      ),
       function: (nbt: CompoundTag): iArray<iString> => {
         return nbt.getAllKeys();
       },

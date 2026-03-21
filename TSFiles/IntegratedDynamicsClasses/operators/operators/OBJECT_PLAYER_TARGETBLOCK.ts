@@ -17,17 +17,20 @@ export class OPERATOR_OBJECT_PLAYER_TARGETBLOCK extends BaseOperator<
   ];
   static override symbol = "target_block";
   static override interactName = "entityTargetBlock";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Entity",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Block",
+          },
         },
-        to: {
-          type: "Block",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (entity: Entity): Block => {
         return entity.getTargetBlock();
       },

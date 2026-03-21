@@ -16,14 +16,10 @@ export class OPERATOR_STRING_SUBSTRING extends BaseOperator<
   ];
   static override symbol = "substring";
   static override interactName = "integerSubstring";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Integer",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
             type: "Integer",
@@ -31,14 +27,21 @@ export class OPERATOR_STRING_SUBSTRING extends BaseOperator<
           to: {
             type: "Function",
             from: {
-              type: "String",
+              type: "Integer",
             },
             to: {
-              type: "String",
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: {
+                type: "String",
+              },
             },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (
         start: Integer
       ): TypeLambda<Integer, TypeLambda<iString, iString>> => {

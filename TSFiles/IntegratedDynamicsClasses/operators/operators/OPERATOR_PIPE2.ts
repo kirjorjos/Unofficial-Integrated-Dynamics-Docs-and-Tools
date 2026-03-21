@@ -7,26 +7,17 @@ export class OPERATOR_OPERATOR_PIPE2 extends BaseOperator<any, any> {
   static override nicknames = ["operatorPipe2", "pipe.2", "pipe2"];
   static override symbol = ".2";
   static override interactName = "operatorPipe2";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Operator",
-          obscured: {
-            type: "Function",
-            from: { type: "Any", typeID: 1 },
-            to: { type: "Any", typeID: 2 },
-          },
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
             type: "Operator",
             obscured: {
               type: "Function",
               from: { type: "Any", typeID: 1 },
-              to: { type: "Any", typeID: 3 },
+              to: { type: "Any", typeID: 2 },
             },
           },
           to: {
@@ -35,25 +26,37 @@ export class OPERATOR_OPERATOR_PIPE2 extends BaseOperator<any, any> {
               type: "Operator",
               obscured: {
                 type: "Function",
-                from: { type: "Any", typeID: 2 },
-                to: {
+                from: { type: "Any", typeID: 1 },
+                to: { type: "Any", typeID: 3 },
+              },
+            },
+            to: {
+              type: "Function",
+              from: {
+                type: "Operator",
+                obscured: {
                   type: "Function",
-                  from: { type: "Any", typeID: 3 },
+                  from: { type: "Any", typeID: 2 },
+                  to: {
+                    type: "Function",
+                    from: { type: "Any", typeID: 3 },
+                    to: { type: "Any", typeID: 4 },
+                  },
+                },
+              },
+              to: {
+                type: "Operator",
+                obscured: {
+                  type: "Function",
+                  from: { type: "Any", typeID: 1 },
                   to: { type: "Any", typeID: 4 },
                 },
               },
             },
-            to: {
-              type: "Operator",
-              obscured: {
-                type: "Function",
-                from: { type: "Any", typeID: 1 },
-                to: { type: "Any", typeID: 4 },
-              },
-            },
           },
         },
-      }),
+        normalizeSignature
+      ),
       serializer: "integrateddynamics:combined.pipe",
       function: (
         f: Operator<IntegratedValue, IntegratedValue>

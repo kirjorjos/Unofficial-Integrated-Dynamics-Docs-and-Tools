@@ -8,17 +8,20 @@ export class OPERATOR_STRING_LENGTH extends BaseOperator<iString, Integer> {
   static override nicknames = ["stringLength"];
   static override symbol = "len";
   static override interactName = "stringLength";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "String",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: {
+            type: "Integer",
+          },
         },
-        to: {
-          type: "Integer",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (str: iString): Integer => {
         return new Integer(str.valueOf().length);
       },

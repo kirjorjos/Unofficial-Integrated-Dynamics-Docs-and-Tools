@@ -9,17 +9,20 @@ export class OPERATOR_NBT_AS_BOOLEAN extends BaseOperator<ByteTag, iBoolean> {
   static override nicknames = ["nbtAsBoolean"];
   static override symbol = "NBT.as_iBoolean";
   static override interactName = "nbtAsBoolean";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "NBT",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
-        to: {
-          type: "Boolean",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (nbt: ByteTag): iBoolean => {
         if (nbt.getType() === Tag.TAG_BYTE) {
           return new iBoolean(!!nbt.valueOf().toJSNumber());

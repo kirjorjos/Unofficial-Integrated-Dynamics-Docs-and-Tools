@@ -442,8 +442,7 @@ export const ASTToExpanded = (
 
     const oldVarName = v.varName;
     delete v.varName;
-    const exprStr =
-      style === "CodeLine" ? ASTToCodeLine(v, true) : ASTToCondensed(v, true);
+    const exprStr = style === "CodeLine" ? ASTToCodeLine(v) : ASTToCondensed(v);
     if (oldVarName) v.varName = oldVarName;
 
     const assignment = `${name} = ${exprStr}`;

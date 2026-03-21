@@ -11,15 +11,18 @@ export class OPERATOR_STRING_ERROR extends BaseOperator<
   static override nicknames = ["stringStringError", "error", "string_error"];
   static override symbol = "error";
   static override interactName = "stringStringError";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "String",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: { type: "Any", typeID: 1 },
         },
-        to: { type: "Any", typeID: 1 },
-      }),
+        normalizeSignature
+      ),
       function: (message: iString): never => {
         throw new Error(`Error: ${message.valueOf()}`);
       },

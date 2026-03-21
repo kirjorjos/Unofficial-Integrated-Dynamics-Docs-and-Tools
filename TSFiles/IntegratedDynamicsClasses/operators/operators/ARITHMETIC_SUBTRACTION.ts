@@ -15,23 +15,26 @@ export class OPERATOR_ARITHMETIC_SUBTRACTION extends BaseOperator<
   ];
   static override symbol = "-";
   static override interactName = "numberSubtract";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Number",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
             type: "Number",
           },
           to: {
-            type: "Number",
+            type: "Function",
+            from: {
+              type: "Number",
+            },
+            to: {
+              type: "Number",
+            },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (num1: TypeNumber): TypeLambda<TypeNumber, TypeNumber> => {
         return (num2: TypeNumber): TypeNumber => {
           if (num1.getOrder() < num2.getOrder()) {

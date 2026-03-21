@@ -77,7 +77,7 @@ final = operatorFlip apply var1 numberIncrement
     const ast = ExpandedToAST(input.trim());
     expect(ast.varName).toBe("final");
     expect(ast.type).toBe("Curry");
-    expect(((ast as TypeAST.Curried).args[1] as TypeAST.Integer).value).toBe(
+    expect(((ast as TypeAST.Curried).args[0] as TypeAST.Integer).value).toBe(
       "5"
     );
   });
@@ -143,7 +143,7 @@ final = apply(numberAdd, var2)
     const backAst = ExpandedToAST(expanded);
     deleteNestedVars(backAst);
     deleteNestedVars(ast);
-    expect(ASTToCodeLine(backAst, true)).toContain("operatorPipe");
+    expect(ASTToCodeLine(backAst)).toContain("operatorPipe");
   });
 
   it("testLargeCurryDecomposition", () => {

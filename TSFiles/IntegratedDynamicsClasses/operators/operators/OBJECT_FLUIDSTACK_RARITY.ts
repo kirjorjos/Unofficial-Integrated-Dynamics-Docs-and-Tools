@@ -19,17 +19,20 @@ export class OPERATOR_OBJECT_FLUIDSTACK_RARITY extends BaseOperator<
   ];
   static override symbol = "rarity";
   static override interactName = "fluidstackRarity";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Fluid",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Fluid",
+          },
+          to: {
+            type: "String",
+          },
         },
-        to: {
-          type: "String",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (fluid: Fluid): iString => {
         return fluid.getRarity();
       },

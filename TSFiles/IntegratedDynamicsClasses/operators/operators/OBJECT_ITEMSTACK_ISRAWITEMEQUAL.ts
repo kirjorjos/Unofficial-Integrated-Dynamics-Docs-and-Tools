@@ -19,23 +19,26 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISRAWITEMEQUAL extends BaseOperator<
   ];
   static override symbol = "=Raw=";
   static override interactName = "itemstackIsEqualRaw";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
             type: "Item",
           },
           to: {
-            type: "Boolean",
+            type: "Function",
+            from: {
+              type: "Item",
+            },
+            to: {
+              type: "Boolean",
+            },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (item1: Item): TypeLambda<Item, iBoolean> => {
         return (item2: Item): iBoolean => {
           return new iBoolean(

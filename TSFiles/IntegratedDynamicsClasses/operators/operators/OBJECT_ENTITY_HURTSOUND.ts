@@ -15,17 +15,20 @@ export class OPERATOR_OBJECT_ENTITY_HURTSOUND extends BaseOperator<
   ];
   static override symbol = "hurtsound";
   static override interactName = "entityHurtSound";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Entity",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "String",
+          },
         },
-        to: {
-          type: "String",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (entity: Entity): iString => {
         return entity.getHurtSound();
       },

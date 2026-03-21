@@ -13,17 +13,20 @@ export class OPERATOR_ENTITY_HELDITEM extends BaseOperator<Entity, Item> {
   ];
   static override symbol = "held_item_1";
   static override interactName = "entityHeldItem";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Entity",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Item",
+          },
         },
-        to: {
-          type: "Item",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (entity: Entity): Item => {
         return entity.getHeldItemMain();
       },

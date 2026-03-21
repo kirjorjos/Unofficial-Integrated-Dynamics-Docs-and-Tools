@@ -16,21 +16,24 @@ export class OPERATOR_STRING_SPLIT_ON_REGEX extends BaseOperator<
   static override nicknames = ["stringSplitOnRegex"];
   static override symbol = "split_on_regex";
   static override interactName = "stringSplitOnRegex";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
             type: "String",
           },
-          to: { type: "List", listType: { type: "String" } },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: { type: "List", listType: { type: "String" } },
+          },
         },
-      }),
+        normalizeSignature
+      ),
       function: (
         regexString: iString
       ): TypeLambda<iString, iArray<iString>> => {

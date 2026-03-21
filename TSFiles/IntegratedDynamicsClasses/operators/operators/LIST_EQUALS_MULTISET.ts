@@ -18,19 +18,22 @@ export class OPERATOR_LIST_EQUALS_MULTISET extends BaseOperator<
   ];
   static override symbol = "=multiset=";
   static override interactName = "listEquals_multiset";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: { type: "List", listType: { type: "Any", typeID: 1 } },
           to: {
-            type: "Boolean",
+            type: "Function",
+            from: { type: "List", listType: { type: "Any", typeID: 1 } },
+            to: {
+              type: "Boolean",
+            },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (
         list1: iArray<IntegratedValue>
       ): TypeLambda<iArray<IntegratedValue>, iBoolean> => {

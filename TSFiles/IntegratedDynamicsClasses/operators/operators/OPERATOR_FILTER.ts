@@ -12,30 +12,33 @@ export class OPERATOR_OPERATOR_FILTER extends BaseOperator<
   static override nicknames = ["operatorFilter", "filter"];
   static override symbol = "filter";
   static override interactName = "operatorFilter";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Operator",
-          obscured: {
-            type: "Function",
-            from: { type: "Any", typeID: 1 },
-            to: { type: "Boolean" },
-          },
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
-            type: "List",
-            listType: { type: "Any", typeID: 1 },
+            type: "Operator",
+            obscured: {
+              type: "Function",
+              from: { type: "Any", typeID: 1 },
+              to: { type: "Boolean" },
+            },
           },
           to: {
-            type: "List",
-            listType: { type: "Any", typeID: 1 },
+            type: "Function",
+            from: {
+              type: "List",
+              listType: { type: "Any", typeID: 1 },
+            },
+            to: {
+              type: "List",
+              listType: { type: "Any", typeID: 1 },
+            },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (
         predicate: Operator<IntegratedValue, iBoolean>
       ): TypeLambda<iArray<IntegratedValue>, iArray<IntegratedValue>> => {

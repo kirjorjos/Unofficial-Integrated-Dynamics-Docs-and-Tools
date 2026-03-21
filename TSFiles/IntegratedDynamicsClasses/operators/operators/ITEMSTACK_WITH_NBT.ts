@@ -18,23 +18,26 @@ export class OPERATOR_ITEMSTACK_WITH_NBT extends BaseOperator<
   ];
   static override symbol = "with_nbt";
   static override interactName = "itemstackWithNBT";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
-            type: "NBT",
-          },
-          to: {
             type: "Item",
           },
+          to: {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "Item",
+            },
+          },
         },
-      }),
+        normalizeSignature
+      ),
       function: (item: Item): TypeLambda<CompoundTag, Item> => {
         return (nbt: CompoundTag): Item => {
           return new Item(new Properties({ NBT: nbt }), item);

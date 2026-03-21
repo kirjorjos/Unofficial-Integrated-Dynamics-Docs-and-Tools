@@ -8,17 +8,20 @@ export class OPERATOR_OBJECT_ENTITY_AGE extends BaseOperator<Entity, Integer> {
   static override nicknames = ["EntityAge", "entity_age", "entityAge"];
   static override symbol = "age";
   static override interactName = "entityAge";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Entity",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Integer",
+          },
         },
-        to: {
-          type: "Integer",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (entity: Entity): Integer => {
         return entity.getAge();
       },

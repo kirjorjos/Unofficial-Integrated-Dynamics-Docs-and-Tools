@@ -7,17 +7,20 @@ export class OPERATOR_DOUBLE_TO_LONG extends BaseOperator<Double, Long> {
   static override nicknames = ["doubleDoubleToLong", "doubleToLong"];
   static override symbol = "()";
   static override interactName = "doubleDoubleToLong";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Double",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Double",
+          },
+          to: {
+            type: "Long",
+          },
         },
-        to: {
-          type: "Long",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (double: Double): Long => {
         return double.toLong();
       },

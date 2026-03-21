@@ -11,23 +11,26 @@ export class OPERATOR_RELATIONAL_GT extends BaseOperator<
   static override nicknames = ["numberGreaterThan", "relationalGt"];
   static override symbol = ">";
   static override interactName = "numberGreaterThan";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Number",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
             type: "Number",
           },
           to: {
-            type: "Boolean",
+            type: "Function",
+            from: {
+              type: "Number",
+            },
+            to: {
+              type: "Boolean",
+            },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (num1: TypeNumber): TypeLambda<TypeNumber, iBoolean> => {
         return (num2: TypeNumber): iBoolean => {
           return new iBoolean(num1.gt(num2));

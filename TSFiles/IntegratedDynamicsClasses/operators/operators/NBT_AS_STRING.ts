@@ -9,17 +9,20 @@ export class OPERATOR_NBT_AS_STRING extends BaseOperator<StringTag, iString> {
   static override nicknames = ["nbtAsString"];
   static override symbol = "NBT.as_string";
   static override interactName = "nbtAsString";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "NBT",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "String",
+          },
         },
-        to: {
-          type: "String",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (nbt: StringTag): iString => {
         if (nbt.getType() === Tag.TAG_STRING) {
           return nbt.valueOf();

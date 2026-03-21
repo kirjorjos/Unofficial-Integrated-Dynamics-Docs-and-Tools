@@ -18,23 +18,26 @@ export class OPERATOR_OBJECT_FLUIDSTACK_WITH_NBT extends BaseOperator<
   ];
   static override symbol = "with_nbt";
   static override interactName = "fluidstackWithNBT";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Fluid",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
-            type: "NBT",
-          },
-          to: {
             type: "Fluid",
           },
+          to: {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "Fluid",
+            },
+          },
         },
-      }),
+        normalizeSignature
+      ),
       function: (fluid: Fluid): TypeLambda<CompoundTag, Fluid> => {
         return (nbt: CompoundTag): Fluid => {
           return new Fluid(new Properties({ nbt: nbt }), fluid);

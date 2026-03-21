@@ -19,17 +19,20 @@ export class OPERATOR_ITEMSTACK_ITEMBYNAME extends BaseOperator<iString, Item> {
   ];
   static override symbol = "item_by_name";
   static override interactName = "stringItemByName";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "String",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: {
+            type: "Item",
+          },
         },
-        to: {
-          type: "Item",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (name: iString): Item => {
         const itemRegistry = RegistryHub.itemRegistry;
         let key = name.valueOf().toLowerCase();

@@ -16,17 +16,20 @@ export class OPERATOR_OBJECT_ENTITY_ISBURNING extends BaseOperator<
   ];
   static override symbol = "is_burning";
   static override interactName = "entityIsBurning";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Entity",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
-        to: {
-          type: "Boolean",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (entity: Entity): iBoolean => {
         return entity.isBurning();
       },

@@ -21,30 +21,33 @@ export class OPERATOR_LIST_UNIQ_PREDICATE extends BaseOperator<
   ];
   static override symbol = "uniq_p";
   static override interactName = "listUniquePredicate";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
-          from: {
-            type: "Operator",
-            obscured: {
-              type: "Function",
-              from: { type: "Any", typeID: 1 },
-              to: {
+          from: { type: "List", listType: { type: "Any", typeID: 1 } },
+          to: {
+            type: "Function",
+            from: {
+              type: "Operator",
+              obscured: {
                 type: "Function",
                 from: { type: "Any", typeID: 1 },
                 to: {
-                  type: "Boolean",
+                  type: "Function",
+                  from: { type: "Any", typeID: 1 },
+                  to: {
+                    type: "Boolean",
+                  },
                 },
               },
             },
+            to: { type: "List", listType: { type: "Any", typeID: 1 } },
           },
-          to: { type: "List", listType: { type: "Any", typeID: 1 } },
         },
-      }),
+        normalizeSignature
+      ),
       function: (
         list: iArray<IntegratedValue>
       ): TypeLambda<

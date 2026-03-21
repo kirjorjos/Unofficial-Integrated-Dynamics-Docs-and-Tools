@@ -18,15 +18,18 @@ export class OPERATOR_OBJECT_ITEMSTACK_INVENTORY extends BaseOperator<
   ];
   static override symbol = "inventory";
   static override interactName = "itemstackInventory";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Item",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: { type: "List", listType: { type: "Item" } },
         },
-        to: { type: "List", listType: { type: "Item" } },
-      }),
+        normalizeSignature
+      ),
       function: (item: Item): iArray<Item> => {
         return item.getInventory() as iArray<Item>;
       },

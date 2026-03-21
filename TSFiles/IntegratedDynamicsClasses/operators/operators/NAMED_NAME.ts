@@ -10,17 +10,20 @@ export class OPERATOR_NAMED_NAME extends BaseOperator<
   static override nicknames = ["name", "namedName", "toString"];
   static override symbol = "name";
   static override interactName = "namedName";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Named",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Named",
+          },
+          to: {
+            type: "String",
+          },
         },
-        to: {
-          type: "String",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (named: TypeRawSignatureAST.RawSignatureNamed): iString => {
         return new iString(named.toString());
       },

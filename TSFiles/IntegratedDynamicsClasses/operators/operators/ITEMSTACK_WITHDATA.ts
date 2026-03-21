@@ -22,29 +22,32 @@ export class OPERATOR_ITEMSTACK_WITHDATA extends BaseOperator<
   ];
   static override symbol = "with_data";
   static override interactName = "itemstackWithData";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
-            type: "String",
+            type: "Item",
           },
           to: {
             type: "Function",
             from: {
-              type: "NBT",
+              type: "String",
             },
             to: {
-              type: "Item",
+              type: "Function",
+              from: {
+                type: "NBT",
+              },
+              to: {
+                type: "Item",
+              },
             },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (
         item: Item
       ): TypeLambda<iString, TypeLambda<Tag<IntegratedValue>, Item>> => {

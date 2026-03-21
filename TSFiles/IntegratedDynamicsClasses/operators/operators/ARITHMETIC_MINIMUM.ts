@@ -11,23 +11,26 @@ export class OPERATOR_ARITHMETIC_MINIMUM extends BaseOperator<
   static override nicknames = ["min", "arithmeticMinimum", "numberMin"];
   static override symbol = "min";
   static override interactName = "numberMin";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Number",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
             type: "Number",
           },
           to: {
-            type: "Number",
+            type: "Function",
+            from: {
+              type: "Number",
+            },
+            to: {
+              type: "Number",
+            },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (num1: TypeNumber): TypeLambda<TypeNumber, TypeNumber> => {
         return (num2: TypeNumber): TypeNumber => {
           const [lowerOrder, higherOrder] =

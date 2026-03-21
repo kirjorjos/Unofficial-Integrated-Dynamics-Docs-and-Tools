@@ -16,17 +16,20 @@ export class OPERATOR_OBJECT_ENTITY_DEATHSOUND extends BaseOperator<
   ];
   static override symbol = "deathsound";
   static override interactName = "entityDeathSound";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Entity",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "String",
+          },
         },
-        to: {
-          type: "String",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (entity: Entity): iString => {
         return entity.getDeathSound();
       },

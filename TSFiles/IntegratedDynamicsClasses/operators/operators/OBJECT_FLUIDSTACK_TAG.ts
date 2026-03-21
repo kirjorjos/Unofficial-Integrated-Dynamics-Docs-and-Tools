@@ -20,15 +20,18 @@ export class OPERATOR_OBJECT_FLUIDSTACK_TAG extends BaseOperator<
   ];
   static override symbol = "fluid_tag_names";
   static override interactName = "fluidstackTags";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Fluid",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Fluid",
+          },
+          to: { type: "List", listType: { type: "String" } },
         },
-        to: { type: "List", listType: { type: "String" } },
-      }),
+        normalizeSignature
+      ),
       function: (fluid: Fluid): iArray<iString> => {
         return new iArrayEager(
           fluid

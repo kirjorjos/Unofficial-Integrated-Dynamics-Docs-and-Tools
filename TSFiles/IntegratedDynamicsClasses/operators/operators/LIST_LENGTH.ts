@@ -10,15 +10,18 @@ export class OPERATOR_LIST_LENGTH extends BaseOperator<
   static override nicknames = ["listLength"];
   static override symbol = "| |";
   static override interactName = "listLength";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: {
-          type: "Integer",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: { type: "List", listType: { type: "Any", typeID: 1 } },
+          to: {
+            type: "Integer",
+          },
         },
-      }),
+        normalizeSignature
+      ),
       function: (list: iArray<IntegratedValue>): Integer => {
         return list.size();
       },

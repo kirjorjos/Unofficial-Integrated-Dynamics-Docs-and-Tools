@@ -11,23 +11,26 @@ export class OPERATOR_STRING_CONCAT extends BaseOperator<
   static override nicknames = ["stringConcat"];
   static override symbol = "+";
   static override interactName = "stringConcat";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
             type: "String",
           },
           to: {
-            type: "String",
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "String",
+            },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (str1: iString): TypeLambda<iString, iString> => {
         return (str2: iString): iString => {
           return new iString(str1.valueOf().concat(str2.valueOf()));

@@ -10,23 +10,26 @@ export class OPERATOR_BINARY_RSHIFT extends BaseOperator<
   static override nicknames = ["binaryRshift", "integerRightShift"];
   static override symbol = ">>";
   static override interactName = "integerRightShift";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Integer",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
             type: "Integer",
           },
           to: {
-            type: "Integer",
+            type: "Function",
+            from: {
+              type: "Integer",
+            },
+            to: {
+              type: "Integer",
+            },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (int1: Integer): TypeLambda<Integer, Integer> => {
         return (int2: Integer): Integer => {
           return int1.rightShift(int2);

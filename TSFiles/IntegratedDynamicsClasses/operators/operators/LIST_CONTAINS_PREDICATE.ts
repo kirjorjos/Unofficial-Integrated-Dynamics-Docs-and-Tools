@@ -17,28 +17,31 @@ export class OPERATOR_LIST_CONTAINS_PREDICATE extends BaseOperator<
   ];
   static override symbol = "contains_p";
   static override interactName = "listContainsPredicate";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
-          from: {
-            type: "Operator",
-            obscured: {
-              type: "Function",
-              from: { type: "Any", typeID: 1 },
-              to: {
-                type: "Boolean",
+          from: { type: "List", listType: { type: "Any", typeID: 1 } },
+          to: {
+            type: "Function",
+            from: {
+              type: "Operator",
+              obscured: {
+                type: "Function",
+                from: { type: "Any", typeID: 1 },
+                to: {
+                  type: "Boolean",
+                },
               },
             },
-          },
-          to: {
-            type: "Boolean",
+            to: {
+              type: "Boolean",
+            },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (
         list: iArray<IntegratedValue>
       ): TypeLambda<Predicate<IntegratedValue>, iBoolean> => {

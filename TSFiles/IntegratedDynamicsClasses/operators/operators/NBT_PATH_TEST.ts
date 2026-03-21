@@ -14,23 +14,26 @@ export class OPERATOR_NBT_PATH_TEST extends BaseOperator<
   static override nicknames = ["stringNbtPathTest", "NBTPathTest"];
   static override symbol = "NBT.path_test";
   static override interactName = "stringNbtPathTest";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
-            type: "NBT",
+            type: "String",
           },
           to: {
-            type: "Boolean",
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "Boolean",
+            },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (path: iString): TypeLambda<CompoundTag, iBoolean> => {
         return (nbt: CompoundTag): iBoolean => {
           let expression = NbtPath.parse(path.valueOf());

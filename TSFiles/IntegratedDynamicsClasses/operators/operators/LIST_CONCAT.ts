@@ -11,17 +11,20 @@ export class OPERATOR_LIST_CONCAT extends BaseOperator<
   static override nicknames = ["listConcat", "concat"];
   static override symbol = "concat";
   static override interactName = "listConcat";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: { type: "List", listType: { type: "Any", typeID: 1 } },
-          to: { type: "List", listType: { type: "Any", typeID: 1 } },
+          to: {
+            type: "Function",
+            from: { type: "List", listType: { type: "Any", typeID: 1 } },
+            to: { type: "List", listType: { type: "Any", typeID: 1 } },
+          },
         },
-      }),
+        normalizeSignature
+      ),
       function: (
         list1: iArray<IntegratedValue>
       ): TypeLambda<iArray<IntegratedValue>, iArray<IntegratedValue>> => {

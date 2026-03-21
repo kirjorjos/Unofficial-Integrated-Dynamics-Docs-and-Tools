@@ -19,17 +19,20 @@ export class OPERATOR_ITEMSTACK_ISFECONTAINER extends BaseOperator<
   ];
   static override symbol = "is_fe_container";
   static override interactName = "itemstackIsFeContainer";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Item",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
-        to: {
-          type: "Boolean",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (item: Item): iBoolean => {
         return item.isFeContainer();
       },

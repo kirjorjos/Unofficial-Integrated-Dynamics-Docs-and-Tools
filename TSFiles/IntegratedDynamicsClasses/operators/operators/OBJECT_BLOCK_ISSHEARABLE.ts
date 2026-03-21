@@ -15,17 +15,20 @@ export class OPERATOR_OBJECT_BLOCK_ISSHEARABLE extends BaseOperator<
   ];
   static override symbol = "is_shearable";
   static override interactName = "blockIsShearable";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Block",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Block",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
-        to: {
-          type: "Boolean",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (block: Block): iBoolean => {
         return block.isShearable();
       },

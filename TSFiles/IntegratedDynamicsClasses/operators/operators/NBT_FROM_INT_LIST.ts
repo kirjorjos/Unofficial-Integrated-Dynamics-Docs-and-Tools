@@ -13,15 +13,18 @@ export class OPERATOR_NBT_FROM_INT_LIST extends BaseOperator<
   static override nicknames = ["intListAsNbt", "nbtFromIntList"];
   static override symbol = "NBT.from_int_list";
   static override interactName = "intListAsNbt";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: { type: "List", listType: { type: "Integer" } },
-        to: {
-          type: "NBT",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: { type: "List", listType: { type: "Integer" } },
+          to: {
+            type: "NBT",
+          },
         },
-      }),
+        normalizeSignature
+      ),
       function: (intList: iArray<Integer>): IntArrayTag => {
         return new IntArrayTag(intList);
       },

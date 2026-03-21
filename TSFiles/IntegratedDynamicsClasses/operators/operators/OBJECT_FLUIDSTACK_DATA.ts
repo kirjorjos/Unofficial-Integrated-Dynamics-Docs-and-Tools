@@ -25,17 +25,20 @@ export class OPERATOR_OBJECT_FLUIDSTACK_DATA extends BaseOperator<
   ];
   static override symbol = "NBT()";
   static override interactName = "fluidstackNbt";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Fluid",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Fluid",
+          },
+          to: {
+            type: "NBT",
+          },
         },
-        to: {
-          type: "NBT",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (fluid: Fluid): Tag<IntegratedValue> => {
         return fluid.getNBT();
       },

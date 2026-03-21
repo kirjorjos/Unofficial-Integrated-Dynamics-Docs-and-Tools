@@ -15,17 +15,20 @@ export class OPERATOR_ARITHMETIC_DECREMENT extends BaseOperator<
   ];
   static override symbol = "--";
   static override interactName = "numberDecrement";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Number",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Number",
+          },
+          to: {
+            type: "Number",
+          },
         },
-        to: {
-          type: "Number",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (num1: TypeNumber): TypeNumber => {
         return num1.subtract(Integer.ONE);
       },

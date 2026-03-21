@@ -7,17 +7,20 @@ export class OPERATOR_OBJECT_BLOCK_PLANT extends BaseOperator<Block, Block> {
   static override nicknames = ["plant"];
   static override symbol = "plant";
   static override interactName = "plant";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Block",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Block",
+          },
+          to: {
+            type: "Block",
+          },
         },
-        to: {
-          type: "Block",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (block: Block): Block => {
         return block.getPlant();
       },

@@ -15,19 +15,10 @@ export class OPERATOR_OPERATOR_DISJUNCTION extends BaseOperator<
   static override nicknames = ["operatorDisjunction", "disjunction"];
   static override symbol = ".||.";
   static override interactName = "operatorDisjunction";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Operator",
-          obscured: {
-            type: "Function",
-            from: { type: "Any", typeID: 1 },
-            to: { type: "Boolean" },
-          },
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
             type: "Operator",
@@ -38,15 +29,27 @@ export class OPERATOR_OPERATOR_DISJUNCTION extends BaseOperator<
             },
           },
           to: {
-            type: "Operator",
-            obscured: {
-              type: "Function",
-              from: { type: "Any", typeID: 1 },
-              to: { type: "Boolean" },
+            type: "Function",
+            from: {
+              type: "Operator",
+              obscured: {
+                type: "Function",
+                from: { type: "Any", typeID: 1 },
+                to: { type: "Boolean" },
+              },
+            },
+            to: {
+              type: "Operator",
+              obscured: {
+                type: "Function",
+                from: { type: "Any", typeID: 1 },
+                to: { type: "Boolean" },
+              },
             },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (
         predicate1: Operator<IntegratedValue, iBoolean>
       ): TypeLambda<

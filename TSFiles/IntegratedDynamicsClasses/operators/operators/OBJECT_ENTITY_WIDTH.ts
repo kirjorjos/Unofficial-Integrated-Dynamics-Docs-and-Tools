@@ -9,17 +9,20 @@ export class OPERATOR_OBJECT_ENTITY_WIDTH extends BaseOperator<Entity, Double> {
   static override nicknames = ["EntityWidth", "entity_width", "entityWidth"];
   static override symbol = "width";
   static override interactName = "entityWidth";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Entity",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Double",
+          },
         },
-        to: {
-          type: "Double",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (entity: Entity): Double => {
         return entity.getWidth();
       },

@@ -14,17 +14,20 @@ export class OPERATOR_OBJECT_ITEMSTACK_BLOCK extends BaseOperator<Item, Block> {
   ];
   static override symbol = "block";
   static override interactName = "itemstackBlock";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Item",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "Block",
+          },
         },
-        to: {
-          type: "Block",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (item: Item): Block => {
         return new Block(new Properties({}), item.getBlock());
       },

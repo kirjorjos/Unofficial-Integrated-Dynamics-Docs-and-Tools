@@ -10,35 +10,38 @@ export class OPERATOR_OPERATOR_FLIP extends BaseOperator<
   static override nicknames = ["operatorFlip", "flip"];
   static override symbol = "flip";
   static override interactName = "operatorFlip";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Operator",
-          obscured: {
-            type: "Function",
-            from: { type: "Any", typeID: 1 },
-            to: {
-              type: "Function",
-              from: { type: "Any", typeID: 2 },
-              to: { type: "Any", typeID: 3 },
-            },
-          },
-        },
-        to: {
-          type: "Operator",
-          obscured: {
-            type: "Function",
-            from: { type: "Any", typeID: 2 },
-            to: {
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Operator",
+            obscured: {
               type: "Function",
               from: { type: "Any", typeID: 1 },
-              to: { type: "Any", typeID: 3 },
+              to: {
+                type: "Function",
+                from: { type: "Any", typeID: 2 },
+                to: { type: "Any", typeID: 3 },
+              },
+            },
+          },
+          to: {
+            type: "Operator",
+            obscured: {
+              type: "Function",
+              from: { type: "Any", typeID: 2 },
+              to: {
+                type: "Function",
+                from: { type: "Any", typeID: 1 },
+                to: { type: "Any", typeID: 3 },
+              },
             },
           },
         },
-      }),
+        normalizeSignature
+      ),
       serializer: "integrateddynamics:combined.flip",
       function: (
         op: Operator<

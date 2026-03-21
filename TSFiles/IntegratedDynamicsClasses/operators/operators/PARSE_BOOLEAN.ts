@@ -10,17 +10,20 @@ export class OPERATOR_PARSE_BOOLEAN extends BaseOperator<iString, iBoolean> {
   static override nicknames = ["stringParseAsBoolean", "parseBoolean"];
   static override symbol = "parse_iBoolean";
   static override interactName = "stringParseAsBoolean";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "String",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
-        to: {
-          type: "Boolean",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (value: iString): iBoolean => {
         const re = new RE2("^(F(alse)?|[+-]?(0x|#)?0+|)$", "iu");
         const match = re.match(value.valueOf().trim());

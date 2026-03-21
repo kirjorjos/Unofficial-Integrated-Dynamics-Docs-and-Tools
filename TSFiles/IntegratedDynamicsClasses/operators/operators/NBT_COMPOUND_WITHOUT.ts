@@ -17,23 +17,26 @@ export class OPERATOR_NBT_COMPOUND_WITHOUT extends BaseOperator<
   ];
   static override symbol = "NBT{}.without";
   static override interactName = "nbtWithout";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
-            type: "String",
-          },
-          to: {
             type: "NBT",
           },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "NBT",
+            },
+          },
         },
-      }),
+        normalizeSignature
+      ),
       function: (nbt: CompoundTag): TypeLambda<iString, CompoundTag> => {
         return (key: iString): CompoundTag => {
           return nbt.without(key.valueOf());

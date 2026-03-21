@@ -16,21 +16,24 @@ export class OPERATOR_STRING_REGEX_GROUPS extends BaseOperator<
   static override nicknames = ["stringRegexGroups"];
   static override symbol = "regex_groups";
   static override interactName = "stringRegexGroups";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
             type: "String",
           },
-          to: { type: "List", listType: { type: "String" } },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: { type: "List", listType: { type: "String" } },
+          },
         },
-      }),
+        normalizeSignature
+      ),
       function: (
         regexString: iString
       ): TypeLambda<iString, iArray<iString>> => {

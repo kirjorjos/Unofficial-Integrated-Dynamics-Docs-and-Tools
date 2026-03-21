@@ -16,17 +16,20 @@ export class OPERATOR_OBJECT_BLOCK_PLANTAGE extends BaseOperator<
   ];
   static override symbol = "plant_age";
   static override interactName = "blockPlantAge";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Block",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Block",
+          },
+          to: {
+            type: "Integer",
+          },
         },
-        to: {
-          type: "Integer",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (block: Block): Integer => {
         return block.getPlantAge();
       },

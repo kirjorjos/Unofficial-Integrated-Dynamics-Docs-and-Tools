@@ -10,23 +10,26 @@ export class OPERATOR_DOUBLE_POW extends BaseOperator<
   static override nicknames = ["doublePow", "pow"];
   static override symbol = "pow";
   static override interactName = "doublePow";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Double",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
             type: "Double",
           },
           to: {
-            type: "Double",
+            type: "Function",
+            from: {
+              type: "Double",
+            },
+            to: {
+              type: "Double",
+            },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (base: Double): TypeLambda<Double, Double> => {
         return (exponent: Double): Double => {
           return base.pow(exponent);

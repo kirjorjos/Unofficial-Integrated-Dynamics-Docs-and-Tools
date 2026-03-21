@@ -11,23 +11,26 @@ export class OPERATOR_LOGICAL_NOR extends BaseOperator<
   static override nicknames = ["booleanNor", "nor", "logicalNor"];
   static override symbol = "!||";
   static override interactName = "booleanNor";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Boolean",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
             type: "Boolean",
           },
           to: {
-            type: "Boolean",
+            type: "Function",
+            from: {
+              type: "Boolean",
+            },
+            to: {
+              type: "Boolean",
+            },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (bool1: iBoolean): TypeLambda<iBoolean, iBoolean> => {
         return (bool2: iBoolean): iBoolean => {
           return new iBoolean(!(bool1.valueOf() || bool2.valueOf()));

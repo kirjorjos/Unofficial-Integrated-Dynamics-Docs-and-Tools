@@ -13,25 +13,28 @@ export class OPERATOR_LIST_SLICE extends BaseOperator<
   static override nicknames = ["listSlice", "slice"];
   static override symbol = "slice";
   static override interactName = "listSlice";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
-          from: {
-            type: "Integer",
-          },
+          from: { type: "List", listType: { type: "Any", typeID: 1 } },
           to: {
             type: "Function",
             from: {
               type: "Integer",
             },
-            to: { type: "List", listType: { type: "Any", typeID: 1 } },
+            to: {
+              type: "Function",
+              from: {
+                type: "Integer",
+              },
+              to: { type: "List", listType: { type: "Any", typeID: 1 } },
+            },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (
         list: iArray<IntegratedValue>
       ): TypeLambda<Integer, TypeLambda<Integer, iArray<IntegratedValue>>> => {

@@ -12,17 +12,20 @@ export class OPERATOR_NBT_COMPOUND_SIZE extends BaseOperator<
   static override nicknames = ["nbtSize", "nbtCompoundSize", "NBTSize"];
   static override symbol = "NBT{}.size";
   static override interactName = "nbtSize";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "NBT",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "Integer",
+          },
         },
-        to: {
-          type: "Integer",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (nbt: CompoundTag): Integer => {
         return nbt.getAllKeys().size();
       },

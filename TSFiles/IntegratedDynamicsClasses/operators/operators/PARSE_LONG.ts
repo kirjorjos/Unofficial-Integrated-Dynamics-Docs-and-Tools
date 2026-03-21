@@ -9,17 +9,20 @@ export class OPERATOR_PARSE_LONG extends BaseOperator<iString, Long> {
   static override nicknames = ["stringParseAsLong", "parseLong"];
   static override symbol = "parse_long";
   static override interactName = "stringParseAsLong";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "String",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: {
+            type: "Long",
+          },
         },
-        to: {
-          type: "Long",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (data: iString): Long => {
         try {
           return new Long(data.valueOf());

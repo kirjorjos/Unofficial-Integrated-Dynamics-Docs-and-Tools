@@ -16,17 +16,20 @@ export class OPERATOR_OBJECT_ENTITY_MODNAME extends BaseOperator<
   ];
   static override symbol = "entity_mod";
   static override interactName = "entityMod";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Entity",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "String",
+          },
         },
-        to: {
-          type: "String",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (entity: Entity): iString => {
         return entity.getModName();
       },

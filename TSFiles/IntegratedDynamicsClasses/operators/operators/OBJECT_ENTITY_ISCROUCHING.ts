@@ -17,17 +17,20 @@ export class OPERATOR_OBJECT_ENTITY_ISCROUCHING extends BaseOperator<
   ];
   static override symbol = "is_crouching";
   static override interactName = "entityIsCrouching";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Entity",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
-        to: {
-          type: "Boolean",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (entity: Entity): iBoolean => {
         return entity.isCrouching();
       },

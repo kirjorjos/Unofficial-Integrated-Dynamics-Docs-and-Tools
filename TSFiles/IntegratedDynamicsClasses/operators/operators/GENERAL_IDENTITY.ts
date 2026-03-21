@@ -14,19 +14,22 @@ export class OPERATOR_GENERAL_IDENTITY extends BaseOperator<
   ];
   static override symbol = "id";
   static override interactName = "anyIdentity";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Any",
-          typeID: 1,
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Any",
+            typeID: 1,
+          },
+          to: {
+            type: "Any",
+            typeID: 1,
+          },
         },
-        to: {
-          type: "Any",
-          typeID: 1,
-        },
-      }),
+        normalizeSignature
+      ),
       function: (value: IntegratedValue): IntegratedValue => {
         return value;
       },

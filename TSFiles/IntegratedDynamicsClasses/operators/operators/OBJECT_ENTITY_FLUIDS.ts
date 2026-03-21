@@ -14,15 +14,18 @@ export class OPERATOR_OBJECT_ENTITY_FLUIDS extends BaseOperator<
   static override nicknames = ["EntityFluids", "entity_fluids", "entityFluids"];
   static override symbol = "entity_fluids";
   static override interactName = "entityFluids";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Entity",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: { type: "List", listType: { type: "Fluid" } },
         },
-        to: { type: "List", listType: { type: "Fluid" } },
-      }),
+        normalizeSignature
+      ),
       function: (entity: Entity): iArray<Fluid> => {
         return new iArrayEager(entity.getFluids());
       },

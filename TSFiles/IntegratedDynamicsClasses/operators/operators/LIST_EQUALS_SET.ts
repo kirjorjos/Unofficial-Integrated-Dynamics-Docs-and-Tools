@@ -13,19 +13,22 @@ export class OPERATOR_LIST_EQUALS_SET extends BaseOperator<
   static override nicknames = ["listEquals_set", "listEqualsSet", "equalsSet"];
   static override symbol = "=set=";
   static override interactName = "listEquals_set";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: { type: "List", listType: { type: "Any", typeID: 1 } },
           to: {
-            type: "Boolean",
+            type: "Function",
+            from: { type: "List", listType: { type: "Any", typeID: 1 } },
+            to: {
+              type: "Boolean",
+            },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (
         list1: iArray<IntegratedValue>
       ): TypeLambda<iArray<IntegratedValue>, iBoolean> => {

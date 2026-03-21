@@ -22,23 +22,26 @@ export class OPERATOR_OBJECT_FLUIDSTACK_ISRAWFLUIDEQUAL extends BaseOperator<
   ];
   static override symbol = "=Raw=";
   static override interactName = "fluidstackIsRawEqual";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Fluid",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
             type: "Fluid",
           },
           to: {
-            type: "Boolean",
+            type: "Function",
+            from: {
+              type: "Fluid",
+            },
+            to: {
+              type: "Boolean",
+            },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (fluid1: Fluid): TypeLambda<Fluid, iBoolean> => {
         return (fluid2: Fluid): iBoolean => {
           return new iBoolean(

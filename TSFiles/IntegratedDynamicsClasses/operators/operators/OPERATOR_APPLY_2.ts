@@ -10,41 +10,44 @@ export class OPERATOR_OPERATOR_APPLY_2 extends BaseOperator<
   static override nicknames = ["operatorApply2", "operatorApply_2", "apply2"];
   static override symbol = "apply2";
   static override interactName = "operatorApply2";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Operator",
-          obscured: {
-            type: "Function",
-            from: { type: "Any", typeID: 1 },
-            to: {
-              type: "Function",
-              from: { type: "Any", typeID: 2 },
-              to: { type: "Any", typeID: 3 },
-            },
-          },
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
-            type: "Any",
-            typeID: 1,
+            type: "Operator",
+            obscured: {
+              type: "Function",
+              from: { type: "Any", typeID: 1 },
+              to: {
+                type: "Function",
+                from: { type: "Any", typeID: 2 },
+                to: { type: "Any", typeID: 3 },
+              },
+            },
           },
           to: {
             type: "Function",
             from: {
               type: "Any",
-              typeID: 2,
+              typeID: 1,
             },
             to: {
-              type: "Any",
-              typeID: 3,
+              type: "Function",
+              from: {
+                type: "Any",
+                typeID: 2,
+              },
+              to: {
+                type: "Any",
+                typeID: 3,
+              },
             },
           },
         },
-      }),
+        normalizeSignature
+      ),
       serializer: "integrateddynamics:curry",
       function: (
         op: Operator<

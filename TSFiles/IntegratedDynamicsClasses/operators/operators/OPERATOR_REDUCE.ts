@@ -8,15 +8,29 @@ export class OPERATOR_OPERATOR_REDUCE extends BaseOperator<any, any> {
   static override nicknames = ["operatorReduce", "reduce"];
   static override symbol = "reduce";
   static override interactName = "operatorReduce";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Operator",
-          obscured: {
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Operator",
+            obscured: {
+              type: "Function",
+              from: { type: "Any", typeID: 1 },
+              to: {
+                type: "Function",
+                from: { type: "Any", typeID: 1 },
+                to: { type: "Any", typeID: 1 },
+              },
+            },
+          },
+          to: {
             type: "Function",
-            from: { type: "Any", typeID: 1 },
+            from: {
+              type: "List",
+              listType: { type: "Any", typeID: 1 },
+            },
             to: {
               type: "Function",
               from: { type: "Any", typeID: 1 },
@@ -24,19 +38,8 @@ export class OPERATOR_OPERATOR_REDUCE extends BaseOperator<any, any> {
             },
           },
         },
-        to: {
-          type: "Function",
-          from: {
-            type: "List",
-            listType: { type: "Any", typeID: 1 },
-          },
-          to: {
-            type: "Function",
-            from: { type: "Any", typeID: 1 },
-            to: { type: "Any", typeID: 1 },
-          },
-        },
-      }),
+        normalizeSignature
+      ),
       function: (
         op: Operator<
           IntegratedValue,

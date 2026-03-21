@@ -17,17 +17,20 @@ export class OPERATOR_OBJECT_ITEMSTACK_NBT extends BaseOperator<
   ];
   static override symbol = "nbt";
   static override interactName = "itemStackNBT";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Item",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "NBT",
+          },
         },
-        to: {
-          type: "NBT",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (item: Item): Tag<IntegratedValue> => {
         return item.getNBT();
       },

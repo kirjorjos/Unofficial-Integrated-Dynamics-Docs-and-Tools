@@ -12,23 +12,26 @@ export class OPERATOR_NBT_COMPOUND_MINUS extends BaseOperator<
   static override nicknames = ["nbtMinus", "nbtCompoundMinus", "NBTMinus"];
   static override symbol = "NBT{}.∖";
   static override interactName = "nbtMinus";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
             type: "NBT",
           },
           to: {
-            type: "NBT",
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "NBT",
+            },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (nbt1: CompoundTag) => {
         return (nbt2: CompoundTag) => {
           return nbt1.compoundMinus(nbt2);

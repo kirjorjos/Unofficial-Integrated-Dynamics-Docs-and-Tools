@@ -11,14 +11,10 @@ export class OPERATOR_STRING_REPLACE extends BaseOperator<
   static override nicknames = ["stringReplace"];
   static override symbol = "replace";
   static override interactName = "stringReplace";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
             type: "String",
@@ -29,11 +25,18 @@ export class OPERATOR_STRING_REPLACE extends BaseOperator<
               type: "String",
             },
             to: {
-              type: "String",
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: {
+                type: "String",
+              },
             },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (
         searchString: iString
       ): TypeLambda<iString, TypeLambda<iString, iString>> => {

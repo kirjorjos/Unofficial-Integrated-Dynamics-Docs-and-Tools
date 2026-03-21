@@ -12,15 +12,18 @@ export class OPERATOR_INGREDIENTS_FLUIDS extends BaseOperator<
   static override nicknames = ["ingredientsFluids", "Ingr.fluids"];
   static override symbol = "Ingr.fluids";
   static override interactName = "ingredientsFluids";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Ingredients",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Ingredients",
+          },
+          to: { type: "List", listType: { type: "Fluid" } },
         },
-        to: { type: "List", listType: { type: "Fluid" } },
-      }),
+        normalizeSignature
+      ),
       function: (ingredients: Ingredients): iArray<Fluid> => {
         return ingredients.getFluids();
       },

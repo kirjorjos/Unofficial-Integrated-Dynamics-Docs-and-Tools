@@ -12,19 +12,22 @@ export class OPERATOR_RELATIONAL_NOTEQUALS extends BaseOperator<
   static override nicknames = ["anyNotEquals", "relationalNotequals"];
   static override symbol = "!=";
   static override interactName = "anyNotEquals";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: { type: "Any", typeID: 1 },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: { type: "Any", typeID: 1 },
           to: {
-            type: "Boolean",
+            type: "Function",
+            from: { type: "Any", typeID: 1 },
+            to: {
+              type: "Boolean",
+            },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (
         value1: IntegratedValue
       ): TypeLambda<IntegratedValue, iBoolean> => {

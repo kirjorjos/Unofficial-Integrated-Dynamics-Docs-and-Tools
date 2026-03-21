@@ -46,7 +46,7 @@ export const getArity = (node: TypeAST.Operator): number => {
     let op: BaseOperator<IntegratedValue, IntegratedValue> | void = undefined;
     if (opClass) {
       try {
-        op = new opClass();
+        op = new opClass(false);
       } catch (e) {}
     }
     if (!op) op = operatorRegistry.find(node.opName);
@@ -61,7 +61,7 @@ export const getArity = (node: TypeAST.Operator): number => {
       let op: BaseOperator<IntegratedValue, IntegratedValue> | void = undefined;
       if (opClass) {
         try {
-          op = new opClass();
+          op = new opClass(false);
         } catch (e) {}
       }
       if (!op) op = operatorRegistry.find(node.base.opName);
@@ -117,7 +117,7 @@ export const expectsOperatorArgument = (
     let op: BaseOperator<IntegratedValue, IntegratedValue>;
     if (opClass) {
       try {
-        op = new opClass();
+        op = new opClass(false);
       } catch (e) {}
     }
     if (!op!) op = operatorRegistry.find(current.opName)!;

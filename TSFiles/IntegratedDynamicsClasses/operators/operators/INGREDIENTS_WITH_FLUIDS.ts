@@ -13,21 +13,24 @@ export class OPERATOR_INGREDIENTS_WITH_FLUIDS extends BaseOperator<
   static override nicknames = ["ingredientsWithFluids", "Ingr.with_fluids"];
   static override symbol = "Ingr.with_fluids";
   static override interactName = "ingredientsWithFluids";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Ingredients",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
-          from: { type: "List", listType: { type: "Fluid" } },
-          to: {
+          from: {
             type: "Ingredients",
           },
+          to: {
+            type: "Function",
+            from: { type: "List", listType: { type: "Fluid" } },
+            to: {
+              type: "Ingredients",
+            },
+          },
         },
-      }),
+        normalizeSignature
+      ),
       function: (
         ingredients: Ingredients
       ): TypeLambda<iArray<Fluid>, Ingredients> => {

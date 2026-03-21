@@ -10,17 +10,20 @@ export class OPERATOR_NBT_AS_SHORT extends BaseOperator<ShortTag, Integer> {
   static override nicknames = ["nbtAsShort"];
   static override symbol = "NBT.as_short";
   static override interactName = "nbtAsShort";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "NBT",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "Integer",
+          },
         },
-        to: {
-          type: "Integer",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (nbt: IntTag): Integer => {
         if (nbt.getType() === Tag.TAG_SHORT) {
           return nbt.valueOf();

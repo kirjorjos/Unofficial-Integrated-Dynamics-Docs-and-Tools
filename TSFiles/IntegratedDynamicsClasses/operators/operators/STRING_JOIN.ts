@@ -12,21 +12,24 @@ export class OPERATOR_STRING_JOIN extends BaseOperator<
   static override nicknames = ["stringJoin"];
   static override symbol = "join";
   static override interactName = "stringJoin";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
-          from: { type: "List", listType: { type: "String" } },
-          to: {
+          from: {
             type: "String",
           },
+          to: {
+            type: "Function",
+            from: { type: "List", listType: { type: "String" } },
+            to: {
+              type: "String",
+            },
+          },
         },
-      }),
+        normalizeSignature
+      ),
       function: (delimiter: iString): TypeLambda<iArray<iString>, iString> => {
         return (stringList: iArray<iString>): iString => {
           if (

@@ -19,17 +19,20 @@ export class OPERATOR_OBJECT_FLUIDSTACK_BUCKET extends BaseOperator<
   ];
   static override symbol = "bucket";
   static override interactName = "fluidstackBucket";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Fluid",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Fluid",
+          },
+          to: {
+            type: "Item",
+          },
         },
-        to: {
-          type: "Item",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (fluid: Fluid): Item => {
         return fluid.getBucket();
       },

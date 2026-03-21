@@ -19,23 +19,26 @@ export class OPERATOR_OBJECT_ENTITY_CANBREEDWITH extends BaseOperator<
   ];
   static override symbol = "can_breed_with";
   static override interactName = "entityCanBreedWith";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
-            type: "Item",
+            type: "Entity",
           },
           to: {
-            type: "Boolean",
+            type: "Function",
+            from: {
+              type: "Item",
+            },
+            to: {
+              type: "Boolean",
+            },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (entity: Entity): TypeLambda<Item, iBoolean> => {
         return (item: Item): iBoolean => {
           return entity.getBreadableList().includes(item.getUniqueName());

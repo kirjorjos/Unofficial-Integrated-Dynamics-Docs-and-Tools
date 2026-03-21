@@ -22,20 +22,23 @@ export class OPERATOR_OBJECT_ITEMSTACK_TAG_STACKS extends BaseOperator<
   ];
   static override symbol = "item_tag_val";
   static override interactName = "itemstackTagVal";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
-          type: "List",
-          listType: {
-            type: "Item",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: {
+            type: "List",
+            listType: {
+              type: "Item",
+            },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (tag: iString): iArray<Item> => {
         const matches: Item[] = [];
         const itemRegistry = RegistryHub.itemRegistry;

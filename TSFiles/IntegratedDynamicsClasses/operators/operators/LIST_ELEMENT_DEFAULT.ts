@@ -18,23 +18,26 @@ export class OPERATOR_LIST_ELEMENT_DEFAULT extends BaseOperator<
   ];
   static override symbol = "get_or_default";
   static override interactName = "listGetOrDefault";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
-          from: {
-            type: "Integer",
-          },
+          from: { type: "List", listType: { type: "Any", typeID: 1 } },
           to: {
             type: "Function",
-            from: { type: "Any", typeID: 1 },
-            to: { type: "Any", typeID: 1 },
+            from: {
+              type: "Integer",
+            },
+            to: {
+              type: "Function",
+              from: { type: "Any", typeID: 1 },
+              to: { type: "Any", typeID: 1 },
+            },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (
         list: iArray<IntegratedValue>
       ): TypeLambda<Integer, TypeLambda<IntegratedValue, IntegratedValue>> => {

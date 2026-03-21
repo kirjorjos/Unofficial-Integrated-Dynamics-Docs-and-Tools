@@ -19,17 +19,20 @@ export class OPERATOR_OBJECT_ITEMFRAME_CONTENTS extends BaseOperator<
   ];
   static override symbol = "itemframe_contents";
   static override interactName = "entityItemFrameContents";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Entity",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Item",
+          },
         },
-        to: {
-          type: "Item",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (entity: Entity): Item => {
         if (entity.isItemFrame().valueOf()) {
           return entity.getItemFrameContents();

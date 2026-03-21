@@ -12,15 +12,18 @@ export class OPERATOR_OBJECT_BLOCK_TAG extends BaseOperator<
   static override nicknames = ["blockTags", "BlockTag", "blockTag"];
   static override symbol = "block_tag_names";
   static override interactName = "blockTags";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Block",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Block",
+          },
+          to: { type: "List", listType: { type: "String" } },
         },
-        to: { type: "List", listType: { type: "String" } },
-      }),
+        normalizeSignature
+      ),
       function: (block: Block): iArray<iString> => {
         return block.getTagNames();
       },

@@ -15,23 +15,26 @@ export class OPERATOR_STRING_INDEX_OF_REGEX extends BaseOperator<
   static override nicknames = ["indexOfRegex", "stringIndexOfRegex"];
   static override symbol = "index_of_regex";
   static override interactName = "stringIndexOfRegex";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
             type: "String",
           },
           to: {
-            type: "Integer",
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Integer",
+            },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (regexString: iString): TypeLambda<iString, Integer> => {
         return (fullString: iString): Integer => {
           const regex = new RE2(sanitizeForRe2(regexString.valueOf()), "u");

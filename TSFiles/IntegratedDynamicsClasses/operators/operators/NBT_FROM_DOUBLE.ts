@@ -8,17 +8,20 @@ export class OPERATOR_NBT_FROM_DOUBLE extends BaseOperator<Double, DoubleTag> {
   static override nicknames = ["doubleAsNbt", "nbtFromDouble"];
   static override symbol = "NBT.from_double";
   static override interactName = "doubleAsNbt";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Double",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Double",
+          },
+          to: {
+            type: "NBT",
+          },
         },
-        to: {
-          type: "NBT",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (double: Double): DoubleTag => {
         return new DoubleTag(double);
       },

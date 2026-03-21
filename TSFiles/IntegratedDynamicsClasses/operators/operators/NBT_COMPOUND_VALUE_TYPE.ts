@@ -17,23 +17,26 @@ export class OPERATOR_NBT_COMPOUND_VALUE_TYPE extends BaseOperator<
   ];
   static override symbol = "NBT{}.type";
   static override interactName = "nbtType";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
-            type: "String",
+            type: "NBT",
           },
           to: {
-            type: "String",
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "String",
+            },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (nbt: CompoundTag): TypeLambda<iString, iString> => {
         return (key: iString): iString => {
           if (!nbt.has(key)) {

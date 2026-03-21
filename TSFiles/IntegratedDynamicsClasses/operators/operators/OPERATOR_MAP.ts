@@ -11,30 +11,33 @@ export class OPERATOR_OPERATOR_MAP extends BaseOperator<
   static override nicknames = ["operatorMap", "map"];
   static override symbol = "map";
   static override interactName = "operatorMap";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Operator",
-          obscured: {
-            type: "Function",
-            from: { type: "Any", typeID: 1 },
-            to: { type: "Any", typeID: 2 },
-          },
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
-            type: "List",
-            listType: { type: "Any", typeID: 1 },
+            type: "Operator",
+            obscured: {
+              type: "Function",
+              from: { type: "Any", typeID: 1 },
+              to: { type: "Any", typeID: 2 },
+            },
           },
           to: {
-            type: "List",
-            listType: { type: "Any", typeID: 2 },
+            type: "Function",
+            from: {
+              type: "List",
+              listType: { type: "Any", typeID: 1 },
+            },
+            to: {
+              type: "List",
+              listType: { type: "Any", typeID: 2 },
+            },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (
         op: Operator<IntegratedValue, IntegratedValue>
       ): TypeLambda<iArray<IntegratedValue>, iArray<IntegratedValue>> => {

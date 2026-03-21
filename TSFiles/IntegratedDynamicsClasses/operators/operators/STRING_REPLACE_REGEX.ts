@@ -17,14 +17,10 @@ export class OPERATOR_STRING_REPLACE_REGEX extends BaseOperator<
   static override nicknames = ["stringReplaceRegex"];
   static override symbol = "replace_regex";
   static override interactName = "stringReplaceRegex";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
             type: "String",
@@ -35,11 +31,18 @@ export class OPERATOR_STRING_REPLACE_REGEX extends BaseOperator<
               type: "String",
             },
             to: {
-              type: "String",
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: {
+                type: "String",
+              },
             },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (regexString: iString) => {
         return (replacementString: iString): TypeLambda<iString, iString> => {
           return (fullString: iString): iString => {

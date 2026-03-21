@@ -21,17 +21,20 @@ export class OPERATOR_OBJECT_FLUIDSTACK_BY_NAME extends BaseOperator<
   ];
   static override symbol = "fluid_by_name";
   static override interactName = "stringFluidByName";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "String",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: {
+            type: "Fluid",
+          },
         },
-        to: {
-          type: "Fluid",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (name: iString): Fluid => {
         const fluidRegistry = RegistryHub.fluidRegistry;
         const key = name.valueOf().toLowerCase();

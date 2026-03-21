@@ -16,52 +16,55 @@ export class OPERATOR_OPERATOR_APPLY_3 extends BaseOperator<
   static override nicknames = ["operatorApply3", "operatorApply_3", "apply3"];
   static override symbol = "apply3";
   static override interactName = "operatorApply3";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Operator",
-          obscured: {
-            type: "Function",
-            from: { type: "Any", typeID: 1 },
-            to: {
-              type: "Function",
-              from: { type: "Any", typeID: 2 },
-              to: {
-                type: "Function",
-                from: { type: "Any", typeID: 3 },
-                to: { type: "Any", typeID: 4 },
-              },
-            },
-          },
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
-            type: "Any",
-            typeID: 1,
+            type: "Operator",
+            obscured: {
+              type: "Function",
+              from: { type: "Any", typeID: 1 },
+              to: {
+                type: "Function",
+                from: { type: "Any", typeID: 2 },
+                to: {
+                  type: "Function",
+                  from: { type: "Any", typeID: 3 },
+                  to: { type: "Any", typeID: 4 },
+                },
+              },
+            },
           },
           to: {
             type: "Function",
             from: {
               type: "Any",
-              typeID: 2,
+              typeID: 1,
             },
             to: {
               type: "Function",
               from: {
                 type: "Any",
-                typeID: 3,
+                typeID: 2,
               },
               to: {
-                type: "Any",
-                typeID: 4,
+                type: "Function",
+                from: {
+                  type: "Any",
+                  typeID: 3,
+                },
+                to: {
+                  type: "Any",
+                  typeID: 4,
+                },
               },
             },
           },
         },
-      }),
+        normalizeSignature
+      ),
       serializer: "integrateddynamics:curry",
       function: (
         op: Operator<

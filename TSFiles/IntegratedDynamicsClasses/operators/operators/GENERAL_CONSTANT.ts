@@ -16,26 +16,29 @@ export class OPERATOR_GENERAL_CONSTANT extends BaseOperator<
   ];
   static override symbol = "K";
   static override interactName = "anyConstant";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Any",
-          typeID: 1,
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
             type: "Any",
-            typeID: 2,
-          },
-          to: {
-            type: "Any",
             typeID: 1,
           },
+          to: {
+            type: "Function",
+            from: {
+              type: "Any",
+              typeID: 2,
+            },
+            to: {
+              type: "Any",
+              typeID: 1,
+            },
+          },
         },
-      }),
+        normalizeSignature
+      ),
       function: (value: IntegratedValue): TypeLambda<void, IntegratedValue> => {
         return () => {
           return value;

@@ -19,29 +19,32 @@ export class OPERATOR_NBT_COMPOUND_WITH_FLOAT extends BaseOperator<
   ];
   static override symbol = "NBT{}.with_float";
   static override interactName = "nbtWithFloat";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
-            type: "String",
+            type: "NBT",
           },
           to: {
             type: "Function",
             from: {
-              type: "Double",
+              type: "String",
             },
             to: {
-              type: "NBT",
+              type: "Function",
+              from: {
+                type: "Double",
+              },
+              to: {
+                type: "NBT",
+              },
             },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (
         nbt: CompoundTag
       ): TypeLambda<iString, TypeLambda<Double, CompoundTag>> => {

@@ -16,17 +16,20 @@ export class OPERATOR_UNIQUELY_NAMED_UNIQUE_NAME extends BaseOperator<
   ];
   static override symbol = "uname";
   static override interactName = "uniquely_namedUniqueName";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "UniquelyNamed",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "UniquelyNamed",
+          },
+          to: {
+            type: "String",
+          },
         },
-        to: {
-          type: "String",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (uniquelyNamed: UniquelyNamed): iString => {
         return uniquelyNamed.getUniqueName();
       },

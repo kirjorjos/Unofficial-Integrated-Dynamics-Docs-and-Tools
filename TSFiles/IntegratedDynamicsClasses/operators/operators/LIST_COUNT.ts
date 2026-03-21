@@ -12,19 +12,22 @@ export class OPERATOR_LIST_COUNT extends BaseOperator<
   static override nicknames = ["listCount", "count"];
   static override symbol = "count";
   static override interactName = "listCount";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
-          from: { type: "Any", typeID: 1 },
+          from: { type: "List", listType: { type: "Any", typeID: 1 } },
           to: {
-            type: "Integer",
+            type: "Function",
+            from: { type: "Any", typeID: 1 },
+            to: {
+              type: "Integer",
+            },
           },
         },
-      }),
+        normalizeSignature
+      ),
       function: (
         list: iArray<IntegratedValue>
       ): TypeLambda<IntegratedValue, Integer> => {

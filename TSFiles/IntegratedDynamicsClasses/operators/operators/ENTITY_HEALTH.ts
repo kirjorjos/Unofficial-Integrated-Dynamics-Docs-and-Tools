@@ -13,17 +13,20 @@ export class OPERATOR_ENTITY_HEALTH extends BaseOperator<Entity, Double> {
   ];
   static override symbol = "health";
   static override interactName = "entityHealth";
-  constructor() {
+  constructor(normalizeSignature = true) {
     super({
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Entity",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Double",
+          },
         },
-        to: {
-          type: "Double",
-        },
-      }),
+        normalizeSignature
+      ),
       function: (entity: Entity): Double => {
         return entity.getHealth();
       },
