@@ -72,7 +72,7 @@ describe("TestCodeLineTransformer", () => {
     const code = "x => (booleanNot x) (numberIncrement x)";
     const ast = CodeLineToAST(code);
     expect(ASTToCodeLine(ast)).toBe(
-      "operatorPipe2 anyIdentity numberIncrement booleanNot"
+      "operatorPipe2 booleanNot numberIncrement operatorApply"
     );
   });
 

@@ -592,7 +592,11 @@ export const CodeLineToAST = (
         if (
           E1.type === "Curry" &&
           E1.args.length === 1 &&
-          !containsVar(param, E1.base as InternalAST)
+          !containsVar(param, E1.base as InternalAST) &&
+          !(
+            E1.args[0]!.type === "Variable" &&
+            (E1.args[0]! as { name: string }).name === param
+          )
         ) {
           return {
             type: "Pipe2",
