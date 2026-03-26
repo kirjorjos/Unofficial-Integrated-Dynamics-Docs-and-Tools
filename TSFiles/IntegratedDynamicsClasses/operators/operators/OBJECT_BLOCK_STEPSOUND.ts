@@ -8,6 +8,7 @@ export class OPERATOR_OBJECT_BLOCK_STEPSOUND extends BaseOperator<
   iString
 > {
   static override internalName = "integrateddynamics:block_stepsound" as const;
+  static override numericID = 18;
   static override nicknames = [
     "BlockStepsound",
     "blockStepSound",

@@ -10,6 +10,7 @@ export class OPERATOR_LIST_SLICE extends BaseOperator<
   Operator<Integer, Operator<Integer, iArrayEager<IntegratedValue>>>
 > {
   static override internalName = "integrateddynamics:list_slice" as const;
+  static override numericID = 138;
   static override nicknames = ["listSlice", "slice"];
   static override symbol = "slice";
   static override interactName = "listSlice";

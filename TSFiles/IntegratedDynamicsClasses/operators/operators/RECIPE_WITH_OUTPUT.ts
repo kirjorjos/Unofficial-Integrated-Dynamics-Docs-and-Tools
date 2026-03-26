@@ -10,6 +10,7 @@ export class OPERATOR_RECIPE_WITH_OUTPUT extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:recipe_with_output" as const;
+  static override numericID = 185;
   static override nicknames = ["recipeWithOutput"];
   static override symbol = "Recipe.with_out";
   static override interactName = "recipeWithOutput";

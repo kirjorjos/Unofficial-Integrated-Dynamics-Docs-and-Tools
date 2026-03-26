@@ -8,6 +8,7 @@ export class OPERATOR_OBJECT_ENTITY_HURTSOUND extends BaseOperator<
   iString
 > {
   static override internalName = "integrateddynamics:entity_hurtsound" as const;
+  static override numericID = 21;
   static override nicknames = [
     "EntityHurtsound",
     "entity_hurt_sound",

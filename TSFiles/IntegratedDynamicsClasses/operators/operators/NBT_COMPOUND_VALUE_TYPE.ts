@@ -10,6 +10,7 @@ export class OPERATOR_NBT_COMPOUND_VALUE_TYPE extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:nbt_compound_type" as const;
+  static override numericID = 213;
   static override nicknames = [
     "nbtType",
     "nbtCompoundValueType",

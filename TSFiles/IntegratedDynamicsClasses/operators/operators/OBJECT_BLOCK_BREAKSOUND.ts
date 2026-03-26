@@ -7,6 +7,7 @@ export class OPERATOR_OBJECT_BLOCK_BREAKSOUND extends BaseOperator<
   iString
 > {
   static override internalName = "integrateddynamics:block_breaksound" as const;
+  static override numericID = 13;
   static override nicknames = [
     "BlockBreaksound",
     "block_break_sound",

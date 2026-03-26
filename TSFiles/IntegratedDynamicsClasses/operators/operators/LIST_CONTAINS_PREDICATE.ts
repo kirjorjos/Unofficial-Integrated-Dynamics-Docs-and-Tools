@@ -9,6 +9,7 @@ export class OPERATOR_LIST_CONTAINS_PREDICATE extends BaseOperator<
   Operator<Predicate<IntegratedValue>, iBoolean>
 > {
   static override internalName = "integrateddynamics:list_contains_p" as const;
+  static override numericID = 103;
   static override nicknames = [
     "listContainsP",
     "listContainsPredicate",

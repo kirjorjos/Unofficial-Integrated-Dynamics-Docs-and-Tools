@@ -10,6 +10,7 @@ export class OPERATOR_STRING_STARTS_WITH extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:string_starts_with" as const;
+  static override numericID = 162;
   static override nicknames = ["startsWith", "stringStartsWith"];
   static override symbol = "starts_with";
   static override interactName = "stringStartsWith";

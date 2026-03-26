@@ -12,6 +12,7 @@ export class OPERATOR_LIST_LAZYBUILT extends BaseOperator<
   >
 > {
   static override internalName = "integrateddynamics:list_lazybuilt" as const;
+  static override numericID = 118;
   static override nicknames = ["listLazybuilt", "lazybuilt", "anyLazyBuilt"];
   static override symbol = "lazybuilt";
   static override interactName = "anyLazyBuilt";

@@ -9,6 +9,7 @@ export class OPERATOR_OBJECT_PLAYER_TARGETBLOCK extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:entity_targetblock" as const;
+  static override numericID = 35;
   static override nicknames = [
     "entityTargetBlock",
     "PlayerTargetblock",

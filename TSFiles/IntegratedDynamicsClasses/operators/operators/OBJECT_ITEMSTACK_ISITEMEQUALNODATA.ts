@@ -10,6 +10,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISITEMEQUALNODATA extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:itemstack_isitemequalnodata" as const;
+  static override numericID = 282;
   static override nicknames = [
     "itemstackIsNbtEqual",
     "ItemstackIsitemequalnodata",

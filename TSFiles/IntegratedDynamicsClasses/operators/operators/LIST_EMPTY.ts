@@ -9,6 +9,7 @@ export class OPERATOR_LIST_EMPTY extends BaseOperator<
   iBoolean
 > {
   static override internalName = "integrateddynamics:list_empty" as const;
+  static override numericID = 105;
   static override nicknames = ["listEmpty", "listIsEmpty"];
   static override symbol = "∅";
   static override interactName = "listIsEmpty";

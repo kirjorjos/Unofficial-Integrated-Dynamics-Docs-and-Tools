@@ -9,6 +9,7 @@ export class OPERATOR_ITEMSTACK_TOOLTIP extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:itemstack_tooltip" as const;
+  static override numericID = 292;
   static override nicknames = [
     "ItemstackTooltip",
     "itemstack_tooltip",

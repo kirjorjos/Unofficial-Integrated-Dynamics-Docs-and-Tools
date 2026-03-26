@@ -7,6 +7,7 @@ export class OPERATOR_OBJECT_BLOCK_OPAQUE extends BaseOperator<
   iBoolean
 > {
   static override internalName = "integrateddynamics:block_opaque" as const;
+  static override numericID = 16;
   static override nicknames = ["blockIsOpaque", "BlockOpaque", "opaque"];
   static override symbol = "opaque";
   static override interactName = "blockIsOpaque";

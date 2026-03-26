@@ -9,6 +9,7 @@ export class OPERATOR_OBJECT_FLUIDSTACK_IS_LIGHTER_THAN_AIR extends BaseOperator
 > {
   static override internalName =
     "integrateddynamics:fluidstack_lighter_than_air" as const;
+  static override numericID = 272;
   static override nicknames = [
     "FluidstackIsLighterThanAir",
     "fluidstackIsLighterThanAir",

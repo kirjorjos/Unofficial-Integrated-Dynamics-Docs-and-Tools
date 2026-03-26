@@ -9,6 +9,7 @@ export class OPERATOR_OBJECT_FLUIDSTACK_TEMPERATURE extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:fluidstack_temperature" as const;
+  static override numericID = 276;
   static override nicknames = [
     "FluidstackTemperature",
     "fluidstackTemperature",

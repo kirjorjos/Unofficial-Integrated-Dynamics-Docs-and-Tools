@@ -8,6 +8,7 @@ export class OPERATOR_OBJECT_ENTITY_ISWET extends BaseOperator<
   iBoolean
 > {
   static override internalName = "integrateddynamics:entity_iswet" as const;
+  static override numericID = 29;
   static override nicknames = [
     "EntityIswet",
     "entity_is_wet",

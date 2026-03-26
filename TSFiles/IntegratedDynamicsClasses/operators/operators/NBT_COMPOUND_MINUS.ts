@@ -9,6 +9,7 @@ export class OPERATOR_NBT_COMPOUND_MINUS extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:nbt_compound_minus" as const;
+  static override numericID = 210;
   static override nicknames = ["nbtMinus", "nbtCompoundMinus", "NBTMinus"];
   static override symbol = "NBT{}.∖";
   static override interactName = "nbtMinus";

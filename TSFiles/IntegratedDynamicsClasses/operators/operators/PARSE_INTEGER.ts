@@ -6,6 +6,7 @@ import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 export class OPERATOR_PARSE_INTEGER extends BaseOperator<iString, Integer> {
   static override internalName =
     "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.integer" as const;
+  static override numericID = 194;
   static override nicknames = ["stringParseAsInteger", "parseInteger"];
   static override symbol = "parse_integer";
   static override interactName = "stringParseAsInteger";

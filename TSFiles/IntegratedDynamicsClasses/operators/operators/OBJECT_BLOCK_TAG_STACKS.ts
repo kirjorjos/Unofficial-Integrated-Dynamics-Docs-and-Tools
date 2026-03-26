@@ -12,6 +12,7 @@ export class OPERATOR_OBJECT_BLOCK_TAG_STACKS extends BaseOperator<
   iArray<Block>
 > {
   static override internalName = "integrateddynamics:string_blocktag" as const;
+  static override numericID = 298;
   static override nicknames = [
     "stringBlocksByTag",
     "BlockTagStacks",

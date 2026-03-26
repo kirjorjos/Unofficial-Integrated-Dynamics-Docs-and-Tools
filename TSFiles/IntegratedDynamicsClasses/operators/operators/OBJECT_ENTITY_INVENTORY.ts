@@ -9,6 +9,7 @@ export class OPERATOR_OBJECT_ENTITY_INVENTORY extends BaseOperator<
   iArray<Item>
 > {
   static override internalName = "integrateddynamics:entity_inventory" as const;
+  static override numericID = 22;
   static override nicknames = [
     "entityInventory",
     "EntityInventoryContents",

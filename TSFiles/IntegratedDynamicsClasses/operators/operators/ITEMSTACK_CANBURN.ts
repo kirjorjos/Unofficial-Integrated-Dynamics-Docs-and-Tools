@@ -5,6 +5,7 @@ import { ParsedSignature } from "HelperClasses/ParsedSignature";
 export class OPERATOR_ITEMSTACK_CANBURN extends BaseOperator<Item, iBoolean> {
   static override internalName =
     "integrateddynamics:itemstack_canburn" as const;
+  static override numericID = 112;
   static override nicknames = [
     "ItemstackCanburn",
     "item_can_burn",

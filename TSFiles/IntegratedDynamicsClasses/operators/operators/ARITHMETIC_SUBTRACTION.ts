@@ -8,6 +8,7 @@ export class OPERATOR_ARITHMETIC_SUBTRACTION extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:arithmetic_subtraction" as const;
+  static override numericID = 5;
   static override nicknames = [
     "subtract",
     "arithmeticSubtraction",

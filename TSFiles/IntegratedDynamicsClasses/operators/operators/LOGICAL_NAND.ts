@@ -8,6 +8,7 @@ export class OPERATOR_LOGICAL_NAND extends BaseOperator<
   Operator<iBoolean, iBoolean>
 > {
   static override internalName = "integrateddynamics:logical_nand" as const;
+  static override numericID = 110;
   static override nicknames = ["booleanNand", "nand", "logicalNand"];
   static override symbol = "!&&";
   static override interactName = "booleanNand";

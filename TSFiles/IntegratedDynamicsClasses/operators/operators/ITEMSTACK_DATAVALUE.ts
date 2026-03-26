@@ -9,6 +9,7 @@ import { CompoundTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftCla
 export class OPERATOR_ITEMSTACK_DATAVALUE extends BaseOperator<Item, iBoolean> {
   static override internalName =
     "integrateddynamics:itemstack_datavalue" as const;
+  static override numericID = 288;
   static override nicknames = [
     "ItemstackDataValue",
     "itemstack_data_value",

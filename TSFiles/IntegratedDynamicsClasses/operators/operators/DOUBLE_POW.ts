@@ -7,6 +7,7 @@ export class OPERATOR_DOUBLE_POW extends BaseOperator<
   Operator<Double, Double>
 > {
   static override internalName = "integrateddynamics:double_pow" as const;
+  static override numericID = 294;
   static override nicknames = ["doublePow", "pow"];
   static override symbol = "pow";
   static override interactName = "doublePow";

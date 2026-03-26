@@ -9,6 +9,7 @@ export class OPERATOR_UNIQUELY_NAMED_UNIQUE_NAME extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:string_unique_name" as const;
+  static override numericID = 147;
   static override nicknames = [
     "uniquely_namedUniqueName",
     "uname",

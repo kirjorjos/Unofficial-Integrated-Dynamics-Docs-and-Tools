@@ -8,6 +8,7 @@ export class OPERATOR_OBJECT_BLOCK_PLACESOUND extends BaseOperator<
   iString
 > {
   static override internalName = "integrateddynamics:block_placesound" as const;
+  static override numericID = 17;
   static override nicknames = [
     "BlockPlacesound",
     "blockPlaceSound",

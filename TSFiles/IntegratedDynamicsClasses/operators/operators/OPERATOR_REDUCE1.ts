@@ -5,6 +5,7 @@ import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 
 export class OPERATOR_OPERATOR_REDUCE1 extends BaseOperator<any, any> {
   static override internalName = "integrateddynamics:operator_reduce1" as const;
+  static override numericID = 182;
   static override nicknames = ["operatorReduce1", "reduce1"];
   static override symbol = "reduce1";
   static override interactName = "operatorReduce1";

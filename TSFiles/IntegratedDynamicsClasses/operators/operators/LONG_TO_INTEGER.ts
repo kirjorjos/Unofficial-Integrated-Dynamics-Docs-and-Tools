@@ -6,6 +6,7 @@ import { Integer } from "JavaNumberClasses/Integer";
 export class OPERATOR_LONG_TO_INTEGER extends BaseOperator<Long, Integer> {
   static override internalName =
     "integrateddynamics:operator.integrateddynamics.castintegrateddynamics_long__integrateddynamics_integer" as const;
+  static override numericID = 89;
   static override nicknames = [
     "longLongToInteger",
     "longToInt",

@@ -8,6 +8,7 @@ export class OPERATOR_GENERAL_CHOICE extends BaseOperator<
   Operator<IntegratedValue, Operator<IntegratedValue, IntegratedValue>>
 > {
   static override internalName = "integrateddynamics:general_choice" as const;
+  static override numericID = 44;
   static override nicknames = [
     "generalChoice",
     "choice",

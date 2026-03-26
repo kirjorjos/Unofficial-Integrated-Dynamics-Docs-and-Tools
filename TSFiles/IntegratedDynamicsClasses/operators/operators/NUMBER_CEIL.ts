@@ -4,6 +4,7 @@ import { Integer } from "JavaNumberClasses/Integer";
 
 export class OPERATOR_NUMBER_CEIL extends BaseOperator<TypeNumber, Integer> {
   static override internalName = "integrateddynamics:number_ceil" as const;
+  static override numericID = 204;
   static override nicknames = ["ceil", "numberCeil"];
   static override symbol = "⌈ ⌉";
   static override interactName = "numberCeil";

@@ -8,6 +8,7 @@ export class OPERATOR_RELATIONAL_LT extends BaseOperator<
   Operator<TypeNumber, iBoolean>
 > {
   static override internalName = "integrateddynamics:relational_lt" as const;
+  static override numericID = 76;
   static override nicknames = ["numberLessThan", "relationalLt", "lt"];
   static override symbol = "<";
 

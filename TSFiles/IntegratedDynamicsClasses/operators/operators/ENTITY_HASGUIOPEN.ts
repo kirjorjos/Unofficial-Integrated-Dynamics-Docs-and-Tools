@@ -5,6 +5,7 @@ import { ParsedSignature } from "HelperClasses/ParsedSignature";
 export class OPERATOR_ENTITY_HASGUIOPEN extends BaseOperator<Entity, iBoolean> {
   static override internalName =
     "integrateddynamics:entity_hasguiopen" as const;
+  static override numericID = 186;
   static override nicknames = [
     "PlayerHasguiopen",
     "player_has_gui_open",

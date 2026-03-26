@@ -9,6 +9,7 @@ export class OPERATOR_OPERATOR_FILTER extends BaseOperator<
   Operator<iArray<IntegratedValue>, iArray<IntegratedValue>>
 > {
   static override internalName = "integrateddynamics:operator_filter" as const;
+  static override numericID = 99;
   static override nicknames = ["operatorFilter", "filter"];
   static override symbol = "filter";
   static override interactName = "operatorFilter";

@@ -6,6 +6,7 @@ import { ParsedSignature } from "HelperClasses/ParsedSignature";
 
 export class OPERATOR_NBT_AS_DOUBLE extends BaseOperator<DoubleTag, Double> {
   static override internalName = "integrateddynamics:nbt_as_double" as const;
+  static override numericID = 244;
   static override nicknames = ["nbtAsDouble"];
   static override symbol = "NBT.as_double";
   static override interactName = "nbtAsDouble";

@@ -10,6 +10,7 @@ export class OPERATOR_LIST_ELEMENT_DEFAULT extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:list_get_or_default" as const;
+  static override numericID = 143;
   static override nicknames = [
     "listElementDefault",
     "get_or_default",

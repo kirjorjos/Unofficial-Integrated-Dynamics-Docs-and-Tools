@@ -9,6 +9,7 @@ export class OPERATOR_OBJECT_ENTITY_ISSHEARABLE extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:entity_isshearable" as const;
+  static override numericID = 132;
   static override nicknames = [
     "EntityIsshearable",
     "entity_is_shearable",

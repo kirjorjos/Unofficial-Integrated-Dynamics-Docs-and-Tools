@@ -9,6 +9,7 @@ export class OPERATOR_STRING_JOIN extends BaseOperator<
   Operator<iArray<iString>, iString>
 > {
   static override internalName = "integrateddynamics:string_join" as const;
+  static override numericID = 198;
   static override nicknames = ["stringJoin"];
   static override symbol = "join";
   static override interactName = "stringJoin";

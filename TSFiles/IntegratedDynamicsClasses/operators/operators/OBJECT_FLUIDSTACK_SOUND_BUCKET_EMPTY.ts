@@ -9,6 +9,7 @@ export class OPERATOR_OBJECT_FLUIDSTACK_SOUND_BUCKET_EMPTY extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:fluidstack_sound_bucket_empty" as const;
+  static override numericID = 273;
   static override nicknames = [
     "fluidstackBucketEmptySound",
     "FluidstackSoundBucketEmpty",

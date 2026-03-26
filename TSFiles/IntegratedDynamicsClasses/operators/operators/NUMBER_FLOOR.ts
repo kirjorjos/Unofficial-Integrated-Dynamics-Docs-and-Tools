@@ -4,6 +4,7 @@ import { Integer } from "JavaNumberClasses/Integer";
 
 export class OPERATOR_NUMBER_FLOOR extends BaseOperator<TypeNumber, Integer> {
   static override internalName = "integrateddynamics:number_floor" as const;
+  static override numericID = 205;
   static override nicknames = ["floor", "numberFloor"];
   static override symbol = "⌊ ⌋";
   static override interactName = "numberFloor";

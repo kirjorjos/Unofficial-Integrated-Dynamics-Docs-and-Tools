@@ -7,6 +7,7 @@ export class OPERATOR_ENTITY_HELDITEMOFFHAND extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:entity_helditemoffhand" as const;
+  static override numericID = 107;
   static override nicknames = [
     "EntityHelditemOff",
     "entity_held_item_off",

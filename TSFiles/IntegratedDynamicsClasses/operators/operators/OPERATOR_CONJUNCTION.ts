@@ -12,6 +12,7 @@ export class OPERATOR_OPERATOR_CONJUNCTION extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:operator_conjunction" as const;
+  static override numericID = 97;
   static override nicknames = ["operatorConjunction", "conjunction"];
   static override symbol = ".&&.";
   static override interactName = "operatorConjunction";

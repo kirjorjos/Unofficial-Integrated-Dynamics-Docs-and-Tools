@@ -10,6 +10,7 @@ export class OPERATOR_OBJECT_FLUIDSTACK_ISRAWFLUIDEQUAL extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:fluidstack_israwfluidequal" as const;
+  static override numericID = 40;
   static override nicknames = [
     "fluidstackIsRawEqual",
     "FluidstackIsrawfluidequal",

@@ -14,6 +14,7 @@ export class OPERATOR_NBT_COMPOUND_VALUE_DOUBLE extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:nbt_compound_value_double" as const;
+  static override numericID = 216;
   static override nicknames = [
     "nbtGetDouble",
     "nbtCompoundValueDouble",

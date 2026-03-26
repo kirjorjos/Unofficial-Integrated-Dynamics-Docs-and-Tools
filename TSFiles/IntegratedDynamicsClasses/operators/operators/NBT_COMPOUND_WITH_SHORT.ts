@@ -12,6 +12,7 @@ export class OPERATOR_NBT_COMPOUND_WITH_SHORT extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:nbt_compound_with_short" as const;
+  static override numericID = 234;
   static override nicknames = [
     "nbtWithShort",
     "nbtCompoundWithShort",

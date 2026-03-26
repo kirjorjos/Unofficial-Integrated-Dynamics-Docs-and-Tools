@@ -8,6 +8,7 @@ export class OPERATOR_OBJECT_BLOCK_ISSHEARABLE extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:block_isshearable" as const;
+  static override numericID = 131;
   static override nicknames = [
     "blockIsshearable",
     "block_is_shearable",

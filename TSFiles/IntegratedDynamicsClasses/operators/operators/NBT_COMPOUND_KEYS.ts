@@ -10,6 +10,7 @@ export class OPERATOR_NBT_COMPOUND_KEYS extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:nbt_compound_keys" as const;
+  static override numericID = 209;
   static override nicknames = ["nbtKeys", "nbtCompoundKeys", "NBTKeys"];
   static override symbol = "NBT{}.keys";
   static override interactName = "nbtKeys";

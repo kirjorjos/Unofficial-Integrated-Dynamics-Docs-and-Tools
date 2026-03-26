@@ -10,6 +10,7 @@ export class OPERATOR_ITEMSTACK_ITEMLISTCOUNT extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:itemstack_itemlistcount" as const;
+  static override numericID = 190;
   static override nicknames = [
     "listItemListCount",
     "ItemstackListCount",

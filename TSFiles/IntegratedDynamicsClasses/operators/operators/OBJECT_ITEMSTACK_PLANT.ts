@@ -5,6 +5,7 @@ import { Item } from "IntegratedDynamicsClasses/Item";
 
 export class OPERATOR_OBJECT_ITEMSTACK_PLANT extends BaseOperator<Item, Block> {
   static override internalName = "integrateddynamics:itemstack_plant" as const;
+  static override numericID = 124;
   static override nicknames = ["plant"];
   static override symbol = "plant";
   static override interactName = "plant";

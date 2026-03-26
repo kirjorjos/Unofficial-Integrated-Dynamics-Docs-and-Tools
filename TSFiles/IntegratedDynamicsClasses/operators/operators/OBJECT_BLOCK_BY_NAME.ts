@@ -11,6 +11,7 @@ export class OPERATOR_OBJECT_BLOCK_BY_NAME extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:block_blockbyname" as const;
+  static override numericID = 142;
   static override nicknames = [
     "stringBlockByName",
     "BlockByName",

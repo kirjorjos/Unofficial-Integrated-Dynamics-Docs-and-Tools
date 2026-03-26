@@ -11,6 +11,7 @@ export class OPERATOR_LIST_EQUALS_MULTISET extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:list_equals_multiset" as const;
+  static override numericID = 301;
   static override nicknames = [
     "listEquals_multiset",
     "listEqualsMultiset",

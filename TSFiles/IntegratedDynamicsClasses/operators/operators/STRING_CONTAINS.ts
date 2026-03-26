@@ -9,6 +9,7 @@ export class OPERATOR_STRING_CONTAINS extends BaseOperator<
   Operator<iString, iBoolean>
 > {
   static override internalName = "integrateddynamics:string_contains" as const;
+  static override numericID = 156;
   static override nicknames = ["stringContains"];
   static override symbol = "contains";
   static override interactName = "stringContains";

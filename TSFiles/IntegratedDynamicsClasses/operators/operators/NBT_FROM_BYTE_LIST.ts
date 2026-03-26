@@ -10,6 +10,7 @@ export class OPERATOR_NBT_FROM_BYTE_LIST extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:nbt_from_byte_list" as const;
+  static override numericID = 255;
   static override nicknames = ["byteListAsNbt", "nbtFromByteList"];
   static override symbol = "NBT.from_byte_list";
   static override interactName = "byteListAsNbt";

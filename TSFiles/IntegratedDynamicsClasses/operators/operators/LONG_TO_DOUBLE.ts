@@ -6,6 +6,7 @@ import { Double } from "JavaNumberClasses/Double";
 export class OPERATOR_LONG_TO_DOUBLE extends BaseOperator<Long, Double> {
   static override internalName =
     "integrateddynamics:operator.integrateddynamics.castintegrateddynamics_long__integrateddynamics_double" as const;
+  static override numericID = 88;
   static override nicknames = [
     "longToDouble",
     "longDouble",

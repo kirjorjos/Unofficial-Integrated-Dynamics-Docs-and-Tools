@@ -8,6 +8,7 @@ export class OPERATOR_OBJECT_FLUIDSTACK_MODNAME extends BaseOperator<
   iString
 > {
   static override internalName = "integrateddynamics:fluidstack_mod" as const;
+  static override numericID = 41;
   static override nicknames = [
     "fluidstackMod",
     "FluidstackModname",

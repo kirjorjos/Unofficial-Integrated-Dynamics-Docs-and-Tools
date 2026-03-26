@@ -5,6 +5,7 @@ import { BaseOperator } from "../BaseOperator";
 export class OPERATOR_ENTITY_ISMINECART extends BaseOperator<Entity, iBoolean> {
   static override internalName =
     "integrateddynamics:entity_isminecart" as const;
+  static override numericID = 171;
   static override nicknames = [
     "EntityIsminecart",
     "entity_is_minecart",

@@ -12,6 +12,7 @@ export class OPERATOR_OBJECT_FLUIDSTACK_TAG_STACKS extends BaseOperator<
   iArray<Fluid>
 > {
   static override internalName = "integrateddynamics:string_fluidtag" as const;
+  static override numericID = 299;
   static override nicknames = [
     "stringFluidsByTag",
     "FluidstackTagStacks",

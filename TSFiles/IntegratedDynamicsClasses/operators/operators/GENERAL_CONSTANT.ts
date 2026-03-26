@@ -7,6 +7,7 @@ export class OPERATOR_GENERAL_CONSTANT extends BaseOperator<
   Operator<IntegratedValue, IntegratedValue>
 > {
   static override internalName = "integrateddynamics:general_constant" as const;
+  static override numericID = 178;
   static override nicknames = [
     "generalConstant",
     "const",

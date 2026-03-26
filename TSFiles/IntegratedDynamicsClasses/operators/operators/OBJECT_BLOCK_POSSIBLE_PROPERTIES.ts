@@ -9,6 +9,7 @@ export class OPERATOR_OBJECT_BLOCK_POSSIBLE_PROPERTIES extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:block_blockpossibleproperties" as const;
+  static override numericID = 268;
   static override nicknames = [
     "BlockPossibleProperties",
     "block_possible_properties",

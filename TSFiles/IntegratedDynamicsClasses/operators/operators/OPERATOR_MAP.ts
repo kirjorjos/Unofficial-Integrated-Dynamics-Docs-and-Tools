@@ -8,6 +8,7 @@ export class OPERATOR_OPERATOR_MAP extends BaseOperator<
   Operator<iArray<IntegratedValue>, iArray<IntegratedValue>>
 > {
   static override internalName = "integrateddynamics:operator_map" as const;
+  static override numericID = 95;
   static override nicknames = ["operatorMap", "map"];
   static override symbol = "map";
   static override interactName = "operatorMap";

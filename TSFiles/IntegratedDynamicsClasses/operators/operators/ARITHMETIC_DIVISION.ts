@@ -8,6 +8,7 @@ export class OPERATOR_ARITHMETIC_DIVISION extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:arithmetic_division" as const;
+  static override numericID = 1;
   static override nicknames = ["divide", "arithmeticDivision", "numberDivide"];
   static override symbol = "/";
   static override interactName = "numberDivide";

@@ -6,6 +6,7 @@ import { CompoundTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftCla
 export class OPERATOR_PARSE_NBT extends BaseOperator<iString, CompoundTag> {
   static override internalName =
     "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.nbt" as const;
+  static override numericID = 196;
   static override nicknames = ["stringParseAsNbt", "parseNBT"];
   static override symbol = "parse_nbt";
   static override interactName = "stringParseAsNbt";

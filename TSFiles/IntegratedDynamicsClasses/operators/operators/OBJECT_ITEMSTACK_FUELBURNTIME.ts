@@ -9,6 +9,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_FUELBURNTIME extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:itemstack_burntime" as const;
+  static override numericID = 49;
   static override nicknames = [
     "itemstackBurnTime",
     "ItemstackFuelburntime",

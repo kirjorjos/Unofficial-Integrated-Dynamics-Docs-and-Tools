@@ -11,6 +11,7 @@ export class OPERATOR_NBT_COMPOUND_HASKEY extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:nbt_compound_haskey" as const;
+  static override numericID = 207;
   static override nicknames = ["nbtHasKey", "nbtCompoundHaskey", "NBTHasKey"];
   static override symbol = "NBT{}.has_key";
   static override interactName = "nbtHasKey";

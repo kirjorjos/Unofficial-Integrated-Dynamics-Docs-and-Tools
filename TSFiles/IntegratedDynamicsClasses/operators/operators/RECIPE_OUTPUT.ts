@@ -5,6 +5,7 @@ import { Ingredients } from "IntegratedDynamicsClasses/Ingredients";
 
 export class OPERATOR_RECIPE_OUTPUT extends BaseOperator<Recipe, Ingredients> {
   static override internalName = "integrateddynamics:recipe_output" as const;
+  static override numericID = 152;
   static override nicknames = ["recipeOutput"];
   static override symbol = "recipe_out";
   static override interactName = "recipeOutput";

@@ -12,6 +12,7 @@ export class OPERATOR_STRING_INDEX_OF_REGEX extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:string_index_of_regex" as const;
+  static override numericID = 165;
   static override nicknames = ["indexOfRegex", "stringIndexOfRegex"];
   static override symbol = "index_of_regex";
   static override interactName = "stringIndexOfRegex";

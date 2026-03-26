@@ -9,6 +9,7 @@ export class OPERATOR_OBJECT_ENTITY_ISCROUCHING extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:entity_iscrouching" as const;
+  static override numericID = 203;
   static override nicknames = [
     "EntityIscrouching",
     "entity_is_crouching",

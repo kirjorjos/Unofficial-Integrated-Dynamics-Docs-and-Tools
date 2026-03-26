@@ -9,6 +9,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_MAXDAMAGE extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:itemstack_maxdamage" as const;
+  static override numericID = 58;
   static override nicknames = [
     "ItemstackMaxdamage",
     "itemstack_max_damage",

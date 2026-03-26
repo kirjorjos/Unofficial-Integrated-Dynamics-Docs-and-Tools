@@ -6,6 +6,7 @@ import { Item } from "IntegratedDynamicsClasses/Item";
 
 export class OPERATOR_STRING_TAG extends BaseOperator<iString, iArray<Item>> {
   static override internalName = "integrateddynamics:string_tag" as const;
+  static override numericID = 202;
   static override nicknames = [
     "stringItemsByTag",
     "ItemstackTagStacks",

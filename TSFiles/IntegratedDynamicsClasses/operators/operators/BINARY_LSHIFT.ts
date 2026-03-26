@@ -7,6 +7,7 @@ export class OPERATOR_BINARY_LSHIFT extends BaseOperator<
   Operator<Integer, Integer>
 > {
   static override internalName = "integrateddynamics:binary_lshift" as const;
+  static override numericID = 8;
   static override nicknames = ["binaryLshift", "integerLeftShift"];
   static override symbol = "<<";
   static override interactName = "integerLeftShift";

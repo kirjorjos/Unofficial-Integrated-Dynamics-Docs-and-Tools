@@ -9,6 +9,7 @@ export class OPERATOR_OBJECT_FLUIDSTACK_SOUND_FLUID_VAPORIZE extends BaseOperato
 > {
   static override internalName =
     "integrateddynamics:fluidstack_sound_fluid_vaporize" as const;
+  static override numericID = 275;
   static override nicknames = [
     "fluidstackFluidVaporizeSound",
     "FluidstackSoundFluidVaporize",

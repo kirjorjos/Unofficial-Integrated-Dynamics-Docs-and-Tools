@@ -8,6 +8,7 @@ export class OPERATOR_OPERATOR_APPLY_N extends BaseOperator<
   Operator<iArray<IntegratedValue>, IntegratedValue>
 > {
   static override internalName = "integrateddynamics:operator_apply_n" as const;
+  static override numericID = 280;
   static override nicknames = [
     "operatorApply_n",
     "operatorApplyN",

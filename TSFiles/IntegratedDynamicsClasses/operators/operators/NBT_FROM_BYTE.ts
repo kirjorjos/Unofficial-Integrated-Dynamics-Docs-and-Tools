@@ -5,6 +5,7 @@ import { ByteTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses
 
 export class OPERATOR_NBT_FROM_BYTE extends BaseOperator<Integer, ByteTag> {
   static override internalName = "integrateddynamics:nbt_from_byte" as const;
+  static override numericID = 254;
   static override nicknames = ["byteAsNbt", "nbtFromByte"];
   static override symbol = "NBT.from_byte";
   static override interactName = "byteAsNbt";

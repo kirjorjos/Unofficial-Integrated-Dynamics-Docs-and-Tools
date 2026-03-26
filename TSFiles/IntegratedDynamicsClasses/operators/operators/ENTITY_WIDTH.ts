@@ -3,6 +3,7 @@ import { BaseOperator } from "../BaseOperator";
 
 export class OPERATOR_ENTITY_WIDTH extends BaseOperator<Entity, Double> {
   static override internalName = "integrateddynamics:entity_width" as const;
+  static override numericID = 92;
   static override nicknames = [
     "EntityWidth",
     "entity_width",

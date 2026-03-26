@@ -6,6 +6,7 @@ export class OPERATOR_GENERAL_IDENTITY extends BaseOperator<
   IntegratedValue
 > {
   static override internalName = "integrateddynamics:general_identity" as const;
+  static override numericID = 45;
   static override nicknames = [
     "generalIdentity",
     "id",

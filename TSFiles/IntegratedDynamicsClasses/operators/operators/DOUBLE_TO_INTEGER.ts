@@ -4,6 +4,7 @@ import { ParsedSignature } from "HelperClasses/ParsedSignature";
 export class OPERATOR_DOUBLE_TO_INTEGER extends BaseOperator<Double, Integer> {
   static override internalName =
     "integrateddynamics:operator.integrateddynamics.castintegrateddynamics_double__integrateddynamics_integer" as const;
+  static override numericID = 84;
   static override nicknames = [
     "doubleDoubleToInteger",
     "doubleToInt",

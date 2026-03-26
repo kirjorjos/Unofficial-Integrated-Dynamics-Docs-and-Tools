@@ -18,6 +18,7 @@ export class OPERATOR_NBT_COMPOUND_VALUE_LIST_BYTE extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:nbt_compound_value_list_byte" as const;
+  static override numericID = 219;
   static override nicknames = [
     "nbtGetListByte",
     "nbtCompoundValueListByte",

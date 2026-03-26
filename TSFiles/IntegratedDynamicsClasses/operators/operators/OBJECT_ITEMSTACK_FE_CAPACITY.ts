@@ -9,6 +9,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_FE_CAPACITY extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:itemstack_fecapacity" as const;
+  static override numericID = 188;
   static override nicknames = [
     "ItemstackFecapacity",
     "itemstack_fe_capacity",

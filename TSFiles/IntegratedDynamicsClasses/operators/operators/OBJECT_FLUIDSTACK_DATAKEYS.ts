@@ -12,6 +12,7 @@ export class OPERATOR_OBJECT_FLUIDSTACK_DATAKEYS extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:fluidstack_datakeys" as const;
+  static override numericID = 284;
   static override nicknames = [
     "FluidstackDataKeys",
     "fluidstackDataKeys",

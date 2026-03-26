@@ -8,6 +8,7 @@ export class OPERATOR_RELATIONAL_GE extends BaseOperator<
   Operator<TypeNumber, iBoolean>
 > {
   static override internalName = "integrateddynamics:relational_ge" as const;
+  static override numericID = 73;
   static override nicknames = ["anyGreaterThanOrEquals", "relationalGe"];
   static override symbol = ">=";
   static override interactName = "anyGreaterThanOrEquals";

@@ -10,6 +10,7 @@ export class OPERATOR_STRING_SPLIT_ON extends BaseOperator<
   Operator<iString, iArray<iString>>
 > {
   static override internalName = "integrateddynamics:string_split_on" as const;
+  static override numericID = 160;
   static override nicknames = ["stringSplitOn"];
   static override symbol = "split_on";
   static override interactName = "stringSplitOn";

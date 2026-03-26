@@ -16,6 +16,7 @@ export class OPERATOR_NBT_COMPOUND_VALUE_LONG extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:nbt_compound_value_long" as const;
+  static override numericID = 222;
   static override nicknames = [
     "nbtGetLong",
     "nbtCompoundValueLong",

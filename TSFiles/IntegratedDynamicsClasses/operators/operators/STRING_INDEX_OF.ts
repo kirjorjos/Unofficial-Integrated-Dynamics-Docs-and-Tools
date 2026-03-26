@@ -9,6 +9,7 @@ export class OPERATOR_STRING_INDEX_OF extends BaseOperator<
   Operator<iString, Integer>
 > {
   static override internalName = "integrateddynamics:string_index_of" as const;
+  static override numericID = 164;
   static override nicknames = ["stringIndexOf"];
   static override symbol = "index_of";
   static override interactName = "stringIndexOf";

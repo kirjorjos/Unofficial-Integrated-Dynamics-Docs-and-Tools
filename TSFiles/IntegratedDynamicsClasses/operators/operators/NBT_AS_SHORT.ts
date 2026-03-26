@@ -7,6 +7,7 @@ import { ParsedSignature } from "HelperClasses/ParsedSignature";
 
 export class OPERATOR_NBT_AS_SHORT extends BaseOperator<ShortTag, Integer> {
   static override internalName = "integrateddynamics:nbt_as_short" as const;
+  static override numericID = 251;
   static override nicknames = ["nbtAsShort"];
   static override symbol = "NBT.as_short";
   static override interactName = "nbtAsShort";

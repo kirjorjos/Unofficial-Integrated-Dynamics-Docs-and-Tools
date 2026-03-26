@@ -10,6 +10,7 @@ export class OPERATOR_LIST_COUNT_PREDICATE extends BaseOperator<
   Operator<Operator<IntegratedValue, iBoolean>, Integer>
 > {
   static override internalName = "integrateddynamics:list_count_p" as const;
+  static override numericID = 115;
   static override nicknames = ["listCountPredicate", "listCountP"];
   static override symbol = "count_p";
   static override interactName = "listCountPredicate";

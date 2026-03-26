@@ -8,6 +8,7 @@ export class OPERATOR_LOGICAL_NOR extends BaseOperator<
   Operator<iBoolean, iBoolean>
 > {
   static override internalName = "integrateddynamics:logical_nor" as const;
+  static override numericID = 111;
   static override nicknames = ["booleanNor", "nor", "logicalNor"];
   static override symbol = "!||";
   static override interactName = "booleanNor";

@@ -9,6 +9,7 @@ import { Integer } from "JavaNumberClasses/Integer";
 
 export class OPERATOR_NBT_AS_INT_LIST extends BaseOperator<ListTag, Integer> {
   static override internalName = "integrateddynamics:nbt_as_int_list" as const;
+  static override numericID = 248;
   static override nicknames = ["nbtAsIntList"];
   static override symbol = "NBT.as_int_list";
   static override interactName = "nbtAsIntList";

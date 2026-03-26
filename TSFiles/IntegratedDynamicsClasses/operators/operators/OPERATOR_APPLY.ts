@@ -7,6 +7,7 @@ export class OPERATOR_OPERATOR_APPLY extends BaseOperator<
   Operator<IntegratedValue, IntegratedValue>
 > {
   static override internalName = "integrateddynamics:operator_apply" as const;
+  static override numericID = 94;
   static override nicknames = ["operatorApply", "apply"];
   static override symbol = "apply";
   static override interactName = "operatorApply";

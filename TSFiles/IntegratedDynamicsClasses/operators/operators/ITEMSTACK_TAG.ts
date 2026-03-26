@@ -8,6 +8,7 @@ export class OPERATOR_ITEMSTACK_TAG extends BaseOperator<
   iArray<iString>
 > {
   static override internalName = "integrateddynamics:itemstack_tag" as const;
+  static override numericID = 199;
   static override nicknames = [
     "itemstackTags",
     "ItemstackTag",

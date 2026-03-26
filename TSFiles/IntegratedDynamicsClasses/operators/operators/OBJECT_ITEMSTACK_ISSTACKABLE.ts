@@ -9,6 +9,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISSTACKABLE extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:itemstack_stackable" as const;
+  static override numericID = 64;
   static override nicknames = [
     "ItemstackIsstackable",
     "itemstack_is_stackable",

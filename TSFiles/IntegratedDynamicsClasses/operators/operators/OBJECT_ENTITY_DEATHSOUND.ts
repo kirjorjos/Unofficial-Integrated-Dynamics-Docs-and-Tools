@@ -9,6 +9,7 @@ export class OPERATOR_OBJECT_ENTITY_DEATHSOUND extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:entity_deathsound" as const;
+  static override numericID = 19;
   static override nicknames = [
     "entityDeathSound",
     "EntityDeathsound",

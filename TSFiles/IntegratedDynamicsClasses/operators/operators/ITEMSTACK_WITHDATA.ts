@@ -13,6 +13,7 @@ export class OPERATOR_ITEMSTACK_WITHDATA extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:itemstack_withdata" as const;
+  static override numericID = 289;
   static override nicknames = [
     "ItemstackWithData",
     "itemstack_with_data",

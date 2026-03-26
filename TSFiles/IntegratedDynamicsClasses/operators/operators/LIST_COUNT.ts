@@ -9,6 +9,7 @@ export class OPERATOR_LIST_COUNT extends BaseOperator<
   Operator<IntegratedValue, Integer>
 > {
   static override internalName = "integrateddynamics:list_count" as const;
+  static override numericID = 114;
   static override nicknames = ["listCount", "count"];
   static override symbol = "count";
   static override interactName = "listCount";

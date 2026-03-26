@@ -8,6 +8,7 @@ export class OPERATOR_BINARY_RZSHIFT extends BaseOperator<
   Operator<Integer, Integer>
 > {
   static override internalName = "integrateddynamics:binary_rzshift" as const;
+  static override numericID = 11;
   static override nicknames = [
     "binaryRzshift",
     "integerUnsignedRightShift",

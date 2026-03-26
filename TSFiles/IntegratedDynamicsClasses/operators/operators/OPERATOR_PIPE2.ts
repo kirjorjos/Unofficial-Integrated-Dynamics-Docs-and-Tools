@@ -4,6 +4,7 @@ import { Operator } from "../Operator";
 
 export class OPERATOR_OPERATOR_PIPE2 extends BaseOperator<any, any> {
   static override internalName = "integrateddynamics:operator_pipe2" as const;
+  static override numericID = 177;
   static override nicknames = ["operatorPipe2", "pipe.2", "pipe2"];
   static override symbol = ".2";
   static override interactName = "operatorPipe2";

@@ -11,6 +11,7 @@ export class OPERATOR_OBJECT_ENTITY_ITEMS extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:entity_entityitems" as const;
+  static override numericID = 176;
   static override nicknames = [
     "EntityItems",
     "entity_items",

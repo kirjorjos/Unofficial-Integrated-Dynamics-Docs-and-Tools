@@ -8,6 +8,7 @@ export class OPERATOR_OBJECT_ENTITY_CANBREED extends BaseOperator<
   iBoolean
 > {
   static override internalName = "integrateddynamics:entity_canbreed" as const;
+  static override numericID = 127;
   static override nicknames = [
     "EntityCanbreed",
     "entity_can_breed",

@@ -9,6 +9,7 @@ import { Properties } from "IntegratedDynamicsClasses/Properties";
 export class OPERATOR_ITEMSTACK_ITEMBYNAME extends BaseOperator<iString, Item> {
   static override internalName =
     "integrateddynamics:itemstack_itembyname" as const;
+  static override numericID = 189;
   static override nicknames = [
     "stringItemByName",
     "ItemstackByName",

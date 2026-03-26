@@ -12,6 +12,7 @@ export class OPERATOR_OBJECT_ENTITY_ENTITYITEMTOOLTIP extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:entity_entityitemtooltip" as const;
+  static override numericID = 291;
   static override nicknames = [
     "entityEntityItemTooltip",
     "ItemstackEntityTooltip",

@@ -6,6 +6,7 @@ import { Entity } from "IntegratedDynamicsClasses/Entity";
 
 export class OPERATOR_ENTITY_ITEM extends BaseOperator<Entity, Item> {
   static override internalName = "integrateddynamics:entity_item" as const;
+  static override numericID = 30;
   static override nicknames = [
     "EntityItemstack",
     "entity_itemstack",

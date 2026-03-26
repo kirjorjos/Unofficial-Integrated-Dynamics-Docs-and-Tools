@@ -3,6 +3,7 @@ import { BaseOperator } from "../BaseOperator";
 
 export class OPERATOR_ENTITY_HEALTH extends BaseOperator<Entity, Double> {
   static override internalName = "integrateddynamics:entity_health" as const;
+  static override numericID = 91;
   static override nicknames = [
     "EntityHealth",
     "entity_health",

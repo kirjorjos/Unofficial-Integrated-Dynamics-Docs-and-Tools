@@ -9,6 +9,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_MAXSIZE extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:itemstack_maxsize" as const;
+  static override numericID = 59;
   static override nicknames = [
     "ItemstackMaxsize",
     "itemstack_max_size",

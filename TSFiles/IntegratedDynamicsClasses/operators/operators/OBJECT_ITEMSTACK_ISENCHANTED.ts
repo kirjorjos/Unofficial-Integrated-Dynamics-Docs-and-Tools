@@ -9,6 +9,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISENCHANTED extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:itemstack_enchanted" as const;
+  static override numericID = 53;
   static override nicknames = [
     "ItemstackIsenchanted",
     "itemstack_is_enchanted",

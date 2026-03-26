@@ -9,6 +9,7 @@ export class OPERATOR_INGREDIENTS_WITH_FLUID extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:ingredients_with_fluid" as const;
+  static override numericID = 180;
   static override nicknames = ["ingredientsWithFluid", "Ingr.with_fluid"];
   static override symbol = "Ingr.with_fluid";
   static override interactName = "ingredientsWithFluid";

@@ -13,6 +13,7 @@ export class OPERATOR_NBT_COMPOUND_WITH_LIST_INT extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:nbt_compound_with_list_int" as const;
+  static override numericID = 230;
   static override nicknames = [
     "nbtWithIntList",
     "nbtCompoundWithListInt",

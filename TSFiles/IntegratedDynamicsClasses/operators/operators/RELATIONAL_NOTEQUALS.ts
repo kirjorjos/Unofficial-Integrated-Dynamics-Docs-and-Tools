@@ -9,6 +9,7 @@ export class OPERATOR_RELATIONAL_NOTEQUALS extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:relational_notequals" as const;
+  static override numericID = 77;
   static override nicknames = ["anyNotEquals", "relationalNotequals"];
   static override symbol = "!=";
   static override interactName = "anyNotEquals";

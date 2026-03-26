@@ -9,6 +9,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_REPAIRCOST extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:itemstack_repaircost" as const;
+  static override numericID = 62;
   static override nicknames = [
     "ItemstackRepaircost",
     "itemstack_repair_cost",

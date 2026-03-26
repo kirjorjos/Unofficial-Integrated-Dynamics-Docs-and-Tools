@@ -8,6 +8,7 @@ export class OPERATOR_ARITHMETIC_MULTIPLICATION extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:arithmetic_multiplication" as const;
+  static override numericID = 4;
   static override nicknames = [
     "multiply",
     "arithmeticMultiplication",

@@ -8,6 +8,7 @@ export class OPERATOR_OBJECT_ENTITY_MODNAME extends BaseOperator<
   iString
 > {
   static override internalName = "integrateddynamics:entity_mod" as const;
+  static override numericID = 33;
   static override nicknames = [
     "EntityMod",
     "entity_mod",

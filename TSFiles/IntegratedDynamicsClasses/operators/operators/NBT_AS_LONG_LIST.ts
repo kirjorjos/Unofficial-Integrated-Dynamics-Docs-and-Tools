@@ -12,6 +12,7 @@ export class OPERATOR_NBT_AS_LONG_LIST extends BaseOperator<
   iArray<Long>
 > {
   static override internalName = "integrateddynamics:nbt_as_long_list" as const;
+  static override numericID = 250;
   static override nicknames = ["nbtAsLongList"];
   static override symbol = "NBT.as_long_list";
   static override interactName = "nbtAsLongList";

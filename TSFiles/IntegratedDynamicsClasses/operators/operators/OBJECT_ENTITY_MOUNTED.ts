@@ -9,6 +9,7 @@ export class OPERATOR_OBJECT_ENTITY_MOUNTED extends BaseOperator<
   iArray<Entity>
 > {
   static override internalName = "integrateddynamics:entity_mounted" as const;
+  static override numericID = 34;
   static override nicknames = [
     "entityMounted",
     "EntityMounted",

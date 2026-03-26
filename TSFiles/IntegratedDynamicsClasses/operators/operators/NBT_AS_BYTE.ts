@@ -6,6 +6,7 @@ import { ParsedSignature } from "HelperClasses/ParsedSignature";
 
 export class OPERATOR_NBT_AS_BYTE extends BaseOperator<ByteTag, Integer> {
   static override internalName = "integrateddynamics:nbt_as_byte" as const;
+  static override numericID = 242;
   static override nicknames = ["nbtAsByte"];
   static override symbol = "NBT.as_byte";
   static override interactName = "nbtAsByte";

@@ -8,6 +8,7 @@ export class OPERATOR_ENTITY_ARMORINVENTORY extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:entity_armorinventory" as const;
+  static override numericID = 90;
   static override nicknames = [
     "EntityArmorinventory",
     "entity_armor_inventory",

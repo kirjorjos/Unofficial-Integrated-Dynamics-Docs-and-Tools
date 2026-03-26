@@ -13,6 +13,7 @@ export class OPERATOR_STRING_SPLIT_ON_REGEX extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:string_split_on_regex" as const;
+  static override numericID = 161;
   static override nicknames = ["stringSplitOnRegex"];
   static override symbol = "split_on_regex";
   static override interactName = "stringSplitOnRegex";

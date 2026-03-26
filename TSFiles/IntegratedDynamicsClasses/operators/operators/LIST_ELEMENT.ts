@@ -9,6 +9,7 @@ export class OPERATOR_LIST_ELEMENT extends BaseOperator<
   Operator<Integer, IntegratedValue>
 > {
   static override internalName = "integrateddynamics:list_get" as const;
+  static override numericID = 66;
   static override nicknames = ["listElement", "get", "listGet"];
   static override symbol = "get";
   static override interactName = "listGet";

@@ -13,6 +13,7 @@ export class BaseOperator<
   static nicknames: string[] = [];
   static symbol: string = "";
   static interactName: string = "";
+  static numericID: number = -1;
   serializer?: string;
   static readonly nicknameRegex = /^[A-Za-z0-9\\._&|{}]+$/;
 

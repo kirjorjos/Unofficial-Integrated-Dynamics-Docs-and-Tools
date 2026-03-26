@@ -7,6 +7,7 @@ export class OPERATOR_BINARY_XOR extends BaseOperator<
   Operator<Integer, Integer>
 > {
   static override internalName = "integrateddynamics:binary_xor" as const;
+  static override numericID = 12;
   static override nicknames = ["binaryXor", "integerXor"];
   static override symbol = "^";
   static override interactName = "integerXor";

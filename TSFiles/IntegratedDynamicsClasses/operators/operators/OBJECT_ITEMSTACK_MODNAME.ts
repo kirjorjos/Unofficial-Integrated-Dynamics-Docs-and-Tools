@@ -8,6 +8,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_MODNAME extends BaseOperator<
   iString
 > {
   static override internalName = "integrateddynamics:itemstack_mod" as const;
+  static override numericID = 60;
   static override nicknames = [
     "itemstackMod",
     "ItemstackModname",

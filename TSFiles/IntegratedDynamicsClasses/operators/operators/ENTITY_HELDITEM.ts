@@ -3,6 +3,7 @@ import { BaseOperator } from "../BaseOperator";
 
 export class OPERATOR_ENTITY_HELDITEM extends BaseOperator<Entity, Item> {
   static override internalName = "integrateddynamics:entity_helditem" as const;
+  static override numericID = 93;
   static override nicknames = [
     "EntityHelditemMain",
     "entity_held_item_main",

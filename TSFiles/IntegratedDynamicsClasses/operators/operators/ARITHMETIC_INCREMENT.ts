@@ -8,6 +8,7 @@ export class OPERATOR_ARITHMETIC_INCREMENT extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:arithmetic_increment" as const;
+  static override numericID = 83;
   static override nicknames = [
     "increment",
     "arithmeticIncrement",

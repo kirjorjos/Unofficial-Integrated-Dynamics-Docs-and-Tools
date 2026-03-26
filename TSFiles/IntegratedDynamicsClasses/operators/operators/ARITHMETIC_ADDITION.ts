@@ -8,6 +8,7 @@ export class OPERATOR_ARITHMETIC_ADDITION extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:arithmetic_addition" as const;
+  static override numericID = 0;
   static override nicknames = ["add", "arithmeticAddition", "numberAdd"];
   static override symbol = "+";
   static override interactName = "numberAdd";

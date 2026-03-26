@@ -8,6 +8,7 @@ export class OPERATOR_OBJECT_BLOCK_PLANTAGE extends BaseOperator<
   Integer
 > {
   static override internalName = "integrateddynamics:block_plantage" as const;
+  static override numericID = 122;
   static override nicknames = [
     "BlockPlantage",
     "block_plant_age",

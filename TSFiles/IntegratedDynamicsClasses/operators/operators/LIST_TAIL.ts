@@ -8,6 +8,7 @@ export class OPERATOR_LIST_TAIL extends BaseOperator<
   iArray<IntegratedValue>
 > {
   static override internalName = "integrateddynamics:list_tail" as const;
+  static override numericID = 117;
   static override nicknames = ["listTail", "tail"];
   static override symbol = "tail";
   static override interactName = "listTail";

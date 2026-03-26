@@ -12,6 +12,7 @@ export class OPERATOR_NBT_COMPOUND_WITH_FLOAT extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:nbt_compound_with_float" as const;
+  static override numericID = 226;
   static override nicknames = [
     "nbtWithFloat",
     "nbtCompoundWithFloat",

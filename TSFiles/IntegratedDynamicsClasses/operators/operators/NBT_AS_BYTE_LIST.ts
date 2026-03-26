@@ -12,6 +12,7 @@ export class OPERATOR_NBT_AS_BYTE_LIST extends BaseOperator<
   iArray<Integer>
 > {
   static override internalName = "integrateddynamics:nbt_as_byte_list" as const;
+  static override numericID = 243;
   static override nicknames = ["nbtAsByteList"];
   static override symbol = "NBT.as_byte_list";
   static override interactName = "nbtAsByteList";
