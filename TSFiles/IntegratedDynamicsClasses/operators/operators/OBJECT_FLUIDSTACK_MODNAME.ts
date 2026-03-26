@@ -8,28 +8,32 @@ export class OPERATOR_OBJECT_FLUIDSTACK_MODNAME extends BaseOperator<
   iString
 > {
   static override internalName = "integrateddynamics:fluidstack_mod" as const;
-  constructor() {
+  static override numericID = 41;
+  static override nicknames = [
+    "fluidstackMod",
+    "FluidstackModname",
+    "fluidstackModname",
+    "fluid_stack_modname",
+    "fluidStackModname",
+    "fluid_mod_name",
+    "fluidModName",
+  ];
+  static override symbol = "mod";
+  static override interactName = "fluidstackMod";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: [
-        "FluidstackModname",
-        "fluidstackModname",
-        "fluid_stack_modname",
-        "fluidStackModname",
-        "fluid_stack_modname",
-        "fluid_mod_name",
-        "fluidModName",
-      ],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Fluid",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Fluid",
+          },
+          to: {
+            type: "String",
+          },
         },
-        to: {
-          type: "String",
-        },
-      }),
-      symbol: "mod",
-      interactName: "fluidstackMod",
+        normalizeSignature
+      ),
       function: (fluid: Fluid): iString => {
         return fluid.getModName();
       },

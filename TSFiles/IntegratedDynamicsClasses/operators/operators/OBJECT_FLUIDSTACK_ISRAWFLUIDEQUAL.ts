@@ -10,35 +10,39 @@ export class OPERATOR_OBJECT_FLUIDSTACK_ISRAWFLUIDEQUAL extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:fluidstack_israwfluidequal" as const;
-  constructor() {
+  static override numericID = 40;
+  static override nicknames = [
+    "fluidstackIsRawEqual",
+    "FluidstackIsrawfluidequal",
+    "fluidstackIsrawfluidequal",
+    "fluid_stack_israwfluidequal",
+    "fluidStackIsrawfluidequal",
+    "fluid_israwfluidequal",
+    "isRawFluidEqual",
+    "rawFluidEquals",
+  ];
+  static override symbol = "=Raw=";
+  static override interactName = "fluidstackIsRawEqual";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: [
-        "FluidstackIsrawfluidequal",
-        "fluidstackIsrawfluidequal",
-        "fluid_stack_israwfluidequal",
-        "fluidStackIsrawfluidequal",
-        "fluid_stack_israwfluidequal",
-        "fluid_israwfluidequal",
-        "isRawFluidEqual",
-        "rawFluidEquals",
-      ],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Fluid",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
             type: "Fluid",
           },
           to: {
-            type: "Boolean",
+            type: "Function",
+            from: {
+              type: "Fluid",
+            },
+            to: {
+              type: "Boolean",
+            },
           },
         },
-      }),
-      symbol: "=Raw=",
-      interactName: "fluidstackIsRawEqual",
+        normalizeSignature
+      ),
       function: (fluid1: Fluid): TypeLambda<Fluid, iBoolean> => {
         return (fluid2: Fluid): iBoolean => {
           return new iBoolean(

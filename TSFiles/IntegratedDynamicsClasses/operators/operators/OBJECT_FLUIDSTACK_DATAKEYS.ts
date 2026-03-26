@@ -12,32 +12,35 @@ export class OPERATOR_OBJECT_FLUIDSTACK_DATAKEYS extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:fluidstack_datakeys" as const;
-  constructor() {
+  static override numericID = 284;
+  static override nicknames = [
+    "FluidstackDataKeys",
+    "fluidstackDataKeys",
+    "fluid_stack_data_keys",
+    "fluidStackDataKeys",
+    "fluid_data_keys",
+    "fluidDataKeys",
+    "fluid_NBT_keys",
+    "fluidStackNBTKeys",
+    "fluid_stack_NBT_keys",
+    "fluidstack_NBT_keys",
+    "fluidstackNBTKeys",
+    "fluidNBTKeys",
+  ];
+  static override symbol = "data_keys";
+  static override interactName = "fluidstackDataKeys";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: [
-        "FluidstackDataKeys",
-        "fluidstackDataKeys",
-        "fluid_stack_data_keys",
-        "fluidStackDataKeys",
-        "fluid_stack_data_keys",
-        "fluid_data_keys",
-        "fluidDataKeys",
-        "fluid_NBT_keys",
-        "fluidStackNBTKeys",
-        "fluid_stack_NBT_keys",
-        "fluidstack_NBT_keys",
-        "fluidstackNBTKeys",
-        "fluidNBTKeys",
-      ],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Fluid",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Fluid",
+          },
+          to: { type: "List", listType: { type: "String" } },
         },
-        to: { type: "List", listType: { type: "String" } },
-      }),
-      symbol: "data_keys",
-      interactName: "fluidstackDataKeys",
+        normalizeSignature
+      ),
       function: (fluid: Fluid): iArray<iString> => {
         const nbt = fluid.getNBT();
         if (nbt instanceof CompoundTag) {

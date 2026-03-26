@@ -9,22 +9,26 @@ export class OPERATOR_LIST_ELEMENT extends BaseOperator<
   Operator<Integer, IntegratedValue>
 > {
   static override internalName = "integrateddynamics:list_get" as const;
-  constructor() {
+  static override numericID = 66;
+  static override nicknames = ["listElement", "get", "listGet"];
+  static override symbol = "get";
+  static override interactName = "listGet";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["listElement", "get", "listGet"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
-          from: {
-            type: "Integer",
+          from: { type: "List", listType: { type: "Any", typeID: 1 } },
+          to: {
+            type: "Function",
+            from: {
+              type: "Integer",
+            },
+            to: { type: "Any", typeID: 1 },
           },
-          to: { type: "Any", typeID: 1 },
         },
-      }),
-      symbol: "get",
-      interactName: "listGet",
+        normalizeSignature
+      ),
       function: (
         list: iArray<IntegratedValue>
       ): TypeLambda<Integer, IntegratedValue> => {

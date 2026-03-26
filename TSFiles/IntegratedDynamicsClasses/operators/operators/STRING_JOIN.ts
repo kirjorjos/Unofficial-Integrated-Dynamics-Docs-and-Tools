@@ -9,24 +9,28 @@ export class OPERATOR_STRING_JOIN extends BaseOperator<
   Operator<iArray<iString>, iString>
 > {
   static override internalName = "integrateddynamics:string_join" as const;
-  constructor() {
+  static override numericID = 198;
+  static override nicknames = ["stringJoin"];
+  static override symbol = "join";
+  static override interactName = "stringJoin";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["stringJoin"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
-          from: { type: "List", listType: { type: "String" } },
-          to: {
+          from: {
             type: "String",
           },
+          to: {
+            type: "Function",
+            from: { type: "List", listType: { type: "String" } },
+            to: {
+              type: "String",
+            },
+          },
         },
-      }),
-      symbol: "join",
-      interactName: "stringJoin",
+        normalizeSignature
+      ),
       function: (delimiter: iString): TypeLambda<iArray<iString>, iString> => {
         return (stringList: iArray<iString>): iString => {
           if (

@@ -6,20 +6,24 @@ import { CompoundTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftCla
 export class OPERATOR_PARSE_NBT extends BaseOperator<iString, CompoundTag> {
   static override internalName =
     "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.nbt" as const;
-  constructor() {
+  static override numericID = 196;
+  static override nicknames = ["stringParseAsNbt", "parseNBT"];
+  static override symbol = "parse_nbt";
+  static override interactName = "stringParseAsNbt";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["parseNBT"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "String",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: {
+            type: "NBT",
+          },
         },
-        to: {
-          type: "NBT",
-        },
-      }),
-      symbol: "parse_nbt",
-      interactName: "stringParseAsNbt",
+        normalizeSignature
+      ),
       function: (data: iString): CompoundTag => {
         return CompoundTag.fromJSON(data.valueOf());
       },

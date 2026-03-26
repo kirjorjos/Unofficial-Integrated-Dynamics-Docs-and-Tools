@@ -8,20 +8,30 @@ export class OPERATOR_OBJECT_ITEMSTACK_NBT extends BaseOperator<
   Tag<IntegratedValue>
 > {
   static override internalName = "integrateddynamics:itemstack_nbt" as const;
-  constructor() {
+  static override numericID = 145;
+  static override nicknames = [
+    "itemStackNBT",
+    "ItemstackNbt",
+    "itemstack_nbt",
+    "itemstackNBT",
+    "itemNBT",
+  ];
+  static override symbol = "nbt";
+  static override interactName = "itemStackNBT";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["ItemstackNbt", "itemstack_nbt", "itemstackNBT", "itemNBT"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Item",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "NBT",
+          },
         },
-        to: {
-          type: "NBT",
-        },
-      }),
-      symbol: "nbt",
-      interactName: "itemStackNBT",
+        normalizeSignature
+      ),
       function: (item: Item): Tag<IntegratedValue> => {
         return item.getNBT();
       },

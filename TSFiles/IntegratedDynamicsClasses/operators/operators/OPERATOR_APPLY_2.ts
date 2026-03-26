@@ -7,44 +7,48 @@ export class OPERATOR_OPERATOR_APPLY_2 extends BaseOperator<
   Operator<IntegratedValue, Operator<IntegratedValue, IntegratedValue>>
 > {
   static override internalName = "integrateddynamics:operator_apply2" as const;
-  constructor() {
+  static override numericID = 140;
+  static override nicknames = ["operatorApply2", "operatorApply_2", "apply2"];
+  static override symbol = "apply2";
+  static override interactName = "operatorApply2";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["operatorApply_2", "apply2"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Operator",
-          obscured: {
-            type: "Function",
-            from: { type: "Any", typeID: 1 },
-            to: {
-              type: "Function",
-              from: { type: "Any", typeID: 2 },
-              to: { type: "Any", typeID: 3 },
-            },
-          },
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
-            type: "Any",
-            typeID: 1,
+            type: "Operator",
+            obscured: {
+              type: "Function",
+              from: { type: "Any", typeID: 1 },
+              to: {
+                type: "Function",
+                from: { type: "Any", typeID: 2 },
+                to: { type: "Any", typeID: 3 },
+              },
+            },
           },
           to: {
             type: "Function",
             from: {
               type: "Any",
-              typeID: 2,
+              typeID: 1,
             },
             to: {
-              type: "Any",
-              typeID: 3,
+              type: "Function",
+              from: {
+                type: "Any",
+                typeID: 2,
+              },
+              to: {
+                type: "Any",
+                typeID: 3,
+              },
             },
           },
         },
-      }),
-      symbol: "apply2",
-      interactName: "operatorApply2",
+        normalizeSignature
+      ),
       serializer: "integrateddynamics:curry",
       function: (
         op: Operator<

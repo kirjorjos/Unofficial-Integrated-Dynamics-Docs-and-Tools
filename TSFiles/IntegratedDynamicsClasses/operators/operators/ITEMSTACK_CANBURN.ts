@@ -5,29 +5,33 @@ import { ParsedSignature } from "HelperClasses/ParsedSignature";
 export class OPERATOR_ITEMSTACK_CANBURN extends BaseOperator<Item, iBoolean> {
   static override internalName =
     "integrateddynamics:itemstack_canburn" as const;
-  constructor() {
+  static override numericID = 112;
+  static override nicknames = [
+    "ItemstackCanburn",
+    "item_can_burn",
+    "itemCanBurn",
+    "item_is_fuel",
+    "itemIsFuel",
+    "isFuel",
+    "can_burn",
+    "itemstackCanBurn",
+  ];
+  static override symbol = "can_burn";
+  static override interactName = "itemstackCanBurn";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: [
-        "ItemstackCanburn",
-        "item_can_burn",
-        "itemCanBurn",
-        "item_is_fuel",
-        "itemIsFuel",
-        "isFuel",
-        "can_burn",
-        "itemstackCanBurn",
-      ],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Item",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
-        to: {
-          type: "Boolean",
-        },
-      }),
-      symbol: "can_burn",
-      interactName: "itemstackCanBurn",
+        normalizeSignature
+      ),
       function: (item: Item): iBoolean => {
         return item.isFuel();
       },

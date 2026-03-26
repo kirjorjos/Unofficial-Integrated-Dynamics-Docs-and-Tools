@@ -11,20 +11,29 @@ export class OPERATOR_OBJECT_BLOCK_BY_NAME extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:block_blockbyname" as const;
-  constructor() {
+  static override numericID = 142;
+  static override nicknames = [
+    "stringBlockByName",
+    "BlockByName",
+    "block_by_name",
+    "blockByName",
+  ];
+  static override symbol = "block_by_name";
+  static override interactName = "stringBlockByName";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["BlockByName", "block_by_name", "blockByName"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "String",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: {
+            type: "Block",
+          },
         },
-        to: {
-          type: "Block",
-        },
-      }),
-      symbol: "block_by_name",
-      interactName: "stringBlockByName",
+        normalizeSignature
+      ),
       function: (name: iString): Block => {
         const blockRegistry = RegistryHub.blockRegistry;
         const key = name.valueOf().toLowerCase();

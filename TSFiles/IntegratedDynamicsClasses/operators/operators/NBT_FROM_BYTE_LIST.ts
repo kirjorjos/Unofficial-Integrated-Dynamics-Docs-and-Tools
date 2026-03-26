@@ -10,18 +10,22 @@ export class OPERATOR_NBT_FROM_BYTE_LIST extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:nbt_from_byte_list" as const;
-  constructor() {
+  static override numericID = 255;
+  static override nicknames = ["byteListAsNbt", "nbtFromByteList"];
+  static override symbol = "NBT.from_byte_list";
+  static override interactName = "byteListAsNbt";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["nbtFromByteList"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: { type: "List", listType: { type: "Integer" } },
-        to: {
-          type: "NBT",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: { type: "List", listType: { type: "Integer" } },
+          to: {
+            type: "NBT",
+          },
         },
-      }),
-      symbol: "NBT.from_byte_list",
-      interactName: "byteListAsNbt",
+        normalizeSignature
+      ),
       function: (byteList: iArray<Integer>): ByteArrayTag => {
         return new ByteArrayTag(byteList);
       },

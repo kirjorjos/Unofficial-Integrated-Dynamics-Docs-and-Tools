@@ -10,31 +10,36 @@ export class OPERATOR_ITEMSTACK_ITEMLISTCOUNT extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:itemstack_itemlistcount" as const;
-  constructor() {
+  static override numericID = 190;
+  static override nicknames = [
+    "listItemListCount",
+    "ItemstackListCount",
+    "itemstack_list_count",
+    "itemstackListCount",
+    "item_list_count",
+    "itemListCount",
+  ];
+  static override symbol = "item_list_count";
+  static override interactName = "listItemListCount";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: [
-        "ItemstackListCount",
-        "itemstack_list_count",
-        "itemstackListCount",
-        "item_list_count",
-        "itemListCount",
-      ],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "List",
-          listType: { type: "Item" },
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
-          from: { type: "Item" },
+          from: {
+            type: "List",
+            listType: { type: "Item" },
+          },
           to: {
-            type: "Integer",
+            type: "Function",
+            from: { type: "Item" },
+            to: {
+              type: "Integer",
+            },
           },
         },
-      }),
-      symbol: "item_list_count",
-      interactName: "listItemListCount",
+        normalizeSignature
+      ),
       function: (items: iArray<Item>): TypeLambda<Item, Integer> => {
         return (item: Item): Integer => {
           let totalCount = Integer.ZERO;

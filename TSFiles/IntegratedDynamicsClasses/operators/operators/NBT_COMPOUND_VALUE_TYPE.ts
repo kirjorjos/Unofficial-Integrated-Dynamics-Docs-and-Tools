@@ -10,26 +10,34 @@ export class OPERATOR_NBT_COMPOUND_VALUE_TYPE extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:nbt_compound_type" as const;
-  constructor() {
+  static override numericID = 213;
+  static override nicknames = [
+    "nbtType",
+    "nbtCompoundValueType",
+    "NBTValueType",
+  ];
+  static override symbol = "NBT{}.type";
+  static override interactName = "nbtType";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["nbtCompoundValueType", "NBTValueType"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
-            type: "String",
+            type: "NBT",
           },
           to: {
-            type: "String",
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "String",
+            },
           },
         },
-      }),
-      symbol: "NBT{}.type",
-      interactName: "nbtType",
+        normalizeSignature
+      ),
       function: (nbt: CompoundTag): TypeLambda<iString, iString> => {
         return (key: iString): iString => {
           if (!nbt.has(key)) {

@@ -4,20 +4,28 @@ import { ParsedSignature } from "HelperClasses/ParsedSignature";
 export class OPERATOR_INTEGER_TO_DOUBLE extends BaseOperator<Integer, Double> {
   static override internalName =
     "integrateddynamics:operator.integrateddynamics.castintegrateddynamics_integer__integrateddynamics_double" as const;
-  constructor() {
+  static override numericID = 85;
+  static override nicknames = [
+    "intToDouble",
+    "integerToDouble",
+    "integerIntegerToDouble",
+  ];
+  static override symbol = "()";
+  static override interactName = "integerIntegerToDouble";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["intToDouble", "integerToDouble", "integerIntegerToDouble"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Integer",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Integer",
+          },
+          to: {
+            type: "Double",
+          },
         },
-        to: {
-          type: "Double",
-        },
-      }),
-      symbol: "()",
-      interactName: "integerIntegerToDouble",
+        normalizeSignature
+      ),
       function: (int: Integer): Double => {
         return int.toDouble();
       },

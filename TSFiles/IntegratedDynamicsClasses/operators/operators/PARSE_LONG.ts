@@ -6,20 +6,24 @@ import { iString } from "IntegratedDynamicsClasses/typeWrappers/iString";
 export class OPERATOR_PARSE_LONG extends BaseOperator<iString, Long> {
   static override internalName =
     "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.long" as const;
-  constructor() {
+  static override numericID = 195;
+  static override nicknames = ["stringParseAsLong", "parseLong"];
+  static override symbol = "parse_long";
+  static override interactName = "stringParseAsLong";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["parseLong"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "String",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: {
+            type: "Long",
+          },
         },
-        to: {
-          type: "Long",
-        },
-      }),
-      symbol: "parse_long",
-      interactName: "stringParseAsLong",
+        normalizeSignature
+      ),
       function: (data: iString): Long => {
         try {
           return new Long(data.valueOf());

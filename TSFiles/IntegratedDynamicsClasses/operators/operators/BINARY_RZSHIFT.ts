@@ -8,32 +8,35 @@ export class OPERATOR_BINARY_RZSHIFT extends BaseOperator<
   Operator<Integer, Integer>
 > {
   static override internalName = "integrateddynamics:binary_rzshift" as const;
-  constructor() {
+  static override numericID = 11;
+  static override nicknames = [
+    "binaryRzshift",
+    "integerUnsignedRightShift",
+    "binaryUnsignedRightShift",
+    "integerRzshift",
+  ];
+  static override symbol = ">>>";
+  static override interactName = "integerUnsignedRightShift";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: [
-        ">>>",
-        "binaryRzshift",
-        "integerUnsignedRightShift",
-        "binaryUnsignedRightShift",
-        "integerRzshift",
-      ],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Integer",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
             type: "Integer",
           },
           to: {
-            type: "Integer",
+            type: "Function",
+            from: {
+              type: "Integer",
+            },
+            to: {
+              type: "Integer",
+            },
           },
         },
-      }),
-      symbol: ">>>",
-      interactName: "integerUnsignedRightShift",
+        normalizeSignature
+      ),
       function: (int1: Integer): TypeLambda<Integer, Integer> => {
         return (int2: Integer): Integer => {
           return new Integer(int1.unsignedRightShift(int2));

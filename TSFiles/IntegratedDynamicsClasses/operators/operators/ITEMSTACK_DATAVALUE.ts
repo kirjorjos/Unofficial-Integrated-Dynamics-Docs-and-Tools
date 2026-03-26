@@ -9,33 +9,37 @@ import { CompoundTag } from "IntegratedDynamicsClasses/NBTFunctions/MinecraftCla
 export class OPERATOR_ITEMSTACK_DATAVALUE extends BaseOperator<Item, iBoolean> {
   static override internalName =
     "integrateddynamics:itemstack_datavalue" as const;
-  constructor() {
+  static override numericID = 288;
+  static override nicknames = [
+    "ItemstackDataValue",
+    "itemstack_data_value",
+    "itemstackDataValue",
+    "item_data_value",
+    "itemDataValue",
+    "itemNBTValue",
+  ];
+  static override symbol = "data_value";
+  static override interactName = "itemstackDataValue";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: [
-        "ItemstackDataValue",
-        "itemstack_data_value",
-        "itemstackDataValue",
-        "item_data_value",
-        "itemDataValue",
-        "itemNBTValue",
-      ],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
-            type: "String",
+            type: "Item",
           },
           to: {
-            type: "NBT",
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "NBT",
+            },
           },
         },
-      }),
-      symbol: "data_value",
-      interactName: "itemstackDataValue",
+        normalizeSignature
+      ),
       function: (item: Item): TypeLambda<iString, Tag<IntegratedValue>> => {
         return (key: iString): Tag<IntegratedValue> => {
           const nbt = item.getNBT();

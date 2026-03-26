@@ -10,24 +10,28 @@ export class OPERATOR_INGREDIENTS_WITH_ENERGIES extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:ingredients_with_energies" as const;
-  constructor() {
+  static override numericID = 153;
+  static override nicknames = ["ingredientsWithEnergies", "Ingr.with_energies"];
+  static override symbol = "Ingr.with_energies";
+  static override interactName = "ingredientsWithEnergies";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["ingredientsWithEnergies", "Ingr.with_energies"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Ingredients",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
-          from: { type: "List", listType: { type: "Long" } },
-          to: {
+          from: {
             type: "Ingredients",
           },
+          to: {
+            type: "Function",
+            from: { type: "List", listType: { type: "Long" } },
+            to: {
+              type: "Ingredients",
+            },
+          },
         },
-      }),
-      symbol: "Ingr.with_energies",
-      interactName: "ingredientsWithEnergies",
+        normalizeSignature
+      ),
       function: (
         ingredients: Ingredients
       ): TypeLambda<iArray<Long>, Ingredients> => {

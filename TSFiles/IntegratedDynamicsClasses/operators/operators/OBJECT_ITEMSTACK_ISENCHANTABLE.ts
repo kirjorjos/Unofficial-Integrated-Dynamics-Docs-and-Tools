@@ -9,25 +9,29 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISENCHANTABLE extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:itemstack_enchantable" as const;
-  constructor() {
+  static override numericID = 52;
+  static override nicknames = [
+    "ItemstackIsenchantable",
+    "itemstack_is_enchantable",
+    "itemstackIsEnchantable",
+    "enchantable",
+  ];
+  static override symbol = "enchantable";
+  static override interactName = "itemstackIsEnchantable";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: [
-        "ItemstackIsenchantable",
-        "itemstack_is_enchantable",
-        "itemstackIsEnchantable",
-        "enchantable",
-      ],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Item",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
-        to: {
-          type: "Boolean",
-        },
-      }),
-      symbol: "enchantable",
-      interactName: "itemstackIsEnchantable",
+        normalizeSignature
+      ),
       function: (item: Item): iBoolean => {
         return item.isEnchantable();
       },

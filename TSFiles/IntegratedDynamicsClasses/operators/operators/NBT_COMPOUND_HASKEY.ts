@@ -11,26 +11,30 @@ export class OPERATOR_NBT_COMPOUND_HASKEY extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:nbt_compound_haskey" as const;
-  constructor() {
+  static override numericID = 207;
+  static override nicknames = ["nbtHasKey", "nbtCompoundHaskey", "NBTHasKey"];
+  static override symbol = "NBT{}.has_key";
+  static override interactName = "nbtHasKey";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["nbtCompoundHaskey", "NBTHasKey"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
-            type: "String",
+            type: "NBT",
           },
           to: {
-            type: "Boolean",
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Boolean",
+            },
           },
         },
-      }),
-      symbol: "NBT{}.has_key",
-      interactName: "nbtHasKey",
+        normalizeSignature
+      ),
       function: (nbt: CompoundTag): TypeLambda<iString, iBoolean> => {
         return (key: iString): iBoolean => {
           return new iBoolean(nbt.has(key));

@@ -5,20 +5,24 @@ import { Double } from "JavaNumberClasses/Double";
 
 export class OPERATOR_NBT_FROM_DOUBLE extends BaseOperator<Double, DoubleTag> {
   static override internalName = "integrateddynamics:nbt_from_double" as const;
-  constructor() {
+  static override numericID = 256;
+  static override nicknames = ["doubleAsNbt", "nbtFromDouble"];
+  static override symbol = "NBT.from_double";
+  static override interactName = "doubleAsNbt";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["nbtFromDouble"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Double",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Double",
+          },
+          to: {
+            type: "NBT",
+          },
         },
-        to: {
-          type: "NBT",
-        },
-      }),
-      symbol: "NBT.from_double",
-      interactName: "doubleAsNbt",
+        normalizeSignature
+      ),
       function: (double: Double): DoubleTag => {
         return new DoubleTag(double);
       },

@@ -7,29 +7,39 @@ export class OPERATOR_GENERAL_CONSTANT extends BaseOperator<
   Operator<IntegratedValue, IntegratedValue>
 > {
   static override internalName = "integrateddynamics:general_constant" as const;
-  constructor() {
+  static override numericID = 178;
+  static override nicknames = [
+    "generalConstant",
+    "const",
+    "constant",
+    "anyConstant",
+    "K",
+  ];
+  static override symbol = "K";
+  static override interactName = "anyConstant";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["generalConstant", "const", "constant", "anyConstant", "K"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Any",
-          typeID: 1,
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
             type: "Any",
-            typeID: 2,
-          },
-          to: {
-            type: "Any",
             typeID: 1,
           },
+          to: {
+            type: "Function",
+            from: {
+              type: "Any",
+              typeID: 2,
+            },
+            to: {
+              type: "Any",
+              typeID: 1,
+            },
+          },
         },
-      }),
-      symbol: "K",
-      interactName: "anyConstant",
+        normalizeSignature
+      ),
       function: (value: IntegratedValue): TypeLambda<void, IntegratedValue> => {
         return () => {
           return value;

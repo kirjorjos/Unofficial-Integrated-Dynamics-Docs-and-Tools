@@ -5,16 +5,33 @@ import { iArray } from "IntegratedDynamicsClasses/typeWrappers/iArray";
 
 export class OPERATOR_OPERATOR_REDUCE extends BaseOperator<any, any> {
   static override internalName = "integrateddynamics:operator_reduce" as const;
-  constructor() {
+  static override numericID = 104;
+  static override nicknames = ["operatorReduce", "reduce"];
+  static override symbol = "reduce";
+  static override interactName = "operatorReduce";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["operatorReduce", "reduce"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Operator",
-          obscured: {
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Operator",
+            obscured: {
+              type: "Function",
+              from: { type: "Any", typeID: 1 },
+              to: {
+                type: "Function",
+                from: { type: "Any", typeID: 1 },
+                to: { type: "Any", typeID: 1 },
+              },
+            },
+          },
+          to: {
             type: "Function",
-            from: { type: "Any", typeID: 1 },
+            from: {
+              type: "List",
+              listType: { type: "Any", typeID: 1 },
+            },
             to: {
               type: "Function",
               from: { type: "Any", typeID: 1 },
@@ -22,21 +39,8 @@ export class OPERATOR_OPERATOR_REDUCE extends BaseOperator<any, any> {
             },
           },
         },
-        to: {
-          type: "Function",
-          from: {
-            type: "List",
-            listType: { type: "Any", typeID: 1 },
-          },
-          to: {
-            type: "Function",
-            from: { type: "Any", typeID: 1 },
-            to: { type: "Any", typeID: 1 },
-          },
-        },
-      }),
-      symbol: "reduce",
-      interactName: "operatorReduce",
+        normalizeSignature
+      ),
       function: (
         op: Operator<
           IntegratedValue,

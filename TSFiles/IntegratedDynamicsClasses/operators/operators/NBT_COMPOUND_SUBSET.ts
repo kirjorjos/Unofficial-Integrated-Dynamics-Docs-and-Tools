@@ -10,26 +10,30 @@ export class OPERATOR_NBT_COMPOUND_SUBSET extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:nbt_compound_subset" as const;
-  constructor() {
+  static override numericID = 212;
+  static override nicknames = ["nbtIsSubset", "nbtCompoundSubset", "NBTSubset"];
+  static override symbol = "NBT{}.⊆";
+  static override interactName = "nbtIsSubset";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["nbtCompoundSubset", "NBTSubset"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
             type: "NBT",
           },
           to: {
-            type: "Boolean",
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "Boolean",
+            },
           },
         },
-      }),
-      symbol: "NBT{}.⊆",
-      interactName: "nbtIsSubset",
+        normalizeSignature
+      ),
       function: (subSet: CompoundTag): TypeLambda<CompoundTag, iBoolean> => {
         return (superSet: CompoundTag): iBoolean => {
           return new iBoolean(superSet.compoundSubset(subSet));

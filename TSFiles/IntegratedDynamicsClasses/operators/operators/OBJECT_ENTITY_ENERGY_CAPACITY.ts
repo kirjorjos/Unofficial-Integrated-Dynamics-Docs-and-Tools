@@ -8,25 +8,29 @@ export class OPERATOR_OBJECT_ENTITY_ENERGY_CAPACITY extends BaseOperator<
   Integer
 > {
   static override internalName =
-    "integrateddynamics:entity_entityenergystored" as const;
-  constructor() {
+    "integrateddynamics:entity_entityenergycapacity" as const;
+  static override numericID = 173;
+  static override nicknames = [
+    "EntityEnergyCapacity",
+    "entity_energy_capacity",
+    "entityEnergyCapacity",
+  ];
+  static override symbol = "entity_capacity_fe";
+  static override interactName = "entityEnergyCapacity";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: [
-        "EntityEnergyCapacity",
-        "entity_energy_capacity",
-        "entityEnergyCapacity",
-      ],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Entity",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Integer",
+          },
         },
-        to: {
-          type: "Integer",
-        },
-      }),
-      symbol: "entity_capacity_fe",
-      interactName: "entityEnergyCapacity",
+        normalizeSignature
+      ),
       function: (entity: Entity): Integer => {
         return entity.getEnergyCapacity();
       },

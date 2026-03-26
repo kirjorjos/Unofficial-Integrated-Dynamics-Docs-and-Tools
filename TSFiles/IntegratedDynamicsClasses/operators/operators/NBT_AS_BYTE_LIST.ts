@@ -12,18 +12,22 @@ export class OPERATOR_NBT_AS_BYTE_LIST extends BaseOperator<
   iArray<Integer>
 > {
   static override internalName = "integrateddynamics:nbt_as_byte_list" as const;
-  constructor() {
+  static override numericID = 243;
+  static override nicknames = ["nbtAsByteList"];
+  static override symbol = "NBT.as_byte_list";
+  static override interactName = "nbtAsByteList";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["nbtAsByteList"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "NBT",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: { type: "List", listType: { type: "Integer" } },
         },
-        to: { type: "List", listType: { type: "Integer" } },
-      }),
-      symbol: "NBT.as_byte_list",
-      interactName: "nbtAsByteList",
+        normalizeSignature
+      ),
       function: (nbt: ListTag): iArray<Integer> => {
         if (nbt.getType() === Tag.TAG_BYTE_ARRAY) {
           const list = nbt.valueOf();
@@ -35,11 +39,14 @@ export class OPERATOR_NBT_AS_BYTE_LIST extends BaseOperator<
                 IntegratedValue,
                 IntegratedValue
               >,
-              parsedSignature: new ParsedSignature({
-                type: "Function",
-                from: { type: "Any", typeID: 1 },
-                to: { type: "Any", typeID: 2 },
-              } as TypeRawSignatureAST.RawSignatureDefiniteValue),
+              parsedSignature: new ParsedSignature(
+                {
+                  type: "Function",
+                  from: { type: "Any", typeID: 1 },
+                  to: { type: "Any", typeID: 2 },
+                } as TypeRawSignatureAST.RawSignatureDefiniteValue,
+                normalizeSignature
+              ),
             })
           ) as iArray<Integer>;
         } else {

@@ -12,26 +12,30 @@ export class OPERATOR_STRING_CONTAINS_REGEX extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:string_contains_regex" as const;
-  constructor() {
+  static override numericID = 157;
+  static override nicknames = ["stringContainsRegex", "containsRegex"];
+  static override symbol = "contains_regex";
+  static override interactName = "stringContainsRegex";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["containsRegex"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
             type: "String",
           },
           to: {
-            type: "Boolean",
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Boolean",
+            },
           },
         },
-      }),
-      symbol: "contains_regex",
-      interactName: "stringContainsRegex",
+        normalizeSignature
+      ),
       function: (regexString: iString): TypeLambda<iString, iBoolean> => {
         return (fullString: iString): iBoolean => {
           const regex = new RE2(sanitizeForRe2(regexString.valueOf()), "u");

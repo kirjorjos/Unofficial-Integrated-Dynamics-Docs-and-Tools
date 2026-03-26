@@ -9,28 +9,32 @@ export class OPERATOR_OBJECT_FLUIDSTACK_SOUND_BUCKET_FILL extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:fluidstack_sound_bucket_fill" as const;
-  constructor() {
+  static override numericID = 274;
+  static override nicknames = [
+    "fluidstackBucketFillSound",
+    "FluidstackSoundBucketFill",
+    "fluidstackSoundBucketFill",
+    "fluid_stack_sound_bucket_fill",
+    "fluidStackSoundBucketFill",
+    "fluid_sound_bucket_fill",
+    "fluidSoundBucketFill",
+  ];
+  static override symbol = "sound_bucket_fill";
+  static override interactName = "fluidstackBucketFillSound";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: [
-        "FluidstackSoundBucketFill",
-        "fluidstackSoundBucketFill",
-        "fluid_stack_sound_bucket_fill",
-        "fluidStackSoundBucketFill",
-        "fluid_stack_sound_bucket_fill",
-        "fluid_sound_bucket_fill",
-        "fluidSoundBucketFill",
-      ],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Fluid",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Fluid",
+          },
+          to: {
+            type: "String",
+          },
         },
-        to: {
-          type: "String",
-        },
-      }),
-      symbol: "sound_bucket_fill",
-      interactName: "fluidstackBucketFillSound",
+        normalizeSignature
+      ),
       function: (fluid: Fluid): iString => {
         return fluid.getBucketFillSound();
       },

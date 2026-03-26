@@ -9,25 +9,29 @@ export class OPERATOR_OBJECT_ITEMSTACK_MAXSIZE extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:itemstack_maxsize" as const;
-  constructor() {
+  static override numericID = 59;
+  static override nicknames = [
+    "ItemstackMaxsize",
+    "itemstack_max_size",
+    "itemstackMaxSize",
+    "maxSize",
+  ];
+  static override symbol = "maxsize";
+  static override interactName = "itemstackMaxSize";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: [
-        "ItemstackMaxsize",
-        "itemstack_max_size",
-        "itemstackMaxSize",
-        "maxSize",
-      ],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Item",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "Integer",
+          },
         },
-        to: {
-          type: "Integer",
-        },
-      }),
-      symbol: "maxsize",
-      interactName: "itemstackMaxSize",
+        normalizeSignature
+      ),
       function: (item: Item): Integer => {
         return item.getMaxSize();
       },

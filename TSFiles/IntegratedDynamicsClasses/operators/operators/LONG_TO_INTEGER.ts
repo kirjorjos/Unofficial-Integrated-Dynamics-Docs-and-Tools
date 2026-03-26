@@ -6,20 +6,29 @@ import { Integer } from "JavaNumberClasses/Integer";
 export class OPERATOR_LONG_TO_INTEGER extends BaseOperator<Long, Integer> {
   static override internalName =
     "integrateddynamics:operator.integrateddynamics.castintegrateddynamics_long__integrateddynamics_integer" as const;
-  constructor() {
+  static override numericID = 89;
+  static override nicknames = [
+    "longLongToInteger",
+    "longToInt",
+    "longInteger",
+    "longToInteger",
+  ];
+  static override symbol = "()";
+  static override interactName = "longLongToInteger";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["longToInt", "longInteger", "longToInteger"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Long",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Long",
+          },
+          to: {
+            type: "Integer",
+          },
         },
-        to: {
-          type: "Integer",
-        },
-      }),
-      symbol: "()",
-      interactName: "longLongToInteger",
+        normalizeSignature
+      ),
       function: (long: Long): Integer => {
         return long.toInteger();
       },

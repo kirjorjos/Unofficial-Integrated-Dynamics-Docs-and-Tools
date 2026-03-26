@@ -8,25 +8,29 @@ export class OPERATOR_OBJECT_ITEMSTACK_DAMAGE extends BaseOperator<
   Integer
 > {
   static override internalName = "integrateddynamics:itemstack_damage" as const;
-  constructor() {
+  static override numericID = 50;
+  static override nicknames = [
+    "ItemstackDamage",
+    "itemstack_damage",
+    "itemstackDamage",
+    "damage",
+  ];
+  static override symbol = "damage";
+  static override interactName = "itemstackDamage";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: [
-        "ItemstackDamage",
-        "itemstack_damage",
-        "itemstackDamage",
-        "damage",
-      ],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Item",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "Integer",
+          },
         },
-        to: {
-          type: "Integer",
-        },
-      }),
-      symbol: "damage",
-      interactName: "itemstackDamage",
+        normalizeSignature
+      ),
       function: (item: Item): Integer => {
         return item.getDamage();
       },

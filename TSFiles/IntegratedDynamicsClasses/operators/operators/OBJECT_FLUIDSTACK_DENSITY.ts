@@ -9,28 +9,31 @@ export class OPERATOR_OBJECT_FLUIDSTACK_DENSITY extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:fluidstack_density" as const;
-  constructor() {
+  static override numericID = 39;
+  static override nicknames = [
+    "FluidstackDensity",
+    "fluidstackDensity",
+    "fluid_stack_density",
+    "fluidStackDensity",
+    "fluid_density",
+    "fluidDensity",
+  ];
+  static override symbol = "density";
+  static override interactName = "fluidstackDensity";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: [
-        "FluidstackDensity",
-        "fluidstackDensity",
-        "fluid_stack_density",
-        "fluidStackDensity",
-        "fluid_stack_density",
-        "fluid_density",
-        "fluidDensity",
-      ],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Fluid",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Fluid",
+          },
+          to: {
+            type: "Integer",
+          },
         },
-        to: {
-          type: "Integer",
-        },
-      }),
-      symbol: "density",
-      interactName: "fluidstackDensity",
+        normalizeSignature
+      ),
       function: (fluid: Fluid): Integer => {
         return fluid.getDensity();
       },

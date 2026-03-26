@@ -11,18 +11,21 @@ export class OPERATOR_NBT_COMPOUND_WITH_STRING extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:nbt_compound_with_string" as const;
-  constructor() {
+  static override numericID = 235;
+  static override nicknames = [
+    "nbtWithString",
+    "nbtCompoundWithString",
+    "NBTWithString",
+  ];
+  static override symbol = "NBT{}.with_string";
+  static override interactName = "nbtWithString";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["nbtCompoundWithString", "NBTWithString"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
-            type: "String",
+            type: "NBT",
           },
           to: {
             type: "Function",
@@ -30,13 +33,18 @@ export class OPERATOR_NBT_COMPOUND_WITH_STRING extends BaseOperator<
               type: "String",
             },
             to: {
-              type: "NBT",
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: {
+                type: "NBT",
+              },
             },
           },
         },
-      }),
-      symbol: "NBT{}.with_string",
-      interactName: "nbtWithString",
+        normalizeSignature
+      ),
       function: (
         nbt: CompoundTag
       ): TypeLambda<iString, TypeLambda<iString, CompoundTag>> => {

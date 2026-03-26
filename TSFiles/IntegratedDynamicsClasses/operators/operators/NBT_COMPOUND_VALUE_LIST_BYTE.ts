@@ -18,24 +18,32 @@ export class OPERATOR_NBT_COMPOUND_VALUE_LIST_BYTE extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:nbt_compound_value_list_byte" as const;
-  constructor() {
+  static override numericID = 219;
+  static override nicknames = [
+    "nbtGetListByte",
+    "nbtCompoundValueListByte",
+    "compoundValueListByte",
+  ];
+  static override symbol = "NBT{}.get_list_byte";
+  static override interactName = "nbtGetListByte";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["nbtCompoundValueListByte", "compoundValueListByte"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
-            type: "String",
+            type: "NBT",
           },
-          to: { type: "List", listType: { type: "Integer" } },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: { type: "List", listType: { type: "Integer" } },
+          },
         },
-      }),
-      symbol: "NBT{}.get_list_byte",
-      interactName: "nbtGetListByte",
+        normalizeSignature
+      ),
       function: (nbt: CompoundTag): TypeLambda<iString, iArray<Integer>> => {
         return (key: iString): iArray<Integer> => {
           let value = nbt.get(key);
@@ -57,11 +65,14 @@ export class OPERATOR_NBT_COMPOUND_VALUE_LIST_BYTE extends BaseOperator<
               new Operator({
                 function: (e: Tag<IntegratedValue>) =>
                   e.valueOf() as IntegratedValue,
-                parsedSignature: new ParsedSignature({
-                  type: "Function",
-                  from: { type: "NBT" },
-                  to: { type: "Integer" },
-                }),
+                parsedSignature: new ParsedSignature(
+                  {
+                    type: "Function",
+                    from: { type: "NBT" },
+                    to: { type: "Integer" },
+                  },
+                  normalizeSignature
+                ),
               })
             ) as iArray<Integer>;
           }

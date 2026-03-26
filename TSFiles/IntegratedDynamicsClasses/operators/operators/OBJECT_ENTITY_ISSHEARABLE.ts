@@ -9,25 +9,28 @@ export class OPERATOR_OBJECT_ENTITY_ISSHEARABLE extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:entity_isshearable" as const;
-  constructor() {
+  static override numericID = 132;
+  static override nicknames = [
+    "EntityIsshearable",
+    "entity_is_shearable",
+    "entityIsShearable",
+  ];
+  static override symbol = "is_shearable";
+  static override interactName = "entityIsShearable";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: [
-        "EntityIsshearable",
-        "entity_is_shearable",
-        "entityIsShearable",
-        "entityIsShearable",
-      ],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Entity",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
-        to: {
-          type: "Boolean",
-        },
-      }),
-      symbol: "is_shearable",
-      interactName: "entityIsShearable",
+        normalizeSignature
+      ),
       function: (entity: Entity): iBoolean => {
         return entity.isShearable();
       },

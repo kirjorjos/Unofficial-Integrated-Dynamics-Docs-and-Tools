@@ -8,25 +8,29 @@ export class OPERATOR_OBJECT_BLOCK_PLACESOUND extends BaseOperator<
   iString
 > {
   static override internalName = "integrateddynamics:block_placesound" as const;
-  constructor() {
+  static override numericID = 17;
+  static override nicknames = [
+    "BlockPlacesound",
+    "blockPlaceSound",
+    "block_place_sound",
+    "placeSound",
+  ];
+  static override symbol = "place_sound";
+  static override interactName = "blockPlaceSound";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: [
-        "BlockPlacesound",
-        "blockPlaceSound",
-        "block_place_sound",
-        "placeSound",
-      ],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Block",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Block",
+          },
+          to: {
+            type: "String",
+          },
         },
-        to: {
-          type: "String",
-        },
-      }),
-      symbol: "place_sound",
-      interactName: "blockPlaceSound",
+        normalizeSignature
+      ),
       function: (block: Block): iString => {
         return block.getPlaceSound();
       },

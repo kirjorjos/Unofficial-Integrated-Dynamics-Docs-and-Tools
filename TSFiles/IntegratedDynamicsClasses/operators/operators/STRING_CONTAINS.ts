@@ -9,26 +9,30 @@ export class OPERATOR_STRING_CONTAINS extends BaseOperator<
   Operator<iString, iBoolean>
 > {
   static override internalName = "integrateddynamics:string_contains" as const;
-  constructor() {
+  static override numericID = 156;
+  static override nicknames = ["stringContains"];
+  static override symbol = "contains";
+  static override interactName = "stringContains";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["stringContains"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
             type: "String",
           },
           to: {
-            type: "Boolean",
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Boolean",
+            },
           },
         },
-      }),
-      symbol: "contains",
-      interactName: "stringContains",
+        normalizeSignature
+      ),
       function: (substring: iString): TypeLambda<iString, iBoolean> => {
         return (fullString: iString): iBoolean => {
           return new iBoolean(

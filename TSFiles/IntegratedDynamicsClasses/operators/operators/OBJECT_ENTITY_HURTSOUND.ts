@@ -8,20 +8,28 @@ export class OPERATOR_OBJECT_ENTITY_HURTSOUND extends BaseOperator<
   iString
 > {
   static override internalName = "integrateddynamics:entity_hurtsound" as const;
-  constructor() {
+  static override numericID = 21;
+  static override nicknames = [
+    "EntityHurtsound",
+    "entity_hurt_sound",
+    "entityHurtSound",
+  ];
+  static override symbol = "hurtsound";
+  static override interactName = "entityHurtSound";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["EntityHurtsound", "entity_hurt_sound", "entityHurtSound"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Entity",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "String",
+          },
         },
-        to: {
-          type: "String",
-        },
-      }),
-      symbol: "hurtsound",
-      interactName: "entityHurtSound",
+        normalizeSignature
+      ),
       function: (entity: Entity): iString => {
         return entity.getHurtSound();
       },

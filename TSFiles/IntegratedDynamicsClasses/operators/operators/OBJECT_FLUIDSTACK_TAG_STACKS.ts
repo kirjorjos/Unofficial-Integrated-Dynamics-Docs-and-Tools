@@ -12,23 +12,28 @@ export class OPERATOR_OBJECT_FLUIDSTACK_TAG_STACKS extends BaseOperator<
   iArray<Fluid>
 > {
   static override internalName = "integrateddynamics:string_fluidtag" as const;
-  constructor() {
+  static override numericID = 299;
+  static override nicknames = [
+    "stringFluidsByTag",
+    "FluidstackTagStacks",
+    "fluidStackTagStacks",
+    "fluid_stack_tag_stacks",
+    "fluidTagStacks",
+  ];
+  static override symbol = "fluid_tag_values";
+  static override interactName = "stringFluidsByTag";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: [
-        "FluidstackTagStacks",
-        "fluidStackTagStacks",
-        "fluid_stack_tag_stacks",
-        "fluidTagStacks",
-      ],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "String",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: { type: "List", listType: { type: "Fluid" } },
         },
-        to: { type: "List", listType: { type: "Fluid" } },
-      }),
-      symbol: "fluid_tag_values",
-      interactName: "stringFluidsByTag",
+        normalizeSignature
+      ),
       function: (name: iString): iArray<Fluid> => {
         const fluidRegistry = RegistryHub.fluidRegistry;
         const fluids: Fluid[] = [];

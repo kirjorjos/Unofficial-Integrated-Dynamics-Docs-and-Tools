@@ -7,20 +7,24 @@ export class OPERATOR_NAMED_NAME extends BaseOperator<
   iString
 > {
   static override internalName = "integrateddynamics:string_name" as const;
-  constructor() {
+  static override numericID = 80;
+  static override nicknames = ["name", "namedName", "toString"];
+  static override symbol = "name";
+  static override interactName = "namedName";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["name", "namedName", "toString"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Named",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Named",
+          },
+          to: {
+            type: "String",
+          },
         },
-        to: {
-          type: "String",
-        },
-      }),
-      symbol: "name",
-      interactName: "namedName",
+        normalizeSignature
+      ),
       function: (named: TypeRawSignatureAST.RawSignatureNamed): iString => {
         return new iString(named.toString());
       },

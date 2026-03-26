@@ -3,27 +3,31 @@ import { BaseOperator } from "../BaseOperator";
 
 export class OPERATOR_ENTITY_HELDITEM extends BaseOperator<Entity, Item> {
   static override internalName = "integrateddynamics:entity_helditem" as const;
-  constructor() {
+  static override numericID = 93;
+  static override nicknames = [
+    "EntityHelditemMain",
+    "entity_held_item_main",
+    "entityHeldItemMain",
+    "heldItemMain",
+    "held_item_1",
+    "entityHeldItem",
+  ];
+  static override symbol = "held_item_1";
+  static override interactName = "entityHeldItem";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: [
-        "EntityHelditemMain",
-        "entity_held_item_main",
-        "entityHeldItemMain",
-        "heldItemMain",
-        "held_item_1",
-        "entityHeldItem",
-      ],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Entity",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Item",
+          },
         },
-        to: {
-          type: "Item",
-        },
-      }),
-      symbol: "held_item_1",
-      interactName: "entityHeldItem",
+        normalizeSignature
+      ),
       function: (entity: Entity): Item => {
         return entity.getHeldItemMain();
       },

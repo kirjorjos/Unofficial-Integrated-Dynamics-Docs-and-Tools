@@ -9,18 +9,26 @@ export class OPERATOR_NULLABLE_ISNOTNULL extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:general_isnotnull" as const;
-  constructor() {
+  static override numericID = 46;
+  static override nicknames = [
+    "anyIsNotNull",
+    "isNotNull",
+    "nullableIsnotnull",
+  ];
+  static override symbol = "∅";
+  static override interactName = "anyIsNotNull";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["isNotNull", "nullableIsnotnull"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: { type: "Any", typeID: 1 },
-        to: {
-          type: "Boolean",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: { type: "Any", typeID: 1 },
+          to: {
+            type: "Boolean",
+          },
         },
-      }),
-      symbol: "∅",
-      interactName: "anyIsNotNull",
+        normalizeSignature
+      ),
       function: (value: IntegratedValue): iBoolean => {
         return new iBoolean(!(value instanceof iNull));
       },

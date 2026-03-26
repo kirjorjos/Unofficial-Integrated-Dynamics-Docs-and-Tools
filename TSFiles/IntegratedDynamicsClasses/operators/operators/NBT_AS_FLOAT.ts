@@ -6,20 +6,24 @@ import { ParsedSignature } from "HelperClasses/ParsedSignature";
 
 export class OPERATOR_NBT_AS_FLOAT extends BaseOperator<FloatTag, Double> {
   static override internalName = "integrateddynamics:nbt_as_float" as const;
-  constructor() {
+  static override numericID = 245;
+  static override nicknames = ["nbtAsFloat"];
+  static override symbol = "NBT.as_float";
+  static override interactName = "nbtAsFloat";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["nbtAsFloat"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "NBT",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "Double",
+          },
         },
-        to: {
-          type: "Double",
-        },
-      }),
-      symbol: "NBT.as_float",
-      interactName: "nbtAsFloat",
+        normalizeSignature
+      ),
       function: (nbt: FloatTag): Double => {
         if (nbt.getType() === Tag.TAG_FLOAT) {
           return nbt.valueOf();

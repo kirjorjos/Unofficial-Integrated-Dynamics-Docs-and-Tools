@@ -18,24 +18,32 @@ export class OPERATOR_NBT_COMPOUND_VALUE_LIST_LONG extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:nbt_compound_value_list_long" as const;
-  constructor() {
+  static override numericID = 241;
+  static override nicknames = [
+    "nbtGetListLong",
+    "nbtCompoundValueListLong",
+    "compoundValueListLong",
+  ];
+  static override symbol = "NBT{}.get_list_long";
+  static override interactName = "nbtGetListLong";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["nbtCompoundValueListLong", "compoundValueListLong"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
-            type: "String",
+            type: "NBT",
           },
-          to: { type: "List", listType: { type: "Long" } },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: { type: "List", listType: { type: "Long" } },
+          },
         },
-      }),
-      symbol: "NBT{}.get_list_long",
-      interactName: "nbtGetListLong",
+        normalizeSignature
+      ),
       function: (nbt: CompoundTag): TypeLambda<iString, iArray<Long>> => {
         return (key: iString): iArray<Long> => {
           let value = nbt.get(key);
@@ -57,11 +65,14 @@ export class OPERATOR_NBT_COMPOUND_VALUE_LIST_LONG extends BaseOperator<
               new Operator({
                 function: (e: Tag<IntegratedValue>) =>
                   e.valueOf() as IntegratedValue,
-                parsedSignature: new ParsedSignature({
-                  type: "Function",
-                  from: { type: "NBT" },
-                  to: { type: "Long" },
-                }),
+                parsedSignature: new ParsedSignature(
+                  {
+                    type: "Function",
+                    from: { type: "NBT" },
+                    to: { type: "Long" },
+                  },
+                  normalizeSignature
+                ),
               })
             ) as iArray<Long>;
           }

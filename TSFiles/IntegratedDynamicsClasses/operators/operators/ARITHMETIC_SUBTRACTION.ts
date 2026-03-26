@@ -8,26 +8,34 @@ export class OPERATOR_ARITHMETIC_SUBTRACTION extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:arithmetic_subtraction" as const;
-  constructor() {
+  static override numericID = 5;
+  static override nicknames = [
+    "subtract",
+    "arithmeticSubtraction",
+    "numberSubtract",
+  ];
+  static override symbol = "-";
+  static override interactName = "numberSubtract";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["subtract", "arithmeticSubtraction"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Number",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
             type: "Number",
           },
           to: {
-            type: "Number",
+            type: "Function",
+            from: {
+              type: "Number",
+            },
+            to: {
+              type: "Number",
+            },
           },
         },
-      }),
-      symbol: "-",
-      interactName: "numberSubtract",
+        normalizeSignature
+      ),
       function: (num1: TypeNumber): TypeLambda<TypeNumber, TypeNumber> => {
         return (num2: TypeNumber): TypeNumber => {
           if (num1.getOrder() < num2.getOrder()) {

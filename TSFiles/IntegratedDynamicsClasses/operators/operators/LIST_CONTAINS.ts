@@ -9,22 +9,26 @@ export class OPERATOR_LIST_CONTAINS extends BaseOperator<
   Operator<IntegratedValue, iBoolean>
 > {
   static override internalName = "integrateddynamics:list_contains" as const;
-  constructor() {
+  static override numericID = 102;
+  static override nicknames = ["listContains", "contains"];
+  static override symbol = "contains";
+  static override interactName = "listContains";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["listContains", "contains"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
-          from: { type: "Any", typeID: 1 },
+          from: { type: "List", listType: { type: "Any", typeID: 1 } },
           to: {
-            type: "Boolean",
+            type: "Function",
+            from: { type: "Any", typeID: 1 },
+            to: {
+              type: "Boolean",
+            },
           },
         },
-      }),
-      symbol: "contains",
-      interactName: "listContains",
+        normalizeSignature
+      ),
       function: (
         list: iArray<IntegratedValue>
       ): TypeLambda<IntegratedValue, iBoolean> => {

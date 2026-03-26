@@ -6,20 +6,24 @@ import { ParsedSignature } from "HelperClasses/ParsedSignature";
 
 export class OPERATOR_NBT_AS_LONG extends BaseOperator<LongTag, Long> {
   static override internalName = "integrateddynamics:nbt_as_long" as const;
-  constructor() {
+  static override numericID = 249;
+  static override nicknames = ["nbtAsLong"];
+  static override symbol = "NBT.as_long";
+  static override interactName = "nbtAsLong";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["nbtAsLong"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "NBT",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "Long",
+          },
         },
-        to: {
-          type: "Long",
-        },
-      }),
-      symbol: "NBT.as_long",
-      interactName: "nbtAsLong",
+        normalizeSignature
+      ),
       function: (nbt: LongTag): Long => {
         if (nbt.getType() === Tag.TAG_LONG) {
           return nbt.valueOf();

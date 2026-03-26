@@ -8,25 +8,24 @@ export class OPERATOR_OBJECT_ENTITY_HEIGHT extends BaseOperator<
   Double
 > {
   static override internalName = "integrateddynamics:entity_height" as const;
-  constructor() {
+  static override numericID = 20;
+  static override nicknames = ["EntityHeight", "entity_height", "entityHeight"];
+  static override symbol = "height";
+  static override interactName = "entityHeight";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: [
-        "EntityHeight",
-        "entity_height",
-        "entityHeight",
-        "entityHeight",
-      ],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Entity",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Double",
+          },
         },
-        to: {
-          type: "Double",
-        },
-      }),
-      symbol: "height",
-      interactName: "entityHeight",
+        normalizeSignature
+      ),
       function: (entity: Entity): Double => {
         return entity.getHeight();
       },

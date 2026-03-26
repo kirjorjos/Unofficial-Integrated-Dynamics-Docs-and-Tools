@@ -8,25 +8,29 @@ export class OPERATOR_OBJECT_ENTITY_ISINLOVE extends BaseOperator<
   iBoolean
 > {
   static override internalName = "integrateddynamics:entity_isinlove" as const;
-  constructor() {
+  static override numericID = 130;
+  static override nicknames = [
+    "EntityIsinlove",
+    "entity_is_in_love",
+    "entityIsInLove",
+    "isInLove",
+  ];
+  static override symbol = "is_in_love";
+  static override interactName = "entityIsInLove";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: [
-        "EntityIsinlove",
-        "entity_is_in_love",
-        "entityIsInLove",
-        "isInLove",
-      ],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Entity",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
-        to: {
-          type: "Boolean",
-        },
-      }),
-      symbol: "is_in_love",
-      interactName: "entityIsInLove",
+        normalizeSignature
+      ),
       function: (entity: Entity): iBoolean => {
         return entity.isInLove();
       },

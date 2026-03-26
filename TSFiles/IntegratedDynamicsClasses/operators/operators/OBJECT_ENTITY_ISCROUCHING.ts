@@ -9,25 +9,29 @@ export class OPERATOR_OBJECT_ENTITY_ISCROUCHING extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:entity_iscrouching" as const;
-  constructor() {
+  static override numericID = 203;
+  static override nicknames = [
+    "EntityIscrouching",
+    "entity_is_crouching",
+    "entityIsCrouching",
+    "isCrouching",
+  ];
+  static override symbol = "is_crouching";
+  static override interactName = "entityIsCrouching";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: [
-        "EntityIscrouching",
-        "entity_is_crouching",
-        "entityIsCrouching",
-        "isCrouching",
-      ],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Entity",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
-        to: {
-          type: "Boolean",
-        },
-      }),
-      symbol: "is_crouching",
-      interactName: "entityIsCrouching",
+        normalizeSignature
+      ),
       function: (entity: Entity): iBoolean => {
         return entity.isCrouching();
       },

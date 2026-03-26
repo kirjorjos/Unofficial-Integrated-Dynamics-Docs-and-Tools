@@ -15,28 +15,33 @@ export class OPERATOR_NBT_COMPOUND_VALUE_LIST_TAG extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:nbt_compound_value_list_tag" as const;
-  constructor() {
+  static override numericID = 221;
+  static override nicknames = [
+    "nbtGetGenericListTag",
+    "nbtCompoundValueListTag",
+    "nbtCompoundValueList",
+    "compoundValueListNBT",
+  ];
+  static override symbol = "NBT{}.get_list_tag";
+  static override interactName = "nbtGetGenericListTag";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: [
-        "nbtCompoundValueListTag",
-        "nbtCompoundValueList",
-        "compoundValueListNBT",
-      ],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
-            type: "String",
+            type: "NBT",
           },
-          to: { type: "List", listType: { type: "NBT" } },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: { type: "List", listType: { type: "NBT" } },
+          },
         },
-      }),
-      symbol: "NBT{}.get_list_tag",
-      interactName: "nbtGetGenericListTag",
+        normalizeSignature
+      ),
       function: (
         nbt: CompoundTag
       ): TypeLambda<iString, iArray<Tag<IntegratedValue>>> => {

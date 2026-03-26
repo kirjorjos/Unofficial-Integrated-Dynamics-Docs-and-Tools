@@ -10,31 +10,36 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISRAWITEMEQUAL extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:itemstack_israwitemequal" as const;
-  constructor() {
+  static override numericID = 57;
+  static override nicknames = [
+    "itemstackIsEqualRaw",
+    "ItemstackIsrawitemequal",
+    "itemstack_is_rawitemequal",
+    "itemstackIsRawitemequal",
+    "rawItemEquals",
+  ];
+  static override symbol = "=Raw=";
+  static override interactName = "itemstackIsEqualRaw";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: [
-        "ItemstackIsrawitemequal",
-        "itemstack_is_rawitemequal",
-        "itemstackIsRawitemequal",
-        "rawItemEquals",
-      ],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
             type: "Item",
           },
           to: {
-            type: "Boolean",
+            type: "Function",
+            from: {
+              type: "Item",
+            },
+            to: {
+              type: "Boolean",
+            },
           },
         },
-      }),
-      symbol: "=Raw=",
-      interactName: "itemstackIsEqualRaw",
+        normalizeSignature
+      ),
       function: (item1: Item): TypeLambda<Item, iBoolean> => {
         return (item2: Item): iBoolean => {
           return new iBoolean(

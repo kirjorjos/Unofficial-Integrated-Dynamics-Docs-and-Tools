@@ -8,20 +8,24 @@ export class OPERATOR_OBJECT_BLOCK_PLANTTYPE extends BaseOperator<
   iString
 > {
   static override internalName = "integrateddynamics:block_plant_type" as const;
-  constructor() {
+  static override numericID = 121;
+  static override nicknames = ["plant_type", "planttype", "plantType"];
+  static override symbol = "plant_type";
+  static override interactName = "plantType";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["plant_type", "planttype", "plantType"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Block",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Block",
+          },
+          to: {
+            type: "String",
+          },
         },
-        to: {
-          type: "String",
-        },
-      }),
-      symbol: "plant_type",
-      interactName: "plantType",
+        normalizeSignature
+      ),
       function: (block: Block): iString => {
         return block.getPlantType();
       },

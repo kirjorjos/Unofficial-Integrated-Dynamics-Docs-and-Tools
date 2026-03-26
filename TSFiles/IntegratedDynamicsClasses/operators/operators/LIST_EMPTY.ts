@@ -9,18 +9,22 @@ export class OPERATOR_LIST_EMPTY extends BaseOperator<
   iBoolean
 > {
   static override internalName = "integrateddynamics:list_empty" as const;
-  constructor() {
+  static override numericID = 105;
+  static override nicknames = ["listEmpty", "listIsEmpty"];
+  static override symbol = "∅";
+  static override interactName = "listIsEmpty";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["listEmpty", "listIsEmpty"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: {
-          type: "Boolean",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: { type: "List", listType: { type: "Any", typeID: 1 } },
+          to: {
+            type: "Boolean",
+          },
         },
-      }),
-      symbol: "∅",
-      interactName: "listIsEmpty",
+        normalizeSignature
+      ),
       function: (list: iArray<IntegratedValue>): iBoolean => {
         return list.size().equals(Integer.ZERO);
       },

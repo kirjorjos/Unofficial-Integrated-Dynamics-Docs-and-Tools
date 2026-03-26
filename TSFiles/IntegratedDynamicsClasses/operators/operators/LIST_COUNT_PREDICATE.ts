@@ -10,31 +10,35 @@ export class OPERATOR_LIST_COUNT_PREDICATE extends BaseOperator<
   Operator<Operator<IntegratedValue, iBoolean>, Integer>
 > {
   static override internalName = "integrateddynamics:list_count_p" as const;
-  constructor() {
+  static override numericID = 115;
+  static override nicknames = ["listCountPredicate", "listCountP"];
+  static override symbol = "count_p";
+  static override interactName = "listCountPredicate";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["listCountPredicate", "listCountP"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
-          from: {
-            type: "Operator",
-            obscured: {
-              type: "Function",
-              from: { type: "Any", typeID: 1 },
-              to: {
-                type: "Boolean",
+          from: { type: "List", listType: { type: "Any", typeID: 1 } },
+          to: {
+            type: "Function",
+            from: {
+              type: "Operator",
+              obscured: {
+                type: "Function",
+                from: { type: "Any", typeID: 1 },
+                to: {
+                  type: "Boolean",
+                },
               },
             },
-          },
-          to: {
-            type: "Integer",
+            to: {
+              type: "Integer",
+            },
           },
         },
-      }),
-      symbol: "count_p",
-      interactName: "listCountPredicate",
+        normalizeSignature
+      ),
       function: (
         list: iArray<IntegratedValue>
       ): TypeLambda<Predicate<IntegratedValue>, Integer> => {

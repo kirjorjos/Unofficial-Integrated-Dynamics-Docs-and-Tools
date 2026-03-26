@@ -7,26 +7,30 @@ export class OPERATOR_BINARY_XOR extends BaseOperator<
   Operator<Integer, Integer>
 > {
   static override internalName = "integrateddynamics:binary_xor" as const;
-  constructor() {
+  static override numericID = 12;
+  static override nicknames = ["binaryXor", "integerXor"];
+  static override symbol = "^";
+  static override interactName = "integerXor";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["binaryXor", "^", "integerXor"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Integer",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
             type: "Integer",
           },
           to: {
-            type: "Integer",
+            type: "Function",
+            from: {
+              type: "Integer",
+            },
+            to: {
+              type: "Integer",
+            },
           },
         },
-      }),
-      symbol: "^",
-      interactName: "integerXor",
+        normalizeSignature
+      ),
       function: (int1: Integer): TypeLambda<Integer, Integer> => {
         return (int2: Integer): Integer => {
           return int1.binaryXor(int2);

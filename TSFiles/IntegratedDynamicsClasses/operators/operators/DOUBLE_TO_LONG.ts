@@ -4,20 +4,24 @@ import { BaseOperator } from "../BaseOperator";
 export class OPERATOR_DOUBLE_TO_LONG extends BaseOperator<Double, Long> {
   static override internalName =
     "integrateddynamics:operator.integrateddynamics.castintegrateddynamics_double__integrateddynamics_long" as const;
-  constructor() {
+  static override numericID = 86;
+  static override nicknames = ["doubleDoubleToLong", "doubleToLong"];
+  static override symbol = "()";
+  static override interactName = "doubleDoubleToLong";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["doubleToLong"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Double",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Double",
+          },
+          to: {
+            type: "Long",
+          },
         },
-        to: {
-          type: "Long",
-        },
-      }),
-      symbol: "()",
-      interactName: "doubleDoubleToLong",
+        normalizeSignature
+      ),
       function: (double: Double): Long => {
         return double.toLong();
       },

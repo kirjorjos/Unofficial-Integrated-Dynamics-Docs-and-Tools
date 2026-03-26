@@ -8,25 +8,29 @@ export class OPERATOR_OBJECT_BLOCK_PLANTAGE extends BaseOperator<
   Integer
 > {
   static override internalName = "integrateddynamics:block_plantage" as const;
-  constructor() {
+  static override numericID = 122;
+  static override nicknames = [
+    "BlockPlantage",
+    "block_plant_age",
+    "blockPlantAge",
+    "plantAge",
+  ];
+  static override symbol = "plant_age";
+  static override interactName = "blockPlantAge";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: [
-        "BlockPlantage",
-        "block_plant_age",
-        "blockPlantAge",
-        "plantAge",
-      ],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Block",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Block",
+          },
+          to: {
+            type: "Integer",
+          },
         },
-        to: {
-          type: "Integer",
-        },
-      }),
-      symbol: "plant_age",
-      interactName: "blockPlantAge",
+        normalizeSignature
+      ),
       function: (block: Block): Integer => {
         return block.getPlantAge();
       },

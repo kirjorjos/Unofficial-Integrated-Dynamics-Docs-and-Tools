@@ -8,26 +8,30 @@ export class OPERATOR_RELATIONAL_GE extends BaseOperator<
   Operator<TypeNumber, iBoolean>
 > {
   static override internalName = "integrateddynamics:relational_ge" as const;
-  constructor() {
+  static override numericID = 73;
+  static override nicknames = ["anyGreaterThanOrEquals", "relationalGe"];
+  static override symbol = ">=";
+  static override interactName = "anyGreaterThanOrEquals";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["relationalGe", ">="],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Number",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
             type: "Number",
           },
           to: {
-            type: "Boolean",
+            type: "Function",
+            from: {
+              type: "Number",
+            },
+            to: {
+              type: "Boolean",
+            },
           },
         },
-      }),
-      symbol: ">=",
-      interactName: "anyGreaterThanOrEquals",
+        normalizeSignature
+      ),
       function: (num1: TypeNumber): TypeLambda<TypeNumber, iBoolean> => {
         return (num2: TypeNumber): iBoolean => {
           return new iBoolean(num1.gte(num2));

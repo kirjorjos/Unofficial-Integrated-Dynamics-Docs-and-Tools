@@ -6,22 +6,31 @@ export class OPERATOR_GENERAL_IDENTITY extends BaseOperator<
   IntegratedValue
 > {
   static override internalName = "integrateddynamics:general_identity" as const;
-  constructor() {
+  static override numericID = 45;
+  static override nicknames = [
+    "generalIdentity",
+    "id",
+    "identity",
+    "anyIdentity",
+  ];
+  static override symbol = "id";
+  static override interactName = "anyIdentity";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["generalIdentity", "id", "identity", "anyIdentity"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Any",
-          typeID: 1,
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Any",
+            typeID: 1,
+          },
+          to: {
+            type: "Any",
+            typeID: 1,
+          },
         },
-        to: {
-          type: "Any",
-          typeID: 1,
-        },
-      }),
-      symbol: "id",
-      interactName: "anyIdentity",
+        normalizeSignature
+      ),
       function: (value: IntegratedValue): IntegratedValue => {
         return value;
       },

@@ -9,26 +9,30 @@ export class OPERATOR_STRING_INDEX_OF extends BaseOperator<
   Operator<iString, Integer>
 > {
   static override internalName = "integrateddynamics:string_index_of" as const;
-  constructor() {
+  static override numericID = 164;
+  static override nicknames = ["stringIndexOf"];
+  static override symbol = "index_of";
+  static override interactName = "stringIndexOf";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["stringIndexOf"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
             type: "String",
           },
           to: {
-            type: "Integer",
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Integer",
+            },
           },
         },
-      }),
-      symbol: "index_of",
-      interactName: "stringIndexOf",
+        normalizeSignature
+      ),
       function: (substring: iString): TypeLambda<iString, Integer> => {
         return (fullString: iString): Integer => {
           return new Integer(fullString.valueOf().indexOf(substring.valueOf()));

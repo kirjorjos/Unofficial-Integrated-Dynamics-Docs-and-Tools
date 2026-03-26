@@ -8,26 +8,30 @@ export class OPERATOR_RELATIONAL_GT extends BaseOperator<
   Operator<TypeNumber, iBoolean>
 > {
   static override internalName = "integrateddynamics:relational_gt" as const;
-  constructor() {
+  static override numericID = 74;
+  static override nicknames = ["numberGreaterThan", "relationalGt"];
+  static override symbol = ">";
+  static override interactName = "numberGreaterThan";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["relationalGt", ">"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Number",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
             type: "Number",
           },
           to: {
-            type: "Boolean",
+            type: "Function",
+            from: {
+              type: "Number",
+            },
+            to: {
+              type: "Boolean",
+            },
           },
         },
-      }),
-      symbol: ">",
-      interactName: "numberGreaterThan",
+        normalizeSignature
+      ),
       function: (num1: TypeNumber): TypeLambda<TypeNumber, iBoolean> => {
         return (num2: TypeNumber): iBoolean => {
           return new iBoolean(num1.gt(num2));

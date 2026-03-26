@@ -8,25 +8,29 @@ export class OPERATOR_OBJECT_BLOCK_STEPSOUND extends BaseOperator<
   iString
 > {
   static override internalName = "integrateddynamics:block_stepsound" as const;
-  constructor() {
+  static override numericID = 18;
+  static override nicknames = [
+    "BlockStepsound",
+    "blockStepSound",
+    "block_step_sound",
+    "stepSound",
+  ];
+  static override symbol = "step_sound";
+  static override interactName = "blockStepSound";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: [
-        "BlockStepsound",
-        "blockStepSound",
-        "block_step_sound",
-        "stepSound",
-      ],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Block",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Block",
+          },
+          to: {
+            type: "String",
+          },
         },
-        to: {
-          type: "String",
-        },
-      }),
-      symbol: "step_sound",
-      interactName: "blockStepSound",
+        normalizeSignature
+      ),
       function: (block: Block): iString => {
         return block.getStepSound();
       },

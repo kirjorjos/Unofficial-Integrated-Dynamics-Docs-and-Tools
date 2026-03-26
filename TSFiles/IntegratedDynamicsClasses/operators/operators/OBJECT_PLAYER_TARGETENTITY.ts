@@ -8,25 +8,29 @@ export class OPERATOR_OBJECT_PLAYER_TARGETENTITY extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:entity_targetentity" as const;
-  constructor() {
+  static override numericID = 36;
+  static override nicknames = [
+    "EntityTargetentity",
+    "entity_target_entity",
+    "entityTargetEntity",
+    "playerTargetEntity",
+  ];
+  static override symbol = "target_entity";
+  static override interactName = "entityTargetEntity";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: [
-        "EntityTargetentity",
-        "entity_target_entity",
-        "entityTargetEntity",
-        "playerTargetEntity",
-      ],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Entity",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Entity",
+          },
         },
-        to: {
-          type: "Entity",
-        },
-      }),
-      symbol: "target_entity",
-      interactName: "entityTargetEntity",
+        normalizeSignature
+      ),
       function: (entity: Entity): Entity => {
         return entity.getTargetEntity();
       },

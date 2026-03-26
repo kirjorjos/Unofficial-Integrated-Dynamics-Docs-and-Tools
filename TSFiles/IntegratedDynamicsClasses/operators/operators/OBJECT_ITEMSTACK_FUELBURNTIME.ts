@@ -9,25 +9,30 @@ export class OPERATOR_OBJECT_ITEMSTACK_FUELBURNTIME extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:itemstack_burntime" as const;
-  constructor() {
+  static override numericID = 49;
+  static override nicknames = [
+    "itemstackBurnTime",
+    "ItemstackFuelburntime",
+    "item_fuel_burn_time",
+    "itemFuelBurnTime",
+    "fuelBurnTime",
+  ];
+  static override symbol = "burn_time";
+  static override interactName = "itemstackBurnTime";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: [
-        "ItemstackFuelburntime",
-        "item_fuel_burn_time",
-        "itemFuelBurnTime",
-        "fuelBurnTime",
-      ],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Item",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "Integer",
+          },
         },
-        to: {
-          type: "Integer",
-        },
-      }),
-      symbol: "burn_time",
-      interactName: "itemstackBurnTime",
+        normalizeSignature
+      ),
       function: (item: Item): Integer => {
         return item.getFuelBurnTime();
       },

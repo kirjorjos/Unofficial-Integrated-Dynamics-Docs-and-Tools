@@ -11,31 +11,35 @@ export class OPERATOR_OBJECT_ENTITY_CANBREEDWITH extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:entity_canbreedwith" as const;
-  constructor() {
+  static override numericID = 128;
+  static override nicknames = [
+    "EntityCanbreedwith",
+    "entity_can_breed_with",
+    "entityCanBreedWith",
+    "canBreedWith",
+  ];
+  static override symbol = "can_breed_with";
+  static override interactName = "entityCanBreedWith";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: [
-        "EntityCanbreedwith",
-        "entity_can_breed_with",
-        "entityCanBreedWith",
-        "canBreedWith",
-      ],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
-            type: "Item",
+            type: "Entity",
           },
           to: {
-            type: "Boolean",
+            type: "Function",
+            from: {
+              type: "Item",
+            },
+            to: {
+              type: "Boolean",
+            },
           },
         },
-      }),
-      symbol: "can_breed_with",
-      interactName: "entityCanBreedWith",
+        normalizeSignature
+      ),
       function: (entity: Entity): TypeLambda<Item, iBoolean> => {
         return (item: Item): iBoolean => {
           return entity.getBreadableList().includes(item.getUniqueName());

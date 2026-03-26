@@ -10,25 +10,29 @@ export class OPERATOR_OBJECT_ITEMSTACK_HASINVENTORY extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:itemstack_hasinventory" as const;
-  constructor() {
+  static override numericID = 133;
+  static override nicknames = [
+    "ItemstackHasinventory",
+    "itemstack_has_inventory",
+    "itemstackHasInventory",
+    "hasInventory",
+  ];
+  static override symbol = "has_inventory";
+  static override interactName = "itemstackHasInventory";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: [
-        "ItemstackHasinventory",
-        "itemstack_has_inventory",
-        "itemstackHasInventory",
-        "hasInventory",
-      ],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Item",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
-        to: {
-          type: "Boolean",
-        },
-      }),
-      symbol: "has_inventory",
-      interactName: "itemstackHasInventory",
+        normalizeSignature
+      ),
       function: (item: Item): iBoolean => {
         return new iBoolean(item.getInventory().size().gt(Integer.ZERO));
       },

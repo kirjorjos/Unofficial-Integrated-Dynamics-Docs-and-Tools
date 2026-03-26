@@ -9,28 +9,31 @@ export class OPERATOR_OBJECT_FLUIDSTACK_LIGHT_LEVEL extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:fluidstack_light_level" as const;
-  constructor() {
+  static override numericID = 271;
+  static override nicknames = [
+    "FluidstackLightLevel",
+    "fluidstackLightLevel",
+    "fluid_stack_light_level",
+    "fluidStackLightLevel",
+    "fluid_light_level",
+    "fluidLightLevel",
+  ];
+  static override symbol = "light_level";
+  static override interactName = "fluidstackLightLevel";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: [
-        "FluidstackLightLevel",
-        "fluidstackLightLevel",
-        "fluid_stack_light_level",
-        "fluidStackLightLevel",
-        "fluid_stack_light_level",
-        "fluid_light_level",
-        "fluidLightLevel",
-      ],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Fluid",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Fluid",
+          },
+          to: {
+            type: "Integer",
+          },
         },
-        to: {
-          type: "Integer",
-        },
-      }),
-      symbol: "light_level",
-      interactName: "fluidstackLightLevel",
+        normalizeSignature
+      ),
       function: (fluid: Fluid): Integer => {
         return fluid.getLightLevel();
       },

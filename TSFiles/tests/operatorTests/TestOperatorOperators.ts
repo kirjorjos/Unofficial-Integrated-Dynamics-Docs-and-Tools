@@ -75,10 +75,14 @@ describe("TestOperatorOperators", () => {
     oArithmeticIncrement = new operatorRegistry.ARITHMETIC_INCREMENT();
     oArithmeticAddition = new operatorRegistry.ARITHMETIC_ADDITION();
     oSubStr = new operatorRegistry.STRING_SUBSTRING();
-    oGetConstStr = new BaseOperator({
-      nicknames: ["NONE"],
-      symbol: "NONE",
-      interactName: "NONE",
+    oGetConstStr = new (class extends BaseOperator<
+      IntegratedValue,
+      IntegratedValue
+    > {
+      static override nicknames = ["NONE"];
+      static override symbol = "NONE";
+      static override interactName = "NONE";
+    })({
       parsedSignature: new ParsedSignature({ type: "String" }),
       function: () => new iString("HI"),
     });

@@ -7,25 +7,29 @@ export class OPERATOR_OBJECT_BLOCK_BREAKSOUND extends BaseOperator<
   iString
 > {
   static override internalName = "integrateddynamics:block_breaksound" as const;
-  constructor() {
+  static override numericID = 13;
+  static override nicknames = [
+    "BlockBreaksound",
+    "block_break_sound",
+    "blockBreakSound",
+    "breakSound",
+  ];
+  static override symbol = "break_sound";
+  static override interactName = "blockBreakSound";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: [
-        "BlockBreaksound",
-        "block_break_sound",
-        "blockBreakSound",
-        "breakSound",
-      ],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Block",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Block",
+          },
+          to: {
+            type: "String",
+          },
         },
-        to: {
-          type: "String",
-        },
-      }),
-      symbol: "break_sound",
-      interactName: "blockBreakSound",
+        normalizeSignature
+      ),
       function: (block: Block): iString => {
         return block.getBreakSound();
       },

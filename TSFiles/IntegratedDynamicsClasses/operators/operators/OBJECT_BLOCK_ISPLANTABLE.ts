@@ -9,20 +9,24 @@ export class OPERATOR_OBJECT_BLOCK_ISPLANTABLE extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:block_is_plantable" as const;
-  constructor() {
+  static override numericID = 119;
+  static override nicknames = ["is_plantable", "isplantable", "isPlantable"];
+  static override symbol = "is_plantable";
+  static override interactName = "isPlantable";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["is_plantable", "isplantable", "isPlantable"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Block",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Block",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
-        to: {
-          type: "Boolean",
-        },
-      }),
-      symbol: "is_plantable",
-      interactName: "isPlantable",
+        normalizeSignature
+      ),
       function: (block: Block): iBoolean => {
         return block.isPlantable();
       },

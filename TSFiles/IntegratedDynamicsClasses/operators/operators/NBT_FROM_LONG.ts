@@ -5,20 +5,24 @@ import { Long } from "JavaNumberClasses/Long";
 
 export class OPERATOR_NBT_FROM_LONG extends BaseOperator<Long, LongTag> {
   static override internalName = "integrateddynamics:nbt_from_long" as const;
-  constructor() {
+  static override numericID = 261;
+  static override nicknames = ["longAsNbt", "nbtFromLong"];
+  static override symbol = "NBT.from_long";
+  static override interactName = "longAsNbt";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["nbtFromLong"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Long",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Long",
+          },
+          to: {
+            type: "NBT",
+          },
         },
-        to: {
-          type: "NBT",
-        },
-      }),
-      symbol: "NBT.from_long",
-      interactName: "longAsNbt",
+        normalizeSignature
+      ),
       function: (long: Long): LongTag => {
         return new LongTag(long);
       },

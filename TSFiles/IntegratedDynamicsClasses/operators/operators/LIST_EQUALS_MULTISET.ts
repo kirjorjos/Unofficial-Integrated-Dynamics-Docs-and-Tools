@@ -11,22 +11,30 @@ export class OPERATOR_LIST_EQUALS_MULTISET extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:list_equals_multiset" as const;
-  constructor() {
+  static override numericID = 301;
+  static override nicknames = [
+    "listEquals_multiset",
+    "listEqualsMultiset",
+    "equalsMultiset",
+  ];
+  static override symbol = "=multiset=";
+  static override interactName = "listEquals_multiset";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["listEqualsMultiset", "equalsMultiset"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: { type: "List", listType: { type: "Any", typeID: 1 } },
           to: {
-            type: "Boolean",
+            type: "Function",
+            from: { type: "List", listType: { type: "Any", typeID: 1 } },
+            to: {
+              type: "Boolean",
+            },
           },
         },
-      }),
-      symbol: "=multiset=",
-      interactName: "listEquals_multiset",
+        normalizeSignature
+      ),
       function: (
         list1: iArray<IntegratedValue>
       ): TypeLambda<iArray<IntegratedValue>, iBoolean> => {

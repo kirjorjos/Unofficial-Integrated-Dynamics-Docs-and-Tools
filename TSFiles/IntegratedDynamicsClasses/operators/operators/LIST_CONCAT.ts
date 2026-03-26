@@ -8,20 +8,24 @@ export class OPERATOR_LIST_CONCAT extends BaseOperator<
   Operator<iArray<IntegratedValue>, iArray<IntegratedValue>>
 > {
   static override internalName = "integrateddynamics:list_concat" as const;
-  constructor() {
+  static override numericID = 139;
+  static override nicknames = ["listConcat", "concat"];
+  static override symbol = "concat";
+  static override interactName = "listConcat";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["listConcat", "concat"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: { type: "List", listType: { type: "Any", typeID: 1 } },
-          to: { type: "List", listType: { type: "Any", typeID: 1 } },
+          to: {
+            type: "Function",
+            from: { type: "List", listType: { type: "Any", typeID: 1 } },
+            to: { type: "List", listType: { type: "Any", typeID: 1 } },
+          },
         },
-      }),
-      symbol: "concat",
-      interactName: "listConcat",
+        normalizeSignature
+      ),
       function: (
         list1: iArray<IntegratedValue>
       ): TypeLambda<iArray<IntegratedValue>, iArray<IntegratedValue>> => {

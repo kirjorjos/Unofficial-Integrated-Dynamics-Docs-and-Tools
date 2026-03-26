@@ -5,20 +5,24 @@ import { Item } from "IntegratedDynamicsClasses/Item";
 
 export class OPERATOR_OBJECT_ITEMSTACK_PLANT extends BaseOperator<Item, Block> {
   static override internalName = "integrateddynamics:itemstack_plant" as const;
-  constructor() {
+  static override numericID = 124;
+  static override nicknames = ["plant"];
+  static override symbol = "plant";
+  static override interactName = "plant";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["plant"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Item",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "Block",
+          },
         },
-        to: {
-          type: "Block",
-        },
-      }),
-      symbol: "plant",
-      interactName: "plant",
+        normalizeSignature
+      ),
       function: (item: Item): Block => {
         return item.getPlant();
       },

@@ -8,25 +8,29 @@ export class OPERATOR_OBJECT_ITEMSTACK_RARITY extends BaseOperator<
   iString
 > {
   static override internalName = "integrateddynamics:itemstack_rarity" as const;
-  constructor() {
+  static override numericID = 61;
+  static override nicknames = [
+    "ItemstackRarity",
+    "itemstack_rarity",
+    "itemstackRarity",
+    "rarity",
+  ];
+  static override symbol = "rarity";
+  static override interactName = "itemstackRarity";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: [
-        "ItemstackRarity",
-        "itemstack_rarity",
-        "itemstackRarity",
-        "rarity",
-      ],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Item",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "String",
+          },
         },
-        to: {
-          type: "String",
-        },
-      }),
-      symbol: "rarity",
-      interactName: "itemstackRarity",
+        normalizeSignature
+      ),
       function: (item: Item): iString => {
         return item.getRarity();
       },

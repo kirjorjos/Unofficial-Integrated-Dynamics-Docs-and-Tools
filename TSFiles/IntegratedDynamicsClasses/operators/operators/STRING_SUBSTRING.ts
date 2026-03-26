@@ -9,15 +9,18 @@ export class OPERATOR_STRING_SUBSTRING extends BaseOperator<
   Operator<Integer, Operator<iString, iString>>
 > {
   static override internalName = "integrateddynamics:string_substring" as const;
-  constructor() {
+  static override numericID = 163;
+  static override nicknames = [
+    "integerSubstring",
+    "substring",
+    "stringSubstring",
+  ];
+  static override symbol = "substring";
+  static override interactName = "integerSubstring";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["substring", "stringSubstring"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Integer",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
             type: "Integer",
@@ -25,16 +28,21 @@ export class OPERATOR_STRING_SUBSTRING extends BaseOperator<
           to: {
             type: "Function",
             from: {
-              type: "String",
+              type: "Integer",
             },
             to: {
-              type: "String",
+              type: "Function",
+              from: {
+                type: "String",
+              },
+              to: {
+                type: "String",
+              },
             },
           },
         },
-      }),
-      symbol: "substring",
-      interactName: "integerSubstring",
+        normalizeSignature
+      ),
       function: (
         start: Integer
       ): TypeLambda<Integer, TypeLambda<iString, iString>> => {

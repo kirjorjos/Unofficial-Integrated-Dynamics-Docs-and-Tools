@@ -8,24 +8,29 @@ export class OPERATOR_ITEMSTACK_TAG extends BaseOperator<
   iArray<iString>
 > {
   static override internalName = "integrateddynamics:itemstack_tag" as const;
-  constructor() {
+  static override numericID = 199;
+  static override nicknames = [
+    "itemstackTags",
+    "ItemstackTag",
+    "itemstack_tag_names",
+    "itemstackTagNames",
+    "item_tag_names",
+    "itemTagNames",
+  ];
+  static override symbol = "item_tag_names";
+  static override interactName = "itemstackTags";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: [
-        "ItemstackTag",
-        "itemstack_tag_names",
-        "itemstackTagNames",
-        "item_tag_names",
-        "itemTagNames",
-      ],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Item",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: { type: "List", listType: { type: "String" } },
         },
-        to: { type: "List", listType: { type: "String" } },
-      }),
-      symbol: "item_tag_names",
-      interactName: "itemstackTags",
+        normalizeSignature
+      ),
       function: (item: Item): iArray<iString> => {
         return item.getTagNames();
       },

@@ -12,32 +12,40 @@ export class OPERATOR_NBT_COMPOUND_WITH_LONG extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:nbt_compound_with_long" as const;
-  constructor() {
+  static override numericID = 233;
+  static override nicknames = [
+    "nbtWithLong",
+    "nbtCompoundWithLong",
+    "NBTWithLong",
+  ];
+  static override symbol = "NBT{}.with_long";
+  static override interactName = "nbtWithLong";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["nbtCompoundWithLong", "NBTWithLong"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
-            type: "String",
+            type: "NBT",
           },
           to: {
             type: "Function",
             from: {
-              type: "Long",
+              type: "String",
             },
             to: {
-              type: "NBT",
+              type: "Function",
+              from: {
+                type: "Long",
+              },
+              to: {
+                type: "NBT",
+              },
             },
           },
         },
-      }),
-      symbol: "NBT{}.with_long",
-      interactName: "nbtWithLong",
+        normalizeSignature
+      ),
       function: (
         nbt: CompoundTag
       ): TypeLambda<iString, TypeLambda<Long, CompoundTag>> => {

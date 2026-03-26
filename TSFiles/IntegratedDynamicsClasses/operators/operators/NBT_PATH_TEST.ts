@@ -11,26 +11,30 @@ export class OPERATOR_NBT_PATH_TEST extends BaseOperator<
   Operator<CompoundTag, iBoolean>
 > {
   static override internalName = "integrateddynamics:nbt_path_test" as const;
-  constructor() {
+  static override numericID = 240;
+  static override nicknames = ["stringNbtPathTest", "NBTPathTest"];
+  static override symbol = "NBT.path_test";
+  static override interactName = "stringNbtPathTest";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["NBTPathTest"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
-            type: "NBT",
+            type: "String",
           },
           to: {
-            type: "Boolean",
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "Boolean",
+            },
           },
         },
-      }),
-      symbol: "NBT.path_test",
-      interactName: "stringNbtPathTest",
+        normalizeSignature
+      ),
       function: (path: iString): TypeLambda<CompoundTag, iBoolean> => {
         return (nbt: CompoundTag): iBoolean => {
           let expression = NbtPath.parse(path.valueOf());

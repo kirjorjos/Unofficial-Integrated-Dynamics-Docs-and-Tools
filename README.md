@@ -13,10 +13,13 @@ Current plans for this project are as follows:
 
 - [x] Ability to eval custom operators
 - [ ] Ability to convert to and from AST:
-  - [ ] NBT
-  - [ ] Condensed
-  - [ ] Expanded
-  - [ ] CodeLine
+  - [] SNBT
+    - [x] JSON
+    - [] Add stringify and parse for JSON in correct places
+  - [x] Condensed
+  - [x] Expanded
+  - [x] CodeLine
+  - [x] URL Param
   - [ ] Javascript (Anything that's valid in [InSr](https://github.com/cyclopsmc/IntegratedScripting))
 - [ ] An article explaining various things about the mod intended to help beginners learn
   - [ ] An article for each operator explaining its usage and providing a mini challenge involving it
@@ -34,7 +37,7 @@ Current plans for this project are as follows:
 
 If you think something is wrong or missing, feel free to [open an issue](https://github.com/kirjorjos/WIP-Integrated-Dynamics-Project/issues) or [submit a pull request](https://github.com/kirjorjos/WIP-Integrated-Dynamics-Project/pulls).
 
-Before committing any changes, please build the project:
+Before committing any changes, please build the project to automatically format and test:
 
 ```bash
 npm run build

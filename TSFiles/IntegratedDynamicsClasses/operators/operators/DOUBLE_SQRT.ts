@@ -3,20 +3,24 @@ import { BaseOperator } from "../BaseOperator";
 
 export class OPERATOR_DOUBLE_SQRT extends BaseOperator<Double, Double> {
   static override internalName = "integrateddynamics:double_sqrt" as const;
-  constructor() {
+  static override numericID = 295;
+  static override nicknames = ["doubleSqrt", "sqrt"];
+  static override symbol = "sqrt";
+  static override interactName = "doubleSqrt";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["doubleSqrt", "sqrt"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Double",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Double",
+          },
+          to: {
+            type: "Double",
+          },
         },
-        to: {
-          type: "Double",
-        },
-      }),
-      symbol: "sqrt",
-      interactName: "doubleSqrt",
+        normalizeSignature
+      ),
       function: (double: Double): Double => {
         return double.sqrt();
       },

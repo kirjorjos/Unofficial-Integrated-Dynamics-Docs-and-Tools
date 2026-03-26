@@ -8,18 +8,22 @@ export class OPERATOR_STRING_ERROR extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:string_string_error" as const;
-  constructor() {
+  static override numericID = 290;
+  static override nicknames = ["stringStringError", "error", "string_error"];
+  static override symbol = "error";
+  static override interactName = "stringStringError";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["error", "string_error"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "String",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: { type: "Any", typeID: 1 },
         },
-        to: { type: "Any", typeID: 1 },
-      }),
-      symbol: "error",
-      interactName: "stringStringError",
+        normalizeSignature
+      ),
       function: (message: iString): never => {
         throw new Error(`Error: ${message.valueOf()}`);
       },

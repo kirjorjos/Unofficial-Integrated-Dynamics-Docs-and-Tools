@@ -8,26 +8,30 @@ export class OPERATOR_RELATIONAL_LE extends BaseOperator<
   Operator<TypeNumber, iBoolean>
 > {
   static override internalName = "integrateddynamics:relational_le" as const;
-  constructor() {
+  static override numericID = 75;
+  static override nicknames = ["anyLessThanOrEquals", "relationalLe"];
+  static override symbol = "<=";
+  static override interactName = "anyLessThanOrEquals";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["relationalLe", "<="],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Number",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
             type: "Number",
           },
           to: {
-            type: "Boolean",
+            type: "Function",
+            from: {
+              type: "Number",
+            },
+            to: {
+              type: "Boolean",
+            },
           },
         },
-      }),
-      symbol: "<=",
-      interactName: "anyLessThanOrEquals",
+        normalizeSignature
+      ),
       function: (num1: TypeNumber): TypeLambda<TypeNumber, iBoolean> => {
         return (num2: TypeNumber): iBoolean => {
           return new iBoolean(num1.lte(num2));

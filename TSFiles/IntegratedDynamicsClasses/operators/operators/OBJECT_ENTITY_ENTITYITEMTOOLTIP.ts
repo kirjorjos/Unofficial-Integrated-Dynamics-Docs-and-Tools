@@ -12,30 +12,35 @@ export class OPERATOR_OBJECT_ENTITY_ENTITYITEMTOOLTIP extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:entity_entityitemtooltip" as const;
-  constructor() {
+  static override numericID = 291;
+  static override nicknames = [
+    "entityEntityItemTooltip",
+    "ItemstackEntityTooltip",
+    "itemstack_entity_tooltip",
+    "itemstackEntityTooltip",
+    "item_entity_tooltip",
+    "itemEntityTooltip",
+  ];
+  static override symbol = "entity_item_tooltip";
+  static override interactName = "entityEntityItemTooltip";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: [
-        "ItemstackEntityTooltip",
-        "itemstack_entity_tooltip",
-        "itemstackEntityTooltip",
-        "item_entity_tooltip",
-        "itemEntityTooltip",
-      ],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Entity",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
-            type: "Item",
+            type: "Entity",
           },
-          to: { type: "List", listType: { type: "String" } },
+          to: {
+            type: "Function",
+            from: {
+              type: "Item",
+            },
+            to: { type: "List", listType: { type: "String" } },
+          },
         },
-      }),
-      symbol: "entity_item_tooltip",
-      interactName: "entityEntityItemTooltip",
+        normalizeSignature
+      ),
       function: (entity: Entity): TypeLambda<Item, iArray<iString>> => {
         return (item: Item): iArray<iString> => {
           if (entity.isPlayer().valueOf()) {

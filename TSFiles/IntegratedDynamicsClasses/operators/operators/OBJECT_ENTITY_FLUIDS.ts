@@ -11,18 +11,22 @@ export class OPERATOR_OBJECT_ENTITY_FLUIDS extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:entity_entityfluids" as const;
-  constructor() {
+  static override numericID = 175;
+  static override nicknames = ["EntityFluids", "entity_fluids", "entityFluids"];
+  static override symbol = "entity_fluids";
+  static override interactName = "entityFluids";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["EntityFluids", "entity_fluids", "entityFluids"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Entity",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: { type: "List", listType: { type: "Fluid" } },
         },
-        to: { type: "List", listType: { type: "Fluid" } },
-      }),
-      symbol: "entity_fluids",
-      interactName: "entityFluids",
+        normalizeSignature
+      ),
       function: (entity: Entity): iArray<Fluid> => {
         return new iArrayEager(entity.getFluids());
       },

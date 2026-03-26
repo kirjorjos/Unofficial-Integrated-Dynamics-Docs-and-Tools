@@ -8,20 +8,30 @@ export class OPERATOR_OBJECT_ENTITY_NBT extends BaseOperator<
   CompoundTag
 > {
   static override internalName = "integrateddynamics:entity_nbt" as const;
-  constructor() {
+  static override numericID = 144;
+  static override nicknames = [
+    "entityNbt",
+    "EntityNbt",
+    "entity_nbt",
+    "canBreed",
+    "entityNBT",
+  ];
+  static override symbol = "NBT()";
+  static override interactName = "entityNbt";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["EntityNbt", "entity_nbt", "canBreed", "entityNBT"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Entity",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "NBT",
+          },
         },
-        to: {
-          type: "NBT",
-        },
-      }),
-      symbol: "NBT()",
-      interactName: "entityNbt",
+        normalizeSignature
+      ),
       function: (entity: Entity): CompoundTag => {
         return entity.getNBT();
       },

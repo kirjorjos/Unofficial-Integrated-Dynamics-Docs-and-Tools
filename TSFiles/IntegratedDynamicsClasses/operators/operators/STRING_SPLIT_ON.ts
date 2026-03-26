@@ -10,24 +10,28 @@ export class OPERATOR_STRING_SPLIT_ON extends BaseOperator<
   Operator<iString, iArray<iString>>
 > {
   static override internalName = "integrateddynamics:string_split_on" as const;
-  constructor() {
+  static override numericID = 160;
+  static override nicknames = ["stringSplitOn"];
+  static override symbol = "split_on";
+  static override interactName = "stringSplitOn";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["stringSplitOn"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
             type: "String",
           },
-          to: { type: "List", listType: { type: "String" } },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: { type: "List", listType: { type: "String" } },
+          },
         },
-      }),
-      symbol: "split_on",
-      interactName: "stringSplitOn",
+        normalizeSignature
+      ),
       function: (delimiter: iString): TypeLambda<iString, iArray<iString>> => {
         return (fullString: iString): iArray<iString> => {
           return new iArrayEager(

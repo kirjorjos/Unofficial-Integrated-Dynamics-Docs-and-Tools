@@ -4,20 +4,24 @@ import { Integer } from "JavaNumberClasses/Integer";
 
 export class OPERATOR_NUMBER_ROUND extends BaseOperator<TypeNumber, Integer> {
   static override internalName = "integrateddynamics:number_round" as const;
-  constructor() {
+  static override numericID = 206;
+  static override nicknames = ["round", "numberRound"];
+  static override symbol = "|| ||";
+  static override interactName = "numberRound";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["round", "numberRound"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Number",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Number",
+          },
+          to: {
+            type: "Integer",
+          },
         },
-        to: {
-          type: "Integer",
-        },
-      }),
-      symbol: "|| ||",
-      interactName: "numberRound",
+        normalizeSignature
+      ),
       function: (number: TypeNumber): Integer => {
         return number.round();
       },

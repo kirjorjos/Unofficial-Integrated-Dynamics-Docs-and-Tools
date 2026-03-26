@@ -10,26 +10,31 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISFLUIDSTACK extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:itemstack_isfluidstack" as const;
-  constructor() {
+  static override numericID = 56;
+  static override nicknames = [
+    "itemstackIsFluidStack",
+    "ItemstackIsfluidstack",
+    "itemstack_is_fluidstack",
+    "itemstackIsFluidstack",
+    "itemHasFluid",
+    "isFluidstack",
+  ];
+  static override symbol = "is_fluidstack";
+  static override interactName = "itemstackIsFluidStack";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: [
-        "ItemstackIsfluidstack",
-        "itemstack_is_fluidstack",
-        "itemstackIsFluidstack",
-        "itemHasFluid",
-        "isFluidstack",
-      ],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Item",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
-        to: {
-          type: "Boolean",
-        },
-      }),
-      symbol: "is_fluidstack",
-      interactName: "itemstackIsFluidStack",
+        normalizeSignature
+      ),
       function: (item: Item): iBoolean => {
         return new iBoolean(item.getFluid().getAmount().gt(Integer.ZERO));
       },

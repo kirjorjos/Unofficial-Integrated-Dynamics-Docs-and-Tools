@@ -8,31 +8,34 @@ export class OPERATOR_ARITHMETIC_MULTIPLICATION extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:arithmetic_multiplication" as const;
-  constructor() {
+  static override numericID = 4;
+  static override nicknames = [
+    "multiply",
+    "arithmeticMultiplication",
+    "numberMultiply",
+  ];
+  static override symbol = "*";
+  static override interactName = "numberMultiply";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: [
-        "multiply",
-        "arithmeticMultiplication",
-        "*",
-        "numberMultiply",
-      ],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Number",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
             type: "Number",
           },
           to: {
-            type: "Number",
+            type: "Function",
+            from: {
+              type: "Number",
+            },
+            to: {
+              type: "Number",
+            },
           },
         },
-      }),
-      symbol: "*",
-      interactName: "numberMultiply",
+        normalizeSignature
+      ),
       function: (num1: TypeNumber): TypeLambda<TypeNumber, TypeNumber> => {
         return (num2: TypeNumber): TypeNumber => {
           const [lowerOrder, higherOrder] =

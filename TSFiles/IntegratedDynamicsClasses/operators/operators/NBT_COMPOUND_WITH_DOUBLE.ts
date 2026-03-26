@@ -12,32 +12,40 @@ export class OPERATOR_NBT_COMPOUND_WITH_DOUBLE extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:nbt_compound_with_double" as const;
-  constructor() {
+  static override numericID = 225;
+  static override nicknames = [
+    "nbtWithDouble",
+    "nbtCompoundWithDouble",
+    "NBTWithDouble",
+  ];
+  static override symbol = "NBT{}.with_double";
+  static override interactName = "nbtWithDouble";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["nbtCompoundWithDouble", "NBTWithDouble"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
-            type: "String",
+            type: "NBT",
           },
           to: {
             type: "Function",
             from: {
-              type: "Double",
+              type: "String",
             },
             to: {
-              type: "NBT",
+              type: "Function",
+              from: {
+                type: "Double",
+              },
+              to: {
+                type: "NBT",
+              },
             },
           },
         },
-      }),
-      symbol: "NBT{}.with_double",
-      interactName: "nbtWithDouble",
+        normalizeSignature
+      ),
       function: (
         nbt: CompoundTag
       ): TypeLambda<iString, TypeLambda<Double, CompoundTag>> => {

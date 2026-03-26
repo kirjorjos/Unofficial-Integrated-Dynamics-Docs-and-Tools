@@ -9,28 +9,31 @@ export class OPERATOR_OBJECT_FLUIDSTACK_RARITY extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:fluidstack_rarity" as const;
-  constructor() {
+  static override numericID = 42;
+  static override nicknames = [
+    "FluidstackRarity",
+    "fluidstackRarity",
+    "fluid_stack_rarity",
+    "fluidStackRarity",
+    "fluid_rarity",
+    "fluidRarity",
+  ];
+  static override symbol = "rarity";
+  static override interactName = "fluidstackRarity";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: [
-        "FluidstackRarity",
-        "fluidstackRarity",
-        "fluid_stack_rarity",
-        "fluidStackRarity",
-        "fluid_stack_rarity",
-        "fluid_rarity",
-        "fluidRarity",
-      ],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Fluid",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Fluid",
+          },
+          to: {
+            type: "String",
+          },
         },
-        to: {
-          type: "String",
-        },
-      }),
-      symbol: "rarity",
-      interactName: "fluidstackRarity",
+        normalizeSignature
+      ),
       function: (fluid: Fluid): iString => {
         return fluid.getRarity();
       },

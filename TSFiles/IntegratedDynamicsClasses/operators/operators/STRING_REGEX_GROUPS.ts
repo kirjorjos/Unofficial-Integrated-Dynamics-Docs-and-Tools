@@ -13,24 +13,28 @@ export class OPERATOR_STRING_REGEX_GROUPS extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:string_regex_groups" as const;
-  constructor() {
+  static override numericID = 166;
+  static override nicknames = ["stringRegexGroups"];
+  static override symbol = "regex_groups";
+  static override interactName = "stringRegexGroups";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["stringRegexGroups", "stringRegexGroups"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
             type: "String",
           },
-          to: { type: "List", listType: { type: "String" } },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: { type: "List", listType: { type: "String" } },
+          },
         },
-      }),
-      symbol: "regex_groups",
-      interactName: "stringRegexGroups",
+        normalizeSignature
+      ),
       function: (
         regexString: iString
       ): TypeLambda<iString, iArray<iString>> => {

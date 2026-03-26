@@ -10,41 +10,45 @@ export class OPERATOR_OPERATOR_PIPE extends BaseOperator<
   >
 > {
   static override internalName = "integrateddynamics:operator_pipe" as const;
-  constructor() {
+  static override numericID = 101;
+  static override nicknames = ["operatorPipe", "pipe"];
+  static override symbol = ".";
+  static override interactName = "operatorPipe";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["operatorPipe", "pipe"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Operator",
-          obscured: {
-            type: "Function",
-            from: { type: "Any", typeID: 1 },
-            to: { type: "Any", typeID: 2 },
-          },
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
             type: "Operator",
             obscured: {
               type: "Function",
-              from: { type: "Any", typeID: 2 },
-              to: { type: "Any", typeID: 3 },
+              from: { type: "Any", typeID: 1 },
+              to: { type: "Any", typeID: 2 },
             },
           },
           to: {
-            type: "Operator",
-            obscured: {
-              type: "Function",
-              from: { type: "Any", typeID: 1 },
-              to: { type: "Any", typeID: 3 },
+            type: "Function",
+            from: {
+              type: "Operator",
+              obscured: {
+                type: "Function",
+                from: { type: "Any", typeID: 2 },
+                to: { type: "Any", typeID: 3 },
+              },
+            },
+            to: {
+              type: "Operator",
+              obscured: {
+                type: "Function",
+                from: { type: "Any", typeID: 1 },
+                to: { type: "Any", typeID: 3 },
+              },
             },
           },
         },
-      }),
-      symbol: ".",
-      interactName: "operatorPipe",
+        normalizeSignature
+      ),
       serializer: "integrateddynamics:combined.pipe",
       function: (
         f: Operator<IntegratedValue, IntegratedValue>

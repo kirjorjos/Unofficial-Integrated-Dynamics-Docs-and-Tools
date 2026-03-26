@@ -11,26 +11,34 @@ export class OPERATOR_NBT_COMPOUND_VALUE_COMPOUND extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:nbt_compound_value_compound" as const;
-  constructor() {
+  static override numericID = 215;
+  static override nicknames = [
+    "nbtGetCompound",
+    "nbtCompoundValueCompound",
+    "compoundValueCompound",
+  ];
+  static override symbol = "NBT{}.get_compound";
+  static override interactName = "nbtGetCompound";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["nbtCompoundValueCompound", "compoundValueCompound"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "NBT",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
-            type: "String",
-          },
-          to: {
             type: "NBT",
           },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "NBT",
+            },
+          },
         },
-      }),
-      symbol: "NBT{}.get_compound",
-      interactName: "nbtGetCompound",
+        normalizeSignature
+      ),
       function: (nbt: CompoundTag): TypeLambda<iString, CompoundTag> => {
         return (key: iString): CompoundTag => {
           let value = nbt.get(key);

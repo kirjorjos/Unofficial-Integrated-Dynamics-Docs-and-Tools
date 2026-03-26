@@ -8,20 +8,29 @@ export class OPERATOR_OBJECT_ENTITY_ISITEM extends BaseOperator<
   iBoolean
 > {
   static override internalName = "integrateddynamics:entity_isitem" as const;
-  constructor() {
+  static override numericID = 26;
+  static override nicknames = [
+    "EntityIsitem",
+    "entity_is_item",
+    "entityIsItem",
+    "isItem",
+  ];
+  static override symbol = "is_item";
+  static override interactName = "entityIsItem";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["EntityIsitem", "entity_is_item", "entityIsItem", "isItem"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Entity",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
-        to: {
-          type: "Boolean",
-        },
-      }),
-      symbol: "is_item",
-      interactName: "entityIsItem",
+        normalizeSignature
+      ),
       function: (entity: Entity): iBoolean => {
         return entity.isItem();
       },

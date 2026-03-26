@@ -11,26 +11,31 @@ export class OPERATOR_OBJECT_FLUIDSTACK_BY_NAME extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:fluidstack_by_name" as const;
-  constructor() {
+  static override numericID = 303;
+  static override nicknames = [
+    "stringFluidByName",
+    "FluidstackByName",
+    "fluidstack_by_name",
+    "fluidstackByName",
+    "fluid_by_name",
+    "fluidByName",
+  ];
+  static override symbol = "fluid_by_name";
+  static override interactName = "stringFluidByName";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: [
-        "FluidstackByName",
-        "fluidstack_by_name",
-        "fluidstackByName",
-        "fluid_by_name",
-        "fluidByName",
-      ],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "String",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: {
+            type: "Fluid",
+          },
         },
-        to: {
-          type: "Fluid",
-        },
-      }),
-      symbol: "fluid_by_name",
-      interactName: "stringFluidByName",
+        normalizeSignature
+      ),
       function: (name: iString): Fluid => {
         const fluidRegistry = RegistryHub.fluidRegistry;
         const key = name.valueOf().toLowerCase();

@@ -12,18 +12,27 @@ export class OPERATOR_OBJECT_BLOCK_TAG_STACKS extends BaseOperator<
   iArray<Block>
 > {
   static override internalName = "integrateddynamics:string_blocktag" as const;
-  constructor() {
+  static override numericID = 298;
+  static override nicknames = [
+    "stringBlocksByTag",
+    "BlockTagStacks",
+    "block_tag_stacks",
+    "blockTagStacks",
+  ];
+  static override symbol = "block_tag_values";
+  static override interactName = "stringBlocksByTag";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["BlockTagStacks", "block_tag_stacks", "blockTagStacks"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "String",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: { type: "List", listType: { type: "Block" } },
         },
-        to: { type: "List", listType: { type: "Block" } },
-      }),
-      symbol: "block_tag_values",
-      interactName: "stringBlocksByTag",
+        normalizeSignature
+      ),
       function: (name: iString): iArray<Block> => {
         const blockRegistry = RegistryHub.blockRegistry;
         const blocks: Block[] = [];

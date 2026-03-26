@@ -8,35 +8,38 @@ export class OPERATOR_OBJECT_FLUIDSTACK_DATA extends BaseOperator<
   Tag<IntegratedValue>
 > {
   static override internalName = "integrateddynamics:fluidstack_nbt" as const;
-  constructor() {
+  static override numericID = 281;
+  static override nicknames = [
+    "fluidstackNbt",
+    "FluidstackData",
+    "fluidstackData",
+    "fluid_stack_data",
+    "fluidStackData",
+    "fluid_data",
+    "fluidData",
+    "fluid_NBT",
+    "fluidStackNBT",
+    "fluid_stack_NBT",
+    "fluidstack_NBT",
+    "fluidNBT",
+    "fluidNBTKeys",
+  ];
+  static override symbol = "NBT()";
+  static override interactName = "fluidstackNbt";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: [
-        "FluidstackData",
-        "fluidstackData",
-        "fluid_stack_data",
-        "fluidStackData",
-        "fluid_stack_data",
-        "fluid_data",
-        "fluidData",
-        "fluid_NBT",
-        "fluidStackNBT",
-        "fluid_stack_NBT",
-        "fluidstack_NBT",
-        "fluidstackNBT",
-        "fluidNBT",
-        "fluidNBTKeys",
-      ],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Fluid",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Fluid",
+          },
+          to: {
+            type: "NBT",
+          },
         },
-        to: {
-          type: "NBT",
-        },
-      }),
-      symbol: "NBT()",
-      interactName: "fluidstackNbt",
+        normalizeSignature
+      ),
       function: (fluid: Fluid): Tag<IntegratedValue> => {
         return fluid.getNBT();
       },

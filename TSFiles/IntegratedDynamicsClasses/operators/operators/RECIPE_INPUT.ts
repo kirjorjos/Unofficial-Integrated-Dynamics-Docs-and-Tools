@@ -5,20 +5,24 @@ import { Ingredients } from "IntegratedDynamicsClasses/Ingredients";
 
 export class OPERATOR_RECIPE_INPUT extends BaseOperator<Recipe, Ingredients> {
   static override internalName = "integrateddynamics:recipe_input" as const;
-  constructor() {
+  static override numericID = 151;
+  static override nicknames = ["recipeInput", "recipeWithInput"];
+  static override symbol = "recipe_in";
+  static override interactName = "recipeInput";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["recipeInput", "recipeWithInput"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Recipe",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Recipe",
+          },
+          to: {
+            type: "Ingredients",
+          },
         },
-        to: {
-          type: "Ingredients",
-        },
-      }),
-      symbol: "recipe_in",
-      interactName: "recipeInput",
+        normalizeSignature
+      ),
       function: (recipe: Recipe): Ingredients => {
         return recipe.getInput();
       },

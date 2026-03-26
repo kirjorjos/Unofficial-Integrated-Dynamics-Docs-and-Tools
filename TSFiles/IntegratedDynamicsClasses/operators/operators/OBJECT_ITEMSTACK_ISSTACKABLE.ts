@@ -9,25 +9,29 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISSTACKABLE extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:itemstack_stackable" as const;
-  constructor() {
+  static override numericID = 64;
+  static override nicknames = [
+    "ItemstackIsstackable",
+    "itemstack_is_stackable",
+    "itemstackIsStackable",
+    "isStackable",
+  ];
+  static override symbol = "stackable";
+  static override interactName = "itemstackIsStackable";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: [
-        "ItemstackIsstackable",
-        "itemstack_is_stackable",
-        "itemstackIsStackable",
-        "isStackable",
-      ],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Item",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "Boolean",
+          },
         },
-        to: {
-          type: "Boolean",
-        },
-      }),
-      symbol: "stackable",
-      interactName: "itemstackIsStackable",
+        normalizeSignature
+      ),
       function: (item: Item): iBoolean => {
         return item.isStackable();
       },

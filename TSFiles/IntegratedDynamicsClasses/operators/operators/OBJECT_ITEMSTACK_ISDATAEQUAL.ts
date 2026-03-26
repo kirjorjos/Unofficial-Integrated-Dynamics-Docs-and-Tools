@@ -10,31 +10,35 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISDATAEQUAL extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:itemstack_isnbtequal" as const;
-  constructor() {
+  static override numericID = 283;
+  static override nicknames = [
+    "itemstackIsNbtEqual",
+    "ItemstackIsdataequal",
+    "itemstack_is_dataequal",
+    "itemstackIsDataequal",
+  ];
+  static override symbol = "=NBT=";
+  static override interactName = "itemstackIsNbtEqual";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: [
-        "ItemstackIsdataequal",
-        "itemstack_is_dataequal",
-        "itemstackIsDataequal",
-        "=NBT=",
-      ],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Item",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
             type: "Item",
           },
           to: {
-            type: "Boolean",
+            type: "Function",
+            from: {
+              type: "Item",
+            },
+            to: {
+              type: "Boolean",
+            },
           },
         },
-      }),
-      symbol: "=NBT=",
-      interactName: "itemstackIsNbtEqual",
+        normalizeSignature
+      ),
       function: (item1: Item): TypeLambda<Item, iBoolean> => {
         return (item2: Item): iBoolean => {
           const itemsEqual = item1

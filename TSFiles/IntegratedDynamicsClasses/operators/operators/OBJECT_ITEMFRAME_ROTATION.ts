@@ -9,26 +9,31 @@ export class OPERATOR_OBJECT_ITEMFRAME_ROTATION extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:entity_itemframerotation" as const;
-  constructor() {
+  static override numericID = 32;
+  static override nicknames = [
+    "entityItemFrameRotation",
+    "ItemframeRotation",
+    "itemframe_rotation",
+    "itemframeRotation",
+    "item_frame_rotation",
+    "itemFrameRotation",
+  ];
+  static override symbol = "itemframe_rotation";
+  static override interactName = "entityItemFrameRotation";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: [
-        "ItemframeRotation",
-        "itemframe_rotation",
-        "itemframeRotation",
-        "item_frame_rotation",
-        "itemFrameRotation",
-      ],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Entity",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Integer",
+          },
         },
-        to: {
-          type: "Integer",
-        },
-      }),
-      symbol: "itemframe_rotation",
-      interactName: "entityItemFrameRotation",
+        normalizeSignature
+      ),
       function: (entity: Entity): Integer => {
         if (entity.isItemFrame().valueOf()) {
           return entity.getItemFrameRotation();

@@ -9,31 +9,35 @@ export class OPERATOR_OBJECT_ITEMSTACK_FLUIDSTACK extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:itemstack_fluidstack" as const;
-  constructor() {
+  static override numericID = 54;
+  static override nicknames = [
+    "itemstackFluidStack",
+    "ItemstackFluidstack",
+    "itemstack_fluidstack",
+    "itemstackFluidstack",
+    "itemFluidstack",
+    "item_fluidstack",
+    "itemFluid",
+    "item_fluid",
+    "itemstack_fluid",
+    "itemstackFluid",
+  ];
+  static override symbol = "fluidstack";
+  static override interactName = "itemstackFluidStack";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: [
-        "ItemstackFluidstack",
-        "itemstack_fluidstack",
-        "itemstackFluidstack",
-        "itemFluidstack",
-        "item_fluidstack",
-        "itemFluid",
-        "item_fluid",
-        "itemstack_fluid",
-        "itemstackFluid",
-        "itemFluid",
-      ],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Item",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Item",
+          },
+          to: {
+            type: "Fluid",
+          },
         },
-        to: {
-          type: "Fluid",
-        },
-      }),
-      symbol: "fluidstack",
-      interactName: "itemstackFluidStack",
+        normalizeSignature
+      ),
       function: (item: Item): Fluid => {
         return item.getFluid();
       },

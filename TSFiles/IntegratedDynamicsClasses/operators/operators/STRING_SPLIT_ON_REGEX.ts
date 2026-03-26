@@ -13,24 +13,28 @@ export class OPERATOR_STRING_SPLIT_ON_REGEX extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:string_split_on_regex" as const;
-  constructor() {
+  static override numericID = 161;
+  static override nicknames = ["stringSplitOnRegex"];
+  static override symbol = "split_on_regex";
+  static override interactName = "stringSplitOnRegex";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["stringSplitOnRegex"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
             type: "String",
           },
-          to: { type: "List", listType: { type: "String" } },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: { type: "List", listType: { type: "String" } },
+          },
         },
-      }),
-      symbol: "split_on_regex",
-      interactName: "stringSplitOnRegex",
+        normalizeSignature
+      ),
       function: (
         regexString: iString
       ): TypeLambda<iString, iArray<iString>> => {

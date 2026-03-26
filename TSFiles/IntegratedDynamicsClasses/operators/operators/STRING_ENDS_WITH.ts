@@ -9,26 +9,30 @@ export class OPERATOR_STRING_ENDS_WITH extends BaseOperator<
   Operator<iString, iBoolean>
 > {
   static override internalName = "integrateddynamics:string_ends_with" as const;
-  constructor() {
+  static override numericID = 158;
+  static override nicknames = ["endsWith", "stringEndsWith"];
+  static override symbol = "ends_with";
+  static override interactName = "stringEndsWith";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["endsWith", "stringEndsWith"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "String",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
             type: "String",
           },
           to: {
-            type: "Boolean",
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Boolean",
+            },
           },
         },
-      }),
-      symbol: "ends_with",
-      interactName: "stringEndsWith",
+        normalizeSignature
+      ),
       function: (substring: iString): TypeLambda<iString, iBoolean> => {
         return (fullString: iString): iBoolean => {
           return new iBoolean(

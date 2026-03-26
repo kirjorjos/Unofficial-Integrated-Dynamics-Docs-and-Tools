@@ -6,20 +6,24 @@ import { ParsedSignature } from "HelperClasses/ParsedSignature";
 
 export class OPERATOR_NBT_AS_STRING extends BaseOperator<StringTag, iString> {
   static override internalName = "integrateddynamics:nbt_as_string" as const;
-  constructor() {
+  static override numericID = 252;
+  static override nicknames = ["nbtAsString"];
+  static override symbol = "NBT.as_string";
+  static override interactName = "nbtAsString";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["nbtAsString"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "NBT",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "String",
+          },
         },
-        to: {
-          type: "String",
-        },
-      }),
-      symbol: "NBT.as_string",
-      interactName: "nbtAsString",
+        normalizeSignature
+      ),
       function: (nbt: StringTag): iString => {
         if (nbt.getType() === Tag.TAG_STRING) {
           return nbt.valueOf();

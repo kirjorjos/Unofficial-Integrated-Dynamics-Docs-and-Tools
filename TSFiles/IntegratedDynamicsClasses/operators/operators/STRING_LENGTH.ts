@@ -5,20 +5,24 @@ import { Integer } from "JavaNumberClasses/Integer";
 
 export class OPERATOR_STRING_LENGTH extends BaseOperator<iString, Integer> {
   static override internalName = "integrateddynamics:string_length" as const;
-  constructor() {
+  static override numericID = 79;
+  static override nicknames = ["stringLength"];
+  static override symbol = "len";
+  static override interactName = "stringLength";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["stringLength"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "String",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: {
+            type: "Integer",
+          },
         },
-        to: {
-          type: "Integer",
-        },
-      }),
-      symbol: "len",
-      interactName: "stringLength",
+        normalizeSignature
+      ),
       function: (str: iString): Integer => {
         return new Integer(str.valueOf().length);
       },

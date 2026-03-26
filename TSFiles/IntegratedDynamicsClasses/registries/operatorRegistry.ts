@@ -309,7 +309,7 @@ import { OPERATOR_LIST_LAZYBUILT } from "IntegratedDynamicsClasses/operators/ope
 import { BaseOperator } from "IntegratedDynamicsClasses/operators/BaseOperator";
 import { RegistryHub } from "./registryHub";
 
-class operatorRegistryClass {
+const operatorRegistryClass = class operatorRegistryClass {
   constructor() {}
 
   find(uname: string): BaseOperator<IntegratedValue, IntegratedValue> | void {
@@ -317,6 +317,21 @@ class operatorRegistryClass {
       if (value.name === "find") continue;
       const internalName = value.internalName;
       if (internalName === uname) return new value();
+    }
+  }
+
+  operatorByNickname(nickname: string): TypeOperatorKey | void {
+    for (const [key, opClass] of Object.entries(this)) {
+      if (key === "find" || key === "operatorByNickname") continue;
+      if (typeof opClass === "function") {
+        const staticOp = opClass as typeof BaseOperator;
+        if (staticOp.internalName === nickname) return key as TypeOperatorKey;
+
+        if (key === nickname) return key as TypeOperatorKey;
+
+        if (staticOp.nicknames.includes(nickname))
+          return key as TypeOperatorKey;
+      }
     }
   }
 
@@ -632,7 +647,7 @@ class operatorRegistryClass {
   DOUBLE_TO_LONG = OPERATOR_DOUBLE_TO_LONG;
   LONG_TO_INTEGER = OPERATOR_LONG_TO_INTEGER;
   LONG_TO_DOUBLE = OPERATOR_LONG_TO_DOUBLE;
-}
+};
 
 const operatorRegistry = new operatorRegistryClass();
 RegistryHub.operatorRegistry = operatorRegistry;

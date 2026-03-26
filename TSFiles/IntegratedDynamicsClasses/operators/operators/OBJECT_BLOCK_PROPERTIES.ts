@@ -9,20 +9,28 @@ export class OPERATOR_OBJECT_BLOCK_PROPERTIES extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:block_blockproperties" as const;
-  constructor() {
+  static override numericID = 269;
+  static override nicknames = [
+    "BlockProperties",
+    "block_properties",
+    "blockProperties",
+  ];
+  static override symbol = "block_props";
+  static override interactName = "blockProperties";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["BlockProperties", "block_properties", "blockProperties"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Block",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Block",
+          },
+          to: {
+            type: "NBT",
+          },
         },
-        to: {
-          type: "NBT",
-        },
-      }),
-      symbol: "block_props",
-      interactName: "blockProperties",
+        normalizeSignature
+      ),
       function: (block: Block): CompoundTag => {
         return block.getProperties().toCompoundTag();
       },

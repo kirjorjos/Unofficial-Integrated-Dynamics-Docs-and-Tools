@@ -8,16 +8,20 @@ export class OPERATOR_LIST_UNIQ extends BaseOperator<
   Operator<IntegratedValue, iArray<IntegratedValue>>
 > {
   static override internalName = "integrateddynamics:list_uniq" as const;
-  constructor() {
+  static override numericID = 136;
+  static override nicknames = ["listUnique", "listUniq"];
+  static override symbol = "uniq";
+  static override interactName = "listUnique";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["listUniq"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: { type: "List", listType: { type: "Any", typeID: 1 } },
-      }),
-      symbol: "uniq",
-      interactName: "listUnique",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: { type: "List", listType: { type: "Any", typeID: 1 } },
+          to: { type: "List", listType: { type: "Any", typeID: 1 } },
+        },
+        normalizeSignature
+      ),
       function: (list: iArray<IntegratedValue>): iArray<IntegratedValue> => {
         const seen = new Set();
         return list.filter((item) => {

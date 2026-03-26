@@ -8,28 +8,31 @@ export class OPERATOR_OBJECT_FLUIDSTACK_BLOCK extends BaseOperator<
   Block
 > {
   static override internalName = "integrateddynamics:fluidstack_block" as const;
-  constructor() {
+  static override numericID = 38;
+  static override nicknames = [
+    "FluidstackBlock",
+    "fluidstackBlock",
+    "fluid_stack_block",
+    "fluidStackBlock",
+    "fluid_block",
+    "fluidBlock",
+  ];
+  static override symbol = "block";
+  static override interactName = "fluidstackBlock";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: [
-        "FluidstackBlock",
-        "fluidstackBlock",
-        "fluid_stack_block",
-        "fluidStackBlock",
-        "fluid_stack_block",
-        "fluid_block",
-        "fluidBlock",
-      ],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Fluid",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Fluid",
+          },
+          to: {
+            type: "Block",
+          },
         },
-        to: {
-          type: "Block",
-        },
-      }),
-      symbol: "block",
-      interactName: "fluidstackBlock",
+        normalizeSignature
+      ),
       function: (fluid: Fluid): Block => {
         return fluid.getBlock();
       },

@@ -5,20 +5,24 @@ import { Integer } from "JavaNumberClasses/Integer";
 
 export class OPERATOR_NBT_FROM_SHORT extends BaseOperator<Integer, ShortTag> {
   static override internalName = "integrateddynamics:nbt_from_short" as const;
-  constructor() {
+  static override numericID = 263;
+  static override nicknames = ["shortAsNbt", "nbtFromShort"];
+  static override symbol = "NBT.from_short";
+  static override interactName = "shortAsNbt";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["nbtFromShort"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Integer",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Integer",
+          },
+          to: {
+            type: "NBT",
+          },
         },
-        to: {
-          type: "NBT",
-        },
-      }),
-      symbol: "NBT.from_short",
-      interactName: "shortAsNbt",
+        normalizeSignature
+      ),
       function: (short: Integer): ShortTag => {
         return new ShortTag(short);
       },

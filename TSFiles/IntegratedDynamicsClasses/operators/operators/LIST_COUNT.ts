@@ -9,22 +9,26 @@ export class OPERATOR_LIST_COUNT extends BaseOperator<
   Operator<IntegratedValue, Integer>
 > {
   static override internalName = "integrateddynamics:list_count" as const;
-  constructor() {
+  static override numericID = 114;
+  static override nicknames = ["listCount", "count"];
+  static override symbol = "count";
+  static override interactName = "listCount";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["listCount", "count"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
-          from: { type: "Any", typeID: 1 },
+          from: { type: "List", listType: { type: "Any", typeID: 1 } },
           to: {
-            type: "Integer",
+            type: "Function",
+            from: { type: "Any", typeID: 1 },
+            to: {
+              type: "Integer",
+            },
           },
         },
-      }),
-      symbol: "count",
-      interactName: "listCount",
+        normalizeSignature
+      ),
       function: (
         list: iArray<IntegratedValue>
       ): TypeLambda<IntegratedValue, Integer> => {

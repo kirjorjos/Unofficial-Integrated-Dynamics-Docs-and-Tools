@@ -9,18 +9,22 @@ import { Integer } from "JavaNumberClasses/Integer";
 
 export class OPERATOR_NBT_AS_INT_LIST extends BaseOperator<ListTag, Integer> {
   static override internalName = "integrateddynamics:nbt_as_int_list" as const;
-  constructor() {
+  static override numericID = 248;
+  static override nicknames = ["nbtAsIntList"];
+  static override symbol = "NBT.as_int_list";
+  static override interactName = "nbtAsIntList";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["nbtAsIntList"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "NBT",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: { type: "List", listType: { type: "Integer" } },
         },
-        to: { type: "List", listType: { type: "Integer" } },
-      }),
-      symbol: "NBT.as_int_list",
-      interactName: "nbtAsIntList",
+        normalizeSignature
+      ),
       function: (nbt: ListTag): iArray<Integer> => {
         if (nbt.getType() === Tag.TAG_INT_ARRAY) {
           const list = nbt.valueOf();
@@ -32,11 +36,14 @@ export class OPERATOR_NBT_AS_INT_LIST extends BaseOperator<ListTag, Integer> {
                 IntegratedValue,
                 IntegratedValue
               >,
-              parsedSignature: new ParsedSignature({
-                type: "Function",
-                from: { type: "Any", typeID: 1 },
-                to: { type: "Any", typeID: 2 },
-              } as TypeRawSignatureAST.RawSignatureDefiniteValue),
+              parsedSignature: new ParsedSignature(
+                {
+                  type: "Function",
+                  from: { type: "Any", typeID: 1 },
+                  to: { type: "Any", typeID: 2 },
+                } as TypeRawSignatureAST.RawSignatureDefiniteValue,
+                normalizeSignature
+              ),
             })
           ) as iArray<Integer>;
         } else {

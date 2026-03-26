@@ -9,18 +9,22 @@ export class OPERATOR_INGREDIENTS_ITEMS extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:ingredients_items" as const;
-  constructor() {
+  static override numericID = 150;
+  static override nicknames = ["ingredientsItems", "Ingr.items"];
+  static override symbol = "Ingr.items";
+  static override interactName = "ingredientsItems";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["ingredientsItems", "Ingr.items"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Ingredients",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Ingredients",
+          },
+          to: { type: "List", listType: { type: "Item" } },
         },
-        to: { type: "List", listType: { type: "Item" } },
-      }),
-      symbol: "Ingr.items",
-      interactName: "ingredientsItems",
+        normalizeSignature
+      ),
       function: (ingredients: Ingredients): iArray<Item> => {
         return ingredients.getItems();
       },

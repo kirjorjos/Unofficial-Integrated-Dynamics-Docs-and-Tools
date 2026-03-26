@@ -9,23 +9,27 @@ export class OPERATOR_OBJECT_ENTITY_INVENTORY extends BaseOperator<
   iArray<Item>
 > {
   static override internalName = "integrateddynamics:entity_inventory" as const;
-  constructor() {
+  static override numericID = 22;
+  static override nicknames = [
+    "entityInventory",
+    "EntityInventoryContents",
+    "entity_inventory_contents",
+    "entityInventoryContents",
+  ];
+  static override symbol = "entity_inventory";
+  static override interactName = "entityInventory";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: [
-        "EntityInventoryContents",
-        "entity_inventory_contents",
-        "entityInventoryContents",
-        "entityInventoryContents",
-      ],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Entity",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: { type: "List", listType: { type: "Item" } },
         },
-        to: { type: "List", listType: { type: "Item" } },
-      }),
-      symbol: "entity_inventory",
-      interactName: "entityInventory",
+        normalizeSignature
+      ),
       function: (entity: Entity): iArray<Item> => {
         return entity.getInventory();
       },

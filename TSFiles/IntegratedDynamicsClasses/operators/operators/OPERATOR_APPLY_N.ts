@@ -8,33 +8,42 @@ export class OPERATOR_OPERATOR_APPLY_N extends BaseOperator<
   Operator<iArray<IntegratedValue>, IntegratedValue>
 > {
   static override internalName = "integrateddynamics:operator_apply_n" as const;
-  constructor() {
+  static override numericID = 280;
+  static override nicknames = [
+    "operatorApply_n",
+    "operatorApplyN",
+    "applyn",
+    "applyN",
+  ];
+  static override symbol = "apply_n";
+  static override interactName = "operatorApply_n";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["operatorApplyN", "applyn", "applyN"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Operator",
-          obscured: {
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Operator",
+            obscured: {
+              type: "Function",
+              from: { type: "Any", typeID: 1 },
+              to: { type: "Any", typeID: 2 },
+            },
+          },
+          to: {
             type: "Function",
-            from: { type: "Any", typeID: 1 },
+            from: {
+              type: "List",
+              listType: {
+                type: "Any",
+                typeID: 1,
+              },
+            },
             to: { type: "Any", typeID: 2 },
           },
         },
-        to: {
-          type: "Function",
-          from: {
-            type: "List",
-            listType: {
-              type: "Any",
-              typeID: 1,
-            },
-          },
-          to: { type: "Any", typeID: 2 },
-        },
-      }),
-      symbol: "apply_n",
-      interactName: "operatorApply_n",
+        normalizeSignature
+      ),
       serializer: "integrateddynamics:curry",
       function: (
         op: Operator<IntegratedValue, IntegratedValue>

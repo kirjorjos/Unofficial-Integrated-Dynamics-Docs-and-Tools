@@ -6,20 +6,24 @@ import { ParsedSignature } from "HelperClasses/ParsedSignature";
 
 export class OPERATOR_NBT_AS_BYTE extends BaseOperator<ByteTag, Integer> {
   static override internalName = "integrateddynamics:nbt_as_byte" as const;
-  constructor() {
+  static override numericID = 242;
+  static override nicknames = ["nbtAsByte"];
+  static override symbol = "NBT.as_byte";
+  static override interactName = "nbtAsByte";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["nbtAsByte"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "NBT",
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "Integer",
+          },
         },
-        to: {
-          type: "Integer",
-        },
-      }),
-      symbol: "NBT.as_byte",
-      interactName: "nbtAsByte",
+        normalizeSignature
+      ),
       function: (nbt: ByteTag): Integer => {
         if (nbt.getType() === Tag.TAG_BYTE) {
           return nbt.valueOf();

@@ -11,34 +11,37 @@ export class OPERATOR_OBJECT_FLUIDSTACK_WITH_AMOUNT extends BaseOperator<
 > {
   static override internalName =
     "integrateddynamics:fluidstack_with_amount" as const;
-  constructor() {
+  static override numericID = 266;
+  static override nicknames = [
+    "FluidstackWithAmount",
+    "fluidstackWithAmount",
+    "fluid_stack_with_amount",
+    "fluidStackWithAmount",
+    "fluid_with_amount",
+    "fluidWithAmount",
+  ];
+  static override symbol = "with_amount";
+  static override interactName = "fluidstackWithAmount";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: [
-        "FluidstackWithAmount",
-        "fluidstackWithAmount",
-        "fluid_stack_with_amount",
-        "fluidStackWithAmount",
-        "fluid_stack_with_amount",
-        "fluid_with_amount",
-        "fluidWithAmount",
-      ],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: {
-          type: "Fluid",
-        },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
           from: {
-            type: "Integer",
-          },
-          to: {
             type: "Fluid",
           },
+          to: {
+            type: "Function",
+            from: {
+              type: "Integer",
+            },
+            to: {
+              type: "Fluid",
+            },
+          },
         },
-      }),
-      symbol: "with_amount",
-      interactName: "fluidstackWithAmount",
+        normalizeSignature
+      ),
       function: (fluid: Fluid): TypeLambda<Integer, Fluid> => {
         return (amount: Integer): Fluid => {
           return new Fluid(new Properties({ amount }), fluid);

@@ -8,20 +8,24 @@ export class OPERATOR_LIST_APPEND extends BaseOperator<
   Operator<IntegratedValue, iArray<IntegratedValue>>
 > {
   static override internalName = "integrateddynamics:list_append" as const;
-  constructor() {
+  static override numericID = 113;
+  static override nicknames = ["listAppend", "append"];
+  static override symbol = "append";
+  static override interactName = "listAppend";
+  constructor(normalizeSignature = true) {
     super({
-      nicknames: ["listAppend", "append"],
-      parsedSignature: new ParsedSignature({
-        type: "Function",
-        from: { type: "List", listType: { type: "Any", typeID: 1 } },
-        to: {
+      parsedSignature: new ParsedSignature(
+        {
           type: "Function",
-          from: { type: "Any", typeID: 1 },
-          to: { type: "List", listType: { type: "Any", typeID: 1 } },
+          from: { type: "List", listType: { type: "Any", typeID: 1 } },
+          to: {
+            type: "Function",
+            from: { type: "Any", typeID: 1 },
+            to: { type: "List", listType: { type: "Any", typeID: 1 } },
+          },
         },
-      }),
-      symbol: "append",
-      interactName: "listAppend",
+        normalizeSignature
+      ),
       function: (
         list: iArray<IntegratedValue>
       ): TypeLambda<IntegratedValue, iArray<IntegratedValue>> => {
