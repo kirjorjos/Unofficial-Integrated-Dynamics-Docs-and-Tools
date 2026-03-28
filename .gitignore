@@ -7,5 +7,6 @@ Integrated Dynamics Website.code-workspace
 .DS_Store
 
 node_modules/
+docs/
 *.log
 *.disabled

@@ -1,0 +1,43 @@
+import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
+import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
+import { iString } from "lib/IntegratedDynamicsClasses/typeWrappers/iString";
+import { Fluid } from "lib/IntegratedDynamicsClasses/Fluid";
+
+export class OPERATOR_OBJECT_FLUIDSTACK_SOUND_FLUID_VAPORIZE extends BaseOperator<
+  Fluid,
+  iString
+> {
+  static override internalName =
+    "integrateddynamics:fluidstack_sound_fluid_vaporize" as const;
+  static override numericID = 275;
+  static override nicknames = [
+    "fluidstackFluidVaporizeSound",
+    "FluidstackSoundFluidVaporize",
+    "fluidstackSoundFluidVaporize",
+    "fluid_stack_sound_fluid_vaporize",
+    "fluidStackSoundFluidVaporize",
+    "fluid_sound_fluid_vaporize",
+    "fluidSoundFluidVaporize",
+  ];
+  static override symbol = "sound_fluid_vaporize";
+  static override interactName = "fluidstackFluidVaporizeSound";
+  constructor(normalizeSignature = true) {
+    super({
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Fluid",
+          },
+          to: {
+            type: "String",
+          },
+        },
+        normalizeSignature
+      ),
+      function: (fluid: Fluid): iString => {
+        return fluid.getFluidVaporizeSound();
+      },
+    });
+  }
+}

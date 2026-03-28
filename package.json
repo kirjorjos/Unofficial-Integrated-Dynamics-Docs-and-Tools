@@ -1,11 +1,15 @@
 {
+  "type": "module",
   "dependencies": {
     "chokidar": "^4.0.3",
     "node-notifier": "^10.0.1",
     "re2": "^1.22.1",
-    "re2-wasm": "^1.0.2"
+    "re2-wasm": "^1.0.2",
+    "vue": "^3.5.31"
   },
   "devDependencies": {
+    "@types/node": "^24.7.2",
+    "@vitejs/plugin-vue": "^5.2.4",
     "@types/jest": "^30.0.0",
     "esbuild": "^0.27.0",
     "jest": "^30.2.0",
@@ -13,14 +17,18 @@
     "nodemon": "^3.1.10",
     "prettier": "3.6.2",
     "ts-jest": "^29.4.6",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vite": "^5.4.21",
+    "vue-tsc": "^2.2.12"
   },
   "scripts": {
+    "dev": "vite",
     "test:debug": "jest --runInBand --no-cache",
     "test": "jest",
     "format": "prettier --write .",
-    "bundle": "esbuild TSFiles/index.ts --bundle --outfile=docs/index.js --platform=browser --loader:.wasm=file --external:fs --external:path",
-    "build": "npm run format && npm run test && npm run bundle"
+    "typecheck": "vue-tsc --noEmit -p tsconfig.app.json",
+    "build": "npm run format && npm run test && npm run typecheck && vite build",
+    "preview": "vite preview"
   },
   "prettier": {
     "tabWidth": 2,

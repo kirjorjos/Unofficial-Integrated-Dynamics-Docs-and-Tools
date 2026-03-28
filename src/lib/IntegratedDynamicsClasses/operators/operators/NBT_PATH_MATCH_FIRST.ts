@@ -1,0 +1,51 @@
+import { NbtPath } from "lib/IntegratedDynamicsClasses/NBTFunctions/NbtPath";
+import { CompoundTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
+import { Tag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/Tag";
+import { NullTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/NullTag";
+import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
+import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
+import { iString } from "lib/IntegratedDynamicsClasses/typeWrappers/iString";
+import { Operator } from "lib/IntegratedDynamicsClasses/operators/Operator";
+
+export class OPERATOR_NBT_PATH_MATCH_FIRST extends BaseOperator<
+  iString,
+  Operator<CompoundTag, Tag<IntegratedValue>>
+> {
+  static override internalName =
+    "integrateddynamics:nbt_path_match_first" as const;
+  static override numericID = 239;
+  static override nicknames = ["stringNbtPathMatchFirst", "nbtPathMatchFirst"];
+  static override symbol = "NBT.path_match_first";
+  static override interactName = "stringNbtPathMatchFirst";
+  constructor(normalizeSignature = true) {
+    super({
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "String",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "NBT",
+            },
+            to: {
+              type: "NBT",
+            },
+          },
+        },
+        normalizeSignature
+      ),
+      function: (
+        path: iString
+      ): TypeLambda<CompoundTag, Tag<IntegratedValue>> => {
+        return (nbt: CompoundTag): Tag<IntegratedValue> => {
+          let expression = NbtPath.parse(path.valueOf());
+          if (!expression) throw new Error(`Invalid path: ${path.valueOf()}`);
+          return expression.match(nbt).getMatches()[0] ?? new NullTag();
+        };
+      },
+    });
+  }
+}
