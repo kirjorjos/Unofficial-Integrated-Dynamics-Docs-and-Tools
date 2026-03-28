@@ -1,0 +1,44 @@
+import { Ingredients } from "lib/IntegratedDynamicsClasses/Ingredients";
+import { Operator } from "lib/IntegratedDynamicsClasses/operators/Operator";
+import { iArray } from "lib/IntegratedDynamicsClasses/typeWrappers/iArray";
+import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
+import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
+
+export class OPERATOR_INGREDIENTS_WITH_ENERGIES extends BaseOperator<
+  Ingredients,
+  Operator<iArray<Long>, Ingredients>
+> {
+  static override internalName =
+    "integrateddynamics:ingredients_with_energies" as const;
+  static override numericID = 153;
+  static override nicknames = ["ingredientsWithEnergies", "Ingr.with_energies"];
+  static override symbol = "Ingr.with_energies";
+  static override interactName = "ingredientsWithEnergies";
+  constructor(normalizeSignature = true) {
+    super({
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Ingredients",
+          },
+          to: {
+            type: "Function",
+            from: { type: "List", listType: { type: "Long" } },
+            to: {
+              type: "Ingredients",
+            },
+          },
+        },
+        normalizeSignature
+      ),
+      function: (
+        ingredients: Ingredients
+      ): TypeLambda<iArray<Long>, Ingredients> => {
+        return (energyList: iArray<Long>): Ingredients => {
+          return ingredients.withEnergies(energyList);
+        };
+      },
+    });
+  }
+}

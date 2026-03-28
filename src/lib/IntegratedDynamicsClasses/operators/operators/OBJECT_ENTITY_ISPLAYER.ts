@@ -1,0 +1,39 @@
+import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
+import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
+import { iBoolean } from "lib/IntegratedDynamicsClasses/typeWrappers/iBoolean";
+import { Entity } from "lib/IntegratedDynamicsClasses/Entity";
+
+export class OPERATOR_OBJECT_ENTITY_ISPLAYER extends BaseOperator<
+  Entity,
+  iBoolean
+> {
+  static override internalName = "integrateddynamics:entity_isplayer" as const;
+  static override numericID = 28;
+  static override nicknames = [
+    "EntityIsplayer",
+    "entity_is_player",
+    "entityIsPlayer",
+    "isPlayer",
+  ];
+  static override symbol = "is_player";
+  static override interactName = "entityIsPlayer";
+  constructor(normalizeSignature = true) {
+    super({
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Boolean",
+          },
+        },
+        normalizeSignature
+      ),
+      function: (entity: Entity): iBoolean => {
+        return entity.isPlayer();
+      },
+    });
+  }
+}

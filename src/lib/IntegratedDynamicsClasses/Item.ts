@@ -1,0 +1,408 @@
+import { Integer } from "lib/JavaNumberClasses/Integer";
+import { Double } from "lib/JavaNumberClasses/Double";
+import { UniquelyNamed } from "lib/IntegratedDynamicsClasses/UniquelyNamed";
+import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
+import { Properties } from "lib/IntegratedDynamicsClasses/Properties";
+import { Tag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/Tag";
+import { iBoolean } from "lib/IntegratedDynamicsClasses/typeWrappers/iBoolean";
+import { iString } from "lib/IntegratedDynamicsClasses/typeWrappers/iString";
+import { NullTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/NullTag";
+import { iArrayEager } from "lib/IntegratedDynamicsClasses/typeWrappers/iArrayEager";
+import { iArray } from "lib/IntegratedDynamicsClasses/typeWrappers/iArray";
+import { Named } from "lib/IntegratedDynamicsClasses/Named";
+import { RegistryHub } from "lib/IntegratedDynamicsClasses/registries/registryHub";
+import { CompoundTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
+import { Fluid } from "lib/IntegratedDynamicsClasses/Fluid";
+import { Block } from "lib/IntegratedDynamicsClasses/Block";
+import { StringTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/StringTag";
+import { ByteTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ByteTag";
+
+export class Item implements UniquelyNamed, Named, IntegratedValue {
+  props: Properties;
+
+  static defaultProps = new Properties({
+    size: Integer.ONE,
+    maxSize: Integer.SIXTY_FOUR,
+    stackable: new iBoolean(true),
+    damageable: new iBoolean(false),
+    damage: Integer.ZERO,
+    maxDamage: Integer.ZERO,
+    enchanted: new iBoolean(false),
+    enchantable: new iBoolean(false),
+    repairCost: Integer.ZERO,
+    rarity: new iString(""),
+    fluid: new iString(""),
+    fluidCapacity: Integer.ZERO,
+    NBT: new NullTag(),
+    id: new iString(""),
+    modName: new iString(""),
+    fuelBurnTime: Integer.ZERO,
+    fuel: new iBoolean(false),
+    tagNames: new iArrayEager<iString>([]),
+    feContainer: new iBoolean(false),
+    feStored: Integer.ZERO,
+    feCapacity: Integer.ZERO,
+    inventory: new iArrayEager<IntegratedValue>([]),
+    tooltip: new iArrayEager<iString>([]),
+    itemName: new iString(""),
+    block: new iString(""),
+    inventorySize: Integer.ZERO,
+    efficiency: new Double(1.0),
+    toolTier: Integer.ZERO,
+    isPlantable: new iBoolean(false),
+    plantType: new iString("none"),
+    plant: new iString(""),
+  });
+  private _signatureCache: any;
+
+  constructor(newProps: Properties, oldItem?: Item) {
+    let props = Item.defaultProps.clone();
+    if (oldItem) props.setAll(oldItem.getProperties());
+
+    const baseNbt = props.get("NBT");
+    const newNbt = newProps.get("NBT");
+    if (
+      baseNbt?.getType() === Tag.TAG_COMPOUND &&
+      newNbt?.getType() === Tag.TAG_COMPOUND
+    ) {
+      newProps.set(
+        "NBT",
+        (baseNbt as CompoundTag).compoundUnion(newNbt as CompoundTag)
+      );
+    }
+
+    props.setAll(newProps);
+    this.props = props;
+  }
+
+  getSize(): Integer {
+    return this.props.get("size");
+  }
+
+  getMaxSize(): Integer {
+    return this.props.get("maxSize");
+  }
+
+  isStackable(): iBoolean {
+    return new iBoolean(this.getMaxSize().gt(Integer.ONE));
+  }
+
+  isDamageable(): iBoolean {
+    return new iBoolean(this.getMaxDamage().gt(Integer.ZERO));
+  }
+
+  getDamage(): Integer {
+    return this.props.get("damage");
+  }
+
+  getMaxDamage(): Integer {
+    const maxDamage = this.props.get("maxDamage") as Integer;
+    if (maxDamage.toJSNumber() === -1) return Integer.ZERO;
+    return maxDamage;
+  }
+
+  isEnchanted(): iBoolean {
+    return this.props.get("enchanted");
+  }
+
+  isEnchantable(): iBoolean {
+    return this.props.get("enchantable");
+  }
+
+  getRepairCost(): Integer {
+    return this.props.get("repairCost");
+  }
+
+  getRarity(): iString {
+    const rarity = this.props.get("rarity") as iString;
+    if (this.isEnchanted().valueOf() && rarity.valueOf() === "COMMON") {
+      return new iString("RARE");
+    }
+    return rarity;
+  }
+
+  getFluid(): Fluid {
+    const fluidRegistry = RegistryHub.fluidRegistry;
+    let key = (this.props.get("fluid") as iString).valueOf().toLowerCase();
+    if (!key) return new Fluid(new Properties({}));
+    const FluidConstructor =
+      fluidRegistry.items[key as keyof typeof fluidRegistry.items];
+    if (!FluidConstructor) return new Fluid(new Properties({}));
+    return new FluidConstructor();
+  }
+
+  getFluidCapacity(): Integer {
+    const capacity = this.props.get("fluidCapacity") as Integer;
+    if (
+      capacity.toJSNumber() === 0 &&
+      (this.props.get("fluid") as iString).valueOf() !== ""
+    ) {
+      return new Integer(1000);
+    }
+    return capacity;
+  }
+
+  getNBT(): Tag<IntegratedValue> {
+    return this.props.get("NBT");
+  }
+
+  getUniqueName(): iString {
+    return this.props.get("id");
+  }
+
+  getModName(): iString {
+    return this.props.get("modName");
+  }
+
+  getFuelBurnTime(): Integer {
+    return this.props.get("fuelBurnTime");
+  }
+
+  isFuel(): iBoolean {
+    return this.props.get("fuel");
+  }
+
+  getTagNames(): iArray<iString> {
+    return this.props.get("tagNames");
+  }
+
+  isFeContainer(): iBoolean {
+    return this.props.get("feContainer");
+  }
+
+  getFeStored(): Integer {
+    return this.props.get("feStored");
+  }
+
+  getFeCapacity(): Integer {
+    return this.props.get("feCapacity");
+  }
+
+  getInventory(): iArray<IntegratedValue> {
+    return this.props.get("inventory") || new iArrayEager([]);
+  }
+
+  getInventorySize(): Integer {
+    return this.props.get("inventorySize");
+  }
+
+  getTooltip(_player?: Entity): iArray<iString> {
+    return this.props.get("tooltip");
+  }
+
+  getItemName(): iString {
+    return this.props.get("itemName");
+  }
+
+  getEfficiency(): Double {
+    return this.props.get("efficiency");
+  }
+
+  getToolTier(): Integer {
+    return this.props.get("toolTier");
+  }
+
+  getBlock(): Block {
+    const blockRegistry = RegistryHub.blockRegistry;
+    let key = (this.props.get("block") as iString).valueOf().toLowerCase();
+    if (!key) return new Block(new Properties({}));
+    const BlockConstructor =
+      blockRegistry.items[key as keyof typeof blockRegistry.items];
+    if (!BlockConstructor) return new Block(new Properties({}));
+    return new BlockConstructor();
+  }
+
+  isPlantable(): iBoolean {
+    return this.props.get("isPlantable");
+  }
+
+  getPlantType(): iString {
+    return this.props.get("plantType");
+  }
+
+  getPlant(): Block {
+    const blockRegistry = RegistryHub.blockRegistry;
+    let key = (this.props.get("plant") as iString).valueOf().toLowerCase();
+    if (!key) return new Block(new Properties({}));
+    const BlockConstructor =
+      blockRegistry.items[key as keyof typeof blockRegistry.items];
+    if (!BlockConstructor) return new Block(new Properties({}));
+    return new BlockConstructor();
+  }
+
+  getProperties(): Properties {
+    return this.props;
+  }
+
+  serializeNBT(): CompoundTag {
+    const data: Record<string, Tag<IntegratedValue>> = {
+      id: new StringTag(this.getUniqueName()),
+      Count: new ByteTag(this.getSize()),
+    };
+    const nbt = this.getNBT();
+    if (!(nbt instanceof NullTag)) {
+      data["tag"] = nbt;
+    }
+    return new CompoundTag(data);
+  }
+
+  static deserializeNBT(tag: Tag<IntegratedValue>): Item {
+    if (!(tag instanceof CompoundTag)) {
+      return new Item(new Properties({}));
+    }
+    const compound = tag as CompoundTag;
+    const idNode = compound.get(new iString("id"));
+    const id =
+      idNode instanceof StringTag
+        ? (idNode as StringTag).valueOf().valueOf().toLowerCase()
+        : "";
+    const ItemConstructor =
+      RegistryHub.itemRegistry.items[
+        id as keyof typeof RegistryHub.itemRegistry.items
+      ];
+
+    const countNode = compound.get(new iString("Count"));
+    const size =
+      countNode instanceof ByteTag
+        ? (countNode as ByteTag).valueOf()
+        : Integer.ONE;
+
+    const nbtNode = compound.get(new iString("tag"));
+    const nbt =
+      nbtNode instanceof CompoundTag ? (nbtNode as CompoundTag) : new NullTag();
+
+    if (ItemConstructor) {
+      return new ItemConstructor({ size, NBT: nbt });
+    }
+    return new Item(new Properties({ id: new iString(id), size, NBT: nbt }));
+  }
+
+  getStrengthVsBlock(block: Block): Double {
+    if (block.getSignatureNode().getRootType() !== "Block")
+      throw new Error("block is not a Block");
+
+    const blockTags = block
+      .getTagNames()
+      .valueOf()
+      .map((t) => t.valueOf());
+    const itemTags = this.getTagNames()
+      .valueOf()
+      .map((t) => t.valueOf());
+
+    let isCorrectTool = false;
+    const toolTypes = ["pickaxe", "axe", "shovel", "hoe"];
+    for (const type of toolTypes) {
+      if (
+        blockTags.includes(`minecraft:mineable/${type}`) &&
+        (itemTags.includes(`forge:tools/${type}s`) ||
+          itemTags.includes(`minecraft:${type}s`))
+      ) {
+        isCorrectTool = true;
+        break;
+      }
+    }
+
+    if (isCorrectTool) {
+      const efficiency = this.getEfficiency();
+      return efficiency;
+    }
+    return new Double(1.0);
+  }
+
+  canHarvestBlock(block: Block): iBoolean {
+    const blockTags = block
+      .getTagNames()
+      .valueOf()
+      .map((t) => t.valueOf());
+    const itemTags = this.getTagNames()
+      .valueOf()
+      .map((t) => t.valueOf());
+
+    let requiresTool = blockTags.some((t) => t.startsWith("minecraft:needs_"));
+    if (blockTags.includes("minecraft:mineable/pickaxe")) requiresTool = true;
+
+    if (!requiresTool) return new iBoolean(true);
+
+    let toolType: string | null = null;
+    const toolTypes = ["pickaxe", "axe", "shovel", "hoe"];
+    for (const type of toolTypes) {
+      if (blockTags.includes(`minecraft:mineable/${type}`)) {
+        toolType = type;
+        break;
+      }
+    }
+
+    if (!toolType) return new iBoolean(true);
+
+    const isCorrectType =
+      itemTags.includes(`forge:tools/${toolType}s`) ||
+      itemTags.includes(`minecraft:${toolType}s`);
+    if (!isCorrectType) return new iBoolean(false);
+
+    const blockLevel = block.getRequiredTier().toJSNumber();
+    const itemLevel = this.getToolTier().toJSNumber();
+
+    return new iBoolean(itemLevel >= blockLevel);
+  }
+
+  equals(other: IntegratedValue) {
+    if (!(other instanceof Item)) return new iBoolean(false);
+
+    if (!this.getUniqueName().equals(other.getUniqueName()).valueOf())
+      return new iBoolean(false);
+    if (!this.props.get("fluid").equals(other.props.get("fluid")).valueOf())
+      return new iBoolean(false);
+    if (!this.props.get("block").equals(other.props.get("block")).valueOf())
+      return new iBoolean(false);
+
+    const keys = Object.getOwnPropertyNames(Item.prototype).filter(
+      (k) =>
+        ![
+          "constructor",
+          "equals",
+          "getSignatureNode",
+          "getProperties",
+          "getFluid",
+          "getBlock",
+          "getInventory",
+          "getUniqueName",
+          "getPlant",
+        ].includes(k)
+    );
+    for (const key of keys as Array<keyof Item>) {
+      if (
+        this[key] instanceof Function &&
+        (this[key] as Function).length === 0
+      ) {
+        try {
+          const thisResult = (this[key] as Function)() as IntegratedValue;
+          const otherResult = (other[key] as Function)() as IntegratedValue;
+
+          if (!thisResult.equals(otherResult).valueOf()) {
+            return new iBoolean(false);
+          }
+        } catch (e: any) {
+          continue;
+        }
+      }
+    }
+    return new iBoolean(true);
+  }
+
+  getSignatureNode(): ParsedSignature {
+    if (this._signatureCache) {
+      return this._signatureCache;
+    }
+    const newSignature = new ParsedSignature({ type: "Item" }, false);
+    this._signatureCache = newSignature;
+    return newSignature;
+  }
+
+  toString(): iString {
+    return this.props.get("itemName");
+  }
+
+  getName(): iString {
+    return this.props.get("itemName");
+  }
+}

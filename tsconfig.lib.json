@@ -1,0 +1,28 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "docs",
+    "rootDir": "src/lib",
+    "noEmit": false,
+    "noEmitOnError": true,
+    "removeComments": false,
+    "preserveConstEnums": true,
+    "importHelpers": true,
+    "emitBOM": false,
+    "newLine": "lf",
+    "downlevelIteration": false,
+    "module": "es2022",
+    "lib": ["es2022", "dom"],
+    "typeRoots": ["./src/lib/types", "./node_modules/@types"],
+    "types": ["jest"],
+    "disableSizeLimit": true,
+    "incremental": false,
+    "assumeChangesOnlyAffectDirectDependencies": false,
+    "noErrorTruncation": false,
+    "traceResolution": false,
+    "sourceMap": true,
+    "inlineSourceMap": false,
+    "inlineSources": true
+  },
+  "include": ["src/lib/**/*.ts", "src/lib/**/*.d.ts"]
+}

@@ -1,0 +1,39 @@
+import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
+import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
+import { iBoolean } from "lib/IntegratedDynamicsClasses/typeWrappers/iBoolean";
+import { Entity } from "lib/IntegratedDynamicsClasses/Entity";
+
+export class OPERATOR_OBJECT_ENTITY_ISWET extends BaseOperator<
+  Entity,
+  iBoolean
+> {
+  static override internalName = "integrateddynamics:entity_iswet" as const;
+  static override numericID = 29;
+  static override nicknames = [
+    "EntityIswet",
+    "entity_is_wet",
+    "entityIsWet",
+    "isWet",
+  ];
+  static override symbol = "is_wet";
+  static override interactName = "entityIsWet";
+  constructor(normalizeSignature = true) {
+    super({
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Entity",
+          },
+          to: {
+            type: "Boolean",
+          },
+        },
+        normalizeSignature
+      ),
+      function: (entity: Entity): iBoolean => {
+        return entity.isWet();
+      },
+    });
+  }
+}

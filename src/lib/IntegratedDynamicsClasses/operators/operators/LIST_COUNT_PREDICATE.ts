@@ -1,0 +1,51 @@
+import { iArray } from "lib/IntegratedDynamicsClasses/typeWrappers/iArray";
+import { iBoolean } from "lib/IntegratedDynamicsClasses/typeWrappers/iBoolean";
+import { Integer } from "lib/JavaNumberClasses/Integer";
+import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
+import { Operator } from "lib/IntegratedDynamicsClasses/operators/Operator";
+import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
+
+export class OPERATOR_LIST_COUNT_PREDICATE extends BaseOperator<
+  iArray<IntegratedValue>,
+  Operator<Operator<IntegratedValue, iBoolean>, Integer>
+> {
+  static override internalName = "integrateddynamics:list_count_p" as const;
+  static override numericID = 115;
+  static override nicknames = ["listCountPredicate", "listCountP"];
+  static override symbol = "count_p";
+  static override interactName = "listCountPredicate";
+  constructor(normalizeSignature = true) {
+    super({
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: { type: "List", listType: { type: "Any", typeID: 1 } },
+          to: {
+            type: "Function",
+            from: {
+              type: "Operator",
+              obscured: {
+                type: "Function",
+                from: { type: "Any", typeID: 1 },
+                to: {
+                  type: "Boolean",
+                },
+              },
+            },
+            to: {
+              type: "Integer",
+            },
+          },
+        },
+        normalizeSignature
+      ),
+      function: (
+        list: iArray<IntegratedValue>
+      ): TypeLambda<Predicate<IntegratedValue>, Integer> => {
+        return (predicate: Predicate<IntegratedValue>): Integer => {
+          return list.filter((item) => predicate.apply(item).valueOf()).size();
+        };
+      },
+    });
+  }
+}

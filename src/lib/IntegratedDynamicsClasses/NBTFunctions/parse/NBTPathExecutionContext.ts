@@ -1,0 +1,45 @@
+/**
+ * Transpiler: kirjorjos
+ * Derived from https://github.com/CyclopsMC/CyclopsCore/ with minimal changes
+ * Original Author: rubensworks
+ */
+
+import { iBoolean } from "lib/IntegratedDynamicsClasses/typeWrappers/iBoolean";
+import { Tag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/Tag";
+
+/**
+ * A context that is passed during the NBT path execution.
+ */
+export class NbtPathExpressionExecutionContext {
+  private currentTag: Tag<IntegratedValue>;
+  private parentContext?: NbtPathExpressionExecutionContext;
+
+  constructor(
+    currentTag: Tag<IntegratedValue>,
+    parentContext?: NbtPathExpressionExecutionContext
+  ) {
+    this.currentTag = currentTag;
+    this.parentContext = parentContext;
+  }
+
+  getCurrentTag(): Tag<IntegratedValue> {
+    return this.currentTag;
+  }
+
+  getParentContext(): NbtPathExpressionExecutionContext | undefined {
+    return this.parentContext;
+  }
+
+  getRootContext(): NbtPathExpressionExecutionContext {
+    const parent = this.getParentContext();
+    return parent ? parent.getRootContext() : this;
+  }
+
+  equals(obj: NbtPathExpressionExecutionContext): iBoolean {
+    if (!(obj instanceof NbtPathExpressionExecutionContext)) {
+      return new iBoolean(false);
+    }
+    let that = obj as NbtPathExpressionExecutionContext;
+    return this.getCurrentTag().equals(that.getCurrentTag());
+  }
+}

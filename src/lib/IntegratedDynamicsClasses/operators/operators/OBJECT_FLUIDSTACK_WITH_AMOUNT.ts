@@ -1,0 +1,52 @@
+import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
+import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
+import { Fluid } from "lib/IntegratedDynamicsClasses/Fluid";
+import { Integer } from "lib/JavaNumberClasses/Integer";
+import { Properties } from "lib/IntegratedDynamicsClasses/Properties";
+import { Operator } from "lib/IntegratedDynamicsClasses/operators/Operator";
+
+export class OPERATOR_OBJECT_FLUIDSTACK_WITH_AMOUNT extends BaseOperator<
+  Fluid,
+  Operator<Integer, Fluid>
+> {
+  static override internalName =
+    "integrateddynamics:fluidstack_with_amount" as const;
+  static override numericID = 266;
+  static override nicknames = [
+    "FluidstackWithAmount",
+    "fluidstackWithAmount",
+    "fluid_stack_with_amount",
+    "fluidStackWithAmount",
+    "fluid_with_amount",
+    "fluidWithAmount",
+  ];
+  static override symbol = "with_amount";
+  static override interactName = "fluidstackWithAmount";
+  constructor(normalizeSignature = true) {
+    super({
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "Fluid",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "Integer",
+            },
+            to: {
+              type: "Fluid",
+            },
+          },
+        },
+        normalizeSignature
+      ),
+      function: (fluid: Fluid): TypeLambda<Integer, Fluid> => {
+        return (amount: Integer): Fluid => {
+          return new Fluid(new Properties({ amount }), fluid);
+        };
+      },
+    });
+  }
+}

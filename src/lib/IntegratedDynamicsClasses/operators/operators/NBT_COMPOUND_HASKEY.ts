@@ -1,0 +1,45 @@
+import { CompoundTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
+import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
+import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
+import { iString } from "lib/IntegratedDynamicsClasses/typeWrappers/iString";
+import { iBoolean } from "lib/IntegratedDynamicsClasses/typeWrappers/iBoolean";
+import { Operator } from "lib/IntegratedDynamicsClasses/operators/Operator";
+
+export class OPERATOR_NBT_COMPOUND_HASKEY extends BaseOperator<
+  CompoundTag,
+  Operator<iString, iBoolean>
+> {
+  static override internalName =
+    "integrateddynamics:nbt_compound_haskey" as const;
+  static override numericID = 207;
+  static override nicknames = ["nbtHasKey", "nbtCompoundHaskey", "NBTHasKey"];
+  static override symbol = "NBT{}.has_key";
+  static override interactName = "nbtHasKey";
+  constructor(normalizeSignature = true) {
+    super({
+      parsedSignature: new ParsedSignature(
+        {
+          type: "Function",
+          from: {
+            type: "NBT",
+          },
+          to: {
+            type: "Function",
+            from: {
+              type: "String",
+            },
+            to: {
+              type: "Boolean",
+            },
+          },
+        },
+        normalizeSignature
+      ),
+      function: (nbt: CompoundTag): TypeLambda<iString, iBoolean> => {
+        return (key: iString): iBoolean => {
+          return new iBoolean(nbt.has(key));
+        };
+      },
+    });
+  }
+}
