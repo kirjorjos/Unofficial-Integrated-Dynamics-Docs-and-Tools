@@ -122,6 +122,9 @@ export const ASTtoOperator = (ast: TypeAST.AST): IntegratedValue => {
     case "NBT":
       return new CompoundTag(ast.value as Record<string, any>);
 
+    case "List":
+      return new iArrayEager(ast.value.map(ASTtoOperator));
+
     default:
       throw new Error(`Unsupported AST type: ${(ast as any).type}`);
   }
@@ -227,6 +230,13 @@ export const OperatortoAST = (val: IntegratedValue): TypeAST.AST => {
 
   if (val instanceof Tag) {
     return { type: "NBT", value: val.toJSON() };
+  }
+
+  if (val instanceof iArrayEager) {
+    return {
+      type: "List",
+      value: val.valueOf().map((entry) => OperatortoAST(entry)),
+    };
   }
 
   throw new Error(

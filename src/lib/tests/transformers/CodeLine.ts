@@ -10,6 +10,27 @@ describe("TestCodeLineTransformer", () => {
     expect(ASTToCodeLine(ast)).toBe(code);
   });
 
+  it("testListLiteral", () => {
+    const code = '["c:armor", "c:tools"]';
+    const ast = CodeLineToAST(code);
+    expect(ast).toEqual({
+      type: "List",
+      value: [
+        { type: "String", value: "c:armor" },
+        { type: "String", value: "c:tools" },
+      ],
+    });
+    expect(ASTToCodeLine(ast)).toBe(code);
+  });
+
+  it("testImplicitFlipOperatorReference", () => {
+    const ast = CodeLineToAST("flipListContainsPredicate");
+    expect(ast).toEqual({
+      type: "Flip",
+      arg: { type: "Operator", opName: "LIST_CONTAINS_PREDICATE" },
+    });
+  });
+
   it("testLambda", () => {
     const code = "x => (numberAdd x 1)";
     const ast = CodeLineToAST(code);

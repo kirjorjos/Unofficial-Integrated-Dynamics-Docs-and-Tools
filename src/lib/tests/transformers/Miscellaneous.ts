@@ -1,5 +1,6 @@
 import { operatorRegistry } from "lib/IntegratedDynamicsClasses/registries/operatorRegistry";
 import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
+import { getNicknameRegex } from "lib/HelperClasses/UtilityFunctions";
 
 /**
  * Miscellaneous validation tests for operators.
@@ -78,9 +79,9 @@ describe("MiscellaneousTests", () => {
       for (const opClass of operatorClasses) {
         const uniqueName = opClass.internalName;
         for (const nickname of opClass.nicknames) {
-          if (!BaseOperator.nicknameRegex.test(nickname)) {
+          if (!getNicknameRegex().test(nickname)) {
             throw new Error(
-              `Nickname "${nickname}" in operator "${uniqueName}" does not match regex ${BaseOperator.nicknameRegex}`
+              `Nickname "${nickname}" in operator "${uniqueName}" does not match regex ${BaseOperator.nicknameRegexValidChars}`
             );
           }
         }

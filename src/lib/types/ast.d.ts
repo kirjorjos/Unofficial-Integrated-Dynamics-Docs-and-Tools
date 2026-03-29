@@ -40,6 +40,7 @@ namespace TypeAST {
   };
 
   type Nbt = { type: "NBT"; value: jsonData; varName?: string };
+  type List = { type: "List"; value: AST[]; varName?: string };
 
   type BaseOperator = {
     type: "Operator";
@@ -86,6 +87,7 @@ namespace TypeAST {
     | String
     | Boolean
     | Null
+    | List
     | Identifier
     | Variable;
 

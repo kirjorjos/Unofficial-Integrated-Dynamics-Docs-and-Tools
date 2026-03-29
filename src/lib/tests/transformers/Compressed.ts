@@ -40,6 +40,13 @@ describe("TestCompressedTransformer", () => {
       { type: "String", value: "hello" },
       { type: "Boolean", value: true },
       { type: "Null" },
+      {
+        type: "List",
+        value: [
+          { type: "String", value: "c:armor" },
+          { type: "String", value: "c:tools" },
+        ],
+      },
       { type: "Variable", name: "x", varName: "namedVar" },
     ];
 

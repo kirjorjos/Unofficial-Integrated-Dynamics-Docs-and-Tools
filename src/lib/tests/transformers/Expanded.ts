@@ -210,4 +210,32 @@ final = apply(numberAdd, var2)
       "operatorApply3 :: Operator<a<Operator<b<c<Any<typeID14>> -> (d<e<Any<typeID15>> -> (f<g<Any<typeID16>> -> h<Any<typeID17>>>)>)>> -> (i<j<Any<typeID22>> -> (k<e<Any<typeID15>> -> (l<g<Any<typeID16>> -> h<Any<typeID17>>>)>)>)>>\noperatorApply3 = operatorApply3";
     expect(expanded).toBe(expected);
   });
+
+  it("testExpandedListLiteral", () => {
+    const input = `
+whitelistTagList :: List<String>
+whitelistTagList = ["c:armor", "c:tools"]
+`;
+    const ast = ExpandedToAST(input.trim());
+    expect(ast).toEqual({
+      type: "List",
+      value: [
+        { type: "String", value: "c:armor" },
+        { type: "String", value: "c:tools" },
+      ],
+      varName: "whitelistTagList",
+    });
+    expect(ASTToExpanded(ast)).toContain(
+      'whitelistTagList = ["c:armor", "c:tools"]'
+    );
+  });
+
+  it("testExpandedImplicitFlipOperatorReference", () => {
+    const ast = ExpandedToAST("final = flipListContainsPredicate");
+    expect(ast).toEqual({
+      type: "Flip",
+      arg: { type: "Operator", opName: "LIST_CONTAINS_PREDICATE" },
+      varName: "final",
+    });
+  });
 });

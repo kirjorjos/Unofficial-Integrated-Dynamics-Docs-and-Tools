@@ -26,8 +26,9 @@ const enum LiteralKind {
   Ingredients = 10,
   Recipe = 11,
   NBT = 12,
-  Variable = 13,
-  Curry = 14,
+  List = 13,
+  Variable = 14,
+  Curry = 15,
 }
 
 const enum JSONKind {
@@ -707,6 +708,16 @@ const writeNode = (
       writeNodeMetadata(writer, node);
       return;
 
+    case "List":
+      writer.writeBits(NodeKind.Literal, 2);
+      writeLiteralKind(writer, LiteralKind.List);
+      writeVarUint(writer, node.value.length);
+      for (const entry of node.value) {
+        writeNode(writer, entry, seen);
+      }
+      writeNodeMetadata(writer, node);
+      return;
+
     case "Variable":
       writer.writeBits(NodeKind.Literal, 2);
       writeLiteralKind(writer, LiteralKind.Variable);
@@ -866,6 +877,15 @@ const readNode = (
         case LiteralKind.NBT:
           node = { type: "NBT", value: readJSONValue(reader) };
           break;
+        case LiteralKind.List: {
+          const length = readVarUint(reader);
+          const value: ASTNode[] = [];
+          for (let i = 0; i < length; i++) {
+            value.push(readNode(reader, decoded));
+          }
+          node = { type: "List", value };
+          break;
+        }
         case LiteralKind.Variable:
           node = { type: "Variable", name: readString(reader) };
           break;

@@ -14,6 +14,32 @@ export function sanitizeReplacement(replacement: string): string {
     .replaceAll(/\\(\$)/g, "$$$$");
 }
 
+export const getNicknameRegex = (): RegExp =>
+  new RegExp(`^[${BaseOperator.nicknameRegexValidChars}]+$`);
+
+export const getNicknameCharacterRegex = (): RegExp =>
+  new RegExp(`^[${BaseOperator.nicknameRegexValidChars}]$`);
+
+export const getImplicitFlipNameRegex = (): RegExp => {
+  return new RegExp(`^flip([A-Z][${BaseOperator.nicknameRegexValidChars}]*)$`);
+};
+
+export const resolveImplicitFlipOperator = (
+  name: string
+): TypeAST.Flip | undefined => {
+  const match = name.match(getImplicitFlipNameRegex());
+  if (!match) return undefined;
+
+  const baseNickname = match[1]!.charAt(0).toLowerCase() + match[1]!.slice(1);
+  const internalName = operatorRegistry.operatorByNickname(baseNickname);
+  if (!internalName) return undefined;
+
+  return {
+    type: "Flip",
+    arg: { type: "Operator", opName: internalName },
+  };
+};
+
 export const getOpName = (opName: TypeOperatorKey): string => {
   const opClass = operatorRegistry[opName];
   if (opClass && opClass.interactName) return opClass.interactName;

@@ -2,8 +2,10 @@ import { operatorRegistry } from "lib/IntegratedDynamicsClasses/registries/opera
 import { ASTToCodeLine, CodeLineToAST } from "lib/transformers/CodeLine";
 import { ASTToCondensed, CondensedToAST } from "lib/transformers/Condensed";
 import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
-import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
-import { getOpName } from "lib/HelperClasses/UtilityFunctions";
+import {
+  getOpName,
+  getNicknameRegex,
+} from "lib/HelperClasses/UtilityFunctions";
 
 const getLabel = (index: number): string => {
   let label = "";
@@ -100,6 +102,28 @@ const computeSignature = (
       signature = new ParsedSignature({ type: node.type }, false);
       break;
     }
+    case "List": {
+      if (node.value.length === 0) {
+        signature = new ParsedSignature(
+          {
+            type: "List",
+            listType: { type: "Any", typeID: ParsedSignature.getNewTypeID() },
+          },
+          false
+        );
+        break;
+      }
+
+      const elementSignature = computeSignature(node.value[0]!, scope).getAst();
+      signature = new ParsedSignature(
+        {
+          type: "List",
+          listType: elementSignature,
+        },
+        false
+      );
+      break;
+    }
     case "Operator": {
       const internalKey = operatorRegistry.operatorByNickname(node.opName);
       if (!internalKey) throw new Error(`Unknown operator: ${node.opName}`);
@@ -176,6 +200,9 @@ const collectVariables = (
       break;
     case "Flip":
       collectVariables(node.arg, collected, seen);
+      break;
+    case "List":
+      for (const value of node.value) collectVariables(value, collected, seen);
       break;
   }
 
@@ -330,6 +357,8 @@ const getVarName = (node: TypeAST.AST): string => {
     }
     case "Flip":
       return `${getVarName(node.arg)}On`;
+    case "List":
+      return "list";
   }
 
   return `v${++varCounter}`;
@@ -535,7 +564,7 @@ export const ExpandedToAST = (expanded: string): TypeAST.AST => {
       varName = line.substring(0, eqIdx).trim();
       exprStr = line.substring(eqIdx + 1).trim();
 
-      if (!BaseOperator.nicknameRegex.test(varName)) {
+      if (!getNicknameRegex().test(varName)) {
         throw new Error(`Invalid variable name: "${varName}"`);
       }
       if (operatorRegistry.operatorByNickname(varName)) {

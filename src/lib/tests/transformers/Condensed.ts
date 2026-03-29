@@ -85,6 +85,26 @@ describe("TestCondensedTransformer", () => {
     expect(CondensedToAST("null")).toEqual({ type: "Null" });
   });
 
+  it("testListLiteral", () => {
+    const ast = CondensedToAST('["c:armor", "c:tools"]');
+    expect(ast).toEqual({
+      type: "List",
+      value: [
+        { type: "String", value: "c:armor" },
+        { type: "String", value: "c:tools" },
+      ],
+    });
+    expect(ASTToCondensed(ast)).toBe('["c:armor", "c:tools"]');
+  });
+
+  it("testImplicitFlipOperatorReference", () => {
+    const ast = CondensedToAST("flipListContainsPredicate");
+    expect(ast).toEqual({
+      type: "Flip",
+      arg: { type: "Operator", opName: "LIST_CONTAINS_PREDICATE" },
+    });
+  });
+
   it("testComplexNesting", () => {
     const ast = CondensedToAST("apply(relationalEquals, 8)");
     expect(ast).toEqual({

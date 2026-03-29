@@ -4,6 +4,8 @@ import {
   getOpName,
   getArity,
   expectsOperatorArgument,
+  getNicknameCharacterRegex,
+  resolveImplicitFlipOperator,
 } from "lib/HelperClasses/UtilityFunctions";
 
 type char = string;
@@ -29,7 +31,7 @@ const charTokenCheckers: Record<string, (c: char, state: State) => boolean> = {
   identifier: (c, state) =>
     !state.inString &&
     state.inJSON === 0 &&
-    (BaseOperator.nicknameRegex.test(c) || c === "="),
+    (getNicknameCharacterRegex().test(c) || c === "="),
 };
 
 const resolveType = (value: string, possible: string[]): string => {
@@ -102,7 +104,7 @@ export const tokenize = (condensed: string) => {
     }
 
     const isStructural =
-      !state.inString && state.inJSON === 0 && /^[(),\\]$/.test(char);
+      !state.inString && state.inJSON === 0 && /^[()[\],\\]$/.test(char);
     const isWhitespace =
       !state.inString && state.inJSON === 0 && /^\s$/.test(char);
 
@@ -196,6 +198,7 @@ export const CondensedToAST = (
     | { type: "String"; value: string; varName?: string }
     | { type: "Boolean"; value: boolean; varName?: string }
     | { type: "Null"; varName?: string }
+    | { type: "List"; value: InternalAST[]; varName?: string }
     | { type: "Block"; value: jsonObject; varName?: string }
     | { type: "Item"; value: jsonObject; varName?: string }
     | { type: "Fluid"; value: jsonObject; varName?: string }
@@ -343,6 +346,30 @@ export const CondensedToAST = (
           throw new Error("Expected ')' after grouping");
         pos++; // consume ')'
         return expr;
+      }
+      if (token.value === "[") {
+        const values: InternalAST[] = [];
+        while (
+          tokens[pos] &&
+          !(tokens[pos]!.type === "structural" && tokens[pos]!.value === "]")
+        ) {
+          values.push(parseExpression(scope));
+          if (
+            tokens[pos] &&
+            tokens[pos]!.type === "structural" &&
+            tokens[pos]!.value === ","
+          ) {
+            pos++;
+          }
+        }
+        if (
+          !tokens[pos] ||
+          !(tokens[pos]!.type === "structural" && tokens[pos]!.value === "]")
+        ) {
+          throw new Error("Expected ']'");
+        }
+        pos++;
+        return { type: "List", value: values };
       }
       throw new Error(`Unexpected structural token: ${token.value}`);
     }
@@ -762,6 +789,8 @@ export const CondensedToAST = (
         ) {
           return { type: "Identifier", value: token.value };
         }
+        const implicitFlip = resolveImplicitFlipOperator(token.value);
+        if (implicitFlip) return implicitFlip;
         const internalName = operatorRegistry.operatorByNickname(token.value);
         if (internalName) return { type: "Operator", opName: internalName };
         throw new Error(`Unknown identifier: ${token.value}`);
@@ -813,6 +842,9 @@ export const ASTToCondensed = (ast: TypeAST.AST, isTopLevel = true): string => {
         break;
       case "Null":
         result = "null";
+        break;
+      case "List":
+        result = `[${node.value.map((entry) => stringify(entry, false)).join(", ")}]`;
         break;
       case "NBT":
         result = JSON.stringify(node.value);

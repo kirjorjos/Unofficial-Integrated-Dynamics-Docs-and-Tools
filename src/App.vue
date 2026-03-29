@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import type { Component } from "vue";
 import { operatorRegistry } from "lib";
 import AdvancedPage from "./pages/AdvancedPage.vue";
@@ -73,13 +73,17 @@ const operatorPages: FilePage[] = Object.keys(operatorRegistry)
     kind: "page" as const,
     id: `operator-${key}`,
     label:
-      (operatorRegistry[key as keyof typeof operatorRegistry] as {
-        symbol?: string;
-      }).symbol ?? key,
+      (
+        operatorRegistry[key as keyof typeof operatorRegistry] as {
+          symbol?: string;
+        }
+      ).symbol ?? key,
     tooltip:
-      (operatorRegistry[key as keyof typeof operatorRegistry] as {
-        interactName?: string;
-      }).interactName ?? key,
+      (
+        operatorRegistry[key as keyof typeof operatorRegistry] as {
+          interactName?: string;
+        }
+      ).interactName ?? key,
     component: OperatorPage,
     props: {
       operatorKey: key,
@@ -158,9 +162,46 @@ const selectedPageId = ref("transformers");
 
 const allPages = computed(() => flattenItems(sections));
 
+const pageFolderMap = computed(() => {
+  const entries: Record<string, string | undefined> = {};
+
+  for (const item of sections) {
+    if (item.kind === "page") {
+      entries[item.id] = undefined;
+      continue;
+    }
+
+    for (const page of item.children) {
+      entries[page.id] = item.id;
+    }
+  }
+
+  return entries;
+});
+
 const selectedPage = computed(() => {
   return allPages.value.find((page) => page.id === selectedPageId.value);
 });
+
+const normalizeHashPageId = (hash: string): string | undefined => {
+  const pageId = decodeURIComponent(hash.replace(/^#/, "").trim());
+  if (!pageId) return undefined;
+  return allPages.value.some((page) => page.id === pageId) ? pageId : undefined;
+};
+
+const expandFolderForPage = (pageId: string): void => {
+  const folderId = pageFolderMap.value[pageId];
+  if (folderId) {
+    collapsedFolders.value[folderId] = false;
+  }
+};
+
+const syncPageFromHash = (): void => {
+  const pageId = normalizeHashPageId(window.location.hash);
+  if (!pageId) return;
+  selectedPageId.value = pageId;
+  expandFolderForPage(pageId);
+};
 
 const openPage = (pageId: string): void => {
   selectedPageId.value = pageId;
@@ -169,6 +210,29 @@ const openPage = (pageId: string): void => {
 const toggleFolder = (folderId: string): void => {
   collapsedFolders.value[folderId] = !collapsedFolders.value[folderId];
 };
+
+watch(selectedPageId, (pageId) => {
+  expandFolderForPage(pageId);
+
+  const nextHash = `#${encodeURIComponent(pageId)}`;
+  if (window.location.hash !== nextHash) {
+    window.location.hash = nextHash;
+  }
+});
+
+onMounted(() => {
+  syncPageFromHash();
+
+  if (!window.location.hash) {
+    window.location.hash = `#${encodeURIComponent(selectedPageId.value)}`;
+  }
+
+  window.addEventListener("hashchange", syncPageFromHash);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener("hashchange", syncPageFromHash);
+});
 </script>
 
 <template>
@@ -180,7 +244,11 @@ const toggleFolder = (folderId: string): void => {
       </div>
 
       <nav class="sidebar-nav">
-        <section v-for="section in sections" :key="section.id" class="sidebar-section">
+        <section
+          v-for="section in sections"
+          :key="section.id"
+          class="sidebar-section"
+        >
           <button
             v-if="section.kind === 'page'"
             type="button"
@@ -205,18 +273,18 @@ const toggleFolder = (folderId: string): void => {
             </button>
 
             <div v-if="!collapsedFolders[section.id]" class="file-list">
-            <button
-              v-for="page in section.children"
-              :key="page.id"
-              type="button"
-              class="file-row"
-              :class="{ active: page.id === selectedPageId }"
-              :title="page.tooltip"
-              @click="openPage(page.id)"
-            >
-              <span class="file-icon" aria-hidden="true">•</span>
-              <span class="file-label">{{ page.label }}</span>
-            </button>
+              <button
+                v-for="page in section.children"
+                :key="page.id"
+                type="button"
+                class="file-row"
+                :class="{ active: page.id === selectedPageId }"
+                :title="page.tooltip"
+                @click="openPage(page.id)"
+              >
+                <span class="file-icon" aria-hidden="true">•</span>
+                <span class="file-label">{{ page.label }}</span>
+              </button>
             </div>
           </template>
         </section>

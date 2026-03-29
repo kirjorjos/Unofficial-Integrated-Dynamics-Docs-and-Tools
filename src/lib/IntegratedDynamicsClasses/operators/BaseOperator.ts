@@ -18,7 +18,7 @@ export class BaseOperator<
   static interactName: string = "";
   static numericID: number = -1;
   serializer?: string;
-  static readonly nicknameRegex = /^[A-Za-z0-9\\._&|{}]+$/;
+  static readonly nicknameRegexValidChars = "A-Za-z0-9._&|{}";
 
   constructor({
     parsedSignature,

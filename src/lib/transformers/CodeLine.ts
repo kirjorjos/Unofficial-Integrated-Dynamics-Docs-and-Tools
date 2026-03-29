@@ -1,6 +1,9 @@
 import { operatorRegistry } from "lib/IntegratedDynamicsClasses/registries/operatorRegistry";
 import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
-import { getOpName } from "lib/HelperClasses/UtilityFunctions";
+import {
+  getOpName,
+  resolveImplicitFlipOperator,
+} from "lib/HelperClasses/UtilityFunctions";
 
 export const ASTToCodeLine = (ast: TypeAST.AST, isTopLevel = true): string => {
   const stringify = (node: TypeAST.AST, topLevel = false): string => {
@@ -16,6 +19,7 @@ export const ASTToCodeLine = (ast: TypeAST.AST, isTopLevel = true): string => {
       node.type === "String" ||
       node.type === "Boolean" ||
       node.type === "Null" ||
+      node.type === "List" ||
       node.type === "NBT" ||
       node.type === "Operator" ||
       node.type === "Block" ||
@@ -52,6 +56,9 @@ export const ASTToCodeLine = (ast: TypeAST.AST, isTopLevel = true): string => {
         break;
       case "Null":
         result = "null";
+        break;
+      case "List":
+        result = `[${node.value.map((entry) => stringify(entry)).join(", ")}]`;
         break;
       case "NBT":
         result = JSON.stringify(node.value);
@@ -167,7 +174,14 @@ export const CodeLineToAST = (
       tokens.push("->");
       current = "";
       i++;
-    } else if (char === "(" || char === ")" || char === "," || char === "\\") {
+    } else if (
+      char === "(" ||
+      char === ")" ||
+      char === "," ||
+      char === "\\" ||
+      char === "[" ||
+      char === "]"
+    ) {
       if (current.trim()) tokens.push(current.trim());
       tokens.push(char);
       current = "";
@@ -189,6 +203,7 @@ export const CodeLineToAST = (
     | { type: "String"; value: string; varName?: string }
     | { type: "Boolean"; value: boolean; varName?: string }
     | { type: "Null"; varName?: string }
+    | { type: "List"; value: InternalAST[]; varName?: string }
     | { type: "Block"; value: jsonObject; varName?: string }
     | { type: "Item"; value: jsonObject; varName?: string }
     | { type: "Fluid"; value: jsonObject; varName?: string }
@@ -309,6 +324,17 @@ export const CodeLineToAST = (
       return result;
     }
 
+    if (token === "[") {
+      const values: InternalAST[] = [];
+      while (pos < tokens.length && tokens[pos] !== "]") {
+        values.push(parseExpression(scope));
+        if (tokens[pos] === ",") pos++;
+      }
+      if (tokens[pos] !== "]") throw new Error("Expected ']'");
+      pos++;
+      return { type: "List", value: values };
+    }
+
     if (token === ",") {
       return parseExpression(scope);
     }
@@ -354,6 +380,9 @@ export const CodeLineToAST = (
     if (internalKey) {
       return { type: "Operator", opName: internalKey as TypeOperatorKey };
     }
+
+    const implicitFlip = resolveImplicitFlipOperator(token);
+    if (implicitFlip) return implicitFlip;
 
     throw new Error(`Unknown identifier: ${token}`);
   }
