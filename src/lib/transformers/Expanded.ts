@@ -17,6 +17,8 @@ const getLabel = (index: number): string => {
   return label;
 };
 
+const SIGNATURE_ARROW = "→";
+
 class SignatureFormatter {
   private typeIDToLabel = new Map<number, string>();
   private counter = 0;
@@ -45,7 +47,7 @@ class SignatureFormatter {
       const to = sig.getOutput();
       const fromStr = this.format(from);
       const toStr = this.format(to, true);
-      const res = `${label}<${fromStr} -> ${toStr}>`;
+      const res = `${label}<${fromStr} ${SIGNATURE_ARROW} ${toStr}>`;
       return isReturnType ? `(${res})` : res;
     }
 

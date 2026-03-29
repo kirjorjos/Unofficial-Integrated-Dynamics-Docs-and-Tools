@@ -81,7 +81,7 @@ describe("MiscellaneousTests", () => {
         for (const nickname of opClass.nicknames) {
           if (!getNicknameRegex().test(nickname)) {
             throw new Error(
-              `Nickname "${nickname}" in operator "${uniqueName}" does not match regex ${BaseOperator.nicknameRegexValidChars}`
+              `Nickname "${nickname}" in operator "${uniqueName}" does not match regex ${BaseOperator.nicknameRegexAllowedChars}`
             );
           }
         }

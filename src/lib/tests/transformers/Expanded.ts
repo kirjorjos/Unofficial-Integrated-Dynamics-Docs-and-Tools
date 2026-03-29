@@ -218,7 +218,7 @@ final = apply(numberAdd, var2)
     const ast = CodeLineToAST("operatorApply3");
     const expanded = ASTToExpanded(ast);
     const expected =
-      "operatorApply3 :: Operator<a<Operator<b<c<Any<typeID14>> -> (d<e<Any<typeID15>> -> (f<g<Any<typeID16>> -> h<Any<typeID17>>>)>)>> -> (i<j<Any<typeID22>> -> (k<e<Any<typeID15>> -> (l<g<Any<typeID16>> -> h<Any<typeID17>>>)>)>)>>\noperatorApply3 = operatorApply3";
+      "operatorApply3 :: Operator<a<Operator<b<c<Any<typeID14>> → (d<e<Any<typeID15>> → (f<g<Any<typeID16>> → h<Any<typeID17>>>)>)>> → (i<j<Any<typeID22>> → (k<e<Any<typeID15>> → (l<g<Any<typeID16>> → h<Any<typeID17>>>)>)>)>>\noperatorApply3 = operatorApply3";
     expect(expanded).toBe(expected);
   });
 

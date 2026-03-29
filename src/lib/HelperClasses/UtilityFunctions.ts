@@ -15,13 +15,15 @@ export function sanitizeReplacement(replacement: string): string {
 }
 
 export const getNicknameRegex = (): RegExp =>
-  new RegExp(`^[${BaseOperator.nicknameRegexValidChars}]+$`);
+  new RegExp(`^[${BaseOperator.nicknameRegexAllowedChars}]+$`);
 
 export const getNicknameCharacterRegex = (): RegExp =>
-  new RegExp(`^[${BaseOperator.nicknameRegexValidChars}]$`);
+  new RegExp(`^[${BaseOperator.nicknameRegexAllowedChars}]$`);
 
 export const getImplicitFlipNameRegex = (): RegExp => {
-  return new RegExp(`^flip([A-Z][${BaseOperator.nicknameRegexValidChars}]*)$`);
+  return new RegExp(
+    `^flip([A-Z][${BaseOperator.nicknameRegexAllowedChars}]*)$`
+  );
 };
 
 export const resolveImplicitFlipOperator = (
