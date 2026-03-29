@@ -1,150 +1,237 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import {
-  ASTToCodeLine,
-  ASTToCompressed,
-  ASTToCondensed,
-  CondensedToAST,
-  ASTToExpanded,
-  ASTtoJSON,
-  CodeLineToAST,
-  CompressedToAST,
-  ExpandedToAST,
-  JSONtoAST,
-} from "lib";
+import type { Component } from "vue";
+import { operatorRegistry } from "lib";
+import AdvancedPage from "./pages/AdvancedPage.vue";
+import IntegratedCraftingPage from "./pages/IntegratedCraftingPage.vue";
+import IntegratedMekanismPage from "./pages/IntegratedMekanismPage.vue";
+import IntegratedScriptingPage from "./pages/IntegratedScriptingPage.vue";
+import IntegratedTerminalsPage from "./pages/IntegratedTerminalsPage.vue";
+import IntegratedTunnelsPage from "./pages/IntegratedTunnelsPage.vue";
+import TransformersPage from "./pages/TransformersPage.vue";
+import DataTypesPage from "./pages/starting-out/DataTypesPage.vue";
+import DelayerPage from "./pages/starting-out/DelayerPage.vue";
+import LogicProgrammerAndLabellerPage from "./pages/starting-out/LogicProgrammerAndLabellerPage.vue";
+import MaterializerPage from "./pages/starting-out/MaterializerPage.vue";
+import ReadersAndWritersPage from "./pages/starting-out/ReadersAndWritersPage.vue";
+import OperatorPage from "./pages/operators/OperatorPage.vue";
 
-type FormatKey = "condensed" | "expanded" | "codeline" | "compressed" | "json";
+type FilePage = {
+  kind: "page";
+  id: string;
+  label: string;
+  component: Component;
+  props?: Record<string, unknown>;
+  tooltip?: string;
+};
 
-const leftText = ref("");
-const rightText = ref("");
-const leftFormat = ref<FormatKey>("condensed");
-const rightFormat = ref<FormatKey>("expanded");
-const status = ref("");
+type FolderPage = {
+  kind: "folder";
+  id: string;
+  label: string;
+  children: FilePage[];
+};
 
-const formatters: Record<
-  FormatKey,
+type NavItem = FilePage | FolderPage;
+
+const startingOutPages: FilePage[] = [
   {
-    label: string;
-    toAST: (value: string) => TypeAST.AST;
-    fromAST: (ast: TypeAST.AST) => string;
-  }
-> = {
-  condensed: {
-    label: "Condensed",
-    toAST: (value) => CondensedToAST(value),
-    fromAST: (ast) => ASTToCondensed(ast),
+    kind: "page",
+    id: "starting-out-logic-programmer-and-labeller",
+    label: "Logic programmer and labeller",
+    component: LogicProgrammerAndLabellerPage,
   },
-  expanded: {
-    label: "Expanded",
-    toAST: (value) => ExpandedToAST(value),
-    fromAST: (ast) => ASTToExpanded(ast),
+  {
+    kind: "page",
+    id: "starting-out-data-types",
+    label: "Data types",
+    component: DataTypesPage,
   },
-  codeline: {
-    label: "Code Line",
-    toAST: (value) => CodeLineToAST(value),
-    fromAST: (ast) => ASTToCodeLine(ast),
+  {
+    kind: "page",
+    id: "starting-out-readers-and-writers",
+    label: "Readers and writers",
+    component: ReadersAndWritersPage,
   },
-  compressed: {
-    label: "Compressed",
-    toAST: (value) => CompressedToAST(value),
-    fromAST: (ast) => ASTToCompressed(ast),
+  {
+    kind: "page",
+    id: "starting-out-materializer",
+    label: "Materializer",
+    component: MaterializerPage,
   },
-  json: {
-    label: "JSON",
-    toAST: (value) => JSONtoAST(JSON.parse(value) as jsonData),
-    fromAST: (ast) => JSON.stringify(ASTtoJSON(ast), null, 2),
+  {
+    kind: "page",
+    id: "starting-out-delayer",
+    label: "Delayer",
+    component: DelayerPage,
   },
+];
+
+const operatorPages: FilePage[] = Object.keys(operatorRegistry)
+  .filter((key) => key !== "find" && key !== "operatorByNickname")
+  .map((key) => ({
+    kind: "page" as const,
+    id: `operator-${key}`,
+    label:
+      (operatorRegistry[key as keyof typeof operatorRegistry] as {
+        symbol?: string;
+      }).symbol ?? key,
+    tooltip:
+      (operatorRegistry[key as keyof typeof operatorRegistry] as {
+        interactName?: string;
+      }).interactName ?? key,
+    component: OperatorPage,
+    props: {
+      operatorKey: key,
+    },
+  }));
+
+const sections: NavItem[] = [
+  {
+    kind: "page",
+    id: "transformers",
+    label: "Transformers",
+    component: TransformersPage,
+  },
+  {
+    kind: "folder",
+    id: "starting-out",
+    label: "Starting out",
+    children: startingOutPages,
+  },
+  {
+    kind: "page",
+    id: "advanced",
+    label: "Advanced",
+    component: AdvancedPage,
+  },
+  {
+    kind: "folder",
+    id: "operators",
+    label: "Operators",
+    children: operatorPages,
+  },
+  {
+    kind: "page",
+    id: "integrated-tunnels",
+    label: "Integrated Tunnels",
+    component: IntegratedTunnelsPage,
+  },
+  {
+    kind: "page",
+    id: "integrated-terminals",
+    label: "Integrated Terminals",
+    component: IntegratedTerminalsPage,
+  },
+  {
+    kind: "page",
+    id: "integrated-crafting",
+    label: "Integrated Crafting",
+    component: IntegratedCraftingPage,
+  },
+  {
+    kind: "page",
+    id: "integrated-scripting",
+    label: "Integrated Scripting",
+    component: IntegratedScriptingPage,
+  },
+  {
+    kind: "page",
+    id: "integrated-mekanism",
+    label: "Integrated Mekanism",
+    component: IntegratedMekanismPage,
+  },
+];
+
+const collapsedFolders = ref<Record<string, boolean>>({
+  "starting-out": false,
+  operators: false,
+});
+
+const flattenItems = (items: NavItem[]): FilePage[] => {
+  return items.flatMap((item) =>
+    item.kind === "page" ? [item] : flattenItems(item.children)
+  );
 };
 
-const formatOptions = Object.entries(formatters).map(([value, formatter]) => ({
-  value: value as FormatKey,
-  label: formatter.label,
-}));
+const selectedPageId = ref("transformers");
 
-const canConvertLeftToRight = computed(() => leftText.value.trim().length > 0);
-const canConvertRightToLeft = computed(() => rightText.value.trim().length > 0);
+const allPages = computed(() => flattenItems(sections));
 
-const convertLeftToRight = (): void => {
-  try {
-    const ast = formatters[leftFormat.value].toAST(leftText.value);
-    rightText.value = formatters[rightFormat.value].fromAST(ast);
-    status.value = `Converted ${formatters[leftFormat.value].label} to ${formatters[rightFormat.value].label}.`;
-  } catch (error) {
-    status.value = error instanceof Error ? error.message : String(error);
-  }
+const selectedPage = computed(() => {
+  return allPages.value.find((page) => page.id === selectedPageId.value);
+});
+
+const openPage = (pageId: string): void => {
+  selectedPageId.value = pageId;
 };
 
-const convertRightToLeft = (): void => {
-  try {
-    const ast = formatters[rightFormat.value].toAST(rightText.value);
-    leftText.value = formatters[leftFormat.value].fromAST(ast);
-    status.value = `Converted ${formatters[rightFormat.value].label} to ${formatters[leftFormat.value].label}.`;
-  } catch (error) {
-    status.value = error instanceof Error ? error.message : String(error);
-  }
+const toggleFolder = (folderId: string): void => {
+  collapsedFolders.value[folderId] = !collapsedFolders.value[folderId];
 };
 </script>
 
 <template>
-  <main>
-    <h1>WIP Integrated Dynamics Project</h1>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Navigation">
+      <div class="sidebar-header">
+        <h1>Integrated Dynamics</h1>
+        <p>Reference pages and generated operator docs.</p>
+      </div>
 
-    <div class="card">
-      <label class="field">
-        <span>{{ formatters[leftFormat].label }}</span>
-        <select v-model="leftFormat" class="select" aria-label="Left format">
-          <option
-            v-for="option in formatOptions"
-            :key="option.value"
-            :value="option.value"
+      <nav class="sidebar-nav">
+        <section v-for="section in sections" :key="section.id" class="sidebar-section">
+          <button
+            v-if="section.kind === 'page'"
+            type="button"
+            class="file-row top-level-file"
+            :class="{ active: section.id === selectedPageId }"
+            @click="openPage(section.id)"
           >
-            {{ option.label }}
-          </option>
-        </select>
-        <textarea
-          v-model="leftText"
-          class="editor"
-          spellcheck="false"
-          :aria-label="formatters[leftFormat].label"
-        />
-      </label>
+            <span class="file-icon" aria-hidden="true">•</span>
+            <span class="file-label">{{ section.label }}</span>
+          </button>
 
-      <button
-        :disabled="!canConvertLeftToRight"
-        type="button"
-        @click="convertLeftToRight"
-      >
-        Convert to {{ formatters[rightFormat].label }}
-      </button>
+          <template v-else>
+            <button
+              type="button"
+              class="folder-row folder-button"
+              @click="toggleFolder(section.id)"
+            >
+              <span class="folder-icon" aria-hidden="true">{{
+                collapsedFolders[section.id] ? "▸" : "▾"
+              }}</span>
+              <span class="folder-label">{{ section.label }}</span>
+            </button>
 
-      <label class="field">
-        <span>{{ formatters[rightFormat].label }}</span>
-        <select v-model="rightFormat" class="select" aria-label="Right format">
-          <option
-            v-for="option in formatOptions"
-            :key="option.value"
-            :value="option.value"
-          >
-            {{ option.label }}
-          </option>
-        </select>
-        <textarea
-          v-model="rightText"
-          class="editor"
-          spellcheck="false"
-          :aria-label="formatters[rightFormat].label"
-        />
-      </label>
+            <div v-if="!collapsedFolders[section.id]" class="file-list">
+            <button
+              v-for="page in section.children"
+              :key="page.id"
+              type="button"
+              class="file-row"
+              :class="{ active: page.id === selectedPageId }"
+              :title="page.tooltip"
+              @click="openPage(page.id)"
+            >
+              <span class="file-icon" aria-hidden="true">•</span>
+              <span class="file-label">{{ page.label }}</span>
+            </button>
+            </div>
+          </template>
+        </section>
+      </nav>
+    </aside>
 
-      <button
-        :disabled="!canConvertRightToLeft"
-        type="button"
-        @click="convertRightToLeft"
-      >
-        Convert to {{ formatters[leftFormat].label }}
-      </button>
-
-      <p class="status">{{ status }}</p>
-    </div>
-  </main>
+    <main class="content-panel">
+      <component
+        :is="selectedPage?.component"
+        v-if="selectedPage"
+        v-bind="selectedPage.props"
+      />
+      <section v-else class="doc-page">
+        <h2>Select a page</h2>
+      </section>
+    </main>
+  </div>
 </template>

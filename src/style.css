@@ -1,147 +1,314 @@
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
   line-height: 1.5;
+  font-weight: 400;
+  color: #12303a;
+  background:
+    radial-gradient(circle at top left, rgba(133, 218, 232, 0.3), transparent 24%),
+    linear-gradient(135deg, #558d9c 0%, #6aaab7 42%, #3f7283 100%);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
 }
 
 * {
   box-sizing: border-box;
 }
 
+html,
+body,
+#app {
+  min-height: 100vh;
+}
+
 body {
   margin: 0;
   min-width: 320px;
-  min-height: 100vh;
-  display: flex;
-  place-items: center;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-
-a:hover {
-  color: #535bf2;
-}
-
-#app {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-}
-
-button,
-textarea,
-select {
-  font: inherit;
 }
 
 button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
+  font: inherit;
+}
+
+.app-shell {
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.sidebar {
+  border-right: 1px solid #bfd4db;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0)),
+    linear-gradient(180deg, #d4edf3 0%, #bedfe7 100%);
+  padding: 1.5rem 1rem;
+  overflow-y: auto;
+}
+
+.sidebar-header {
+  margin-bottom: 1.5rem;
+  padding: 0 0.5rem;
+}
+
+.sidebar-header h1 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.sidebar-header p {
+  margin: 0.5rem 0 0;
+  color: #55727d;
+  font-size: 0.95rem;
+}
+
+.sidebar-nav {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.sidebar-section {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.folder-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 0.5rem;
+  color: #244654;
+  font-weight: 600;
+}
+
+.folder-button {
+  width: 100%;
+  border: 0;
+  background: transparent;
   cursor: pointer;
-  transition: border-color 0.25s;
-  color: inherit;
+  text-align: left;
+  border-radius: 0.5rem;
 }
 
-button:hover {
-  border-color: #646cff;
+.folder-button:hover {
+  background: #eef2f6;
 }
 
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+.folder-icon,
+.file-icon {
+  width: 1rem;
+  text-align: center;
+  color: #5a8a94;
+  flex: 0 0 auto;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+.file-list {
+  display: grid;
+  gap: 0.15rem;
 }
 
-.card {
-  padding: 2em;
+.file-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: #355662;
+  text-align: left;
+  padding: 0.45rem 0.5rem 0.45rem 1.5rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition:
+    background-color 120ms ease,
+    color 120ms ease,
+    transform 120ms ease;
 }
 
-.read-the-docs {
-  color: #888;
+.file-row:hover {
+  background: rgba(110, 187, 201, 0.2);
+  color: #153946;
+}
+
+.file-row.active {
+  background: linear-gradient(180deg, #2d8697 0%, #236d80 100%);
+  color: #effcff;
+  box-shadow:
+    inset 0 0 0 1px #6dc4d1,
+    0 10px 24px rgba(35, 109, 128, 0.22);
+}
+
+.top-level-file {
+  padding-left: 0.5rem;
+}
+
+.file-label {
+  overflow-wrap: anywhere;
+}
+
+.content-panel {
+  position: relative;
+  padding: 2rem;
+  overflow-x: auto;
+  background: linear-gradient(180deg, #d9edf2 0%, #d4e8ed 100%);
+}
+
+.content-panel::before {
+  content: "";
+  position: fixed;
+  inset: 0 0 0 320px;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at top left, rgba(145, 225, 236, 0.2), transparent 18%),
+    radial-gradient(circle at 85% 20%, rgba(44, 124, 146, 0.22), transparent 26%),
+    linear-gradient(135deg, #5a95a3 0%, #74b5c2 38%, #467f90 72%, #325c69 100%);
+}
+
+.content-panel > * {
+  position: relative;
+  z-index: 1;
+}
+
+.doc-page {
+  max-width: 880px;
+  margin: 0 auto;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.08)),
+    linear-gradient(180deg, #e8f6f9 0%, #d9edf2 100%);
+  border: 1px solid #8fc2cd;
+  border-radius: 0.75rem;
+  padding: 2rem;
+  box-shadow:
+    0 18px 40px rgba(24, 48, 58, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.75);
+}
+
+.doc-page h2 {
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+  font-size: 1.8rem;
+}
+
+.doc-page p {
+  margin: 0;
+  color: #4a6974;
+}
+
+.operator-meta {
+  display: grid;
+  gap: 1rem;
+  margin: 1.5rem 0 0;
+}
+
+.operator-meta div {
+  padding: 0.9rem 1rem;
+  border: 1px solid #abd0d9;
+  border-radius: 0.65rem;
+  background: linear-gradient(180deg, #eef9fb 0%, #dcedf2 100%);
+}
+
+.operator-meta dt {
+  margin: 0 0 0.25rem;
+  font-weight: 600;
+  color: #2b505d;
+}
+
+.operator-meta dd {
+  margin: 0;
+  color: #153946;
+  overflow-wrap: anywhere;
+}
+
+.transformer-layout {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.5rem;
 }
 
 .field {
-  display: block;
-  margin-bottom: 1rem;
-  text-align: left;
+  display: grid;
+  gap: 0.5rem;
 }
 
-.field span {
-  display: block;
-  margin-bottom: 0.5rem;
+.editor,
+.select,
+.transformer-actions button {
+  font: inherit;
 }
 
 .editor {
   width: 100%;
   min-height: 12rem;
   padding: 0.75rem;
-  border: 1px solid #444;
-  border-radius: 8px;
-  background: #1a1a1a;
-  color: inherit;
+  border: 1px solid #9cc9d3;
+  border-radius: 0.5rem;
+  background: rgba(248, 253, 254, 0.82);
+  color: #18303a;
   resize: vertical;
 }
 
 .select {
   width: 100%;
-  margin-bottom: 0.5rem;
   padding: 0.5rem 0.75rem;
-  border: 1px solid #444;
-  border-radius: 8px;
-  background: #1a1a1a;
-  color: inherit;
+  border: 1px solid #9cc9d3;
+  border-radius: 0.5rem;
+  background: rgba(248, 253, 254, 0.82);
+  color: #18303a;
+}
+
+.transformer-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.transformer-actions button {
+  border: 1px solid #8ebec8;
+  border-radius: 0.5rem;
+  padding: 0.6rem 1rem;
+  background: linear-gradient(180deg, #ecf9fb 0%, #cfe9ef 100%);
+  color: #1b404d;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(49, 105, 117, 0.08);
+}
+
+.transformer-actions button:hover:not(:disabled) {
+  border-color: #4baec0;
+  background: linear-gradient(180deg, #f2fdff 0%, #c4e5ed 100%);
+}
+
+.transformer-actions button:disabled {
+  cursor: default;
+  opacity: 0.6;
 }
 
 .status {
   margin-top: 1rem;
-  color: #888;
+  color: #4a6974;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+@media (max-width: 900px) {
+  .app-shell {
+    grid-template-columns: 1fr;
   }
 
-  a:hover {
-    color: #747bff;
+  .sidebar {
+    border-right: 0;
+    border-bottom: 1px solid #d7dde5;
+    max-height: 40vh;
   }
 
-  button {
-    background-color: #f9f9f9;
+  .content-panel {
+    padding: 1rem;
   }
 
-  .editor {
-    border-color: #d1d5db;
-    background: #ffffff;
+  .content-panel::before {
+    inset: 0;
   }
 
-  .select {
-    border-color: #d1d5db;
-    background: #ffffff;
-  }
-
-  .read-the-docs,
-  .status {
-    color: #666;
+  .doc-page {
+    padding: 1.25rem;
   }
 }
