@@ -255,6 +255,15 @@ const isApplyNode = (node: TypeAST.AST): boolean => {
   return false;
 };
 
+const isSelfNicknameShadow = (varName: string, node: TypeAST.AST): boolean => {
+  const nicknameInternalKey = operatorRegistry.operatorByNickname(varName);
+  if (!nicknameInternalKey) return false;
+
+  if (node.type !== "Operator") return false;
+
+  return node.opName === nicknameInternalKey;
+};
+
 const getVarName = (node: TypeAST.AST): string => {
   if (node.varName) return node.varName;
 
@@ -567,11 +576,6 @@ export const ExpandedToAST = (expanded: string): TypeAST.AST => {
       if (!getNicknameRegex().test(varName)) {
         throw new Error(`Invalid variable name: "${varName}"`);
       }
-      if (operatorRegistry.operatorByNickname(varName)) {
-        throw new Error(
-          `Variable name "${varName}" overshadows an operator nickname`
-        );
-      }
     } else {
       if (i === 0)
         throw new Error(
@@ -597,6 +601,16 @@ export const ExpandedToAST = (expanded: string): TypeAST.AST => {
           }: "${exprStr}"\nCondensed error: ${e}\nCodeLine error: ${e2}`
         );
       }
+    }
+
+    if (
+      varName &&
+      operatorRegistry.operatorByNickname(varName) &&
+      !isSelfNicknameShadow(varName, lineAST)
+    ) {
+      throw new Error(
+        `Variable name "${varName}" overshadows an operator nickname`
+      );
     }
 
     if (varName) {

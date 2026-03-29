@@ -89,6 +89,17 @@ operatorPipe = 5
     expect(() => ExpandedToAST(input.trim())).toThrow();
   });
 
+  it("testShadowingOperatorAllowsSelfReference", () => {
+    const input = `
+operatorPipe = operatorPipe
+`;
+    expect(ExpandedToAST(input.trim())).toEqual({
+      type: "Operator",
+      opName: "OPERATOR_PIPE",
+      varName: "operatorPipe",
+    });
+  });
+
   it("testInvalidVarNameThrows", () => {
     const input = `
 invalid!name = 5
