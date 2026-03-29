@@ -284,6 +284,7 @@ button {
   margin: 0;
   padding: 0.75rem 0.6rem 0.75rem 0.75rem;
   color: #6c8e99;
+  line-height: 1.5;
   text-align: right;
   user-select: none;
   will-change: transform;
@@ -306,6 +307,7 @@ button {
   border-radius: 0;
   background: transparent;
   color: #18303a;
+  line-height: 1.5;
   overflow: auto;
   resize: none;
 }
@@ -317,6 +319,17 @@ button {
 .editor[readonly] {
   background: rgba(235, 247, 250, 0.78);
   color: #274750;
+}
+
+.output-error {
+  min-height: 12rem;
+  padding: 0.75rem;
+  border: 1px solid #d5a5aa;
+  border-radius: 0.5rem;
+  background: rgba(255, 239, 241, 0.92);
+  color: #8a1f2d;
+  white-space: pre-wrap;
+  overflow: auto;
 }
 
 .expanded-output-viewer {

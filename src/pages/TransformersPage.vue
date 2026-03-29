@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, nextTick, ref, watch } from "vue";
 import {
   ASTToCodeLine,
   ASTToCompressed,
@@ -21,7 +21,9 @@ const inputText = ref("");
 const outputText = ref("");
 const outputFormat = ref<FormatKey>("expanded");
 const status = ref("");
+const outputError = ref("");
 const lineNumberOffset = ref(0);
+const inputEditor = ref<HTMLTextAreaElement | null>(null);
 
 const formatters: Record<
   FormatKey,
@@ -91,20 +93,31 @@ const detectedInputFormat = computed<FormatKey | null>(() => {
 
 const canTransform = computed(() => inputText.value.trim().length > 0);
 
+const syncLineNumberOffsetFromTextarea = (): void => {
+  lineNumberOffset.value = inputEditor.value?.scrollTop ?? 0;
+};
+
 const syncLineNumberScroll = (event: Event): void => {
   lineNumberOffset.value = (event.target as HTMLTextAreaElement).scrollTop;
 };
+
+watch(inputText, async () => {
+  await nextTick();
+  syncLineNumberOffsetFromTextarea();
+});
 
 const transform = (): void => {
   try {
     const trimmedInput = inputText.value.trim();
     const sourceFormat = detectInputFormat(trimmedInput);
     const ast = formatters[sourceFormat].toAST(trimmedInput);
+    outputError.value = "";
     outputText.value = formatters[outputFormat.value].fromAST(ast);
     status.value = `Detected ${formatters[sourceFormat].label}. Output as ${formatters[outputFormat.value].label}.`;
   } catch (error) {
     outputText.value = "";
-    status.value = error instanceof Error ? error.message : String(error);
+    outputError.value = error instanceof Error ? error.message : String(error);
+    status.value = "";
   }
 };
 </script>
@@ -112,10 +125,7 @@ const transform = (): void => {
 <template>
   <article class="doc-page">
     <h2>Transformers</h2>
-    <p>
-      Detect the input format automatically, then convert it to the selected
-      output format.
-    </p>
+    <p>Transform from auto-detected input form to selected output form.</p>
 
     <div class="transformer-layout">
       <label class="field">
@@ -132,6 +142,7 @@ const transform = (): void => {
             />
           </div>
           <textarea
+            ref="inputEditor"
             v-model="inputText"
             class="editor input-editor"
             spellcheck="false"
@@ -166,8 +177,9 @@ const transform = (): void => {
 
       <label class="field">
         <span>{{ formatters[outputFormat].label }}</span>
+        <div v-if="outputError" class="output-error" v-text="outputError" />
         <FoldableExpandedOutput
-          v-if="outputFormat === 'expanded'"
+          v-else-if="outputFormat === 'expanded'"
           :text="outputText"
         />
         <textarea
@@ -181,6 +193,6 @@ const transform = (): void => {
       </label>
     </div>
 
-    <p class="status">{{ status }}</p>
+    <p v-if="status" class="status">{{ status }}</p>
   </article>
 </template>
