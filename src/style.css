@@ -307,6 +307,9 @@ button {
   border-radius: 0;
   background: transparent;
   color: #18303a;
+  font-family:
+    "JetBrains Mono", "IBM Plex Mono", "Fira Code", ui-monospace,
+    SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", monospace;
   line-height: 1.5;
   overflow: auto;
   resize: none;
@@ -328,6 +331,9 @@ button {
   border-radius: 0.5rem;
   background: rgba(255, 239, 241, 0.92);
   color: #8a1f2d;
+  font-family:
+    "JetBrains Mono", "IBM Plex Mono", "Fira Code", ui-monospace,
+    SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", monospace;
   white-space: pre-wrap;
   overflow: auto;
 }
@@ -340,8 +346,8 @@ button {
   background: rgba(235, 247, 250, 0.78);
   color: #274750;
   font-family:
-    ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono",
-    monospace;
+    "JetBrains Mono", "IBM Plex Mono", "Fira Code", ui-monospace,
+    SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", monospace;
   white-space: pre-wrap;
   overflow: auto;
 }

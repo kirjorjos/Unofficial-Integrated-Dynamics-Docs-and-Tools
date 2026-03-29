@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, ref, watch } from "vue";
+import { computed, nextTick, onMounted, ref, watch } from "vue";
 import {
   ASTToCodeLine,
   ASTToCompressed,
@@ -12,18 +12,25 @@ import {
   ExpandedToAST,
   JSONtoAST,
 } from "lib";
+import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
+import { globalMap } from "lib/HelperClasses/TypeMap";
 import FoldableExpandedOutput from "../components/FoldableExpandedOutput.vue";
 import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
 
 type FormatKey = "condensed" | "expanded" | "codeline" | "compressed" | "json";
+type OutputFormatKey = Exclude<FormatKey, "compressed">;
 
 const inputText = ref("");
 const outputText = ref("");
-const outputFormat = ref<FormatKey>("expanded");
+const outputFormat = ref<OutputFormatKey>("condensed");
 const status = ref("");
 const outputError = ref("");
 const lineNumberOffset = ref(0);
 const inputEditor = ref<HTMLTextAreaElement | null>(null);
+const expandedOutputViewer = ref<InstanceType<
+  typeof FoldableExpandedOutput
+> | null>(null);
+const currentAst = ref<any>(null);
 
 const formatters: Record<
   FormatKey,
@@ -60,10 +67,25 @@ const formatters: Record<
   },
 };
 
-const formatOptions = Object.entries(formatters).map(([value, formatter]) => ({
-  value: value as FormatKey,
-  label: formatter.label,
-}));
+const outputFormatters: Record<
+  OutputFormatKey,
+  {
+    label: string;
+    fromAST: (ast: TypeAST.AST) => string;
+  }
+> = {
+  condensed: formatters.condensed,
+  expanded: formatters.expanded,
+  codeline: formatters.codeline,
+  json: formatters.json,
+};
+
+const formatOptions = Object.entries(outputFormatters).map(
+  ([value, formatter]) => ({
+    value: value as OutputFormatKey,
+    label: formatter.label,
+  })
+);
 
 const inputLineNumbers = computed(() => {
   const lineCount = Math.max(1, inputText.value.split("\n").length);
@@ -92,6 +114,14 @@ const detectedInputFormat = computed<FormatKey | null>(() => {
 });
 
 const canTransform = computed(() => inputText.value.trim().length > 0);
+const canCopyOutput = computed(
+  () => !outputError.value && outputText.value.trim().length > 0
+);
+const canProcessTypes = computed(
+  () =>
+    !outputError.value &&
+    (outputText.value.trim().length > 0 || inputText.value.trim().length > 0)
+);
 
 const syncLineNumberOffsetFromTextarea = (): void => {
   lineNumberOffset.value = inputEditor.value?.scrollTop ?? 0;
@@ -101,9 +131,35 @@ const syncLineNumberScroll = (event: Event): void => {
   lineNumberOffset.value = (event.target as HTMLTextAreaElement).scrollTop;
 };
 
+const renderOutput = (format: OutputFormatKey, ast: TypeAST.AST): string => {
+  return outputFormatters[format].fromAST(ast);
+};
+
+const updateOutputFromAst = (
+  ast: TypeAST.AST,
+  format: OutputFormatKey = outputFormat.value
+): boolean => {
+  try {
+    outputError.value = "";
+    outputText.value = renderOutput(format, ast);
+    return true;
+  } catch (error) {
+    outputText.value = "";
+    outputError.value = error instanceof Error ? error.message : String(error);
+    status.value = "";
+    return false;
+  }
+};
+
 watch(inputText, async () => {
+  currentAst.value = null;
   await nextTick();
   syncLineNumberOffsetFromTextarea();
+});
+
+watch(outputFormat, () => {
+  if (!currentAst.value || outputError.value) return;
+  updateOutputFromAst(currentAst.value, outputFormat.value);
 });
 
 const transform = (): void => {
@@ -111,15 +167,75 @@ const transform = (): void => {
     const trimmedInput = inputText.value.trim();
     const sourceFormat = detectInputFormat(trimmedInput);
     const ast = formatters[sourceFormat].toAST(trimmedInput);
-    outputError.value = "";
-    outputText.value = formatters[outputFormat.value].fromAST(ast);
-    status.value = `Detected ${formatters[sourceFormat].label}. Output as ${formatters[outputFormat.value].label}.`;
+    const compressedOutput = ASTToCompressed(ast);
+    currentAst.value = ast;
+    if (!updateOutputFromAst(ast, outputFormat.value)) return;
+    status.value = `Detected ${formatters[sourceFormat].label}. Output as ${outputFormatters[outputFormat.value].label}.`;
+    const url = new URL(window.location.href);
+    url.searchParams.set("code", compressedOutput);
+    window.history.replaceState({}, "", url);
+  } catch (error) {
+    outputText.value = "";
+    outputError.value = error instanceof Error ? error.message : String(error);
+    status.value = "";
+    const url = new URL(window.location.href);
+    url.searchParams.delete("code");
+    window.history.replaceState({}, "", url);
+  }
+};
+
+const getCurrentAst = (): TypeAST.AST => {
+  if (currentAst.value) return currentAst.value;
+
+  const trimmedInput = inputText.value.trim();
+  const sourceFormat = detectInputFormat(trimmedInput);
+  return formatters[sourceFormat].toAST(trimmedInput);
+};
+
+const processTypes = (): void => {
+  try {
+    const ast = getCurrentAst();
+    globalMap.clear();
+    ParsedSignature.resetTypeIDCounter();
+    const compressedOutput = ASTToCompressed(ast);
+    currentAst.value = ast;
+    outputFormat.value = "expanded";
+    if (!updateOutputFromAst(ast, "expanded")) return;
+    status.value = "Processed types and regenerated expanded output.";
+    const url = new URL(window.location.href);
+    url.searchParams.set("code", compressedOutput);
+    window.history.replaceState({}, "", url);
   } catch (error) {
     outputText.value = "";
     outputError.value = error instanceof Error ? error.message : String(error);
     status.value = "";
   }
 };
+
+const copyOutput = async (): Promise<void> => {
+  if (!canCopyOutput.value) return;
+
+  const textToCopy =
+    outputFormat.value === "expanded"
+      ? (expandedOutputViewer.value?.getCopyText() ?? outputText.value)
+      : outputText.value;
+
+  await navigator.clipboard.writeText(textToCopy);
+  status.value = "Copied output.";
+};
+
+onMounted(() => {
+  const url = new URL(window.location.href);
+  const code = url.searchParams.get("code");
+  if (!code) return;
+
+  const ast = CompressedToAST(code);
+  currentAst.value = ast;
+  outputFormat.value = "condensed";
+  if (updateOutputFromAst(ast, "condensed")) {
+    status.value = "Loaded output from URL.";
+  }
+});
 </script>
 
 <template>
@@ -173,13 +289,24 @@ const transform = (): void => {
         <button :disabled="!canTransform" type="button" @click="transform">
           Transform
         </button>
+        <button
+          :disabled="!canProcessTypes"
+          type="button"
+          @click="processTypes"
+        >
+          Process Types
+        </button>
+        <button :disabled="!canCopyOutput" type="button" @click="copyOutput">
+          Copy output
+        </button>
       </div>
 
       <label class="field">
-        <span>{{ formatters[outputFormat].label }}</span>
+        <span>{{ outputFormatters[outputFormat].label }}</span>
         <div v-if="outputError" class="output-error" v-text="outputError" />
         <FoldableExpandedOutput
           v-else-if="outputFormat === 'expanded'"
+          ref="expandedOutputViewer"
           :text="outputText"
         />
         <textarea
@@ -187,7 +314,7 @@ const transform = (): void => {
           :value="outputText"
           class="editor"
           spellcheck="false"
-          :aria-label="formatters[outputFormat].label"
+          :aria-label="outputFormatters[outputFormat].label"
           readonly
         />
       </label>
