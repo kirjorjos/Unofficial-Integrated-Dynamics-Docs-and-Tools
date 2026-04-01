@@ -17,9 +17,14 @@ export class OPERATOR_OBJECT_BLOCK_BY_NAME extends BaseOperator<
     "BlockByName",
     "block_by_name",
     "blockByName",
+    "blockbyname",
+    "blockBlockbyname",
   ];
   static override symbol = "block_by_name";
   static override interactName = "stringBlockByName";
+  static override operatorName = "blockbyname" as const;
+  static override kind = "block" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

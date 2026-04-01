@@ -10,9 +10,17 @@ export class OPERATOR_LIST_NOT_EMPTY extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:list_notempty" as const;
   static override numericID = 106;
-  static override nicknames = ["listNotEmpty", "listIsNotEmpty"];
+  static override nicknames = [
+    "listNotEmpty",
+    "listIsNotEmpty",
+    "notempty",
+    "listNotempty",
+  ];
   static override symbol = "o";
   static override interactName = "listIsNotEmpty";
+  static override operatorName = "notempty" as const;
+  static override kind = "list" as const;
+  static override renderPattern = "PREFIX_1" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

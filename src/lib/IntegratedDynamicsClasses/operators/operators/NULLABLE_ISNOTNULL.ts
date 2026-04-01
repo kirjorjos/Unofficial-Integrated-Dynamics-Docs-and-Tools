@@ -14,9 +14,14 @@ export class OPERATOR_NULLABLE_ISNOTNULL extends BaseOperator<
     "anyIsNotNull",
     "isNotNull",
     "nullableIsnotnull",
+    "isnotnull",
+    "generalIsnotnull",
   ];
   static override symbol = "∅";
   static override interactName = "anyIsNotNull";
+  static override operatorName = "isnotnull" as const;
+  static override kind = "general" as const;
+  static override renderPattern = "PREFIX_1" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

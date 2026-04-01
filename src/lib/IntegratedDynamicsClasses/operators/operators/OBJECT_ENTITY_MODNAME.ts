@@ -14,9 +14,13 @@ export class OPERATOR_OBJECT_ENTITY_MODNAME extends BaseOperator<
     "entity_mod",
     "entityMod",
     "entityModName",
+    "mod",
   ];
   static override symbol = "entity_mod";
   static override interactName = "entityMod";
+  static override operatorName = "mod" as const;
+  static override kind = "entity" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

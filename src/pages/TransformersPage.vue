@@ -15,10 +15,11 @@ import {
 import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 import { globalMap } from "lib/HelperClasses/TypeMap";
 import FoldableExpandedOutput from "../components/FoldableExpandedOutput.vue";
+import LogicProgrammerVisualOutput from "../components/LogicProgrammerVisualOutput.vue";
 import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
 
 type FormatKey = "condensed" | "expanded" | "codeline" | "compressed" | "json";
-type OutputFormatKey = Exclude<FormatKey, "compressed">;
+type OutputFormatKey = Exclude<FormatKey, "compressed"> | "visual";
 
 const inputText = ref("");
 const outputText = ref("");
@@ -78,6 +79,10 @@ const outputFormatters: Record<
   expanded: formatters.expanded,
   codeline: formatters.codeline,
   json: formatters.json,
+  visual: {
+    label: "Visual",
+    fromAST: (ast) => ASTToCondensed(ast),
+  },
 };
 
 const formatOptions = Object.entries(outputFormatters).map(
@@ -115,7 +120,11 @@ const detectedInputFormat = computed<FormatKey | null>(() => {
 
 const canTransform = computed(() => inputText.value.trim().length > 0);
 const canCopyOutput = computed(
-  () => !outputError.value && outputText.value.trim().length > 0
+  () =>
+    !outputError.value &&
+    (outputFormat.value === "visual"
+      ? currentAst.value !== null
+      : outputText.value.trim().length > 0)
 );
 const canProcessTypes = computed(
   () =>
@@ -218,7 +227,9 @@ const copyOutput = async (): Promise<void> => {
   const textToCopy =
     outputFormat.value === "expanded"
       ? (expandedOutputViewer.value?.getCopyText() ?? outputText.value)
-      : outputText.value;
+      : outputFormat.value === "visual" && currentAst.value
+        ? ASTToCondensed(currentAst.value)
+        : outputText.value;
 
   await navigator.clipboard.writeText(textToCopy);
   status.value = "Copied output.";
@@ -308,6 +319,10 @@ onMounted(() => {
           v-else-if="outputFormat === 'expanded'"
           ref="expandedOutputViewer"
           :text="outputText"
+        />
+        <LogicProgrammerVisualOutput
+          v-else-if="outputFormat === 'visual' && currentAst"
+          :ast="currentAst"
         />
         <textarea
           v-else

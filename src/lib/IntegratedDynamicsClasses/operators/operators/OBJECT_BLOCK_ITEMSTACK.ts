@@ -11,9 +11,13 @@ export class OPERATOR_OBJECT_BLOCK_ITEMSTACK extends BaseOperator<Block, Item> {
     "blockItemstack",
     "block_itemstack",
     "blockItem",
+    "itemstack",
   ];
   static override symbol = "itemstack";
   static override interactName = "blockItemStack";
+  static override operatorName = "itemstack" as const;
+  static override kind = "block" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

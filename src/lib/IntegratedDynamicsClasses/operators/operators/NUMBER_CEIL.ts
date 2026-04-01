@@ -8,6 +8,9 @@ export class OPERATOR_NUMBER_CEIL extends BaseOperator<TypeNumber, Integer> {
   static override nicknames = ["ceil", "numberCeil"];
   static override symbol = "⌈ ⌉";
   static override interactName = "numberCeil";
+  static override operatorName = "ceil" as const;
+  static override kind = "number" as const;
+  static override renderPattern = "PREFIX_1" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

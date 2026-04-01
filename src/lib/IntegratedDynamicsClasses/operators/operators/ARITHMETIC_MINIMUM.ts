@@ -9,9 +9,17 @@ export class OPERATOR_ARITHMETIC_MINIMUM extends BaseOperator<
   static override internalName =
     "integrateddynamics:arithmetic_minimum" as const;
   static override numericID = 3;
-  static override nicknames = ["min", "arithmeticMinimum", "numberMin"];
+  static override nicknames = [
+    "min",
+    "arithmeticMinimum",
+    "numberMin",
+    "minimum",
+  ];
   static override symbol = "min";
   static override interactName = "numberMin";
+  static override operatorName = "minimum" as const;
+  static override kind = "arithmetic" as const;
+  static override renderPattern = "PREFIX_2" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

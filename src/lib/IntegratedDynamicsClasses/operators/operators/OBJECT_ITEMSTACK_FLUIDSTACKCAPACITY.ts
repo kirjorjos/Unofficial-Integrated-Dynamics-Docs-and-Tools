@@ -20,9 +20,14 @@ export class OPERATOR_OBJECT_ITEMSTACK_FLUIDSTACKCAPACITY extends BaseOperator<
     "item_fluidstack_capacity",
     "itemFluidstackCapacity",
     "fluidCapatity",
+    "fluidstackcapacity",
+    "itemstackFluidstackcapacity",
   ];
   static override symbol = "fluidstack_capacity";
   static override interactName = "itemstackFluidCapacity";
+  static override operatorName = "fluidstackcapacity" as const;
+  static override kind = "itemstack" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

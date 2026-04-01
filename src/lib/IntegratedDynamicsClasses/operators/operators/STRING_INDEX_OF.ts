@@ -10,9 +10,12 @@ export class OPERATOR_STRING_INDEX_OF extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:string_index_of" as const;
   static override numericID = 164;
-  static override nicknames = ["stringIndexOf"];
+  static override nicknames = ["stringIndexOf", "index_of", "stringIndex_of"];
   static override symbol = "index_of";
   static override interactName = "stringIndexOf";
+  static override operatorName = "index_of" as const;
+  static override kind = "string" as const;
+  static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

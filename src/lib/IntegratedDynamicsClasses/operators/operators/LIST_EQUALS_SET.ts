@@ -11,9 +11,17 @@ export class OPERATOR_LIST_EQUALS_SET extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:list_equals_set" as const;
   static override numericID = 302;
-  static override nicknames = ["listEquals_set", "listEqualsSet", "equalsSet"];
+  static override nicknames = [
+    "listEquals_set",
+    "listEqualsSet",
+    "equalsSet",
+    "equals_set",
+  ];
   static override symbol = "=set=";
   static override interactName = "listEquals_set";
+  static override operatorName = "equals_set" as const;
+  static override kind = "list" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

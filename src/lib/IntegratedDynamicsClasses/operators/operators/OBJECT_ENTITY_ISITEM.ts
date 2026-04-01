@@ -14,9 +14,14 @@ export class OPERATOR_OBJECT_ENTITY_ISITEM extends BaseOperator<
     "entity_is_item",
     "entityIsItem",
     "isItem",
+    "isitem",
+    "entityIsitem",
   ];
   static override symbol = "is_item";
   static override interactName = "entityIsItem";
+  static override operatorName = "isitem" as const;
+  static override kind = "entity" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

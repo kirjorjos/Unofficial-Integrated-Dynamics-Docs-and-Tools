@@ -15,9 +15,14 @@ export class OPERATOR_NBT_COMPOUND_WITHOUT extends BaseOperator<
     "nbtWithout",
     "nbtCompoundWithout",
     "NBTWithout",
+    "compound_without",
+    "nbtCompound_without",
   ];
   static override symbol = "NBT{}.without";
   static override interactName = "nbtWithout";
+  static override operatorName = "compound_without" as const;
+  static override kind = "nbt" as const;
+  static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

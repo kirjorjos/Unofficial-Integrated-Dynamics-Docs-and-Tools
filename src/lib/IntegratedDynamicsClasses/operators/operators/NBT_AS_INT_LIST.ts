@@ -10,9 +10,12 @@ import { Integer } from "lib/JavaNumberClasses/Integer";
 export class OPERATOR_NBT_AS_INT_LIST extends BaseOperator<ListTag, Integer> {
   static override internalName = "integrateddynamics:nbt_as_int_list" as const;
   static override numericID = 248;
-  static override nicknames = ["nbtAsIntList"];
+  static override nicknames = ["nbtAsIntList", "as_int_list", "nbtAs_int_list"];
   static override symbol = "NBT.as_int_list";
   static override interactName = "nbtAsIntList";
+  static override operatorName = "as_int_list" as const;
+  static override kind = "nbt" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

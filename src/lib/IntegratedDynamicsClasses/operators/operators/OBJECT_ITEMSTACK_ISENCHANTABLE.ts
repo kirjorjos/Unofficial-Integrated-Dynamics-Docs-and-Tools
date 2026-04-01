@@ -15,9 +15,13 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISENCHANTABLE extends BaseOperator<
     "itemstack_is_enchantable",
     "itemstackIsEnchantable",
     "enchantable",
+    "itemstackEnchantable",
   ];
   static override symbol = "enchantable";
   static override interactName = "itemstackIsEnchantable";
+  static override operatorName = "enchantable" as const;
+  static override kind = "itemstack" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

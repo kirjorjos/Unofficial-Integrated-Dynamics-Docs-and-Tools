@@ -16,9 +16,13 @@ export class OPERATOR_LIST_ELEMENT_DEFAULT extends BaseOperator<
     "get_or_default",
     "getOrDefault",
     "listGetOrDefault",
+    "listGet_or_default",
   ];
   static override symbol = "get_or_default";
   static override interactName = "listGetOrDefault";
+  static override operatorName = "get_or_default" as const;
+  static override kind = "list" as const;
+  static override renderPattern = "INFIX_2_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

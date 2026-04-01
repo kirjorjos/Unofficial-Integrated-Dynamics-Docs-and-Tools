@@ -17,6 +17,9 @@ export class OPERATOR_OBJECT_ITEMSTACK_SIZE extends BaseOperator<
   ];
   static override symbol = "size";
   static override interactName = "itemstackSize";
+  static override operatorName = "size" as const;
+  static override kind = "itemstack" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

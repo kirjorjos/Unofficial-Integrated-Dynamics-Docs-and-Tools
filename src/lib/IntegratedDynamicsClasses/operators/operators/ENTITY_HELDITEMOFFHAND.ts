@@ -15,9 +15,14 @@ export class OPERATOR_ENTITY_HELDITEMOFFHAND extends BaseOperator<
     "heldItemOff",
     "entityHeldItemOffHand",
     "held_item_2",
+    "helditemoffhand",
+    "entityHelditemoffhand",
   ];
   static override symbol = "held_item_2";
   static override interactName = "entityHeldItemOffHand";
+  static override operatorName = "helditemoffhand" as const;
+  static override kind = "entity" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

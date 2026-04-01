@@ -9,6 +9,9 @@ export class OPERATOR_OPERATOR_REDUCE extends BaseOperator<any, any> {
   static override nicknames = ["operatorReduce", "reduce"];
   static override symbol = "reduce";
   static override interactName = "operatorReduce";
+  static override operatorName = "reduce" as const;
+  static override kind = "operator" as const;
+  static override renderPattern = "PREFIX_3_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

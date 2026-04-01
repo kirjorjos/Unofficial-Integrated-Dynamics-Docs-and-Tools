@@ -6,9 +6,17 @@ import { Integer } from "lib/JavaNumberClasses/Integer";
 export class OPERATOR_NBT_FROM_INT extends BaseOperator<Integer, IntTag> {
   static override internalName = "integrateddynamics:nbt_from_int" as const;
   static override numericID = 259;
-  static override nicknames = ["integerAsNbt", "nbtFromInt"];
+  static override nicknames = [
+    "integerAsNbt",
+    "nbtFromInt",
+    "from_int",
+    "nbtFrom_int",
+  ];
   static override symbol = "NBT.from_int";
   static override interactName = "integerAsNbt";
+  static override operatorName = "from_int" as const;
+  static override kind = "nbt" as const;
+  static override renderPattern = "PREFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

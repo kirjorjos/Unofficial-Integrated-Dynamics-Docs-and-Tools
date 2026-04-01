@@ -11,6 +11,9 @@ export class OPERATOR_OPERATOR_FLIP extends BaseOperator<
   static override nicknames = ["operatorFlip", "flip"];
   static override symbol = "flip";
   static override interactName = "operatorFlip";
+  static override operatorName = "flip" as const;
+  static override kind = "operator" as const;
+  static override renderPattern = "PREFIX_1" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

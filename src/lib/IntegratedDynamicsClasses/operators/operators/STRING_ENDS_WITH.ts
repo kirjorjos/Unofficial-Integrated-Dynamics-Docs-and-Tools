@@ -10,9 +10,17 @@ export class OPERATOR_STRING_ENDS_WITH extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:string_ends_with" as const;
   static override numericID = 158;
-  static override nicknames = ["endsWith", "stringEndsWith"];
+  static override nicknames = [
+    "endsWith",
+    "stringEndsWith",
+    "ends_with",
+    "stringEnds_with",
+  ];
   static override symbol = "ends_with";
   static override interactName = "stringEndsWith";
+  static override operatorName = "ends_with" as const;
+  static override kind = "string" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

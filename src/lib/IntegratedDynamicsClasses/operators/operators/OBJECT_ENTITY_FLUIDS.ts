@@ -12,9 +12,18 @@ export class OPERATOR_OBJECT_ENTITY_FLUIDS extends BaseOperator<
   static override internalName =
     "integrateddynamics:entity_entityfluids" as const;
   static override numericID = 175;
-  static override nicknames = ["EntityFluids", "entity_fluids", "entityFluids"];
+  static override nicknames = [
+    "EntityFluids",
+    "entity_fluids",
+    "entityFluids",
+    "entityfluids",
+    "entityEntityfluids",
+  ];
   static override symbol = "entity_fluids";
   static override interactName = "entityFluids";
+  static override operatorName = "entityfluids" as const;
+  static override kind = "entity" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

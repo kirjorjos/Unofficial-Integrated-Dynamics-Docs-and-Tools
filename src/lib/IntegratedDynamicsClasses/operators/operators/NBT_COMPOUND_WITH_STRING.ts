@@ -16,9 +16,14 @@ export class OPERATOR_NBT_COMPOUND_WITH_STRING extends BaseOperator<
     "nbtWithString",
     "nbtCompoundWithString",
     "NBTWithString",
+    "compound_with_string",
+    "nbtCompound_with_string",
   ];
   static override symbol = "NBT{}.with_string";
   static override interactName = "nbtWithString";
+  static override operatorName = "compound_with_string" as const;
+  static override kind = "nbt" as const;
+  static override renderPattern = "INFIX_2_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

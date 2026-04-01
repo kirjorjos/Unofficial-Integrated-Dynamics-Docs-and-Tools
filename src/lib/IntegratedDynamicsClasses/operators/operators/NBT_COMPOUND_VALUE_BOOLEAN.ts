@@ -18,9 +18,14 @@ export class OPERATOR_NBT_COMPOUND_VALUE_BOOLEAN extends BaseOperator<
     "nbtGetBoolean",
     "nbtCompoundValueBoolean",
     "compoundValueBoolean",
+    "compound_value_boolean",
+    "nbtCompound_value_boolean",
   ];
   static override symbol = "NBT{}.get_iBoolean";
   static override interactName = "nbtGetBoolean";
+  static override operatorName = "compound_value_boolean" as const;
+  static override kind = "nbt" as const;
+  static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

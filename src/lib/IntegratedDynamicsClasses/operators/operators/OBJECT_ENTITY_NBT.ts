@@ -15,9 +15,13 @@ export class OPERATOR_OBJECT_ENTITY_NBT extends BaseOperator<
     "entity_nbt",
     "canBreed",
     "entityNBT",
+    "nbt",
   ];
   static override symbol = "NBT()";
   static override interactName = "entityNbt";
+  static override operatorName = "nbt" as const;
+  static override kind = "entity" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

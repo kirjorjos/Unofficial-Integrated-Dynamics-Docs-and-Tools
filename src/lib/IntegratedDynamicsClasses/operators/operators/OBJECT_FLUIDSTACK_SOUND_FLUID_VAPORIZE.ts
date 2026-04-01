@@ -18,9 +18,14 @@ export class OPERATOR_OBJECT_FLUIDSTACK_SOUND_FLUID_VAPORIZE extends BaseOperato
     "fluidStackSoundFluidVaporize",
     "fluid_sound_fluid_vaporize",
     "fluidSoundFluidVaporize",
+    "sound_fluid_vaporize",
+    "fluidstackSound_fluid_vaporize",
   ];
   static override symbol = "sound_fluid_vaporize";
   static override interactName = "fluidstackFluidVaporizeSound";
+  static override operatorName = "sound_fluid_vaporize" as const;
+  static override kind = "fluidstack" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

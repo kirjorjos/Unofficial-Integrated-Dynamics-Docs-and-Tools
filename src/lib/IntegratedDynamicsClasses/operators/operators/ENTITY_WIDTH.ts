@@ -12,6 +12,9 @@ export class OPERATOR_ENTITY_WIDTH extends BaseOperator<Entity, Double> {
   ];
   static override symbol = "width";
   static override interactName = "entityWidth";
+  static override operatorName = "width" as const;
+  static override kind = "entity" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

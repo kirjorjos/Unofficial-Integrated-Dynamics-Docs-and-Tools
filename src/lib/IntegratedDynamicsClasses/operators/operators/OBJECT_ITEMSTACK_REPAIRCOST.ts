@@ -15,9 +15,14 @@ export class OPERATOR_OBJECT_ITEMSTACK_REPAIRCOST extends BaseOperator<
     "itemstack_repair_cost",
     "itemstackRepairCost",
     "repairCost",
+    "repaircost",
+    "itemstackRepaircost",
   ];
   static override symbol = "repair_cost";
   static override interactName = "itemstackRepairCost";
+  static override operatorName = "repaircost" as const;
+  static override kind = "itemstack" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

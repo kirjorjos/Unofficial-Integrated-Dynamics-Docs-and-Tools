@@ -19,9 +19,14 @@ export class OPERATOR_OBJECT_FLUIDSTACK_TAG_STACKS extends BaseOperator<
     "fluidStackTagStacks",
     "fluid_stack_tag_stacks",
     "fluidTagStacks",
+    "fluidtag",
+    "stringFluidtag",
   ];
   static override symbol = "fluid_tag_values";
   static override interactName = "stringFluidsByTag";
+  static override operatorName = "fluidtag" as const;
+  static override kind = "string" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

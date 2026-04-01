@@ -13,6 +13,9 @@ export class OPERATOR_LOGICAL_OR extends BaseOperator<
   static override symbol = "||";
 
   static override interactName = "booleanOr";
+  static override operatorName = "or" as const;
+  static override kind = "logical" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

@@ -18,9 +18,14 @@ export class OPERATOR_OBJECT_ITEMSTACK_CANHARVESTBLOCK extends BaseOperator<
     "itemstack_can_harvest_block",
     "itemstackCanHarvestBlock",
     "canHarvestBlock",
+    "canharvest",
+    "itemstackCanharvest",
   ];
   static override symbol = "can_harvest";
   static override interactName = "itemstackCanHarvest";
+  static override operatorName = "canharvest" as const;
+  static override kind = "itemstack" as const;
+  static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

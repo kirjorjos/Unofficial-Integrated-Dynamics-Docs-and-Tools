@@ -12,6 +12,9 @@ export class OPERATOR_LOGICAL_NAND extends BaseOperator<
   static override nicknames = ["booleanNand", "nand", "logicalNand"];
   static override symbol = "!&&";
   static override interactName = "booleanNand";
+  static override operatorName = "nand" as const;
+  static override kind = "logical" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

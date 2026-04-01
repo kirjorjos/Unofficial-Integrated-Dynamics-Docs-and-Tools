@@ -18,9 +18,14 @@ export class OPERATOR_NBT_COMPOUND_WITH_LIST_BYTE extends BaseOperator<
     "nbtWithByteList",
     "nbtCompoundWithListByte",
     "NBTWithByteList",
+    "compound_with_list_byte",
+    "nbtCompound_with_list_byte",
   ];
   static override symbol = "NBT{}.with_byte_list";
   static override interactName = "nbtWithByteList";
+  static override operatorName = "compound_with_list_byte" as const;
+  static override kind = "nbt" as const;
+  static override renderPattern = "INFIX_2_VERYLONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

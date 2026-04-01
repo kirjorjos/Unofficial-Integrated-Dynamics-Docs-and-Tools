@@ -12,6 +12,9 @@ export class OPERATOR_LIST_APPEND extends BaseOperator<
   static override nicknames = ["listAppend", "append"];
   static override symbol = "append";
   static override interactName = "listAppend";
+  static override operatorName = "append" as const;
+  static override kind = "list" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

@@ -13,9 +13,14 @@ export class OPERATOR_OBJECT_BLOCK_BREAKSOUND extends BaseOperator<
     "block_break_sound",
     "blockBreakSound",
     "breakSound",
+    "breaksound",
+    "blockBreaksound",
   ];
   static override symbol = "break_sound";
   static override interactName = "blockBreakSound";
+  static override operatorName = "breaksound" as const;
+  static override kind = "block" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

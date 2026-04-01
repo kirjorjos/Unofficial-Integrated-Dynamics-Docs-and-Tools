@@ -15,9 +15,14 @@ export class OPERATOR_OBJECT_ITEMSTACK_FE_CAPACITY extends BaseOperator<
     "itemstack_fe_capacity",
     "itemstackFECapacity",
     "feCapacity",
+    "fecapacity",
+    "itemstackFecapacity",
   ];
   static override symbol = "fe_capacity";
   static override interactName = "itemstackFECapacity";
+  static override operatorName = "fecapacity" as const;
+  static override kind = "itemstack" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

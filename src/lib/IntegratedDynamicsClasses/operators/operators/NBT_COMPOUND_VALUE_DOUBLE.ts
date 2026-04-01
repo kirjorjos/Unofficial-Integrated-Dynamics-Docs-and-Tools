@@ -19,9 +19,14 @@ export class OPERATOR_NBT_COMPOUND_VALUE_DOUBLE extends BaseOperator<
     "nbtGetDouble",
     "nbtCompoundValueDouble",
     "compoundValueDouble",
+    "compound_value_double",
+    "nbtCompound_value_double",
   ];
   static override symbol = "NBT{}.get_double";
   static override interactName = "nbtGetDouble";
+  static override operatorName = "compound_value_double" as const;
+  static override kind = "nbt" as const;
+  static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

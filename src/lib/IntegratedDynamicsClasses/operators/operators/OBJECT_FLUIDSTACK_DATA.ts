@@ -23,9 +23,13 @@ export class OPERATOR_OBJECT_FLUIDSTACK_DATA extends BaseOperator<
     "fluidstack_NBT",
     "fluidNBT",
     "fluidNBTKeys",
+    "nbt",
   ];
   static override symbol = "NBT()";
   static override interactName = "fluidstackNbt";
+  static override operatorName = "nbt" as const;
+  static override kind = "fluidstack" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

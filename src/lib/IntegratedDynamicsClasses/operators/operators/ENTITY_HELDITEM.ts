@@ -11,9 +11,14 @@ export class OPERATOR_ENTITY_HELDITEM extends BaseOperator<Entity, Item> {
     "heldItemMain",
     "held_item_1",
     "entityHeldItem",
+    "helditem",
+    "entityHelditem",
   ];
   static override symbol = "held_item_1";
   static override interactName = "entityHeldItem";
+  static override operatorName = "helditem" as const;
+  static override kind = "entity" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

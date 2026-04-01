@@ -12,6 +12,9 @@ export class OPERATOR_ARITHMETIC_MODULUS extends BaseOperator<
   static override nicknames = ["modulus", "arithmeticModulus", "numberModulus"];
   static override symbol = "%";
   static override interactName = "numberModulus";
+  static override operatorName = "modulus" as const;
+  static override kind = "arithmetic" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

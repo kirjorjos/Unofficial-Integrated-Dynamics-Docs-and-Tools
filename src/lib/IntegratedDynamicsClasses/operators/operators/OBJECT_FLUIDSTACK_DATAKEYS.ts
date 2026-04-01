@@ -26,9 +26,14 @@ export class OPERATOR_OBJECT_FLUIDSTACK_DATAKEYS extends BaseOperator<
     "fluidstack_NBT_keys",
     "fluidstackNBTKeys",
     "fluidNBTKeys",
+    "fluidstack_datakeys",
+    "fluidstackFluidstack_datakeys",
   ];
   static override symbol = "data_keys";
   static override interactName = "fluidstackDataKeys";
+  static override operatorName = "fluidstack_datakeys" as const;
+  static override kind = "fluidstack" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

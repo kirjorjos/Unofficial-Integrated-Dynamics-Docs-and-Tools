@@ -12,9 +12,14 @@ export class OPERATOR_ENTITY_HASGUIOPEN extends BaseOperator<Entity, iBoolean> {
     "playerHasGuiOpen",
     "has_gui_open",
     "entityHasGuiOpen",
+    "hasguiopen",
+    "entityHasguiopen",
   ];
   static override symbol = "has_gui_open";
   static override interactName = "entityHasGuiOpen";
+  static override operatorName = "hasguiopen" as const;
+  static override kind = "entity" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

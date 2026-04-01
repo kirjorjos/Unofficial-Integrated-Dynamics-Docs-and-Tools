@@ -14,9 +14,14 @@ export class OPERATOR_OBJECT_BLOCK_PLACESOUND extends BaseOperator<
     "blockPlaceSound",
     "block_place_sound",
     "placeSound",
+    "placesound",
+    "blockPlacesound",
   ];
   static override symbol = "place_sound";
   static override interactName = "blockPlaceSound";
+  static override operatorName = "placesound" as const;
+  static override kind = "block" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

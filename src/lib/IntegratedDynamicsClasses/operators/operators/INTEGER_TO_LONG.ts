@@ -9,9 +9,14 @@ export class OPERATOR_INTEGER_TO_LONG extends BaseOperator<Integer, Long> {
     "intToLong",
     "integerLong",
     "integerIntegerToLong",
+    "cast_long",
+    "numberCast_long",
   ];
   static override symbol = "()";
   static override interactName = "integerIntegerToLong";
+  static override operatorName = "cast_long" as const;
+  static override kind = "number" as const;
+  static override renderPattern = "PREFIX_1" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

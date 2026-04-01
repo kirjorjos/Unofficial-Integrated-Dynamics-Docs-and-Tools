@@ -17,9 +17,13 @@ export class OPERATOR_OBJECT_FLUIDSTACK_BUCKET extends BaseOperator<
     "fluidStackBucket",
     "fluid_bucket",
     "fluidBucket",
+    "bucket",
   ];
   static override symbol = "bucket";
   static override interactName = "fluidstackBucket";
+  static override operatorName = "bucket" as const;
+  static override kind = "fluidstack" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

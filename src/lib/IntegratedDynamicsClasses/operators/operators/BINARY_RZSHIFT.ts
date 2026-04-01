@@ -14,9 +14,13 @@ export class OPERATOR_BINARY_RZSHIFT extends BaseOperator<
     "integerUnsignedRightShift",
     "binaryUnsignedRightShift",
     "integerRzshift",
+    "rzshift",
   ];
   static override symbol = ">>>";
   static override interactName = "integerUnsignedRightShift";
+  static override operatorName = "rzshift" as const;
+  static override kind = "binary" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

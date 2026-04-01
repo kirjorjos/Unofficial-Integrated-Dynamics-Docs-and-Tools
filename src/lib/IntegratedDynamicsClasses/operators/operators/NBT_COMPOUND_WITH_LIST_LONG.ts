@@ -18,9 +18,14 @@ export class OPERATOR_NBT_COMPOUND_WITH_LIST_LONG extends BaseOperator<
     "nbtWithLongList",
     "nbtCompoundWithListLong",
     "NBTWithLongList",
+    "compound_with_list_long",
+    "nbtCompound_with_list_long",
   ];
   static override symbol = "NBT{}.with_long_list";
   static override interactName = "nbtWithLongList";
+  static override operatorName = "compound_with_list_long" as const;
+  static override kind = "nbt" as const;
+  static override renderPattern = "INFIX_2_VERYLONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

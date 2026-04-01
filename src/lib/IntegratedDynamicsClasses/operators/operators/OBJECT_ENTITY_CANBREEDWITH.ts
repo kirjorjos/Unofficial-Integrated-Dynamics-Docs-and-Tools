@@ -17,9 +17,14 @@ export class OPERATOR_OBJECT_ENTITY_CANBREEDWITH extends BaseOperator<
     "entity_can_breed_with",
     "entityCanBreedWith",
     "canBreedWith",
+    "canbreedwith",
+    "entityCanbreedwith",
   ];
   static override symbol = "can_breed_with";
   static override interactName = "entityCanBreedWith";
+  static override operatorName = "canbreedwith" as const;
+  static override kind = "entity" as const;
+  static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

@@ -9,9 +9,17 @@ export class OPERATOR_ARITHMETIC_DIVISION extends BaseOperator<
   static override internalName =
     "integrateddynamics:arithmetic_division" as const;
   static override numericID = 1;
-  static override nicknames = ["divide", "arithmeticDivision", "numberDivide"];
+  static override nicknames = [
+    "divide",
+    "arithmeticDivision",
+    "numberDivide",
+    "division",
+  ];
   static override symbol = "/";
   static override interactName = "numberDivide";
+  static override operatorName = "division" as const;
+  static override kind = "arithmetic" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

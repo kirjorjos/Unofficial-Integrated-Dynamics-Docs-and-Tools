@@ -6,9 +6,12 @@ import { Integer } from "lib/JavaNumberClasses/Integer";
 export class OPERATOR_STRING_LENGTH extends BaseOperator<iString, Integer> {
   static override internalName = "integrateddynamics:string_length" as const;
   static override numericID = 79;
-  static override nicknames = ["stringLength"];
+  static override nicknames = ["stringLength", "length"];
   static override symbol = "len";
   static override interactName = "stringLength";
+  static override operatorName = "length" as const;
+  static override kind = "string" as const;
+  static override renderPattern = "PREFIX_1" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

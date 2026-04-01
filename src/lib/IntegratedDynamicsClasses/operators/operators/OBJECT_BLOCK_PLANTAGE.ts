@@ -14,9 +14,14 @@ export class OPERATOR_OBJECT_BLOCK_PLANTAGE extends BaseOperator<
     "block_plant_age",
     "blockPlantAge",
     "plantAge",
+    "plantage",
+    "blockPlantage",
   ];
   static override symbol = "plant_age";
   static override interactName = "blockPlantAge";
+  static override operatorName = "plantage" as const;
+  static override kind = "block" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

@@ -12,6 +12,9 @@ export class OPERATOR_LIST_HEAD extends BaseOperator<
   static override nicknames = ["listHead", "head"];
   static override symbol = "head";
   static override interactName = "listHead";
+  static override operatorName = "head" as const;
+  static override kind = "list" as const;
+  static override renderPattern = "PREFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

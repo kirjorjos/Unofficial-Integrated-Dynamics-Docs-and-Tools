@@ -9,9 +9,12 @@ export class OPERATOR_STRING_REPLACE extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:string_replace" as const;
   static override numericID = 168;
-  static override nicknames = ["stringReplace"];
+  static override nicknames = ["stringReplace", "replace"];
   static override symbol = "replace";
   static override interactName = "stringReplace";
+  static override operatorName = "replace" as const;
+  static override kind = "string" as const;
+  static override renderPattern = "PREFIX_3_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

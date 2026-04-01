@@ -14,9 +14,14 @@ export class OPERATOR_OBJECT_ENTITY_ISSHEARABLE extends BaseOperator<
     "EntityIsshearable",
     "entity_is_shearable",
     "entityIsShearable",
+    "isshearable",
+    "entityIsshearable",
   ];
   static override symbol = "is_shearable";
   static override interactName = "entityIsShearable";
+  static override operatorName = "isshearable" as const;
+  static override kind = "entity" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

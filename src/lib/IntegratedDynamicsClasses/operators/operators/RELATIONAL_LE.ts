@@ -9,9 +9,12 @@ export class OPERATOR_RELATIONAL_LE extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:relational_le" as const;
   static override numericID = 75;
-  static override nicknames = ["anyLessThanOrEquals", "relationalLe"];
+  static override nicknames = ["anyLessThanOrEquals", "relationalLe", "le"];
   static override symbol = "<=";
   static override interactName = "anyLessThanOrEquals";
+  static override operatorName = "le" as const;
+  static override kind = "relational" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

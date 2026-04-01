@@ -14,9 +14,14 @@ export class OPERATOR_OPERATOR_BY_NAME extends BaseOperator<
     "stringOperatorByName",
     "operatorByName",
     "opByName",
+    "by_name",
+    "operatorBy_name",
   ];
   static override symbol = "op_by_name";
   static override interactName = "stringOperatorByName";
+  static override operatorName = "by_name" as const;
+  static override kind = "operator" as const;
+  static override renderPattern = "PREFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

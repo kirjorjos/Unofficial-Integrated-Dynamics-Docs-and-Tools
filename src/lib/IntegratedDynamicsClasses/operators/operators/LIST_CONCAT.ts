@@ -12,6 +12,9 @@ export class OPERATOR_LIST_CONCAT extends BaseOperator<
   static override nicknames = ["listConcat", "concat"];
   static override symbol = "concat";
   static override interactName = "listConcat";
+  static override operatorName = "concat" as const;
+  static override kind = "list" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

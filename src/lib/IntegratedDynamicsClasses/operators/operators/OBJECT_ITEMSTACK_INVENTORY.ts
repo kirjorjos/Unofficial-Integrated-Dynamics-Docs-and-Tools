@@ -16,9 +16,13 @@ export class OPERATOR_OBJECT_ITEMSTACK_INVENTORY extends BaseOperator<
     "itemstackInventory",
     "item_inventory",
     "itemInventory",
+    "inventory",
   ];
   static override symbol = "inventory";
   static override interactName = "itemstackInventory";
+  static override operatorName = "inventory" as const;
+  static override kind = "itemstack" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

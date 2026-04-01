@@ -17,9 +17,13 @@ export class OPERATOR_OBJECT_FLUIDSTACK_RARITY extends BaseOperator<
     "fluidStackRarity",
     "fluid_rarity",
     "fluidRarity",
+    "rarity",
   ];
   static override symbol = "rarity";
   static override interactName = "fluidstackRarity";
+  static override operatorName = "rarity" as const;
+  static override kind = "fluidstack" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

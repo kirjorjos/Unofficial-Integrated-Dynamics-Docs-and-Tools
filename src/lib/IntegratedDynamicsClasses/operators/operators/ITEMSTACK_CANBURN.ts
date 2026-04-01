@@ -15,9 +15,14 @@ export class OPERATOR_ITEMSTACK_CANBURN extends BaseOperator<Item, iBoolean> {
     "isFuel",
     "can_burn",
     "itemstackCanBurn",
+    "canburn",
+    "itemstackCanburn",
   ];
   static override symbol = "can_burn";
   static override interactName = "itemstackCanBurn";
+  static override operatorName = "canburn" as const;
+  static override kind = "itemstack" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

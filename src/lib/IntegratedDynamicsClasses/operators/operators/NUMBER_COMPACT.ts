@@ -8,6 +8,9 @@ export class OPERATOR_NUMBER_COMPACT extends BaseOperator<TypeNumber, iString> {
   static override nicknames = ["compact", "numberCompact"];
   static override symbol = "compact";
   static override interactName = "numberCompact";
+  static override operatorName = "compact" as const;
+  static override kind = "number" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

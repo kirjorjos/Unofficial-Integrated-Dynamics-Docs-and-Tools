@@ -13,9 +13,13 @@ export class OPERATOR_ARITHMETIC_SUBTRACTION extends BaseOperator<
     "subtract",
     "arithmeticSubtraction",
     "numberSubtract",
+    "subtraction",
   ];
   static override symbol = "-";
   static override interactName = "numberSubtract";
+  static override operatorName = "subtraction" as const;
+  static override kind = "arithmetic" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

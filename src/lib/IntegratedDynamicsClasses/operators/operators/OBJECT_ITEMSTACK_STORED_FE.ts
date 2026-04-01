@@ -18,9 +18,14 @@ export class OPERATOR_OBJECT_ITEMSTACK_STORED_FE extends BaseOperator<
     "item_stored_fe",
     "itemStoredFe",
     "storedFe",
+    "storedfe",
+    "itemstackStoredfe",
   ];
   static override symbol = "stored_fe";
   static override interactName = "itemstackFeStored";
+  static override operatorName = "storedfe" as const;
+  static override kind = "itemstack" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

@@ -13,6 +13,9 @@ export class OPERATOR_LOGICAL_AND extends BaseOperator<
   static override symbol = "&&";
 
   static override interactName = "booleanAnd";
+  static override operatorName = "and" as const;
+  static override kind = "logical" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

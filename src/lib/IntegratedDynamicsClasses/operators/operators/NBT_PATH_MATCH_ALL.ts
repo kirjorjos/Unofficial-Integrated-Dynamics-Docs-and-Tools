@@ -15,9 +15,17 @@ export class OPERATOR_NBT_PATH_MATCH_ALL extends BaseOperator<
   static override internalName =
     "integrateddynamics:nbt_path_match_all" as const;
   static override numericID = 238;
-  static override nicknames = ["stringNbtPathMatchAll", "nbtPathMatchAll"];
+  static override nicknames = [
+    "stringNbtPathMatchAll",
+    "nbtPathMatchAll",
+    "path_match_all",
+    "nbtPath_match_all",
+  ];
   static override symbol = "NBT.path_match_all";
   static override interactName = "stringNbtPathMatchAll";
+  static override operatorName = "path_match_all" as const;
+  static override kind = "nbt" as const;
+  static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

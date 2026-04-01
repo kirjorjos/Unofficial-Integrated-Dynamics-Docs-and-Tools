@@ -15,9 +15,14 @@ export class OPERATOR_OBJECT_ITEMSTACK_MAXSIZE extends BaseOperator<
     "itemstack_max_size",
     "itemstackMaxSize",
     "maxSize",
+    "maxsize",
+    "itemstackMaxsize",
   ];
   static override symbol = "maxsize";
   static override interactName = "itemstackMaxSize";
+  static override operatorName = "maxsize" as const;
+  static override kind = "itemstack" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

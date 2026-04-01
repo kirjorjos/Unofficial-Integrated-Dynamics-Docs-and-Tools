@@ -11,9 +11,17 @@ export class OPERATOR_NBT_FROM_INT_LIST extends BaseOperator<
   static override internalName =
     "integrateddynamics:nbt_from_int_list" as const;
   static override numericID = 260;
-  static override nicknames = ["intListAsNbt", "nbtFromIntList"];
+  static override nicknames = [
+    "intListAsNbt",
+    "nbtFromIntList",
+    "from_int_list",
+    "nbtFrom_int_list",
+  ];
   static override symbol = "NBT.from_int_list";
   static override interactName = "intListAsNbt";
+  static override operatorName = "from_int_list" as const;
+  static override kind = "nbt" as const;
+  static override renderPattern = "PREFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

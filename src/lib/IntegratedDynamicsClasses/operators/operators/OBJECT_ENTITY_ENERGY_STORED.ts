@@ -15,9 +15,14 @@ export class OPERATOR_OBJECT_ENTITY_ENERGY_STORED extends BaseOperator<
     "EntityEnergyStored",
     "entity_energy_stored",
     "entityEnergyStored",
+    "entityenergystored",
+    "entityEntityenergystored",
   ];
   static override symbol = "entity_stored_fe";
   static override interactName = "entityEnergy";
+  static override operatorName = "entityenergystored" as const;
+  static override kind = "entity" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

@@ -17,9 +17,14 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISRAWITEMEQUAL extends BaseOperator<
     "itemstack_is_rawitemequal",
     "itemstackIsRawitemequal",
     "rawItemEquals",
+    "israwitemequal",
+    "itemstackIsrawitemequal",
   ];
   static override symbol = "=Raw=";
   static override interactName = "itemstackIsEqualRaw";
+  static override operatorName = "israwitemequal" as const;
+  static override kind = "itemstack" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

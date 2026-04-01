@@ -17,9 +17,13 @@ export class OPERATOR_OBJECT_FLUIDSTACK_TEMPERATURE extends BaseOperator<
     "fluidStackTemperature",
     "fluid_temperature",
     "fluidTemperature",
+    "temperature",
   ];
   static override symbol = "temperature";
   static override interactName = "fluidstackTemperature";
+  static override operatorName = "temperature" as const;
+  static override kind = "fluidstack" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

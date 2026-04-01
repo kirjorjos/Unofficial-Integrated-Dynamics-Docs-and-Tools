@@ -18,9 +18,14 @@ export class OPERATOR_ITEMSTACK_ITEMLISTCOUNT extends BaseOperator<
     "itemstackListCount",
     "item_list_count",
     "itemListCount",
+    "itemlistcount",
+    "itemstackItemlistcount",
   ];
   static override symbol = "item_list_count";
   static override interactName = "listItemListCount";
+  static override operatorName = "itemlistcount" as const;
+  static override kind = "itemstack" as const;
+  static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

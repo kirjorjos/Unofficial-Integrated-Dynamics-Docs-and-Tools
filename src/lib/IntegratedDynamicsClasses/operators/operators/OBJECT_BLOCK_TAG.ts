@@ -10,9 +10,12 @@ export class OPERATOR_OBJECT_BLOCK_TAG extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:block_tag" as const;
   static override numericID = 296;
-  static override nicknames = ["blockTags", "BlockTag", "blockTag"];
+  static override nicknames = ["blockTags", "BlockTag", "blockTag", "tag"];
   static override symbol = "block_tag_names";
   static override interactName = "blockTags";
+  static override operatorName = "tag" as const;
+  static override kind = "block" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

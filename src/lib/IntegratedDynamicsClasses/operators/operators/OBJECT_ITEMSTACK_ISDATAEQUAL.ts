@@ -16,9 +16,14 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISDATAEQUAL extends BaseOperator<
     "ItemstackIsdataequal",
     "itemstack_is_dataequal",
     "itemstackIsDataequal",
+    "isnbtequal",
+    "itemstackIsnbtequal",
   ];
   static override symbol = "=NBT=";
   static override interactName = "itemstackIsNbtEqual";
+  static override operatorName = "isnbtequal" as const;
+  static override kind = "itemstack" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

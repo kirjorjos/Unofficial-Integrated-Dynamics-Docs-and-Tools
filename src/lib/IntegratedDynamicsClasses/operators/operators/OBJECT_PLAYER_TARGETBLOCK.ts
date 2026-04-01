@@ -15,9 +15,14 @@ export class OPERATOR_OBJECT_PLAYER_TARGETBLOCK extends BaseOperator<
     "PlayerTargetblock",
     "player_target_block",
     "playerTargetBlock",
+    "targetblock",
+    "entityTargetblock",
   ];
   static override symbol = "target_block";
   static override interactName = "entityTargetBlock";
+  static override operatorName = "targetblock" as const;
+  static override kind = "entity" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

@@ -14,9 +14,14 @@ export class OPERATOR_OBJECT_ENTITY_ISWET extends BaseOperator<
     "entity_is_wet",
     "entityIsWet",
     "isWet",
+    "iswet",
+    "entityIswet",
   ];
   static override symbol = "is_wet";
   static override interactName = "entityIsWet";
+  static override operatorName = "iswet" as const;
+  static override kind = "entity" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

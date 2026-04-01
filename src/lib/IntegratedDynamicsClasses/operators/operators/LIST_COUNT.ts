@@ -13,6 +13,9 @@ export class OPERATOR_LIST_COUNT extends BaseOperator<
   static override nicknames = ["listCount", "count"];
   static override symbol = "count";
   static override interactName = "listCount";
+  static override operatorName = "count" as const;
+  static override kind = "list" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

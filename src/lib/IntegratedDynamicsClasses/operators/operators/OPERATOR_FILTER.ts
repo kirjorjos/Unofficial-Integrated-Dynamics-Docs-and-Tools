@@ -13,6 +13,9 @@ export class OPERATOR_OPERATOR_FILTER extends BaseOperator<
   static override nicknames = ["operatorFilter", "filter"];
   static override symbol = "filter";
   static override interactName = "operatorFilter";
+  static override operatorName = "filter" as const;
+  static override kind = "operator" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

@@ -13,6 +13,9 @@ export class OPERATOR_LIST_CONTAINS extends BaseOperator<
   static override nicknames = ["listContains", "contains"];
   static override symbol = "contains";
   static override interactName = "listContains";
+  static override operatorName = "contains" as const;
+  static override kind = "list" as const;
+  static override renderPattern = "PREFIX_2_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

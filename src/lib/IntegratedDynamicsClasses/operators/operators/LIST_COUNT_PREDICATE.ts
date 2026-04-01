@@ -11,9 +11,17 @@ export class OPERATOR_LIST_COUNT_PREDICATE extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:list_count_p" as const;
   static override numericID = 115;
-  static override nicknames = ["listCountPredicate", "listCountP"];
+  static override nicknames = [
+    "listCountPredicate",
+    "listCountP",
+    "count_p",
+    "listCount_p",
+  ];
   static override symbol = "count_p";
   static override interactName = "listCountPredicate";
+  static override operatorName = "count_p" as const;
+  static override kind = "list" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

@@ -8,6 +8,9 @@ export class OPERATOR_NUMBER_FLOOR extends BaseOperator<TypeNumber, Integer> {
   static override nicknames = ["floor", "numberFloor"];
   static override symbol = "⌊ ⌋";
   static override interactName = "numberFloor";
+  static override operatorName = "floor" as const;
+  static override kind = "number" as const;
+  static override renderPattern = "PREFIX_1" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

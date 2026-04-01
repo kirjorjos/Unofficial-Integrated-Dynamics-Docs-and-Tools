@@ -17,9 +17,13 @@ export class OPERATOR_OBJECT_FLUIDSTACK_MODNAME extends BaseOperator<
     "fluidStackModname",
     "fluid_mod_name",
     "fluidModName",
+    "mod",
   ];
   static override symbol = "mod";
   static override interactName = "fluidstackMod";
+  static override operatorName = "mod" as const;
+  static override kind = "fluidstack" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

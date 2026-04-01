@@ -11,9 +11,14 @@ export class OPERATOR_LONG_TO_DOUBLE extends BaseOperator<Long, Double> {
     "longToDouble",
     "longDouble",
     "longLongToDouble",
+    "cast_double",
+    "numberCast_double",
   ];
   static override symbol = "()";
   static override interactName = "longLongToDouble";
+  static override operatorName = "cast_double" as const;
+  static override kind = "number" as const;
+  static override renderPattern = "PREFIX_1" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

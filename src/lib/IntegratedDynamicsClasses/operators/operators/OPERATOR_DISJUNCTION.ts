@@ -16,6 +16,9 @@ export class OPERATOR_OPERATOR_DISJUNCTION extends BaseOperator<
   static override nicknames = ["operatorDisjunction", "disjunction"];
   static override symbol = ".||.";
   static override interactName = "operatorDisjunction";
+  static override operatorName = "disjunction" as const;
+  static override kind = "operator" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

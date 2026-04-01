@@ -14,9 +14,13 @@ export class OPERATOR_OPERATOR_APPLY_N extends BaseOperator<
     "operatorApplyN",
     "applyn",
     "applyN",
+    "apply_n",
   ];
   static override symbol = "apply_n";
   static override interactName = "operatorApply_n";
+  static override operatorName = "apply_n" as const;
+  static override kind = "operator" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

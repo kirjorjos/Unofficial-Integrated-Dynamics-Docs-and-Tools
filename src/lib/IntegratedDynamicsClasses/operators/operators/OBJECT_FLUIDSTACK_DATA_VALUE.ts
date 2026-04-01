@@ -26,9 +26,14 @@ export class OPERATOR_OBJECT_FLUIDSTACK_DATA_VALUE extends BaseOperator<
     "fluid_stack_NBT_value",
     "fluidstack_NBT_value",
     "fluidNBTValue",
+    "fluidstack_datavalue",
+    "fluidstackFluidstack_datavalue",
   ];
   static override symbol = "data_value";
   static override interactName = "fluidstackDataValue";
+  static override operatorName = "fluidstack_datavalue" as const;
+  static override kind = "fluidstack" as const;
+  static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

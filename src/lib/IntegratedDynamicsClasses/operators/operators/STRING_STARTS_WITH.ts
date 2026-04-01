@@ -11,9 +11,17 @@ export class OPERATOR_STRING_STARTS_WITH extends BaseOperator<
   static override internalName =
     "integrateddynamics:string_starts_with" as const;
   static override numericID = 162;
-  static override nicknames = ["startsWith", "stringStartsWith"];
+  static override nicknames = [
+    "startsWith",
+    "stringStartsWith",
+    "starts_with",
+    "stringStarts_with",
+  ];
   static override symbol = "starts_with";
   static override interactName = "stringStartsWith";
+  static override operatorName = "starts_with" as const;
+  static override kind = "string" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

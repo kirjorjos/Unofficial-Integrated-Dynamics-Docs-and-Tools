@@ -15,9 +15,14 @@ export class OPERATOR_LIST_CONTAINS_PREDICATE extends BaseOperator<
     "listContainsPredicate",
     "containsPredicate",
     "containsP",
+    "contains_p",
+    "listContains_p",
   ];
   static override symbol = "contains_p";
   static override interactName = "listContainsPredicate";
+  static override operatorName = "contains_p" as const;
+  static override kind = "list" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

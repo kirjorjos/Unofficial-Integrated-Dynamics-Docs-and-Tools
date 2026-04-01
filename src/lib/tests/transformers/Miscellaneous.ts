@@ -72,6 +72,26 @@ describe("MiscellaneousTests", () => {
         }
       }
     });
+
+    it("testOperatorNameDerivedNicknames", () => {
+      for (const opClass of operatorClasses) {
+        const uniqueName = opClass.internalName;
+        const operatorName = opClass.operatorName;
+        const globalStyleName = `${opClass.kind}${operatorName[0]!.toUpperCase()}${operatorName.substring(1)}`;
+
+        if (!opClass.nicknames.includes(operatorName)) {
+          throw new Error(
+            `operatorName "${operatorName}" not found in nicknames for operator "${uniqueName}"`
+          );
+        }
+
+        if (!opClass.nicknames.includes(globalStyleName)) {
+          throw new Error(
+            `Derived nickname "${globalStyleName}" not found in nicknames for operator "${uniqueName}"`
+          );
+        }
+      }
+    });
   });
 
   describe("ValidationTests", () => {

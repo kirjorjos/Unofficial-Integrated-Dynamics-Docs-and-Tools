@@ -18,9 +18,13 @@ export class OPERATOR_OBJECT_ITEMSTACK_STRENGTH_VS_BLOCK extends BaseOperator<
     "itemstack_strength_vs_block",
     "itemstackStrengthVsBlock",
     "strengthVsBlock",
+    "strength",
   ];
   static override symbol = "strength";
   static override interactName = "itemstackStrength";
+  static override operatorName = "strength" as const;
+  static override kind = "itemstack" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

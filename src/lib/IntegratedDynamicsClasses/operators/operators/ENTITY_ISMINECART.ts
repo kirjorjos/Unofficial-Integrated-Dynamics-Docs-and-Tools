@@ -12,9 +12,14 @@ export class OPERATOR_ENTITY_ISMINECART extends BaseOperator<Entity, iBoolean> {
     "entityIsMinecart",
     "isMinecart",
     "is_minecart",
+    "isminecart",
+    "entityIsminecart",
   ];
   static override symbol = "is_minecart";
   static override interactName = "entityIsMinecart";
+  static override operatorName = "isminecart" as const;
+  static override kind = "entity" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

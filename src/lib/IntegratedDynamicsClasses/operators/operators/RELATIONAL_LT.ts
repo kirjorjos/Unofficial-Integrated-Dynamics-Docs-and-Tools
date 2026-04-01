@@ -13,6 +13,9 @@ export class OPERATOR_RELATIONAL_LT extends BaseOperator<
   static override symbol = "<";
 
   static override interactName = "numberLessThan";
+  static override operatorName = "lt" as const;
+  static override kind = "relational" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

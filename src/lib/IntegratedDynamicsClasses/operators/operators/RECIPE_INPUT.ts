@@ -6,9 +6,12 @@ import { Ingredients } from "lib/IntegratedDynamicsClasses/Ingredients";
 export class OPERATOR_RECIPE_INPUT extends BaseOperator<Recipe, Ingredients> {
   static override internalName = "integrateddynamics:recipe_input" as const;
   static override numericID = 151;
-  static override nicknames = ["recipeInput", "recipeWithInput"];
+  static override nicknames = ["recipeInput", "recipeWithInput", "input"];
   static override symbol = "recipe_in";
   static override interactName = "recipeInput";
+  static override operatorName = "input" as const;
+  static override kind = "recipe" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

@@ -15,9 +15,13 @@ export class OPERATOR_OBJECT_ENTITY_INVENTORY extends BaseOperator<
     "EntityInventoryContents",
     "entity_inventory_contents",
     "entityInventoryContents",
+    "inventory",
   ];
   static override symbol = "entity_inventory";
   static override interactName = "entityInventory";
+  static override operatorName = "inventory" as const;
+  static override kind = "entity" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

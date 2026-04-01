@@ -17,9 +17,13 @@ export class OPERATOR_OBJECT_FLUIDSTACK_VISCOSITY extends BaseOperator<
     "fluidStackViscosity",
     "fluid_viscosity",
     "fluidViscosity",
+    "viscosity",
   ];
   static override symbol = "viscosity";
   static override interactName = "fluidstackViscosity";
+  static override operatorName = "viscosity" as const;
+  static override kind = "fluidstack" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

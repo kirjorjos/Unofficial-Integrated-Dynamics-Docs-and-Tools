@@ -15,9 +15,14 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISDAMAGEABLE extends BaseOperator<
     "itemstack_is_damageable",
     "itemstackIsDamageable",
     "isDamageable",
+    "damageable",
+    "itemstackDamageable",
   ];
   static override symbol = "damageable";
   static override interactName = "itemstackIsDamageable";
+  static override operatorName = "damageable" as const;
+  static override kind = "itemstack" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

@@ -15,9 +15,16 @@ export class OPERATOR_STRING_REPLACE_REGEX extends BaseOperator<
   static override internalName =
     "integrateddynamics:string_replace_regex" as const;
   static override numericID = 169;
-  static override nicknames = ["stringReplaceRegex"];
+  static override nicknames = [
+    "stringReplaceRegex",
+    "replace_regex",
+    "stringReplace_regex",
+  ];
   static override symbol = "replace_regex";
   static override interactName = "stringReplaceRegex";
+  static override operatorName = "replace_regex" as const;
+  static override kind = "string" as const;
+  static override renderPattern = "PREFIX_3_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

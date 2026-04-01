@@ -11,9 +11,18 @@ export class OPERATOR_NBT_COMPOUND_SUBSET extends BaseOperator<
   static override internalName =
     "integrateddynamics:nbt_compound_subset" as const;
   static override numericID = 212;
-  static override nicknames = ["nbtIsSubset", "nbtCompoundSubset", "NBTSubset"];
+  static override nicknames = [
+    "nbtIsSubset",
+    "nbtCompoundSubset",
+    "NBTSubset",
+    "compound_subset",
+    "nbtCompound_subset",
+  ];
   static override symbol = "NBT{}.⊆";
   static override interactName = "nbtIsSubset";
+  static override operatorName = "compound_subset" as const;
+  static override kind = "nbt" as const;
+  static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

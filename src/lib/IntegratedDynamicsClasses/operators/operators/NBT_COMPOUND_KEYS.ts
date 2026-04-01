@@ -11,9 +11,18 @@ export class OPERATOR_NBT_COMPOUND_KEYS extends BaseOperator<
   static override internalName =
     "integrateddynamics:nbt_compound_keys" as const;
   static override numericID = 209;
-  static override nicknames = ["nbtKeys", "nbtCompoundKeys", "NBTKeys"];
+  static override nicknames = [
+    "nbtKeys",
+    "nbtCompoundKeys",
+    "NBTKeys",
+    "compound_keys",
+    "nbtCompound_keys",
+  ];
   static override symbol = "NBT{}.keys";
   static override interactName = "nbtKeys";
+  static override operatorName = "compound_keys" as const;
+  static override kind = "nbt" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

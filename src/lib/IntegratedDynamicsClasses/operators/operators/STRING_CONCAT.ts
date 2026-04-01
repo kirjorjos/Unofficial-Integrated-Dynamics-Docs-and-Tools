@@ -9,9 +9,12 @@ export class OPERATOR_STRING_CONCAT extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:string_concat" as const;
   static override numericID = 78;
-  static override nicknames = ["stringConcat"];
+  static override nicknames = ["stringConcat", "concat"];
   static override symbol = "+";
   static override interactName = "stringConcat";
+  static override operatorName = "concat" as const;
+  static override kind = "string" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

@@ -6,9 +6,17 @@ import { Long } from "lib/JavaNumberClasses/Long";
 export class OPERATOR_NBT_FROM_LONG extends BaseOperator<Long, LongTag> {
   static override internalName = "integrateddynamics:nbt_from_long" as const;
   static override numericID = 261;
-  static override nicknames = ["longAsNbt", "nbtFromLong"];
+  static override nicknames = [
+    "longAsNbt",
+    "nbtFromLong",
+    "from_long",
+    "nbtFrom_long",
+  ];
   static override symbol = "NBT.from_long";
   static override interactName = "longAsNbt";
+  static override operatorName = "from_long" as const;
+  static override kind = "nbt" as const;
+  static override renderPattern = "PREFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

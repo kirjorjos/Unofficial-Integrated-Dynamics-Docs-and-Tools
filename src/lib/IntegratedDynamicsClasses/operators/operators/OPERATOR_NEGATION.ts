@@ -13,6 +13,9 @@ export class OPERATOR_OPERATOR_NEGATION extends BaseOperator<
   static override nicknames = ["operatorNegation", "negation"];
   static override symbol = "!.";
   static override interactName = "operatorNegation";
+  static override operatorName = "negation" as const;
+  static override kind = "operator" as const;
+  static override renderPattern = "PREFIX_1" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

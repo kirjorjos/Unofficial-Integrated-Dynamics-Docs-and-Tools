@@ -11,9 +11,12 @@ export class OPERATOR_STRING_SPLIT_ON extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:string_split_on" as const;
   static override numericID = 160;
-  static override nicknames = ["stringSplitOn"];
+  static override nicknames = ["stringSplitOn", "split_on", "stringSplit_on"];
   static override symbol = "split_on";
   static override interactName = "stringSplitOn";
+  static override operatorName = "split_on" as const;
+  static override kind = "string" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

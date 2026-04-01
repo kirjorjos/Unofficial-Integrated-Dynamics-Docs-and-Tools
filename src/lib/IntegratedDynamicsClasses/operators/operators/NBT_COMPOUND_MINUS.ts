@@ -10,9 +10,18 @@ export class OPERATOR_NBT_COMPOUND_MINUS extends BaseOperator<
   static override internalName =
     "integrateddynamics:nbt_compound_minus" as const;
   static override numericID = 210;
-  static override nicknames = ["nbtMinus", "nbtCompoundMinus", "NBTMinus"];
+  static override nicknames = [
+    "nbtMinus",
+    "nbtCompoundMinus",
+    "NBTMinus",
+    "compound_minus",
+    "nbtCompound_minus",
+  ];
   static override symbol = "NBT{}.∖";
   static override interactName = "nbtMinus";
+  static override operatorName = "compound_minus" as const;
+  static override kind = "nbt" as const;
+  static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

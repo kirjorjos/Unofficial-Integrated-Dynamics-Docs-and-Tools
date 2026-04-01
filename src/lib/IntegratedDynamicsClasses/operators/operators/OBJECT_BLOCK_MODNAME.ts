@@ -8,9 +8,12 @@ export class OPERATOR_OBJECT_BLOCK_MODNAME extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:block_mod" as const;
   static override numericID = 15;
-  static override nicknames = ["blockMod", "block_mod"];
+  static override nicknames = ["blockMod", "block_mod", "mod"];
   static override symbol = "mod";
   static override interactName = "blockMod";
+  static override operatorName = "mod" as const;
+  static override kind = "block" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

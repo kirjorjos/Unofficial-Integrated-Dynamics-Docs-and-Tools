@@ -13,9 +13,13 @@ export class OPERATOR_ARITHMETIC_MULTIPLICATION extends BaseOperator<
     "multiply",
     "arithmeticMultiplication",
     "numberMultiply",
+    "multiplication",
   ];
   static override symbol = "*";
   static override interactName = "numberMultiply";
+  static override operatorName = "multiplication" as const;
+  static override kind = "arithmetic" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

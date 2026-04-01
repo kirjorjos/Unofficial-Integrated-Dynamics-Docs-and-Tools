@@ -9,9 +9,17 @@ export class OPERATOR_ARITHMETIC_MAXIMUM extends BaseOperator<
   static override internalName =
     "integrateddynamics:arithmetic_maximum" as const;
   static override numericID = 2;
-  static override nicknames = ["max", "arithmeticMaximum", "numberMax"];
+  static override nicknames = [
+    "max",
+    "arithmeticMaximum",
+    "numberMax",
+    "maximum",
+  ];
   static override symbol = "max";
   static override interactName = "numberMax";
+  static override operatorName = "maximum" as const;
+  static override kind = "arithmetic" as const;
+  static override renderPattern = "PREFIX_2" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

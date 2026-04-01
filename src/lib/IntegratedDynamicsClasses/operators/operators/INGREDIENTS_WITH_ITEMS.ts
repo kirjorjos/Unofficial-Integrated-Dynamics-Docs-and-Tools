@@ -11,9 +11,17 @@ export class OPERATOR_INGREDIENTS_WITH_ITEMS extends BaseOperator<
   static override internalName =
     "integrateddynamics:ingredients_with_items" as const;
   static override numericID = 155;
-  static override nicknames = ["ingredientsWithItems", "Ingr.with_items"];
+  static override nicknames = [
+    "ingredientsWithItems",
+    "Ingr.with_items",
+    "with_items",
+    "ingredientsWith_items",
+  ];
   static override symbol = "Ingr.with_items";
   static override interactName = "ingredientsWithItems";
+  static override operatorName = "with_items" as const;
+  static override kind = "ingredients" as const;
+  static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

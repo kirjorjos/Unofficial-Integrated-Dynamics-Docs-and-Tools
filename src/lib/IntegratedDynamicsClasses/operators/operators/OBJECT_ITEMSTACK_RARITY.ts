@@ -17,6 +17,9 @@ export class OPERATOR_OBJECT_ITEMSTACK_RARITY extends BaseOperator<
   ];
   static override symbol = "rarity";
   static override interactName = "itemstackRarity";
+  static override operatorName = "rarity" as const;
+  static override kind = "itemstack" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

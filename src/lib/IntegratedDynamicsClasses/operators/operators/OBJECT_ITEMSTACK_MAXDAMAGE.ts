@@ -15,9 +15,14 @@ export class OPERATOR_OBJECT_ITEMSTACK_MAXDAMAGE extends BaseOperator<
     "itemstack_max_damage",
     "itemstackMaxDamage",
     "maxDamage",
+    "maxdamage",
+    "itemstackMaxdamage",
   ];
   static override symbol = "max_damage";
   static override interactName = "itemstackMaxDamage";
+  static override operatorName = "maxdamage" as const;
+  static override kind = "itemstack" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

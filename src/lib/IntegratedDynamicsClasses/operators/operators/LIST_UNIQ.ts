@@ -9,9 +9,12 @@ export class OPERATOR_LIST_UNIQ extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:list_uniq" as const;
   static override numericID = 136;
-  static override nicknames = ["listUnique", "listUniq"];
+  static override nicknames = ["listUnique", "listUniq", "uniq"];
   static override symbol = "uniq";
   static override interactName = "listUnique";
+  static override operatorName = "uniq" as const;
+  static override kind = "list" as const;
+  static override renderPattern = "PREFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

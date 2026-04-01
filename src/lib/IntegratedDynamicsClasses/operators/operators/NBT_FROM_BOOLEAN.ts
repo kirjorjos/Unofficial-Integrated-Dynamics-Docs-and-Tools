@@ -8,9 +8,17 @@ export class OPERATOR_NBT_FROM_BOOLEAN extends BaseOperator<iBoolean, ByteTag> {
   static override internalName =
     "integrateddynamics:nbt_from_iBoolean" as const;
   static override numericID = 258;
-  static override nicknames = ["booleanAsNbt", "nbtFromBoolean"];
+  static override nicknames = [
+    "booleanAsNbt",
+    "nbtFromBoolean",
+    "from_boolean",
+    "nbtFrom_boolean",
+  ];
   static override symbol = "NBT.from_iBoolean";
   static override interactName = "booleanAsNbt";
+  static override operatorName = "from_boolean" as const;
+  static override kind = "nbt" as const;
+  static override renderPattern = "PREFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

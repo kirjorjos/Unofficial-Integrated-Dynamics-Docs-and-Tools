@@ -20,9 +20,14 @@ export class OPERATOR_ITEMSTACK_WITHDATA extends BaseOperator<
     "itemstackWithData",
     "item_with_data",
     "itemWithData",
+    "itemstack_withdata",
+    "itemstackItemstack_withdata",
   ];
   static override symbol = "with_data";
   static override interactName = "itemstackWithData";
+  static override operatorName = "itemstack_withdata" as const;
+  static override kind = "itemstack" as const;
+  static override renderPattern = "INFIX_2_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

@@ -8,9 +8,12 @@ export class OPERATOR_BINARY_LSHIFT extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:binary_lshift" as const;
   static override numericID = 8;
-  static override nicknames = ["binaryLshift", "integerLeftShift"];
+  static override nicknames = ["binaryLshift", "integerLeftShift", "lshift"];
   static override symbol = "<<";
   static override interactName = "integerLeftShift";
+  static override operatorName = "lshift" as const;
+  static override kind = "binary" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

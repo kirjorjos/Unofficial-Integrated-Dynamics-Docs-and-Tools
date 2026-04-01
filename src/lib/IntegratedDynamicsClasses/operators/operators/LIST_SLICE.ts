@@ -14,6 +14,9 @@ export class OPERATOR_LIST_SLICE extends BaseOperator<
   static override nicknames = ["listSlice", "slice"];
   static override symbol = "slice";
   static override interactName = "listSlice";
+  static override operatorName = "slice" as const;
+  static override kind = "list" as const;
+  static override renderPattern = "PREFIX_3" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

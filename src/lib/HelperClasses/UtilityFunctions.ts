@@ -1,6 +1,19 @@
 import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
 import { operatorRegistry } from "lib/IntegratedDynamicsClasses/registries/operatorRegistry";
 
+export const capitalize = (value: string) =>
+  value.length === 0 ? value : `${value[0]!.toUpperCase()}${value.slice(1)}`;
+
+export const lowerCaseFirst = (value: string) =>
+  value.length === 0 ? value : `${value[0]!.toLowerCase()}${value.slice(1)}`;
+
+export const humanizeIdentifier = (value: string) =>
+  value
+    .split(/[_\s]+/g)
+    .filter(Boolean)
+    .map((part) => capitalize(part))
+    .join(" ");
+
 export function sanitizeForRe2(pattern: string): string {
   return pattern
     .replaceAll(/\(\?(?!P)(?<name>[a-zA-Z0-9_]+)>/g, "(?P<$1>")

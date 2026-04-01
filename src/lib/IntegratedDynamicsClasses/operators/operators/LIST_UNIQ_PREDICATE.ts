@@ -19,9 +19,13 @@ export class OPERATOR_LIST_UNIQ_PREDICATE extends BaseOperator<
     "listUniqPredicate",
     "uniq_p",
     "list_uniq_p",
+    "listUniq_p",
   ];
   static override symbol = "uniq_p";
   static override interactName = "listUniquePredicate";
+  static override operatorName = "uniq_p" as const;
+  static override kind = "list" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

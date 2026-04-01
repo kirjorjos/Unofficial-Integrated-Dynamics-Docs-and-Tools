@@ -15,9 +15,13 @@ export class OPERATOR_OBJECT_ITEMSTACK_MODNAME extends BaseOperator<
     "item_mod",
     "itemModname",
     "itemMod",
+    "mod",
   ];
   static override symbol = "mod";
   static override interactName = "itemstackMod";
+  static override operatorName = "mod" as const;
+  static override kind = "itemstack" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

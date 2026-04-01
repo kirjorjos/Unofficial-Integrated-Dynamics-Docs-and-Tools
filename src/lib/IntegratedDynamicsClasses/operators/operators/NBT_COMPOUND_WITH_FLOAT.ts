@@ -17,9 +17,14 @@ export class OPERATOR_NBT_COMPOUND_WITH_FLOAT extends BaseOperator<
     "nbtWithFloat",
     "nbtCompoundWithFloat",
     "NBTWithFloat",
+    "compound_with_float",
+    "nbtCompound_with_float",
   ];
   static override symbol = "NBT{}.with_float";
   static override interactName = "nbtWithFloat";
+  static override operatorName = "compound_with_float" as const;
+  static override kind = "nbt" as const;
+  static override renderPattern = "INFIX_2_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

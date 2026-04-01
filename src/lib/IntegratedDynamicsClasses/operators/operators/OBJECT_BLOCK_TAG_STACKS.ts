@@ -18,9 +18,14 @@ export class OPERATOR_OBJECT_BLOCK_TAG_STACKS extends BaseOperator<
     "BlockTagStacks",
     "block_tag_stacks",
     "blockTagStacks",
+    "blocktag",
+    "stringBlocktag",
   ];
   static override symbol = "block_tag_values";
   static override interactName = "stringBlocksByTag";
+  static override operatorName = "blocktag" as const;
+  static override kind = "string" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

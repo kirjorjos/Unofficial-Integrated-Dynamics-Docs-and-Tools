@@ -20,9 +20,14 @@ export class OPERATOR_OBJECT_ITEMSTACK_TAG_STACKS extends BaseOperator<
     "itemstackTagValues",
     "item_tag_names",
     "itemTagNames",
+    "tag",
+    "stringTag",
   ];
   static override symbol = "item_tag_val";
   static override interactName = "itemstackTagVal";
+  static override operatorName = "tag" as const;
+  static override kind = "string" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

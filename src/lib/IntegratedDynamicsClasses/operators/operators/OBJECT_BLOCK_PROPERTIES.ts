@@ -14,9 +14,14 @@ export class OPERATOR_OBJECT_BLOCK_PROPERTIES extends BaseOperator<
     "BlockProperties",
     "block_properties",
     "blockProperties",
+    "blockproperties",
+    "blockBlockproperties",
   ];
   static override symbol = "block_props";
   static override interactName = "blockProperties";
+  static override operatorName = "blockproperties" as const;
+  static override kind = "block" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

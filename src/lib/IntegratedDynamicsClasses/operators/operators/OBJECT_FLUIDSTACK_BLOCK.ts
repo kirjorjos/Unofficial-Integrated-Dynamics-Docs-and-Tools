@@ -16,9 +16,13 @@ export class OPERATOR_OBJECT_FLUIDSTACK_BLOCK extends BaseOperator<
     "fluidStackBlock",
     "fluid_block",
     "fluidBlock",
+    "block",
   ];
   static override symbol = "block";
   static override interactName = "fluidstackBlock";
+  static override operatorName = "block" as const;
+  static override kind = "fluidstack" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

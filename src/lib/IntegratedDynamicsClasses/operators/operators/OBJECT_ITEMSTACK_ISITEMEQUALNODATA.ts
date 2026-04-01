@@ -16,9 +16,14 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISITEMEQUALNODATA extends BaseOperator<
     "ItemstackIsitemequalnodata",
     "itemstack_is_itemequalnodata",
     "itemstackIsItemequalnodata",
+    "isitemequalnonbt",
+    "itemstackIsitemequalnonbt",
   ];
   static override symbol = "=NoNBT=";
   static override interactName = "itemstackIsNbtEqual";
+  static override operatorName = "isitemequalnonbt" as const;
+  static override kind = "itemstack" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

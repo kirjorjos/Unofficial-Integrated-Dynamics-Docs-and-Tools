@@ -16,9 +16,14 @@ export class OPERATOR_ITEMSTACK_WITH_NBT extends BaseOperator<
     "itemWithNBT",
     "item_stack_with_nbt",
     "itemStackWithNBT",
+    "itemwithtag",
+    "itemstackItemwithtag",
   ];
   static override symbol = "with_nbt";
   static override interactName = "itemstackWithNBT";
+  static override operatorName = "itemwithtag" as const;
+  static override kind = "itemstack" as const;
+  static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

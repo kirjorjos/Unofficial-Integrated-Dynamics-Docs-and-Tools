@@ -13,9 +13,13 @@ export class OPERATOR_OBJECT_BLOCK_ISSHEARABLE extends BaseOperator<
     "blockIsshearable",
     "block_is_shearable",
     "blockIsShearable",
+    "isshearable",
   ];
   static override symbol = "is_shearable";
   static override interactName = "blockIsShearable";
+  static override operatorName = "isshearable" as const;
+  static override kind = "block" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(
