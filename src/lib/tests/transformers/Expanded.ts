@@ -194,7 +194,7 @@ final = apply(numberAdd, var2)
 
     const ast6 = CodeLineToAST("apply (flip numberAdd) 5");
     const exp6 = ASTToExpanded(ast6);
-    expect(exp6).toContain("{numberAddOn}on5 ::");
+    expect(exp6).toContain("{flipNumberAdd}on5 ::");
 
     const ast8 = CodeLineToAST("pipe numberIncrement numberMultiply");
     const exp8 = ASTToExpanded(ast8);
@@ -212,6 +212,10 @@ final = apply(numberAdd, var2)
     const ast10 = CodeLineToAST("applyN numberAdd list1", scope10);
     const exp10 = ASTToExpanded(ast10);
     expect(exp10).toContain("numberAddBy_nList1 ::");
+
+    const ast11 = CodeLineToAST("flip numberAdd");
+    const exp11 = ASTToExpanded(ast11);
+    expect(exp11).toContain("flipNumberAdd ::");
   });
 
   it("testSignatureFormatting", () => {

@@ -332,7 +332,8 @@ const getVarName = (node: TypeAST.AST): string => {
         connector = "On";
       } else {
         name = getVarName(base);
-        connector = name.endsWith("On") ? "On" : "By";
+        connector =
+          name.endsWith("On") || name.startsWith("flip") ? "On" : "By";
       }
 
       if (args.length === 0) return name;
@@ -367,7 +368,7 @@ const getVarName = (node: TypeAST.AST): string => {
       return `${hName}With${capitalize(fName)}And${capitalize(gName)}`;
     }
     case "Flip":
-      return `${getVarName(node.arg)}On`;
+      return `flip${capitalize(getVarName(node.arg))}`;
     case "List":
       return "list";
   }
