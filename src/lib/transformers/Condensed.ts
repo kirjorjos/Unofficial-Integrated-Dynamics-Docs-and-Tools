@@ -621,126 +621,297 @@ export const CondensedToAST = (
   const CONST_OP = ID_OP("GENERAL_CONSTANT" as TypeOperatorKey);
   const IDEN_OP = ID_OP("GENERAL_IDENTITY" as TypeOperatorKey);
 
-  function abstract(param: string, body: InternalAST): InternalAST {
-    if (body.type === "Curry" && body.args.length === 1) {
-      const f = body.base;
-      const arg = body.args[0]!;
-
+  function condense(body: InternalAST): InternalAST {
+    if (body.type === "Pipe") {
       if (
-        arg.type === "Variable" &&
-        arg.name === param &&
-        !containsVar(param, f as InternalAST)
+        body.op1.type === "Operator" &&
+        body.op1.opName === "GENERAL_IDENTITY"
       ) {
-        return f as InternalAST;
+        return condense(body.op2);
       }
-
-      if (f.type === "Curry" && f.args.length === 1) {
-        const g = f.base;
-        const arg1 = f.args[0]!;
-        if (
-          arg1.type === "Variable" &&
-          arg1.name === param &&
-          !containsVar(param, g as InternalAST) &&
-          !containsVar(param, arg as InternalAST)
-        ) {
-          return {
-            type: "Curry",
-            base: { type: "Flip", arg: g as TypeAST.AST } as TypeAST.AST,
-            args: [arg as TypeAST.AST],
-          } as InternalAST;
-        }
+      if (
+        body.op2.type === "Operator" &&
+        body.op2.opName === "GENERAL_IDENTITY"
+      ) {
+        return condense(body.op1);
       }
     }
+    return body;
+  }
 
-    if (body.type === "Variable" && body.name === param) {
-      return IDEN_OP;
-    }
-
-    if (!containsVar(param, body)) {
-      return { type: "Curry", base: CONST_OP, args: [body as TypeAST.AST] };
-    }
-
-    if (body.type === "Curry" && body.args.length === 1) {
-      const E1 = body.base;
-      const E2 = body.args[0]!;
-
-      const xInE1 = containsVar(param, E1);
-      const xInE2 = containsVar(param, E2);
-
-      if (xInE1 && xInE2) {
-        if (
-          E1.type === "Curry" &&
-          E1.args.length === 1 &&
-          !containsVar(param, E1.base)
-        ) {
-          return {
-            type: "Pipe2",
-            op1: abstract(param, E1.args[0]!) as TypeAST.AST,
-            op2: abstract(param, E2) as TypeAST.AST,
-            op3: E1.base as TypeAST.AST,
-          };
-        }
-
-        return {
-          type: "Pipe2",
-          op1: abstract(param, E1) as TypeAST.AST,
-          op2: abstract(param, E2) as TypeAST.AST,
-          op3: APPLY_OP as TypeAST.AST,
-        };
-      } else if (xInE1) {
-        const flipApply: InternalAST = {
-          type: "Flip",
-          arg: APPLY_OP as TypeAST.AST,
-        };
-        const callback: InternalAST = {
-          type: "Curry",
-          base: flipApply as TypeAST.AST,
-          args: [E2 as TypeAST.AST],
-        };
-        return {
-          type: "Pipe",
-          op1: abstract(param, E1) as TypeAST.AST,
-          op2: callback as TypeAST.AST,
-        };
-      } else {
-        if (E2.type === "Variable" && E2.name === param) {
-          return E1;
-        }
-
-        return {
-          type: "Pipe",
-          op1: abstract(param, E2) as TypeAST.AST,
-          op2: E1 as TypeAST.AST,
-        };
-      }
-    } else if (body.type === "Curry" && body.args.length > 1) {
-      const lastArg = body.args[body.args.length - 1]!;
-      const rest: InternalAST = {
-        ...body,
-        args: body.args.slice(0, -1),
-      };
+  function abstract(param: string, body: InternalAST): InternalAST {
+    if (body.type === "Curry" && body.base.type === "Curry") {
       return abstract(param, {
         type: "Curry",
-        base: rest,
-        args: [lastArg],
+        base: body.base.base,
+        args: [...body.base.args, ...body.args],
       });
     }
 
-    if (body.type === "Pipe") {
-      return {
-        type: "Pipe2",
-        op1: abstract(param, body.op1) as TypeAST.AST,
-        op2: abstract(param, body.op2) as TypeAST.AST,
-        op3: ID_OP("OPERATOR_PIPE") as TypeAST.AST,
-      };
-    }
+    if (!containsVar(param, body)) {
+      return condense({ type: "Curry", base: CONST_OP, args: [body] });
+    } else if (body.type === "Variable") {
+      return IDEN_OP;
+    } else if (body.type === "Pipe") {
+      const xInOp1 = containsVar(param, body.op1);
+      const xInOp2 = containsVar(param, body.op2);
 
-    if (body.type === "Flip") {
-      return {
+      if (xInOp1 && xInOp2) {
+        return condense({
+          type: "Pipe2",
+          op1: abstract(param, body.op1) as TypeAST.AST,
+          op2: abstract(param, body.op2) as TypeAST.AST,
+          op3: ID_OP("OPERATOR_PIPE") as TypeAST.AST,
+        });
+      } else if (xInOp2) {
+        return condense({
+          type: "Pipe",
+          op1: abstract(param, body.op2),
+          op2: {
+            type: "Curry",
+            base: ID_OP("OPERATOR_PIPE"),
+            args: [body.op1 as TypeAST.AST],
+          },
+        });
+      } else {
+        return condense({
+          type: "Pipe",
+          op1: abstract(param, body.op1),
+          op2: {
+            type: "Curry",
+            base: {
+              type: "Flip",
+              arg: ID_OP("OPERATOR_PIPE"),
+            },
+            args: [body.op2 as TypeAST.AST],
+          },
+        });
+      }
+    } else if (body.type === "Pipe2") {
+      const xInOp1 = containsVar(param, body.op1);
+      const xInOp2 = containsVar(param, body.op2);
+      const xInOp3 = containsVar(param, body.op3);
+
+      if (xInOp1 && xInOp2 && xInOp3) {
+        return condense({
+          type: "Pipe2",
+          op1: {
+            type: "Pipe2",
+            op1: abstract(param, body.op1),
+            op2: abstract(param, body.op2),
+            op3: ID_OP("OPERATOR_PIPE2"),
+          },
+          op2: abstract(param, body.op3),
+          op3: APPLY_OP,
+        });
+      } else if (xInOp2 && xInOp3) {
+        return condense({
+          type: "Pipe2",
+          op1: abstract(param, body.op2),
+          op2: abstract(param, body.op3),
+          op3: {
+            type: "Curry",
+            base: ID_OP("OPERATOR_PIPE2"),
+            args: [body.op1],
+          },
+        });
+      } else if (xInOp1 && xInOp3) {
+        return condense({
+          type: "Pipe2",
+          op1: abstract(param, body.op1),
+          op2: abstract(param, body.op3),
+          op3: {
+            type: "Curry",
+            base: {
+              type: "Flip",
+              arg: ID_OP("OPERATOR_PIPE2"),
+            },
+            args: [body.op2],
+          },
+        });
+      } else if (xInOp1 && xInOp2) {
+        return condense({
+          type: "Pipe2",
+          op1: {
+            type: "Pipe",
+            op1: abstract(param, body.op1),
+            op2: ID_OP("OPERATOR_PIPE2"),
+          },
+          op2: abstract(param, body.op2),
+          op3: {
+            type: "Curry",
+            base: {
+              type: "Flip",
+              arg: ID_OP("OPERATOR_FLIP"),
+            },
+            args: [body.op3],
+          },
+        });
+      } else if (xInOp3) {
+        return condense({
+          type: "Pipe",
+          op1: abstract(param, body.op3),
+          op2: {
+            type: "Curry",
+            base: ID_OP("OPERATOR_PIPE2"),
+            args: [body.op1, body.op2],
+          },
+        });
+      } else if (xInOp2) {
+        return condense({
+          type: "Pipe",
+          op1: abstract(param, body.op2),
+          op2: {
+            type: "Curry",
+            base: {
+              type: "Flip",
+              arg: {
+                type: "Curry",
+                base: ID_OP("OPERATOR_PIPE2"),
+                args: [body.op1],
+              },
+            },
+            args: [body.op3],
+          },
+        });
+      } else {
+        return condense({
+          type: "Pipe",
+          op1: abstract(param, body.op1),
+          op2: {
+            type: "Curry",
+            base: {
+              type: "Flip",
+              arg: {
+                type: "Curry",
+                base: {
+                  type: "Flip",
+                  arg: ID_OP("OPERATOR_PIPE2"),
+                },
+                args: [body.op2],
+              },
+            },
+            args: [body.op3],
+          },
+        });
+      }
+    } else if (body.type === "Flip") {
+      return condense({
         type: "Pipe",
-        op1: abstract(param, body.arg) as TypeAST.AST,
-        op2: ID_OP("OPERATOR_FLIP") as TypeAST.AST,
-      };
+        op1: abstract(param, body.arg),
+        op2: ID_OP("OPERATOR_FLIP"),
+      });
+    } else if (body.type === "Curry") {
+      if (containsVar(param, body.base)) {
+        return abstract(param, {
+          type: "Curry",
+          base: APPLY_OP,
+          args: [body.base, ...body.args],
+        });
+      }
+      if (body.args.length === 1) {
+        return condense({
+          type: "Pipe",
+          op1: abstract(param, body.args[0]!),
+          op2: body.base,
+        });
+      } else if (body.args.length === 2) {
+        const arg1 = body.args[0]!;
+        const arg2 = body.args[1]!;
+        const arg1Contains = containsVar(param, arg1);
+        const arg2Contains = containsVar(param, arg2);
+
+        if (arg1Contains && arg2Contains) {
+          return condense({
+            type: "Pipe2",
+            op1: abstract(param, arg1),
+            op2: abstract(param, arg2),
+            op3: body.base,
+          });
+        } else if (arg2Contains) {
+          return condense({
+            type: "Pipe",
+            op1: abstract(param, arg2),
+            op2: {
+              type: "Curry",
+              base: body.base,
+              args: [arg1],
+            },
+          });
+        } else {
+          return condense({
+            type: "Pipe",
+            op1: abstract(param, arg1),
+            op2: {
+              type: "Curry",
+              base: {
+                type: "Flip",
+                arg: body.base,
+              },
+              args: [arg2],
+            },
+          });
+        }
+      } else {
+        const firstArgs = body.args.slice(0, -2);
+        const secondLastArg = body.args[body.args.length - 2]!;
+        const lastArg = body.args[body.args.length - 1]!;
+
+        if (firstArgs.some((a) => containsVar(param, a))) {
+          return abstract(param, {
+            type: "Curry",
+            base: APPLY_OP,
+            args: [
+              {
+                type: "Curry",
+                base: body.base,
+                args: [...firstArgs, secondLastArg],
+              },
+              lastArg,
+            ],
+          });
+        }
+
+        const base: InternalAST = {
+          type: "Curry",
+          base: body.base,
+          args: firstArgs,
+        };
+        const secondLastArgContains = containsVar(param, secondLastArg);
+        const lastArgContains = containsVar(param, lastArg);
+
+        if (secondLastArgContains && lastArgContains) {
+          return condense({
+            type: "Pipe2",
+            op1: abstract(param, secondLastArg),
+            op2: abstract(param, lastArg),
+            op3: base,
+          });
+        } else if (lastArgContains) {
+          return condense({
+            type: "Pipe",
+            op1: abstract(param, lastArg),
+            op2: {
+              type: "Curry",
+              base: body.base,
+              args: [...firstArgs, secondLastArg],
+            },
+          });
+        } else {
+          return condense({
+            type: "Pipe",
+            op1: abstract(param, secondLastArg),
+            op2: {
+              type: "Curry",
+              base: {
+                type: "Flip",
+                arg: base,
+              },
+              args: [lastArg],
+            },
+          });
+        }
+      }
     }
 
     throw new Error(`Could not abstract "${param}" from expression`);

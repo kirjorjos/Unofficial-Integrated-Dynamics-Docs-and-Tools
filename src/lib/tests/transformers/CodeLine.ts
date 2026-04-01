@@ -90,10 +90,10 @@ describe("TestCodeLineTransformer", () => {
 
   it("testLambdaRule6", () => {
     // x => fOfX gOfX  =>  pipe2 (x => fOfX) (x => gOfX) apply
-    const code = "x => (booleanNot x) (numberIncrement x)";
+    const code = "x => x (operatorNegation x true)";
     const ast = CodeLineToAST(code);
     expect(ASTToCodeLine(ast)).toBe(
-      "operatorPipe2 booleanNot numberIncrement operatorApply"
+      "operatorPipe2 anyIdentity ((operatorFlip operatorNegation) true) operatorApply"
     );
   });
 

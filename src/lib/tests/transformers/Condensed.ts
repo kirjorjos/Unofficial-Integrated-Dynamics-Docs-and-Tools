@@ -169,10 +169,10 @@ describe("TestCondensedTransformer", () => {
   it("testLambdaRule6", () => {
     // x => fOfX gOfX  =>  pipe2 (x => fOfX) (x => gOfX) apply
     const ast = CondensedToAST(
-      "x => operatorApply(booleanNot(x), booleanNot(x))"
+      "x => operatorApply(x, operatorApply(operatorNegation(x), true))"
     );
     expect(ASTToCondensed(ast)).toBe(
-      "operatorPipe2(booleanNot, booleanNot, operatorApply)"
+      "operatorPipe2(anyIdentity, operatorPipe(operatorNegation, apply(operatorFlip(operatorApply), true)), operatorApply)"
     );
   });
 
