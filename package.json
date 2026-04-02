@@ -28,7 +28,8 @@
     "format": "prettier --write .",
     "typecheck": "vue-tsc --noEmit -p tsconfig.app.json",
     "build": "npm run format && npm run test && npm run typecheck && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "commit": "git stash --keep-index && (npm test || (git stash pop && \"$(exit 1)\")) && npm run format && git add -u && git stash pop && git commit -m"
   },
   "prettier": {
     "tabWidth": 2,
