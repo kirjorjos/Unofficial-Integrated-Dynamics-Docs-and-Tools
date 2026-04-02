@@ -599,7 +599,7 @@ export const CodeLineToAST = (
         type: "Pipe",
         op1: condense(body.op1),
         op2: condense(body.op2),
-      }
+      };
     }
     if (body.type === "Curry") {
       if (body.base.type === "Curry") {
@@ -613,7 +613,7 @@ export const CodeLineToAST = (
         type: "Curry",
         base: condense(body.base),
         args: body.args.map(condense),
-      }
+      };
     }
     if (body.type === "Pipe2") {
       if (body.op3.type === "Operator" && body.op3.opName === "LOGICAL_AND") {
@@ -635,7 +635,7 @@ export const CodeLineToAST = (
         op1: condense(body.op1),
         op2: condense(body.op2),
         op3: condense(body.op3),
-      }
+      };
     }
     if (body.type === "Flip" && body.arg.type === "Operator") {
       const originalOp = new operatorRegistry[body.arg.opName]();
@@ -648,7 +648,7 @@ export const CodeLineToAST = (
       return {
         type: "Flip",
         arg: condense(body.arg),
-      }
+      };
     }
     return body;
   }

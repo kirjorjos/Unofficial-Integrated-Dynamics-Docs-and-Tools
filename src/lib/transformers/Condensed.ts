@@ -663,7 +663,10 @@ export const CondensedToAST = (
       }
       const condensedBase = condense(body.base);
       const condensedArgs = body.args.map(condense);
-      if (condensedBase === body.base && condensedArgs.every((a, i) => a === body.args[i])) {
+      if (
+        condensedBase === body.base &&
+        condensedArgs.every((a, i) => a === body.args[i])
+      ) {
         return body;
       }
       return condense({
