@@ -28,13 +28,21 @@ export const getImplicitFlipNameRegex = (): RegExp => {
 
 export const resolveImplicitFlipOperator = (
   name: string
-): TypeAST.Flip | undefined => {
+): TypeAST.AST | undefined => {
   const match = name.match(getImplicitFlipNameRegex());
   if (!match) return undefined;
 
   const baseNickname = match[1]!.charAt(0).toLowerCase() + match[1]!.slice(1);
   const internalName = operatorRegistry.operatorByNickname(baseNickname);
   if (!internalName) return undefined;
+
+  const originalOp = new operatorRegistry[internalName]();
+  if (originalOp instanceof BaseOperator && originalOp.flipTarget) {
+    return {
+      type: "Operator",
+      opName: originalOp.flipTarget,
+    };
+  }
 
   return {
     type: "Flip",

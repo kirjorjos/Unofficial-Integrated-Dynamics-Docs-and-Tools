@@ -48,6 +48,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISITEMEQUALNODATA extends BaseOperator<
           );
         };
       },
+      flipTarget: "OBJECT_ITEMSTACK_ISITEMEQUALNODATA",
     });
   }
 }

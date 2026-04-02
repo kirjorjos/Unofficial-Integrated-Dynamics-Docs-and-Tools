@@ -34,19 +34,19 @@ describe("TestCodeLineTransformer", () => {
   it("testLambda", () => {
     const code = "x => (numberAdd x 1)";
     const ast = CodeLineToAST(code);
-    expect(ASTToCodeLine(ast)).toBe("(operatorFlip numberAdd) 1");
+    expect(ASTToCodeLine(ast)).toBe("numberAdd 1");
   });
 
   it("testLambdaShort", () => {
     const code = "\\x.numberAdd x 1";
     const ast = CodeLineToAST(code);
-    expect(ASTToCodeLine(ast)).toBe("(operatorFlip numberAdd) 1");
+    expect(ASTToCodeLine(ast)).toBe("numberAdd 1");
   });
 
   it("testLambdaArrow", () => {
     const code = "x -> numberAdd x 1";
     const ast = CodeLineToAST(code);
-    expect(ASTToCodeLine(ast)).toBe("(operatorFlip numberAdd) 1");
+    expect(ASTToCodeLine(ast)).toBe("numberAdd 1");
   });
 
   it("testLambdaRule1", () => {
@@ -67,7 +67,7 @@ describe("TestCodeLineTransformer", () => {
     // x => f x y  =>  flip f y
     const code = "x => (numberAdd x 1)";
     const ast = CodeLineToAST(code);
-    expect(ASTToCodeLine(ast)).toBe("(operatorFlip numberAdd) 1");
+    expect(ASTToCodeLine(ast)).toBe("numberAdd 1");
   });
 
   it("testLambdaRule4", () => {
@@ -123,7 +123,7 @@ describe("TestCodeLineTransformer", () => {
   it("testLambdaVarWithDot", () => {
     const code = "\\var.with.dot.numberAdd var.with.dot 1";
     const ast = CodeLineToAST(code);
-    expect(ASTToCodeLine(ast)).toBe("(operatorFlip numberAdd) 1");
+    expect(ASTToCodeLine(ast)).toBe("numberAdd 1");
   });
 
   it("testComplicated2", () => {

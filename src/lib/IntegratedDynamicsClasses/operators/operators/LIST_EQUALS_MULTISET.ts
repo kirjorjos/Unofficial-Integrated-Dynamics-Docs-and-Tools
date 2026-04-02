@@ -60,6 +60,7 @@ export class OPERATOR_LIST_EQUALS_MULTISET extends BaseOperator<
           return new iBoolean(true);
         };
       },
+      flipTarget: "LIST_EQUALS_MULTISET",
     });
   }
 }

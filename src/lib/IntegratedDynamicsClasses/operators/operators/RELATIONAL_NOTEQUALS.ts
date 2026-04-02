@@ -36,6 +36,7 @@ export class OPERATOR_RELATIONAL_NOTEQUALS extends BaseOperator<
           return value1.equals(value2).negate();
         };
       },
+      flipTarget: "RELATIONAL_NOTEQUALS",
     });
   }
 }

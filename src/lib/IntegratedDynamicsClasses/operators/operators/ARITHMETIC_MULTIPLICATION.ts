@@ -43,6 +43,7 @@ export class OPERATOR_ARITHMETIC_MULTIPLICATION extends BaseOperator<
           return higherOrder.multiply(lowerOrder);
         };
       },
+      flipTarget: "ARITHMETIC_MULTIPLICATION",
     });
   }
 }

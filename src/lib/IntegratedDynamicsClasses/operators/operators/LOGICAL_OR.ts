@@ -38,6 +38,7 @@ export class OPERATOR_LOGICAL_OR extends BaseOperator<
           return new iBoolean(bool1.valueOf() || bool2.valueOf());
         };
       },
+      flipTarget: "LOGICAL_OR",
     });
   }
 }

@@ -145,7 +145,7 @@ describe("TestCondensedTransformer", () => {
   it("testLambdaRule3", () => {
     // x => f x y  =>  flip f y
     const ast = CondensedToAST("x => numberAdd(x, 1)");
-    expect(ASTToCondensed(ast)).toBe("apply(operatorFlip(numberAdd), 1)");
+    expect(ASTToCondensed(ast)).toBe("apply(numberAdd, 1)");
   });
 
   it("testLambdaRule4", () => {

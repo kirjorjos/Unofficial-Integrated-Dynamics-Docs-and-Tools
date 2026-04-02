@@ -37,6 +37,7 @@ export class OPERATOR_RELATIONAL_EQUALS extends BaseOperator<
           return value1.equals(value2);
         };
       },
+      flipTarget: "RELATIONAL_EQUALS",
     });
   }
 }

@@ -39,6 +39,7 @@ export class OPERATOR_ARITHMETIC_ADDITION extends BaseOperator<
           return higherOrder.add(lowerOrder);
         };
       },
+      flipTarget: "ARITHMETIC_ADDITION",
     });
   }
 }

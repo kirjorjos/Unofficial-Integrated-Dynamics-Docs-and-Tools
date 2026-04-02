@@ -39,6 +39,7 @@ export class OPERATOR_ARITHMETIC_MINIMUM extends BaseOperator<
           return higherOrder.min(lowerOrder);
         };
       },
+      flipTarget: "ARITHMETIC_MINIMUM",
     });
   }
 }

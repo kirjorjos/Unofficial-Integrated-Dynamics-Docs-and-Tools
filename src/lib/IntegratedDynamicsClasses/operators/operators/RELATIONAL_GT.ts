@@ -37,6 +37,7 @@ export class OPERATOR_RELATIONAL_GT extends BaseOperator<
           return new iBoolean(num1.gt(num2));
         };
       },
+      flipTarget: "RELATIONAL_LT",
     });
   }
 }

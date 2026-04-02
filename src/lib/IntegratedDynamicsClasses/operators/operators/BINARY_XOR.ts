@@ -36,6 +36,7 @@ export class OPERATOR_BINARY_XOR extends BaseOperator<
           return int1.binaryXor(int2);
         };
       },
+      flipTarget: "BINARY_XOR",
     });
   }
 }

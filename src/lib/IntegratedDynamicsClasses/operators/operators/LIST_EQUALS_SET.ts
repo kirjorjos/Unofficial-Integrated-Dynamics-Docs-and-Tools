@@ -46,6 +46,7 @@ export class OPERATOR_LIST_EQUALS_SET extends BaseOperator<
           return new iBoolean(true);
         };
       },
+      flipTarget: "LIST_EQUALS_SET",
     });
   }
 }

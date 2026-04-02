@@ -36,6 +36,7 @@ export class OPERATOR_BINARY_AND extends BaseOperator<
           return int1.binaryAnd(int2);
         };
       },
+      flipTarget: "BINARY_AND",
     });
   }
 }

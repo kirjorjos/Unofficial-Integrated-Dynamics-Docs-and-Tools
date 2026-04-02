@@ -68,6 +68,7 @@ export class OPERATOR_OPERATOR_DISJUNCTION extends BaseOperator<
           };
         };
       },
+      flipTarget: "OPERATOR_DISJUNCTION",
     });
   }
 }
