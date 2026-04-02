@@ -588,6 +588,13 @@ export const CodeLineToAST = (
       ) {
         return condense(body.op1);
       }
+      if (body.op2.type === "Operator" && body.op2.opName === "LOGICAL_NOT") {
+        return condense({
+          type: "Curry",
+          base: ID_OP("OPERATOR_NEGATION"),
+          args: [body.op1],
+        });
+      }
     }
     if (body.type === "Curry") {
       if (body.base.type === "Curry") {
@@ -595,6 +602,22 @@ export const CodeLineToAST = (
           type: "Curry",
           base: body.base.base,
           args: [...body.base.args, ...body.args],
+        });
+      }
+    }
+    if (body.type === "Pipe2") {
+      if (body.op3.type === "Operator" && body.op3.opName === "LOGICAL_AND") {
+        return condense({
+          type: "Curry",
+          base: ID_OP("OPERATOR_CONJUNCTION"),
+          args: [body.op1, body.op2],
+        });
+      }
+      if (body.op3.type === "Operator" && body.op3.opName === "LOGICAL_OR") {
+        return condense({
+          type: "Curry",
+          base: ID_OP("OPERATOR_DISJUNCTION"),
+          args: [body.op1, body.op2],
         });
       }
     }
