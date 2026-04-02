@@ -176,6 +176,28 @@ describe("TestCondensedTransformer", () => {
     );
   });
 
+  it("testLambdaNegation", () => {
+    const code = "x => not(itemstackIsStackable(x))";
+    const ast = CondensedToAST(code);
+    expect(ASTToCondensed(ast)).toBe("operatorNegation(itemstackIsStackable)");
+  });
+
+  it("testLambdaConjunction", () => {
+    const code = "x => and(itemstackIsStackable(x), itemstackIsDamageable(x))";
+    const ast = CondensedToAST(code);
+    expect(ASTToCondensed(ast)).toBe(
+      "operatorConjunction(itemstackIsStackable, itemstackIsDamageable)"
+    );
+  });
+
+  it("testLambdaDisjunction", () => {
+    const code = "x => or(itemstackIsStackable(x), itemstackIsDamageable(x))";
+    const ast = CondensedToAST(code);
+    expect(ASTToCondensed(ast)).toBe(
+      "operatorDisjunction(itemstackIsStackable, itemstackIsDamageable)"
+    );
+  });
+
   it("testLambdaFlip", () => {
     const ast = CondensedToAST("(a, b) => stringConcat(b, a)");
     expect(ASTToCondensed(ast)).toBe("operatorFlip(stringConcat)");
