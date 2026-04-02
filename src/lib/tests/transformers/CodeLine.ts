@@ -97,6 +97,29 @@ describe("TestCodeLineTransformer", () => {
     );
   });
 
+  it("testLambdaNegation", () => {
+    const code = "x => not (itemstackIsStackable x)";
+    const ast = CodeLineToAST(code);
+    expect(ASTToCodeLine(ast)).toBe("operatorNegation itemstackIsStackable");
+  });
+
+  it("testLambdaConjunction", () => {
+    const code =
+      "x => (and (itemstackIsStackable x) (itemstackIsDamageable x))";
+    const ast = CodeLineToAST(code);
+    expect(ASTToCodeLine(ast)).toBe(
+      "operatorConjunction itemstackIsStackable itemstackIsDamageable"
+    );
+  });
+
+  it("testLambdaDisjunction", () => {
+    const code = "x => (or (itemstackIsStackable x) (itemstackIsDamageable x))";
+    const ast = CodeLineToAST(code);
+    expect(ASTToCodeLine(ast)).toBe(
+      "operatorDisjunction itemstackIsStackable itemstackIsDamageable"
+    );
+  });
+
   it("testLambdaVarWithDot", () => {
     const code = "\\var.with.dot.numberAdd var.with.dot 1";
     const ast = CodeLineToAST(code);
