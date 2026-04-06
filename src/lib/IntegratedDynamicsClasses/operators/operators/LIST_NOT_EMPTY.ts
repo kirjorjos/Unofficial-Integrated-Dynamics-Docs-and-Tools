@@ -19,6 +19,8 @@ export class OPERATOR_LIST_NOT_EMPTY extends BaseOperator<
   static override symbol = "o";
   static override interactName = "listIsNotEmpty";
   static override operatorName = "notempty" as const;
+  static override displayName = "Not Empty" as const;
+  static override fullDisplayName = "List Not Empty" as const;
   static override kind = "list" as const;
   static override renderPattern = "PREFIX_1" as const;
   constructor(normalizeSignature = true) {

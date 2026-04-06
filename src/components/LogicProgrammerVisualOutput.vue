@@ -13,6 +13,8 @@ type OperatorClassLike = {
   new (normalizeSignature?: boolean): BaseOperator<any, any>;
   operatorName?: string;
   interactName?: string;
+  displayName?: string;
+  fullDisplayName?: string;
   symbol?: string;
   renderPattern?: LogicProgrammerRenderPatternKey;
 };
@@ -93,9 +95,7 @@ const getOperatorDisplay = (opName: TypeOperatorKey) => {
   return {
     title: operatorClass?.interactName ?? opName,
     searchLabel: operatorClass?.operatorName ?? "Filter",
-    panelLabel: operatorClass
-      ? new operatorClass(false).getFullDisplayName()
-      : opName,
+    panelLabel: operatorClass?.fullDisplayName ?? opName,
     symbol: operatorClass?.symbol ?? opName,
     renderPattern: operatorClass?.renderPattern ?? "NONE",
   };

@@ -20,6 +20,8 @@ export class OPERATOR_OBJECT_BLOCK_PROPERTIES extends BaseOperator<
   static override symbol = "block_props";
   static override interactName = "blockProperties";
   static override operatorName = "blockproperties" as const;
+  static override displayName = "Block Properties" as const;
+  static override fullDisplayName = "Block Block Properties" as const;
   static override kind = "block" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

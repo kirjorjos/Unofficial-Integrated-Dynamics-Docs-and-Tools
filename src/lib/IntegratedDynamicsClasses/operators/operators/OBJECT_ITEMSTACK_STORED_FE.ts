@@ -24,6 +24,8 @@ export class OPERATOR_OBJECT_ITEMSTACK_STORED_FE extends BaseOperator<
   static override symbol = "stored_fe";
   static override interactName = "itemstackFeStored";
   static override operatorName = "storedfe" as const;
+  static override displayName = "FE Stored" as const;
+  static override fullDisplayName = "Item FE Stored" as const;
   static override kind = "itemstack" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

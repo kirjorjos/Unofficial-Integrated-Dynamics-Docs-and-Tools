@@ -14,6 +14,8 @@ export class OPERATOR_OBJECT_BLOCK_TAG extends BaseOperator<
   static override symbol = "block_tag_names";
   static override interactName = "blockTags";
   static override operatorName = "tag" as const;
+  static override displayName = "Block Tag Names" as const;
+  static override fullDisplayName = "Block Block Tag Names" as const;
   static override kind = "block" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

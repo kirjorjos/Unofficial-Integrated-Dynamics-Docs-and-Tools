@@ -22,6 +22,8 @@ export class OPERATOR_STRING_MATCHES_REGEX extends BaseOperator<
   static override symbol = "matches_regex";
   static override interactName = "stringMatchesRegex";
   static override operatorName = "matches_regex" as const;
+  static override displayName = "Matches Regex" as const;
+  static override fullDisplayName = "String Matches Regex" as const;
   static override kind = "string" as const;
   static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {

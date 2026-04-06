@@ -10,6 +10,8 @@ export class OPERATOR_STRING_LENGTH extends BaseOperator<iString, Integer> {
   static override symbol = "len";
   static override interactName = "stringLength";
   static override operatorName = "length" as const;
+  static override displayName = "Length" as const;
+  static override fullDisplayName = "String Length" as const;
   static override kind = "string" as const;
   static override renderPattern = "PREFIX_1" as const;
   constructor(normalizeSignature = true) {

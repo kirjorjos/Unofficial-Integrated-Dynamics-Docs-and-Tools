@@ -18,6 +18,8 @@ export class OPERATOR_ARITHMETIC_MINIMUM extends BaseOperator<
   static override symbol = "min";
   static override interactName = "numberMin";
   static override operatorName = "minimum" as const;
+  static override displayName = "Minimum" as const;
+  static override fullDisplayName = "Arithmetic Minimum" as const;
   static override kind = "arithmetic" as const;
   static override renderPattern = "PREFIX_2" as const;
   constructor(normalizeSignature = true) {

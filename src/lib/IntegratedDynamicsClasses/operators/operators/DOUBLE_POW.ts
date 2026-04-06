@@ -12,6 +12,8 @@ export class OPERATOR_DOUBLE_POW extends BaseOperator<
   static override symbol = "pow";
   static override interactName = "doublePow";
   static override operatorName = "pow" as const;
+  static override displayName = "Power" as const;
+  static override fullDisplayName = "Double Power" as const;
   static override kind = "double" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

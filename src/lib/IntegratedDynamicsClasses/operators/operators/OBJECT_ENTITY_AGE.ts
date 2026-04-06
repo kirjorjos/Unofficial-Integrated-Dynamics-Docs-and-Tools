@@ -10,6 +10,8 @@ export class OPERATOR_OBJECT_ENTITY_AGE extends BaseOperator<Entity, Integer> {
   static override symbol = "age";
   static override interactName = "entityAge";
   static override operatorName = "age" as const;
+  static override displayName = "Entity Age" as const;
+  static override fullDisplayName = "Entity Entity Age" as const;
   static override kind = "entity" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

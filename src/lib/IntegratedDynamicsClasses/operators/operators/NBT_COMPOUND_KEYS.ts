@@ -21,6 +21,8 @@ export class OPERATOR_NBT_COMPOUND_KEYS extends BaseOperator<
   static override symbol = "NBT{}.keys";
   static override interactName = "nbtKeys";
   static override operatorName = "compound_keys" as const;
+  static override displayName = "NBT Compound Keys" as const;
+  static override fullDisplayName = "NBT NBT Compound Keys" as const;
   static override kind = "nbt" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

@@ -12,6 +12,8 @@ export class OPERATOR_OPERATOR_APPLY_2 extends BaseOperator<
   static override symbol = "apply2";
   static override interactName = "operatorApply2";
   static override operatorName = "apply2" as const;
+  static override displayName = "Apply 2" as const;
+  static override fullDisplayName = "Operator Apply 2" as const;
   static override kind = "operator" as const;
   static override renderPattern = "INFIX_2" as const;
   constructor(normalizeSignature = true) {

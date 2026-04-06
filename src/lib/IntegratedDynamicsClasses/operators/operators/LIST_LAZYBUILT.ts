@@ -17,6 +17,8 @@ export class OPERATOR_LIST_LAZYBUILT extends BaseOperator<
   static override symbol = "lazybuilt";
   static override interactName = "anyLazyBuilt";
   static override operatorName = "lazybuilt" as const;
+  static override displayName = "Lazy List Builder" as const;
+  static override fullDisplayName = "List Lazy List Builder" as const;
   static override kind = "list" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

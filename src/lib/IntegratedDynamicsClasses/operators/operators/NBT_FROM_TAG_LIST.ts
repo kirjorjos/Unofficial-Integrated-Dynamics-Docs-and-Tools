@@ -20,6 +20,8 @@ export class OPERATOR_NBT_FROM_TAG_LIST extends BaseOperator<
   static override symbol = "NBT.from_tag_list";
   static override interactName = "tagListAsNbt";
   static override operatorName = "from_tag_list" as const;
+  static override displayName = "NBT List From Tag List" as const;
+  static override fullDisplayName = "NBT NBT List From Tag List" as const;
   static override kind = "nbt" as const;
   static override renderPattern = "PREFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

@@ -16,6 +16,8 @@ export class OPERATOR_OBJECT_BLOCK_ITEMSTACK extends BaseOperator<Block, Item> {
   static override symbol = "itemstack";
   static override interactName = "blockItemStack";
   static override operatorName = "itemstack" as const;
+  static override displayName = "Item" as const;
+  static override fullDisplayName = "Block Item" as const;
   static override kind = "block" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

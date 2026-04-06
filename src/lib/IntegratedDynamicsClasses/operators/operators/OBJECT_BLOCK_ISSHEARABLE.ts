@@ -18,6 +18,8 @@ export class OPERATOR_OBJECT_BLOCK_ISSHEARABLE extends BaseOperator<
   static override symbol = "is_shearable";
   static override interactName = "blockIsShearable";
   static override operatorName = "isshearable" as const;
+  static override displayName = "Block Is Shearable" as const;
+  static override fullDisplayName = "Block Block Is Shearable" as const;
   static override kind = "block" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

@@ -9,6 +9,8 @@ export class OPERATOR_NUMBER_FLOOR extends BaseOperator<TypeNumber, Integer> {
   static override symbol = "⌊ ⌋";
   static override interactName = "numberFloor";
   static override operatorName = "floor" as const;
+  static override displayName = "Floor" as const;
+  static override fullDisplayName = "Number Floor" as const;
   static override kind = "number" as const;
   static override renderPattern = "PREFIX_1" as const;
   constructor(normalizeSignature = true) {

@@ -22,6 +22,8 @@ export class OPERATOR_OBJECT_FLUIDSTACK_AMOUNT extends BaseOperator<
   static override symbol = "amount";
   static override interactName = "fluidstackAmount";
   static override operatorName = "amount" as const;
+  static override displayName = "Amount" as const;
+  static override fullDisplayName = "Fluid Amount" as const;
   static override kind = "fluidstack" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

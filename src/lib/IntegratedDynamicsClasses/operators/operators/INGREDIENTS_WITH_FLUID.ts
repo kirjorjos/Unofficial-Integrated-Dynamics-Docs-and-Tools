@@ -19,6 +19,9 @@ export class OPERATOR_INGREDIENTS_WITH_FLUID extends BaseOperator<
   static override symbol = "Ingr.with_fluid";
   static override interactName = "ingredientsWithFluid";
   static override operatorName = "with_fluid" as const;
+  static override displayName = "Ingredients With Fluid" as const;
+  static override fullDisplayName =
+    "Ingredients Ingredients With Fluid" as const;
   static override kind = "ingredients" as const;
   static override renderPattern = "INFIX_2_LONG" as const;
   constructor(normalizeSignature = true) {

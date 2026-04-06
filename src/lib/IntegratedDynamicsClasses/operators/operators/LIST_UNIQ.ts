@@ -13,6 +13,8 @@ export class OPERATOR_LIST_UNIQ extends BaseOperator<
   static override symbol = "uniq";
   static override interactName = "listUnique";
   static override operatorName = "uniq" as const;
+  static override displayName = "Uniq" as const;
+  static override fullDisplayName = "List Uniq" as const;
   static override kind = "list" as const;
   static override renderPattern = "PREFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

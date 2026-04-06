@@ -20,6 +20,8 @@ export class OPERATOR_GENERAL_CHOICE extends BaseOperator<
   static override symbol = "?";
   static override interactName = "booleanChoice";
   static override operatorName = "choice" as const;
+  static override displayName = "Choice" as const;
+  static override fullDisplayName = "General Choice" as const;
   static override kind = "general" as const;
   static override renderPattern = "GENERAL_CHOICE" as const;
   constructor(normalizeSignature = true) {

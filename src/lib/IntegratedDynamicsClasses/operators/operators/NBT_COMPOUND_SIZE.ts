@@ -20,6 +20,8 @@ export class OPERATOR_NBT_COMPOUND_SIZE extends BaseOperator<
   static override symbol = "NBT{}.size";
   static override interactName = "nbtSize";
   static override operatorName = "compound_size" as const;
+  static override displayName = "NBT Compound Size" as const;
+  static override fullDisplayName = "NBT NBT Compound Size" as const;
   static override kind = "nbt" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

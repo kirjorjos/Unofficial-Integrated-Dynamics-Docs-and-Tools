@@ -15,6 +15,8 @@ export class OPERATOR_LIST_INTERSECTION extends BaseOperator<
   static override symbol = "∩";
   static override interactName = "listIntersection";
   static override operatorName = "intersection" as const;
+  static override displayName = "Intersection" as const;
+  static override fullDisplayName = "List Intersection" as const;
   static override kind = "list" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

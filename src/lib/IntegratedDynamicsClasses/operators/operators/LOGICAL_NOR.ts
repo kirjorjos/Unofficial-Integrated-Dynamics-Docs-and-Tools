@@ -13,6 +13,8 @@ export class OPERATOR_LOGICAL_NOR extends BaseOperator<
   static override symbol = "!||";
   static override interactName = "booleanNor";
   static override operatorName = "nor" as const;
+  static override displayName = "Nor" as const;
+  static override fullDisplayName = "Logical Nor" as const;
   static override kind = "logical" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

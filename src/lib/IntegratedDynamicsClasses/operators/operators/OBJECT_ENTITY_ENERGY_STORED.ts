@@ -21,6 +21,8 @@ export class OPERATOR_OBJECT_ENTITY_ENERGY_STORED extends BaseOperator<
   static override symbol = "entity_stored_fe";
   static override interactName = "entityEnergy";
   static override operatorName = "entityenergystored" as const;
+  static override displayName = "Entity Energy Stored" as const;
+  static override fullDisplayName = "Entity Entity Energy Stored" as const;
   static override kind = "entity" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

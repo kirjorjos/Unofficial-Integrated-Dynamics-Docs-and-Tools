@@ -20,6 +20,8 @@ export class OPERATOR_STRING_STARTS_WITH extends BaseOperator<
   static override symbol = "starts_with";
   static override interactName = "stringStartsWith";
   static override operatorName = "starts_with" as const;
+  static override displayName = "Starts With" as const;
+  static override fullDisplayName = "String Starts With" as const;
   static override kind = "string" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

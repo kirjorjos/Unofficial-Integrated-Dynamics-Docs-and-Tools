@@ -22,6 +22,8 @@ export class OPERATOR_OBJECT_FLUIDSTACK_DENSITY extends BaseOperator<
   static override symbol = "density";
   static override interactName = "fluidstackDensity";
   static override operatorName = "density" as const;
+  static override displayName = "Density" as const;
+  static override fullDisplayName = "Fluid Density" as const;
   static override kind = "fluidstack" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

@@ -23,6 +23,8 @@ export class OPERATOR_ITEMSTACK_ITEMBYNAME extends BaseOperator<iString, Item> {
   static override symbol = "item_by_name";
   static override interactName = "stringItemByName";
   static override operatorName = "itembyname" as const;
+  static override displayName = "Item By Name" as const;
+  static override fullDisplayName = "Item Item By Name" as const;
   static override kind = "itemstack" as const;
   static override renderPattern = "PREFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

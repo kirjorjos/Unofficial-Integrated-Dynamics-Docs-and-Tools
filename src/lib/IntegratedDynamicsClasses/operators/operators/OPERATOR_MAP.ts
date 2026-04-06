@@ -13,6 +13,8 @@ export class OPERATOR_OPERATOR_MAP extends BaseOperator<
   static override symbol = "map";
   static override interactName = "operatorMap";
   static override operatorName = "map" as const;
+  static override displayName = "Map" as const;
+  static override fullDisplayName = "Operator Map" as const;
   static override kind = "operator" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

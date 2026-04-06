@@ -20,6 +20,8 @@ export class OPERATOR_OBJECT_ENTITY_NBT extends BaseOperator<
   static override symbol = "NBT()";
   static override interactName = "entityNbt";
   static override operatorName = "nbt" as const;
+  static override displayName = "Entity NBT" as const;
+  static override fullDisplayName = "Entity Entity NBT" as const;
   static override kind = "entity" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

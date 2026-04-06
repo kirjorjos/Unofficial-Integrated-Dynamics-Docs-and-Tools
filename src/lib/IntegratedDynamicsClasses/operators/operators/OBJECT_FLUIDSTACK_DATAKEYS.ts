@@ -32,6 +32,8 @@ export class OPERATOR_OBJECT_FLUIDSTACK_DATAKEYS extends BaseOperator<
   static override symbol = "data_keys";
   static override interactName = "fluidstackDataKeys";
   static override operatorName = "fluidstack_datakeys" as const;
+  static override displayName = "Fluid Data Keys" as const;
+  static override fullDisplayName = "Fluid Fluid Data Keys" as const;
   static override kind = "fluidstack" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

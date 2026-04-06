@@ -20,6 +20,9 @@ export class OPERATOR_RECIPE_WITH_INPUT extends BaseOperator<
   static override symbol = "Recipe.with_in";
   static override interactName = "recipeWithInput";
   static override operatorName = "with_input" as const;
+  static override displayName = "Recipe With Input Ingredients" as const;
+  static override fullDisplayName =
+    "Recipe Recipe With Input Ingredients" as const;
   static override kind = "recipe" as const;
   static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {

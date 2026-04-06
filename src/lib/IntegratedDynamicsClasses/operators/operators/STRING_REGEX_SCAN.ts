@@ -23,6 +23,8 @@ export class OPERATOR_STRING_REGEX_SCAN extends BaseOperator<
   static override symbol = "regex_scan";
   static override interactName = "stringRegexScan";
   static override operatorName = "regex_scan" as const;
+  static override displayName = "Regex Scan" as const;
+  static override fullDisplayName = "String Regex Scan" as const;
   static override kind = "string" as const;
   static override renderPattern = "PREFIX_3_LONG" as const;
   constructor(normalizeSignature = true) {

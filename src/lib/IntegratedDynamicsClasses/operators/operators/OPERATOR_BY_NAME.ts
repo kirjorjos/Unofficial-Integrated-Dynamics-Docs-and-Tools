@@ -20,6 +20,8 @@ export class OPERATOR_OPERATOR_BY_NAME extends BaseOperator<
   static override symbol = "op_by_name";
   static override interactName = "stringOperatorByName";
   static override operatorName = "by_name" as const;
+  static override displayName = "Operator By Name" as const;
+  static override fullDisplayName = "Operator Operator By Name" as const;
   static override kind = "operator" as const;
   static override renderPattern = "PREFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

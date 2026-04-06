@@ -24,6 +24,8 @@ export class OPERATOR_NBT_COMPOUND_WITH_BOOLEAN extends BaseOperator<
   static override symbol = "NBT{}.with_iBoolean";
   static override interactName = "nbtWithBoolean";
   static override operatorName = "compound_with_boolean" as const;
+  static override displayName = "NBT Compound With Boolean" as const;
+  static override fullDisplayName = "NBT NBT Compound With Boolean" as const;
   static override kind = "nbt" as const;
   static override renderPattern = "INFIX_2_VERYLONG" as const;
   constructor(normalizeSignature = true) {

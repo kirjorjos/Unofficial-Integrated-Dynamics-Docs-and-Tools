@@ -23,6 +23,8 @@ export class OPERATOR_OBJECT_ITEMFRAME_CONTENTS extends BaseOperator<
   static override symbol = "itemframe_contents";
   static override interactName = "entityItemFrameContents";
   static override operatorName = "itemframecontents" as const;
+  static override displayName = "Item Frame Contents" as const;
+  static override fullDisplayName = "Entity Item Frame Contents" as const;
   static override kind = "entity" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

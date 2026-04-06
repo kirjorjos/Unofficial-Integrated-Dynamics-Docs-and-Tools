@@ -21,6 +21,8 @@ export class OPERATOR_NBT_AS_BYTE_LIST extends BaseOperator<
   static override symbol = "NBT.as_byte_list";
   static override interactName = "nbtAsByteList";
   static override operatorName = "as_byte_list" as const;
+  static override displayName = "NBT Byte Array As Byte List" as const;
+  static override fullDisplayName = "NBT NBT Byte Array As Byte List" as const;
   static override kind = "nbt" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

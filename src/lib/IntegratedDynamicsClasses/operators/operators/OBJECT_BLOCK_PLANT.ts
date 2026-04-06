@@ -9,6 +9,8 @@ export class OPERATOR_OBJECT_BLOCK_PLANT extends BaseOperator<Block, Block> {
   static override symbol = "plant";
   static override interactName = "plant";
   static override operatorName = "plant" as const;
+  static override displayName = "Block Plant" as const;
+  static override fullDisplayName = "Block Block Plant" as const;
   static override kind = "block" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

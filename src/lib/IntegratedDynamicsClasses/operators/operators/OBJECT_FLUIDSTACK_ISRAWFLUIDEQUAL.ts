@@ -25,6 +25,8 @@ export class OPERATOR_OBJECT_FLUIDSTACK_ISRAWFLUIDEQUAL extends BaseOperator<
   static override symbol = "=Raw=";
   static override interactName = "fluidstackIsRawEqual";
   static override operatorName = "israwfluidequal" as const;
+  static override displayName = "Raw fluid equals" as const;
+  static override fullDisplayName = "Fluid Raw fluid equals" as const;
   static override kind = "fluidstack" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

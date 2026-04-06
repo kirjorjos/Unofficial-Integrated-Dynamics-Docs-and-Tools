@@ -12,6 +12,8 @@ export class OPERATOR_LIST_LENGTH extends BaseOperator<
   static override symbol = "| |";
   static override interactName = "listLength";
   static override operatorName = "length" as const;
+  static override displayName = "Length" as const;
+  static override fullDisplayName = "List Length" as const;
   static override kind = "list" as const;
   static override renderPattern = "PREFIX_1" as const;
   constructor(normalizeSignature = true) {

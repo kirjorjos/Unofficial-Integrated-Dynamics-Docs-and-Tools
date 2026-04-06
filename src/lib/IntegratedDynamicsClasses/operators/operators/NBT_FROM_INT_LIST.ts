@@ -20,6 +20,9 @@ export class OPERATOR_NBT_FROM_INT_LIST extends BaseOperator<
   static override symbol = "NBT.from_int_list";
   static override interactName = "intListAsNbt";
   static override operatorName = "from_int_list" as const;
+  static override displayName = "NBT Integer Array From Integer List" as const;
+  static override fullDisplayName =
+    "NBT NBT Integer Array From Integer List" as const;
   static override kind = "nbt" as const;
   static override renderPattern = "PREFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

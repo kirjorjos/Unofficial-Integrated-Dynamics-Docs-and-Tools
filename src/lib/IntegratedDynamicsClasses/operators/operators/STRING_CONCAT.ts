@@ -13,6 +13,8 @@ export class OPERATOR_STRING_CONCAT extends BaseOperator<
   static override symbol = "+";
   static override interactName = "stringConcat";
   static override operatorName = "concat" as const;
+  static override displayName = "Concat" as const;
+  static override fullDisplayName = "String Concat" as const;
   static override kind = "string" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

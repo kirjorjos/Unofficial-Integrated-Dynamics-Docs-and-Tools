@@ -26,6 +26,8 @@ export class OPERATOR_ITEMSTACK_WITHDATA extends BaseOperator<
   static override symbol = "with_data";
   static override interactName = "itemstackWithData";
   static override operatorName = "itemstack_withdata" as const;
+  static override displayName = "Item With Data" as const;
+  static override fullDisplayName = "Item Item With Data" as const;
   static override kind = "itemstack" as const;
   static override renderPattern = "INFIX_2_LONG" as const;
   constructor(normalizeSignature = true) {

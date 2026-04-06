@@ -21,6 +21,8 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISSTACKABLE extends BaseOperator<
   static override symbol = "stackable";
   static override interactName = "itemstackIsStackable";
   static override operatorName = "stackable" as const;
+  static override displayName = "Stackable" as const;
+  static override fullDisplayName = "Item Stackable" as const;
   static override kind = "itemstack" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

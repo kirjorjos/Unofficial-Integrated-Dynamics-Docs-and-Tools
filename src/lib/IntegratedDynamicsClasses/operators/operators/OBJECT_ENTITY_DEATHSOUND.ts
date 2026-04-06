@@ -20,6 +20,8 @@ export class OPERATOR_OBJECT_ENTITY_DEATHSOUND extends BaseOperator<
   static override symbol = "deathsound";
   static override interactName = "entityDeathSound";
   static override operatorName = "deathsound" as const;
+  static override displayName = "Entity Death Sound" as const;
+  static override fullDisplayName = "Entity Entity Death Sound" as const;
   static override kind = "entity" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

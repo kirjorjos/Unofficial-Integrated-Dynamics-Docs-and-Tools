@@ -12,6 +12,8 @@ export class OPERATOR_OBJECT_BLOCK_MODNAME extends BaseOperator<
   static override symbol = "mod";
   static override interactName = "blockMod";
   static override operatorName = "mod" as const;
+  static override displayName = "Mod" as const;
+  static override fullDisplayName = "Block Mod" as const;
   static override kind = "block" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

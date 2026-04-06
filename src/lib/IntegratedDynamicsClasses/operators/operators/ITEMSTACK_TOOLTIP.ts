@@ -21,6 +21,8 @@ export class OPERATOR_ITEMSTACK_TOOLTIP extends BaseOperator<
   static override symbol = "tooltip";
   static override interactName = "itemstackTooltip";
   static override operatorName = "tooltip" as const;
+  static override displayName = "Tooltip" as const;
+  static override fullDisplayName = "Item Tooltip" as const;
   static override kind = "itemstack" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

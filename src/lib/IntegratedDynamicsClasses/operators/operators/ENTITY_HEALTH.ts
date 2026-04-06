@@ -15,6 +15,8 @@ export class OPERATOR_ENTITY_HEALTH extends BaseOperator<Entity, Double> {
   static override symbol = "health";
   static override interactName = "entityHealth";
   static override operatorName = "health" as const;
+  static override displayName = "Health" as const;
+  static override fullDisplayName = "Entity Health" as const;
   static override kind = "entity" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

@@ -20,6 +20,8 @@ export class OPERATOR_NBT_COMPOUND_UNION extends BaseOperator<
   static override symbol = "NBT{}.∪";
   static override interactName = "nbtUnion";
   static override operatorName = "compound_union" as const;
+  static override displayName = "NBT Compound Union" as const;
+  static override fullDisplayName = "NBT NBT Compound Union" as const;
   static override kind = "nbt" as const;
   static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {

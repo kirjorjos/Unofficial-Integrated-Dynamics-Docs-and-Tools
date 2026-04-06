@@ -22,6 +22,8 @@ export class OPERATOR_STRING_SPLIT_ON_REGEX extends BaseOperator<
   static override symbol = "split_on_regex";
   static override interactName = "stringSplitOnRegex";
   static override operatorName = "split_on_regex" as const;
+  static override displayName = "Split On Regex" as const;
+  static override fullDisplayName = "String Split On Regex" as const;
   static override kind = "string" as const;
   static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {

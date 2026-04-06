@@ -15,6 +15,8 @@ export class OPERATOR_OPERATOR_PIPE extends BaseOperator<
   static override symbol = ".";
   static override interactName = "operatorPipe";
   static override operatorName = "pipe" as const;
+  static override displayName = "Pipe" as const;
+  static override fullDisplayName = "Operator Pipe" as const;
   static override kind = "operator" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

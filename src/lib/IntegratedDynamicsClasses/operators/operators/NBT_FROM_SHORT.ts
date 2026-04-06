@@ -15,6 +15,8 @@ export class OPERATOR_NBT_FROM_SHORT extends BaseOperator<Integer, ShortTag> {
   static override symbol = "NBT.from_short";
   static override interactName = "shortAsNbt";
   static override operatorName = "from_short" as const;
+  static override displayName = "NBT Short From Integer" as const;
+  static override fullDisplayName = "NBT NBT Short From Integer" as const;
   static override kind = "nbt" as const;
   static override renderPattern = "PREFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

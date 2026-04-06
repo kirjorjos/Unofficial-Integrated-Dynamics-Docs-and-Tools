@@ -18,6 +18,8 @@ export class OPERATOR_GENERAL_CONSTANT extends BaseOperator<
   static override symbol = "K";
   static override interactName = "anyConstant";
   static override operatorName = "constant" as const;
+  static override displayName = "Constant" as const;
+  static override fullDisplayName = "General Constant" as const;
   static override kind = "general" as const;
   static override renderPattern = "PREFIX_2" as const;
   constructor(normalizeSignature = true) {

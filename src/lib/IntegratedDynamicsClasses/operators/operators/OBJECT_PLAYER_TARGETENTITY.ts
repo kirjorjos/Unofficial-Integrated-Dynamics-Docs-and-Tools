@@ -20,6 +20,8 @@ export class OPERATOR_OBJECT_PLAYER_TARGETENTITY extends BaseOperator<
   static override symbol = "target_entity";
   static override interactName = "entityTargetEntity";
   static override operatorName = "targetentity" as const;
+  static override displayName = "Target Entity" as const;
+  static override fullDisplayName = "Entity Target Entity" as const;
   static override kind = "entity" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

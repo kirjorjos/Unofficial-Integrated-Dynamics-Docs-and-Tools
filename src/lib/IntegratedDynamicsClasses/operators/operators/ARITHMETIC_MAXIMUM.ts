@@ -18,6 +18,8 @@ export class OPERATOR_ARITHMETIC_MAXIMUM extends BaseOperator<
   static override symbol = "max";
   static override interactName = "numberMax";
   static override operatorName = "maximum" as const;
+  static override displayName = "Maximum" as const;
+  static override fullDisplayName = "Arithmetic Maximum" as const;
   static override kind = "arithmetic" as const;
   static override renderPattern = "PREFIX_2" as const;
   constructor(normalizeSignature = true) {

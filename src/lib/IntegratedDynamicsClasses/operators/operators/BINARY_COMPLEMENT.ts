@@ -13,6 +13,8 @@ export class OPERATOR_BINARY_COMPLEMENT extends BaseOperator<Integer, Integer> {
   static override symbol = "~";
   static override interactName = "integerComplement";
   static override operatorName = "complement" as const;
+  static override displayName = "Complement" as const;
+  static override fullDisplayName = "Binary Complement" as const;
   static override kind = "binary" as const;
   static override renderPattern = "PREFIX_1" as const;
   constructor(normalizeSignature = true) {

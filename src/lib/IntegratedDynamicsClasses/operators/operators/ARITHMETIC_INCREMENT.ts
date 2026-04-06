@@ -17,6 +17,8 @@ export class OPERATOR_ARITHMETIC_INCREMENT extends BaseOperator<
   static override symbol = "++";
   static override interactName = "numberIncrement";
   static override operatorName = "increment" as const;
+  static override displayName = "Increment" as const;
+  static override fullDisplayName = "Arithmetic Increment" as const;
   static override kind = "arithmetic" as const;
   static override renderPattern = "SUFFIX_1" as const;
   constructor(normalizeSignature = true) {

@@ -21,6 +21,8 @@ export class OPERATOR_OBJECT_FLUIDSTACK_BLOCK extends BaseOperator<
   static override symbol = "block";
   static override interactName = "fluidstackBlock";
   static override operatorName = "block" as const;
+  static override displayName = "Block" as const;
+  static override fullDisplayName = "Fluid Block" as const;
   static override kind = "fluidstack" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

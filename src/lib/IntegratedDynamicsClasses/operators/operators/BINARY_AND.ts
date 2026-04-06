@@ -12,6 +12,8 @@ export class OPERATOR_BINARY_AND extends BaseOperator<
   static override symbol = "&";
   static override interactName = "integerBinaryAnd";
   static override operatorName = "and" as const;
+  static override displayName = "And" as const;
+  static override fullDisplayName = "Binary And" as const;
   static override kind = "binary" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

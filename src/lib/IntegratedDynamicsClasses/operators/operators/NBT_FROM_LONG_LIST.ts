@@ -20,6 +20,9 @@ export class OPERATOR_NBT_FROM_LONG_LIST extends BaseOperator<
   static override symbol = "NBT.from_long_list";
   static override interactName = "longListAsNbt";
   static override operatorName = "from_long_list" as const;
+  static override displayName = "NBT Long Array From Long List" as const;
+  static override fullDisplayName =
+    "NBT NBT Long Array From Long List" as const;
   static override kind = "nbt" as const;
   static override renderPattern = "PREFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

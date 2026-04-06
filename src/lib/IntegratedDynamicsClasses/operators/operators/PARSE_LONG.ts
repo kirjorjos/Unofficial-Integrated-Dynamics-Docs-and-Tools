@@ -16,6 +16,8 @@ export class OPERATOR_PARSE_LONG extends BaseOperator<iString, Long> {
   static override symbol = "parse_long";
   static override interactName = "stringParseAsLong";
   static override operatorName = "parse_long" as const;
+  static override displayName = "Parse Long" as const;
+  static override fullDisplayName = "Parse" as const;
   static override kind = "parse" as const;
   static override renderPattern = "PREFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

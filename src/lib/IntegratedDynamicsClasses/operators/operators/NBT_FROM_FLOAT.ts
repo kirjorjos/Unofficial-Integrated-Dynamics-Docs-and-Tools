@@ -15,6 +15,8 @@ export class OPERATOR_NBT_FROM_FLOAT extends BaseOperator<Double, FloatTag> {
   static override symbol = "NBT.from_float";
   static override interactName = "floatAsNbt";
   static override operatorName = "from_float" as const;
+  static override displayName = "NBT Float From Double" as const;
+  static override fullDisplayName = "NBT NBT Float From Double" as const;
   static override kind = "nbt" as const;
   static override renderPattern = "PREFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

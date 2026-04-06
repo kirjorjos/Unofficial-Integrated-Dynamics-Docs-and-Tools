@@ -23,6 +23,8 @@ export class OPERATOR_ITEMSTACK_ISFECONTAINER extends BaseOperator<
   static override symbol = "is_fe_container";
   static override interactName = "itemstackIsFeContainer";
   static override operatorName = "isfecontainer" as const;
+  static override displayName = "Is FE Container" as const;
+  static override fullDisplayName = "Item Is FE Container" as const;
   static override kind = "itemstack" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

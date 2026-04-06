@@ -37,7 +37,6 @@ export type LogicProgrammerRenderPatternKey =
   | "PREFIX_3_LONG"
   | "SUFFIX_1"
   | "SUFFIX_1_LONG";
-
 export class BaseOperator<
   I extends IntegratedValue,
   O extends IntegratedValue,
@@ -46,6 +45,8 @@ export class BaseOperator<
   static symbol: string = "";
   static operatorName: string = "";
   static interactName: string = "";
+  static displayName: string = "";
+  static fullDisplayName: string = "";
   static kind: string = "";
   static numericID: number = -1;
   static renderPattern: LogicProgrammerRenderPatternKey = "NONE";
@@ -82,6 +83,14 @@ export class BaseOperator<
     return (this.constructor as typeof BaseOperator).operatorName;
   }
 
+  get displayName(): string {
+    return (this.constructor as typeof BaseOperator).displayName;
+  }
+
+  get fullDisplayName(): string {
+    return (this.constructor as typeof BaseOperator).fullDisplayName;
+  }
+
   get kind(): string {
     return (this.constructor as typeof BaseOperator).kind;
   }
@@ -103,11 +112,14 @@ export class BaseOperator<
   }
 
   getDisplayOperatorName(): string {
-    return humanizeIdentifier(this.operatorName);
+    return this.displayName || humanizeIdentifier(this.operatorName);
   }
 
   getFullDisplayName(): string {
-    return `${this.getCategoryName()} ${this.getDisplayOperatorName()}`.trim();
+    return (
+      this.fullDisplayName ||
+      `${this.getCategoryName()} ${this.getDisplayOperatorName()}`.trim()
+    );
   }
 
   getTooltipName(): string {

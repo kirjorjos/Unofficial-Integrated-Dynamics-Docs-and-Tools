@@ -23,6 +23,8 @@ export class OPERATOR_NBT_COMPOUND_WITH_SHORT extends BaseOperator<
   static override symbol = "NBT{}.with_short";
   static override interactName = "nbtWithShort";
   static override operatorName = "compound_with_short" as const;
+  static override displayName = "NBT Compound With Short" as const;
+  static override fullDisplayName = "NBT NBT Compound With Short" as const;
   static override kind = "nbt" as const;
   static override renderPattern = "INFIX_2_LONG" as const;
   constructor(normalizeSignature = true) {

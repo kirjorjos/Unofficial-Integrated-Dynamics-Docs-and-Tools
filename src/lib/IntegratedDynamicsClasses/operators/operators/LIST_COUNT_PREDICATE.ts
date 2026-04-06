@@ -20,6 +20,8 @@ export class OPERATOR_LIST_COUNT_PREDICATE extends BaseOperator<
   static override symbol = "count_p";
   static override interactName = "listCountPredicate";
   static override operatorName = "count_p" as const;
+  static override displayName = "Count Predicate" as const;
+  static override fullDisplayName = "List Count Predicate" as const;
   static override kind = "list" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

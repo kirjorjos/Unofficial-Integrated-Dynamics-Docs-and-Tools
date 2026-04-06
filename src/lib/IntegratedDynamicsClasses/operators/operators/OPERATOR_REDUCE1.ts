@@ -10,6 +10,8 @@ export class OPERATOR_OPERATOR_REDUCE1 extends BaseOperator<any, any> {
   static override symbol = "reduce1";
   static override interactName = "operatorReduce1";
   static override operatorName = "reduce1" as const;
+  static override displayName = "Reduce 1" as const;
+  static override fullDisplayName = "Operator Reduce 1" as const;
   static override kind = "operator" as const;
   static override renderPattern = "PREFIX_2_LONG" as const;
   constructor(normalizeSignature = true) {

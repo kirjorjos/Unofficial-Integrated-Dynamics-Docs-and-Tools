@@ -12,6 +12,8 @@ export class OPERATOR_NAMED_NAME extends BaseOperator<
   static override symbol = "name";
   static override interactName = "namedName";
   static override operatorName = "name" as const;
+  static override displayName = "To String" as const;
+  static override fullDisplayName = "String To String" as const;
   static override kind = "string" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

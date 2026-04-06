@@ -25,6 +25,8 @@ export class OPERATOR_OBJECT_ITEMSTACK_DATA_KEYS extends BaseOperator<
   static override symbol = "data_keys";
   static override interactName = "itemStackDataKeys";
   static override operatorName = "itemstack_datakeys" as const;
+  static override displayName = "Item Data Keys" as const;
+  static override fullDisplayName = "Item Item Data Keys" as const;
   static override kind = "itemstack" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

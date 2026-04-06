@@ -26,6 +26,8 @@ export class OPERATOR_NBT_COMPOUND_VALUE_INTEGER extends BaseOperator<
   static override symbol = "NBT{}.get_integer";
   static override interactName = "nbtGetInteger";
   static override operatorName = "compound_value_integer" as const;
+  static override displayName = "NBT Compound Value Integer" as const;
+  static override fullDisplayName = "NBT NBT Compound Value Integer" as const;
   static override kind = "nbt" as const;
   static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {

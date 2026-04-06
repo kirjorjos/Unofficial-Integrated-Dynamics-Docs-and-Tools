@@ -18,6 +18,8 @@ export class OPERATOR_ARITHMETIC_DIVISION extends BaseOperator<
   static override symbol = "/";
   static override interactName = "numberDivide";
   static override operatorName = "division" as const;
+  static override displayName = "Division" as const;
+  static override fullDisplayName = "Arithmetic Division" as const;
   static override kind = "arithmetic" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

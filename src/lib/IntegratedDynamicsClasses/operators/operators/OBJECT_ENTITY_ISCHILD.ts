@@ -20,6 +20,8 @@ export class OPERATOR_OBJECT_ENTITY_ISCHILD extends BaseOperator<
   static override symbol = "is_child";
   static override interactName = "entityIsChild";
   static override operatorName = "ischild" as const;
+  static override displayName = "Entity Is Child" as const;
+  static override fullDisplayName = "Entity Entity Is Child" as const;
   static override kind = "entity" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

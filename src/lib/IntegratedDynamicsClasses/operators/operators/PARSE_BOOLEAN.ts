@@ -17,6 +17,8 @@ export class OPERATOR_PARSE_BOOLEAN extends BaseOperator<iString, iBoolean> {
   static override symbol = "parse_iBoolean";
   static override interactName = "stringParseAsBoolean";
   static override operatorName = "parse_boolean" as const;
+  static override displayName = "Parse Boolean" as const;
+  static override fullDisplayName = "Parse" as const;
   static override kind = "parse" as const;
   static override renderPattern = "PREFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

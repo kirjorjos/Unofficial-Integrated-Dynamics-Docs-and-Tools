@@ -21,6 +21,8 @@ export class OPERATOR_LIST_CONTAINS_PREDICATE extends BaseOperator<
   static override symbol = "contains_p";
   static override interactName = "listContainsPredicate";
   static override operatorName = "contains_p" as const;
+  static override displayName = "Contains Predicate" as const;
+  static override fullDisplayName = "List Contains Predicate" as const;
   static override kind = "list" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

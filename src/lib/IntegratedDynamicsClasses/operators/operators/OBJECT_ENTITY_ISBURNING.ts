@@ -20,6 +20,8 @@ export class OPERATOR_OBJECT_ENTITY_ISBURNING extends BaseOperator<
   static override symbol = "is_burning";
   static override interactName = "entityIsBurning";
   static override operatorName = "isburning" as const;
+  static override displayName = "Is Burning" as const;
+  static override fullDisplayName = "Entity Is Burning" as const;
   static override kind = "entity" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

@@ -20,6 +20,8 @@ export class OPERATOR_NULLABLE_ISNOTNULL extends BaseOperator<
   static override symbol = "∅";
   static override interactName = "anyIsNotNull";
   static override operatorName = "isnotnull" as const;
+  static override displayName = "Is Not Null" as const;
+  static override fullDisplayName = "General Is Not Null" as const;
   static override kind = "general" as const;
   static override renderPattern = "PREFIX_1" as const;
   constructor(normalizeSignature = true) {

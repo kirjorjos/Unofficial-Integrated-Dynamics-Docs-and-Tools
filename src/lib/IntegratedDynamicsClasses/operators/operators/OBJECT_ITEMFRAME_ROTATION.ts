@@ -23,6 +23,8 @@ export class OPERATOR_OBJECT_ITEMFRAME_ROTATION extends BaseOperator<
   static override symbol = "itemframe_rotation";
   static override interactName = "entityItemFrameRotation";
   static override operatorName = "itemframerotation" as const;
+  static override displayName = "Item Frame Rotation" as const;
+  static override fullDisplayName = "Entity Item Frame Rotation" as const;
   static override kind = "entity" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

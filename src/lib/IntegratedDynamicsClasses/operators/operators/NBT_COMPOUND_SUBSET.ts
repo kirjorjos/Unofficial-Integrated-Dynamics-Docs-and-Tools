@@ -21,6 +21,8 @@ export class OPERATOR_NBT_COMPOUND_SUBSET extends BaseOperator<
   static override symbol = "NBT{}.⊆";
   static override interactName = "nbtIsSubset";
   static override operatorName = "compound_subset" as const;
+  static override displayName = "NBT Compound Subset" as const;
+  static override fullDisplayName = "NBT NBT Compound Subset" as const;
   static override kind = "nbt" as const;
   static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {

@@ -23,6 +23,8 @@ export class OPERATOR_OBJECT_FLUIDSTACK_LIGHT_LEVEL extends BaseOperator<
   static override symbol = "light_level";
   static override interactName = "fluidstackLightLevel";
   static override operatorName = "light_level" as const;
+  static override displayName = "Light level" as const;
+  static override fullDisplayName = "Fluid Light level" as const;
   static override kind = "fluidstack" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

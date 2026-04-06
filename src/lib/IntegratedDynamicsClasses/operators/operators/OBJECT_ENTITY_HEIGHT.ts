@@ -18,6 +18,8 @@ export class OPERATOR_OBJECT_ENTITY_HEIGHT extends BaseOperator<
   static override symbol = "height";
   static override interactName = "entityHeight";
   static override operatorName = "height" as const;
+  static override displayName = "Height" as const;
+  static override fullDisplayName = "Entity Height" as const;
   static override kind = "entity" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

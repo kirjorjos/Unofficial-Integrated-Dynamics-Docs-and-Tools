@@ -29,6 +29,9 @@ export class OPERATOR_NBT_COMPOUND_VALUE_LIST_BYTE extends BaseOperator<
   static override symbol = "NBT{}.get_list_byte";
   static override interactName = "nbtGetListByte";
   static override operatorName = "compound_value_list_byte" as const;
+  static override displayName = "NBT Compound Value Byte Array" as const;
+  static override fullDisplayName =
+    "NBT NBT Compound Value Byte Array" as const;
   static override kind = "nbt" as const;
   static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {

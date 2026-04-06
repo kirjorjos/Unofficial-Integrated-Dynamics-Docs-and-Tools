@@ -19,6 +19,8 @@ export class OPERATOR_STRING_ENDS_WITH extends BaseOperator<
   static override symbol = "ends_with";
   static override interactName = "stringEndsWith";
   static override operatorName = "ends_with" as const;
+  static override displayName = "Ends With" as const;
+  static override fullDisplayName = "String Ends With" as const;
   static override kind = "string" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

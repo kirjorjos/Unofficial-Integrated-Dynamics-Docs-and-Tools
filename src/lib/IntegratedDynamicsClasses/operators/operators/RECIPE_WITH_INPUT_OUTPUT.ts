@@ -20,6 +20,10 @@ export class OPERATOR_RECIPE_WITH_INPUT_OUTPUT extends BaseOperator<
   static override symbol = "Recipe.with_io";
   static override interactName = "ingredientsWithInputOutput";
   static override operatorName = "with_input_output" as const;
+  static override displayName =
+    "Recipe With Input and Output Ingredients" as const;
+  static override fullDisplayName =
+    "Recipe Recipe With Input and Output Ingredients" as const;
   static override kind = "recipe" as const;
   static override renderPattern = "PREFIX_2_LONG" as const;
   constructor(normalizeSignature = true) {

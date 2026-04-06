@@ -9,6 +9,8 @@ export class OPERATOR_NUMBER_ROUND extends BaseOperator<TypeNumber, Integer> {
   static override symbol = "|| ||";
   static override interactName = "numberRound";
   static override operatorName = "round" as const;
+  static override displayName = "Round" as const;
+  static override fullDisplayName = "Number Round" as const;
   static override kind = "number" as const;
   static override renderPattern = "PREFIX_1" as const;
   constructor(normalizeSignature = true) {

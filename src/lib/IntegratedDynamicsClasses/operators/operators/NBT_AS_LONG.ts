@@ -11,6 +11,8 @@ export class OPERATOR_NBT_AS_LONG extends BaseOperator<LongTag, Long> {
   static override symbol = "NBT.as_long";
   static override interactName = "nbtAsLong";
   static override operatorName = "as_long" as const;
+  static override displayName = "NBT Long As Long" as const;
+  static override fullDisplayName = "NBT NBT Long As Long" as const;
   static override kind = "nbt" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

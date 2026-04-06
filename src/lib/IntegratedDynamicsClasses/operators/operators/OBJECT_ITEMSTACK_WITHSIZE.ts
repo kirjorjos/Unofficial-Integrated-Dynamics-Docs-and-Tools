@@ -23,6 +23,8 @@ export class OPERATOR_OBJECT_ITEMSTACK_WITHSIZE extends BaseOperator<
   static override symbol = "with_size";
   static override interactName = "itemstackWithSize";
   static override operatorName = "withsize" as const;
+  static override displayName = "Item With Stacksize" as const;
+  static override fullDisplayName = "Item Item With Stacksize" as const;
   static override kind = "itemstack" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

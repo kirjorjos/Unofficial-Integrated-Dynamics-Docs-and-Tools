@@ -22,6 +22,8 @@ export class OPERATOR_STRING_CONTAINS_REGEX extends BaseOperator<
   static override symbol = "contains_regex";
   static override interactName = "stringContainsRegex";
   static override operatorName = "contains_regex" as const;
+  static override displayName = "Contains Regex" as const;
+  static override fullDisplayName = "String Contains Regex" as const;
   static override kind = "string" as const;
   static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {

@@ -23,6 +23,8 @@ export class OPERATOR_NBT_COMPOUND_WITH_FLOAT extends BaseOperator<
   static override symbol = "NBT{}.with_float";
   static override interactName = "nbtWithFloat";
   static override operatorName = "compound_with_float" as const;
+  static override displayName = "NBT Compound With Float" as const;
+  static override fullDisplayName = "NBT NBT Compound With Float" as const;
   static override kind = "nbt" as const;
   static override renderPattern = "INFIX_2_LONG" as const;
   constructor(normalizeSignature = true) {

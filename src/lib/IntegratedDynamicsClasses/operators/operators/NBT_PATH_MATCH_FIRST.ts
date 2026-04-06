@@ -23,6 +23,8 @@ export class OPERATOR_NBT_PATH_MATCH_FIRST extends BaseOperator<
   static override symbol = "NBT.path_match_first";
   static override interactName = "stringNbtPathMatchFirst";
   static override operatorName = "path_match_first" as const;
+  static override displayName = "NBT Path Match First" as const;
+  static override fullDisplayName = "NBT NBT Path Match First" as const;
   static override kind = "nbt" as const;
   static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {

@@ -17,6 +17,8 @@ export class OPERATOR_OBJECT_ENTITY_TYPE extends BaseOperator<Entity, iString> {
   static override symbol = "entity_type";
   static override interactName = "entityType";
   static override operatorName = "entitytype" as const;
+  static override displayName = "Entity Type" as const;
+  static override fullDisplayName = "Entity Entity Type" as const;
   static override kind = "entity" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

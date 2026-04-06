@@ -23,6 +23,8 @@ export class OPERATOR_OBJECT_FLUIDSTACK_TAG extends BaseOperator<
   static override symbol = "fluid_tag_names";
   static override interactName = "fluidstackTags";
   static override operatorName = "tag" as const;
+  static override displayName = "Fluid Tag Names" as const;
+  static override fullDisplayName = "Fluid Fluid Tag Names" as const;
   static override kind = "fluidstack" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

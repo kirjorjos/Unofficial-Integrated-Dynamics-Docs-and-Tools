@@ -12,6 +12,8 @@ export class OPERATOR_BINARY_RSHIFT extends BaseOperator<
   static override symbol = ">>";
   static override interactName = "integerRightShift";
   static override operatorName = "rshift" as const;
+  static override displayName = "Right Shift" as const;
+  static override fullDisplayName = "Binary Right Shift" as const;
   static override kind = "binary" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

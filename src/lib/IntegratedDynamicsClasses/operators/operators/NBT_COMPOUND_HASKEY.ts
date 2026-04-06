@@ -22,6 +22,8 @@ export class OPERATOR_NBT_COMPOUND_HASKEY extends BaseOperator<
   static override symbol = "NBT{}.has_key";
   static override interactName = "nbtHasKey";
   static override operatorName = "compound_haskey" as const;
+  static override displayName = "NBT Compound Has Key" as const;
+  static override fullDisplayName = "NBT NBT Compound Has Key" as const;
   static override kind = "nbt" as const;
   static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {

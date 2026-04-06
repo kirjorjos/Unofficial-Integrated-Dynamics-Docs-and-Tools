@@ -18,6 +18,8 @@ export class OPERATOR_ARITHMETIC_ADDITION extends BaseOperator<
   static override symbol = "+";
   static override interactName = "numberAdd";
   static override operatorName = "addition" as const;
+  static override displayName = "Addition" as const;
+  static override fullDisplayName = "Arithmetic Addition" as const;
   static override kind = "arithmetic" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

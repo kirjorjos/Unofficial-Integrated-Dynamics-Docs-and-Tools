@@ -21,6 +21,8 @@ export class OPERATOR_LIST_EQUALS_MULTISET extends BaseOperator<
   static override symbol = "=multiset=";
   static override interactName = "listEquals_multiset";
   static override operatorName = "equals_multiset" as const;
+  static override displayName = "List Equals (Multiset)" as const;
+  static override fullDisplayName = "List List Equals (Multiset)" as const;
   static override kind = "list" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

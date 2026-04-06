@@ -21,6 +21,8 @@ export class OPERATOR_LIST_ELEMENT_DEFAULT extends BaseOperator<
   static override symbol = "get_or_default";
   static override interactName = "listGetOrDefault";
   static override operatorName = "get_or_default" as const;
+  static override displayName = "Get Or Default" as const;
+  static override fullDisplayName = "List Get Or Default" as const;
   static override kind = "list" as const;
   static override renderPattern = "INFIX_2_LONG" as const;
   constructor(normalizeSignature = true) {

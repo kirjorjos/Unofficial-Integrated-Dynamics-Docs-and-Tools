@@ -18,6 +18,8 @@ export class OPERATOR_LONG_TO_INTEGER extends BaseOperator<Long, Integer> {
   static override symbol = "()";
   static override interactName = "longLongToInteger";
   static override operatorName = "cast_integer" as const;
+  static override displayName = "Cast Number to Integer" as const;
+  static override fullDisplayName = "Number Cast Number to Integer" as const;
   static override kind = "number" as const;
   static override renderPattern = "PREFIX_1" as const;
   constructor(normalizeSignature = true) {

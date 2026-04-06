@@ -23,6 +23,8 @@ export class OPERATOR_STRING_REPLACE_REGEX extends BaseOperator<
   static override symbol = "replace_regex";
   static override interactName = "stringReplaceRegex";
   static override operatorName = "replace_regex" as const;
+  static override displayName = "Replace Regex" as const;
+  static override fullDisplayName = "String Replace Regex" as const;
   static override kind = "string" as const;
   static override renderPattern = "PREFIX_3_LONG" as const;
   constructor(normalizeSignature = true) {

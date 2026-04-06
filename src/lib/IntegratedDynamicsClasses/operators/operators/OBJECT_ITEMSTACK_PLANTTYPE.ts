@@ -19,6 +19,8 @@ export class OPERATOR_OBJECT_ITEMSTACK_PLANTTYPE extends BaseOperator<
   static override symbol = "plant_type";
   static override interactName = "plantType";
   static override operatorName = "planttype" as const;
+  static override displayName = "Item Plant Type" as const;
+  static override fullDisplayName = "Item Item Plant Type" as const;
   static override kind = "itemstack" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

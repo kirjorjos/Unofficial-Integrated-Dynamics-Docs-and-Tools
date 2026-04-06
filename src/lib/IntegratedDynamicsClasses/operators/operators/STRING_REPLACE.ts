@@ -13,6 +13,8 @@ export class OPERATOR_STRING_REPLACE extends BaseOperator<
   static override symbol = "replace";
   static override interactName = "stringReplace";
   static override operatorName = "replace" as const;
+  static override displayName = "Replace" as const;
+  static override fullDisplayName = "String Replace" as const;
   static override kind = "string" as const;
   static override renderPattern = "PREFIX_3_LONG" as const;
   constructor(normalizeSignature = true) {

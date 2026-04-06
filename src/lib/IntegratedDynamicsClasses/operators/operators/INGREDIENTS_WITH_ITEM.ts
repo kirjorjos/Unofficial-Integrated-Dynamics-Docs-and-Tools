@@ -19,6 +19,9 @@ export class OPERATOR_INGREDIENTS_WITH_ITEM extends BaseOperator<
   static override symbol = "Ingr.with_item";
   static override interactName = "ingredientsWithItem";
   static override operatorName = "with_item" as const;
+  static override displayName = "Ingredients With Item" as const;
+  static override fullDisplayName =
+    "Ingredients Ingredients With Item" as const;
   static override kind = "ingredients" as const;
   static override renderPattern = "INFIX_2_LONG" as const;
   constructor(normalizeSignature = true) {

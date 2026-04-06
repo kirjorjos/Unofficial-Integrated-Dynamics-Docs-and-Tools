@@ -20,6 +20,9 @@ export class OPERATOR_INGREDIENTS_WITH_ENERGIES extends BaseOperator<
   static override symbol = "Ingr.with_energies";
   static override interactName = "ingredientsWithEnergies";
   static override operatorName = "with_energies" as const;
+  static override displayName = "Ingredients With Energy Elements" as const;
+  static override fullDisplayName =
+    "Ingredients Ingredients With Energy Elements" as const;
   static override kind = "ingredients" as const;
   static override renderPattern = "INFIX_VERYLONG" as const;
   constructor(normalizeSignature = true) {

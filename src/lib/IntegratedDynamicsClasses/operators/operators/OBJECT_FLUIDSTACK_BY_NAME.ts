@@ -25,6 +25,8 @@ export class OPERATOR_OBJECT_FLUIDSTACK_BY_NAME extends BaseOperator<
   static override symbol = "fluid_by_name";
   static override interactName = "stringFluidByName";
   static override operatorName = "fluidbyname" as const;
+  static override displayName = "Fluid By Name" as const;
+  static override fullDisplayName = "Fluid Fluid By Name" as const;
   static override kind = "fluidstack" as const;
   static override renderPattern = "PREFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

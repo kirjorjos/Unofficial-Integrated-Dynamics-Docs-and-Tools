@@ -24,6 +24,8 @@ export class OPERATOR_ITEMSTACK_ITEMLISTCOUNT extends BaseOperator<
   static override symbol = "item_list_count";
   static override interactName = "listItemListCount";
   static override operatorName = "itemlistcount" as const;
+  static override displayName = "Item List Count" as const;
+  static override fullDisplayName = "Item Item List Count" as const;
   static override kind = "itemstack" as const;
   static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {

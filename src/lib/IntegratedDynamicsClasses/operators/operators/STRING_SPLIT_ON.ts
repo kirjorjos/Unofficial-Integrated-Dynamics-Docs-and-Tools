@@ -15,6 +15,8 @@ export class OPERATOR_STRING_SPLIT_ON extends BaseOperator<
   static override symbol = "split_on";
   static override interactName = "stringSplitOn";
   static override operatorName = "split_on" as const;
+  static override displayName = "Split On" as const;
+  static override fullDisplayName = "String Split On" as const;
   static override kind = "string" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

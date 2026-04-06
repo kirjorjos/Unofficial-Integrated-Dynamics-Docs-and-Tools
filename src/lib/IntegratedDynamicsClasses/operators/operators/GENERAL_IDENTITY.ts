@@ -16,6 +16,8 @@ export class OPERATOR_GENERAL_IDENTITY extends BaseOperator<
   static override symbol = "id";
   static override interactName = "anyIdentity";
   static override operatorName = "identity" as const;
+  static override displayName = "Identity" as const;
+  static override fullDisplayName = "General Identity" as const;
   static override kind = "general" as const;
   static override renderPattern = "PREFIX_1" as const;
   constructor(normalizeSignature = true) {

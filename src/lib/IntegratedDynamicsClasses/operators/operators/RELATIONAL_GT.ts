@@ -13,6 +13,8 @@ export class OPERATOR_RELATIONAL_GT extends BaseOperator<
   static override symbol = ">";
   static override interactName = "numberGreaterThan";
   static override operatorName = "gt" as const;
+  static override displayName = "Greater Than" as const;
+  static override fullDisplayName = "Relational Greater Than" as const;
   static override kind = "relational" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

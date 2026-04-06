@@ -10,6 +10,8 @@ export class OPERATOR_RECIPE_INPUT extends BaseOperator<Recipe, Ingredients> {
   static override symbol = "recipe_in";
   static override interactName = "recipeInput";
   static override operatorName = "input" as const;
+  static override displayName = "Recipe Input Ingredients" as const;
+  static override fullDisplayName = "Recipe Recipe Input Ingredients" as const;
   static override kind = "recipe" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

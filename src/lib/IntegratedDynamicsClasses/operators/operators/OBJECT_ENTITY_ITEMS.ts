@@ -24,6 +24,8 @@ export class OPERATOR_OBJECT_ENTITY_ITEMS extends BaseOperator<
   static override symbol = "entity_items";
   static override interactName = "entityItems";
   static override operatorName = "entityitems" as const;
+  static override displayName = "Entity Items" as const;
+  static override fullDisplayName = "Entity Entity Items" as const;
   static override kind = "entity" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

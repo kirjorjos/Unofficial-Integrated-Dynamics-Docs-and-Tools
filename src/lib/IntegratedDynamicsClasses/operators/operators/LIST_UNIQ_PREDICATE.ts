@@ -24,6 +24,8 @@ export class OPERATOR_LIST_UNIQ_PREDICATE extends BaseOperator<
   static override symbol = "uniq_p";
   static override interactName = "listUniquePredicate";
   static override operatorName = "uniq_p" as const;
+  static override displayName = "Unique Predicate" as const;
+  static override fullDisplayName = "List Unique Predicate" as const;
   static override kind = "list" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
