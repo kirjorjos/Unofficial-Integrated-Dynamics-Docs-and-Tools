@@ -144,6 +144,27 @@ const renderOutput = (format: OutputFormatKey, ast: TypeAST.AST): string => {
   return outputFormatters[format].fromAST(ast);
 };
 
+const updateUrlState = (
+  code: string | null,
+  format: OutputFormatKey | null = outputFormat.value
+): void => {
+  const url = new URL(window.location.href);
+
+  if (code) {
+    url.searchParams.set("code", code);
+  } else {
+    url.searchParams.delete("code");
+  }
+
+  if (format) {
+    url.searchParams.set("output", format);
+  } else {
+    url.searchParams.delete("output");
+  }
+
+  window.history.replaceState({}, "", url);
+};
+
 const updateOutputFromAst = (
   ast: TypeAST.AST,
   format: OutputFormatKey = outputFormat.value
@@ -167,6 +188,10 @@ watch(inputText, async () => {
 });
 
 watch(outputFormat, () => {
+  updateUrlState(
+    currentAst.value ? ASTToCompressed(currentAst.value) : null,
+    outputFormat.value
+  );
   if (!currentAst.value || outputError.value) return;
   updateOutputFromAst(currentAst.value, outputFormat.value);
 });
@@ -180,16 +205,12 @@ const transform = (): void => {
     currentAst.value = ast;
     if (!updateOutputFromAst(ast, outputFormat.value)) return;
     status.value = `Detected ${formatters[sourceFormat].label}. Output as ${outputFormatters[outputFormat.value].label}.`;
-    const url = new URL(window.location.href);
-    url.searchParams.set("code", compressedOutput);
-    window.history.replaceState({}, "", url);
+    updateUrlState(compressedOutput, outputFormat.value);
   } catch (error) {
     outputText.value = "";
     outputError.value = error instanceof Error ? error.message : String(error);
     status.value = "";
-    const url = new URL(window.location.href);
-    url.searchParams.delete("code");
-    window.history.replaceState({}, "", url);
+    updateUrlState(null, outputFormat.value);
   }
 };
 
@@ -211,9 +232,7 @@ const processTypes = (): void => {
     outputFormat.value = "expanded";
     if (!updateOutputFromAst(ast, "expanded")) return;
     status.value = "Processed types and regenerated expanded output.";
-    const url = new URL(window.location.href);
-    url.searchParams.set("code", compressedOutput);
-    window.history.replaceState({}, "", url);
+    updateUrlState(compressedOutput, "expanded");
   } catch (error) {
     outputText.value = "";
     outputError.value = error instanceof Error ? error.message : String(error);
@@ -238,12 +257,21 @@ const copyOutput = async (): Promise<void> => {
 onMounted(() => {
   const url = new URL(window.location.href);
   const code = url.searchParams.get("code");
+  const output = url.searchParams.get("output");
+
+  if (
+    output &&
+    Object.prototype.hasOwnProperty.call(outputFormatters, output) &&
+    output !== "compressed"
+  ) {
+    outputFormat.value = output as OutputFormatKey;
+  }
+
   if (!code) return;
 
   const ast = CompressedToAST(code);
   currentAst.value = ast;
-  outputFormat.value = "condensed";
-  if (updateOutputFromAst(ast, "condensed")) {
+  if (updateOutputFromAst(ast, outputFormat.value)) {
     status.value = "Loaded output from URL.";
   }
 });
