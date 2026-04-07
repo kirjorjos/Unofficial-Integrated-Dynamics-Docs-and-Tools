@@ -3,6 +3,7 @@ import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperat
 import {
   getOpName,
   resolveImplicitFlipOperator,
+  setOperatorSourceName,
 } from "lib/HelperClasses/UtilityFunctions";
 
 export const ASTToCodeLine = (ast: TypeAST.AST, isTopLevel = true): string => {
@@ -378,7 +379,10 @@ export const CodeLineToAST = (
 
     const internalKey = operatorRegistry.operatorByNickname(token);
     if (internalKey) {
-      return { type: "Operator", opName: internalKey as TypeOperatorKey };
+      return setOperatorSourceName(
+        { type: "Operator", opName: internalKey as TypeOperatorKey },
+        token
+      );
     }
 
     const implicitFlip = resolveImplicitFlipOperator(token);

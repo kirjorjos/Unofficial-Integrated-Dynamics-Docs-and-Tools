@@ -5,6 +5,7 @@ import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 import {
   getOpName,
   getNicknameRegex,
+  getOperatorSourceName,
 } from "lib/HelperClasses/UtilityFunctions";
 
 const getLabel = (index: number): string => {
@@ -285,6 +286,8 @@ const getVarName = (node: TypeAST.AST): string => {
     case "Variable":
       return node.name;
     case "Operator": {
+      const sourceName = getOperatorSourceName(node);
+      if (sourceName) return sourceName;
       const formal = getOpName(node.opName);
       return formal.charAt(0).toLowerCase() + formal.slice(1);
     }

@@ -237,6 +237,9 @@ const getOperatorOutputType = (operatorClass: OperatorClassLike): string => {
 const getCardName = (ast: TypeAST.AST, fallbackIndex: number): string => {
   if (ast.varName) return ast.varName;
 
+  const capitalize = (value: string) =>
+    value.charAt(0).toUpperCase() + value.slice(1);
+
   switch (ast.type) {
     case "Operator":
       return getOperatorDisplay(ast.opName).title;
@@ -253,13 +256,13 @@ const getCardName = (ast: TypeAST.AST, fallbackIndex: number): string => {
     case "Null":
       return "null";
     case "List":
-      return `list${fallbackIndex}`;
+      return "list";
     case "Pipe":
-      return `pipe${fallbackIndex}`;
+      return "pipe";
     case "Pipe2":
-      return `pipe2_${fallbackIndex}`;
+      return "pipe2";
     case "Flip":
-      return `flip${fallbackIndex}`;
+      return `flip${capitalize(getCardName(ast.arg, fallbackIndex))}`;
     case "Curry":
       return `card${fallbackIndex}`;
     default:

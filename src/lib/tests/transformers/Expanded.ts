@@ -253,4 +253,9 @@ whitelistTagList = ["c:armor", "c:tools"]
       varName: "final",
     });
   });
+
+  it("testVarNameIsGivenNickname", () => {
+    expect(ASTToExpanded(CodeLineToAST("gt"))).toContain("gt ::");
+    expect(ASTToExpanded(CodeLineToAST("flip pipe"))).toContain("flipPipe ::");
+  });
 });

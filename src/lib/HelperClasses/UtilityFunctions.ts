@@ -39,6 +39,22 @@ export const getImplicitFlipNameRegex = (): RegExp => {
   );
 };
 
+const operatorSourceNameMap = new WeakMap<TypeAST.BaseOperator, string>();
+
+export const setOperatorSourceName = (
+  node: TypeAST.BaseOperator,
+  sourceName: string
+): TypeAST.BaseOperator => {
+  operatorSourceNameMap.set(node, sourceName);
+  return node;
+};
+
+export const getOperatorSourceName = (
+  node: TypeAST.BaseOperator
+): string | undefined => {
+  return operatorSourceNameMap.get(node);
+};
+
 export const resolveImplicitFlipOperator = (
   name: string
 ): TypeAST.Flip | undefined => {
@@ -51,7 +67,10 @@ export const resolveImplicitFlipOperator = (
 
   return {
     type: "Flip",
-    arg: { type: "Operator", opName: internalName },
+    arg: setOperatorSourceName(
+      { type: "Operator", opName: internalName },
+      baseNickname
+    ),
   };
 };
 
