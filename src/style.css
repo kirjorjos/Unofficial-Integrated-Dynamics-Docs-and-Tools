@@ -72,6 +72,28 @@ button {
   font-size: 0.95rem;
 }
 
+.sidebar-search {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0 0.5rem 1rem;
+}
+
+.sidebar-search-label {
+  color: #355866;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.sidebar-search-input {
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid #9cc9d3;
+  border-radius: 0.5rem;
+  background: rgba(248, 253, 254, 0.82);
+  color: #18303a;
+  font: inherit;
+}
+
 .sidebar-nav {
   display: grid;
   gap: 0.9rem;
@@ -115,6 +137,14 @@ button {
 .file-list {
   display: grid;
   gap: 0.15rem;
+}
+
+.nested-folder-row {
+  padding-left: 1.5rem;
+}
+
+.nested-file-list {
+  padding-left: 1rem;
 }
 
 .file-row {
