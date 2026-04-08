@@ -57,7 +57,7 @@ const operatorAst = computed<TypeAST.Operator>(() => {
 </script>
 
 <template>
-  <article class="doc-page">
+  <article class="doc-page operator-doc-page">
     <h2>{{ operatorKey }}</h2>
 
     <dl class="operator-meta">
@@ -103,12 +103,28 @@ const operatorAst = computed<TypeAST.Operator>(() => {
         </label>
       </div>
 
-      <LogicProgrammerVisualOutput
-        :ast="operatorAst"
-        :start-variable-id="variableId"
-        :show-step-numbers="false"
-        :show-step-titles="false"
-      />
+      <div class="operator-preview-grid">
+        <section class="operator-preview-panel">
+          <h3>Operator Tab</h3>
+          <LogicProgrammerVisualOutput
+            :ast="operatorAst"
+            :start-variable-id="variableId"
+            :show-step-numbers="false"
+            :show-step-titles="false"
+          />
+        </section>
+
+        <section class="operator-preview-panel">
+          <h3>Pattern Tab</h3>
+          <LogicProgrammerVisualOutput
+            :ast="operatorAst"
+            :start-variable-id="variableId"
+            :show-step-numbers="false"
+            :show-step-titles="false"
+            operator-preview-mode="pattern"
+          />
+        </section>
+      </div>
     </section>
   </article>
 </template>

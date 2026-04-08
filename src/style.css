@@ -247,6 +247,10 @@ button {
   color: #4a6974;
 }
 
+.operator-doc-page {
+  max-width: 1240px;
+}
+
 .operator-meta {
   margin: 1.5rem 0 0;
 }
@@ -280,6 +284,23 @@ button {
   display: grid;
   gap: 1rem;
   margin-top: 1.5rem;
+}
+
+.operator-preview-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.operator-preview-panel {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.operator-preview-panel h3 {
+  margin: 0;
+  color: #224855;
+  font-size: 1rem;
 }
 
 .operator-preview-controls {
@@ -711,14 +732,23 @@ button {
   overflow: visible;
 }
 
+.logic-tooltip-anchor {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
 .logic-card-tooltip {
-  position: absolute;
-  left: 50%;
-  bottom: calc(100% + 4px);
-  transform: translateX(-50%);
-  display: none;
   pointer-events: none;
-  z-index: 12;
+}
+
+.logic-card-tooltip-floating {
+  position: fixed;
+  z-index: 9999;
+  transform: scale(2);
+  transform-origin: top left;
 }
 
 .mc-tooltip {
@@ -819,10 +849,6 @@ button {
 
 .mc-tooltip-color-f {
   color: #ffffff;
-}
-
-.logic-card-overlay-has-tooltip:hover .logic-card-tooltip {
-  display: block;
 }
 
 .logic-write-arrow {
@@ -992,5 +1018,9 @@ button {
 
   .doc-page {
     padding: 1.25rem;
+  }
+
+  .operator-preview-grid {
+    grid-template-columns: 1fr;
   }
 }

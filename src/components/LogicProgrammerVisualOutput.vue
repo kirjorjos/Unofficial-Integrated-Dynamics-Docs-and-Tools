@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import FitText from "./FitText.vue";
-import MinecraftTooltip from "./MinecraftTooltip.vue";
+import HoverMinecraftTooltip from "./HoverMinecraftTooltip.vue";
 import { ASTToCondensed, operatorRegistry } from "lib";
 import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 import { ASTtoOperator } from "lib/transformers/Operator";
@@ -39,6 +39,10 @@ type VisualStep = {
   variableId: number;
   tooltip: TooltipData;
   tooltipOperatorKey?: TypeOperatorKey;
+  expectedInputTypes?: string[];
+  expectedOutputType?: string;
+  forceOperatorTabActive?: boolean;
+  workspaceMode?: "operatorValue" | "pattern";
 };
 
 type VisualCardRef = {
@@ -101,6 +105,7 @@ const props = defineProps<{
   startVariableId: number;
   showStepNumbers?: boolean;
   showStepTitles?: boolean;
+  operatorPreviewMode?: "value" | "pattern";
 }>();
 
 const SHIFT_HELD_TOOLTIP_INFO = tooltipInfo as Record<string, string>;
@@ -115,6 +120,8 @@ const OPERATOR_INPUT_TYPE_TEMPLATE = "§eInput Type %s: §r%s";
 const OPERATOR_OUTPUT_TYPE_TEMPLATE = "§eOutput Type: §r%s";
 const OPERATOR_VARIABLE_IDS_TEMPLATE = "§eVariable IDs: §r§o%s";
 const OPERATOR_SIGNATURE_TEMPLATE = "§eSignature: §r%s";
+const EXPECTED_INPUT_TYPE_TEMPLATE = "§eExpected Type: §r%s";
+const EXPECTED_OUTPUT_TYPE_TEMPLATE = "§eExpected Output: §r%s";
 
 const publicAsset = (path: string) => `${import.meta.env.BASE_URL}${path}`;
 
@@ -780,6 +787,46 @@ const buildStepTooltip = (
 };
 
 const steps = computed<VisualStep[]>(() => {
+  if (
+    props.operatorPreviewMode === "pattern" &&
+    props.ast.type === "Operator"
+  ) {
+    const operator = getOperatorDisplay(props.ast.opName);
+    const operatorMeta = getOperatorTooltipMeta(props.ast.opName);
+    const signatureTypes = getOperatorValueSignatureTypes(props.ast.opName);
+    const variableId = props.startVariableId;
+    const step: Omit<VisualStep, "variableId" | "tooltip"> = {
+      id: "operator-pattern-preview",
+      title: operator.title,
+      searchLabel: operator.searchLabel,
+      panelLabel: operator.panelLabel,
+      symbol: operator.symbol,
+      kind: "value",
+      sourceType: "Operator",
+      renderPattern: operator.renderPattern,
+      inputs: [],
+      output: getCardName(props.ast, 1),
+      detail: props.ast.opName,
+      node: props.ast,
+      tooltipOperatorKey: props.ast.opName,
+      expectedInputTypes: operatorMeta.inputTypes,
+      expectedOutputType:
+        signatureTypes.length > 0
+          ? signatureTypes[signatureTypes.length - 1]
+          : operatorMeta.outputType,
+      forceOperatorTabActive: true,
+      workspaceMode: "pattern",
+    };
+
+    return [
+      {
+        ...step,
+        variableId,
+        tooltip: buildStepTooltip(step, variableId),
+      },
+    ];
+  }
+
   const result: VisualStep[] = [];
   const seen = new Map<TypeAST.AST, VisualCardRef>();
   let counter = 0;
@@ -825,6 +872,7 @@ const steps = computed<VisualStep[]>(() => {
           detail: ast.opName,
           node: ast,
           tooltipOperatorKey: ast.opName,
+          workspaceMode: "operatorValue",
         });
       }
       case "Curry": {
@@ -939,7 +987,7 @@ const steps = computed<VisualStep[]>(() => {
   return result;
 });
 
-const getOperatorValueSignatureLines = (opName: TypeOperatorKey): string[] => {
+const getOperatorValueSignatureTypes = (opName: TypeOperatorKey): string[] => {
   const operatorClass = operatorRegistry[
     opName as keyof typeof operatorRegistry
   ] as unknown as OperatorClassLike | undefined;
@@ -953,11 +1001,62 @@ const getOperatorValueSignatureLines = (opName: TypeOperatorKey): string[] => {
   );
   const flatSignature = signature.toFlatSignature();
 
+  return flatSignature;
+};
+
+const getOperatorValueSignatureLines = (opName: TypeOperatorKey): string[] => {
+  const flatSignature = getOperatorValueSignatureTypes(opName);
   if (flatSignature.length === 0) return [];
 
   return flatSignature.map((typeName, index) =>
     index === 0 ? typeName : `  -> ${typeName}`
   );
+};
+
+const getExpectedInputTooltip = (typeName: string): TooltipData => {
+  const typeMeta = getValueTypeMeta(typeName);
+  return {
+    title: "Expected Input",
+    lines: [
+      formatTemplate(
+        EXPECTED_INPUT_TYPE_TEMPLATE,
+        `${typeMeta.colorCode}${typeMeta.label}`
+      ),
+    ],
+  };
+};
+
+const getExpectedOutputTooltip = (typeName: string): TooltipData => {
+  const typeMeta = getValueTypeMeta(typeName);
+  return {
+    title: "Expected Output",
+    lines: [
+      formatTemplate(
+        EXPECTED_OUTPUT_TYPE_TEMPLATE,
+        `${typeMeta.colorCode}${typeMeta.label}`
+      ),
+    ],
+  };
+};
+
+const getInputSlotTooltip = (
+  step: VisualStep,
+  inputIndex: number
+): TooltipData | null => {
+  if (step.inputs[inputIndex]) {
+    return step.inputs[inputIndex]!.tooltip;
+  }
+
+  const expectedType = step.expectedInputTypes?.[inputIndex];
+  return expectedType ? getExpectedInputTooltip(expectedType) : null;
+};
+
+const getOutputSlotTooltip = (step: VisualStep): TooltipData => {
+  if (step.workspaceMode === "pattern" && step.expectedOutputType) {
+    return getExpectedOutputTooltip(step.expectedOutputType);
+  }
+
+  return step.tooltip;
 };
 
 const getPatternBox = (step: VisualStep) => {
@@ -966,7 +1065,7 @@ const getPatternBox = (step: VisualStep) => {
   const workspaceWidth = 160;
   const workspaceHeight = 87;
 
-  if (step.sourceType === "Operator") {
+  if (step.workspaceMode === "operatorValue") {
     const pattern = LOGIC_PROGRAMMER_RENDER_PATTERNS.NONE_CANVAS;
     const left = workspaceX + Math.floor((workspaceWidth - pattern.width) / 2);
     const top = workspaceY + Math.floor((workspaceHeight - pattern.height) / 2);
@@ -1096,11 +1195,12 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
       color: entry.color,
       active:
         entry.tabKind === "type"
-          ? entry.symbol ===
-            (step.sourceType === "Operator"
-              ? "Operator"
-              : getValueTypeSearchLabel(step.sourceType))
-          : step.sourceType !== "Operator" &&
+          ? !step.forceOperatorTabActive &&
+            entry.symbol ===
+              (step.sourceType === "Operator"
+                ? "Operator"
+                : getValueTypeSearchLabel(step.sourceType))
+          : (step.forceOperatorTabActive || step.sourceType !== "Operator") &&
             (entry.symbol === step.symbol || entry.matchString === search),
     }));
 
@@ -1178,7 +1278,7 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
 
             <div class="logic-clear-button-overlay">Clear</div>
 
-            <template v-if="step.sourceType === 'Operator'">
+            <template v-if="step.workspaceMode === 'operatorValue'">
               <div
                 class="logic-operator-canvas"
                 :style="{
@@ -1218,7 +1318,7 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
               </div>
             </template>
 
-            <template v-if="getValueBox(step)">
+            <template v-else-if="getValueBox(step)">
               <div
                 v-if="getPatternBox(step).canvas"
                 class="logic-operator-canvas"
@@ -1245,7 +1345,7 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
               </div>
             </template>
 
-            <template v-else-if="step.sourceType !== 'Operator'">
+            <template v-else>
               <div
                 v-if="getPatternBox(step).canvas"
                 class="logic-operator-canvas"
@@ -1279,23 +1379,26 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
                 :key="`${step.id}-slot-${inputIndex}`"
                 class="logic-slot-overlay"
                 :class="{
-                  'logic-card-overlay-has-tooltip': !!step.inputs[inputIndex],
+                  'logic-card-overlay-has-tooltip': !!getInputSlotTooltip(
+                    step,
+                    inputIndex
+                  ),
                 }"
                 :style="{ left: `${slot.left}px`, top: `${slot.top}px` }"
               >
-                <div
-                  v-if="step.inputs[inputIndex]"
-                  class="logic-slot-card-composite"
-                  :style="{
-                    backgroundImage: `url('${publicAsset(`valuetype/${getValueTypeTextureName(step.inputs[inputIndex]?.type ?? 'Null')}.png`)}'), url('${publicAsset('item/variable.png')}')`,
-                  }"
-                />
-                <div v-if="step.inputs[inputIndex]" class="logic-card-tooltip">
-                  <MinecraftTooltip
-                    :title="step.inputs[inputIndex]!.tooltip.title"
-                    :lines="step.inputs[inputIndex]!.tooltip.lines"
+                <HoverMinecraftTooltip
+                  v-if="getInputSlotTooltip(step, inputIndex)"
+                  :title="getInputSlotTooltip(step, inputIndex)!.title"
+                  :lines="getInputSlotTooltip(step, inputIndex)!.lines"
+                >
+                  <div
+                    v-if="step.inputs[inputIndex]"
+                    class="logic-slot-card-composite"
+                    :style="{
+                      backgroundImage: `url('${publicAsset(`valuetype/${getValueTypeTextureName(step.inputs[inputIndex]?.type ?? 'Null')}.png`)}'), url('${publicAsset('item/variable.png')}')`,
+                    }"
                   />
-                </div>
+                </HoverMinecraftTooltip>
               </div>
               <div
                 v-if="getPatternBox(step).symbol"
@@ -1321,18 +1424,18 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
             <div class="logic-labeller-badge">E</div>
 
             <div class="logic-write-card logic-card-overlay-has-tooltip">
-              <div
-                class="logic-write-card-composite"
-                :style="{
-                  backgroundImage: `url('${publicAsset(`valuetype/${getValueTypeTextureName(step.sourceType)}.png`)}'), url('${publicAsset('item/variable.png')}')`,
-                }"
-              />
-              <div class="logic-card-tooltip">
-                <MinecraftTooltip
-                  :title="step.tooltip.title"
-                  :lines="step.tooltip.lines"
+              <HoverMinecraftTooltip
+                :title="getOutputSlotTooltip(step).title"
+                :lines="getOutputSlotTooltip(step).lines"
+              >
+                <div
+                  v-if="step.workspaceMode !== 'pattern'"
+                  class="logic-write-card-composite"
+                  :style="{
+                    backgroundImage: `url('${publicAsset(`valuetype/${getValueTypeTextureName(step.sourceType)}.png`)}'), url('${publicAsset('item/variable.png')}')`,
+                  }"
                 />
-              </div>
+              </HoverMinecraftTooltip>
             </div>
           </div>
         </div>
