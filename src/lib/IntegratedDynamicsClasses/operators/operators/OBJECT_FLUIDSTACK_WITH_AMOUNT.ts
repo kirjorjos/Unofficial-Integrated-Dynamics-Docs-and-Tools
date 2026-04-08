@@ -27,6 +27,9 @@ export class OPERATOR_OBJECT_FLUIDSTACK_WITH_AMOUNT extends BaseOperator<
   static override operatorName = "with_amount" as const;
   static override displayName = "Fluid With Amount" as const;
   static override fullDisplayName = "Fluid Fluid With Amount" as const;
+  static override tooltipInfo =
+    "Copy the given fluid with the given amount" as const;
+
   static override kind = "fluidstack" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

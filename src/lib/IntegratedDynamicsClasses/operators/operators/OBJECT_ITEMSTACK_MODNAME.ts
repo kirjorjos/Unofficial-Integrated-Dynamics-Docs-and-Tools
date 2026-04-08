@@ -22,6 +22,9 @@ export class OPERATOR_OBJECT_ITEMSTACK_MODNAME extends BaseOperator<
   static override operatorName = "mod" as const;
   static override displayName = "Mod" as const;
   static override fullDisplayName = "Item Mod" as const;
+  static override tooltipInfo =
+    "The name of the mod owning the given item" as const;
+
   static override kind = "itemstack" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

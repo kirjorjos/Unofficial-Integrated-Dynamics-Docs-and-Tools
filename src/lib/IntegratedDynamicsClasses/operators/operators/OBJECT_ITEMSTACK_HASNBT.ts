@@ -24,6 +24,8 @@ export class OPERATOR_OBJECT_ITEMSTACK_HASNBT extends BaseOperator<
   static override operatorName = "hasnbt" as const;
   static override displayName = "Has NBT" as const;
   static override fullDisplayName = "Item Has NBT" as const;
+  static override tooltipInfo = "If the item stack has an NBT tag." as const;
+
   static override kind = "itemstack" as const;
   static override renderPattern = "PREFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

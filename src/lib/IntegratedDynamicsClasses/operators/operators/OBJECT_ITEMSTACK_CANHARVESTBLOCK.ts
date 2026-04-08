@@ -26,6 +26,9 @@ export class OPERATOR_OBJECT_ITEMSTACK_CANHARVESTBLOCK extends BaseOperator<
   static override operatorName = "canharvest" as const;
   static override displayName = "Can Harvest" as const;
   static override fullDisplayName = "Item Can Harvest" as const;
+  static override tooltipInfo =
+    "If the item can harvest the given block" as const;
+
   static override kind = "itemstack" as const;
   static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {

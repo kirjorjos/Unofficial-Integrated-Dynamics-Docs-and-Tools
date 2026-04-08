@@ -20,6 +20,8 @@ export class OPERATOR_ARITHMETIC_MAXIMUM extends BaseOperator<
   static override operatorName = "maximum" as const;
   static override displayName = "Maximum" as const;
   static override fullDisplayName = "Arithmetic Maximum" as const;
+  static override tooltipInfo = "Takes the largest of two values." as const;
+
   static override kind = "arithmetic" as const;
   static override renderPattern = "PREFIX_2" as const;
   constructor(normalizeSignature = true) {

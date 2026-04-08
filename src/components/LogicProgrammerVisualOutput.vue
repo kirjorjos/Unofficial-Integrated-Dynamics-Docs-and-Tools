@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import FitText from "./FitText.vue";
-import { operatorRegistry } from "lib";
+import MinecraftTooltip from "./MinecraftTooltip.vue";
+import { ASTToCondensed, operatorRegistry } from "lib";
 import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
+import { ASTtoOperator } from "lib/transformers/Operator";
 import {
   BaseOperator,
   type LogicProgrammerRenderPatternKey,
 } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
+import tooltipInfo from "lib/generated/integratedDynamicsTooltipInfo.json";
 import { LOGIC_PROGRAMMER_RENDER_PATTERNS } from "./logicProgrammerRenderPatterns";
 
 type OperatorClassLike = {
@@ -15,6 +18,7 @@ type OperatorClassLike = {
   interactName?: string;
   displayName?: string;
   fullDisplayName?: string;
+  tooltipInfo?: string;
   symbol?: string;
   renderPattern?: LogicProgrammerRenderPatternKey;
 };
@@ -31,11 +35,17 @@ type VisualStep = {
   inputs: VisualCardRef[];
   output: string;
   detail?: string;
+  node: TypeAST.AST;
+  variableId: number;
+  tooltip: TooltipData;
+  tooltipOperatorKey?: TypeOperatorKey;
 };
 
 type VisualCardRef = {
   name: string;
   type: TypeAST.AST["type"];
+  variableId: number;
+  tooltip: TooltipData;
 };
 
 type VisibleListEntry = {
@@ -43,6 +53,11 @@ type VisibleListEntry = {
   active: boolean;
   tabKind: "type" | "operator";
   color: string;
+};
+
+type TooltipData = {
+  title: string;
+  lines: string[];
 };
 
 const LOGIC_PROGRAMMER_DATA_TYPE_TABS = [
@@ -83,9 +98,346 @@ const LOGIC_PROGRAMMER_TYPE_COLORS: Record<string, string> = {
 
 const props = defineProps<{
   ast: TypeAST.AST;
+  startVariableId: number;
 }>();
 
+const SHIFT_HELD_TOOLTIP_INFO = tooltipInfo as Record<string, string>;
+const VARIABLE_CARD_NAME = "Variable Card";
+const VARIABLE_CARD_ID_TEMPLATE = "§e§oVariable ID: §r§o%s";
+const VARIABLE_CARD_INFO_KEY = "item.integrateddynamics.variable.info";
+const VALUE_TYPE_NAME_TEMPLATE = "§eType: §r%s";
+const VALUE_TEMPLATE = "§e§oValue: §r%s";
+const OPERATOR_NAME_TEMPLATE = "§eOperator: §r%s (%s)";
+const OPERATOR_CATEGORY_TEMPLATE = "§eCategory: §r%s";
+const OPERATOR_INPUT_TYPE_TEMPLATE = "§eInput Type %s: §r%s";
+const OPERATOR_OUTPUT_TYPE_TEMPLATE = "§eOutput Type: §r%s";
+const OPERATOR_VARIABLE_IDS_TEMPLATE = "§eVariable IDs: §r§o%s";
+const OPERATOR_SIGNATURE_TEMPLATE = "§eSignature: §r%s";
+
 const publicAsset = (path: string) => `${import.meta.env.BASE_URL}${path}`;
+
+const formatTemplate = (template: string, ...values: string[]): string => {
+  let currentIndex = 0;
+  return template.replace(/%s/g, () => values[currentIndex++] ?? "");
+};
+
+const splitTooltipInfoLines = (value: string, maxLength = 25): string[] => {
+  return value.split(/\\n/g).flatMap((partial) => {
+    const lines: string[] = [];
+    let buffer = "";
+
+    for (const word of partial.split(" ")) {
+      if (!word) continue;
+      buffer = buffer ? `${buffer} ${word}` : word;
+      if (buffer.length >= maxLength) {
+        lines.push(`§5§o${buffer}`);
+        buffer = "";
+      }
+    }
+
+    if (buffer) {
+      lines.push(`§5§o${buffer}`);
+    }
+
+    return lines;
+  });
+};
+
+const formatVariableId = (value: number): string => `${value}`;
+
+const getCardTitle = (name: string): string => {
+  const trimmed = name.trim();
+  return trimmed ? `§o${trimmed}` : VARIABLE_CARD_NAME;
+};
+
+type ValueTypeTooltipMeta = {
+  label: string;
+  colorCode: string;
+  infoKey?: string;
+};
+
+const VALUE_TYPE_TOOLTIP_META: Record<string, ValueTypeTooltipMeta> = {
+  Any: {
+    label: "Any",
+    colorCode: "§r",
+    infoKey: "valuetype.integrateddynamics.any.info",
+  },
+  Number: {
+    label: "Number",
+    colorCode: "§6",
+    infoKey: "valuetype.integrateddynamics.number.info",
+  },
+  Named: {
+    label: "Named",
+    colorCode: "§c",
+    infoKey: "valuetype.integrateddynamics.named.info",
+  },
+  UniquelyNamed: {
+    label: "Uniquely Named",
+    colorCode: "§c",
+    infoKey: "valuetype.integrateddynamics.uniquely_named.info",
+  },
+  Nullable: {
+    label: "Nullable",
+    colorCode: "§8",
+  },
+  Boolean: {
+    label: "Boolean",
+    colorCode: "§1",
+  },
+  Integer: {
+    label: "Integer",
+    colorCode: "§6",
+  },
+  Double: {
+    label: "Double",
+    colorCode: "§e",
+  },
+  Long: {
+    label: "Long",
+    colorCode: "§e",
+  },
+  String: {
+    label: "String",
+    colorCode: "§c",
+  },
+  Operator: {
+    label: "Operator",
+    colorCode: "§2",
+    infoKey: "valuetype.integrateddynamics.operator.info",
+  },
+  NBT: {
+    label: "NBT",
+    colorCode: "§3",
+  },
+  List: {
+    label: "List",
+    colorCode: "§4",
+  },
+  Block: {
+    label: "Block",
+    colorCode: "§7",
+  },
+  Item: {
+    label: "Item",
+    colorCode: "§7",
+  },
+  Entity: {
+    label: "Entity",
+    colorCode: "§7",
+  },
+  Fluid: {
+    label: "Fluid",
+    colorCode: "§7",
+  },
+  Ingredients: {
+    label: "Ingredients",
+    colorCode: "§7",
+  },
+  Recipe: {
+    label: "Recipe",
+    colorCode: "§7",
+  },
+};
+
+const getValueTypeMeta = (typeName: string): ValueTypeTooltipMeta => {
+  return (
+    VALUE_TYPE_TOOLTIP_META[typeName] ?? {
+      label: typeName,
+      colorCode: "§f",
+    }
+  );
+};
+
+const getValueTypeMetaForAst = (
+  type: TypeAST.AST["type"]
+): ValueTypeTooltipMeta => {
+  if (type === "Null") return getValueTypeMeta("Any");
+  return getValueTypeMeta(type);
+};
+
+const getTooltipInfoLines = (infoKey?: string): string[] => {
+  if (!infoKey) return [];
+
+  const line = SHIFT_HELD_TOOLTIP_INFO[infoKey];
+  return line ? splitTooltipInfoLines(line) : [];
+};
+
+const getOperatorClass = (
+  opName: TypeOperatorKey
+): OperatorClassLike | undefined => {
+  return operatorRegistry[
+    opName as keyof typeof operatorRegistry
+  ] as unknown as OperatorClassLike | undefined;
+};
+
+const getOperatorTooltipMeta = (opName: TypeOperatorKey) => {
+  const operatorClass = getOperatorClass(opName);
+  if (!operatorClass) {
+    return {
+      displayName: opName,
+      categoryName: "Operator",
+      symbol: opName,
+      inputTypes: [] as string[],
+      outputType: "Any",
+      tooltipInfo: undefined as string | undefined,
+      fullName: opName,
+    };
+  }
+
+  const operator = new operatorClass(false);
+  const signature = operator.getParsedSignature();
+  const inputTypes = Array.from({ length: signature.getArity() }, (_, index) =>
+    signature.getInput(index).getRootType()
+  );
+
+  return {
+    displayName: operator.getDisplayOperatorName(),
+    categoryName: operator.getCategoryName(),
+    symbol: operator.symbol,
+    inputTypes,
+    outputType: signature.getOutput(-1).getRootType(),
+    tooltipInfo: operatorClass.tooltipInfo,
+    fullName: operator.getFullDisplayName(),
+  };
+};
+
+const cloneAstWithoutVarNames = (ast: TypeAST.AST): TypeAST.AST => {
+  switch (ast.type) {
+    case "Curry":
+      return {
+        type: "Curry",
+        base: cloneAstWithoutVarNames(ast.base) as TypeAST.Operator,
+        args: ast.args.map(cloneAstWithoutVarNames),
+      };
+    case "Pipe":
+      return {
+        type: "Pipe",
+        op1: cloneAstWithoutVarNames(ast.op1) as TypeAST.Operator,
+        op2: cloneAstWithoutVarNames(ast.op2) as TypeAST.Operator,
+      };
+    case "Pipe2":
+      return {
+        type: "Pipe2",
+        op1: cloneAstWithoutVarNames(ast.op1) as TypeAST.Operator,
+        op2: cloneAstWithoutVarNames(ast.op2) as TypeAST.Operator,
+        op3: cloneAstWithoutVarNames(ast.op3) as TypeAST.Operator,
+      };
+    case "Flip":
+      return {
+        type: "Flip",
+        arg: cloneAstWithoutVarNames(ast.arg) as TypeAST.Operator,
+      };
+    case "List":
+      return {
+        type: "List",
+        value: ast.value.map(cloneAstWithoutVarNames),
+      };
+    case "Variable":
+      return {
+        type: "Variable",
+        name: ast.name,
+      };
+    case "Operator":
+      return {
+        type: "Operator",
+        opName: ast.opName,
+      };
+    case "Integer":
+      return { type: "Integer", value: ast.value };
+    case "Long":
+      return { type: "Long", value: ast.value };
+    case "Double":
+      return { type: "Double", value: ast.value };
+    case "String":
+      return { type: "String", value: ast.value };
+    case "Boolean":
+      return { type: "Boolean", value: ast.value };
+    case "Null":
+      return { type: "Null" };
+    case "NBT":
+      return { type: "NBT", value: ast.value };
+    case "Block":
+      return { type: "Block", value: ast.value };
+    case "Item":
+      return { type: "Item", value: ast.value };
+    case "Fluid":
+      return { type: "Fluid", value: ast.value };
+    case "Entity":
+      return { type: "Entity", value: ast.value };
+    case "Ingredients":
+      return {
+        type: "Ingredients",
+        value: {
+          items: (ast.value.items ?? []).map((item) =>
+            cloneAstWithoutVarNames(item)
+          ) as TypeAST.Item[],
+          fluids: (ast.value.fluids ?? []).map((fluid) =>
+            cloneAstWithoutVarNames(fluid)
+          ) as TypeAST.Fluid[],
+          energy: (ast.value.energy ?? []).map((energy) =>
+            cloneAstWithoutVarNames(energy)
+          ) as TypeAST.Long[],
+        },
+      };
+    case "Recipe":
+      return {
+        type: "Recipe",
+        value: {
+          input: cloneAstWithoutVarNames(
+            ast.value.input
+          ) as TypeAST.Ingredients,
+          output: cloneAstWithoutVarNames(
+            ast.value.output
+          ) as TypeAST.Ingredients,
+          inputReuseable: ast.value.inputReuseable,
+        },
+      };
+  }
+};
+
+const getCompactValueTextForAst = (ast: TypeAST.AST): string => {
+  switch (ast.type) {
+    case "String":
+      return ast.value;
+    case "Boolean":
+      return String(ast.value);
+    case "Integer":
+    case "Long":
+    case "Double":
+      return ast.value;
+    case "Null":
+      return "null";
+    case "NBT":
+      return JSON.stringify(ast.value);
+    case "List":
+      return `[${ast.value.map(getCompactValueTextForAst).join(", ")}]`;
+    case "Block":
+    case "Item":
+    case "Fluid":
+    case "Entity":
+    case "Ingredients":
+    case "Recipe": {
+      const value = ASTtoOperator(cloneAstWithoutVarNames(ast));
+      if ("getName" in value && typeof value.getName === "function") {
+        return value.getName().valueOf();
+      }
+      break;
+    }
+  }
+
+  return ASTToCondensed(cloneAstWithoutVarNames(ast));
+};
+
+const getCompactValueText = (
+  step: Pick<VisualStep, "sourceType" | "detail" | "node">
+): string => {
+  if (step.sourceType === "Operator" && step.detail) {
+    return getOperatorTooltipMeta(step.detail as TypeOperatorKey).fullName;
+  }
+
+  return getCompactValueTextForAst(step.node);
+};
 
 const getOperatorDisplay = (opName: TypeOperatorKey) => {
   const operatorClass = operatorRegistry[
@@ -291,6 +643,140 @@ const primitiveDetail = (ast: TypeAST.AST): string | undefined => {
   }
 };
 
+const getOperatorValueSignatureText = (opName: TypeOperatorKey): string => {
+  const operatorClass = getOperatorClass(opName);
+  if (!operatorClass) return "";
+
+  const signature = new ParsedSignature(
+    new operatorClass(false).getParsedSignature().getAst(),
+    false
+  ).toFlatSignature();
+
+  return signature
+    .map((typeName) => {
+      const meta = getValueTypeMeta(typeName);
+      return `${meta.colorCode}${meta.label}`;
+    })
+    .join(" §r-> ");
+};
+
+const getOperatorReferenceText = (inputs: VisualCardRef[]): string => {
+  return `{${inputs
+    .map((input) => `${input.name}:${input.variableId}`)
+    .join(",")}}`;
+};
+
+const getBaseTooltipLines = (variableId: number): string[] => {
+  return [
+    formatTemplate(VARIABLE_CARD_ID_TEMPLATE, formatVariableId(variableId)),
+    ...getTooltipInfoLines(VARIABLE_CARD_INFO_KEY),
+  ];
+};
+
+const buildValueCardTooltip = (
+  step: Pick<VisualStep, "output" | "sourceType" | "detail" | "node">,
+  variableId: number
+): TooltipData => {
+  const typeMeta = getValueTypeMetaForAst(step.sourceType);
+  const lines = [
+    formatTemplate(
+      VALUE_TYPE_NAME_TEMPLATE,
+      `${typeMeta.colorCode}${typeMeta.label}`
+    ),
+    ...getTooltipInfoLines(typeMeta.infoKey),
+  ];
+
+  if (step.sourceType === "Operator" && step.detail) {
+    lines.push(
+      formatTemplate(
+        OPERATOR_SIGNATURE_TEMPLATE,
+        getOperatorValueSignatureText(step.detail as TypeOperatorKey)
+      )
+    );
+  }
+
+  lines.push(formatTemplate(VALUE_TEMPLATE, getCompactValueText(step)));
+  lines.push(...getBaseTooltipLines(variableId));
+
+  return {
+    title: getCardTitle(step.output),
+    lines,
+  };
+};
+
+const buildOperatorCardTooltip = (
+  step: Pick<VisualStep, "output" | "inputs" | "tooltipOperatorKey">,
+  variableId: number
+): TooltipData => {
+  const operatorKey = step.tooltipOperatorKey;
+  if (!operatorKey) {
+    return {
+      title: getCardTitle(step.output),
+      lines: getBaseTooltipLines(variableId),
+    };
+  }
+
+  const operatorMeta = getOperatorTooltipMeta(operatorKey);
+  const operatorInfoLines =
+    operatorKey === "OPERATOR_FLIP" ||
+    operatorKey === "OPERATOR_APPLY" ||
+    operatorKey === "OPERATOR_PIPE" ||
+    operatorKey === "OPERATOR_PIPE2"
+      ? []
+      : splitTooltipInfoLines(operatorMeta.tooltipInfo ?? "");
+  const lines = [
+    formatTemplate(
+      OPERATOR_NAME_TEMPLATE,
+      operatorMeta.displayName,
+      operatorMeta.symbol
+    ),
+    formatTemplate(OPERATOR_CATEGORY_TEMPLATE, operatorMeta.categoryName),
+    ...operatorMeta.inputTypes.map((inputType, index) => {
+      const inputMeta = getValueTypeMeta(inputType);
+      return formatTemplate(
+        OPERATOR_INPUT_TYPE_TEMPLATE,
+        `${index + 1}`,
+        `${inputMeta.colorCode}${inputMeta.label}`
+      );
+    }),
+    formatTemplate(
+      OPERATOR_OUTPUT_TYPE_TEMPLATE,
+      `${getValueTypeMeta(operatorMeta.outputType).colorCode}${getValueTypeMeta(operatorMeta.outputType).label}`
+    ),
+    ...operatorInfoLines,
+    formatTemplate(
+      OPERATOR_VARIABLE_IDS_TEMPLATE,
+      getOperatorReferenceText(step.inputs)
+    ),
+    ...getBaseTooltipLines(variableId),
+  ];
+
+  return {
+    title: getCardTitle(step.output),
+    lines,
+  };
+};
+
+const buildStepTooltip = (
+  step: Pick<
+    VisualStep,
+    | "kind"
+    | "output"
+    | "sourceType"
+    | "detail"
+    | "inputs"
+    | "node"
+    | "tooltipOperatorKey"
+  >,
+  variableId: number
+): TooltipData => {
+  if (step.kind === "operator" && step.sourceType !== "Operator") {
+    return buildOperatorCardTooltip(step, variableId);
+  }
+
+  return buildValueCardTooltip(step, variableId);
+};
+
 const steps = computed<VisualStep[]>(() => {
   const result: VisualStep[] = [];
   const seen = new Map<TypeAST.AST, VisualCardRef>();
@@ -300,9 +786,23 @@ const steps = computed<VisualStep[]>(() => {
     if (seen.has(ast)) return seen.get(ast)!;
 
     const nextName = getCardName(ast, ++counter);
-    const register = (step: VisualStep): VisualCardRef => {
-      result.push(step);
-      const card = { name: step.output, type: step.sourceType };
+    const register = (
+      step: Omit<VisualStep, "variableId" | "tooltip">
+    ): VisualCardRef => {
+      const variableId = props.startVariableId + result.length;
+      const tooltip = buildStepTooltip(step, variableId);
+      const fullStep = {
+        ...step,
+        variableId,
+        tooltip,
+      };
+      result.push(fullStep);
+      const card = {
+        name: fullStep.output,
+        type: fullStep.sourceType,
+        variableId,
+        tooltip,
+      };
       seen.set(ast, card);
       return card;
     };
@@ -321,6 +821,8 @@ const steps = computed<VisualStep[]>(() => {
           inputs: [],
           output: nextName,
           detail: ast.opName,
+          node: ast,
+          tooltipOperatorKey: ast.opName,
         });
       }
       case "Curry": {
@@ -343,6 +845,9 @@ const steps = computed<VisualStep[]>(() => {
           renderPattern: virtualOperator.renderPattern,
           inputs: [baseOutput, ...argOutputs],
           output: nextName,
+          node: ast,
+          tooltipOperatorKey:
+            ast.base.type === "Operator" ? ast.base.opName : "OPERATOR_APPLY",
         });
       }
       case "Pipe": {
@@ -357,6 +862,8 @@ const steps = computed<VisualStep[]>(() => {
           renderPattern: virtualOperator.renderPattern,
           inputs: [visit(ast.op1), visit(ast.op2)],
           output: nextName,
+          node: ast,
+          tooltipOperatorKey: "OPERATOR_PIPE",
         });
       }
       case "Pipe2": {
@@ -371,6 +878,8 @@ const steps = computed<VisualStep[]>(() => {
           renderPattern: virtualOperator.renderPattern,
           inputs: [visit(ast.op1), visit(ast.op2), visit(ast.op3)],
           output: nextName,
+          node: ast,
+          tooltipOperatorKey: "OPERATOR_PIPE2",
         });
       }
       case "Flip": {
@@ -385,6 +894,8 @@ const steps = computed<VisualStep[]>(() => {
           renderPattern: virtualOperator.renderPattern,
           inputs: [visit(ast.arg)],
           output: nextName,
+          node: ast,
+          tooltipOperatorKey: "OPERATOR_FLIP",
         });
       }
       case "List":
@@ -397,6 +908,7 @@ const steps = computed<VisualStep[]>(() => {
           sourceType: ast.type,
           inputs: ast.value.map(visit),
           output: nextName,
+          node: ast,
         });
       default:
         return register({
@@ -416,6 +928,7 @@ const steps = computed<VisualStep[]>(() => {
           inputs: [],
           output: nextName,
           detail: primitiveDetail(ast),
+          node: ast,
         });
     }
   };
@@ -751,8 +1264,7 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
                 :key="`${step.id}-slot-${inputIndex}`"
                 class="logic-slot-overlay"
                 :class="{
-                  'logic-slot-overlay-has-tooltip':
-                    !!step.inputs[inputIndex]?.name,
+                  'logic-card-overlay-has-tooltip': !!step.inputs[inputIndex],
                 }"
                 :style="{ left: `${slot.left}px`, top: `${slot.top}px` }"
               >
@@ -763,11 +1275,11 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
                     backgroundImage: `url('${publicAsset(`valuetype/${getValueTypeTextureName(step.inputs[inputIndex]?.type ?? 'Null')}.png`)}'), url('${publicAsset('item/variable.png')}')`,
                   }"
                 />
-                <div
-                  v-if="step.inputs[inputIndex]?.name"
-                  class="logic-slot-tooltip"
-                >
-                  {{ step.inputs[inputIndex]!.name }}
+                <div v-if="step.inputs[inputIndex]" class="logic-card-tooltip">
+                  <MinecraftTooltip
+                    :title="step.inputs[inputIndex]!.tooltip.title"
+                    :lines="step.inputs[inputIndex]!.tooltip.lines"
+                  />
                 </div>
               </div>
               <div
@@ -793,13 +1305,19 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
 
             <div class="logic-labeller-badge">E</div>
 
-            <div class="logic-write-card">
+            <div class="logic-write-card logic-card-overlay-has-tooltip">
               <div
                 class="logic-write-card-composite"
                 :style="{
                   backgroundImage: `url('${publicAsset(`valuetype/${getValueTypeTextureName(step.sourceType)}.png`)}'), url('${publicAsset('item/variable.png')}')`,
                 }"
               />
+              <div class="logic-card-tooltip">
+                <MinecraftTooltip
+                  :title="step.tooltip.title"
+                  :lines="step.tooltip.lines"
+                />
+              </div>
             </div>
           </div>
         </div>

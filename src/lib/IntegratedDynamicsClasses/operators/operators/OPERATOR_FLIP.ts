@@ -14,6 +14,9 @@ export class OPERATOR_OPERATOR_FLIP extends BaseOperator<
   static override operatorName = "flip" as const;
   static override displayName = "Flip" as const;
   static override fullDisplayName = "Operator Flip" as const;
+  static override tooltipInfo =
+    "Flip the two first input parameters of an operator." as const;
+
   static override kind = "operator" as const;
   static override renderPattern = "PREFIX_1" as const;
   constructor(normalizeSignature = true) {

@@ -23,6 +23,9 @@ export class OPERATOR_NBT_COMPOUND_SUBSET extends BaseOperator<
   static override operatorName = "compound_subset" as const;
   static override displayName = "NBT Compound Subset" as const;
   static override fullDisplayName = "NBT NBT Compound Subset" as const;
+  static override tooltipInfo =
+    "If the first NBT compound tag is a subset of, or equal to the second NBT compound tag. This will recursively check nested tags." as const;
+
   static override kind = "nbt" as const;
   static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {

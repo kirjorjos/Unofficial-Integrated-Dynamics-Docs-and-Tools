@@ -29,6 +29,9 @@ export class OPERATOR_NBT_COMPOUND_VALUE_LONG extends BaseOperator<
   static override operatorName = "compound_value_long" as const;
   static override displayName = "NBT Compound Value Long" as const;
   static override fullDisplayName = "NBT NBT Compound Value Long" as const;
+  static override tooltipInfo =
+    "The Long value in the given NBT compound tag with the given key" as const;
+
   static override kind = "nbt" as const;
   static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {

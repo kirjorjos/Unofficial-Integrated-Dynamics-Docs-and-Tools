@@ -23,6 +23,9 @@ export class OPERATOR_OBJECT_ITEMSTACK_INVENTORY extends BaseOperator<
   static override operatorName = "inventory" as const;
   static override displayName = "Item Inventory" as const;
   static override fullDisplayName = "Item Item Inventory" as const;
+  static override tooltipInfo =
+    "Retrieve the inventory of the given item handler contents" as const;
+
   static override kind = "itemstack" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

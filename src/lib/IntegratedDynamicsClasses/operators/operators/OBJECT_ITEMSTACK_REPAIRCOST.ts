@@ -23,6 +23,8 @@ export class OPERATOR_OBJECT_ITEMSTACK_REPAIRCOST extends BaseOperator<
   static override operatorName = "repaircost" as const;
   static override displayName = "Repair Cost" as const;
   static override fullDisplayName = "Item Repair Cost" as const;
+  static override tooltipInfo = "The repair cost of the item" as const;
+
   static override kind = "itemstack" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

@@ -24,6 +24,8 @@ export class OPERATOR_OBJECT_FLUIDSTACK_RARITY extends BaseOperator<
   static override operatorName = "rarity" as const;
   static override displayName = "Rarity" as const;
   static override fullDisplayName = "Fluid Rarity" as const;
+  static override tooltipInfo = "The fluid rarity" as const;
+
   static override kind = "fluidstack" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

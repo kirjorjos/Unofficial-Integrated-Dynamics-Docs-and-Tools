@@ -21,6 +21,8 @@ export class OPERATOR_OBJECT_BLOCK_BREAKSOUND extends BaseOperator<
   static override operatorName = "breaksound" as const;
   static override displayName = "Block Break Sound" as const;
   static override fullDisplayName = "Block Block Break Sound" as const;
+  static override tooltipInfo = "The break sound of the given block" as const;
+
   static override kind = "block" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

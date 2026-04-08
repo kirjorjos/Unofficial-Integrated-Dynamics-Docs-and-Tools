@@ -16,6 +16,9 @@ export class OPERATOR_STRING_INDEX_OF extends BaseOperator<
   static override operatorName = "index_of" as const;
   static override displayName = "Index Of" as const;
   static override fullDisplayName = "String Index Of" as const;
+  static override tooltipInfo =
+    "Get the index of the first occurrence of a substring matching the search term in the given string." as const;
+
   static override kind = "string" as const;
   static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {

@@ -15,6 +15,8 @@ export class OPERATOR_ENTITY_WIDTH extends BaseOperator<Entity, Double> {
   static override operatorName = "width" as const;
   static override displayName = "Width" as const;
   static override fullDisplayName = "Entity Width" as const;
+  static override tooltipInfo = "The entity width" as const;
+
   static override kind = "entity" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

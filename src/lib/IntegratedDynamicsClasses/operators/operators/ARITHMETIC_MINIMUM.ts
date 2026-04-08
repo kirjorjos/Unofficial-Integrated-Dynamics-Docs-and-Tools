@@ -20,6 +20,8 @@ export class OPERATOR_ARITHMETIC_MINIMUM extends BaseOperator<
   static override operatorName = "minimum" as const;
   static override displayName = "Minimum" as const;
   static override fullDisplayName = "Arithmetic Minimum" as const;
+  static override tooltipInfo = "Takes the smallest of two values." as const;
+
   static override kind = "arithmetic" as const;
   static override renderPattern = "PREFIX_2" as const;
   constructor(normalizeSignature = true) {

@@ -22,6 +22,9 @@ export class OPERATOR_OPERATOR_BY_NAME extends BaseOperator<
   static override operatorName = "by_name" as const;
   static override displayName = "Operator By Name" as const;
   static override fullDisplayName = "Operator Operator By Name" as const;
+  static override tooltipInfo =
+    "Get the operator that has the given unique name." as const;
+
   static override kind = "operator" as const;
   static override renderPattern = "PREFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

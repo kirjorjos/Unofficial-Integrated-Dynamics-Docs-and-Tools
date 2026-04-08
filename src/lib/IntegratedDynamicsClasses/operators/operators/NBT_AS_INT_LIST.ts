@@ -17,6 +17,9 @@ export class OPERATOR_NBT_AS_INT_LIST extends BaseOperator<ListTag, Integer> {
   static override displayName = "NBT Integer Array As Integer List" as const;
   static override fullDisplayName =
     "NBT NBT Integer Array As Integer List" as const;
+  static override tooltipInfo =
+    "Get the Integer List value of the given NBT Integer Array tag" as const;
+
   static override kind = "nbt" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

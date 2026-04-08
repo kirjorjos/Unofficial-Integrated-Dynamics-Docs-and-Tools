@@ -20,6 +20,8 @@ export class OPERATOR_ENTITY_ISMINECART extends BaseOperator<Entity, iBoolean> {
   static override operatorName = "isminecart" as const;
   static override displayName = "Is Minecart" as const;
   static override fullDisplayName = "Entity Is Minecart" as const;
+  static override tooltipInfo = "If the entity is a minecart" as const;
+
   static override kind = "entity" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

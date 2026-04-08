@@ -19,6 +19,9 @@ export class OPERATOR_OBJECT_BLOCK_OPAQUE extends BaseOperator<
   static override operatorName = "opaque" as const;
   static override displayName = "Opaque" as const;
   static override fullDisplayName = "Block Opaque" as const;
+  static override tooltipInfo =
+    "If the given block is opaque, non-transparent" as const;
+
   static override kind = "block" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

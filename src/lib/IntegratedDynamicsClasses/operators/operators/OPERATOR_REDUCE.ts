@@ -12,6 +12,9 @@ export class OPERATOR_OPERATOR_REDUCE extends BaseOperator<any, any> {
   static override operatorName = "reduce" as const;
   static override displayName = "Reduce" as const;
   static override fullDisplayName = "Operator Reduce" as const;
+  static override tooltipInfo =
+    "Apply the given operator on all elements of a list to reduce the list to one value." as const;
+
   static override kind = "operator" as const;
   static override renderPattern = "PREFIX_3_LONG" as const;
   constructor(normalizeSignature = true) {

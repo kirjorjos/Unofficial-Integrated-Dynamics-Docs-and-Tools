@@ -17,6 +17,9 @@ export class OPERATOR_STRING_SPLIT_ON extends BaseOperator<
   static override operatorName = "split_on" as const;
   static override displayName = "Split On" as const;
   static override fullDisplayName = "String Split On" as const;
+  static override tooltipInfo =
+    "Get a list containing pieces, split on the given (literal) delimiter, of the given string." as const;
+
   static override kind = "string" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

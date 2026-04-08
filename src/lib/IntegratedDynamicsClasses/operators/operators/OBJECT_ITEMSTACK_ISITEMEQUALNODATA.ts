@@ -24,6 +24,9 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISITEMEQUALNODATA extends BaseOperator<
   static override operatorName = "isitemequalnonbt" as const;
   static override displayName = "Raw item equals no NBT" as const;
   static override fullDisplayName = "Item Raw item equals no NBT" as const;
+  static override tooltipInfo =
+    "If the raw items of the given stacks are equal, ignoring NBT but including damage value." as const;
+
   static override kind = "itemstack" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

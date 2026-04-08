@@ -28,6 +28,8 @@ export class OPERATOR_OBJECT_ITEMSTACK_FLUIDSTACK extends BaseOperator<
   static override operatorName = "fluidstack" as const;
   static override displayName = "Fluid" as const;
   static override fullDisplayName = "Item Fluid" as const;
+  static override tooltipInfo = "The fluid from the given item" as const;
+
   static override kind = "itemstack" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

@@ -23,6 +23,8 @@ export class OPERATOR_OBJECT_ITEMSTACK_MAXDAMAGE extends BaseOperator<
   static override operatorName = "maxdamage" as const;
   static override displayName = "Max Damage" as const;
   static override fullDisplayName = "Item Max Damage" as const;
+  static override tooltipInfo = "The maximum item damage" as const;
+
   static override kind = "itemstack" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

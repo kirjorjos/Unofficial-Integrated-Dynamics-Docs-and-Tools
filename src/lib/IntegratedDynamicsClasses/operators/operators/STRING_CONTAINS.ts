@@ -16,6 +16,9 @@ export class OPERATOR_STRING_CONTAINS extends BaseOperator<
   static override operatorName = "contains" as const;
   static override displayName = "String Contains" as const;
   static override fullDisplayName = "String String Contains" as const;
+  static override tooltipInfo =
+    "If the given substring is contained within the given string." as const;
+
   static override kind = "string" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

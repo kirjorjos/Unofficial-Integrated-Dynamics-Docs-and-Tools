@@ -30,6 +30,8 @@ export class OPERATOR_OBJECT_FLUIDSTACK_DATA extends BaseOperator<
   static override operatorName = "nbt" as const;
   static override displayName = "Fluid NBT" as const;
   static override fullDisplayName = "Fluid Fluid NBT" as const;
+  static override tooltipInfo = "Get the NBT tag of the given fluid." as const;
+
   static override kind = "fluidstack" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

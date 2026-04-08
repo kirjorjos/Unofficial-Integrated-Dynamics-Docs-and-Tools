@@ -25,6 +25,9 @@ export class OPERATOR_ITEMSTACK_ITEMBYNAME extends BaseOperator<iString, Item> {
   static override operatorName = "itembyname" as const;
   static override displayName = "Item By Name" as const;
   static override fullDisplayName = "Item Item By Name" as const;
+  static override tooltipInfo =
+    "Get the item corresponding to the given unique name, add space+number for indicating the metadata." as const;
+
   static override kind = "itemstack" as const;
   static override renderPattern = "PREFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

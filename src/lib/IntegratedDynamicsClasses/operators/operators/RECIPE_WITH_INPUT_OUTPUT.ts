@@ -24,6 +24,9 @@ export class OPERATOR_RECIPE_WITH_INPUT_OUTPUT extends BaseOperator<
     "Recipe With Input and Output Ingredients" as const;
   static override fullDisplayName =
     "Recipe Recipe With Input and Output Ingredients" as const;
+  static override tooltipInfo =
+    "Create a recipe with the first ingredients as input, and the second ingredients as output" as const;
+
   static override kind = "recipe" as const;
   static override renderPattern = "PREFIX_2_LONG" as const;
   constructor(normalizeSignature = true) {

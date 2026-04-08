@@ -15,6 +15,9 @@ export class OPERATOR_LIST_TAIL extends BaseOperator<
   static override operatorName = "tail" as const;
   static override displayName = "Tail" as const;
   static override fullDisplayName = "List Tail" as const;
+  static override tooltipInfo =
+    "Remove the first element from the list." as const;
+
   static override kind = "list" as const;
   static override renderPattern = "PREFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

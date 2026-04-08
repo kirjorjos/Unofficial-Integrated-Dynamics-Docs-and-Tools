@@ -25,6 +25,9 @@ export class OPERATOR_OBJECT_ENTITY_CANBREEDWITH extends BaseOperator<
   static override operatorName = "canbreedwith" as const;
   static override displayName = "Entity Can Breed With" as const;
   static override fullDisplayName = "Entity Entity Can Breed With" as const;
+  static override tooltipInfo =
+    "If the given entity can be breed using the given item." as const;
+
   static override kind = "entity" as const;
   static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {

@@ -22,6 +22,8 @@ export class OPERATOR_OBJECT_ENTITY_ISEATING extends BaseOperator<
   static override operatorName = "iseating" as const;
   static override displayName = "Is Eating" as const;
   static override fullDisplayName = "Entity Is Eating" as const;
+  static override tooltipInfo = "If the entity is eating" as const;
+
   static override kind = "entity" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

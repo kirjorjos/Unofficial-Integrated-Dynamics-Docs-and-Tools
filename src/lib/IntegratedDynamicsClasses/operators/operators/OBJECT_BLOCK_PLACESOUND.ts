@@ -22,6 +22,8 @@ export class OPERATOR_OBJECT_BLOCK_PLACESOUND extends BaseOperator<
   static override operatorName = "placesound" as const;
   static override displayName = "Block Place Sound" as const;
   static override fullDisplayName = "Block Block Place Sound" as const;
+  static override tooltipInfo = "The place sound of the given block" as const;
+
   static override kind = "block" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

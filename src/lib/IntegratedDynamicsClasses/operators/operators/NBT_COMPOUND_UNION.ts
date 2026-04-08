@@ -22,6 +22,9 @@ export class OPERATOR_NBT_COMPOUND_UNION extends BaseOperator<
   static override operatorName = "compound_union" as const;
   static override displayName = "NBT Compound Union" as const;
   static override fullDisplayName = "NBT NBT Compound Union" as const;
+  static override tooltipInfo =
+    "The union of the given NBT compound tags. Nested tags will be joined recusively." as const;
+
   static override kind = "nbt" as const;
   static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {

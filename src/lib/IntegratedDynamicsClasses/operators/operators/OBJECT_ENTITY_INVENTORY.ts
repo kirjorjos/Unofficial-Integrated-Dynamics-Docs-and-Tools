@@ -22,6 +22,9 @@ export class OPERATOR_OBJECT_ENTITY_INVENTORY extends BaseOperator<
   static override operatorName = "inventory" as const;
   static override displayName = "Player Inventory" as const;
   static override fullDisplayName = "Entity Player Inventory" as const;
+  static override tooltipInfo =
+    "The list of items the player is carrying." as const;
+
   static override kind = "entity" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

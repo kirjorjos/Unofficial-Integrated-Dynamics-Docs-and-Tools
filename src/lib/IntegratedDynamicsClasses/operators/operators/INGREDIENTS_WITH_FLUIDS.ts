@@ -23,6 +23,9 @@ export class OPERATOR_INGREDIENTS_WITH_FLUIDS extends BaseOperator<
   static override displayName = "Ingredients With Fluids" as const;
   static override fullDisplayName =
     "Ingredients Ingredients With Fluids" as const;
+  static override tooltipInfo =
+    "Get a copy of the given ingredients with the given list of fluids at the given ingredient position" as const;
+
   static override kind = "ingredients" as const;
   static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {

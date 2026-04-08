@@ -47,6 +47,7 @@ export class BaseOperator<
   static interactName: string = "";
   static displayName: string = "";
   static fullDisplayName: string = "";
+  static tooltipInfo?: string;
   static kind: string = "";
   static numericID: number = -1;
   static renderPattern: LogicProgrammerRenderPatternKey = "NONE";
@@ -89,6 +90,10 @@ export class BaseOperator<
 
   get fullDisplayName(): string {
     return (this.constructor as typeof BaseOperator).fullDisplayName;
+  }
+
+  get tooltipInfo(): string | undefined {
+    return (this.constructor as typeof BaseOperator).tooltipInfo;
   }
 
   get kind(): string {

@@ -21,6 +21,8 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISPLANTABLE extends BaseOperator<
   static override operatorName = "isplantable" as const;
   static override displayName = "Item Is Plant" as const;
   static override fullDisplayName = "Item Item Is Plant" as const;
+  static override tooltipInfo = "If the given item is a plant" as const;
+
   static override kind = "itemstack" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

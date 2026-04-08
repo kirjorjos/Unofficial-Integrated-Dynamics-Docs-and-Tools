@@ -22,6 +22,9 @@ export class OPERATOR_NBT_FROM_TAG_LIST extends BaseOperator<
   static override operatorName = "from_tag_list" as const;
   static override displayName = "NBT List From Tag List" as const;
   static override fullDisplayName = "NBT NBT List From Tag List" as const;
+  static override tooltipInfo =
+    "Create an NBT List tag from the given NBT List value" as const;
+
   static override kind = "nbt" as const;
   static override renderPattern = "PREFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

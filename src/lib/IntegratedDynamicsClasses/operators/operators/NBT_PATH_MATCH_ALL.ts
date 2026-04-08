@@ -26,6 +26,9 @@ export class OPERATOR_NBT_PATH_MATCH_ALL extends BaseOperator<
   static override operatorName = "path_match_all" as const;
   static override displayName = "NBT Path Match All" as const;
   static override fullDisplayName = "NBT NBT Path Match All" as const;
+  static override tooltipInfo =
+    "Apply the given NBT Path expression on the given NBT value, and return all matches as a list" as const;
+
   static override kind = "nbt" as const;
   static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {

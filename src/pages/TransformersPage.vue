@@ -32,6 +32,7 @@ const expandedOutputViewer = ref<InstanceType<
   typeof FoldableExpandedOutput
 > | null>(null);
 const currentAst = ref<any>(null);
+const initialVariableId = ref(0);
 
 const formatters: Record<
   FormatKey,
@@ -146,7 +147,8 @@ const renderOutput = (format: OutputFormatKey, ast: TypeAST.AST): string => {
 
 const updateUrlState = (
   code: string | null,
-  format: OutputFormatKey | null = outputFormat.value
+  format: OutputFormatKey | null = outputFormat.value,
+  variableId: number | null = initialVariableId.value
 ): void => {
   const url = new URL(window.location.href);
 
@@ -160,6 +162,12 @@ const updateUrlState = (
     url.searchParams.set("output", format);
   } else {
     url.searchParams.delete("output");
+  }
+
+  if (variableId !== null) {
+    url.searchParams.set("varId", String(variableId));
+  } else {
+    url.searchParams.delete("varId");
   }
 
   window.history.replaceState({}, "", url);
@@ -190,10 +198,27 @@ watch(inputText, async () => {
 watch(outputFormat, () => {
   updateUrlState(
     currentAst.value ? ASTToCompressed(currentAst.value) : null,
-    outputFormat.value
+    outputFormat.value,
+    initialVariableId.value
   );
   if (!currentAst.value || outputError.value) return;
   updateOutputFromAst(currentAst.value, outputFormat.value);
+});
+
+watch(initialVariableId, (value) => {
+  const normalized = Number.isFinite(value)
+    ? Math.max(0, Math.trunc(value))
+    : 0;
+  if (normalized !== value) {
+    initialVariableId.value = normalized;
+    return;
+  }
+
+  updateUrlState(
+    currentAst.value ? ASTToCompressed(currentAst.value) : null,
+    outputFormat.value,
+    normalized
+  );
 });
 
 const transform = (): void => {
@@ -205,12 +230,16 @@ const transform = (): void => {
     currentAst.value = ast;
     if (!updateOutputFromAst(ast, outputFormat.value)) return;
     status.value = `Detected ${formatters[sourceFormat].label}. Output as ${outputFormatters[outputFormat.value].label}.`;
-    updateUrlState(compressedOutput, outputFormat.value);
+    updateUrlState(
+      compressedOutput,
+      outputFormat.value,
+      initialVariableId.value
+    );
   } catch (error) {
     outputText.value = "";
     outputError.value = error instanceof Error ? error.message : String(error);
     status.value = "";
-    updateUrlState(null, outputFormat.value);
+    updateUrlState(null, outputFormat.value, initialVariableId.value);
   }
 };
 
@@ -232,7 +261,7 @@ const processTypes = (): void => {
     outputFormat.value = "expanded";
     if (!updateOutputFromAst(ast, "expanded")) return;
     status.value = "Processed types and regenerated expanded output.";
-    updateUrlState(compressedOutput, "expanded");
+    updateUrlState(compressedOutput, "expanded", initialVariableId.value);
   } catch (error) {
     outputText.value = "";
     outputError.value = error instanceof Error ? error.message : String(error);
@@ -258,6 +287,13 @@ onMounted(() => {
   const url = new URL(window.location.href);
   const code = url.searchParams.get("code");
   const output = url.searchParams.get("output");
+  const varId = url.searchParams.get("varId");
+
+  if (varId !== null) {
+    const parsed = Number.parseInt(varId, 10);
+    initialVariableId.value =
+      Number.isFinite(parsed) && parsed >= 0 ? parsed : 0;
+  }
 
   if (
     output &&
@@ -309,6 +345,18 @@ onMounted(() => {
 
       <div class="transformer-actions">
         <label class="field">
+          <span>Initial variable ID</span>
+          <input
+            v-model.number="initialVariableId"
+            class="select"
+            type="number"
+            min="0"
+            step="1"
+            aria-label="Initial variable ID"
+          />
+        </label>
+
+        <label class="field">
           <span>Output format</span>
           <select
             v-model="outputFormat"
@@ -351,6 +399,7 @@ onMounted(() => {
         <LogicProgrammerVisualOutput
           v-else-if="outputFormat === 'visual' && currentAst"
           :ast="currentAst"
+          :start-variable-id="initialVariableId"
         />
         <textarea
           v-else

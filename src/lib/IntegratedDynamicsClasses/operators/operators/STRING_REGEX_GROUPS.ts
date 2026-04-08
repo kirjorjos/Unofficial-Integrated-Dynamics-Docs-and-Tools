@@ -24,6 +24,9 @@ export class OPERATOR_STRING_REGEX_GROUPS extends BaseOperator<
   static override operatorName = "regex_groups" as const;
   static override displayName = "Regex Groups" as const;
   static override fullDisplayName = "String Regex Groups" as const;
+  static override tooltipInfo =
+    "Search for the given regular expression and return in that match a list of all its groups, in the given string." as const;
+
   static override kind = "string" as const;
   static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {

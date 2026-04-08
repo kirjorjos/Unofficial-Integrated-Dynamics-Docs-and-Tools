@@ -16,6 +16,8 @@ export class OPERATOR_OPERATOR_NEGATION extends BaseOperator<
   static override operatorName = "negation" as const;
   static override displayName = "Negation" as const;
   static override fullDisplayName = "Operator Negation" as const;
+  static override tooltipInfo = "Takes the negation of a predicate." as const;
+
   static override kind = "operator" as const;
   static override renderPattern = "PREFIX_1" as const;
   constructor(normalizeSignature = true) {

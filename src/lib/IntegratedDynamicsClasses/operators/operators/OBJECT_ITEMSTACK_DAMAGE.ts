@@ -20,6 +20,8 @@ export class OPERATOR_OBJECT_ITEMSTACK_DAMAGE extends BaseOperator<
   static override operatorName = "damage" as const;
   static override displayName = "Damage" as const;
   static override fullDisplayName = "Item Damage" as const;
+  static override tooltipInfo = "The current item damage" as const;
+
   static override kind = "itemstack" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

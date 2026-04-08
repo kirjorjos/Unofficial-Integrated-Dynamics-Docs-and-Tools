@@ -25,6 +25,9 @@ export class OPERATOR_NBT_COMPOUND_WITH_DOUBLE extends BaseOperator<
   static override operatorName = "compound_with_double" as const;
   static override displayName = "NBT Compound With Double" as const;
   static override fullDisplayName = "NBT NBT Compound With Double" as const;
+  static override tooltipInfo =
+    "Get a copy of the given NBT compound tag with the given Double entry" as const;
+
   static override kind = "nbt" as const;
   static override renderPattern = "INFIX_2_LONG" as const;
   constructor(normalizeSignature = true) {

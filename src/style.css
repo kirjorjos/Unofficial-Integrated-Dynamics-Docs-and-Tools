@@ -390,7 +390,7 @@ button {
   width: calc(256px * 2);
   height: calc(240px * 2);
   max-width: 100%;
-  overflow: auto;
+  overflow: visible;
 }
 
 .logic-programmer-frame {
@@ -400,7 +400,7 @@ button {
   background: url("/gui/logic_programmer.png") top left / 256px 256px no-repeat;
   image-rendering: pixelated;
   box-shadow: 0 14px 30px rgba(24, 48, 58, 0.18);
-  overflow: hidden;
+  overflow: visible;
   transform: scale(2);
   transform-origin: top left;
 }
@@ -661,28 +661,121 @@ button {
   transform-origin: top left;
 }
 
-.logic-slot-overlay-has-tooltip {
+.logic-card-overlay-has-tooltip {
   overflow: visible;
 }
 
-.logic-slot-tooltip {
+.logic-card-tooltip {
   position: absolute;
   left: 50%;
   bottom: calc(100% + 4px);
   transform: translateX(-50%);
   display: none;
-  padding: 1px 4px;
-  background: rgba(20, 20, 20, 0.94);
-  border: 1px solid rgba(220, 220, 220, 0.5);
-  color: #e8e8e8;
+  pointer-events: none;
+  z-index: 12;
+}
+
+.mc-tooltip {
+  min-width: max-content;
+  max-width: 240px;
+  padding: 3px;
+  border: 1px solid #2a0a63;
+  background: linear-gradient(
+    180deg,
+    rgba(16, 0, 16, 0.96) 0%,
+    rgba(10, 0, 10, 0.96) 100%
+  );
+  box-shadow:
+    inset 1px 1px 0 rgba(80, 0, 255, 0.5),
+    inset -1px -1px 0 rgba(40, 0, 120, 0.72);
+  font-family: "Lucida Console", "Courier New", monospace;
   font-size: 8px;
   line-height: 10px;
   white-space: nowrap;
-  pointer-events: none;
-  z-index: 4;
 }
 
-.logic-slot-overlay-has-tooltip:hover .logic-slot-tooltip {
+.mc-tooltip-line {
+  color: #ffffff;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.9);
+}
+
+.mc-tooltip-title {
+  margin-bottom: 1px;
+}
+
+.mc-tooltip-bold {
+  font-weight: 700;
+}
+
+.mc-tooltip-italic {
+  font-style: italic;
+}
+
+.mc-tooltip-color-0 {
+  color: #000000;
+}
+
+.mc-tooltip-color-1 {
+  color: #0000aa;
+}
+
+.mc-tooltip-color-2 {
+  color: #00aa00;
+}
+
+.mc-tooltip-color-3 {
+  color: #00aaaa;
+}
+
+.mc-tooltip-color-4 {
+  color: #aa0000;
+}
+
+.mc-tooltip-color-5 {
+  color: #aa00aa;
+}
+
+.mc-tooltip-color-6 {
+  color: #ffaa00;
+}
+
+.mc-tooltip-color-7 {
+  color: #aaaaaa;
+}
+
+.mc-tooltip-color-8 {
+  color: #555555;
+}
+
+.mc-tooltip-color-9 {
+  color: #5555ff;
+}
+
+.mc-tooltip-color-a {
+  color: #55ff55;
+}
+
+.mc-tooltip-color-b {
+  color: #55ffff;
+}
+
+.mc-tooltip-color-c {
+  color: #ff5555;
+}
+
+.mc-tooltip-color-d {
+  color: #ff55ff;
+}
+
+.mc-tooltip-color-e {
+  color: #ffff55;
+}
+
+.mc-tooltip-color-f {
+  color: #ffffff;
+}
+
+.logic-card-overlay-has-tooltip:hover .logic-card-tooltip {
   display: block;
 }
 

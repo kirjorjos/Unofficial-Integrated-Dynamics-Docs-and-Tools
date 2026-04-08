@@ -17,6 +17,9 @@ export class OPERATOR_NBT_FROM_BYTE extends BaseOperator<Integer, ByteTag> {
   static override operatorName = "from_byte" as const;
   static override displayName = "NBT Byte From Integer" as const;
   static override fullDisplayName = "NBT NBT Byte From Integer" as const;
+  static override tooltipInfo =
+    "Create an NBT Byte tag from the given Integer value" as const;
+
   static override kind = "nbt" as const;
   static override renderPattern = "PREFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

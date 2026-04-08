@@ -22,6 +22,8 @@ export class OPERATOR_NULLABLE_ISNULL extends BaseOperator<
   static override operatorName = "isnull" as const;
   static override displayName = "Is Null" as const;
   static override fullDisplayName = "General Is Null" as const;
+  static override tooltipInfo = "If the given value is null" as const;
+
   static override kind = "general" as const;
   static override renderPattern = "PREFIX_1" as const;
   constructor(normalizeSignature = true) {

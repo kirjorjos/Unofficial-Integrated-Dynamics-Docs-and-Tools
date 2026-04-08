@@ -22,6 +22,9 @@ export class OPERATOR_STRING_TAG extends BaseOperator<iString, iArray<Item>> {
   static override operatorName = "tag" as const;
   static override displayName = "Item Tag Values" as const;
   static override fullDisplayName = "String Item Tag Values" as const;
+  static override tooltipInfo =
+    "The Tag values (items) of the given name" as const;
+
   static override kind = "string" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

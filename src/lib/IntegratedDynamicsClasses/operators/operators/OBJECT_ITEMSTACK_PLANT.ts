@@ -12,6 +12,9 @@ export class OPERATOR_OBJECT_ITEMSTACK_PLANT extends BaseOperator<Item, Block> {
   static override operatorName = "plant" as const;
   static override displayName = "Item Plant" as const;
   static override fullDisplayName = "Item Item Plant" as const;
+  static override tooltipInfo =
+    "The resulting block when this item is planted" as const;
+
   static override kind = "itemstack" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

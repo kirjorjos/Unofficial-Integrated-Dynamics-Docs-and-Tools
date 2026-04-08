@@ -19,6 +19,9 @@ export class OPERATOR_OPERATOR_DISJUNCTION extends BaseOperator<
   static override operatorName = "disjunction" as const;
   static override displayName = "Disjunction" as const;
   static override fullDisplayName = "Operator Disjunction" as const;
+  static override tooltipInfo =
+    "Takes the disjunction of two predicates." as const;
+
   static override kind = "operator" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

@@ -23,6 +23,9 @@ export class OPERATOR_NBT_COMPOUND_WITHOUT extends BaseOperator<
   static override operatorName = "compound_without" as const;
   static override displayName = "NBT Compound Without" as const;
   static override fullDisplayName = "NBT NBT Compound Without" as const;
+  static override tooltipInfo =
+    "Get a copy of the given NBT compound tag without the given key" as const;
+
   static override kind = "nbt" as const;
   static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {

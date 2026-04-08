@@ -25,6 +25,9 @@ export class OPERATOR_OBJECT_BLOCK_BY_NAME extends BaseOperator<
   static override operatorName = "blockbyname" as const;
   static override displayName = "Block By Name" as const;
   static override fullDisplayName = "Block Block By Name" as const;
+  static override tooltipInfo =
+    "Get the block corresponding to the given unique name, add space+number for indicating the metadata." as const;
+
   static override kind = "block" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

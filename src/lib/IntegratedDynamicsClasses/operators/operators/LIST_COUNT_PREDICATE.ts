@@ -22,6 +22,9 @@ export class OPERATOR_LIST_COUNT_PREDICATE extends BaseOperator<
   static override operatorName = "count_p" as const;
   static override displayName = "Count Predicate" as const;
   static override fullDisplayName = "List Count Predicate" as const;
+  static override tooltipInfo =
+    "The number of times the given predicate returns true for the elements in the list." as const;
+
   static override kind = "list" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

@@ -22,6 +22,8 @@ export class OPERATOR_OBJECT_ENTITY_ENERGY_CAPACITY extends BaseOperator<
   static override operatorName = "entityenergycapacity" as const;
   static override displayName = "Entity Energy Capacity" as const;
   static override fullDisplayName = "Entity Entity Energy Capacity" as const;
+  static override tooltipInfo = "The energy capacity of this entity." as const;
+
   static override kind = "entity" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

@@ -21,6 +21,8 @@ export class OPERATOR_BINARY_RZSHIFT extends BaseOperator<
   static override operatorName = "rzshift" as const;
   static override displayName = "Right Zero Shift" as const;
   static override fullDisplayName = "Binary Right Zero Shift" as const;
+  static override tooltipInfo = "Right Shift with zeros fill" as const;
+
   static override kind = "binary" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

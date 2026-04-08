@@ -22,6 +22,9 @@ export class OPERATOR_GENERAL_CHOICE extends BaseOperator<
   static override operatorName = "choice" as const;
   static override displayName = "Choice" as const;
   static override fullDisplayName = "General Choice" as const;
+  static override tooltipInfo =
+    "If the first value is true, the second value is taken, otherwise the third value.\\nType two and three must be equal." as const;
+
   static override kind = "general" as const;
   static override renderPattern = "GENERAL_CHOICE" as const;
   constructor(normalizeSignature = true) {

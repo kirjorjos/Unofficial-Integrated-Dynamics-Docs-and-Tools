@@ -32,6 +32,9 @@ export class OPERATOR_NBT_COMPOUND_VALUE_LIST_INT extends BaseOperator<
   static override displayName = "NBT Compound Value Integer Array" as const;
   static override fullDisplayName =
     "NBT NBT Compound Value Integer Array" as const;
+  static override tooltipInfo =
+    "The Integer Array in the given NBT compound tag with the given key as Integer List" as const;
+
   static override kind = "nbt" as const;
   static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {
