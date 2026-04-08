@@ -2,7 +2,12 @@
 import { computed } from "vue";
 import FitText from "./FitText.vue";
 import HoverMinecraftTooltip from "./HoverMinecraftTooltip.vue";
-import { ASTToCondensed, operatorRegistry } from "lib";
+import {
+  ASTToCondensed,
+  getExpandedVarName,
+  operatorRegistry,
+  resetExpandedVarCounter,
+} from "lib";
 import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 import { ASTtoOperator } from "lib/transformers/Operator";
 import {
@@ -14,6 +19,7 @@ import { LOGIC_PROGRAMMER_RENDER_PATTERNS } from "./logicProgrammerRenderPattern
 
 type OperatorClassLike = {
   new (normalizeSignature?: boolean): BaseOperator<any, any>;
+  internalName?: string;
   operatorName?: string;
   interactName?: string;
   displayName?: string;
@@ -468,6 +474,12 @@ const getOperatorDisplay = (opName: TypeOperatorKey) => {
   };
 };
 
+const getOperatorInternalName = (
+  opName: TypeOperatorKey
+): string | undefined => {
+  return getOperatorClass(opName)?.internalName;
+};
+
 const getVirtualOperatorDisplay = (
   key: "apply" | "pipe" | "pipe2" | "flip"
 ) => {
@@ -601,40 +613,52 @@ const getOperatorOutputType = (operatorClass: OperatorClassLike): string => {
   return outputType;
 };
 
-const getCardName = (ast: TypeAST.AST, fallbackIndex: number): string => {
-  if (ast.varName) return ast.varName;
+const getCardName = (ast: TypeAST.AST): string => {
+  return ast.varName || getExpandedVarName(ast);
+};
 
-  const capitalize = (value: string) =>
-    value.charAt(0).toUpperCase() + value.slice(1);
+const getExpandedCurryChunks = (
+  ast: TypeAST.Curried
+): { node: TypeAST.Curried; args: TypeAST.AST[] }[] => {
+  const chunks: { node: TypeAST.Curried; args: TypeAST.AST[] }[] = [];
+  const isApplyN =
+    ast.base.type === "Operator" &&
+    getOperatorInternalName(ast.base.opName) ===
+      "integrateddynamics:operator_apply_n";
 
-  switch (ast.type) {
-    case "Operator":
-      return getOperatorDisplay(ast.opName).title;
-    case "Variable":
-      return ast.name;
-    case "String":
-      return `"${ast.value}"`;
-    case "Boolean":
-      return String(ast.value);
-    case "Integer":
-    case "Long":
-    case "Double":
-      return ast.value;
-    case "Null":
-      return "null";
-    case "List":
-      return "list";
-    case "Pipe":
-      return "pipe";
-    case "Pipe2":
-      return "pipe2";
-    case "Flip":
-      return `flip${capitalize(getCardName(ast.arg, fallbackIndex))}`;
-    case "Curry":
-      return `card${fallbackIndex}`;
-    default:
-      return `${ast.type.toLowerCase()}${fallbackIndex}`;
+  let currentBase = ast.base;
+  let index = 0;
+
+  while (index < ast.args.length) {
+    let take = 1;
+    if (isApplyN && index === 0 && ast.args.length >= 2) {
+      take = 2;
+    }
+
+    const chunkArgs = ast.args.slice(index, index + take);
+    const isLast = index + take === ast.args.length;
+    const chunkNode: TypeAST.Curried = {
+      type: "Curry",
+      base: currentBase,
+      args: chunkArgs,
+    };
+    const namedChunk: TypeAST.Curried = {
+      ...chunkNode,
+      varName: isLast
+        ? ast.varName || getExpandedVarName(chunkNode)
+        : getExpandedVarName(chunkNode),
+    };
+
+    chunks.push({
+      node: namedChunk,
+      args: chunkArgs,
+    });
+
+    currentBase = namedChunk;
+    index += take;
   }
+
+  return chunks;
 };
 
 const primitiveDetail = (ast: TypeAST.AST): string | undefined => {
@@ -793,6 +817,8 @@ const buildStepTooltip = (
 };
 
 const steps = computed<VisualStep[]>(() => {
+  resetExpandedVarCounter();
+
   if (
     props.operatorPreviewMode === "pattern" &&
     props.ast.type === "Operator"
@@ -811,7 +837,7 @@ const steps = computed<VisualStep[]>(() => {
       sourceType: "Operator",
       renderPattern: operator.renderPattern,
       inputs: [],
-      output: getCardName(props.ast, 1),
+      output: getCardName(props.ast),
       detail: props.ast.opName,
       node: props.ast,
       tooltipOperatorKey: props.ast.opName,
@@ -835,12 +861,11 @@ const steps = computed<VisualStep[]>(() => {
 
   const result: VisualStep[] = [];
   const seen = new Map<TypeAST.AST, VisualCardRef>();
-  let counter = 0;
 
   const visit = (ast: TypeAST.AST): VisualCardRef => {
     if (seen.has(ast)) return seen.get(ast)!;
 
-    const nextName = getCardName(ast, ++counter);
+    const nextName = getCardName(ast);
     const register = (
       step: Omit<VisualStep, "variableId" | "tooltip">
     ): VisualCardRef => {
@@ -866,7 +891,7 @@ const steps = computed<VisualStep[]>(() => {
       case "Operator": {
         const operator = getOperatorDisplay(ast.opName);
         return register({
-          id: `step-${counter}`,
+          id: `step-${result.length + 1}`,
           title: operator.title,
           searchLabel: "Operator",
           panelLabel: operator.panelLabel,
@@ -882,34 +907,53 @@ const steps = computed<VisualStep[]>(() => {
         });
       }
       case "Curry": {
-        const baseOutput = visit(ast.base);
-        const argOutputs = ast.args.map(visit);
         const virtualOperator = getVirtualOperatorDisplay("apply");
-        return register({
-          id: `step-${counter}`,
-          title:
-            ast.base.type === "Operator"
-              ? getOperatorDisplay(ast.base.opName).title
-              : virtualOperator.title,
-          searchLabel:
-            ast.base.type === "Operator"
-              ? getOperatorDisplay(ast.base.opName).searchLabel
-              : virtualOperator.searchLabel,
-          symbol: virtualOperator.symbol,
-          kind: "operator",
-          sourceType: ast.type,
-          renderPattern: virtualOperator.renderPattern,
-          inputs: [baseOutput, ...argOutputs],
-          output: nextName,
-          node: ast,
-          tooltipOperatorKey:
-            ast.base.type === "Operator" ? ast.base.opName : "OPERATOR_APPLY",
-        });
+        const chunks = getExpandedCurryChunks(ast);
+
+        if (chunks.length === 0) {
+          const baseOutput = visit(ast.base);
+          seen.set(ast, baseOutput);
+          return baseOutput;
+        }
+
+        let currentBaseOutput = visit(ast.base);
+        let finalCard = currentBaseOutput;
+
+        for (const chunk of chunks) {
+          const stepBase = chunk.node.base;
+          const argOutputs = chunk.args.map(visit);
+          const step = {
+            id: `step-${result.length + 1}`,
+            title:
+              stepBase.type === "Operator"
+                ? getOperatorDisplay(stepBase.opName).title
+                : virtualOperator.title,
+            searchLabel:
+              stepBase.type === "Operator"
+                ? getOperatorDisplay(stepBase.opName).searchLabel
+                : virtualOperator.searchLabel,
+            symbol: virtualOperator.symbol,
+            kind: "operator" as const,
+            sourceType: chunk.node.type,
+            renderPattern: virtualOperator.renderPattern,
+            inputs: [currentBaseOutput, ...argOutputs],
+            output: chunk.node.varName!,
+            node: chunk.node,
+            tooltipOperatorKey:
+              stepBase.type === "Operator" ? stepBase.opName : "OPERATOR_APPLY",
+          };
+
+          finalCard = register(step);
+          currentBaseOutput = finalCard;
+        }
+
+        seen.set(ast, finalCard);
+        return finalCard;
       }
       case "Pipe": {
         const virtualOperator = getVirtualOperatorDisplay("pipe");
         return register({
-          id: `step-${counter}`,
+          id: `step-${result.length + 1}`,
           title: virtualOperator.title,
           searchLabel: virtualOperator.searchLabel,
           symbol: virtualOperator.symbol,
@@ -925,7 +969,7 @@ const steps = computed<VisualStep[]>(() => {
       case "Pipe2": {
         const virtualOperator = getVirtualOperatorDisplay("pipe2");
         return register({
-          id: `step-${counter}`,
+          id: `step-${result.length + 1}`,
           title: virtualOperator.title,
           searchLabel: virtualOperator.searchLabel,
           symbol: virtualOperator.symbol,
@@ -941,7 +985,7 @@ const steps = computed<VisualStep[]>(() => {
       case "Flip": {
         const virtualOperator = getVirtualOperatorDisplay("flip");
         return register({
-          id: `step-${counter}`,
+          id: `step-${result.length + 1}`,
           title: virtualOperator.title,
           searchLabel: virtualOperator.searchLabel,
           symbol: virtualOperator.symbol,
@@ -956,7 +1000,7 @@ const steps = computed<VisualStep[]>(() => {
       }
       case "List":
         return register({
-          id: `step-${counter}`,
+          id: `step-${result.length + 1}`,
           title: "List",
           searchLabel: "List",
           symbol: "[]",
@@ -968,7 +1012,7 @@ const steps = computed<VisualStep[]>(() => {
         });
       default:
         return register({
-          id: `step-${counter}`,
+          id: `step-${result.length + 1}`,
           title: ast.type,
           searchLabel: getValueTypeSearchLabel(ast.type),
           symbol:

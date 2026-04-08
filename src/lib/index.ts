@@ -6,5 +6,11 @@ export { operatorRegistry } from "lib/IntegratedDynamicsClasses/registries/opera
 export { ASTToCodeLine, CodeLineToAST } from "lib/transformers/CodeLine";
 export { ASTToCompressed, CompressedToAST } from "lib/transformers/Compressed";
 export { ASTToCondensed, CondensedToAST } from "lib/transformers/Condensed";
-export { ASTToExpanded, ExpandedToAST } from "lib/transformers/Expanded";
+export {
+  ASTToExpanded,
+  ExpandedToAST,
+  decomposeASTForExpanded,
+  getExpandedVarName,
+  resetExpandedVarCounter,
+} from "lib/transformers/Expanded";
 export { ASTtoJSON, JSONtoAST } from "lib/transformers/JSON";

@@ -216,6 +216,10 @@ const collectVariables = (
 
 let varCounter = 0;
 
+export const resetExpandedVarCounter = (): void => {
+  varCounter = 0;
+};
+
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 const getInternalName = (node: TypeAST.AST): string | undefined => {
@@ -443,11 +447,20 @@ const decomposeAST = (node: TypeAST.AST): TypeAST.AST => {
   return node;
 };
 
+export const getExpandedVarName = (node: TypeAST.AST): string => {
+  return getVarName(node);
+};
+
+export const decomposeASTForExpanded = (node: TypeAST.AST): TypeAST.AST => {
+  resetExpandedVarCounter();
+  return decomposeAST(structuredClone(node));
+};
+
 export const ASTToExpanded = (
   ast: TypeAST.AST,
   style: "CodeLine" | "Condensed" = "Condensed"
 ): string => {
-  varCounter = 0;
+  resetExpandedVarCounter();
 
   const initialVars = new Set<TypeAST.AST>();
   collectVariables(ast, initialVars, new Set());
