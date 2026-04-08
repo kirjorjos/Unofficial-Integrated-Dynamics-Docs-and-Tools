@@ -64,6 +64,12 @@ type TooltipData = {
   lines: string[];
 };
 
+type OperatorSignatureLine = {
+  prefix: string;
+  label: string;
+  color: string;
+};
+
 const LOGIC_PROGRAMMER_DATA_TYPE_TABS = [
   "Boolean",
   "Integer",
@@ -1004,13 +1010,20 @@ const getOperatorValueSignatureTypes = (opName: TypeOperatorKey): string[] => {
   return flatSignature;
 };
 
-const getOperatorValueSignatureLines = (opName: TypeOperatorKey): string[] => {
+const getOperatorValueSignatureLines = (
+  opName: TypeOperatorKey
+): OperatorSignatureLine[] => {
   const flatSignature = getOperatorValueSignatureTypes(opName);
   if (flatSignature.length === 0) return [];
 
-  return flatSignature.map((typeName, index) =>
-    index === 0 ? typeName : `  -> ${typeName}`
-  );
+  return flatSignature.map((typeName, index) => {
+    const typeMeta = getValueTypeMeta(typeName);
+    return {
+      prefix: index === 0 ? "" : "  -> ",
+      label: typeMeta.label,
+      color: LOGIC_PROGRAMMER_TYPE_COLORS[typeName] ?? "#f0f0f0",
+    };
+  });
 };
 
 const getExpectedInputTooltip = (typeName: string): TooltipData => {
@@ -1314,7 +1327,12 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
                   top: `${getPatternBox(step).canvas!.top + 25 + lineIndex * 9}px`,
                 }"
               >
-                {{ line }}
+                <span class="logic-operator-signature-prefix">
+                  {{ line.prefix }}
+                </span>
+                <span :style="{ color: line.color }">
+                  {{ line.label }}
+                </span>
               </div>
             </template>
 

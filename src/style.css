@@ -642,6 +642,10 @@ button {
   white-space: pre;
 }
 
+.logic-operator-signature-prefix {
+  color: #2f2f2f;
+}
+
 .logic-slot-overlay,
 .logic-write-card {
   position: absolute;
