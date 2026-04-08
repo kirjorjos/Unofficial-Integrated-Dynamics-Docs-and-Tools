@@ -99,6 +99,8 @@ const LOGIC_PROGRAMMER_TYPE_COLORS: Record<string, string> = {
 const props = defineProps<{
   ast: TypeAST.AST;
   startVariableId: number;
+  showStepNumbers?: boolean;
+  showStepTitles?: boolean;
 }>();
 
 const SHIFT_HELD_TOOLTIP_INFO = tooltipInfo as Record<string, string>;
@@ -1121,9 +1123,22 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
       :key="step.id"
       class="logic-programmer-shot"
     >
-      <div class="logic-programmer-meta">
-        <div class="logic-programmer-step">Step {{ index + 1 }}</div>
-        <div class="logic-programmer-step-title">{{ step.output }}</div>
+      <div
+        v-if="props.showStepNumbers !== false || props.showStepTitles !== false"
+        class="logic-programmer-meta"
+      >
+        <div
+          v-if="props.showStepNumbers !== false"
+          class="logic-programmer-step"
+        >
+          Step {{ index + 1 }}
+        </div>
+        <div
+          v-if="props.showStepTitles !== false"
+          class="logic-programmer-step-title"
+        >
+          {{ step.output }}
+        </div>
       </div>
 
       <div class="logic-programmer-frame-shell">
