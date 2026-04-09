@@ -1,4 +1,4 @@
-# Integrated Dynamics unofficial Documentation and Tools
+# Unofficial Integrated Dynamics Docs and Tools
 
 This project is a TypeScript implementation of the core logic from the [Integrated Dynamics](https://github.com/cyclopsmc/IntegratedDynamics/) Minecraft mod as well as documentation and guides for learning the mod.
 
