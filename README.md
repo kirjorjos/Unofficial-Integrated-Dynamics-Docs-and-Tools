@@ -5,7 +5,7 @@ This project is a TypeScript implementation of the core logic from the [Integrat
 ## Live Deployment
 
 This project is hosted and deployed live on GitHub Pages:
-[https://kirjorjos.github.io/WIP-Integrated-Dynamics-Project/](https://kirjorjos.github.io/WIP-Integrated-Dynamics-Project/)
+[https://kirjorjos.github.io/Unofficial-Integrated-Dynamics-Docs-and-Tools/](https://kirjorjos.github.io/Unofficial-Integrated-Dynamics-Docs-and-Tools/)
 
 ## Project Roadmap
 

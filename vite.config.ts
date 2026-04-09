@@ -3,7 +3,7 @@ import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 
 export default defineConfig({
-  base: "/WIP-Integrated-Dynamics-Project/",
+  base: "/Unofficial-Integrated-Dynamics-Docs-and-Tools/",
   plugins: [vue()],
   resolve: {
     alias: {
