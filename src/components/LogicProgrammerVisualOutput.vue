@@ -2,6 +2,7 @@
 import { computed } from "vue";
 import FitText from "./FitText.vue";
 import HoverMinecraftTooltip from "./HoverMinecraftTooltip.vue";
+import DisplayPanel from "./DisplayPanel.vue";
 import {
   ASTToCondensed,
   getExpandedVarName,
@@ -1526,6 +1527,11 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
             </div>
           </div>
         </div>
+      </div>
+
+      <div class="display-panel-row">
+        <DisplayPanel :text="step.output" />
+        <DisplayPanel :text="step.output" />
       </div>
     </article>
   </section>

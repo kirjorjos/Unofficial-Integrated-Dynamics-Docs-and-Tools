@@ -433,6 +433,13 @@ button {
   gap: 0.5rem;
 }
 
+.display-panel-row {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 14px;
+}
+
 .logic-programmer-meta {
   display: flex;
   align-items: baseline;
