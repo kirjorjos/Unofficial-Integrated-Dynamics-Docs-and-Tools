@@ -608,11 +608,10 @@ const getEntryStyle = (entry: VisibleListEntry) => {
 };
 
 const getOperatorOutputType = (operatorClass: OperatorClassLike): string => {
-  const outputType = new operatorClass(false)
+  return new operatorClass(false)
     .getParsedSignature()
     .getOutput(-1)
     .getRootType();
-  return outputType;
 };
 
 const getCardName = (ast: TypeAST.AST): string => {
@@ -707,6 +706,60 @@ const getOperatorValueSignatureText = (opName: TypeOperatorKey): string => {
     .join(" §r-> ");
 };
 
+const getDisplayPanelText = (
+  step: Pick<VisualStep, "output" | "node">
+): string => {
+  if (step.node) {
+    try {
+      const op = ASTtoOperator(step.node) as any;
+      const name = op.getName().valueOf();
+      const signature = new ParsedSignature(
+        op.getParsedSignature().getAst(),
+        false
+      ).toFlatSignature();
+      const indent = "\u00A0";
+      const sigLines = signature
+        .map((type, i) => (i === 0 ? type : `${indent}-> ${type}`))
+        .join("\n");
+      return `${name} ::\n${sigLines}`;
+    } catch {
+      return step.output;
+    }
+  }
+  return step.output;
+};
+
+const getDisplayPanelColor = (
+  step: Pick<VisualStep, "sourceType" | "detail" | "tooltipOperatorKey">
+): string => {
+  const outputType = getStepActualOutputType(step);
+  return LOGIC_PROGRAMMER_TYPE_COLORS[outputType] ?? "#f0f0f0";
+};
+
+const getOutputTextureName = (
+  step: Pick<VisualStep, "sourceType" | "detail" | "tooltipOperatorKey">
+): TypeAST.AST["type"] => {
+  return getStepActualOutputType(step) as TypeAST.AST["type"];
+};
+
+const getStepActualOutputType = (
+  step: Pick<VisualStep, "sourceType" | "detail" | "tooltipOperatorKey">
+): string => {
+  const opKey = step.detail ?? step.tooltipOperatorKey;
+  if (opKey) {
+    const operatorClass = getOperatorClass(opKey as TypeOperatorKey);
+    if (operatorClass) {
+      return new ParsedSignature(
+        new operatorClass(false).getParsedSignature().getAst(),
+        false
+      )
+        .getOutput(-1)
+        .getRootType();
+    }
+  }
+  return step.sourceType;
+};
+
 const getOperatorReferenceText = (inputs: VisualCardRef[]): string => {
   return `{${inputs
     .map((input) => `${input.name}:${input.variableId}`)
@@ -788,7 +841,11 @@ const buildOperatorCardTooltip = (
     }),
     formatTemplate(
       OPERATOR_OUTPUT_TYPE_TEMPLATE,
-      `${getValueTypeMeta(operatorMeta.outputType).colorCode}${getValueTypeMeta(operatorMeta.outputType).label}`
+      `${
+        operatorMeta.outputType === "Any"
+          ? "§0"
+          : getValueTypeMeta(operatorMeta.outputType).colorCode
+      }${getValueTypeMeta(operatorMeta.outputType).label}`
     ),
     ...operatorInfoLines,
     formatTemplate(
@@ -1091,7 +1148,10 @@ const getOperatorValueSignatureLines = (
     return {
       prefix: index === 0 ? "" : "  -> ",
       label: typeMeta.label,
-      color: LOGIC_PROGRAMMER_TYPE_COLORS[typeName] ?? "#f0f0f0",
+      color:
+        typeName === "Any"
+          ? "#000000"
+          : (LOGIC_PROGRAMMER_TYPE_COLORS[typeName] ?? "#f0f0f0"),
     };
   });
 };
@@ -1397,7 +1457,10 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
                   top: `${getPatternBox(step).canvas!.top + 25 + lineIndex * 9}px`,
                 }"
               >
-                <span class="logic-operator-signature-prefix">
+                <span
+                  class="logic-operator-signature-prefix"
+                  :style="{ color: '#000000' }"
+                >
                   {{ line.prefix }}
                 </span>
                 <span :style="{ color: line.color }">
@@ -1520,7 +1583,7 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
                   v-if="step.workspaceMode !== 'pattern'"
                   class="logic-write-card-composite"
                   :style="{
-                    backgroundImage: `url('${publicAsset(`valuetype/${getValueTypeTextureName(step.sourceType)}.png`)}'), url('${publicAsset('item/variable.png')}')`,
+                    backgroundImage: `url('${publicAsset(`valuetype/${getValueTypeTextureName(getOutputTextureName(step))}.png`)}'), url('${publicAsset('item/variable.png')}')`,
                   }"
                 />
               </HoverMinecraftTooltip>
@@ -1530,8 +1593,14 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
       </div>
 
       <div class="display-panel-row">
-        <DisplayPanel :text="step.output" />
-        <DisplayPanel :text="step.output" />
+        <DisplayPanel
+          :text="getDisplayPanelText(step)"
+          :text-color="getDisplayPanelColor(step)"
+        />
+        <DisplayPanel
+          :text="getDisplayPanelText(step)"
+          :text-color="getDisplayPanelColor(step)"
+        />
       </div>
     </article>
   </section>

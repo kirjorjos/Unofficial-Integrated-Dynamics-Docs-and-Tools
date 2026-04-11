@@ -13,6 +13,7 @@ const props = withDefaults(
     text: string;
     minScale?: number;
     align?: "left" | "center";
+    color?: string;
   }>(),
   {
     minScale: 0.5,
@@ -41,9 +42,12 @@ const updateScale = () => {
     return;
   }
 
-  let low = props.minScale;
+  const lines = props.text.split("\n");
+  const isMultiLine = lines.length > 1;
+
+  let low = isMultiLine ? 0.3 : props.minScale;
   let high = 1;
-  let best = props.minScale;
+  let best = isMultiLine ? 0.3 : props.minScale;
 
   for (let index = 0; index < 8; index += 1) {
     const mid = (low + high) / 2;
@@ -52,7 +56,8 @@ const updateScale = () => {
     const contentWidth = content.scrollWidth;
     const contentHeight = content.scrollHeight;
     const fits =
-      contentWidth <= availableWidth && contentHeight <= availableHeight;
+      contentWidth <= availableWidth &&
+      (isMultiLine || contentHeight <= availableHeight);
 
     if (fits) {
       best = mid;
@@ -82,7 +87,19 @@ const innerStyle = computed(() => ({
     props.align === "center" ? "translate(-50%, -50%)" : "translateY(-50%)",
 }));
 
-watch(() => [props.text, props.align, props.minScale], scheduleUpdate);
+const textLines = computed(() => props.text.split("\n"));
+
+const lineStyle = computed(() => {
+  if (props.color) {
+    return { color: props.color };
+  }
+  return {};
+});
+
+watch(
+  () => [props.text, props.align, props.minScale, props.color],
+  scheduleUpdate
+);
 
 onMounted(() => {
   scheduleUpdate();
@@ -101,7 +118,16 @@ onBeforeUnmount(() => {
 <template>
   <span ref="containerRef" class="fit-text">
     <span ref="contentRef" class="fit-text-inner" :style="innerStyle">
-      {{ text }}
+      <span v-for="(line, index) in textLines" :key="index" :style="lineStyle">
+        {{ line
+        }}<span v-if="index < textLines.length - 1" class="line-break" />
+      </span>
     </span>
   </span>
 </template>
+
+<style scoped>
+.line-break {
+  display: block;
+}
+</style>

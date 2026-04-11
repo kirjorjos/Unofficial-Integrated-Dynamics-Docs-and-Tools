@@ -3,6 +3,7 @@ import FitText from "./FitText.vue";
 
 const props = defineProps<{
   text: string;
+  textColor?: string;
 }>();
 
 function getPixelColor(index: number): string {
@@ -128,7 +129,12 @@ function getPixelColor(index: number): string {
       ></div>
     </div>
     <div class="display-panel-screen">
-      <FitText :text="props.text" :min-scale="0.5" align="center" />
+      <FitText
+        :text="props.text"
+        :color="props.textColor"
+        :min-scale="0.5"
+        align="center"
+      />
     </div>
   </div>
 </template>
