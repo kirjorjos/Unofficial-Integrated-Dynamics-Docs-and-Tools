@@ -49,6 +49,35 @@ describe("TestCondensedTransformer", () => {
     expect(ASTToCondensed(ast)).toBe("numberAdd(1, 2)");
   });
 
+  it("testDirectBaseOperatorSerialization", () => {
+    const ast: TypeAST.Curried = {
+      type: "Curry",
+      base: {
+        type: "Curry",
+        base: { type: "Operator", opName: "STRING_CONCAT" },
+        args: [{ type: "String", value: "te" }],
+      },
+      args: [{ type: "String", value: "st" }],
+    };
+
+    expect(ASTToCondensed(ast)).toBe('stringConcat("te", "st")');
+  });
+
+  it("testNamedBoundaryStopsDirectBaseSerialization", () => {
+    const ast: TypeAST.Curried = {
+      type: "Curry",
+      base: {
+        type: "Curry",
+        varName: "concatTe",
+        base: { type: "Operator", opName: "STRING_CONCAT" },
+        args: [{ type: "String", value: "te" }],
+      },
+      args: [{ type: "String", value: "st" }],
+    };
+
+    expect(ASTToCondensed(ast)).toBe('apply(concatTe, "st")');
+  });
+
   it("testIncorrectArityCondensed", () => {
     // Over-expecting: numberIncrement takes 1 arg, given 2
     const over = "numberIncrement(1, 2)";
@@ -221,6 +250,7 @@ describe("TestCondensedTransformer", () => {
       "true",
       "null",
       "apply(numberAdd, 1)",
+      'stringConcat("te", "st")',
       "pipe(numberAdd, multiply)",
     ];
     for (const c of cases) {

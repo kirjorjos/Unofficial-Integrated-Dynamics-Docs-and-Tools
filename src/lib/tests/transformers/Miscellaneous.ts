@@ -1,6 +1,6 @@
 import { operatorRegistry } from "lib/IntegratedDynamicsClasses/registries/operatorRegistry";
 import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
-import { getNicknameRegex } from "lib/HelperClasses/UtilityFunctions";
+import { getNicknameRegex } from "lib/transformers/helpers";
 
 /**
  * Miscellaneous validation tests for operators.
@@ -74,12 +74,23 @@ describe("MiscellaneousTests", () => {
     });
 
     it("testOperatorNameDerivedNicknames", () => {
+      const operatorNameCounts = new Map<string, number>();
+      for (const opClass of operatorClasses) {
+        operatorNameCounts.set(
+          opClass.operatorName,
+          (operatorNameCounts.get(opClass.operatorName) || 0) + 1
+        );
+      }
+
       for (const opClass of operatorClasses) {
         const uniqueName = opClass.internalName;
         const operatorName = opClass.operatorName;
         const globalStyleName = `${opClass.kind}${operatorName[0]!.toUpperCase()}${operatorName.substring(1)}`;
 
-        if (!opClass.nicknames.includes(operatorName)) {
+        if (
+          operatorNameCounts.get(operatorName) === 1 &&
+          !opClass.nicknames.includes(operatorName)
+        ) {
           throw new Error(
             `operatorName "${operatorName}" not found in nicknames for operator "${uniqueName}"`
           );
@@ -91,6 +102,27 @@ describe("MiscellaneousTests", () => {
           );
         }
       }
+    });
+
+    it("testConcatNicknameRegression", () => {
+      const concatOwners: string[] = [];
+
+      for (const [key, opClass] of Object.entries(operatorRegistry)) {
+        if (
+          key === "find" ||
+          key === "operatorByNickname" ||
+          typeof opClass !== "function" ||
+          !(opClass.prototype instanceof BaseOperator)
+        ) {
+          continue;
+        }
+
+        if (opClass.nicknames.includes("concat")) {
+          concatOwners.push(key);
+        }
+      }
+
+      expect(concatOwners).toEqual([]);
     });
   });
 

@@ -1,4 +1,4 @@
-import { getArity } from "lib/HelperClasses/UtilityFunctions";
+import { getArity } from "lib/transformers/helpers";
 import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
 import { operatorRegistry } from "lib/IntegratedDynamicsClasses/registries/operatorRegistry";
 

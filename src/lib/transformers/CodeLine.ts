@@ -4,7 +4,8 @@ import {
   getOpName,
   resolveImplicitFlipOperator,
   setOperatorSourceName,
-} from "lib/HelperClasses/UtilityFunctions";
+  flattenAnonymousBaseOperatorApplication,
+} from "lib/transformers/helpers";
 
 export const ASTToCodeLine = (ast: TypeAST.AST, isTopLevel = true): string => {
   const stringify = (node: TypeAST.AST, topLevel = false): string => {
@@ -70,8 +71,13 @@ export const ASTToCodeLine = (ast: TypeAST.AST, isTopLevel = true): string => {
         break;
 
       case "Curry": {
-        const base = stringify(node.base);
-        const args = node.args.map((a) => wrap(a)).join(" ");
+        const flattened = flattenAnonymousBaseOperatorApplication(node);
+        const base = stringify(
+          flattened?.fullyApplied ? flattened.operator : node.base
+        );
+        const args = (flattened?.fullyApplied ? flattened.args : node.args)
+          .map((a) => wrap(a))
+          .join(" ");
         result = `${base} ${args}`;
         // if (!topLevel) result = `(${result})`;
         break;

@@ -7,7 +7,8 @@ import {
   getNicknameCharacterRegex,
   resolveImplicitFlipOperator,
   setOperatorSourceName,
-} from "lib/HelperClasses/UtilityFunctions";
+  flattenAnonymousBaseOperatorApplication,
+} from "lib/transformers/helpers";
 
 type char = string;
 interface State {
@@ -1094,10 +1095,12 @@ export const ASTToCondensed = (ast: TypeAST.AST, isTopLevel = true): string => {
       }
 
       case "Curry": {
-        const arity = getArity(node.base);
-        if (node.base.type === "Operator" && node.args.length === arity) {
-          const base = stringify(node.base, false);
-          const argsStr = node.args.map((a) => stringify(a, false)).join(", ");
+        const flattened = flattenAnonymousBaseOperatorApplication(node);
+        if (flattened?.fullyApplied) {
+          const base = stringify(flattened.operator, false);
+          const argsStr = flattened.args
+            .map((a) => stringify(a, false))
+            .join(", ");
           result = `${base}(${argsStr})`;
         } else {
           let currentBase = stringify(node.base, false);

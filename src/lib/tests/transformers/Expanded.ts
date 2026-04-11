@@ -174,6 +174,41 @@ final = apply(numberAdd, var2)
     expect(ast2).toEqual(ast1);
   });
 
+  it("testExpandedDirectBaseOperatorRoundTrip", () => {
+    const input = 'test = stringConcat("te", "st")';
+    const ast = ExpandedToAST(input);
+    const expanded = ASTToExpanded(ast);
+
+    expect(expanded).toContain('test = stringConcat("te", "st")');
+    expect(expanded).not.toContain("apply(");
+  });
+
+  it("testExpandedDirectBaseOperatorRoundTripCodeLineStyle", () => {
+    const input = 'test = stringConcat("te", "st")';
+    const ast = ExpandedToAST(input);
+    const expanded = ASTToExpanded(ast, "CodeLine");
+
+    expect(expanded).toContain('test = stringConcat "te" "st"');
+  });
+
+  it("testExpandedNamedBoundaryStaysExplicit", () => {
+    const ast: TypeAST.Curried = {
+      type: "Curry",
+      varName: "test",
+      base: {
+        type: "Curry",
+        varName: "concatTe",
+        base: { type: "Operator", opName: "STRING_CONCAT" },
+        args: [{ type: "String", value: "te" }],
+      },
+      args: [{ type: "String", value: "st" }],
+    };
+    const expanded = ASTToExpanded(ast);
+
+    expect(expanded).toContain('concatTe = apply(stringConcat, "te")');
+    expect(expanded).toContain('test = apply(concatTe, "st")');
+  });
+
   it("testVariableNamingConventions", () => {
     const ast1 = CodeLineToAST("apply operatorPipe numberIncrement");
     const exp1 = ASTToExpanded(ast1);
@@ -185,12 +220,13 @@ final = apply(numberAdd, var2)
 
     const ast3 = CodeLineToAST("apply (apply numberAdd 5) 10");
     const exp3 = ASTToExpanded(ast3);
-    expect(exp3).toContain("numberAddBy5 ::");
     expect(exp3).toContain("{numberAddBy5}by10 ::");
+    expect(exp3).not.toContain("numberAddBy5 ::");
 
     const ast4 = CodeLineToAST("apply2 numberAdd 5 10");
     const exp4 = ASTToExpanded(ast4);
     expect(exp4).toContain("{numberAddBy5}by10 ::");
+    expect(exp4).not.toContain("numberAddBy5 ::");
 
     const ast6 = CodeLineToAST("apply (flip numberAdd) 5");
     const exp6 = ASTToExpanded(ast6);

@@ -9,7 +9,7 @@ export class OPERATOR_STRING_CONCAT extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:string_concat" as const;
   static override numericID = 78;
-  static override nicknames = ["stringConcat", "concat"];
+  static override nicknames = ["stringConcat"];
   static override symbol = "+";
   static override interactName = "stringConcat";
   static override operatorName = "concat" as const;

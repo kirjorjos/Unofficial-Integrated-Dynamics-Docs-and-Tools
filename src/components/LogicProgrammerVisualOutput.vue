@@ -14,6 +14,7 @@ import {
   BaseOperator,
   type LogicProgrammerRenderPatternKey,
 } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
+import { flattenAnonymousBaseOperatorApplication } from "lib/transformers/helpers";
 import tooltipInfo from "lib/generated/integratedDynamicsTooltipInfo.json";
 import { LOGIC_PROGRAMMER_RENDER_PATTERNS } from "./logicProgrammerRenderPatterns";
 
@@ -620,6 +621,12 @@ const getCardName = (ast: TypeAST.AST): string => {
 const getExpandedCurryChunks = (
   ast: TypeAST.Curried
 ): { node: TypeAST.Curried; args: TypeAST.AST[] }[] => {
+  const flattened = flattenAnonymousBaseOperatorApplication(ast);
+
+  if (flattened?.fullyApplied) {
+    return [];
+  }
+
   const chunks: { node: TypeAST.Curried; args: TypeAST.AST[] }[] = [];
   const isApplyN =
     ast.base.type === "Operator" &&
@@ -908,13 +915,31 @@ const steps = computed<VisualStep[]>(() => {
       }
       case "Curry": {
         const virtualOperator = getVirtualOperatorDisplay("apply");
-        const chunks = getExpandedCurryChunks(ast);
+        const flattened = flattenAnonymousBaseOperatorApplication(ast);
 
-        if (chunks.length === 0) {
-          const baseOutput = visit(ast.base);
-          seen.set(ast, baseOutput);
-          return baseOutput;
+        if (flattened?.fullyApplied && flattened.operator.type === "Operator") {
+          const argOutputs = flattened.args.map(visit);
+          const finalVarName = ast.varName || getExpandedVarName(ast);
+          const step = {
+            id: `step-${result.length + 1}`,
+            title: getOperatorDisplay(flattened.operator.opName).title,
+            searchLabel: getOperatorDisplay(flattened.operator.opName)
+              .searchLabel,
+            symbol: getOperatorDisplay(flattened.operator.opName).symbol,
+            kind: "operator" as const,
+            sourceType: ast.type,
+            renderPattern: virtualOperator.renderPattern,
+            inputs: argOutputs,
+            output: finalVarName,
+            node: ast,
+            tooltipOperatorKey: flattened.operator.opName,
+          };
+          const finalCard = register(step);
+          seen.set(ast, finalCard);
+          return finalCard;
         }
+
+        const chunks = getExpandedCurryChunks(ast);
 
         let currentBaseOutput = visit(ast.base);
         let finalCard = currentBaseOutput;

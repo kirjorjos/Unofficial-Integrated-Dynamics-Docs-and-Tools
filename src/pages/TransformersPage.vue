@@ -400,6 +400,8 @@ onMounted(() => {
           v-else-if="outputFormat === 'visual' && currentAst"
           :ast="currentAst"
           :start-variable-id="initialVariableId"
+          :show-step-numbers="true"
+          :show-step-titles="true"
         />
         <textarea
           v-else

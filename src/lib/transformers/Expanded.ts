@@ -6,7 +6,8 @@ import {
   getOpName,
   getNicknameRegex,
   getOperatorSourceName,
-} from "lib/HelperClasses/UtilityFunctions";
+  flattenAnonymousBaseOperatorApplication,
+} from "lib/transformers/helpers";
 
 const getLabel = (index: number): string => {
   let label = "";
@@ -385,8 +386,18 @@ const getVarName = (node: TypeAST.AST): string => {
 
 const decomposeAST = (node: TypeAST.AST): TypeAST.AST => {
   if (node.type === "Curry") {
-    const base = decomposeAST(node.base) as TypeAST.Operator;
+    const flattened = flattenAnonymousBaseOperatorApplication(node);
+
+    if (flattened?.fullyApplied) {
+      return {
+        ...node,
+        base: flattened.operator,
+        args: flattened.args.map(decomposeAST),
+      };
+    }
+
     const args = node.args.map(decomposeAST);
+    const base = decomposeAST(node.base) as TypeAST.Operator;
 
     if (base.type === "Operator" && args.length === 0) {
       return base;

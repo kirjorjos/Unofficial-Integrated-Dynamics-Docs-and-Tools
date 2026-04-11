@@ -146,6 +146,35 @@ describe("TestCodeLineTransformer", () => {
     expect(ASTToCodeLine(ast)).toBe("numberAdd 1 2");
   });
 
+  it("testDirectBaseOperatorSerialization", () => {
+    const ast: TypeAST.Curried = {
+      type: "Curry",
+      base: {
+        type: "Curry",
+        base: { type: "Operator", opName: "STRING_CONCAT" },
+        args: [{ type: "String", value: "te" }],
+      },
+      args: [{ type: "String", value: "st" }],
+    };
+
+    expect(ASTToCodeLine(ast)).toBe('stringConcat "te" "st"');
+  });
+
+  it("testNamedBoundaryStopsDirectBaseSerialization", () => {
+    const ast: TypeAST.Curried = {
+      type: "Curry",
+      base: {
+        type: "Curry",
+        varName: "concatTe",
+        base: { type: "Operator", opName: "STRING_CONCAT" },
+        args: [{ type: "String", value: "te" }],
+      },
+      args: [{ type: "String", value: "st" }],
+    };
+
+    expect(ASTToCodeLine(ast)).toBe('concatTe "st"');
+  });
+
   it("testLeftAssociativeApply", () => {
     const code = "numberAdd numberIncrement 5 1 2";
     const ast = CodeLineToAST(code);
@@ -176,6 +205,7 @@ describe("TestCodeLineTransformer", () => {
       "true",
       "null",
       "(numberAdd 1)",
+      'stringConcat "te" "st"',
       "operatorPipe (operatorPipe numberAdd 1) multiply",
     ];
     for (const c of cases) {
