@@ -4,6 +4,7 @@ import FitText from "./FitText.vue";
 const props = defineProps<{
   text: string;
   textColor?: string;
+  align?: "left" | "center" | "top";
 }>();
 
 function getPixelColor(index: number): string {
@@ -133,7 +134,7 @@ function getPixelColor(index: number): string {
         :text="props.text"
         :color="props.textColor"
         :min-scale="0.5"
-        align="center"
+        :align="props.align ?? 'center'"
       />
     </div>
   </div>
@@ -166,11 +167,12 @@ function getPixelColor(index: number): string {
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: 172px;
-  height: 172px;
+  width: 160px;
+  height: 160px;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 6px;
   font-family:
     "JetBrains Mono", "IBM Plex Mono", "Fira Code", ui-monospace,
     SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", monospace;

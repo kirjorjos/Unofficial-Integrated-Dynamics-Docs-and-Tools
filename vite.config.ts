@@ -8,6 +8,7 @@ export default defineConfig({
   resolve: {
     alias: {
       lib: fileURLToPath(new URL("./src/lib", import.meta.url)),
+      "pages-lib": fileURLToPath(new URL("./src/pages/lib", import.meta.url)),
       "re2-wasm": fileURLToPath(
         new URL("./src/shims/re2-browser.ts", import.meta.url)
       ),

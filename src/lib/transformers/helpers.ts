@@ -184,13 +184,16 @@ export const expectsOperatorArgument = (
 
   if (current.type === "Operator") {
     const opClass = operatorRegistry[current.opName];
-    let op: BaseOperator<IntegratedValue, IntegratedValue>;
+    let op: BaseOperator<IntegratedValue, IntegratedValue> | undefined;
     if (opClass) {
       try {
         op = new opClass(false);
       } catch (e) {}
     }
-    if (!op!) op = operatorRegistry.find(current.opName)!;
+    if (!op)
+      op = operatorRegistry.find(current.opName) as
+        | BaseOperator<IntegratedValue, IntegratedValue>
+        | undefined;
 
     if (!op) return false;
 

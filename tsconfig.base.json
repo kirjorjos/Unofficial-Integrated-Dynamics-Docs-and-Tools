@@ -6,7 +6,9 @@
     "baseUrl": ".",
     "paths": {
       "lib": ["./src/lib/index.ts"],
-      "lib/*": ["./src/lib/*"]
+      "lib/*": ["./src/lib/*"],
+      "pages-lib": ["./src/pages/lib/index.ts"],
+      "pages-lib/*": ["./src/pages/lib/*"]
     },
     "strict": true,
     "skipLibCheck": true,

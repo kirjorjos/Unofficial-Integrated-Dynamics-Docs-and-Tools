@@ -1,0 +1,26 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "dist-test",
+    "rootDir": "src",
+    "noEmit": false,
+    "noEmitOnError": false,
+    "removeComments": false,
+    "preserveConstEnums": true,
+    "emitBOM": false,
+    "newLine": "lf",
+    "module": "es2022",
+    "lib": ["es2022", "dom"],
+    "typeRoots": ["./src/lib/types", "./node_modules/@types"],
+    "types": ["jest"],
+    "disableSizeLimit": true,
+    "incremental": false,
+    "assumeChangesOnlyAffectDirectDependencies": false,
+    "sourceMap": true,
+    "inlineSourceMap": false,
+    "inlineSources": true,
+    "strict": false,
+    "noImplicitAny": false
+  },
+  "include": ["src/**/*.ts", "src/**/*.d.ts"]
+}

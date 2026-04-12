@@ -12,7 +12,7 @@ const props = withDefaults(
   defineProps<{
     text: string;
     minScale?: number;
-    align?: "left" | "center";
+    align?: "left" | "center" | "top";
     color?: string;
   }>(),
   {
@@ -42,32 +42,42 @@ const updateScale = () => {
     return;
   }
 
-  const lines = props.text.split("\n");
-  const isMultiLine = lines.length > 1;
+  // Measure at base font size to get non-wrapped dimensions
+  const baseWidth = content.scrollWidth;
+  const baseHeight = content.scrollHeight;
 
-  let low = isMultiLine ? 0.3 : props.minScale;
-  let high = 1;
-  let best = isMultiLine ? 0.3 : props.minScale;
-
-  for (let index = 0; index < 8; index += 1) {
-    const mid = (low + high) / 2;
-    content.style.fontSize = `${mid}em`;
-
-    const contentWidth = content.scrollWidth;
-    const contentHeight = content.scrollHeight;
-    const fits =
-      contentWidth <= availableWidth &&
-      (isMultiLine || contentHeight <= availableHeight);
-
-    if (fits) {
-      best = mid;
-      low = mid;
-    } else {
-      high = mid;
-    }
+  if (baseWidth <= 0 || baseHeight <= 0) {
+    content.style.fontSize = "1em";
+    return;
   }
 
-  content.style.fontSize = `${best}em`;
+  // Calculate scale to fit BOTH dimensions
+  const widthRatio = availableWidth / baseWidth;
+  const heightRatio = availableHeight / baseHeight;
+
+  // Use the smaller ratio so text fits in BOTH width AND height
+  const neededScale = Math.min(widthRatio, heightRatio);
+
+  const minScale = props.minScale ?? 0.5;
+
+  // If text already fits (neededScale >= 1), cap at 1 (don't scale up)
+  if (neededScale >= 1) {
+    content.style.fontSize = "1em";
+    return;
+  }
+
+  // Text needs to shrink - check if minScale would work
+  const fitsAtMinScale =
+    baseWidth * minScale <= availableWidth &&
+    baseHeight * minScale <= availableHeight;
+
+  if (fitsAtMinScale) {
+    content.style.fontSize = `${minScale}em`;
+    return;
+  }
+
+  // Need to scale down more than minScale allows
+  content.style.fontSize = `${neededScale}em`;
 };
 
 const scheduleUpdate = () => {
@@ -80,12 +90,19 @@ const scheduleUpdate = () => {
   });
 };
 
-const innerStyle = computed(() => ({
-  left: props.align === "center" ? "50%" : "0",
-  top: "50%",
-  transform:
-    props.align === "center" ? "translate(-50%, -50%)" : "translateY(-50%)",
-}));
+const innerStyle = computed(() => {
+  const isCenter = props.align === "center";
+  const isTop = props.align === "top";
+  return {
+    left: isCenter ? "50%" : "0",
+    top: isTop ? "0" : "50%",
+    transform: isCenter
+      ? "translate(-50%, -50%)"
+      : isTop
+        ? "translateY(0)"
+        : "translateY(-50%)",
+  };
+});
 
 const textLines = computed(() => props.text.split("\n"));
 
