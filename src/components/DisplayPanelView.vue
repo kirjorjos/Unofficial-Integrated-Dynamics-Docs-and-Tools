@@ -17,5 +17,9 @@ const textColor = computed(() => {
 </script>
 
 <template>
-  <DisplayPanel :text="props.text" :text-color="textColor" />
+  <DisplayPanel
+    :text="props.text"
+    :text-color="textColor"
+    :type-name="props.typeName"
+  />
 </template>

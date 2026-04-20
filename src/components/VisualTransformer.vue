@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import DisplayPanelView from "./DisplayPanelView.vue";
+import DisplayPanelViewHolder from "./DisplayPanelViewHolder.vue";
 import {
   generateVisualSteps,
   getDisplayPanelText,
@@ -50,7 +51,7 @@ const steps = computed(() =>
         <!-- LogicProgrammerView will go here -->
       </div>
 
-      <div class="display-panel-row">
+      <DisplayPanelViewHolder>
         <DisplayPanelView
           :text="getDisplayPanelText(step)"
           :type-name="step.sourceType"
@@ -59,7 +60,7 @@ const steps = computed(() =>
           :text="getDisplayPanelText(step)"
           :type-name="step.sourceType"
         />
-      </div>
+      </DisplayPanelViewHolder>
     </article>
   </section>
 </template>

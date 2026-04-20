@@ -14,6 +14,7 @@ const props = withDefaults(
     minScale?: number;
     align?: "left" | "center" | "top";
     color?: string;
+    typeName?: string;
   }>(),
   {
     minScale: 0.5,
@@ -55,13 +56,25 @@ const updateScale = () => {
   const widthRatio = availableWidth / baseWidth;
   const heightRatio = availableHeight / baseHeight;
 
-  // Use the smaller ratio so text fits in BOTH width AND height
-  const neededScale = Math.min(widthRatio, heightRatio);
+  // For integer types, normalize to larger dimension (treat as square-ish)
+  // so text fills container in the dominant dimension
+  const isIntegerType = props.typeName === "Integer";
+  let neededScale: number;
+  if (isIntegerType) {
+    const largerDimension = Math.max(baseWidth, baseHeight);
+    const largerContainer = Math.max(availableWidth, availableHeight);
+    neededScale = largerContainer / largerDimension;
+  } else {
+    neededScale = Math.min(widthRatio, heightRatio);
+  }
 
   const minScale = props.minScale ?? 0.5;
 
-  // If text already fits (neededScale >= 1), cap at 1 (don't scale up)
   if (neededScale >= 1) {
+    if (isIntegerType) {
+      content.style.fontSize = `${neededScale}em`;
+      return;
+    }
     content.style.fontSize = "1em";
     return;
   }
