@@ -56,11 +56,14 @@ const updateScale = () => {
   const widthRatio = availableWidth / baseWidth;
   const heightRatio = availableHeight / baseHeight;
 
-  // For integer types, normalize to larger dimension (treat as square-ish)
+  // For integer, string, and operator types, normalize to larger dimension (treat as square-ish)
   // so text fills container in the dominant dimension
-  const isIntegerType = props.typeName === "Integer";
+  const isSpecialType =
+    props.typeName === "Integer" ||
+    props.typeName === "String" ||
+    props.typeName === "Operator";
   let neededScale: number;
-  if (isIntegerType) {
+  if (isSpecialType) {
     const largerDimension = Math.max(baseWidth, baseHeight);
     const largerContainer = Math.max(availableWidth, availableHeight);
     neededScale = largerContainer / largerDimension;
@@ -71,7 +74,7 @@ const updateScale = () => {
   const minScale = props.minScale ?? 0.5;
 
   if (neededScale >= 1) {
-    if (isIntegerType) {
+    if (isSpecialType) {
       content.style.fontSize = `${neededScale}em`;
       return;
     }

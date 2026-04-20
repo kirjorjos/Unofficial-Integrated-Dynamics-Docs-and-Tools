@@ -731,13 +731,8 @@ const getDisplayPanelText = (
       const op = ASTtoOperator(step.node) as any;
       const nodeType = step.node.type;
 
-      // For serializer types (Flip, Pipe, Pipe2, Curry)
-      if (
-        nodeType === "Flip" ||
-        nodeType === "Pipe" ||
-        nodeType === "Pipe2" ||
-        nodeType === "Curry"
-      ) {
+      // For serializer types (Flip, Pipe, Pipe2)
+      if (nodeType === "Flip" || nodeType === "Pipe" || nodeType === "Pipe2") {
         const opKey = step.tooltipOperatorKey;
         if (opKey) {
           // Map tooltip keys to virtual operator keys
@@ -773,6 +768,23 @@ const getDisplayPanelText = (
         return step.output;
       }
 
+      // For Curry types, use getName() which returns "Applied <operator> [args]"
+      if (nodeType === "Curry") {
+        if (typeof (op as any).getName !== "function") {
+          return step.output;
+        }
+        const name = (op as any).getName().valueOf();
+        const signature = new ParsedSignature(
+          (op as any).getParsedSignature().getAst(),
+          false
+        ).toFlatSignature();
+        const indent = "\u00A0";
+        const sigLines = signature
+          .map((type, i) => (i === 0 ? type : `${indent}-> ${type}`))
+          .join("\n");
+        return `${name} ::\n${sigLines}`;
+      }
+
       if (typeof (op as any).getFullDisplayName !== "function") {
         return step.output;
       }
@@ -798,17 +810,20 @@ const getDisplayPanelColor = (
   step: Pick<
     VisualStep,
     "sourceType" | "detail" | "tooltipOperatorKey" | "forceOperatorTabActive"
-  >
+  > & { node?: TypeAST.AST }
 ): string => {
   if (step.sourceType === "Operator" || step.forceOperatorTabActive) {
     return LOGIC_PROGRAMMER_TYPE_COLORS["Operator"] ?? "#2be72f";
   }
-  // For serializers (Curry, Flip, Pipe, Pipe2) used from their respective tabs
+  // For Curry types, the output is an operator (b -> c), so use Operator color
+  if (step.sourceType === "Curry") {
+    return LOGIC_PROGRAMMER_TYPE_COLORS["Operator"] ?? "#2be72f";
+  }
+  // For serializer types (Flip, Pipe, Pipe2) used from their respective tabs
   const opKey = step.tooltipOperatorKey;
   if (
     opKey &&
-    (opKey.startsWith("OPERATOR_APPLY") ||
-      opKey === "OPERATOR_FLIP" ||
+    (opKey === "OPERATOR_FLIP" ||
       opKey === "OPERATOR_PIPE" ||
       opKey === "OPERATOR_PIPE2")
   ) {
@@ -846,12 +861,15 @@ const getOutputTextureName = (
   if (step.sourceType === "Operator" || step.forceOperatorTabActive) {
     return "Operator";
   }
-  // For serializers (Curry, Flip, Pipe, Pipe2) used from their respective tabs
+  // For Curry types, the output is an operator (b -> c), so use Operator texture
+  if (step.sourceType === "Curry") {
+    return "Operator";
+  }
+  // For serializer types (Flip, Pipe, Pipe2) used from their respective tabs
   const opKey = step.tooltipOperatorKey;
   if (
     opKey &&
-    (opKey.startsWith("OPERATOR_APPLY") ||
-      opKey === "OPERATOR_FLIP" ||
+    (opKey === "OPERATOR_FLIP" ||
       opKey === "OPERATOR_PIPE" ||
       opKey === "OPERATOR_PIPE2")
   ) {
@@ -861,8 +879,21 @@ const getOutputTextureName = (
 };
 
 const getStepActualOutputType = (
-  step: Pick<VisualStep, "sourceType" | "detail" | "tooltipOperatorKey">
+  step: Pick<VisualStep, "sourceType" | "detail" | "tooltipOperatorKey"> & {
+    node?: TypeAST.AST;
+  }
 ): string => {
+  // For Curry types, use the actual CurriedOperator's output type
+  if (step.sourceType === "Curry" && step.node) {
+    try {
+      const op = ASTtoOperator(step.node) as any;
+      if (typeof op?.getParsedSignature === "function") {
+        return op.getParsedSignature().getOutput(-1).getRootType();
+      }
+    } catch {
+      // Fall through to default handling
+    }
+  }
   const opKey = step.detail ?? step.tooltipOperatorKey;
   if (opKey) {
     const operatorClass = getOperatorClass(opKey as TypeOperatorKey);
