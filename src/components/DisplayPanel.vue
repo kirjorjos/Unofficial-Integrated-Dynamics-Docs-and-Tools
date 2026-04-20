@@ -6,6 +6,11 @@ const props = defineProps<{
   textColor?: string;
   align?: "left" | "center" | "top";
   typeName?: string;
+  isFullscreen?: boolean;
+}>();
+
+const emit = defineEmits<{
+  (e: "click", event: MouseEvent): void;
 }>();
 
 function getPixelColor(index: number): string {
@@ -121,7 +126,11 @@ function getPixelColor(index: number): string {
 </script>
 
 <template>
-  <div class="display-panel">
+  <div
+    class="display-panel"
+    :class="{ fullscreen: props.isFullscreen }"
+    @click="emit('click', $event)"
+  >
     <div class="panel-grid">
       <div
         v-for="i in 100"

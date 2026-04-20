@@ -2,7 +2,7 @@
 import { computed } from "vue";
 import FitText from "./FitText.vue";
 import HoverMinecraftTooltip from "./HoverMinecraftTooltip.vue";
-import DisplayPanel from "./DisplayPanel.vue";
+import DisplayPanelView from "./DisplayPanelView.vue";
 import DisplayPanelViewHolder from "./DisplayPanelViewHolder.vue";
 import {
   ASTToCondensed,
@@ -1753,13 +1753,13 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
       </div>
 
       <DisplayPanelViewHolder>
-        <DisplayPanel
+        <DisplayPanelView
           :text="getDisplayPanelText(step)"
           :text-color="getDisplayPanelColor(step)"
           :align="getDisplayPanelAlign(step)"
           :type-name="step.sourceType"
         />
-        <DisplayPanel
+        <DisplayPanelView
           :text="getDisplayPanelText(step)"
           :text-color="getDisplayPanelColor(step)"
           :align="getDisplayPanelAlign(step)"

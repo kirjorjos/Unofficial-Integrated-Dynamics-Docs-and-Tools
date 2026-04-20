@@ -5,7 +5,9 @@ import DisplayPanelViewHolder from "./DisplayPanelViewHolder.vue";
 import {
   generateVisualSteps,
   getDisplayPanelText,
+  getDisplayPanelAlignment,
 } from "pages-lib/visualTransformerLogic";
+import { getDisplayPanelColor } from "pages-lib/visualTransformer";
 
 const props = defineProps<{
   ast: globalThis.TypeAST.AST;
@@ -54,10 +56,14 @@ const steps = computed(() =>
       <DisplayPanelViewHolder>
         <DisplayPanelView
           :text="getDisplayPanelText(step)"
+          :text-color="getDisplayPanelColor(step)"
+          :align="getDisplayPanelAlignment(step.sourceType)"
           :type-name="step.sourceType"
         />
         <DisplayPanelView
           :text="getDisplayPanelText(step)"
+          :text-color="getDisplayPanelColor(step)"
+          :align="getDisplayPanelAlignment(step.sourceType)"
           :type-name="step.sourceType"
         />
       </DisplayPanelViewHolder>
