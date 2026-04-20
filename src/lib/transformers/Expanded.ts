@@ -272,10 +272,10 @@ const isSelfNicknameShadow = (varName: string, node: TypeAST.AST): boolean => {
   return node.opName === nicknameInternalKey;
 };
 
+let unamedStrings = 0;
+
 const getVarName = (node: TypeAST.AST): string => {
   if (node.varName) return node.varName;
-
-  const sanitize = (s: string) => s.replace(/[^A-Za-z0-9\\._&|{}]/g, "");
 
   switch (node.type) {
     case "Integer":
@@ -283,7 +283,7 @@ const getVarName = (node: TypeAST.AST): string => {
     case "Double":
       return node.value.toString().replace(/^-/, "neg");
     case "String":
-      return sanitize(node.value.slice(0, 10));
+      return `string${++unamedStrings}`;
     case "Boolean":
       return node.value ? "true" : "false";
     case "Null":

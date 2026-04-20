@@ -250,7 +250,10 @@ export const getEntryStyle = (entry: VisibleListEntry) => {
 };
 
 export const getCardName = (ast: TypeAST.AST): string => {
-  return ast.varName || getExpandedVarName(ast);
+  if (ast.varName) return ast.varName;
+  // For primitives without varName, use the value instead of generated name
+  if (ast.type === "String") return (ast as TypeAST.String).value;
+  return getExpandedVarName(ast);
 };
 
 export const getCompactValueTextForAst = (ast: TypeAST.AST): string => {

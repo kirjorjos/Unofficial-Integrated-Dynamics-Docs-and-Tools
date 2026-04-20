@@ -624,7 +624,8 @@ const getOperatorOutputType = (operatorClass: OperatorClassLike): string => {
 };
 
 const getCardName = (ast: TypeAST.AST): string => {
-  return ast.varName || getExpandedVarName(ast);
+  if (ast.varName) return ast.varName;
+  return getExpandedVarName(ast);
 };
 
 const getExpandedCurryChunks = (
@@ -716,8 +717,15 @@ const getOperatorValueSignatureText = (opName: TypeOperatorKey): string => {
 };
 
 const getDisplayPanelText = (
-  step: Pick<VisualStep, "output" | "node" | "tooltipOperatorKey">
+  step: Pick<
+    VisualStep,
+    "output" | "node" | "tooltipOperatorKey" | "sourceType" | "detail"
+  >
 ): string => {
+  // For string types without custom name, show the value
+  if (step.sourceType === "String" && step.detail) {
+    return step.detail;
+  }
   if (step.node) {
     try {
       const op = ASTtoOperator(step.node) as any;
