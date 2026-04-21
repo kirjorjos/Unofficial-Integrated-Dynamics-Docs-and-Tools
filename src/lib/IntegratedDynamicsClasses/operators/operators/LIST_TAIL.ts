@@ -9,7 +9,7 @@ export class OPERATOR_LIST_TAIL extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:list_tail" as const;
   static override numericID = 117;
-  static override nicknames = ["listTail", "tail"];
+  static override nicknames = ["listTail", "tail", "list_tail"];
   static override symbol = "tail";
   static override interactName = "listTail";
   static override operatorName = "tail" as const;

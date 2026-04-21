@@ -12,14 +12,17 @@ export class OPERATOR_OBJECT_ITEMSTACK_STORED_FE extends BaseOperator<
   static override numericID = 191;
   static override nicknames = [
     "itemstackFeStored",
-    "ItemstackStoredfe",
-    "itemstack_stored_fe",
-    "itemstackStoredFe",
-    "item_stored_fe",
-    "itemStoredFe",
-    "storedFe",
-    "storedfe",
     "itemstackStoredfe",
+    "itemstackStoredFe",
+    "ItemstackStoredfe",
+    "itemStoredFe",
+    "storedfe",
+    "storedFe",
+    "item_stored_fe",
+    "itemstack_fe_stored",
+    "itemstack_stored_fe",
+    "itemstack_storedfe",
+    "stored_fe",
   ];
   static override symbol = "stored_fe";
   static override interactName = "itemstackFeStored";

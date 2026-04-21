@@ -11,9 +11,11 @@ export class OPERATOR_ARITHMETIC_ADDITION extends BaseOperator<
   static override numericID = 0;
   static override nicknames = [
     "add",
+    "addition",
     "arithmeticAddition",
     "numberAdd",
-    "addition",
+    "arithmetic_addition",
+    "number_add",
   ];
   static override symbol = "+";
   static override interactName = "numberAdd";

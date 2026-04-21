@@ -9,11 +9,13 @@ export class OPERATOR_GENERAL_CONSTANT extends BaseOperator<
   static override internalName = "integrateddynamics:general_constant" as const;
   static override numericID = 178;
   static override nicknames = [
-    "generalConstant",
+    "anyConstant",
     "const",
     "constant",
-    "anyConstant",
+    "generalConstant",
     "K",
+    "any_constant",
+    "general_constant",
   ];
   static override symbol = "K";
   static override interactName = "anyConstant";

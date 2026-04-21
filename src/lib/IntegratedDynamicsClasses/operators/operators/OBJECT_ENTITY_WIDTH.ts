@@ -8,10 +8,10 @@ export class OPERATOR_OBJECT_ENTITY_WIDTH extends BaseOperator<Entity, Double> {
     "integrateddynamics:object_entity_width" as const;
   static override numericID = 71;
   static override nicknames = [
-    "EntityWidth",
-    "entity_width",
     "entityWidth",
+    "EntityWidth",
     "width",
+    "entity_width",
   ];
   static override symbol = "width";
   static override interactName = "entityWidth";

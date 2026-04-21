@@ -13,10 +13,14 @@ export class OPERATOR_NBT_COMPOUND_WITH_STRING extends BaseOperator<
     "integrateddynamics:nbt_compound_with_string" as const;
   static override numericID = 235;
   static override nicknames = [
-    "nbtWithString",
+    "compoundWithString",
     "nbtCompoundWithString",
+    "nbtWithString",
     "NBTWithString",
     "compound_with_string",
+    "n_b_t_with_string",
+    "nbt_compound_with_string",
+    "nbt_with_string",
     "nbtCompound_with_string",
   ];
   static override symbol = "NBT{}.with_string";

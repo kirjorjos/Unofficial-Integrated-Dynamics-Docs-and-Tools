@@ -12,12 +12,17 @@ export class OPERATOR_ITEMSTACK_WITH_NBT extends BaseOperator<
     "integrateddynamics:itemstack_withnbt" as const;
   static override numericID = 293;
   static override nicknames = [
-    "itemstackWithNBT",
-    "itemWithNBT",
-    "item_stack_with_nbt",
-    "itemStackWithNBT",
-    "itemwithtag",
     "itemstackItemwithtag",
+    "itemstackWithNBT",
+    "itemStackWithNbt",
+    "itemStackWithNBT",
+    "itemWithNBT",
+    "itemwithtag",
+    "item_stack_with_n_b_t",
+    "item_stack_with_nbt",
+    "item_with_n_b_t",
+    "itemstack_itemwithtag",
+    "itemstack_with_n_b_t",
   ];
   static override symbol = "with_nbt";
   static override interactName = "itemstackWithNBT";

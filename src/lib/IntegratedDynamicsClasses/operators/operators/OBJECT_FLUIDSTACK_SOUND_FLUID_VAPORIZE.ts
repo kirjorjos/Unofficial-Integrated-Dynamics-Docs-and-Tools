@@ -11,15 +11,18 @@ export class OPERATOR_OBJECT_FLUIDSTACK_SOUND_FLUID_VAPORIZE extends BaseOperato
     "integrateddynamics:fluidstack_sound_fluid_vaporize" as const;
   static override numericID = 275;
   static override nicknames = [
-    "fluidstackFluidVaporizeSound",
-    "FluidstackSoundFluidVaporize",
-    "fluidstackSoundFluidVaporize",
-    "fluid_stack_sound_fluid_vaporize",
-    "fluidStackSoundFluidVaporize",
-    "fluid_sound_fluid_vaporize",
     "fluidSoundFluidVaporize",
-    "sound_fluid_vaporize",
+    "fluidstackFluidVaporizeSound",
+    "fluidstackSoundFluidVaporize",
+    "fluidStackSoundFluidVaporize",
+    "FluidstackSoundFluidVaporize",
+    "soundFluidVaporize",
+    "fluid_sound_fluid_vaporize",
+    "fluid_stack_sound_fluid_vaporize",
+    "fluidstack_fluid_vaporize_sound",
+    "fluidstack_sound_fluid_vaporize",
     "fluidstackSound_fluid_vaporize",
+    "sound_fluid_vaporize",
   ];
   static override symbol = "sound_fluid_vaporize";
   static override interactName = "fluidstackFluidVaporizeSound";

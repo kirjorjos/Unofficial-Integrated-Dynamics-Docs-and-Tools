@@ -10,7 +10,11 @@ export class OPERATOR_OPERATOR_NEGATION extends BaseOperator<
   static override internalName =
     "integrateddynamics:operator_negation" as const;
   static override numericID = 100;
-  static override nicknames = ["operatorNegation", "negation"];
+  static override nicknames = [
+    "negation",
+    "operatorNegation",
+    "operator_negation",
+  ];
   static override symbol = "!.";
   static override interactName = "operatorNegation";
   static override operatorName = "negation" as const;

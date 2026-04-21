@@ -5,7 +5,7 @@ import { Block } from "lib/IntegratedDynamicsClasses/Block";
 export class OPERATOR_OBJECT_BLOCK_PLANT extends BaseOperator<Block, Block> {
   static override internalName = "integrateddynamics:block_plant" as const;
   static override numericID = 120;
-  static override nicknames = ["plant", "blockPlant"];
+  static override nicknames = ["blockPlant", "plant", "block_plant"];
   static override symbol = "plant";
   static override interactName = "plant";
   static override operatorName = "plant" as const;

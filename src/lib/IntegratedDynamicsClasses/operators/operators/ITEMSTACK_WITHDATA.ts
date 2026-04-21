@@ -15,11 +15,13 @@ export class OPERATOR_ITEMSTACK_WITHDATA extends BaseOperator<
     "integrateddynamics:itemstack_withdata" as const;
   static override numericID = 289;
   static override nicknames = [
-    "ItemstackWithData",
-    "itemstack_with_data",
+    "itemstackItemstackWithdata",
+    "itemstackWithdata",
     "itemstackWithData",
-    "item_with_data",
+    "ItemstackWithData",
     "itemWithData",
+    "item_with_data",
+    "itemstack_with_data",
     "itemstack_withdata",
     "itemstackItemstack_withdata",
   ];

@@ -10,10 +10,10 @@ export class OPERATOR_OBJECT_ITEMSTACK_DAMAGE extends BaseOperator<
   static override internalName = "integrateddynamics:itemstack_damage" as const;
   static override numericID = 50;
   static override nicknames = [
+    "damage",
+    "itemstackDamage",
     "ItemstackDamage",
     "itemstack_damage",
-    "itemstackDamage",
-    "damage",
   ];
   static override symbol = "damage";
   static override interactName = "itemstackDamage";

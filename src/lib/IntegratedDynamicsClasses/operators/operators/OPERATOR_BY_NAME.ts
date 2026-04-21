@@ -11,11 +11,15 @@ export class OPERATOR_OPERATOR_BY_NAME extends BaseOperator<
   static override internalName = "integrateddynamics:operator_by_name" as const;
   static override numericID = 146;
   static override nicknames = [
-    "stringOperatorByName",
-    "operatorByName",
+    "byName",
     "opByName",
+    "operatorByName",
+    "stringOperatorByName",
     "by_name",
+    "op_by_name",
+    "operator_by_name",
     "operatorBy_name",
+    "string_operator_by_name",
   ];
   static override symbol = "op_by_name";
   static override interactName = "stringOperatorByName";

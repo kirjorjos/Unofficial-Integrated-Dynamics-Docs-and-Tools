@@ -11,11 +11,12 @@ export class OPERATOR_OBJECT_ENTITY_ISSHEARABLE extends BaseOperator<
     "integrateddynamics:entity_isshearable" as const;
   static override numericID = 132;
   static override nicknames = [
-    "EntityIsshearable",
-    "entity_is_shearable",
-    "entityIsShearable",
-    "isshearable",
     "entityIsshearable",
+    "entityIsShearable",
+    "EntityIsshearable",
+    "isshearable",
+    "entity_is_shearable",
+    "entity_isshearable",
   ];
   static override symbol = "is_shearable";
   static override interactName = "entityIsShearable";

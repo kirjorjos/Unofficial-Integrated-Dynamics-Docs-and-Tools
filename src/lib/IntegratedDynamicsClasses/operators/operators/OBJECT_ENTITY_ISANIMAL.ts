@@ -10,12 +10,14 @@ export class OPERATOR_OBJECT_ENTITY_ISANIMAL extends BaseOperator<
   static override internalName = "integrateddynamics:entity_isanimal" as const;
   static override numericID = 23;
   static override nicknames = [
-    "EntityIsanimal",
-    "entity_is_animal",
-    "entityIsAnimal",
-    "isAnimal",
-    "isanimal",
     "entityIsanimal",
+    "entityIsAnimal",
+    "EntityIsanimal",
+    "isanimal",
+    "isAnimal",
+    "entity_is_animal",
+    "entity_isanimal",
+    "is_animal",
   ];
   static override symbol = "is_animal";
   static override interactName = "entityIsAnimal";

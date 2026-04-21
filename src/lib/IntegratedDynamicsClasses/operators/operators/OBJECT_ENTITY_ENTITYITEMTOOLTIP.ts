@@ -14,14 +14,16 @@ export class OPERATOR_OBJECT_ENTITY_ENTITYITEMTOOLTIP extends BaseOperator<
     "integrateddynamics:entity_entityitemtooltip" as const;
   static override numericID = 291;
   static override nicknames = [
-    "entityEntityItemTooltip",
-    "ItemstackEntityTooltip",
-    "itemstack_entity_tooltip",
-    "itemstackEntityTooltip",
-    "item_entity_tooltip",
-    "itemEntityTooltip",
-    "entityitemtooltip",
     "entityEntityitemtooltip",
+    "entityEntityItemTooltip",
+    "entityitemtooltip",
+    "itemEntityTooltip",
+    "itemstackEntityTooltip",
+    "ItemstackEntityTooltip",
+    "entity_entity_item_tooltip",
+    "entity_entityitemtooltip",
+    "item_entity_tooltip",
+    "itemstack_entity_tooltip",
   ];
   static override symbol = "entity_item_tooltip";
   static override interactName = "entityEntityItemTooltip";

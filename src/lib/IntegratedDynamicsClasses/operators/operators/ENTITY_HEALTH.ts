@@ -5,12 +5,12 @@ export class OPERATOR_ENTITY_HEALTH extends BaseOperator<Entity, Double> {
   static override internalName = "integrateddynamics:entity_health" as const;
   static override numericID = 91;
   static override nicknames = [
+    "entityHealth",
     "EntityHealth",
+    "entityHealthValue",
+    "health",
     "entity_health",
     "entity_health_value",
-    "entityHealthValue",
-    "entityHealth",
-    "health",
   ];
   static override symbol = "health";
   static override interactName = "entityHealth";

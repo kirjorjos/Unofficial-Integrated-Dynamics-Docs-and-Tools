@@ -10,11 +10,12 @@ export class OPERATOR_OBJECT_ENTITY_MODNAME extends BaseOperator<
   static override internalName = "integrateddynamics:entity_mod" as const;
   static override numericID = 33;
   static override nicknames = [
-    "EntityMod",
-    "entity_mod",
     "entityMod",
+    "EntityMod",
     "entityModName",
     "mod",
+    "entity_mod",
+    "entity_mod_name",
   ];
   static override symbol = "entity_mod";
   static override interactName = "entityMod";

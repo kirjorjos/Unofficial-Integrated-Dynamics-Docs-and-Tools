@@ -10,12 +10,14 @@ export class OPERATOR_OBJECT_BLOCK_PLACESOUND extends BaseOperator<
   static override internalName = "integrateddynamics:block_placesound" as const;
   static override numericID = 17;
   static override nicknames = [
-    "BlockPlacesound",
-    "blockPlaceSound",
-    "block_place_sound",
-    "placeSound",
-    "placesound",
     "blockPlacesound",
+    "blockPlaceSound",
+    "BlockPlacesound",
+    "placesound",
+    "placeSound",
+    "block_place_sound",
+    "block_placesound",
+    "place_sound",
   ];
   static override symbol = "place_sound";
   static override interactName = "blockPlaceSound";

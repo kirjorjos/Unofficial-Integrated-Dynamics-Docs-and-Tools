@@ -10,10 +10,12 @@ export class OPERATOR_ARITHMETIC_DIVISION extends BaseOperator<
     "integrateddynamics:arithmetic_division" as const;
   static override numericID = 1;
   static override nicknames = [
-    "divide",
     "arithmeticDivision",
-    "numberDivide",
+    "divide",
     "division",
+    "numberDivide",
+    "arithmetic_division",
+    "number_divide",
   ];
   static override symbol = "/";
   static override interactName = "numberDivide";

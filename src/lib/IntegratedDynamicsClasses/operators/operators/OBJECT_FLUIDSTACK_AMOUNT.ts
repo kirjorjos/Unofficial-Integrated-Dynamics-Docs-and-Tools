@@ -11,13 +11,14 @@ export class OPERATOR_OBJECT_FLUIDSTACK_AMOUNT extends BaseOperator<
     "integrateddynamics:fluidstack_amount" as const;
   static override numericID = 37;
   static override nicknames = [
-    "FluidstackAmount",
-    "fluidstackAmount",
-    "fluid_stack_amount",
-    "fluidStackAmount",
-    "fluid_amount",
-    "fluidAmount",
     "amount",
+    "fluidAmount",
+    "fluidstackAmount",
+    "fluidStackAmount",
+    "FluidstackAmount",
+    "fluid_amount",
+    "fluid_stack_amount",
+    "fluidstack_amount",
   ];
   static override symbol = "amount";
   static override interactName = "fluidstackAmount";

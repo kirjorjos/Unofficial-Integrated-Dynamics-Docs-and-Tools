@@ -5,14 +5,18 @@ export class OPERATOR_ENTITY_HELDITEM extends BaseOperator<Entity, Item> {
   static override internalName = "integrateddynamics:entity_helditem" as const;
   static override numericID = 93;
   static override nicknames = [
-    "EntityHelditemMain",
-    "entity_held_item_main",
-    "entityHeldItemMain",
-    "heldItemMain",
-    "held_item_1",
-    "entityHeldItem",
-    "helditem",
     "entityHelditem",
+    "entityHeldItem",
+    "entityHeldItemMain",
+    "EntityHelditemMain",
+    "helditem",
+    "heldItemMain",
+    "entity_held_item",
+    "entity_held_item_main",
+    "entity_helditem",
+    "entity_helditem_main",
+    "held_item_1",
+    "held_item_main",
   ];
   static override symbol = "held_item_1";
   static override interactName = "entityHeldItem";

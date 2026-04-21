@@ -10,9 +10,11 @@ export class OPERATOR_STRING_ERROR extends BaseOperator<
     "integrateddynamics:string_string_error" as const;
   static override numericID = 290;
   static override nicknames = [
-    "stringStringError",
     "error",
+    "stringError",
+    "stringStringError",
     "string_error",
+    "string_string_error",
     "stringString_error",
   ];
   static override symbol = "error";

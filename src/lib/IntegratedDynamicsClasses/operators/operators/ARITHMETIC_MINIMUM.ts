@@ -10,10 +10,12 @@ export class OPERATOR_ARITHMETIC_MINIMUM extends BaseOperator<
     "integrateddynamics:arithmetic_minimum" as const;
   static override numericID = 3;
   static override nicknames = [
-    "min",
     "arithmeticMinimum",
-    "numberMin",
+    "min",
     "minimum",
+    "numberMin",
+    "arithmetic_minimum",
+    "number_min",
   ];
   static override symbol = "min";
   static override interactName = "numberMin";

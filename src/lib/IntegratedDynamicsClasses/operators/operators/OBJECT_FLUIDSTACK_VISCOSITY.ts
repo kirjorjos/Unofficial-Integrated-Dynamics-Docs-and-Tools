@@ -11,13 +11,14 @@ export class OPERATOR_OBJECT_FLUIDSTACK_VISCOSITY extends BaseOperator<
     "integrateddynamics:fluidstack_viscosity" as const;
   static override numericID = 43;
   static override nicknames = [
-    "FluidstackViscosity",
     "fluidstackViscosity",
-    "fluid_stack_viscosity",
     "fluidStackViscosity",
-    "fluid_viscosity",
+    "FluidstackViscosity",
     "fluidViscosity",
     "viscosity",
+    "fluid_stack_viscosity",
+    "fluid_viscosity",
+    "fluidstack_viscosity",
   ];
   static override symbol = "viscosity";
   static override interactName = "fluidstackViscosity";

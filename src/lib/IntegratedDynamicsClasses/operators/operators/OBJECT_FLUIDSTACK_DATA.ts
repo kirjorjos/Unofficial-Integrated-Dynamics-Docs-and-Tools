@@ -10,20 +10,25 @@ export class OPERATOR_OBJECT_FLUIDSTACK_DATA extends BaseOperator<
   static override internalName = "integrateddynamics:fluidstack_nbt" as const;
   static override numericID = 281;
   static override nicknames = [
-    "fluidstackNbt",
-    "FluidstackData",
-    "fluidstackData",
-    "fluid_stack_data",
-    "fluidStackData",
-    "fluid_data",
     "fluidData",
-    "fluid_NBT",
-    "fluidStackNBT",
-    "fluid_stack_NBT",
-    "fluidstack_NBT",
     "fluidNBT",
     "fluidNBTKeys",
+    "fluidstackData",
+    "fluidStackData",
+    "FluidstackData",
+    "fluidstackNbt",
+    "fluidStackNBT",
     "nbt",
+    "fluid_data",
+    "fluid_n_b_t",
+    "fluid_n_b_t_keys",
+    "fluid_NBT",
+    "fluid_stack_data",
+    "fluid_stack_n_b_t",
+    "fluid_stack_NBT",
+    "fluidstack_data",
+    "fluidstack_nbt",
+    "fluidstack_NBT",
   ];
   static override symbol = "NBT()";
   static override interactName = "fluidstackNbt";

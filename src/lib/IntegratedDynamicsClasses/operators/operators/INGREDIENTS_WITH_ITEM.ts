@@ -11,10 +11,13 @@ export class OPERATOR_INGREDIENTS_WITH_ITEM extends BaseOperator<
     "integrateddynamics:ingredients_with_item" as const;
   static override numericID = 181;
   static override nicknames = [
+    "Ingr.withItem",
     "ingredientsWithItem",
+    "withItem",
     "Ingr.with_item",
-    "with_item",
+    "ingredients_with_item",
     "ingredientsWith_item",
+    "with_item",
   ];
   static override symbol = "Ingr.with_item";
   static override interactName = "ingredientsWithItem";

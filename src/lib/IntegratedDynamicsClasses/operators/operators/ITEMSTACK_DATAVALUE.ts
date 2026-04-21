@@ -11,12 +11,15 @@ export class OPERATOR_ITEMSTACK_DATAVALUE extends BaseOperator<Item, iBoolean> {
     "integrateddynamics:itemstack_datavalue" as const;
   static override numericID = 288;
   static override nicknames = [
-    "ItemstackDataValue",
-    "itemstack_data_value",
-    "itemstackDataValue",
-    "item_data_value",
     "itemDataValue",
     "itemNBTValue",
+    "itemstackDatavalue",
+    "itemstackDataValue",
+    "ItemstackDataValue",
+    "itemstackItemstackDatavalue",
+    "item_data_value",
+    "item_n_b_t_value",
+    "itemstack_data_value",
     "itemstack_datavalue",
     "itemstackItemstack_datavalue",
   ];

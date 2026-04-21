@@ -14,11 +14,15 @@ export class OPERATOR_OBJECT_ITEMSTACK_DATA_KEYS extends BaseOperator<
     "integrateddynamics:itemstack_datakeys" as const;
   static override numericID = 287;
   static override nicknames = [
+    "itemNBTKeys",
+    "itemstackDatakeys",
+    "itemstackDataKeys",
     "itemStackDataKeys",
     "ItemstackDatakeys",
+    "itemstackItemstackDatakeys",
+    "item_n_b_t_keys",
+    "item_stack_data_keys",
     "itemstack_data_keys",
-    "itemstackDataKeys",
-    "itemNBTKeys",
     "itemstack_datakeys",
     "itemstackItemstack_datakeys",
   ];

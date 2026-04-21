@@ -14,14 +14,17 @@ export class OPERATOR_OBJECT_ITEMSTACK_TAG_STACKS extends BaseOperator<
     "integrateddynamics:itemstack_tag_stacks" as const;
   static override numericID = 200;
   static override nicknames = [
-    "itemstackTagVal",
     "ItemstackTags",
-    "itemstack_tag_values",
+    "itemstackTagVal",
     "itemstackTagValues",
-    "item_tag_names",
     "itemTagNames",
-    "tag",
     "stringTag",
+    "tag",
+    "item_tag_names",
+    "itemstack_tag_val",
+    "itemstack_tag_values",
+    "itemstack_tags",
+    "string_tag",
   ];
   static override symbol = "item_tag_val";
   static override interactName = "itemstackTagVal";

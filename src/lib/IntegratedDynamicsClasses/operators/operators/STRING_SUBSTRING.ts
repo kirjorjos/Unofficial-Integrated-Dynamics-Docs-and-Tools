@@ -12,8 +12,10 @@ export class OPERATOR_STRING_SUBSTRING extends BaseOperator<
   static override numericID = 163;
   static override nicknames = [
     "integerSubstring",
-    "substring",
     "stringSubstring",
+    "substring",
+    "integer_substring",
+    "string_substring",
   ];
   static override symbol = "substring";
   static override interactName = "integerSubstring";

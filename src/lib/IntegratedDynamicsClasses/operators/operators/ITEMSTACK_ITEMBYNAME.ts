@@ -11,14 +11,16 @@ export class OPERATOR_ITEMSTACK_ITEMBYNAME extends BaseOperator<iString, Item> {
     "integrateddynamics:itemstack_itembyname" as const;
   static override numericID = 189;
   static override nicknames = [
-    "stringItemByName",
-    "ItemstackByName",
-    "itemstack_by_name",
-    "itemstackByName",
-    "item_by_name",
-    "itemByName",
     "itembyname",
+    "itemByName",
+    "itemstackByName",
+    "ItemstackByName",
     "itemstackItembyname",
+    "stringItemByName",
+    "item_by_name",
+    "itemstack_by_name",
+    "itemstack_itembyname",
+    "string_item_by_name",
   ];
   static override symbol = "item_by_name";
   static override interactName = "stringItemByName";

@@ -9,7 +9,7 @@ export class OPERATOR_LIST_APPEND extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:list_append" as const;
   static override numericID = 113;
-  static override nicknames = ["listAppend", "append"];
+  static override nicknames = ["append", "listAppend", "list_append"];
   static override symbol = "append";
   static override interactName = "listAppend";
   static override operatorName = "append" as const;

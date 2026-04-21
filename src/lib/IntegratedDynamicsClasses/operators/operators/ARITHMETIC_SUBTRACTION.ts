@@ -10,10 +10,12 @@ export class OPERATOR_ARITHMETIC_SUBTRACTION extends BaseOperator<
     "integrateddynamics:arithmetic_subtraction" as const;
   static override numericID = 5;
   static override nicknames = [
-    "subtract",
     "arithmeticSubtraction",
     "numberSubtract",
+    "subtract",
     "subtraction",
+    "arithmetic_subtraction",
+    "number_subtract",
   ];
   static override symbol = "-";
   static override interactName = "numberSubtract";

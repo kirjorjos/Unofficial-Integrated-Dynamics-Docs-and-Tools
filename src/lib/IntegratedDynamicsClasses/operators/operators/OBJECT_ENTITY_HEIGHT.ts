@@ -10,10 +10,10 @@ export class OPERATOR_OBJECT_ENTITY_HEIGHT extends BaseOperator<
   static override internalName = "integrateddynamics:entity_height" as const;
   static override numericID = 20;
   static override nicknames = [
-    "EntityHeight",
-    "entity_height",
     "entityHeight",
+    "EntityHeight",
     "height",
+    "entity_height",
   ];
   static override symbol = "height";
   static override interactName = "entityHeight";

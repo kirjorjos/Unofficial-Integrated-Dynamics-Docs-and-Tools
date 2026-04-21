@@ -8,14 +8,14 @@ export class OPERATOR_ENTITY_ITEM extends BaseOperator<Entity, Item> {
   static override internalName = "integrateddynamics:entity_item" as const;
   static override numericID = 30;
   static override nicknames = [
-    "EntityItemstack",
-    "entity_itemstack",
-    "entityItemstack",
-    "entity_item_stack",
-    "entityItemStack",
-    "entity_item",
     "entityItem",
+    "entityItemstack",
+    "entityItemStack",
+    "EntityItemstack",
     "item",
+    "entity_item",
+    "entity_item_stack",
+    "entity_itemstack",
   ];
   static override symbol = "item";
   static override interactName = "entityItem";

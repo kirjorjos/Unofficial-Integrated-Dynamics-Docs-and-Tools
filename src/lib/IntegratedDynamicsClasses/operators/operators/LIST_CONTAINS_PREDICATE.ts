@@ -11,11 +11,14 @@ export class OPERATOR_LIST_CONTAINS_PREDICATE extends BaseOperator<
   static override internalName = "integrateddynamics:list_contains_p" as const;
   static override numericID = 103;
   static override nicknames = [
+    "containsP",
+    "containsPredicate",
     "listContainsP",
     "listContainsPredicate",
-    "containsPredicate",
-    "containsP",
     "contains_p",
+    "contains_predicate",
+    "list_contains_p",
+    "list_contains_predicate",
     "listContains_p",
   ];
   static override symbol = "contains_p";

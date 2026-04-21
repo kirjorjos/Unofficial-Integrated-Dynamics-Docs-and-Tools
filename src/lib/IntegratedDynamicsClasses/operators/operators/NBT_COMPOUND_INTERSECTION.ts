@@ -11,10 +11,13 @@ export class OPERATOR_NBT_COMPOUND_INTERSECTION extends BaseOperator<
     "integrateddynamics:nbt_compound_intersection" as const;
   static override numericID = 208;
   static override nicknames = [
-    "nbtIntersection",
+    "compoundIntersection",
     "nbtCompoundIntersection",
+    "nbtIntersection",
     "NBTIntersection",
     "compound_intersection",
+    "nbt_compound_intersection",
+    "nbt_intersection",
     "nbtCompound_intersection",
   ];
   static override symbol = "NBT{}.∩";

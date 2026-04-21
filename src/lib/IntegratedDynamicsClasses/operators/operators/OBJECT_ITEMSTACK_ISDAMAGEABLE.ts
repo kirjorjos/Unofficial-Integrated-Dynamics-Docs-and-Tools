@@ -11,12 +11,15 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISDAMAGEABLE extends BaseOperator<
     "integrateddynamics:itemstack_damageable" as const;
   static override numericID = 51;
   static override nicknames = [
-    "ItemstackIsdamageable",
-    "itemstack_is_damageable",
-    "itemstackIsDamageable",
-    "isDamageable",
     "damageable",
+    "isDamageable",
     "itemstackDamageable",
+    "itemstackIsDamageable",
+    "ItemstackIsdamageable",
+    "is_damageable",
+    "itemstack_damageable",
+    "itemstack_is_damageable",
+    "itemstack_isdamageable",
   ];
   static override symbol = "damageable";
   static override interactName = "itemstackIsDamageable";

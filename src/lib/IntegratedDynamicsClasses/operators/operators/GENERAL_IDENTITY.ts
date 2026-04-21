@@ -8,10 +8,12 @@ export class OPERATOR_GENERAL_IDENTITY extends BaseOperator<
   static override internalName = "integrateddynamics:general_identity" as const;
   static override numericID = 45;
   static override nicknames = [
+    "anyIdentity",
     "generalIdentity",
     "id",
     "identity",
-    "anyIdentity",
+    "any_identity",
+    "general_identity",
   ];
   static override symbol = "id";
   static override interactName = "anyIdentity";

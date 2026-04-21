@@ -10,10 +10,10 @@ export class OPERATOR_OBJECT_ITEMSTACK_RARITY extends BaseOperator<
   static override internalName = "integrateddynamics:itemstack_rarity" as const;
   static override numericID = 61;
   static override nicknames = [
-    "ItemstackRarity",
-    "itemstack_rarity",
     "itemstackRarity",
+    "ItemstackRarity",
     "rarity",
+    "itemstack_rarity",
   ];
   static override symbol = "rarity";
   static override interactName = "itemstackRarity";

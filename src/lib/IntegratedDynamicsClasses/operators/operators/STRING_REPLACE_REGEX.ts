@@ -16,8 +16,10 @@ export class OPERATOR_STRING_REPLACE_REGEX extends BaseOperator<
     "integrateddynamics:string_replace_regex" as const;
   static override numericID = 169;
   static override nicknames = [
+    "replaceRegex",
     "stringReplaceRegex",
     "replace_regex",
+    "string_replace_regex",
     "stringReplace_regex",
   ];
   static override symbol = "replace_regex";

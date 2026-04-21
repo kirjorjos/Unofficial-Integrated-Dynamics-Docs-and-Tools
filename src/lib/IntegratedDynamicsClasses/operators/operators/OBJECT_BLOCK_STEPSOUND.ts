@@ -10,12 +10,14 @@ export class OPERATOR_OBJECT_BLOCK_STEPSOUND extends BaseOperator<
   static override internalName = "integrateddynamics:block_stepsound" as const;
   static override numericID = 18;
   static override nicknames = [
-    "BlockStepsound",
-    "blockStepSound",
-    "block_step_sound",
-    "stepSound",
-    "stepsound",
     "blockStepsound",
+    "blockStepSound",
+    "BlockStepsound",
+    "stepsound",
+    "stepSound",
+    "block_step_sound",
+    "block_stepsound",
+    "step_sound",
   ];
   static override symbol = "step_sound";
   static override interactName = "blockStepSound";

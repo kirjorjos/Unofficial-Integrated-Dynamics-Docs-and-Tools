@@ -13,11 +13,12 @@ export class OPERATOR_OBJECT_BLOCK_WITH_PROPERTIES extends BaseOperator<
     "integrateddynamics:block_blockfromproperties" as const;
   static override numericID = 267;
   static override nicknames = [
-    "BlockWithProperties",
-    "block_with_properties",
-    "blockWithProperties",
-    "blockfromproperties",
     "blockBlockfromproperties",
+    "blockfromproperties",
+    "blockWithProperties",
+    "BlockWithProperties",
+    "block_blockfromproperties",
+    "block_with_properties",
   ];
   static override symbol = "block_with_props";
   static override interactName = "blockWithProperties";

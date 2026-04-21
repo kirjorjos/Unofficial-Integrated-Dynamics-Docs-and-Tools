@@ -16,10 +16,13 @@ export class OPERATOR_NBT_PATH_MATCH_ALL extends BaseOperator<
     "integrateddynamics:nbt_path_match_all" as const;
   static override numericID = 238;
   static override nicknames = [
-    "stringNbtPathMatchAll",
     "nbtPathMatchAll",
-    "path_match_all",
+    "pathMatchAll",
+    "stringNbtPathMatchAll",
+    "nbt_path_match_all",
     "nbtPath_match_all",
+    "path_match_all",
+    "string_nbt_path_match_all",
   ];
   static override symbol = "NBT.path_match_all";
   static override interactName = "stringNbtPathMatchAll";

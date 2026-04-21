@@ -6,7 +6,7 @@ import { Entity } from "lib/IntegratedDynamicsClasses/Entity";
 export class OPERATOR_OBJECT_ENTITY_AGE extends BaseOperator<Entity, Integer> {
   static override internalName = "integrateddynamics:entity_age" as const;
   static override numericID = 126;
-  static override nicknames = ["EntityAge", "entity_age", "entityAge", "age"];
+  static override nicknames = ["age", "entityAge", "EntityAge", "entity_age"];
   static override symbol = "age";
   static override interactName = "entityAge";
   static override operatorName = "age" as const;

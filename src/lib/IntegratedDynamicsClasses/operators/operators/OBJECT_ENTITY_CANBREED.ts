@@ -10,12 +10,14 @@ export class OPERATOR_OBJECT_ENTITY_CANBREED extends BaseOperator<
   static override internalName = "integrateddynamics:entity_canbreed" as const;
   static override numericID = 127;
   static override nicknames = [
-    "EntityCanbreed",
-    "entity_can_breed",
-    "entityCanBreed",
-    "canBreed",
     "canbreed",
+    "canBreed",
     "entityCanbreed",
+    "entityCanBreed",
+    "EntityCanbreed",
+    "can_breed",
+    "entity_can_breed",
+    "entity_canbreed",
   ];
   static override symbol = "canbreed";
   static override interactName = "entityCanBreed";

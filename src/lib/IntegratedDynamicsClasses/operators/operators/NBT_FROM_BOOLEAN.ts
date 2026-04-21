@@ -10,8 +10,11 @@ export class OPERATOR_NBT_FROM_BOOLEAN extends BaseOperator<iBoolean, ByteTag> {
   static override numericID = 258;
   static override nicknames = [
     "booleanAsNbt",
+    "fromBoolean",
     "nbtFromBoolean",
+    "boolean_as_nbt",
     "from_boolean",
+    "nbt_from_boolean",
     "nbtFrom_boolean",
   ];
   static override symbol = "NBT.from_iBoolean";

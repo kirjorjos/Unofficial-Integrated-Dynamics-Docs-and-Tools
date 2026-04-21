@@ -11,13 +11,14 @@ export class OPERATOR_OBJECT_FLUIDSTACK_RARITY extends BaseOperator<
     "integrateddynamics:fluidstack_rarity" as const;
   static override numericID = 42;
   static override nicknames = [
-    "FluidstackRarity",
-    "fluidstackRarity",
-    "fluid_stack_rarity",
-    "fluidStackRarity",
-    "fluid_rarity",
     "fluidRarity",
+    "fluidstackRarity",
+    "fluidStackRarity",
+    "FluidstackRarity",
     "rarity",
+    "fluid_rarity",
+    "fluid_stack_rarity",
+    "fluidstack_rarity",
   ];
   static override symbol = "rarity";
   static override interactName = "fluidstackRarity";

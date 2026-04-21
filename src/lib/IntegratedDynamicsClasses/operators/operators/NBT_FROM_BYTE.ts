@@ -8,8 +8,11 @@ export class OPERATOR_NBT_FROM_BYTE extends BaseOperator<Integer, ByteTag> {
   static override numericID = 254;
   static override nicknames = [
     "byteAsNbt",
+    "fromByte",
     "nbtFromByte",
+    "byte_as_nbt",
     "from_byte",
+    "nbt_from_byte",
     "nbtFrom_byte",
   ];
   static override symbol = "NBT.from_byte";

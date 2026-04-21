@@ -12,15 +12,20 @@ export class OPERATOR_OBJECT_FLUIDSTACK_ISRAWFLUIDEQUAL extends BaseOperator<
     "integrateddynamics:fluidstack_israwfluidequal" as const;
   static override numericID = 40;
   static override nicknames = [
+    "fluidIsrawfluidequal",
     "fluidstackIsRawEqual",
-    "FluidstackIsrawfluidequal",
     "fluidstackIsrawfluidequal",
-    "fluid_stack_israwfluidequal",
     "fluidStackIsrawfluidequal",
-    "fluid_israwfluidequal",
+    "FluidstackIsrawfluidequal",
+    "israwfluidequal",
     "isRawFluidEqual",
     "rawFluidEquals",
-    "israwfluidequal",
+    "fluid_israwfluidequal",
+    "fluid_stack_israwfluidequal",
+    "fluidstack_is_raw_equal",
+    "fluidstack_israwfluidequal",
+    "is_raw_fluid_equal",
+    "raw_fluid_equals",
   ];
   static override symbol = "=Raw=";
   static override interactName = "fluidstackIsRawEqual";

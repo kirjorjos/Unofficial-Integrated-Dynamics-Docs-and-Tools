@@ -7,9 +7,12 @@ export class OPERATOR_NBT_FROM_INT extends BaseOperator<Integer, IntTag> {
   static override internalName = "integrateddynamics:nbt_from_int" as const;
   static override numericID = 259;
   static override nicknames = [
+    "fromInt",
     "integerAsNbt",
     "nbtFromInt",
     "from_int",
+    "integer_as_nbt",
+    "nbt_from_int",
     "nbtFrom_int",
   ];
   static override symbol = "NBT.from_int";

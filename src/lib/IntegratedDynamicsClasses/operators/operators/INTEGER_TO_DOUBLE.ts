@@ -6,10 +6,15 @@ export class OPERATOR_INTEGER_TO_DOUBLE extends BaseOperator<Integer, Double> {
     "integrateddynamics:operator.integrateddynamics.castintegrateddynamics_integer__integrateddynamics_double" as const;
   static override numericID = 85;
   static override nicknames = [
-    "intToDouble",
-    "integerToDouble",
+    "castDouble",
     "integerIntegerToDouble",
+    "integerToDouble",
+    "intToDouble",
+    "numberCastDouble",
     "cast_double",
+    "int_to_double",
+    "integer_integer_to_double",
+    "integer_to_double",
     "numberCast_double",
   ];
   static override symbol = "()";

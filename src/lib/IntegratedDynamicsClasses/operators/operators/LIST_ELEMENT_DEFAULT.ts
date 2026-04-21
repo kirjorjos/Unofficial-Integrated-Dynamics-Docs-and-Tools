@@ -12,10 +12,12 @@ export class OPERATOR_LIST_ELEMENT_DEFAULT extends BaseOperator<
     "integrateddynamics:list_get_or_default" as const;
   static override numericID = 143;
   static override nicknames = [
-    "listElementDefault",
-    "get_or_default",
     "getOrDefault",
+    "listElementDefault",
     "listGetOrDefault",
+    "get_or_default",
+    "list_element_default",
+    "list_get_or_default",
     "listGet_or_default",
   ];
   static override symbol = "get_or_default";

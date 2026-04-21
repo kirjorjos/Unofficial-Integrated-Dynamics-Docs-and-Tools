@@ -7,9 +7,12 @@ export class OPERATOR_NBT_FROM_LONG extends BaseOperator<Long, LongTag> {
   static override internalName = "integrateddynamics:nbt_from_long" as const;
   static override numericID = 261;
   static override nicknames = [
+    "fromLong",
     "longAsNbt",
     "nbtFromLong",
     "from_long",
+    "long_as_nbt",
+    "nbt_from_long",
     "nbtFrom_long",
   ];
   static override symbol = "NBT.from_long";

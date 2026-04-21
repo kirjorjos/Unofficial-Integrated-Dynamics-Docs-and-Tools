@@ -11,12 +11,12 @@ export class OPERATOR_ITEMSTACK_TOOLTIP extends BaseOperator<
     "integrateddynamics:itemstack_tooltip" as const;
   static override numericID = 292;
   static override nicknames = [
-    "ItemstackTooltip",
-    "itemstack_tooltip",
     "itemstackTooltip",
-    "item_tooltip",
+    "ItemstackTooltip",
     "itemTooltip",
     "tooltip",
+    "item_tooltip",
+    "itemstack_tooltip",
   ];
   static override symbol = "tooltip";
   static override interactName = "itemstackTooltip";

@@ -14,9 +14,10 @@ export class OPERATOR_STRING_MATCHES_REGEX extends BaseOperator<
     "integrateddynamics:string_matches_regex" as const;
   static override numericID = 172;
   static override nicknames = [
-    "stringMatchesRegex",
     "matchesRegex",
+    "stringMatchesRegex",
     "matches_regex",
+    "string_matches_regex",
     "stringMatches_regex",
   ];
   static override symbol = "matches_regex";

@@ -13,10 +13,14 @@ export class OPERATOR_NBT_PATH_TEST extends BaseOperator<
   static override internalName = "integrateddynamics:nbt_path_test" as const;
   static override numericID = 240;
   static override nicknames = [
-    "stringNbtPathTest",
+    "nbtPathTest",
     "NBTPathTest",
-    "path_test",
+    "pathTest",
+    "stringNbtPathTest",
+    "n_b_t_path_test",
     "nbtPath_test",
+    "path_test",
+    "string_nbt_path_test",
   ];
   static override symbol = "NBT.path_test";
   static override interactName = "stringNbtPathTest";

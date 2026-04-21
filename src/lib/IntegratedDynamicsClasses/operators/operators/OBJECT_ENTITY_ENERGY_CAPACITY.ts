@@ -11,11 +11,12 @@ export class OPERATOR_OBJECT_ENTITY_ENERGY_CAPACITY extends BaseOperator<
     "integrateddynamics:entity_entityenergycapacity" as const;
   static override numericID = 173;
   static override nicknames = [
-    "EntityEnergyCapacity",
-    "entity_energy_capacity",
-    "entityEnergyCapacity",
     "entityenergycapacity",
+    "entityEnergyCapacity",
+    "EntityEnergyCapacity",
     "entityEntityenergycapacity",
+    "entity_energy_capacity",
+    "entity_entityenergycapacity",
   ];
   static override symbol = "entity_capacity_fe";
   static override interactName = "entityEnergyCapacity";

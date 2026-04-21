@@ -10,9 +10,11 @@ export class OPERATOR_ARITHMETIC_INCREMENT extends BaseOperator<
     "integrateddynamics:arithmetic_increment" as const;
   static override numericID = 83;
   static override nicknames = [
-    "increment",
     "arithmeticIncrement",
+    "increment",
     "numberIncrement",
+    "arithmetic_increment",
+    "number_increment",
   ];
   static override symbol = "++";
   static override interactName = "numberIncrement";

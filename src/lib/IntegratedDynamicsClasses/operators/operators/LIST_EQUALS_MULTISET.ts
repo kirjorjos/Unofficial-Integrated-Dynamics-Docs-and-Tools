@@ -13,10 +13,11 @@ export class OPERATOR_LIST_EQUALS_MULTISET extends BaseOperator<
     "integrateddynamics:list_equals_multiset" as const;
   static override numericID = 301;
   static override nicknames = [
-    "listEquals_multiset",
-    "listEqualsMultiset",
     "equalsMultiset",
+    "listEqualsMultiset",
     "equals_multiset",
+    "list_equals_multiset",
+    "listEquals_multiset",
   ];
   static override symbol = "=multiset=";
   static override interactName = "listEquals_multiset";

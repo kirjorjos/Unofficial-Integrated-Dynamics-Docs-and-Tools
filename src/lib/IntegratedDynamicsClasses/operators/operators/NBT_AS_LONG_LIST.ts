@@ -14,8 +14,10 @@ export class OPERATOR_NBT_AS_LONG_LIST extends BaseOperator<
   static override internalName = "integrateddynamics:nbt_as_long_list" as const;
   static override numericID = 250;
   static override nicknames = [
+    "asLongList",
     "nbtAsLongList",
     "as_long_list",
+    "nbt_as_long_list",
     "nbtAs_long_list",
   ];
   static override symbol = "NBT.as_long_list";

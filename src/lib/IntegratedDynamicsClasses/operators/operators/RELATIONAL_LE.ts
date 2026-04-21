@@ -9,7 +9,13 @@ export class OPERATOR_RELATIONAL_LE extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:relational_le" as const;
   static override numericID = 75;
-  static override nicknames = ["anyLessThanOrEquals", "relationalLe", "le"];
+  static override nicknames = [
+    "anyLessThanOrEquals",
+    "le",
+    "relationalLe",
+    "any_less_than_or_equals",
+    "relational_le",
+  ];
   static override symbol = "<=";
   static override interactName = "anyLessThanOrEquals";
   static override operatorName = "le" as const;

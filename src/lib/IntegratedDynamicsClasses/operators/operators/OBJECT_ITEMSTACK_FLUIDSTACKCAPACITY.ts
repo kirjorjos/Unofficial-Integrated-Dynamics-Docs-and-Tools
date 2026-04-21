@@ -11,17 +11,20 @@ export class OPERATOR_OBJECT_ITEMSTACK_FLUIDSTACKCAPACITY extends BaseOperator<
     "integrateddynamics:itemstack_fluidstackcapacity" as const;
   static override numericID = 55;
   static override nicknames = [
-    "itemstackFluidCapacity",
-    "ItemstackFluidstackcapacity",
-    "itemstack_fluidstack_capacity",
-    "itemstackFluidstackCapacity",
-    "item_fluid_capacity",
-    "itemFluidCapacity",
-    "item_fluidstack_capacity",
-    "itemFluidstackCapacity",
     "fluidCapatity",
     "fluidstackcapacity",
+    "itemFluidCapacity",
+    "itemFluidstackCapacity",
+    "itemstackFluidCapacity",
     "itemstackFluidstackcapacity",
+    "itemstackFluidstackCapacity",
+    "ItemstackFluidstackcapacity",
+    "fluid_capatity",
+    "item_fluid_capacity",
+    "item_fluidstack_capacity",
+    "itemstack_fluid_capacity",
+    "itemstack_fluidstack_capacity",
+    "itemstack_fluidstackcapacity",
   ];
   static override symbol = "fluidstack_capacity";
   static override interactName = "itemstackFluidCapacity";

@@ -11,7 +11,7 @@ export class OPERATOR_OPERATOR_PIPE extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:operator_pipe" as const;
   static override numericID = 101;
-  static override nicknames = ["operatorPipe", "pipe"];
+  static override nicknames = ["operatorPipe", "pipe", "operator_pipe"];
   static override symbol = ".";
   static override interactName = "operatorPipe";
   static override operatorName = "pipe" as const;

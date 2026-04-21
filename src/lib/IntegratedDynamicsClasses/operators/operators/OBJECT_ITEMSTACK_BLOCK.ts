@@ -8,11 +8,12 @@ export class OPERATOR_OBJECT_ITEMSTACK_BLOCK extends BaseOperator<Item, Block> {
   static override internalName = "integrateddynamics:itemstack_block" as const;
   static override numericID = 48;
   static override nicknames = [
-    "ItemstackBlock",
-    "itemstack_block",
-    "itemstackBlock",
-    "itemBlock",
     "block",
+    "itemBlock",
+    "itemstackBlock",
+    "ItemstackBlock",
+    "item_block",
+    "itemstack_block",
   ];
   static override symbol = "block";
   static override interactName = "itemstackBlock";

@@ -9,7 +9,13 @@ export class OPERATOR_ARITHMETIC_MODULUS extends BaseOperator<
   static override internalName =
     "integrateddynamics:arithmetic_modulus" as const;
   static override numericID = 81;
-  static override nicknames = ["modulus", "arithmeticModulus", "numberModulus"];
+  static override nicknames = [
+    "arithmeticModulus",
+    "modulus",
+    "numberModulus",
+    "arithmetic_modulus",
+    "number_modulus",
+  ];
   static override symbol = "%";
   static override interactName = "numberModulus";
   static override operatorName = "modulus" as const;

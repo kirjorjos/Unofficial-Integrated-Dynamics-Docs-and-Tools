@@ -10,12 +10,14 @@ export class OPERATOR_OBJECT_ENTITY_NBT extends BaseOperator<
   static override internalName = "integrateddynamics:entity_nbt" as const;
   static override numericID = 144;
   static override nicknames = [
-    "entityNbt",
-    "EntityNbt",
-    "entity_nbt",
     "canBreed",
+    "entityNbt",
     "entityNBT",
+    "EntityNbt",
     "nbt",
+    "can_breed",
+    "entity_n_b_t",
+    "entity_nbt",
   ];
   static override symbol = "NBT()";
   static override interactName = "entityNbt";

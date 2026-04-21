@@ -10,12 +10,14 @@ export class OPERATOR_OBJECT_ENTITY_ISWET extends BaseOperator<
   static override internalName = "integrateddynamics:entity_iswet" as const;
   static override numericID = 29;
   static override nicknames = [
-    "EntityIswet",
-    "entity_is_wet",
-    "entityIsWet",
-    "isWet",
-    "iswet",
     "entityIswet",
+    "entityIsWet",
+    "EntityIswet",
+    "iswet",
+    "isWet",
+    "entity_is_wet",
+    "entity_iswet",
+    "is_wet",
   ];
   static override symbol = "is_wet";
   static override interactName = "entityIsWet";

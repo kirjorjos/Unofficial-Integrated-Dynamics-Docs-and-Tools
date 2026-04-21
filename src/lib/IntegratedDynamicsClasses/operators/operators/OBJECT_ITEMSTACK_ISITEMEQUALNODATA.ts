@@ -12,12 +12,15 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISITEMEQUALNODATA extends BaseOperator<
     "integrateddynamics:itemstack_isitemequalnodata" as const;
   static override numericID = 282;
   static override nicknames = [
-    "itemstackIsNbtEqual",
-    "ItemstackIsitemequalnodata",
-    "itemstack_is_itemequalnodata",
-    "itemstackIsItemequalnodata",
     "isitemequalnonbt",
+    "itemstackIsItemequalnodata",
+    "ItemstackIsitemequalnodata",
     "itemstackIsitemequalnonbt",
+    "itemstackIsNbtEqual",
+    "itemstack_is_itemequalnodata",
+    "itemstack_is_nbt_equal",
+    "itemstack_isitemequalnodata",
+    "itemstack_isitemequalnonbt",
   ];
   static override symbol = "=NoNBT=";
   static override interactName = "itemstackIsNbtEqual";

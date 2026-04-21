@@ -8,11 +8,12 @@ export class OPERATOR_OBJECT_ENTITY_TYPE extends BaseOperator<Entity, iString> {
     "integrateddynamics:entity_entitytype" as const;
   static override numericID = 170;
   static override nicknames = [
-    "EntityType",
-    "entity_type",
-    "entityType",
-    "entitytype",
     "entityEntitytype",
+    "entitytype",
+    "entityType",
+    "EntityType",
+    "entity_entitytype",
+    "entity_type",
   ];
   static override symbol = "entity_type";
   static override interactName = "entityType";

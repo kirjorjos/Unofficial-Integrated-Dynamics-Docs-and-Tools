@@ -8,10 +8,12 @@ export class OPERATOR_PARSE_INTEGER extends BaseOperator<iString, Integer> {
     "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.integer" as const;
   static override numericID = 194;
   static override nicknames = [
-    "stringParseAsInteger",
     "parseInteger",
+    "parseParseInteger",
+    "stringParseAsInteger",
     "parse_integer",
     "parseParse_integer",
+    "string_parse_as_integer",
   ];
   static override symbol = "parse_integer";
   static override interactName = "stringParseAsInteger";

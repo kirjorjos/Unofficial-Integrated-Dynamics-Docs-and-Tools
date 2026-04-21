@@ -7,16 +7,20 @@ export class OPERATOR_ITEMSTACK_CANBURN extends BaseOperator<Item, iBoolean> {
     "integrateddynamics:itemstack_canburn" as const;
   static override numericID = 112;
   static override nicknames = [
-    "ItemstackCanburn",
-    "item_can_burn",
-    "itemCanBurn",
-    "item_is_fuel",
-    "itemIsFuel",
-    "isFuel",
-    "can_burn",
-    "itemstackCanBurn",
     "canburn",
+    "canBurn",
+    "isFuel",
+    "itemCanBurn",
+    "itemIsFuel",
     "itemstackCanburn",
+    "itemstackCanBurn",
+    "ItemstackCanburn",
+    "can_burn",
+    "is_fuel",
+    "item_can_burn",
+    "item_is_fuel",
+    "itemstack_can_burn",
+    "itemstack_canburn",
   ];
   static override symbol = "can_burn";
   static override interactName = "itemstackCanBurn";

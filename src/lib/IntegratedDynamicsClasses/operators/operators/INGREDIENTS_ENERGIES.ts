@@ -11,9 +11,10 @@ export class OPERATOR_INGREDIENTS_ENERGIES extends BaseOperator<
     "integrateddynamics:ingredients_energies" as const;
   static override numericID = 148;
   static override nicknames = [
-    "ingredientsEnergies",
-    "Ingr.energies",
     "energies",
+    "Ingr.energies",
+    "ingredientsEnergies",
+    "ingredients_energies",
   ];
   static override symbol = "Ingr.energies";
   static override interactName = "ingredientsEnergies";

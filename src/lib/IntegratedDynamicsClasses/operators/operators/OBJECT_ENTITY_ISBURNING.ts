@@ -10,12 +10,14 @@ export class OPERATOR_OBJECT_ENTITY_ISBURNING extends BaseOperator<
   static override internalName = "integrateddynamics:entity_isburning" as const;
   static override numericID = 24;
   static override nicknames = [
-    "EntityIsburning",
-    "entity_is_burning",
-    "entityIsBurning",
-    "isBurning",
-    "isburning",
     "entityIsburning",
+    "entityIsBurning",
+    "EntityIsburning",
+    "isburning",
+    "isBurning",
+    "entity_is_burning",
+    "entity_isburning",
+    "is_burning",
   ];
   static override symbol = "is_burning";
   static override interactName = "entityIsBurning";

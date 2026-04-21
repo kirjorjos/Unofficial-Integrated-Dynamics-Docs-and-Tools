@@ -12,10 +12,14 @@ export class OPERATOR_NULLABLE_ISNOTNULL extends BaseOperator<
   static override numericID = 46;
   static override nicknames = [
     "anyIsNotNull",
+    "generalIsnotnull",
+    "isnotnull",
     "isNotNull",
     "nullableIsnotnull",
-    "isnotnull",
-    "generalIsnotnull",
+    "any_is_not_null",
+    "general_isnotnull",
+    "is_not_null",
+    "nullable_isnotnull",
   ];
   static override symbol = "∅";
   static override interactName = "anyIsNotNull";

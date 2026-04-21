@@ -8,8 +8,11 @@ export class OPERATOR_NBT_FROM_DOUBLE extends BaseOperator<Double, DoubleTag> {
   static override numericID = 256;
   static override nicknames = [
     "doubleAsNbt",
+    "fromDouble",
     "nbtFromDouble",
+    "double_as_nbt",
     "from_double",
+    "nbt_from_double",
     "nbtFrom_double",
   ];
   static override symbol = "NBT.from_double";

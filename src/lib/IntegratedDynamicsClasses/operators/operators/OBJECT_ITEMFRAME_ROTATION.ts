@@ -11,14 +11,16 @@ export class OPERATOR_OBJECT_ITEMFRAME_ROTATION extends BaseOperator<
     "integrateddynamics:entity_itemframerotation" as const;
   static override numericID = 32;
   static override nicknames = [
-    "entityItemFrameRotation",
-    "ItemframeRotation",
-    "itemframe_rotation",
-    "itemframeRotation",
-    "item_frame_rotation",
-    "itemFrameRotation",
-    "itemframerotation",
     "entityItemframerotation",
+    "entityItemFrameRotation",
+    "itemframerotation",
+    "itemframeRotation",
+    "itemFrameRotation",
+    "ItemframeRotation",
+    "entity_item_frame_rotation",
+    "entity_itemframerotation",
+    "item_frame_rotation",
+    "itemframe_rotation",
   ];
   static override symbol = "itemframe_rotation";
   static override interactName = "entityItemFrameRotation";

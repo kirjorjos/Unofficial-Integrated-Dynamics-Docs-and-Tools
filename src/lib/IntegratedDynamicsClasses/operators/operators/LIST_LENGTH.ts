@@ -8,7 +8,7 @@ export class OPERATOR_LIST_LENGTH extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:list_length" as const;
   static override numericID = 67;
-  static override nicknames = ["listLength", "length"];
+  static override nicknames = ["length", "listLength", "list_length"];
   static override symbol = "| |";
   static override interactName = "listLength";
   static override operatorName = "length" as const;

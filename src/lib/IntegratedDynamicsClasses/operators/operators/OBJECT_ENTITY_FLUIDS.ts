@@ -13,11 +13,12 @@ export class OPERATOR_OBJECT_ENTITY_FLUIDS extends BaseOperator<
     "integrateddynamics:entity_entityfluids" as const;
   static override numericID = 175;
   static override nicknames = [
-    "EntityFluids",
-    "entity_fluids",
-    "entityFluids",
-    "entityfluids",
     "entityEntityfluids",
+    "entityfluids",
+    "entityFluids",
+    "EntityFluids",
+    "entity_entityfluids",
+    "entity_fluids",
   ];
   static override symbol = "entity_fluids";
   static override interactName = "entityFluids";

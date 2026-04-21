@@ -7,10 +7,13 @@ export class OPERATOR_NBT_FROM_SHORT extends BaseOperator<Integer, ShortTag> {
   static override internalName = "integrateddynamics:nbt_from_short" as const;
   static override numericID = 263;
   static override nicknames = [
-    "shortAsNbt",
+    "fromShort",
     "nbtFromShort",
+    "shortAsNbt",
     "from_short",
+    "nbt_from_short",
     "nbtFrom_short",
+    "short_as_nbt",
   ];
   static override symbol = "NBT.from_short";
   static override interactName = "shortAsNbt";

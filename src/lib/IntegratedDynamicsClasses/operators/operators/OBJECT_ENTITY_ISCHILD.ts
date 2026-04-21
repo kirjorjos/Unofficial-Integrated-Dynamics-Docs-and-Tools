@@ -10,12 +10,14 @@ export class OPERATOR_OBJECT_ENTITY_ISCHILD extends BaseOperator<
   static override internalName = "integrateddynamics:entity_ischild" as const;
   static override numericID = 129;
   static override nicknames = [
-    "isChild",
-    "EntityIschild",
-    "entity_is_child",
-    "entityIsChild",
-    "ischild",
     "entityIschild",
+    "entityIsChild",
+    "EntityIschild",
+    "ischild",
+    "isChild",
+    "entity_is_child",
+    "entity_ischild",
+    "is_child",
   ];
   static override symbol = "is_child";
   static override interactName = "entityIsChild";

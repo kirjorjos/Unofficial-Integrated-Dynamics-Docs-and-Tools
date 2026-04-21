@@ -12,10 +12,13 @@ export class OPERATOR_NBT_COMPOUND_WITHOUT extends BaseOperator<
     "integrateddynamics:nbt_compound_without" as const;
   static override numericID = 237;
   static override nicknames = [
-    "nbtWithout",
+    "compoundWithout",
     "nbtCompoundWithout",
+    "nbtWithout",
     "NBTWithout",
     "compound_without",
+    "nbt_compound_without",
+    "nbt_without",
     "nbtCompound_without",
   ];
   static override symbol = "NBT{}.without";

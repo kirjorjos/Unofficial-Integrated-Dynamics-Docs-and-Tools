@@ -9,7 +9,13 @@ export class OPERATOR_LIST_UNIQ extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:list_uniq" as const;
   static override numericID = 136;
-  static override nicknames = ["listUnique", "listUniq", "uniq"];
+  static override nicknames = [
+    "listUniq",
+    "listUnique",
+    "uniq",
+    "list_uniq",
+    "list_unique",
+  ];
   static override symbol = "uniq";
   static override interactName = "listUnique";
   static override operatorName = "uniq" as const;

@@ -5,7 +5,7 @@ import { Integer } from "lib/JavaNumberClasses/Integer";
 export class OPERATOR_NUMBER_ROUND extends BaseOperator<TypeNumber, Integer> {
   static override internalName = "integrateddynamics:number_round" as const;
   static override numericID = 206;
-  static override nicknames = ["round", "numberRound"];
+  static override nicknames = ["numberRound", "round", "number_round"];
   static override symbol = "|| ||";
   static override interactName = "numberRound";
   static override operatorName = "round" as const;

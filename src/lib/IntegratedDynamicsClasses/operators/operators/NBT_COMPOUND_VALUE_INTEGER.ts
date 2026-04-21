@@ -17,10 +17,12 @@ export class OPERATOR_NBT_COMPOUND_VALUE_INTEGER extends BaseOperator<
     "integrateddynamics:nbt_compound_value_integer" as const;
   static override numericID = 218;
   static override nicknames = [
-    "nbtGetInteger",
-    "nbtCompoundValueInteger",
     "compoundValueInteger",
+    "nbtCompoundValueInteger",
+    "nbtGetInteger",
     "compound_value_integer",
+    "nbt_compound_value_integer",
+    "nbt_get_integer",
     "nbtCompound_value_integer",
   ];
   static override symbol = "NBT{}.get_integer";

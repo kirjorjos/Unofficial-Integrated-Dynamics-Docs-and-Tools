@@ -13,9 +13,10 @@ export class OPERATOR_OBJECT_ENTITY_MOUNTED extends BaseOperator<
   static override nicknames = [
     "entityMounted",
     "EntityMounted",
-    "entitys_mounted",
     "entitysMounted",
     "mounted",
+    "entity_mounted",
+    "entitys_mounted",
   ];
   static override symbol = "mounted";
   static override interactName = "entityMounted";

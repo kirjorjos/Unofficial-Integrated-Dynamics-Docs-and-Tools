@@ -8,7 +8,13 @@ export class OPERATOR_BINARY_AND extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:binary_and" as const;
   static override numericID = 6;
-  static override nicknames = ["binaryAnd", "integerBinaryAnd", "and"];
+  static override nicknames = [
+    "and",
+    "binaryAnd",
+    "integerBinaryAnd",
+    "binary_and",
+    "integer_binary_and",
+  ];
   static override symbol = "&";
   static override interactName = "integerBinaryAnd";
   static override operatorName = "and" as const;

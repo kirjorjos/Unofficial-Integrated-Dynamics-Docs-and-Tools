@@ -12,14 +12,16 @@ export class OPERATOR_ITEMSTACK_ITEMLISTCOUNT extends BaseOperator<
     "integrateddynamics:itemstack_itemlistcount" as const;
   static override numericID = 190;
   static override nicknames = [
-    "listItemListCount",
-    "ItemstackListCount",
-    "itemstack_list_count",
-    "itemstackListCount",
-    "item_list_count",
-    "itemListCount",
     "itemlistcount",
+    "itemListCount",
     "itemstackItemlistcount",
+    "itemstackListCount",
+    "ItemstackListCount",
+    "listItemListCount",
+    "item_list_count",
+    "itemstack_itemlistcount",
+    "itemstack_list_count",
+    "list_item_list_count",
   ];
   static override symbol = "item_list_count";
   static override interactName = "listItemListCount";

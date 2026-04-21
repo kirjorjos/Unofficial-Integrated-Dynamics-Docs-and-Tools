@@ -12,9 +12,12 @@ export class OPERATOR_LIST_COUNT_PREDICATE extends BaseOperator<
   static override internalName = "integrateddynamics:list_count_p" as const;
   static override numericID = 115;
   static override nicknames = [
-    "listCountPredicate",
+    "countP",
     "listCountP",
+    "listCountPredicate",
     "count_p",
+    "list_count_p",
+    "list_count_predicate",
     "listCount_p",
   ];
   static override symbol = "count_p";

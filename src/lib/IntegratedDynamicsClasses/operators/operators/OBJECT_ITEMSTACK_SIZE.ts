@@ -10,10 +10,10 @@ export class OPERATOR_OBJECT_ITEMSTACK_SIZE extends BaseOperator<
   static override internalName = "integrateddynamics:itemstack_size" as const;
   static override numericID = 63;
   static override nicknames = [
-    "ItemstackSize",
-    "itemstack_size",
     "itemstackSize",
+    "ItemstackSize",
     "size",
+    "itemstack_size",
   ];
   static override symbol = "size";
   static override interactName = "itemstackSize";

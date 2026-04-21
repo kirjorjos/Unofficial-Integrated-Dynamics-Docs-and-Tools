@@ -14,8 +14,10 @@ export class OPERATOR_STRING_REGEX_GROUP extends BaseOperator<
     "integrateddynamics:string_regex_group" as const;
   static override numericID = 159;
   static override nicknames = [
+    "regexGroup",
     "stringRegexGroup",
     "regex_group",
+    "string_regex_group",
     "stringRegex_group",
   ];
   static override symbol = "regex_group";

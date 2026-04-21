@@ -9,7 +9,7 @@ export class OPERATOR_STRING_REPLACE extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:string_replace" as const;
   static override numericID = 168;
-  static override nicknames = ["stringReplace", "replace"];
+  static override nicknames = ["replace", "stringReplace", "string_replace"];
   static override symbol = "replace";
   static override interactName = "stringReplace";
   static override operatorName = "replace" as const;

@@ -10,11 +10,13 @@ export class OPERATOR_GENERAL_CHOICE extends BaseOperator<
   static override internalName = "integrateddynamics:general_choice" as const;
   static override numericID = 44;
   static override nicknames = [
-    "generalChoice",
-    "choice",
     "booleanChoice",
+    "choice",
+    "generalChoice",
     "if",
     "ifElse",
+    "boolean_choice",
+    "general_choice",
     "if_else",
   ];
   static override symbol = "?";

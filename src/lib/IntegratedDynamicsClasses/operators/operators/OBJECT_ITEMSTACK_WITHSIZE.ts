@@ -13,12 +13,14 @@ export class OPERATOR_OBJECT_ITEMSTACK_WITHSIZE extends BaseOperator<
     "integrateddynamics:itemstack_withsize" as const;
   static override numericID = 108;
   static override nicknames = [
-    "ItemstackWithSize",
-    "itemstack_with_size",
+    "itemstackWithsize",
     "itemstackWithSize",
+    "ItemstackWithSize",
     "itemWithSize",
     "withsize",
-    "itemstackWithsize",
+    "item_with_size",
+    "itemstack_with_size",
+    "itemstack_withsize",
   ];
   static override symbol = "with_size";
   static override interactName = "itemstackWithSize";

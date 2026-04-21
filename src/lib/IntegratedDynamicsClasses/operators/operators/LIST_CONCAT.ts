@@ -9,7 +9,7 @@ export class OPERATOR_LIST_CONCAT extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:list_concat" as const;
   static override numericID = 139;
-  static override nicknames = ["listConcat"];
+  static override nicknames = ["listConcat", "list_concat"];
   static override symbol = "concat";
   static override interactName = "listConcat";
   static override operatorName = "concat" as const;

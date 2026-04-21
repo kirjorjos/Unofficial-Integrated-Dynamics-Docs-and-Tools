@@ -9,7 +9,7 @@ export class OPERATOR_OPERATOR_MAP extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:operator_map" as const;
   static override numericID = 95;
-  static override nicknames = ["operatorMap", "map"];
+  static override nicknames = ["map", "operatorMap", "operator_map"];
   static override symbol = "map";
   static override interactName = "operatorMap";
   static override operatorName = "map" as const;

@@ -12,10 +12,11 @@ export class OPERATOR_OBJECT_ENTITY_INVENTORY extends BaseOperator<
   static override numericID = 22;
   static override nicknames = [
     "entityInventory",
-    "EntityInventoryContents",
-    "entity_inventory_contents",
     "entityInventoryContents",
+    "EntityInventoryContents",
     "inventory",
+    "entity_inventory",
+    "entity_inventory_contents",
   ];
   static override symbol = "entity_inventory";
   static override interactName = "entityInventory";

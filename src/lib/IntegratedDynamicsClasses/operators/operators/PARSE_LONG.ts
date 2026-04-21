@@ -8,10 +8,12 @@ export class OPERATOR_PARSE_LONG extends BaseOperator<iString, Long> {
     "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.long" as const;
   static override numericID = 195;
   static override nicknames = [
-    "stringParseAsLong",
     "parseLong",
+    "parseParseLong",
+    "stringParseAsLong",
     "parse_long",
     "parseParse_long",
+    "string_parse_as_long",
   ];
   static override symbol = "parse_long";
   static override interactName = "stringParseAsLong";

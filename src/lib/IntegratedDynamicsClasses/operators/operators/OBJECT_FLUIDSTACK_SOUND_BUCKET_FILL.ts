@@ -11,15 +11,18 @@ export class OPERATOR_OBJECT_FLUIDSTACK_SOUND_BUCKET_FILL extends BaseOperator<
     "integrateddynamics:fluidstack_sound_bucket_fill" as const;
   static override numericID = 274;
   static override nicknames = [
-    "fluidstackBucketFillSound",
-    "FluidstackSoundBucketFill",
-    "fluidstackSoundBucketFill",
-    "fluid_stack_sound_bucket_fill",
-    "fluidStackSoundBucketFill",
-    "fluid_sound_bucket_fill",
     "fluidSoundBucketFill",
-    "sound_bucket_fill",
+    "fluidstackBucketFillSound",
+    "fluidstackSoundBucketFill",
+    "fluidStackSoundBucketFill",
+    "FluidstackSoundBucketFill",
+    "soundBucketFill",
+    "fluid_sound_bucket_fill",
+    "fluid_stack_sound_bucket_fill",
+    "fluidstack_bucket_fill_sound",
+    "fluidstack_sound_bucket_fill",
     "fluidstackSound_bucket_fill",
+    "sound_bucket_fill",
   ];
   static override symbol = "sound_bucket_fill";
   static override interactName = "fluidstackBucketFillSound";

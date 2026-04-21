@@ -10,7 +10,7 @@ export class OPERATOR_LIST_COUNT extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:list_count" as const;
   static override numericID = 114;
-  static override nicknames = ["listCount", "count"];
+  static override nicknames = ["count", "listCount", "list_count"];
   static override symbol = "count";
   static override interactName = "listCount";
   static override operatorName = "count" as const;

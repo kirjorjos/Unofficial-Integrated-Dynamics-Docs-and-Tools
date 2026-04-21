@@ -8,7 +8,13 @@ export class OPERATOR_BINARY_OR extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:binary_or" as const;
   static override numericID = 9;
-  static override nicknames = ["binaryOr", "integerBinaryOr", "or"];
+  static override nicknames = [
+    "binaryOr",
+    "integerBinaryOr",
+    "or",
+    "binary_or",
+    "integer_binary_or",
+  ];
   static override symbol = "|";
   static override interactName = "integerBinaryOr";
   static override operatorName = "or" as const;

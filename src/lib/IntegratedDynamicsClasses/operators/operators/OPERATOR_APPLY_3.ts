@@ -14,7 +14,12 @@ export class OPERATOR_OPERATOR_APPLY_3 extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:operator_apply3" as const;
   static override numericID = 141;
-  static override nicknames = ["operatorApply3", "operatorApply_3", "apply3"];
+  static override nicknames = [
+    "apply3",
+    "operatorApply3",
+    "operator_apply3",
+    "operatorApply_3",
+  ];
   static override symbol = "apply3";
   static override interactName = "operatorApply3";
   static override operatorName = "apply3" as const;

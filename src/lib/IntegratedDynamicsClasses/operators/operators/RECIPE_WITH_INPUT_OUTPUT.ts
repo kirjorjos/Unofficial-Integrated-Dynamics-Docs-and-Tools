@@ -14,8 +14,11 @@ export class OPERATOR_RECIPE_WITH_INPUT_OUTPUT extends BaseOperator<
   static override nicknames = [
     "ingredientsWithInputOutput",
     "recipeWithInputOutput",
-    "with_input_output",
+    "withInputOutput",
+    "ingredients_with_input_output",
+    "recipe_with_input_output",
     "recipeWith_input_output",
+    "with_input_output",
   ];
   static override symbol = "Recipe.with_io";
   static override interactName = "ingredientsWithInputOutput";

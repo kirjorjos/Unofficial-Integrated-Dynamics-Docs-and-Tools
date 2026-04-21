@@ -10,10 +10,12 @@ export class OPERATOR_ARITHMETIC_MAXIMUM extends BaseOperator<
     "integrateddynamics:arithmetic_maximum" as const;
   static override numericID = 2;
   static override nicknames = [
-    "max",
     "arithmeticMaximum",
-    "numberMax",
+    "max",
     "maximum",
+    "numberMax",
+    "arithmetic_maximum",
+    "number_max",
   ];
   static override symbol = "max";
   static override interactName = "numberMax";

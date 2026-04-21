@@ -9,7 +9,13 @@ export class OPERATOR_RELATIONAL_LT extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:relational_lt" as const;
   static override numericID = 76;
-  static override nicknames = ["numberLessThan", "relationalLt", "lt"];
+  static override nicknames = [
+    "lt",
+    "numberLessThan",
+    "relationalLt",
+    "number_less_than",
+    "relational_lt",
+  ];
   static override symbol = "<";
 
   static override interactName = "numberLessThan";

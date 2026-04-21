@@ -7,13 +7,17 @@ export class OPERATOR_ENTITY_HASGUIOPEN extends BaseOperator<Entity, iBoolean> {
     "integrateddynamics:entity_hasguiopen" as const;
   static override numericID = 186;
   static override nicknames = [
-    "PlayerHasguiopen",
-    "player_has_gui_open",
-    "playerHasGuiOpen",
-    "has_gui_open",
+    "entityHasguiopen",
     "entityHasGuiOpen",
     "hasguiopen",
-    "entityHasguiopen",
+    "hasGuiOpen",
+    "playerHasGuiOpen",
+    "PlayerHasguiopen",
+    "entity_has_gui_open",
+    "entity_hasguiopen",
+    "has_gui_open",
+    "player_has_gui_open",
+    "player_hasguiopen",
   ];
   static override symbol = "has_gui_open";
   static override interactName = "entityHasGuiOpen";

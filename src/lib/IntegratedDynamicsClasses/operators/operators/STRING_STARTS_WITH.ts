@@ -15,6 +15,7 @@ export class OPERATOR_STRING_STARTS_WITH extends BaseOperator<
     "startsWith",
     "stringStartsWith",
     "starts_with",
+    "string_starts_with",
     "stringStarts_with",
   ];
   static override symbol = "starts_with";

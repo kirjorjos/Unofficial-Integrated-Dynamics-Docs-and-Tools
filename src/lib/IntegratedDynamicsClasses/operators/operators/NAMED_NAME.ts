@@ -8,7 +8,15 @@ export class OPERATOR_NAMED_NAME extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:string_name" as const;
   static override numericID = 80;
-  static override nicknames = ["name", "namedName", "toString", "stringName"];
+  static override nicknames = [
+    "name",
+    "namedName",
+    "stringName",
+    "toString",
+    "named_name",
+    "string_name",
+    "to_string",
+  ];
   static override symbol = "name";
   static override interactName = "namedName";
   static override operatorName = "name" as const;

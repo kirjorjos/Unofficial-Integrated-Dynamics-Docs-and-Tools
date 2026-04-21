@@ -5,7 +5,7 @@ import { iString } from "lib/IntegratedDynamicsClasses/typeWrappers/iString";
 export class OPERATOR_NUMBER_COMPACT extends BaseOperator<TypeNumber, iString> {
   static override internalName = "integrateddynamics:number_compact" as const;
   static override numericID = 277;
-  static override nicknames = ["compact", "numberCompact"];
+  static override nicknames = ["compact", "numberCompact", "number_compact"];
   static override symbol = "compact";
   static override interactName = "numberCompact";
   static override operatorName = "compact" as const;

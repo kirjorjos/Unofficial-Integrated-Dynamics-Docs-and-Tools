@@ -10,9 +10,11 @@ export class OPERATOR_OBJECT_BLOCK_OPAQUE extends BaseOperator<
   static override numericID = 16;
   static override nicknames = [
     "blockIsOpaque",
+    "blockOpaque",
     "BlockOpaque",
     "opaque",
-    "blockOpaque",
+    "block_is_opaque",
+    "block_opaque",
   ];
   static override symbol = "opaque";
   static override interactName = "blockIsOpaque";

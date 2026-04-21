@@ -10,7 +10,13 @@ export class OPERATOR_LIST_EMPTY extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:list_empty" as const;
   static override numericID = 105;
-  static override nicknames = ["listEmpty", "listIsEmpty", "empty"];
+  static override nicknames = [
+    "empty",
+    "listEmpty",
+    "listIsEmpty",
+    "list_empty",
+    "list_is_empty",
+  ];
   static override symbol = "∅";
   static override interactName = "listIsEmpty";
   static override operatorName = "empty" as const;

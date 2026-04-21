@@ -15,10 +15,13 @@ export class OPERATOR_NBT_PATH_MATCH_FIRST extends BaseOperator<
     "integrateddynamics:nbt_path_match_first" as const;
   static override numericID = 239;
   static override nicknames = [
-    "stringNbtPathMatchFirst",
     "nbtPathMatchFirst",
-    "path_match_first",
+    "pathMatchFirst",
+    "stringNbtPathMatchFirst",
+    "nbt_path_match_first",
     "nbtPath_match_first",
+    "path_match_first",
+    "string_nbt_path_match_first",
   ];
   static override symbol = "NBT.path_match_first";
   static override interactName = "stringNbtPathMatchFirst";

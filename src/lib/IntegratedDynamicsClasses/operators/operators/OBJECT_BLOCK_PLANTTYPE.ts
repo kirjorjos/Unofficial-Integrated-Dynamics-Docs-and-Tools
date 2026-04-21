@@ -10,10 +10,11 @@ export class OPERATOR_OBJECT_BLOCK_PLANTTYPE extends BaseOperator<
   static override internalName = "integrateddynamics:block_plant_type" as const;
   static override numericID = 121;
   static override nicknames = [
-    "plant_type",
+    "blockPlanttype",
     "planttype",
     "plantType",
-    "blockPlanttype",
+    "block_planttype",
+    "plant_type",
   ];
   static override symbol = "plant_type";
   static override interactName = "plantType";

@@ -14,10 +14,14 @@ export class OPERATOR_NBT_COMPOUND_WITH_FLOAT extends BaseOperator<
     "integrateddynamics:nbt_compound_with_float" as const;
   static override numericID = 226;
   static override nicknames = [
-    "nbtWithFloat",
+    "compoundWithFloat",
     "nbtCompoundWithFloat",
+    "nbtWithFloat",
     "NBTWithFloat",
     "compound_with_float",
+    "n_b_t_with_float",
+    "nbt_compound_with_float",
+    "nbt_with_float",
     "nbtCompound_with_float",
   ];
   static override symbol = "NBT{}.with_float";

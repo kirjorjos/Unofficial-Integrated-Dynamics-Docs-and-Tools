@@ -10,11 +10,12 @@ export class OPERATOR_OBJECT_ENTITY_HURTSOUND extends BaseOperator<
   static override internalName = "integrateddynamics:entity_hurtsound" as const;
   static override numericID = 21;
   static override nicknames = [
-    "EntityHurtsound",
-    "entity_hurt_sound",
-    "entityHurtSound",
-    "hurtsound",
     "entityHurtsound",
+    "entityHurtSound",
+    "EntityHurtsound",
+    "hurtsound",
+    "entity_hurt_sound",
+    "entity_hurtsound",
   ];
   static override symbol = "hurtsound";
   static override interactName = "entityHurtSound";

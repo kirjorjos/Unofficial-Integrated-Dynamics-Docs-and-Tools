@@ -7,7 +7,13 @@ import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 export class OPERATOR_NBT_AS_STRING extends BaseOperator<StringTag, iString> {
   static override internalName = "integrateddynamics:nbt_as_string" as const;
   static override numericID = 252;
-  static override nicknames = ["nbtAsString", "as_string", "nbtAs_string"];
+  static override nicknames = [
+    "asString",
+    "nbtAsString",
+    "as_string",
+    "nbt_as_string",
+    "nbtAs_string",
+  ];
   static override symbol = "NBT.as_string";
   static override interactName = "nbtAsString";
   static override operatorName = "as_string" as const;

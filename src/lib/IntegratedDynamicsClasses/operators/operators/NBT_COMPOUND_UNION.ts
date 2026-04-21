@@ -11,10 +11,13 @@ export class OPERATOR_NBT_COMPOUND_UNION extends BaseOperator<
     "integrateddynamics:nbt_compound_union" as const;
   static override numericID = 214;
   static override nicknames = [
-    "nbtUnion",
+    "compoundUnion",
     "nbtCompoundUnion",
+    "nbtUnion",
     "NBTUnion",
     "compound_union",
+    "nbt_compound_union",
+    "nbt_union",
     "nbtCompound_union",
   ];
   static override symbol = "NBT{}.∪";

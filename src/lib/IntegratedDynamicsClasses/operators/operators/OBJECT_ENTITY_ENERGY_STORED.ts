@@ -12,11 +12,13 @@ export class OPERATOR_OBJECT_ENTITY_ENERGY_STORED extends BaseOperator<
   static override numericID = 174;
   static override nicknames = [
     "entityEnergy",
-    "EntityEnergyStored",
-    "entity_energy_stored",
-    "entityEnergyStored",
     "entityenergystored",
+    "entityEnergyStored",
+    "EntityEnergyStored",
     "entityEntityenergystored",
+    "entity_energy",
+    "entity_energy_stored",
+    "entity_entityenergystored",
   ];
   static override symbol = "entity_stored_fe";
   static override interactName = "entityEnergy";

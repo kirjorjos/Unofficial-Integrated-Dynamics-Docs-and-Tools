@@ -11,13 +11,14 @@ export class OPERATOR_OBJECT_FLUIDSTACK_TEMPERATURE extends BaseOperator<
     "integrateddynamics:fluidstack_temperature" as const;
   static override numericID = 276;
   static override nicknames = [
-    "FluidstackTemperature",
     "fluidstackTemperature",
-    "fluid_stack_temperature",
     "fluidStackTemperature",
-    "fluid_temperature",
+    "FluidstackTemperature",
     "fluidTemperature",
     "temperature",
+    "fluid_stack_temperature",
+    "fluid_temperature",
+    "fluidstack_temperature",
   ];
   static override symbol = "temperature";
   static override interactName = "fluidstackTemperature";

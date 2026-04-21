@@ -10,7 +10,7 @@ export class OPERATOR_LIST_CONTAINS extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:list_contains" as const;
   static override numericID = 102;
-  static override nicknames = ["listContains", "contains"];
+  static override nicknames = ["contains", "listContains", "list_contains"];
   static override symbol = "contains";
   static override interactName = "listContains";
   static override operatorName = "contains" as const;

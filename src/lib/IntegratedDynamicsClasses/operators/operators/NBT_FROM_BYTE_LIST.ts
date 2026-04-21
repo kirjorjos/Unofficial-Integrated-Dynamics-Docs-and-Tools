@@ -13,8 +13,11 @@ export class OPERATOR_NBT_FROM_BYTE_LIST extends BaseOperator<
   static override numericID = 255;
   static override nicknames = [
     "byteListAsNbt",
+    "fromByteList",
     "nbtFromByteList",
+    "byte_list_as_nbt",
     "from_byte_list",
+    "nbt_from_byte_list",
     "nbtFrom_byte_list",
   ];
   static override symbol = "NBT.from_byte_list";

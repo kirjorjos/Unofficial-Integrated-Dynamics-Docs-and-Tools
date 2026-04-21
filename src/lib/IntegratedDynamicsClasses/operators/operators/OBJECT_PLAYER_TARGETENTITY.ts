@@ -10,12 +10,14 @@ export class OPERATOR_OBJECT_PLAYER_TARGETENTITY extends BaseOperator<
     "integrateddynamics:entity_targetentity" as const;
   static override numericID = 36;
   static override nicknames = [
-    "EntityTargetentity",
-    "entity_target_entity",
+    "entityTargetentity",
     "entityTargetEntity",
+    "EntityTargetentity",
     "playerTargetEntity",
     "targetentity",
-    "entityTargetentity",
+    "entity_target_entity",
+    "entity_targetentity",
+    "player_target_entity",
   ];
   static override symbol = "target_entity";
   static override interactName = "entityTargetEntity";

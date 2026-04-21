@@ -7,8 +7,10 @@ export class OPERATOR_BINARY_COMPLEMENT extends BaseOperator<Integer, Integer> {
   static override numericID = 7;
   static override nicknames = [
     "binaryComplement",
-    "integerComplement",
     "complement",
+    "integerComplement",
+    "binary_complement",
+    "integer_complement",
   ];
   static override symbol = "~";
   static override interactName = "integerComplement";

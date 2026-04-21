@@ -11,14 +11,16 @@ export class OPERATOR_OBJECT_ITEMFRAME_CONTENTS extends BaseOperator<
     "integrateddynamics:entity_itemframecontents" as const;
   static override numericID = 31;
   static override nicknames = [
-    "entityItemFrameContents",
-    "ItemframeContents",
-    "itemframe_contents",
-    "itemframeContents",
-    "item_frame_contents",
-    "itemFrameContents",
-    "itemframecontents",
     "entityItemframecontents",
+    "entityItemFrameContents",
+    "itemframecontents",
+    "itemframeContents",
+    "itemFrameContents",
+    "ItemframeContents",
+    "entity_item_frame_contents",
+    "entity_itemframecontents",
+    "item_frame_contents",
+    "itemframe_contents",
   ];
   static override symbol = "itemframe_contents";
   static override interactName = "entityItemFrameContents";

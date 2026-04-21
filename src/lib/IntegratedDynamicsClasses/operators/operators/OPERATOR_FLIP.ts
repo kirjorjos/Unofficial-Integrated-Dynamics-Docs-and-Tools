@@ -8,7 +8,7 @@ export class OPERATOR_OPERATOR_FLIP extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:operator_flip" as const;
   static override numericID = 96;
-  static override nicknames = ["operatorFlip", "flip"];
+  static override nicknames = ["flip", "operatorFlip", "operator_flip"];
   static override symbol = "flip";
   static override interactName = "operatorFlip";
   static override operatorName = "flip" as const;

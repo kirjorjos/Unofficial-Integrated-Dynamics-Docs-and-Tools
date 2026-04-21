@@ -13,8 +13,10 @@ export class OPERATOR_RECIPE_WITH_OUTPUT extends BaseOperator<
   static override numericID = 185;
   static override nicknames = [
     "recipeWithOutput",
-    "with_output",
+    "withOutput",
+    "recipe_with_output",
     "recipeWith_output",
+    "with_output",
   ];
   static override symbol = "Recipe.with_out";
   static override interactName = "recipeWithOutput";

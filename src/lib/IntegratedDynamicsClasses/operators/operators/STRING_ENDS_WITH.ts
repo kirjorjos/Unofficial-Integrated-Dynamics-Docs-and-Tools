@@ -14,6 +14,7 @@ export class OPERATOR_STRING_ENDS_WITH extends BaseOperator<
     "endsWith",
     "stringEndsWith",
     "ends_with",
+    "string_ends_with",
     "stringEnds_with",
   ];
   static override symbol = "ends_with";

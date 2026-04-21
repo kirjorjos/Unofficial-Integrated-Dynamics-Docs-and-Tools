@@ -13,7 +13,11 @@ export class OPERATOR_OPERATOR_DISJUNCTION extends BaseOperator<
   static override internalName =
     "integrateddynamics:operator_disjunction" as const;
   static override numericID = 98;
-  static override nicknames = ["operatorDisjunction", "disjunction"];
+  static override nicknames = [
+    "disjunction",
+    "operatorDisjunction",
+    "operator_disjunction",
+  ];
   static override symbol = ".||.";
   static override interactName = "operatorDisjunction";
   static override operatorName = "disjunction" as const;

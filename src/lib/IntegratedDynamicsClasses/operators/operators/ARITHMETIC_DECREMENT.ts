@@ -10,9 +10,11 @@ export class OPERATOR_ARITHMETIC_DECREMENT extends BaseOperator<
     "integrateddynamics:arithmetic_decrement" as const;
   static override numericID = 82;
   static override nicknames = [
-    "decrement",
     "arithmeticDecrement",
+    "decrement",
     "numberDecrement",
+    "arithmetic_decrement",
+    "number_decrement",
   ];
   static override symbol = "--";
   static override interactName = "numberDecrement";

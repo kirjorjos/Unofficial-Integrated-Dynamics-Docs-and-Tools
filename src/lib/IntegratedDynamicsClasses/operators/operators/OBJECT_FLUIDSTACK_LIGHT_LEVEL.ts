@@ -11,14 +11,16 @@ export class OPERATOR_OBJECT_FLUIDSTACK_LIGHT_LEVEL extends BaseOperator<
     "integrateddynamics:fluidstack_light_level" as const;
   static override numericID = 271;
   static override nicknames = [
-    "FluidstackLightLevel",
-    "fluidstackLightLevel",
-    "fluid_stack_light_level",
-    "fluidStackLightLevel",
-    "fluid_light_level",
     "fluidLightLevel",
-    "light_level",
+    "fluidstackLightLevel",
+    "fluidStackLightLevel",
+    "FluidstackLightLevel",
+    "lightLevel",
+    "fluid_light_level",
+    "fluid_stack_light_level",
+    "fluidstack_light_level",
     "fluidstackLight_level",
+    "light_level",
   ];
   static override symbol = "light_level";
   static override interactName = "fluidstackLightLevel";

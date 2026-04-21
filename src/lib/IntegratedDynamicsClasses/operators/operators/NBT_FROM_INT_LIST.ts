@@ -12,9 +12,12 @@ export class OPERATOR_NBT_FROM_INT_LIST extends BaseOperator<
     "integrateddynamics:nbt_from_int_list" as const;
   static override numericID = 260;
   static override nicknames = [
+    "fromIntList",
     "intListAsNbt",
     "nbtFromIntList",
     "from_int_list",
+    "int_list_as_nbt",
+    "nbt_from_int_list",
     "nbtFrom_int_list",
   ];
   static override symbol = "NBT.from_int_list";

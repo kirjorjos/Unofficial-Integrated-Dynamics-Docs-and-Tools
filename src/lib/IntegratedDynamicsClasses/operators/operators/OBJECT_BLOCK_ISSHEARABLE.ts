@@ -11,9 +11,10 @@ export class OPERATOR_OBJECT_BLOCK_ISSHEARABLE extends BaseOperator<
   static override numericID = 131;
   static override nicknames = [
     "blockIsshearable",
-    "block_is_shearable",
     "blockIsShearable",
     "isshearable",
+    "block_is_shearable",
+    "block_isshearable",
   ];
   static override symbol = "is_shearable";
   static override interactName = "blockIsShearable";

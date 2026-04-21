@@ -15,10 +15,12 @@ export class OPERATOR_NBT_COMPOUND_VALUE_BOOLEAN extends BaseOperator<
     "integrateddynamics:nbt_compound_value_iBoolean" as const;
   static override numericID = 217;
   static override nicknames = [
-    "nbtGetBoolean",
-    "nbtCompoundValueBoolean",
     "compoundValueBoolean",
+    "nbtCompoundValueBoolean",
+    "nbtGetBoolean",
     "compound_value_boolean",
+    "nbt_compound_value_boolean",
+    "nbt_get_boolean",
     "nbtCompound_value_boolean",
   ];
   static override symbol = "NBT{}.get_iBoolean";

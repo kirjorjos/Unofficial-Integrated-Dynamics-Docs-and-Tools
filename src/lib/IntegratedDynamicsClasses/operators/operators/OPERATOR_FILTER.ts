@@ -10,7 +10,7 @@ export class OPERATOR_OPERATOR_FILTER extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:operator_filter" as const;
   static override numericID = 99;
-  static override nicknames = ["operatorFilter", "filter"];
+  static override nicknames = ["filter", "operatorFilter", "operator_filter"];
   static override symbol = "filter";
   static override interactName = "operatorFilter";
   static override operatorName = "filter" as const;

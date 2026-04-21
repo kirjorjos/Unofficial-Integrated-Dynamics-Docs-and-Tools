@@ -14,9 +14,10 @@ export class OPERATOR_STRING_CONTAINS_REGEX extends BaseOperator<
     "integrateddynamics:string_contains_regex" as const;
   static override numericID = 157;
   static override nicknames = [
-    "stringContainsRegex",
     "containsRegex",
+    "stringContainsRegex",
     "contains_regex",
+    "string_contains_regex",
     "stringContains_regex",
   ];
   static override symbol = "contains_regex";

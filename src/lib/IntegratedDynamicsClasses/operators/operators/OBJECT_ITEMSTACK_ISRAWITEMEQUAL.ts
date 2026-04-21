@@ -12,13 +12,16 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISRAWITEMEQUAL extends BaseOperator<
     "integrateddynamics:itemstack_israwitemequal" as const;
   static override numericID = 57;
   static override nicknames = [
-    "itemstackIsEqualRaw",
-    "ItemstackIsrawitemequal",
-    "itemstack_is_rawitemequal",
-    "itemstackIsRawitemequal",
-    "rawItemEquals",
     "israwitemequal",
+    "itemstackIsEqualRaw",
     "itemstackIsrawitemequal",
+    "itemstackIsRawitemequal",
+    "ItemstackIsrawitemequal",
+    "rawItemEquals",
+    "itemstack_is_equal_raw",
+    "itemstack_is_rawitemequal",
+    "itemstack_israwitemequal",
+    "raw_item_equals",
   ];
   static override symbol = "=Raw=";
   static override interactName = "itemstackIsEqualRaw";

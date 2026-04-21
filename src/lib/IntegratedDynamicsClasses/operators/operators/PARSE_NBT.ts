@@ -8,10 +8,14 @@ export class OPERATOR_PARSE_NBT extends BaseOperator<iString, CompoundTag> {
     "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.nbt" as const;
   static override numericID = 196;
   static override nicknames = [
-    "stringParseAsNbt",
+    "parseNbt",
     "parseNBT",
+    "parseParseNbt",
+    "stringParseAsNbt",
+    "parse_n_b_t",
     "parse_nbt",
     "parseParse_nbt",
+    "string_parse_as_nbt",
   ];
   static override symbol = "parse_nbt";
   static override interactName = "stringParseAsNbt";

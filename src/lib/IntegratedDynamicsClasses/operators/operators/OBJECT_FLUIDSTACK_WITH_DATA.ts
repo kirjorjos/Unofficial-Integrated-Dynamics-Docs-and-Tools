@@ -15,10 +15,13 @@ export class OPERATOR_OBJECT_FLUIDSTACK_WITH_DATA extends BaseOperator<
     "integrateddynamics:fluidstack_withdata" as const;
   static override numericID = 286;
   static override nicknames = [
-    "FluidstackWithData",
+    "fluidstackFluidstackWithdata",
+    "fluidstackWithdata",
     "fluidstackWithData",
-    "fluid_stack_with_data",
     "fluidStackWithData",
+    "FluidstackWithData",
+    "fluid_stack_with_data",
+    "fluidstack_with_data",
     "fluidstack_withdata",
     "fluidstackFluidstack_withdata",
   ];

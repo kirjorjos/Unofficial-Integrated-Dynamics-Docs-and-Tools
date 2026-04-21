@@ -7,10 +7,13 @@ export class OPERATOR_NBT_FROM_STRING extends BaseOperator<iString, StringTag> {
   static override internalName = "integrateddynamics:nbt_from_string" as const;
   static override numericID = 264;
   static override nicknames = [
-    "stringAsNbt",
+    "fromString",
     "nbtFromString",
+    "stringAsNbt",
     "from_string",
+    "nbt_from_string",
     "nbtFrom_string",
+    "string_as_nbt",
   ];
   static override symbol = "NBT.from_string";
   static override interactName = "stringAsNbt";

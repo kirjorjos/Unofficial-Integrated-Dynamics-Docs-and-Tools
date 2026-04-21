@@ -10,12 +10,15 @@ export class OPERATOR_OBJECT_ITEMSTACK_MODNAME extends BaseOperator<
   static override internalName = "integrateddynamics:itemstack_mod" as const;
   static override numericID = 60;
   static override nicknames = [
+    "itemMod",
+    "itemModname",
     "itemstackMod",
     "ItemstackModname",
-    "item_mod",
-    "itemModname",
-    "itemMod",
     "mod",
+    "item_mod",
+    "item_modname",
+    "itemstack_mod",
+    "itemstack_modname",
   ];
   static override symbol = "mod";
   static override interactName = "itemstackMod";

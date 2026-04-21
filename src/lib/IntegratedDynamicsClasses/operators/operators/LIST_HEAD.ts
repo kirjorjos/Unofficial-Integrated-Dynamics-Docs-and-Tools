@@ -9,7 +9,7 @@ export class OPERATOR_LIST_HEAD extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:list_head" as const;
   static override numericID = 116;
-  static override nicknames = ["listHead", "head"];
+  static override nicknames = ["head", "listHead", "list_head"];
   static override symbol = "head";
   static override interactName = "listHead";
   static override operatorName = "head" as const;

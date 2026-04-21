@@ -11,7 +11,7 @@ export class OPERATOR_LIST_SLICE extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:list_slice" as const;
   static override numericID = 138;
-  static override nicknames = ["listSlice", "slice"];
+  static override nicknames = ["listSlice", "slice", "list_slice"];
   static override symbol = "slice";
   static override interactName = "listSlice";
   static override operatorName = "slice" as const;

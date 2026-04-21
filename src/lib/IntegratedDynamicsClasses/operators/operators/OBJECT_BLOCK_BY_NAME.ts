@@ -13,12 +13,14 @@ export class OPERATOR_OBJECT_BLOCK_BY_NAME extends BaseOperator<
     "integrateddynamics:block_blockbyname" as const;
   static override numericID = 142;
   static override nicknames = [
-    "stringBlockByName",
-    "BlockByName",
-    "block_by_name",
-    "blockByName",
-    "blockbyname",
     "blockBlockbyname",
+    "blockbyname",
+    "blockByName",
+    "BlockByName",
+    "stringBlockByName",
+    "block_blockbyname",
+    "block_by_name",
+    "string_block_by_name",
   ];
   static override symbol = "block_by_name";
   static override interactName = "stringBlockByName";

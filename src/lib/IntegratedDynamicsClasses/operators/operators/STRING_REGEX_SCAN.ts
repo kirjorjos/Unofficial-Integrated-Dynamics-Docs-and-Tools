@@ -16,8 +16,10 @@ export class OPERATOR_STRING_REGEX_SCAN extends BaseOperator<
     "integrateddynamics:string_regex_scan" as const;
   static override numericID = 167;
   static override nicknames = [
+    "regexScan",
     "stringRegexScan",
     "regex_scan",
+    "string_regex_scan",
     "stringRegex_scan",
   ];
   static override symbol = "regex_scan";

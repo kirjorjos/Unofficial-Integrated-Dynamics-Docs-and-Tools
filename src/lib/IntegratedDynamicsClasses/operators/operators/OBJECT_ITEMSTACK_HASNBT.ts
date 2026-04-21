@@ -11,13 +11,18 @@ export class OPERATOR_OBJECT_ITEMSTACK_HASNBT extends BaseOperator<
   static override internalName = "integrateddynamics:itemstack_hasnbt" as const;
   static override numericID = 197;
   static override nicknames = [
+    "hasnbt",
+    "hasNBT",
+    "itemstackHasnbt",
+    "itemstackHasNbt",
+    "itemstackHasNBT",
     "itemStackHasNBT",
     "ItemstackHasnbt",
+    "has_n_b_t",
+    "item_stack_has_n_b_t",
+    "itemstack_has_n_b_t",
     "itemstack_has_nbt",
-    "itemstackHasNBT",
-    "hasNBT",
-    "hasnbt",
-    "itemstackHasnbt",
+    "itemstack_hasnbt",
   ];
   static override symbol = "has_nbt";
   static override interactName = "itemStackHasNBT";

@@ -9,10 +9,12 @@ export class OPERATOR_PARSE_BOOLEAN extends BaseOperator<iString, iBoolean> {
     "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.iBoolean" as const;
   static override numericID = 193;
   static override nicknames = [
-    "stringParseAsBoolean",
     "parseBoolean",
+    "parseParseBoolean",
+    "stringParseAsBoolean",
     "parse_boolean",
     "parseParse_boolean",
+    "string_parse_as_boolean",
   ];
   static override symbol = "parse_iBoolean";
   static override interactName = "stringParseAsBoolean";
