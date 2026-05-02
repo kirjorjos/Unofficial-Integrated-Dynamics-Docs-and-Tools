@@ -9,9 +9,20 @@ export class OPERATOR_RELATIONAL_GT extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:relational_gt" as const;
   static override numericID = 74;
-  static override nicknames = ["numberGreaterThan", "relationalGt"];
+  static override nicknames = [
+    "gt",
+    "numberGreaterThan",
+    "relationalGt",
+    "number_greater_than",
+    "relational_gt",
+  ];
   static override symbol = ">";
   static override interactName = "numberGreaterThan";
+  static override operatorName = "gt" as const;
+  static override displayName = "Greater Than" as const;
+  static override fullDisplayName = "Relational Greater Than" as const;
+  static override kind = "relational" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

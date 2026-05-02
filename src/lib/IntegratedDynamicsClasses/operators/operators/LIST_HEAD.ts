@@ -9,9 +9,17 @@ export class OPERATOR_LIST_HEAD extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:list_head" as const;
   static override numericID = 116;
-  static override nicknames = ["listHead", "head"];
+  static override nicknames = ["head", "listHead", "list_head"];
   static override symbol = "head";
   static override interactName = "listHead";
+  static override operatorName = "head" as const;
+  static override displayName = "Head" as const;
+  static override fullDisplayName = "List Head" as const;
+  static override tooltipInfo =
+    "Get the first element of the given list." as const;
+
+  static override kind = "list" as const;
+  static override renderPattern = "PREFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

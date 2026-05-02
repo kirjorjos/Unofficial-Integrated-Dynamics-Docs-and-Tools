@@ -13,15 +13,27 @@ export class OPERATOR_OBJECT_FLUIDSTACK_WITH_AMOUNT extends BaseOperator<
     "integrateddynamics:fluidstack_with_amount" as const;
   static override numericID = 266;
   static override nicknames = [
-    "FluidstackWithAmount",
     "fluidstackWithAmount",
-    "fluid_stack_with_amount",
     "fluidStackWithAmount",
-    "fluid_with_amount",
+    "FluidstackWithAmount",
     "fluidWithAmount",
+    "withAmount",
+    "fluid_stack_with_amount",
+    "fluid_with_amount",
+    "fluidstack_with_amount",
+    "fluidstackWith_amount",
+    "with_amount",
   ];
   static override symbol = "with_amount";
   static override interactName = "fluidstackWithAmount";
+  static override operatorName = "with_amount" as const;
+  static override displayName = "Fluid With Amount" as const;
+  static override fullDisplayName = "Fluid Fluid With Amount" as const;
+  static override tooltipInfo =
+    "Copy the given fluid with the given amount" as const;
+
+  static override kind = "fluidstack" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

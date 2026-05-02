@@ -10,9 +10,22 @@ export class OPERATOR_RELATIONAL_NOTEQUALS extends BaseOperator<
   static override internalName =
     "integrateddynamics:relational_notequals" as const;
   static override numericID = 77;
-  static override nicknames = ["anyNotEquals", "relationalNotequals"];
+  static override nicknames = [
+    "anyNotEquals",
+    "notequals",
+    "relationalNotequals",
+    "any_not_equals",
+    "relational_notequals",
+  ];
   static override symbol = "!=";
   static override interactName = "anyNotEquals";
+  static override operatorName = "notequals" as const;
+  static override displayName = "Not Equals" as const;
+  static override fullDisplayName = "Relational Not Equals" as const;
+  static override tooltipInfo = "Type one and two must be equal." as const;
+
+  static override kind = "relational" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

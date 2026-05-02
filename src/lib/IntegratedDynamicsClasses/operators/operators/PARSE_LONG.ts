@@ -7,9 +7,21 @@ export class OPERATOR_PARSE_LONG extends BaseOperator<iString, Long> {
   static override internalName =
     "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.long" as const;
   static override numericID = 195;
-  static override nicknames = ["stringParseAsLong", "parseLong"];
+  static override nicknames = [
+    "parseLong",
+    "parseParseLong",
+    "stringParseAsLong",
+    "parse_long",
+    "parseParse_long",
+    "string_parse_as_long",
+  ];
   static override symbol = "parse_long";
   static override interactName = "stringParseAsLong";
+  static override operatorName = "parse_long" as const;
+  static override displayName = "Parse Long" as const;
+  static override fullDisplayName = "Parse" as const;
+  static override kind = "parse" as const;
+  static override renderPattern = "PREFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

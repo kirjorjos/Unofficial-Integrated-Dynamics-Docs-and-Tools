@@ -8,12 +8,24 @@ export class OPERATOR_LONG_TO_DOUBLE extends BaseOperator<Long, Double> {
     "integrateddynamics:operator.integrateddynamics.castintegrateddynamics_long__integrateddynamics_double" as const;
   static override numericID = 88;
   static override nicknames = [
-    "longToDouble",
+    "castDouble",
     "longDouble",
     "longLongToDouble",
+    "longToDouble",
+    "numberCastDouble",
+    "cast_double",
+    "long_double",
+    "long_long_to_double",
+    "long_to_double",
+    "numberCast_double",
   ];
   static override symbol = "()";
   static override interactName = "longLongToDouble";
+  static override operatorName = "cast_double" as const;
+  static override displayName = "Cast Number to Double" as const;
+  static override fullDisplayName = "Number Cast Number to Double" as const;
+  static override kind = "number" as const;
+  static override renderPattern = "PREFIX_1" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

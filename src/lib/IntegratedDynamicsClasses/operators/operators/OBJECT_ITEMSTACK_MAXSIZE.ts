@@ -11,13 +11,24 @@ export class OPERATOR_OBJECT_ITEMSTACK_MAXSIZE extends BaseOperator<
     "integrateddynamics:itemstack_maxsize" as const;
   static override numericID = 59;
   static override nicknames = [
-    "ItemstackMaxsize",
-    "itemstack_max_size",
+    "itemstackMaxsize",
     "itemstackMaxSize",
+    "ItemstackMaxsize",
+    "maxsize",
     "maxSize",
+    "itemstack_max_size",
+    "itemstack_maxsize",
+    "max_size",
   ];
   static override symbol = "maxsize";
   static override interactName = "itemstackMaxSize";
+  static override operatorName = "maxsize" as const;
+  static override displayName = "Max size" as const;
+  static override fullDisplayName = "Item Max size" as const;
+  static override tooltipInfo = "The maximum stack size" as const;
+
+  static override kind = "itemstack" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

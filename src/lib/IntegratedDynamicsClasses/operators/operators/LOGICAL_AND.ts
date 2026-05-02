@@ -9,10 +9,22 @@ export class OPERATOR_LOGICAL_AND extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:logical_and" as const;
   static override numericID = 68;
-  static override nicknames = ["booleanAnd", "and", "logicalAnd", "&&"];
+  static override nicknames = [
+    "&&",
+    "and",
+    "booleanAnd",
+    "logicalAnd",
+    "boolean_and",
+    "logical_and",
+  ];
   static override symbol = "&&";
 
   static override interactName = "booleanAnd";
+  static override operatorName = "and" as const;
+  static override displayName = "And" as const;
+  static override fullDisplayName = "Logical And" as const;
+  static override kind = "logical" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

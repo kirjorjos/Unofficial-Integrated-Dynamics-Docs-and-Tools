@@ -8,9 +8,24 @@ export class OPERATOR_OBJECT_BLOCK_OPAQUE extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:block_opaque" as const;
   static override numericID = 16;
-  static override nicknames = ["blockIsOpaque", "BlockOpaque", "opaque"];
+  static override nicknames = [
+    "blockIsOpaque",
+    "blockOpaque",
+    "BlockOpaque",
+    "opaque",
+    "block_is_opaque",
+    "block_opaque",
+  ];
   static override symbol = "opaque";
   static override interactName = "blockIsOpaque";
+  static override operatorName = "opaque" as const;
+  static override displayName = "Opaque" as const;
+  static override fullDisplayName = "Block Opaque" as const;
+  static override tooltipInfo =
+    "If the given block is opaque, non-transparent" as const;
+
+  static override kind = "block" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

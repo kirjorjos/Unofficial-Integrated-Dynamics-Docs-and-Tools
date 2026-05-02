@@ -11,15 +11,25 @@ export class OPERATOR_ITEMSTACK_DATAVALUE extends BaseOperator<Item, iBoolean> {
     "integrateddynamics:itemstack_datavalue" as const;
   static override numericID = 288;
   static override nicknames = [
-    "ItemstackDataValue",
-    "itemstack_data_value",
-    "itemstackDataValue",
-    "item_data_value",
     "itemDataValue",
     "itemNBTValue",
+    "itemstackDatavalue",
+    "itemstackDataValue",
+    "ItemstackDataValue",
+    "itemstackItemstackDatavalue",
+    "item_data_value",
+    "item_n_b_t_value",
+    "itemstack_data_value",
+    "itemstack_datavalue",
+    "itemstackItemstack_datavalue",
   ];
   static override symbol = "data_value";
   static override interactName = "itemstackDataValue";
+  static override operatorName = "itemstack_datavalue" as const;
+  static override displayName = "Item Data Value" as const;
+  static override fullDisplayName = "Item Item Data Value" as const;
+  static override kind = "itemstack" as const;
+  static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

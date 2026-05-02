@@ -11,12 +11,23 @@ export class OPERATOR_OBJECT_BLOCK_POSSIBLE_PROPERTIES extends BaseOperator<
     "integrateddynamics:block_blockpossibleproperties" as const;
   static override numericID = 268;
   static override nicknames = [
-    "BlockPossibleProperties",
-    "block_possible_properties",
+    "blockBlockpossibleproperties",
+    "blockpossibleproperties",
     "blockPossibleProperties",
+    "BlockPossibleProperties",
+    "block_blockpossibleproperties",
+    "block_possible_properties",
   ];
   static override symbol = "block_all_props";
   static override interactName = "blockPossibleProperties";
+  static override operatorName = "blockpossibleproperties" as const;
+  static override displayName = "Block Properties" as const;
+  static override fullDisplayName = "Block Block Properties" as const;
+  static override tooltipInfo =
+    "Get all possible block properties as NBT compound tag with list values." as const;
+
+  static override kind = "block" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

@@ -14,13 +14,24 @@ export class OPERATOR_OBJECT_ITEMSTACK_STRENGTH_VS_BLOCK extends BaseOperator<
   static override numericID = 65;
   static override nicknames = [
     "itemstackStrength",
-    "ItemstackStrengthVsBlock",
-    "itemstack_strength_vs_block",
     "itemstackStrengthVsBlock",
+    "ItemstackStrengthVsBlock",
+    "strength",
     "strengthVsBlock",
+    "itemstack_strength",
+    "itemstack_strength_vs_block",
+    "strength_vs_block",
   ];
   static override symbol = "strength";
   static override interactName = "itemstackStrength";
+  static override operatorName = "strength" as const;
+  static override displayName = "Strength vs Block" as const;
+  static override fullDisplayName = "Item Strength vs Block" as const;
+  static override tooltipInfo =
+    "The strength this item has against the given block" as const;
+
+  static override kind = "itemstack" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

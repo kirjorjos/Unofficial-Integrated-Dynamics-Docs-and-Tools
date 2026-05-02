@@ -8,9 +8,22 @@ export class OPERATOR_OPERATOR_APPLY_2 extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:operator_apply2" as const;
   static override numericID = 140;
-  static override nicknames = ["operatorApply2", "operatorApply_2", "apply2"];
+  static override nicknames = [
+    "apply2",
+    "operatorApply2",
+    "operator_apply2",
+    "operatorApply_2",
+  ];
   static override symbol = "apply2";
   static override interactName = "operatorApply2";
+  static override operatorName = "apply2" as const;
+  static override displayName = "Apply 2" as const;
+  static override fullDisplayName = "Operator Apply 2" as const;
+  static override tooltipInfo =
+    "Apply for a given operator the given two values." as const;
+
+  static override kind = "operator" as const;
+  static override renderPattern = "INFIX_2" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

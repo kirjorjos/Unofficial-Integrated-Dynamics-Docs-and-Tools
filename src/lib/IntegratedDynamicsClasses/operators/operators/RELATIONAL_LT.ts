@@ -9,10 +9,21 @@ export class OPERATOR_RELATIONAL_LT extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:relational_lt" as const;
   static override numericID = 76;
-  static override nicknames = ["numberLessThan", "relationalLt", "lt"];
+  static override nicknames = [
+    "lt",
+    "numberLessThan",
+    "relationalLt",
+    "number_less_than",
+    "relational_lt",
+  ];
   static override symbol = "<";
 
   static override interactName = "numberLessThan";
+  static override operatorName = "lt" as const;
+  static override displayName = "Less Than" as const;
+  static override fullDisplayName = "Relational Less Than" as const;
+  static override kind = "relational" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

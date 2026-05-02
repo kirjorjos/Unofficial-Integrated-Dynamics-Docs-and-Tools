@@ -15,9 +15,23 @@ export class OPERATOR_STRING_REGEX_SCAN extends BaseOperator<
   static override internalName =
     "integrateddynamics:string_regex_scan" as const;
   static override numericID = 167;
-  static override nicknames = ["stringRegexScan"];
+  static override nicknames = [
+    "regexScan",
+    "stringRegexScan",
+    "regex_scan",
+    "string_regex_scan",
+    "stringRegex_scan",
+  ];
   static override symbol = "regex_scan";
   static override interactName = "stringRegexScan";
+  static override operatorName = "regex_scan" as const;
+  static override displayName = "Regex Scan" as const;
+  static override fullDisplayName = "String Regex Scan" as const;
+  static override tooltipInfo =
+    "Search for all matches of the given regular expression and return the group at the given index, in the given string." as const;
+
+  static override kind = "string" as const;
+  static override renderPattern = "PREFIX_3_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

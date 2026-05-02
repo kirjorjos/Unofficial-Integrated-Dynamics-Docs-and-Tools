@@ -9,9 +9,21 @@ export class OPERATOR_ARITHMETIC_ADDITION extends BaseOperator<
   static override internalName =
     "integrateddynamics:arithmetic_addition" as const;
   static override numericID = 0;
-  static override nicknames = ["add", "arithmeticAddition", "numberAdd"];
+  static override nicknames = [
+    "add",
+    "addition",
+    "arithmeticAddition",
+    "numberAdd",
+    "arithmetic_addition",
+    "number_add",
+  ];
   static override symbol = "+";
   static override interactName = "numberAdd";
+  static override operatorName = "addition" as const;
+  static override displayName = "Addition" as const;
+  static override fullDisplayName = "Arithmetic Addition" as const;
+  static override kind = "arithmetic" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

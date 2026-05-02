@@ -11,16 +11,27 @@ export class OPERATOR_OBJECT_FLUIDSTACK_IS_LIGHTER_THAN_AIR extends BaseOperator
     "integrateddynamics:fluidstack_lighter_than_air" as const;
   static override numericID = 272;
   static override nicknames = [
-    "FluidstackIsLighterThanAir",
-    "fluidstackIsLighterThanAir",
-    "fluid_stack_is_lighter_than_air",
-    "fluidStackIsLighterThanAir",
-    "fluid_is_lighter_than_air",
     "fluidIsLighterThanAir",
+    "fluidstackIsLighterThanAir",
+    "fluidStackIsLighterThanAir",
+    "FluidstackIsLighterThanAir",
+    "fluidstackLighterThanAir",
     "isLighterThanAir",
+    "lighterThanAir",
+    "fluid_is_lighter_than_air",
+    "fluid_stack_is_lighter_than_air",
+    "fluidstack_is_lighter_than_air",
+    "fluidstackLighter_than_air",
+    "is_lighter_than_air",
+    "lighter_than_air",
   ];
   static override symbol = "lighter_than_air";
   static override interactName = "fluidstackIsLighterThanAir";
+  static override operatorName = "lighter_than_air" as const;
+  static override displayName = "Is Lighter Than Air" as const;
+  static override fullDisplayName = "Fluid Is Lighter Than Air" as const;
+  static override kind = "fluidstack" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

@@ -13,13 +13,25 @@ export class OPERATOR_OBJECT_ENTITY_CANBREEDWITH extends BaseOperator<
     "integrateddynamics:entity_canbreedwith" as const;
   static override numericID = 128;
   static override nicknames = [
-    "EntityCanbreedwith",
-    "entity_can_breed_with",
-    "entityCanBreedWith",
+    "canbreedwith",
     "canBreedWith",
+    "entityCanbreedwith",
+    "entityCanBreedWith",
+    "EntityCanbreedwith",
+    "can_breed_with",
+    "entity_can_breed_with",
+    "entity_canbreedwith",
   ];
   static override symbol = "can_breed_with";
   static override interactName = "entityCanBreedWith";
+  static override operatorName = "canbreedwith" as const;
+  static override displayName = "Entity Can Breed With" as const;
+  static override fullDisplayName = "Entity Entity Can Breed With" as const;
+  static override tooltipInfo =
+    "If the given entity can be breed using the given item." as const;
+
+  static override kind = "entity" as const;
+  static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

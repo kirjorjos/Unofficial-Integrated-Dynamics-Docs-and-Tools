@@ -11,13 +11,26 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISSTACKABLE extends BaseOperator<
     "integrateddynamics:itemstack_stackable" as const;
   static override numericID = 64;
   static override nicknames = [
-    "ItemstackIsstackable",
-    "itemstack_is_stackable",
-    "itemstackIsStackable",
     "isStackable",
+    "itemstackIsStackable",
+    "ItemstackIsstackable",
+    "itemstackStackable",
+    "stackable",
+    "is_stackable",
+    "itemstack_is_stackable",
+    "itemstack_isstackable",
+    "itemstack_stackable",
   ];
   static override symbol = "stackable";
   static override interactName = "itemstackIsStackable";
+  static override operatorName = "stackable" as const;
+  static override displayName = "Stackable" as const;
+  static override fullDisplayName = "Item Stackable" as const;
+  static override tooltipInfo =
+    "If the item stack can hold at least two items." as const;
+
+  static override kind = "itemstack" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

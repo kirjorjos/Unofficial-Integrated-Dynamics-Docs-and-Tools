@@ -12,13 +12,25 @@ export class OPERATOR_ITEMSTACK_WITH_NBT extends BaseOperator<
     "integrateddynamics:itemstack_withnbt" as const;
   static override numericID = 293;
   static override nicknames = [
+    "itemstackItemwithtag",
     "itemstackWithNBT",
-    "itemWithNBT",
-    "item_stack_with_nbt",
+    "itemStackWithNbt",
     "itemStackWithNBT",
+    "itemWithNBT",
+    "itemwithtag",
+    "item_stack_with_n_b_t",
+    "item_stack_with_nbt",
+    "item_with_n_b_t",
+    "itemstack_itemwithtag",
+    "itemstack_with_n_b_t",
   ];
   static override symbol = "with_nbt";
   static override interactName = "itemstackWithNBT";
+  static override operatorName = "itemwithtag" as const;
+  static override displayName = "Item With Tag" as const;
+  static override fullDisplayName = "Item Item With Tag" as const;
+  static override kind = "itemstack" as const;
+  static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

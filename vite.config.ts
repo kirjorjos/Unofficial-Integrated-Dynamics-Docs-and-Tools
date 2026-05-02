@@ -3,11 +3,12 @@ import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 
 export default defineConfig({
-  base: "/WIP-Integrated-Dynamics-Project/",
+  base: "/Unofficial-Integrated-Dynamics-Docs-and-Tools/",
   plugins: [vue()],
   resolve: {
     alias: {
       lib: fileURLToPath(new URL("./src/lib", import.meta.url)),
+      "pages-lib": fileURLToPath(new URL("./src/pages/lib", import.meta.url)),
       "re2-wasm": fileURLToPath(
         new URL("./src/shims/re2-browser.ts", import.meta.url)
       ),

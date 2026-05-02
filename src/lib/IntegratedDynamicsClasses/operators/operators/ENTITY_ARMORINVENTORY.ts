@@ -10,15 +10,27 @@ export class OPERATOR_ENTITY_ARMORINVENTORY extends BaseOperator<
     "integrateddynamics:entity_armorinventory" as const;
   static override numericID = 90;
   static override nicknames = [
-    "EntityArmorinventory",
-    "entity_armor_inventory",
-    "entityArmorInventory",
-    "entity_armor",
+    "armorinventory",
+    "armorInventory",
     "entityArmor",
+    "entityArmorinventory",
+    "entityArmorInventory",
+    "EntityArmorinventory",
     "armor_inventory",
+    "entity_armor",
+    "entity_armor_inventory",
+    "entity_armorinventory",
   ];
   static override symbol = "armor_inventory";
   static override interactName = "entityArmorInventory";
+  static override operatorName = "armorinventory" as const;
+  static override displayName = "Armor Inventory" as const;
+  static override fullDisplayName = "Entity Armor Inventory" as const;
+  static override tooltipInfo =
+    "The list of items the entity is carrying as armor." as const;
+
+  static override kind = "entity" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

@@ -10,12 +10,20 @@ export class OPERATOR_ARITHMETIC_MULTIPLICATION extends BaseOperator<
     "integrateddynamics:arithmetic_multiplication" as const;
   static override numericID = 4;
   static override nicknames = [
-    "multiply",
     "arithmeticMultiplication",
+    "multiplication",
+    "multiply",
     "numberMultiply",
+    "arithmetic_multiplication",
+    "number_multiply",
   ];
   static override symbol = "*";
   static override interactName = "numberMultiply";
+  static override operatorName = "multiplication" as const;
+  static override displayName = "Multiplication" as const;
+  static override fullDisplayName = "Arithmetic Multiplication" as const;
+  static override kind = "arithmetic" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

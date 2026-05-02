@@ -10,15 +10,25 @@ export class OPERATOR_GENERAL_CHOICE extends BaseOperator<
   static override internalName = "integrateddynamics:general_choice" as const;
   static override numericID = 44;
   static override nicknames = [
-    "generalChoice",
-    "choice",
     "booleanChoice",
+    "choice",
+    "generalChoice",
     "if",
     "ifElse",
+    "boolean_choice",
+    "general_choice",
     "if_else",
   ];
   static override symbol = "?";
   static override interactName = "booleanChoice";
+  static override operatorName = "choice" as const;
+  static override displayName = "Choice" as const;
+  static override fullDisplayName = "General Choice" as const;
+  static override tooltipInfo =
+    "If the first value is true, the second value is taken, otherwise the third value.\\nType two and three must be equal." as const;
+
+  static override kind = "general" as const;
+  static override renderPattern = "GENERAL_CHOICE" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

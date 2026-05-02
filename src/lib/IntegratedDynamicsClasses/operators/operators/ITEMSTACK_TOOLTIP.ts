@@ -11,14 +11,20 @@ export class OPERATOR_ITEMSTACK_TOOLTIP extends BaseOperator<
     "integrateddynamics:itemstack_tooltip" as const;
   static override numericID = 292;
   static override nicknames = [
-    "ItemstackTooltip",
-    "itemstack_tooltip",
     "itemstackTooltip",
-    "item_tooltip",
+    "ItemstackTooltip",
     "itemTooltip",
+    "tooltip",
+    "item_tooltip",
+    "itemstack_tooltip",
   ];
   static override symbol = "tooltip";
   static override interactName = "itemstackTooltip";
+  static override operatorName = "tooltip" as const;
+  static override displayName = "Tooltip" as const;
+  static override fullDisplayName = "Item Tooltip" as const;
+  static override kind = "itemstack" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

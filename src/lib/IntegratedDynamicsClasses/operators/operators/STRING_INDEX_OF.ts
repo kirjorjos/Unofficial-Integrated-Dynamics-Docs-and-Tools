@@ -10,9 +10,23 @@ export class OPERATOR_STRING_INDEX_OF extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:string_index_of" as const;
   static override numericID = 164;
-  static override nicknames = ["stringIndexOf"];
+  static override nicknames = [
+    "indexOf",
+    "stringIndexOf",
+    "index_of",
+    "string_index_of",
+    "stringIndex_of",
+  ];
   static override symbol = "index_of";
   static override interactName = "stringIndexOf";
+  static override operatorName = "index_of" as const;
+  static override displayName = "Index Of" as const;
+  static override fullDisplayName = "String Index Of" as const;
+  static override tooltipInfo =
+    "Get the index of the first occurrence of a substring matching the search term in the given string." as const;
+
+  static override kind = "string" as const;
+  static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

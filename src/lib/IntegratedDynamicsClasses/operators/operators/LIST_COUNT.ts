@@ -10,9 +10,17 @@ export class OPERATOR_LIST_COUNT extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:list_count" as const;
   static override numericID = 114;
-  static override nicknames = ["listCount", "count"];
+  static override nicknames = ["count", "listCount", "list_count"];
   static override symbol = "count";
   static override interactName = "listCount";
+  static override operatorName = "count" as const;
+  static override displayName = "Count" as const;
+  static override fullDisplayName = "List Count" as const;
+  static override tooltipInfo =
+    "The number of times the given element is found in the list." as const;
+
+  static override kind = "list" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

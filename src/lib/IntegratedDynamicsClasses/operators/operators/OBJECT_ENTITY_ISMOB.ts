@@ -10,13 +10,24 @@ export class OPERATOR_OBJECT_ENTITY_ISMOB extends BaseOperator<
   static override internalName = "integrateddynamics:entity_ismob" as const;
   static override numericID = 27;
   static override nicknames = [
-    "EntityIsmob",
-    "entity_is_mob",
+    "entityIsmob",
     "entityIsMob",
+    "EntityIsmob",
+    "ismob",
     "isMob",
+    "entity_is_mob",
+    "entity_ismob",
+    "is_mob",
   ];
   static override symbol = "is_mob";
   static override interactName = "entityIsMob";
+  static override operatorName = "ismob" as const;
+  static override displayName = "Is Mob" as const;
+  static override fullDisplayName = "Entity Is Mob" as const;
+  static override tooltipInfo = "If the entity is a mob" as const;
+
+  static override kind = "entity" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

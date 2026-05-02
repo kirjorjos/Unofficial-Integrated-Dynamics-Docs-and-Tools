@@ -11,15 +11,27 @@ export class OPERATOR_OBJECT_ITEMFRAME_CONTENTS extends BaseOperator<
     "integrateddynamics:entity_itemframecontents" as const;
   static override numericID = 31;
   static override nicknames = [
+    "entityItemframecontents",
     "entityItemFrameContents",
-    "ItemframeContents",
-    "itemframe_contents",
+    "itemframecontents",
     "itemframeContents",
-    "item_frame_contents",
     "itemFrameContents",
+    "ItemframeContents",
+    "entity_item_frame_contents",
+    "entity_itemframecontents",
+    "item_frame_contents",
+    "itemframe_contents",
   ];
   static override symbol = "itemframe_contents";
   static override interactName = "entityItemFrameContents";
+  static override operatorName = "itemframecontents" as const;
+  static override displayName = "Item Frame Contents" as const;
+  static override fullDisplayName = "Entity Item Frame Contents" as const;
+  static override tooltipInfo =
+    "The contents from the given Item Frame." as const;
+
+  static override kind = "entity" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

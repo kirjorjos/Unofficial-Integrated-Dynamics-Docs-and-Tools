@@ -12,15 +12,26 @@ export class OPERATOR_OBJECT_FLUIDSTACK_TAG extends BaseOperator<
   static override internalName = "integrateddynamics:fluidstack_tag" as const;
   static override numericID = 297;
   static override nicknames = [
-    "fluidstackTags",
-    "FluidstackTag",
     "fluidstackTag",
-    "fluidstackTagStacks",
+    "FluidstackTag",
+    "fluidstackTags",
     "fluidstackTagStack",
+    "fluidstackTagStacks",
     "fluidTag",
+    "tag",
+    "fluid_tag",
+    "fluidstack_tag",
+    "fluidstack_tag_stack",
+    "fluidstack_tag_stacks",
+    "fluidstack_tags",
   ];
   static override symbol = "fluid_tag_names";
   static override interactName = "fluidstackTags";
+  static override operatorName = "tag" as const;
+  static override displayName = "Fluid Tag Names" as const;
+  static override fullDisplayName = "Fluid Fluid Tag Names" as const;
+  static override kind = "fluidstack" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

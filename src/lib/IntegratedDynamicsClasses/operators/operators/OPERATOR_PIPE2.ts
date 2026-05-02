@@ -5,9 +5,22 @@ import { Operator } from "lib/IntegratedDynamicsClasses/operators/Operator";
 export class OPERATOR_OPERATOR_PIPE2 extends BaseOperator<any, any> {
   static override internalName = "integrateddynamics:operator_pipe2" as const;
   static override numericID = 177;
-  static override nicknames = ["operatorPipe2", "pipe.2", "pipe2"];
+  static override nicknames = [
+    "operatorPipe2",
+    "pipe.2",
+    "pipe2",
+    "operator_pipe2",
+  ];
   static override symbol = ".2";
   static override interactName = "operatorPipe2";
+  static override operatorName = "pipe2" as const;
+  static override displayName = "Pipe 2" as const;
+  static override fullDisplayName = "Operator Pipe 2" as const;
+  static override tooltipInfo =
+    "Create a new operator that gives its input to the first and second operators, and pipes the outputs from both of them to the third operator." as const;
+
+  static override kind = "operator" as const;
+  static override renderPattern = "INFIX_2_LATE" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

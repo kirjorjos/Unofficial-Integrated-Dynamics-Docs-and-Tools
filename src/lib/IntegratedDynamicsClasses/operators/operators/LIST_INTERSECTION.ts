@@ -11,9 +11,18 @@ export class OPERATOR_LIST_INTERSECTION extends BaseOperator<
   static override internalName =
     "integrateddynamics:list_intersection" as const;
   static override numericID = 278;
-  static override nicknames = ["listIntersection", "intersection"];
+  static override nicknames = [
+    "intersection",
+    "listIntersection",
+    "list_intersection",
+  ];
   static override symbol = "∩";
   static override interactName = "listIntersection";
+  static override operatorName = "intersection" as const;
+  static override displayName = "Intersection" as const;
+  static override fullDisplayName = "List Intersection" as const;
+  static override kind = "list" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

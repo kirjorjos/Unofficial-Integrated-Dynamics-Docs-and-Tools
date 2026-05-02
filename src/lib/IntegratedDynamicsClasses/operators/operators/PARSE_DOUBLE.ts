@@ -7,9 +7,21 @@ export class OPERATOR_PARSE_DOUBLE extends BaseOperator<iString, Double> {
   static override internalName =
     "integrateddynamics:operator.integrateddynamics.parse.valuetype.integrateddynamics.double" as const;
   static override numericID = 192;
-  static override nicknames = ["stringParseAsDouble", "parseDouble"];
+  static override nicknames = [
+    "parseDouble",
+    "parseParseDouble",
+    "stringParseAsDouble",
+    "parse_double",
+    "parseParse_double",
+    "string_parse_as_double",
+  ];
   static override symbol = "parse_double";
   static override interactName = "stringParseAsDouble";
+  static override operatorName = "parse_double" as const;
+  static override displayName = "Parse Double" as const;
+  static override fullDisplayName = "Parse" as const;
+  static override kind = "parse" as const;
+  static override renderPattern = "PREFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

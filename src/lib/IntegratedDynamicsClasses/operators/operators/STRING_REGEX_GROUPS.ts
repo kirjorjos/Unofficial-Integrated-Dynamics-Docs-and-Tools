@@ -14,9 +14,23 @@ export class OPERATOR_STRING_REGEX_GROUPS extends BaseOperator<
   static override internalName =
     "integrateddynamics:string_regex_groups" as const;
   static override numericID = 166;
-  static override nicknames = ["stringRegexGroups"];
+  static override nicknames = [
+    "regexGroups",
+    "stringRegexGroups",
+    "regex_groups",
+    "string_regex_groups",
+    "stringRegex_groups",
+  ];
   static override symbol = "regex_groups";
   static override interactName = "stringRegexGroups";
+  static override operatorName = "regex_groups" as const;
+  static override displayName = "Regex Groups" as const;
+  static override fullDisplayName = "String Regex Groups" as const;
+  static override tooltipInfo =
+    "Search for the given regular expression and return in that match a list of all its groups, in the given string." as const;
+
+  static override kind = "string" as const;
+  static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

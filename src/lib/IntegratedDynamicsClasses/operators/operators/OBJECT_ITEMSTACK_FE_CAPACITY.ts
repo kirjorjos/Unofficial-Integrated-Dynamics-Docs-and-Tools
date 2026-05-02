@@ -11,13 +11,27 @@ export class OPERATOR_OBJECT_ITEMSTACK_FE_CAPACITY extends BaseOperator<
     "integrateddynamics:itemstack_fecapacity" as const;
   static override numericID = 188;
   static override nicknames = [
-    "ItemstackFecapacity",
-    "itemstack_fe_capacity",
-    "itemstackFECapacity",
+    "fecapacity",
     "feCapacity",
+    "itemstackFecapacity",
+    "itemstackFeCapacity",
+    "itemstackFECapacity",
+    "ItemstackFecapacity",
+    "fe_capacity",
+    "itemstack_f_e_capacity",
+    "itemstack_fe_capacity",
+    "itemstack_fecapacity",
   ];
   static override symbol = "fe_capacity";
   static override interactName = "itemstackFECapacity";
+  static override operatorName = "fecapacity" as const;
+  static override displayName = "FE Capacity" as const;
+  static override fullDisplayName = "Item FE Capacity" as const;
+  static override tooltipInfo =
+    "The maximum amount of FE that can be stored in this item" as const;
+
+  static override kind = "itemstack" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

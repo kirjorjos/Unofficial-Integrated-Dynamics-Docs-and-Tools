@@ -10,9 +10,22 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISPLANTABLE extends BaseOperator<
   static override internalName =
     "integrateddynamics:itemstack_is_plantable" as const;
   static override numericID = 123;
-  static override nicknames = ["is_plantable", "isplantable", "isPlantable"];
+  static override nicknames = [
+    "isplantable",
+    "isPlantable",
+    "itemstackIsplantable",
+    "is_plantable",
+    "itemstack_isplantable",
+  ];
   static override symbol = "is_plantable";
   static override interactName = "isPlantable";
+  static override operatorName = "isplantable" as const;
+  static override displayName = "Item Is Plant" as const;
+  static override fullDisplayName = "Item Item Is Plant" as const;
+  static override tooltipInfo = "If the given item is a plant" as const;
+
+  static override kind = "itemstack" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

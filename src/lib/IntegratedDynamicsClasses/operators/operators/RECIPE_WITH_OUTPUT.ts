@@ -11,9 +11,24 @@ export class OPERATOR_RECIPE_WITH_OUTPUT extends BaseOperator<
   static override internalName =
     "integrateddynamics:recipe_with_output" as const;
   static override numericID = 185;
-  static override nicknames = ["recipeWithOutput"];
+  static override nicknames = [
+    "recipeWithOutput",
+    "withOutput",
+    "recipe_with_output",
+    "recipeWith_output",
+    "with_output",
+  ];
   static override symbol = "Recipe.with_out";
   static override interactName = "recipeWithOutput";
+  static override operatorName = "with_output" as const;
+  static override displayName = "Recipe With Output Ingredients" as const;
+  static override fullDisplayName =
+    "Recipe Recipe With Output Ingredients" as const;
+  static override tooltipInfo =
+    "Get a copy of the given recipe with the given ingredients as input" as const;
+
+  static override kind = "recipe" as const;
+  static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

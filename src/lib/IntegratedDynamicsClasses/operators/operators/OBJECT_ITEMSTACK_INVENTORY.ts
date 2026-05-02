@@ -11,14 +11,23 @@ export class OPERATOR_OBJECT_ITEMSTACK_INVENTORY extends BaseOperator<
     "integrateddynamics:itemstack_inventory" as const;
   static override numericID = 134;
   static override nicknames = [
-    "ItemstackInventory",
-    "itemstack_inventory",
-    "itemstackInventory",
-    "item_inventory",
+    "inventory",
     "itemInventory",
+    "itemstackInventory",
+    "ItemstackInventory",
+    "item_inventory",
+    "itemstack_inventory",
   ];
   static override symbol = "inventory";
   static override interactName = "itemstackInventory";
+  static override operatorName = "inventory" as const;
+  static override displayName = "Item Inventory" as const;
+  static override fullDisplayName = "Item Item Inventory" as const;
+  static override tooltipInfo =
+    "Retrieve the inventory of the given item handler contents" as const;
+
+  static override kind = "itemstack" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

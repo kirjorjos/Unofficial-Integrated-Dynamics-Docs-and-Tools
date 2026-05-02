@@ -11,15 +11,27 @@ export class OPERATOR_OBJECT_ITEMSTACK_TAG extends BaseOperator<
   static override internalName = "integrateddynamics:itemstack_tags" as const;
   static override numericID = 201;
   static override nicknames = [
-    "itemstackTags",
+    "itemstackTag",
     "ItemstackTag",
-    "itemstack_tag_names",
     "itemstackTagNames",
-    "item_tag_names",
+    "itemstackTags",
     "itemTagNames",
+    "tag",
+    "item_tag_names",
+    "itemstack_tag",
+    "itemstack_tag_names",
+    "itemstack_tags",
   ];
   static override symbol = "item_tag_names";
   static override interactName = "itemstackTags";
+  static override operatorName = "tag" as const;
+  static override displayName = "Item Tag Names" as const;
+  static override fullDisplayName = "Item Item Tag Names" as const;
+  static override tooltipInfo =
+    "The Tag names (strings) of the given item" as const;
+
+  static override kind = "itemstack" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

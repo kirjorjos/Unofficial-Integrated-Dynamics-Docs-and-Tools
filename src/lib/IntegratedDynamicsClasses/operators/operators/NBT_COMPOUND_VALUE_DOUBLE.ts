@@ -16,12 +16,24 @@ export class OPERATOR_NBT_COMPOUND_VALUE_DOUBLE extends BaseOperator<
     "integrateddynamics:nbt_compound_value_double" as const;
   static override numericID = 216;
   static override nicknames = [
-    "nbtGetDouble",
-    "nbtCompoundValueDouble",
     "compoundValueDouble",
+    "nbtCompoundValueDouble",
+    "nbtGetDouble",
+    "compound_value_double",
+    "nbt_compound_value_double",
+    "nbt_get_double",
+    "nbtCompound_value_double",
   ];
   static override symbol = "NBT{}.get_double";
   static override interactName = "nbtGetDouble";
+  static override operatorName = "compound_value_double" as const;
+  static override displayName = "NBT Compound Value Double" as const;
+  static override fullDisplayName = "NBT NBT Compound Value Double" as const;
+  static override tooltipInfo =
+    "The Double value in the given NBT compound tag with the given key" as const;
+
+  static override kind = "nbt" as const;
+  static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

@@ -15,14 +15,23 @@ export class OPERATOR_ITEMSTACK_WITHDATA extends BaseOperator<
     "integrateddynamics:itemstack_withdata" as const;
   static override numericID = 289;
   static override nicknames = [
-    "ItemstackWithData",
-    "itemstack_with_data",
+    "itemstackItemstackWithdata",
+    "itemstackWithdata",
     "itemstackWithData",
-    "item_with_data",
+    "ItemstackWithData",
     "itemWithData",
+    "item_with_data",
+    "itemstack_with_data",
+    "itemstack_withdata",
+    "itemstackItemstack_withdata",
   ];
   static override symbol = "with_data";
   static override interactName = "itemstackWithData";
+  static override operatorName = "itemstack_withdata" as const;
+  static override displayName = "Item With Data" as const;
+  static override fullDisplayName = "Item Item With Data" as const;
+  static override kind = "itemstack" as const;
+  static override renderPattern = "INFIX_2_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

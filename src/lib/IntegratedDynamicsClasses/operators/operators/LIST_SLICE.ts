@@ -11,9 +11,17 @@ export class OPERATOR_LIST_SLICE extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:list_slice" as const;
   static override numericID = 138;
-  static override nicknames = ["listSlice", "slice"];
+  static override nicknames = ["listSlice", "slice", "list_slice"];
   static override symbol = "slice";
   static override interactName = "listSlice";
+  static override operatorName = "slice" as const;
+  static override displayName = "Slice" as const;
+  static override fullDisplayName = "List Slice" as const;
+  static override tooltipInfo =
+    "Take a subset of the given list from the given index (inclusive) to the given index (exclusive)." as const;
+
+  static override kind = "list" as const;
+  static override renderPattern = "PREFIX_3" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

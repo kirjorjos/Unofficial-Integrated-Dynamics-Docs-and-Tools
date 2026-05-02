@@ -10,14 +10,26 @@ export class OPERATOR_OBJECT_ITEMSTACK_MODNAME extends BaseOperator<
   static override internalName = "integrateddynamics:itemstack_mod" as const;
   static override numericID = 60;
   static override nicknames = [
+    "itemMod",
+    "itemModname",
     "itemstackMod",
     "ItemstackModname",
+    "mod",
     "item_mod",
-    "itemModname",
-    "itemMod",
+    "item_modname",
+    "itemstack_mod",
+    "itemstack_modname",
   ];
   static override symbol = "mod";
   static override interactName = "itemstackMod";
+  static override operatorName = "mod" as const;
+  static override displayName = "Mod" as const;
+  static override fullDisplayName = "Item Mod" as const;
+  static override tooltipInfo =
+    "The name of the mod owning the given item" as const;
+
+  static override kind = "itemstack" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

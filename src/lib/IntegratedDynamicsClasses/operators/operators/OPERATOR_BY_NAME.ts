@@ -11,12 +11,26 @@ export class OPERATOR_OPERATOR_BY_NAME extends BaseOperator<
   static override internalName = "integrateddynamics:operator_by_name" as const;
   static override numericID = 146;
   static override nicknames = [
-    "stringOperatorByName",
-    "operatorByName",
+    "byName",
     "opByName",
+    "operatorByName",
+    "stringOperatorByName",
+    "by_name",
+    "op_by_name",
+    "operator_by_name",
+    "operatorBy_name",
+    "string_operator_by_name",
   ];
   static override symbol = "op_by_name";
   static override interactName = "stringOperatorByName";
+  static override operatorName = "by_name" as const;
+  static override displayName = "Operator By Name" as const;
+  static override fullDisplayName = "Operator Operator By Name" as const;
+  static override tooltipInfo =
+    "Get the operator that has the given unique name." as const;
+
+  static override kind = "operator" as const;
+  static override renderPattern = "PREFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

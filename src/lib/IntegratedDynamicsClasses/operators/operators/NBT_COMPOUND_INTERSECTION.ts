@@ -11,12 +11,25 @@ export class OPERATOR_NBT_COMPOUND_INTERSECTION extends BaseOperator<
     "integrateddynamics:nbt_compound_intersection" as const;
   static override numericID = 208;
   static override nicknames = [
-    "nbtIntersection",
+    "compoundIntersection",
     "nbtCompoundIntersection",
+    "nbtIntersection",
     "NBTIntersection",
+    "compound_intersection",
+    "nbt_compound_intersection",
+    "nbt_intersection",
+    "nbtCompound_intersection",
   ];
   static override symbol = "NBT{}.∩";
   static override interactName = "nbtIntersection";
+  static override operatorName = "compound_intersection" as const;
+  static override displayName = "NBT Compound Intersection" as const;
+  static override fullDisplayName = "NBT NBT Compound Intersection" as const;
+  static override tooltipInfo =
+    "The intersection of the given NBT compound tags. Nested tags will be intersected recusively." as const;
+
+  static override kind = "nbt" as const;
+  static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

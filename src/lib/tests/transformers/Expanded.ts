@@ -174,6 +174,41 @@ final = apply(numberAdd, var2)
     expect(ast2).toEqual(ast1);
   });
 
+  it("testExpandedDirectBaseOperatorRoundTrip", () => {
+    const input = 'test = stringConcat("te", "st")';
+    const ast = ExpandedToAST(input);
+    const expanded = ASTToExpanded(ast);
+
+    expect(expanded).toContain('test = stringConcat("te", "st")');
+    expect(expanded).not.toContain("apply(");
+  });
+
+  it("testExpandedDirectBaseOperatorRoundTripCodeLineStyle", () => {
+    const input = 'test = stringConcat("te", "st")';
+    const ast = ExpandedToAST(input);
+    const expanded = ASTToExpanded(ast, "CodeLine");
+
+    expect(expanded).toContain('test = stringConcat "te" "st"');
+  });
+
+  it("testExpandedNamedBoundaryStaysExplicit", () => {
+    const ast: TypeAST.Curried = {
+      type: "Curry",
+      varName: "test",
+      base: {
+        type: "Curry",
+        varName: "concatTe",
+        base: { type: "Operator", opName: "STRING_CONCAT" },
+        args: [{ type: "String", value: "te" }],
+      },
+      args: [{ type: "String", value: "st" }],
+    };
+    const expanded = ASTToExpanded(ast);
+
+    expect(expanded).toContain('concatTe = apply(stringConcat, "te")');
+    expect(expanded).toContain('test = apply(concatTe, "st")');
+  });
+
   it("testVariableNamingConventions", () => {
     const ast1 = CodeLineToAST("apply operatorPipe numberIncrement");
     const exp1 = ASTToExpanded(ast1);
@@ -185,16 +220,17 @@ final = apply(numberAdd, var2)
 
     const ast3 = CodeLineToAST("apply (apply numberAdd 5) 10");
     const exp3 = ASTToExpanded(ast3);
-    expect(exp3).toContain("numberAddBy5 ::");
     expect(exp3).toContain("{numberAddBy5}by10 ::");
+    expect(exp3).not.toContain("numberAddBy5 ::");
 
     const ast4 = CodeLineToAST("apply2 numberAdd 5 10");
     const exp4 = ASTToExpanded(ast4);
     expect(exp4).toContain("{numberAddBy5}by10 ::");
+    expect(exp4).not.toContain("numberAddBy5 ::");
 
     const ast6 = CodeLineToAST("apply (flip numberAdd) 5");
     const exp6 = ASTToExpanded(ast6);
-    expect(exp6).toContain("{numberAddOn}on5 ::");
+    expect(exp6).toContain("{flipNumberAdd}on5 ::");
 
     const ast8 = CodeLineToAST("pipe numberIncrement numberMultiply");
     const exp8 = ASTToExpanded(ast8);
@@ -212,6 +248,10 @@ final = apply(numberAdd, var2)
     const ast10 = CodeLineToAST("applyN numberAdd list1", scope10);
     const exp10 = ASTToExpanded(ast10);
     expect(exp10).toContain("numberAddBy_nList1 ::");
+
+    const ast11 = CodeLineToAST("flip numberAdd");
+    const exp11 = ASTToExpanded(ast11);
+    expect(exp11).toContain("flipNumberAdd ::");
   });
 
   it("testSignatureFormatting", () => {
@@ -248,5 +288,10 @@ whitelistTagList = ["c:armor", "c:tools"]
       arg: { type: "Operator", opName: "LIST_CONTAINS_PREDICATE" },
       varName: "final",
     });
+  });
+
+  it("testVarNameIsGivenNickname", () => {
+    expect(ASTToExpanded(CodeLineToAST("gt"))).toContain("gt ::");
+    expect(ASTToExpanded(CodeLineToAST("flip pipe"))).toContain("flipPipe ::");
   });
 });

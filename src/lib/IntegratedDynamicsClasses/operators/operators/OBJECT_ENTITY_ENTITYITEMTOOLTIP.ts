@@ -14,15 +14,24 @@ export class OPERATOR_OBJECT_ENTITY_ENTITYITEMTOOLTIP extends BaseOperator<
     "integrateddynamics:entity_entityitemtooltip" as const;
   static override numericID = 291;
   static override nicknames = [
+    "entityEntityitemtooltip",
     "entityEntityItemTooltip",
-    "ItemstackEntityTooltip",
-    "itemstack_entity_tooltip",
-    "itemstackEntityTooltip",
-    "item_entity_tooltip",
+    "entityitemtooltip",
     "itemEntityTooltip",
+    "itemstackEntityTooltip",
+    "ItemstackEntityTooltip",
+    "entity_entity_item_tooltip",
+    "entity_entityitemtooltip",
+    "item_entity_tooltip",
+    "itemstack_entity_tooltip",
   ];
   static override symbol = "entity_item_tooltip";
   static override interactName = "entityEntityItemTooltip";
+  static override operatorName = "entityitemtooltip" as const;
+  static override displayName = "Entity Tooltip" as const;
+  static override fullDisplayName = "Entity Entity Tooltip" as const;
+  static override kind = "entity" as const;
+  static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

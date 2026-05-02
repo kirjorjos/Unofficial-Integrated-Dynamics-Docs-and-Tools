@@ -10,16 +10,30 @@ export class OPERATOR_ITEMSTACK_ISFECONTAINER extends BaseOperator<
     "integrateddynamics:itemstack_isfecontainer" as const;
   static override numericID = 109;
   static override nicknames = [
+    "isfecontainer",
+    "isFeContainer",
+    "itemIsFecontainer",
+    "itemIsFeContainer",
+    "itemstackIsfecontainer",
+    "itemstackIsFecontainer",
     "itemstackIsFeContainer",
     "ItemstackIsfecontainer",
-    "itemstack_is_fe_container",
-    "itemstackIsFecontainer",
+    "is_fe_container",
     "item_is_fe_container",
-    "itemIsFecontainer",
-    "isFeContainer",
+    "item_is_fecontainer",
+    "itemstack_is_fe_container",
+    "itemstack_is_fecontainer",
+    "itemstack_isfecontainer",
   ];
   static override symbol = "is_fe_container";
   static override interactName = "itemstackIsFeContainer";
+  static override operatorName = "isfecontainer" as const;
+  static override displayName = "Is FE Container" as const;
+  static override fullDisplayName = "Item Is FE Container" as const;
+  static override tooltipInfo = "If the given item can hold FE" as const;
+
+  static override kind = "itemstack" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

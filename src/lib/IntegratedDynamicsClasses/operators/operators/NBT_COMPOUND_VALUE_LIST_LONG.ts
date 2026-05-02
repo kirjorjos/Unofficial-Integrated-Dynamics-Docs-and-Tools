@@ -20,12 +20,25 @@ export class OPERATOR_NBT_COMPOUND_VALUE_LIST_LONG extends BaseOperator<
     "integrateddynamics:nbt_compound_value_list_long" as const;
   static override numericID = 241;
   static override nicknames = [
-    "nbtGetListLong",
-    "nbtCompoundValueListLong",
     "compoundValueListLong",
+    "nbtCompoundValueListLong",
+    "nbtGetListLong",
+    "compound_value_list_long",
+    "nbt_compound_value_list_long",
+    "nbt_get_list_long",
+    "nbtCompound_value_list_long",
   ];
   static override symbol = "NBT{}.get_list_long";
   static override interactName = "nbtGetListLong";
+  static override operatorName = "compound_value_list_long" as const;
+  static override displayName = "NBT Compound Value Long Array" as const;
+  static override fullDisplayName =
+    "NBT NBT Compound Value Long Array" as const;
+  static override tooltipInfo =
+    "The Long Array in the given NBT compound tag with the given key as Long List" as const;
+
+  static override kind = "nbt" as const;
+  static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

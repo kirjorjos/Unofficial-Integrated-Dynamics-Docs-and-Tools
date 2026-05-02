@@ -12,13 +12,24 @@ export class OPERATOR_OBJECT_ITEMSTACK_HASINVENTORY extends BaseOperator<
     "integrateddynamics:itemstack_hasinventory" as const;
   static override numericID = 133;
   static override nicknames = [
-    "ItemstackHasinventory",
-    "itemstack_has_inventory",
-    "itemstackHasInventory",
+    "hasinventory",
     "hasInventory",
+    "itemstackHasinventory",
+    "itemstackHasInventory",
+    "ItemstackHasinventory",
+    "has_inventory",
+    "itemstack_has_inventory",
+    "itemstack_hasinventory",
   ];
   static override symbol = "has_inventory";
   static override interactName = "itemstackHasInventory";
+  static override operatorName = "hasinventory" as const;
+  static override displayName = "Item Has Inventory" as const;
+  static override fullDisplayName = "Item Item Has Inventory" as const;
+  static override tooltipInfo = "If the given item has an inventory" as const;
+
+  static override kind = "itemstack" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

@@ -10,12 +10,22 @@ export class OPERATOR_OBJECT_ENTITY_HURTSOUND extends BaseOperator<
   static override internalName = "integrateddynamics:entity_hurtsound" as const;
   static override numericID = 21;
   static override nicknames = [
-    "EntityHurtsound",
-    "entity_hurt_sound",
+    "entityHurtsound",
     "entityHurtSound",
+    "EntityHurtsound",
+    "hurtsound",
+    "entity_hurt_sound",
+    "entity_hurtsound",
   ];
   static override symbol = "hurtsound";
   static override interactName = "entityHurtSound";
+  static override operatorName = "hurtsound" as const;
+  static override displayName = "Entity Hurt Sound" as const;
+  static override fullDisplayName = "Entity Entity Hurt Sound" as const;
+  static override tooltipInfo = "The hurt sound of the given entity." as const;
+
+  static override kind = "entity" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

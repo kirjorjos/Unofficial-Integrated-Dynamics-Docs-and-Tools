@@ -13,9 +13,23 @@ export class OPERATOR_LIST_LAZYBUILT extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:list_lazybuilt" as const;
   static override numericID = 118;
-  static override nicknames = ["listLazybuilt", "lazybuilt", "anyLazyBuilt"];
+  static override nicknames = [
+    "anyLazyBuilt",
+    "lazybuilt",
+    "listLazybuilt",
+    "any_lazy_built",
+    "list_lazybuilt",
+  ];
   static override symbol = "lazybuilt";
   static override interactName = "anyLazyBuilt";
+  static override operatorName = "lazybuilt" as const;
+  static override displayName = "Lazy List Builder" as const;
+  static override fullDisplayName = "List Lazy List Builder" as const;
+  static override tooltipInfo =
+    "Build a list lazily using a start value and an operator that is applied to the previous element to get a next element." as const;
+
+  static override kind = "list" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

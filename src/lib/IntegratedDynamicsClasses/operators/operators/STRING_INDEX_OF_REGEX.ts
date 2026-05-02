@@ -13,9 +13,23 @@ export class OPERATOR_STRING_INDEX_OF_REGEX extends BaseOperator<
   static override internalName =
     "integrateddynamics:string_index_of_regex" as const;
   static override numericID = 165;
-  static override nicknames = ["indexOfRegex", "stringIndexOfRegex"];
+  static override nicknames = [
+    "indexOfRegex",
+    "stringIndexOfRegex",
+    "index_of_regex",
+    "string_index_of_regex",
+    "stringIndex_of_regex",
+  ];
   static override symbol = "index_of_regex";
   static override interactName = "stringIndexOfRegex";
+  static override operatorName = "index_of_regex" as const;
+  static override displayName = "Index Of Regex" as const;
+  static override fullDisplayName = "String Index Of Regex" as const;
+  static override tooltipInfo =
+    "Get the index of the first occurrence of a substring matching the pattern in the given string." as const;
+
+  static override kind = "string" as const;
+  static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

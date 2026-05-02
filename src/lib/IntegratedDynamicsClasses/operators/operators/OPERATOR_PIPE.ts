@@ -11,9 +11,17 @@ export class OPERATOR_OPERATOR_PIPE extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:operator_pipe" as const;
   static override numericID = 101;
-  static override nicknames = ["operatorPipe", "pipe"];
+  static override nicknames = ["operatorPipe", "pipe", "operator_pipe"];
   static override symbol = ".";
   static override interactName = "operatorPipe";
+  static override operatorName = "pipe" as const;
+  static override displayName = "Pipe" as const;
+  static override fullDisplayName = "Operator Pipe" as const;
+  static override tooltipInfo =
+    "Create a new operator that pipes the output from the first operator to the second operator." as const;
+
+  static override kind = "operator" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

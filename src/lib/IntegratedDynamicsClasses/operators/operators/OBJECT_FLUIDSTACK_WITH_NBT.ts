@@ -12,13 +12,25 @@ export class OPERATOR_OBJECT_FLUIDSTACK_WITH_NBT extends BaseOperator<
     "integrateddynamics:fluidstack_withnbt" as const;
   static override numericID = 300;
   static override nicknames = [
+    "fluidstackFluidwithtag",
     "fluidstackWithNBT",
-    "fluidWithNBT",
-    "fluid_stack_with_nbt",
+    "fluidStackWithNbt",
     "fluidStackWithNBT",
+    "fluidWithNBT",
+    "fluidwithtag",
+    "fluid_stack_with_n_b_t",
+    "fluid_stack_with_nbt",
+    "fluid_with_n_b_t",
+    "fluidstack_fluidwithtag",
+    "fluidstack_with_n_b_t",
   ];
   static override symbol = "with_nbt";
   static override interactName = "fluidstackWithNBT";
+  static override operatorName = "fluidwithtag" as const;
+  static override displayName = "Fluid With Tag" as const;
+  static override fullDisplayName = "Fluid Fluid With Tag" as const;
+  static override kind = "fluidstack" as const;
+  static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

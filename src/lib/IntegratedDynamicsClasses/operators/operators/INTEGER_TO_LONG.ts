@@ -6,12 +6,24 @@ export class OPERATOR_INTEGER_TO_LONG extends BaseOperator<Integer, Long> {
     "integrateddynamics:operator.integrateddynamics.castintegrateddynamics_integer__integrateddynamics_long" as const;
   static override numericID = 87;
   static override nicknames = [
-    "intToLong",
-    "integerLong",
+    "castLong",
     "integerIntegerToLong",
+    "integerLong",
+    "intToLong",
+    "numberCastLong",
+    "cast_long",
+    "int_to_long",
+    "integer_integer_to_long",
+    "integer_long",
+    "numberCast_long",
   ];
   static override symbol = "()";
   static override interactName = "integerIntegerToLong";
+  static override operatorName = "cast_long" as const;
+  static override displayName = "Cast Number to Long" as const;
+  static override fullDisplayName = "Number Cast Number to Long" as const;
+  static override kind = "number" as const;
+  static override renderPattern = "PREFIX_1" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

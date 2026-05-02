@@ -14,12 +14,26 @@ export class OPERATOR_NBT_COMPOUND_WITH_SHORT extends BaseOperator<
     "integrateddynamics:nbt_compound_with_short" as const;
   static override numericID = 234;
   static override nicknames = [
-    "nbtWithShort",
+    "compoundWithShort",
     "nbtCompoundWithShort",
+    "nbtWithShort",
     "NBTWithShort",
+    "compound_with_short",
+    "n_b_t_with_short",
+    "nbt_compound_with_short",
+    "nbt_with_short",
+    "nbtCompound_with_short",
   ];
   static override symbol = "NBT{}.with_short";
   static override interactName = "nbtWithShort";
+  static override operatorName = "compound_with_short" as const;
+  static override displayName = "NBT Compound With Short" as const;
+  static override fullDisplayName = "NBT NBT Compound With Short" as const;
+  static override tooltipInfo =
+    "Get a copy of the given NBT compound tag with the given Integer as a short entry" as const;
+
+  static override kind = "nbt" as const;
+  static override renderPattern = "INFIX_2_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

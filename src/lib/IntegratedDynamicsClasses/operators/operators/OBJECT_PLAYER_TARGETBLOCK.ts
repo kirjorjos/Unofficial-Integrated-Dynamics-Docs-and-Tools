@@ -11,13 +11,26 @@ export class OPERATOR_OBJECT_PLAYER_TARGETBLOCK extends BaseOperator<
     "integrateddynamics:entity_targetblock" as const;
   static override numericID = 35;
   static override nicknames = [
+    "entityTargetblock",
     "entityTargetBlock",
-    "PlayerTargetblock",
-    "player_target_block",
     "playerTargetBlock",
+    "PlayerTargetblock",
+    "targetblock",
+    "entity_target_block",
+    "entity_targetblock",
+    "player_target_block",
+    "player_targetblock",
   ];
   static override symbol = "target_block";
   static override interactName = "entityTargetBlock";
+  static override operatorName = "targetblock" as const;
+  static override displayName = "Target Block" as const;
+  static override fullDisplayName = "Entity Target Block" as const;
+  static override tooltipInfo =
+    "The block the given entity is currently looking at." as const;
+
+  static override kind = "entity" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

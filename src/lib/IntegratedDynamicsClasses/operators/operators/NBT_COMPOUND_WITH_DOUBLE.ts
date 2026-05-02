@@ -14,12 +14,26 @@ export class OPERATOR_NBT_COMPOUND_WITH_DOUBLE extends BaseOperator<
     "integrateddynamics:nbt_compound_with_double" as const;
   static override numericID = 225;
   static override nicknames = [
-    "nbtWithDouble",
+    "compoundWithDouble",
     "nbtCompoundWithDouble",
+    "nbtWithDouble",
     "NBTWithDouble",
+    "compound_with_double",
+    "n_b_t_with_double",
+    "nbt_compound_with_double",
+    "nbt_with_double",
+    "nbtCompound_with_double",
   ];
   static override symbol = "NBT{}.with_double";
   static override interactName = "nbtWithDouble";
+  static override operatorName = "compound_with_double" as const;
+  static override displayName = "NBT Compound With Double" as const;
+  static override fullDisplayName = "NBT NBT Compound With Double" as const;
+  static override tooltipInfo =
+    "Get a copy of the given NBT compound tag with the given Double entry" as const;
+
+  static override kind = "nbt" as const;
+  static override renderPattern = "INFIX_2_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

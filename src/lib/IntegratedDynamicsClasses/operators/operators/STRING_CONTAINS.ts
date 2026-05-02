@@ -10,9 +10,17 @@ export class OPERATOR_STRING_CONTAINS extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:string_contains" as const;
   static override numericID = 156;
-  static override nicknames = ["stringContains"];
+  static override nicknames = ["contains", "stringContains", "string_contains"];
   static override symbol = "contains";
   static override interactName = "stringContains";
+  static override operatorName = "contains" as const;
+  static override displayName = "String Contains" as const;
+  static override fullDisplayName = "String String Contains" as const;
+  static override tooltipInfo =
+    "If the given substring is contained within the given string." as const;
+
+  static override kind = "string" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

@@ -11,12 +11,25 @@ export class OPERATOR_UNIQUELY_NAMED_UNIQUE_NAME extends BaseOperator<
     "integrateddynamics:string_unique_name" as const;
   static override numericID = 147;
   static override nicknames = [
-    "uniquely_namedUniqueName",
+    "stringUniqueName",
     "uname",
     "uniquelynamedUniquename",
+    "uniquelyNamedUniqueName",
+    "uniqueName",
+    "stringUnique_name",
+    "unique_name",
+    "uniquely_namedUniqueName",
+    "uniquelynamed_uniquename",
   ];
   static override symbol = "uname";
   static override interactName = "uniquely_namedUniqueName";
+  static override operatorName = "unique_name" as const;
+  static override displayName = "Unique Name" as const;
+  static override fullDisplayName = "String Unique Name" as const;
+  static override tooltipInfo = "Get the unique name of an object" as const;
+
+  static override kind = "string" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

@@ -7,9 +7,23 @@ import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 export class OPERATOR_NBT_AS_LONG extends BaseOperator<LongTag, Long> {
   static override internalName = "integrateddynamics:nbt_as_long" as const;
   static override numericID = 249;
-  static override nicknames = ["nbtAsLong"];
+  static override nicknames = [
+    "asLong",
+    "nbtAsLong",
+    "as_long",
+    "nbt_as_long",
+    "nbtAs_long",
+  ];
   static override symbol = "NBT.as_long";
   static override interactName = "nbtAsLong";
+  static override operatorName = "as_long" as const;
+  static override displayName = "NBT Long As Long" as const;
+  static override fullDisplayName = "NBT NBT Long As Long" as const;
+  static override tooltipInfo =
+    "Get the Long value of the given NBT Long tag" as const;
+
+  static override kind = "nbt" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

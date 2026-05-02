@@ -15,13 +15,23 @@ export class OPERATOR_OBJECT_FLUIDSTACK_WITH_DATA extends BaseOperator<
     "integrateddynamics:fluidstack_withdata" as const;
   static override numericID = 286;
   static override nicknames = [
-    "FluidstackWithData",
+    "fluidstackFluidstackWithdata",
+    "fluidstackWithdata",
     "fluidstackWithData",
-    "fluid_stack_with_data",
     "fluidStackWithData",
+    "FluidstackWithData",
+    "fluid_stack_with_data",
+    "fluidstack_with_data",
+    "fluidstack_withdata",
+    "fluidstackFluidstack_withdata",
   ];
   static override symbol = "with_data";
   static override interactName = "fluidstackWithData";
+  static override operatorName = "fluidstack_withdata" as const;
+  static override displayName = "Fluid With Data" as const;
+  static override fullDisplayName = "Fluid Fluid With Data" as const;
+  static override kind = "fluidstack" as const;
+  static override renderPattern = "INFIX_2_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

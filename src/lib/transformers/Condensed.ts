@@ -6,7 +6,9 @@ import {
   expectsOperatorArgument,
   getNicknameCharacterRegex,
   resolveImplicitFlipOperator,
-} from "lib/HelperClasses/UtilityFunctions";
+  setOperatorSourceName,
+  flattenAnonymousBaseOperatorApplication,
+} from "lib/transformers/helpers";
 
 type char = string;
 interface State {
@@ -416,7 +418,7 @@ export const CondensedToAST = (
     const base: InternalAST = externalScope.has(name)
       ? (externalScope.get(name)! as InternalAST)
       : internalKey
-        ? { type: "Operator", opName: internalKey }
+        ? setOperatorSourceName({ type: "Operator", opName: internalKey }, name)
         : [
               "block",
               "item",
@@ -1051,7 +1053,12 @@ export const CondensedToAST = (
         const implicitFlip = resolveImplicitFlipOperator(token.value);
         if (implicitFlip) return implicitFlip;
         const internalName = operatorRegistry.operatorByNickname(token.value);
-        if (internalName) return { type: "Operator", opName: internalName };
+        if (internalName) {
+          return setOperatorSourceName(
+            { type: "Operator", opName: internalName },
+            token.value
+          );
+        }
         throw new Error(`Unknown identifier: ${token.value}`);
       default:
         throw new Error(`Unexpected token type: ${token.type}`);
@@ -1144,10 +1151,12 @@ export const ASTToCondensed = (ast: TypeAST.AST, isTopLevel = true): string => {
       }
 
       case "Curry": {
-        const arity = getArity(node.base);
-        if (node.base.type === "Operator" && node.args.length === arity) {
-          const base = stringify(node.base, false);
-          const argsStr = node.args.map((a) => stringify(a, false)).join(", ");
+        const flattened = flattenAnonymousBaseOperatorApplication(node);
+        if (flattened?.fullyApplied) {
+          const base = stringify(flattened.operator, false);
+          const argsStr = flattened.args
+            .map((a) => stringify(a, false))
+            .join(", ");
           result = `${base}(${argsStr})`;
         } else {
           let currentBase = stringify(node.base, false);

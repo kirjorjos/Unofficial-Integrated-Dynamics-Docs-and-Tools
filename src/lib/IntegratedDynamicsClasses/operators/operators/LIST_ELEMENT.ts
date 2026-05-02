@@ -10,9 +10,23 @@ export class OPERATOR_LIST_ELEMENT extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:list_get" as const;
   static override numericID = 66;
-  static override nicknames = ["listElement", "get", "listGet"];
+  static override nicknames = [
+    "get",
+    "listElement",
+    "listGet",
+    "list_element",
+    "list_get",
+  ];
   static override symbol = "get";
   static override interactName = "listGet";
+  static override operatorName = "get" as const;
+  static override displayName = "Get" as const;
+  static override fullDisplayName = "List Get" as const;
+  static override tooltipInfo =
+    "Get the list element at the given position, throws an error if the index is out of bounds." as const;
+
+  static override kind = "list" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

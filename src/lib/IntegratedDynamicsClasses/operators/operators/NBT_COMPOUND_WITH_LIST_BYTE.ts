@@ -15,12 +15,26 @@ export class OPERATOR_NBT_COMPOUND_WITH_LIST_BYTE extends BaseOperator<
     "integrateddynamics:nbt_compound_with_list_byte" as const;
   static override numericID = 229;
   static override nicknames = [
-    "nbtWithByteList",
+    "compoundWithListByte",
     "nbtCompoundWithListByte",
+    "nbtWithByteList",
     "NBTWithByteList",
+    "compound_with_list_byte",
+    "n_b_t_with_byte_list",
+    "nbt_compound_with_list_byte",
+    "nbt_with_byte_list",
+    "nbtCompound_with_list_byte",
   ];
   static override symbol = "NBT{}.with_byte_list";
   static override interactName = "nbtWithByteList";
+  static override operatorName = "compound_with_list_byte" as const;
+  static override displayName = "NBT Compound With Byte List" as const;
+  static override fullDisplayName = "NBT NBT Compound With Byte List" as const;
+  static override tooltipInfo =
+    "Get a copy of the given NBT compound tag with the given Integer List as an NBT Byte Array entry" as const;
+
+  static override kind = "nbt" as const;
+  static override renderPattern = "INFIX_2_VERYLONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

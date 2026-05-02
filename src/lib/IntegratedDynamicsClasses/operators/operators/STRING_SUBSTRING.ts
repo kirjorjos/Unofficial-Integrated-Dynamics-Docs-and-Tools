@@ -12,11 +12,21 @@ export class OPERATOR_STRING_SUBSTRING extends BaseOperator<
   static override numericID = 163;
   static override nicknames = [
     "integerSubstring",
-    "substring",
     "stringSubstring",
+    "substring",
+    "integer_substring",
+    "string_substring",
   ];
   static override symbol = "substring";
   static override interactName = "integerSubstring";
+  static override operatorName = "substring" as const;
+  static override displayName = "Substring" as const;
+  static override fullDisplayName = "String Substring" as const;
+  static override tooltipInfo =
+    "Get a substring, from the given index (inclusive) to the given index (exclusive), of the given string." as const;
+
+  static override kind = "string" as const;
+  static override renderPattern = "PREFIX_3_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

@@ -12,14 +12,27 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISRAWITEMEQUAL extends BaseOperator<
     "integrateddynamics:itemstack_israwitemequal" as const;
   static override numericID = 57;
   static override nicknames = [
+    "israwitemequal",
     "itemstackIsEqualRaw",
-    "ItemstackIsrawitemequal",
-    "itemstack_is_rawitemequal",
+    "itemstackIsrawitemequal",
     "itemstackIsRawitemequal",
+    "ItemstackIsrawitemequal",
     "rawItemEquals",
+    "itemstack_is_equal_raw",
+    "itemstack_is_rawitemequal",
+    "itemstack_israwitemequal",
+    "raw_item_equals",
   ];
   static override symbol = "=Raw=";
   static override interactName = "itemstackIsEqualRaw";
+  static override operatorName = "israwitemequal" as const;
+  static override displayName = "Raw item equals" as const;
+  static override fullDisplayName = "Item Raw item equals" as const;
+  static override tooltipInfo =
+    "If the raw items of the given items are equal, ignoring NBT and damage value." as const;
+
+  static override kind = "itemstack" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

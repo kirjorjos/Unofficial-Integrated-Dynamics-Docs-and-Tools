@@ -13,15 +13,24 @@ export class OPERATOR_OBJECT_FLUIDSTACK_BY_NAME extends BaseOperator<
     "integrateddynamics:fluidstack_by_name" as const;
   static override numericID = 303;
   static override nicknames = [
-    "stringFluidByName",
-    "FluidstackByName",
-    "fluidstack_by_name",
-    "fluidstackByName",
-    "fluid_by_name",
+    "fluidbyname",
     "fluidByName",
+    "fluidstackByName",
+    "FluidstackByName",
+    "fluidstackFluidbyname",
+    "stringFluidByName",
+    "fluid_by_name",
+    "fluidstack_by_name",
+    "fluidstack_fluidbyname",
+    "string_fluid_by_name",
   ];
   static override symbol = "fluid_by_name";
   static override interactName = "stringFluidByName";
+  static override operatorName = "fluidbyname" as const;
+  static override displayName = "Fluid By Name" as const;
+  static override fullDisplayName = "Fluid Fluid By Name" as const;
+  static override kind = "fluidstack" as const;
+  static override renderPattern = "PREFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

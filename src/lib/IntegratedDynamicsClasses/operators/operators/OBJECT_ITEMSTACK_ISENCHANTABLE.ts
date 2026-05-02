@@ -11,13 +11,23 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISENCHANTABLE extends BaseOperator<
     "integrateddynamics:itemstack_enchantable" as const;
   static override numericID = 52;
   static override nicknames = [
-    "ItemstackIsenchantable",
-    "itemstack_is_enchantable",
-    "itemstackIsEnchantable",
     "enchantable",
+    "itemstackEnchantable",
+    "itemstackIsEnchantable",
+    "ItemstackIsenchantable",
+    "itemstack_enchantable",
+    "itemstack_is_enchantable",
+    "itemstack_isenchantable",
   ];
   static override symbol = "enchantable";
   static override interactName = "itemstackIsEnchantable";
+  static override operatorName = "enchantable" as const;
+  static override displayName = "Enchantable" as const;
+  static override fullDisplayName = "Item Enchantable" as const;
+  static override tooltipInfo = "If the item can be enchanted" as const;
+
+  static override kind = "itemstack" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

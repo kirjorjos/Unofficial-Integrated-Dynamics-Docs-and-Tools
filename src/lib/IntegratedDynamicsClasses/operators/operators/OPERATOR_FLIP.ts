@@ -8,9 +8,17 @@ export class OPERATOR_OPERATOR_FLIP extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:operator_flip" as const;
   static override numericID = 96;
-  static override nicknames = ["operatorFlip", "flip"];
+  static override nicknames = ["flip", "operatorFlip", "operator_flip"];
   static override symbol = "flip";
   static override interactName = "operatorFlip";
+  static override operatorName = "flip" as const;
+  static override displayName = "Flip" as const;
+  static override fullDisplayName = "Operator Flip" as const;
+  static override tooltipInfo =
+    "Flip the two first input parameters of an operator." as const;
+
+  static override kind = "operator" as const;
+  static override renderPattern = "PREFIX_1" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

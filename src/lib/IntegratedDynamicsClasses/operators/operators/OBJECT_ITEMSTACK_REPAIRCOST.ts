@@ -11,13 +11,24 @@ export class OPERATOR_OBJECT_ITEMSTACK_REPAIRCOST extends BaseOperator<
     "integrateddynamics:itemstack_repaircost" as const;
   static override numericID = 62;
   static override nicknames = [
-    "ItemstackRepaircost",
-    "itemstack_repair_cost",
+    "itemstackRepaircost",
     "itemstackRepairCost",
+    "ItemstackRepaircost",
+    "repaircost",
     "repairCost",
+    "itemstack_repair_cost",
+    "itemstack_repaircost",
+    "repair_cost",
   ];
   static override symbol = "repair_cost";
   static override interactName = "itemstackRepairCost";
+  static override operatorName = "repaircost" as const;
+  static override displayName = "Repair Cost" as const;
+  static override fullDisplayName = "Item Repair Cost" as const;
+  static override tooltipInfo = "The repair cost of the item" as const;
+
+  static override kind = "itemstack" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

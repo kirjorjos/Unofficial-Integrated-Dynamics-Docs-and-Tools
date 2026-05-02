@@ -13,9 +13,23 @@ export class OPERATOR_NBT_AS_LONG_LIST extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:nbt_as_long_list" as const;
   static override numericID = 250;
-  static override nicknames = ["nbtAsLongList"];
+  static override nicknames = [
+    "asLongList",
+    "nbtAsLongList",
+    "as_long_list",
+    "nbt_as_long_list",
+    "nbtAs_long_list",
+  ];
   static override symbol = "NBT.as_long_list";
   static override interactName = "nbtAsLongList";
+  static override operatorName = "as_long_list" as const;
+  static override displayName = "NBT Long Array As Long List" as const;
+  static override fullDisplayName = "NBT NBT Long Array As Long List" as const;
+  static override tooltipInfo =
+    "Get the Long List value of the given NBT Long Array tag" as const;
+
+  static override kind = "nbt" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

@@ -11,11 +11,20 @@ export class OPERATOR_OBJECT_BLOCK_ISSHEARABLE extends BaseOperator<
   static override numericID = 131;
   static override nicknames = [
     "blockIsshearable",
-    "block_is_shearable",
     "blockIsShearable",
+    "isshearable",
+    "block_is_shearable",
+    "block_isshearable",
   ];
   static override symbol = "is_shearable";
   static override interactName = "blockIsShearable";
+  static override operatorName = "isshearable" as const;
+  static override displayName = "Block Is Shearable" as const;
+  static override fullDisplayName = "Block Block Is Shearable" as const;
+  static override tooltipInfo = "If the given block is shearable" as const;
+
+  static override kind = "block" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

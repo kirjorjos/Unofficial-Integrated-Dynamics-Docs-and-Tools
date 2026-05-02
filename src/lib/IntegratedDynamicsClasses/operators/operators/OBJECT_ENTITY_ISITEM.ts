@@ -10,13 +10,24 @@ export class OPERATOR_OBJECT_ENTITY_ISITEM extends BaseOperator<
   static override internalName = "integrateddynamics:entity_isitem" as const;
   static override numericID = 26;
   static override nicknames = [
-    "EntityIsitem",
-    "entity_is_item",
+    "entityIsitem",
     "entityIsItem",
+    "EntityIsitem",
+    "isitem",
     "isItem",
+    "entity_is_item",
+    "entity_isitem",
+    "is_item",
   ];
   static override symbol = "is_item";
   static override interactName = "entityIsItem";
+  static override operatorName = "isitem" as const;
+  static override displayName = "Is Item" as const;
+  static override fullDisplayName = "Entity Is Item" as const;
+  static override tooltipInfo = "If the entity is an item" as const;
+
+  static override kind = "entity" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

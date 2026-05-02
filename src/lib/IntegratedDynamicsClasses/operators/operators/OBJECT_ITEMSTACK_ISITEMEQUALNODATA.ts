@@ -12,13 +12,26 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISITEMEQUALNODATA extends BaseOperator<
     "integrateddynamics:itemstack_isitemequalnodata" as const;
   static override numericID = 282;
   static override nicknames = [
-    "itemstackIsNbtEqual",
-    "ItemstackIsitemequalnodata",
-    "itemstack_is_itemequalnodata",
+    "isitemequalnonbt",
     "itemstackIsItemequalnodata",
+    "ItemstackIsitemequalnodata",
+    "itemstackIsitemequalnonbt",
+    "itemstackIsNbtEqual",
+    "itemstack_is_itemequalnodata",
+    "itemstack_is_nbt_equal",
+    "itemstack_isitemequalnodata",
+    "itemstack_isitemequalnonbt",
   ];
   static override symbol = "=NoNBT=";
   static override interactName = "itemstackIsNbtEqual";
+  static override operatorName = "isitemequalnonbt" as const;
+  static override displayName = "Raw item equals no NBT" as const;
+  static override fullDisplayName = "Item Raw item equals no NBT" as const;
+  static override tooltipInfo =
+    "If the raw items of the given stacks are equal, ignoring NBT but including damage value." as const;
+
+  static override kind = "itemstack" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

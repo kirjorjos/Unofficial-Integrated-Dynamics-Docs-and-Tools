@@ -9,9 +9,17 @@ export class OPERATOR_LIST_TAIL extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:list_tail" as const;
   static override numericID = 117;
-  static override nicknames = ["listTail", "tail"];
+  static override nicknames = ["listTail", "tail", "list_tail"];
   static override symbol = "tail";
   static override interactName = "listTail";
+  static override operatorName = "tail" as const;
+  static override displayName = "Tail" as const;
+  static override fullDisplayName = "List Tail" as const;
+  static override tooltipInfo =
+    "Remove the first element from the list." as const;
+
+  static override kind = "list" as const;
+  static override renderPattern = "PREFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

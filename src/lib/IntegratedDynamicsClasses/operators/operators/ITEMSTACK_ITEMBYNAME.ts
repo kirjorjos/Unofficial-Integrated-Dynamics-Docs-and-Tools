@@ -11,15 +11,27 @@ export class OPERATOR_ITEMSTACK_ITEMBYNAME extends BaseOperator<iString, Item> {
     "integrateddynamics:itemstack_itembyname" as const;
   static override numericID = 189;
   static override nicknames = [
-    "stringItemByName",
-    "ItemstackByName",
-    "itemstack_by_name",
-    "itemstackByName",
-    "item_by_name",
+    "itembyname",
     "itemByName",
+    "itemstackByName",
+    "ItemstackByName",
+    "itemstackItembyname",
+    "stringItemByName",
+    "item_by_name",
+    "itemstack_by_name",
+    "itemstack_itembyname",
+    "string_item_by_name",
   ];
   static override symbol = "item_by_name";
   static override interactName = "stringItemByName";
+  static override operatorName = "itembyname" as const;
+  static override displayName = "Item By Name" as const;
+  static override fullDisplayName = "Item Item By Name" as const;
+  static override tooltipInfo =
+    "Get the item corresponding to the given unique name, add space+number for indicating the metadata." as const;
+
+  static override kind = "itemstack" as const;
+  static override renderPattern = "PREFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

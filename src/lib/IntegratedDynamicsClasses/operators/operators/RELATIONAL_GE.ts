@@ -9,9 +9,20 @@ export class OPERATOR_RELATIONAL_GE extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:relational_ge" as const;
   static override numericID = 73;
-  static override nicknames = ["anyGreaterThanOrEquals", "relationalGe"];
+  static override nicknames = [
+    "anyGreaterThanOrEquals",
+    "ge",
+    "relationalGe",
+    "any_greater_than_or_equals",
+    "relational_ge",
+  ];
   static override symbol = ">=";
   static override interactName = "anyGreaterThanOrEquals";
+  static override operatorName = "ge" as const;
+  static override displayName = "Greater Than or Equal" as const;
+  static override fullDisplayName = "Relational Greater Than or Equal" as const;
+  static override kind = "relational" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

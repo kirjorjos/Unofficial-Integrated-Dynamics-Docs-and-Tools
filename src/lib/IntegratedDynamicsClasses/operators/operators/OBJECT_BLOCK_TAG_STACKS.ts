@@ -14,13 +14,22 @@ export class OPERATOR_OBJECT_BLOCK_TAG_STACKS extends BaseOperator<
   static override internalName = "integrateddynamics:string_blocktag" as const;
   static override numericID = 298;
   static override nicknames = [
-    "stringBlocksByTag",
-    "BlockTagStacks",
-    "block_tag_stacks",
+    "blocktag",
     "blockTagStacks",
+    "BlockTagStacks",
+    "stringBlocksByTag",
+    "stringBlocktag",
+    "block_tag_stacks",
+    "string_blocks_by_tag",
+    "string_blocktag",
   ];
   static override symbol = "block_tag_values";
   static override interactName = "stringBlocksByTag";
+  static override operatorName = "blocktag" as const;
+  static override displayName = "Block Tag Values" as const;
+  static override fullDisplayName = "String Block Tag Values" as const;
+  static override kind = "string" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

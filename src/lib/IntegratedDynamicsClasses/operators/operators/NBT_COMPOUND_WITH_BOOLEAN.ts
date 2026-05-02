@@ -15,12 +15,26 @@ export class OPERATOR_NBT_COMPOUND_WITH_BOOLEAN extends BaseOperator<
     "integrateddynamics:nbt_compound_with_iBoolean" as const;
   static override numericID = 227;
   static override nicknames = [
-    "nbtWithBoolean",
+    "compoundWithBoolean",
     "nbtCompoundWithBoolean",
+    "nbtWithBoolean",
     "NBTWithBoolean",
+    "compound_with_boolean",
+    "n_b_t_with_boolean",
+    "nbt_compound_with_boolean",
+    "nbt_with_boolean",
+    "nbtCompound_with_boolean",
   ];
   static override symbol = "NBT{}.with_iBoolean";
   static override interactName = "nbtWithBoolean";
+  static override operatorName = "compound_with_boolean" as const;
+  static override displayName = "NBT Compound With Boolean" as const;
+  static override fullDisplayName = "NBT NBT Compound With Boolean" as const;
+  static override tooltipInfo =
+    "Get a copy of the given NBT compound tag with the given Boolean entry" as const;
+
+  static override kind = "nbt" as const;
+  static override renderPattern = "INFIX_2_VERYLONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

@@ -13,9 +13,23 @@ export class OPERATOR_NBT_AS_BYTE_LIST extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:nbt_as_byte_list" as const;
   static override numericID = 243;
-  static override nicknames = ["nbtAsByteList"];
+  static override nicknames = [
+    "asByteList",
+    "nbtAsByteList",
+    "as_byte_list",
+    "nbt_as_byte_list",
+    "nbtAs_byte_list",
+  ];
   static override symbol = "NBT.as_byte_list";
   static override interactName = "nbtAsByteList";
+  static override operatorName = "as_byte_list" as const;
+  static override displayName = "NBT Byte Array As Byte List" as const;
+  static override fullDisplayName = "NBT NBT Byte Array As Byte List" as const;
+  static override tooltipInfo =
+    "Get the Byte List value of the given NBT Byte Array tag" as const;
+
+  static override kind = "nbt" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

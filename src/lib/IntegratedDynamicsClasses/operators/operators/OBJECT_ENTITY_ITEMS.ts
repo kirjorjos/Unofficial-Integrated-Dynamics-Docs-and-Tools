@@ -13,14 +13,25 @@ export class OPERATOR_OBJECT_ENTITY_ITEMS extends BaseOperator<
     "integrateddynamics:entity_entityitems" as const;
   static override numericID = 176;
   static override nicknames = [
-    "EntityItems",
-    "entity_items",
-    "entityItems",
-    "entity_item_list",
+    "entityEntityitems",
     "entityItemList",
+    "entityitems",
+    "entityItems",
+    "EntityItems",
+    "entity_entityitems",
+    "entity_item_list",
+    "entity_items",
   ];
   static override symbol = "entity_items";
   static override interactName = "entityItems";
+  static override operatorName = "entityitems" as const;
+  static override displayName = "Entity Items" as const;
+  static override fullDisplayName = "Entity Entity Items" as const;
+  static override tooltipInfo =
+    "The items that are contained within this entity." as const;
+
+  static override kind = "entity" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

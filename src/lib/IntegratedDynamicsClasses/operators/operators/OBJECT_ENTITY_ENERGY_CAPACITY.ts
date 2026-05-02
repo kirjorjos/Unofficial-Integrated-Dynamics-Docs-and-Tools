@@ -11,12 +11,22 @@ export class OPERATOR_OBJECT_ENTITY_ENERGY_CAPACITY extends BaseOperator<
     "integrateddynamics:entity_entityenergycapacity" as const;
   static override numericID = 173;
   static override nicknames = [
-    "EntityEnergyCapacity",
-    "entity_energy_capacity",
+    "entityenergycapacity",
     "entityEnergyCapacity",
+    "EntityEnergyCapacity",
+    "entityEntityenergycapacity",
+    "entity_energy_capacity",
+    "entity_entityenergycapacity",
   ];
   static override symbol = "entity_capacity_fe";
   static override interactName = "entityEnergyCapacity";
+  static override operatorName = "entityenergycapacity" as const;
+  static override displayName = "Entity Energy Capacity" as const;
+  static override fullDisplayName = "Entity Entity Energy Capacity" as const;
+  static override tooltipInfo = "The energy capacity of this entity." as const;
+
+  static override kind = "entity" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

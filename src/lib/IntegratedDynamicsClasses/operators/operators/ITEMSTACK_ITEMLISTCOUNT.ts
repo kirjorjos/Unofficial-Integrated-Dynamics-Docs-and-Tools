@@ -12,15 +12,27 @@ export class OPERATOR_ITEMSTACK_ITEMLISTCOUNT extends BaseOperator<
     "integrateddynamics:itemstack_itemlistcount" as const;
   static override numericID = 190;
   static override nicknames = [
-    "listItemListCount",
-    "ItemstackListCount",
-    "itemstack_list_count",
-    "itemstackListCount",
-    "item_list_count",
+    "itemlistcount",
     "itemListCount",
+    "itemstackItemlistcount",
+    "itemstackListCount",
+    "ItemstackListCount",
+    "listItemListCount",
+    "item_list_count",
+    "itemstack_itemlistcount",
+    "itemstack_list_count",
+    "list_item_list_count",
   ];
   static override symbol = "item_list_count";
   static override interactName = "listItemListCount";
+  static override operatorName = "itemlistcount" as const;
+  static override displayName = "Item List Count" as const;
+  static override fullDisplayName = "Item Item List Count" as const;
+  static override tooltipInfo =
+    "Get the total item count of exactly the given item in a list." as const;
+
+  static override kind = "itemstack" as const;
+  static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

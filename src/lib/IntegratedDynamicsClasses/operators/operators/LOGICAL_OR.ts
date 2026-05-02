@@ -9,10 +9,22 @@ export class OPERATOR_LOGICAL_OR extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:logical_or" as const;
   static override numericID = 70;
-  static override nicknames = ["booleanOr", "or", "logicalOr", "||"];
+  static override nicknames = [
+    "||",
+    "booleanOr",
+    "logicalOr",
+    "or",
+    "boolean_or",
+    "logical_or",
+  ];
   static override symbol = "||";
 
   static override interactName = "booleanOr";
+  static override operatorName = "or" as const;
+  static override displayName = "Or" as const;
+  static override fullDisplayName = "Logical Or" as const;
+  static override kind = "logical" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

@@ -9,9 +9,17 @@ export class OPERATOR_LIST_CONCAT extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:list_concat" as const;
   static override numericID = 139;
-  static override nicknames = ["listConcat", "concat"];
+  static override nicknames = ["listConcat", "list_concat"];
   static override symbol = "concat";
   static override interactName = "listConcat";
+  static override operatorName = "concat" as const;
+  static override displayName = "Concat" as const;
+  static override fullDisplayName = "List Concat" as const;
+  static override tooltipInfo =
+    "Concatenate the two list to each other." as const;
+
+  static override kind = "list" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

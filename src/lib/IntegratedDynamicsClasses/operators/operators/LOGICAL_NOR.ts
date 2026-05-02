@@ -9,9 +9,20 @@ export class OPERATOR_LOGICAL_NOR extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:logical_nor" as const;
   static override numericID = 111;
-  static override nicknames = ["booleanNor", "nor", "logicalNor"];
+  static override nicknames = [
+    "booleanNor",
+    "logicalNor",
+    "nor",
+    "boolean_nor",
+    "logical_nor",
+  ];
   static override symbol = "!||";
   static override interactName = "booleanNor";
+  static override operatorName = "nor" as const;
+  static override displayName = "Nor" as const;
+  static override fullDisplayName = "Logical Nor" as const;
+  static override kind = "logical" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

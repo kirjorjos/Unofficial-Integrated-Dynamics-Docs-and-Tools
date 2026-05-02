@@ -12,17 +12,30 @@ export class OPERATOR_OBJECT_FLUIDSTACK_ISRAWFLUIDEQUAL extends BaseOperator<
     "integrateddynamics:fluidstack_israwfluidequal" as const;
   static override numericID = 40;
   static override nicknames = [
+    "fluidIsrawfluidequal",
     "fluidstackIsRawEqual",
-    "FluidstackIsrawfluidequal",
     "fluidstackIsrawfluidequal",
-    "fluid_stack_israwfluidequal",
     "fluidStackIsrawfluidequal",
-    "fluid_israwfluidequal",
+    "FluidstackIsrawfluidequal",
+    "israwfluidequal",
     "isRawFluidEqual",
     "rawFluidEquals",
+    "fluid_israwfluidequal",
+    "fluid_stack_israwfluidequal",
+    "fluidstack_is_raw_equal",
+    "fluidstack_israwfluidequal",
+    "is_raw_fluid_equal",
+    "raw_fluid_equals",
   ];
   static override symbol = "=Raw=";
   static override interactName = "fluidstackIsRawEqual";
+  static override operatorName = "israwfluidequal" as const;
+  static override displayName = "Raw fluid equals" as const;
+  static override fullDisplayName = "Fluid Raw fluid equals" as const;
+  static override tooltipInfo = "If the raw fluids are equal" as const;
+
+  static override kind = "fluidstack" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

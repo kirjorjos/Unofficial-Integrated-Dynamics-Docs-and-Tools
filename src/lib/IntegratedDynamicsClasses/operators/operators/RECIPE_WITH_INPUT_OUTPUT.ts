@@ -14,9 +14,24 @@ export class OPERATOR_RECIPE_WITH_INPUT_OUTPUT extends BaseOperator<
   static override nicknames = [
     "ingredientsWithInputOutput",
     "recipeWithInputOutput",
+    "withInputOutput",
+    "ingredients_with_input_output",
+    "recipe_with_input_output",
+    "recipeWith_input_output",
+    "with_input_output",
   ];
   static override symbol = "Recipe.with_io";
   static override interactName = "ingredientsWithInputOutput";
+  static override operatorName = "with_input_output" as const;
+  static override displayName =
+    "Recipe With Input and Output Ingredients" as const;
+  static override fullDisplayName =
+    "Recipe Recipe With Input and Output Ingredients" as const;
+  static override tooltipInfo =
+    "Create a recipe with the first ingredients as input, and the second ingredients as output" as const;
+
+  static override kind = "recipe" as const;
+  static override renderPattern = "PREFIX_2_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

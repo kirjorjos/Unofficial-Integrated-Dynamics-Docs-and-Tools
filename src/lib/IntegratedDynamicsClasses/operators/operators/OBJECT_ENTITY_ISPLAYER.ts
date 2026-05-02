@@ -10,13 +10,24 @@ export class OPERATOR_OBJECT_ENTITY_ISPLAYER extends BaseOperator<
   static override internalName = "integrateddynamics:entity_isplayer" as const;
   static override numericID = 28;
   static override nicknames = [
-    "EntityIsplayer",
-    "entity_is_player",
+    "entityIsplayer",
     "entityIsPlayer",
+    "EntityIsplayer",
+    "isplayer",
     "isPlayer",
+    "entity_is_player",
+    "entity_isplayer",
+    "is_player",
   ];
   static override symbol = "is_player";
   static override interactName = "entityIsPlayer";
+  static override operatorName = "isplayer" as const;
+  static override displayName = "Is Player" as const;
+  static override fullDisplayName = "Entity Is Player" as const;
+  static override tooltipInfo = "If the entity is a player" as const;
+
+  static override kind = "entity" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

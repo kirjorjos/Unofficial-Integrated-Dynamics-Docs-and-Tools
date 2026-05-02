@@ -11,14 +11,28 @@ export class OPERATOR_OBJECT_ITEMSTACK_HASNBT extends BaseOperator<
   static override internalName = "integrateddynamics:itemstack_hasnbt" as const;
   static override numericID = 197;
   static override nicknames = [
+    "hasnbt",
+    "hasNBT",
+    "itemstackHasnbt",
+    "itemstackHasNbt",
+    "itemstackHasNBT",
     "itemStackHasNBT",
     "ItemstackHasnbt",
+    "has_n_b_t",
+    "item_stack_has_n_b_t",
+    "itemstack_has_n_b_t",
     "itemstack_has_nbt",
-    "itemstackHasNBT",
-    "hasNBT",
+    "itemstack_hasnbt",
   ];
   static override symbol = "has_nbt";
   static override interactName = "itemStackHasNBT";
+  static override operatorName = "hasnbt" as const;
+  static override displayName = "Has NBT" as const;
+  static override fullDisplayName = "Item Has NBT" as const;
+  static override tooltipInfo = "If the item stack has an NBT tag." as const;
+
+  static override kind = "itemstack" as const;
+  static override renderPattern = "PREFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

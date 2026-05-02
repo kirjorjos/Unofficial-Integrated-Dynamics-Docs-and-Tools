@@ -11,19 +11,28 @@ export class OPERATOR_OBJECT_ITEMSTACK_FLUIDSTACK extends BaseOperator<
     "integrateddynamics:itemstack_fluidstack" as const;
   static override numericID = 54;
   static override nicknames = [
+    "fluidstack",
+    "itemFluid",
+    "itemFluidstack",
+    "itemstackFluid",
+    "itemstackFluidstack",
     "itemstackFluidStack",
     "ItemstackFluidstack",
-    "itemstack_fluidstack",
-    "itemstackFluidstack",
-    "itemFluidstack",
-    "item_fluidstack",
-    "itemFluid",
     "item_fluid",
+    "item_fluidstack",
     "itemstack_fluid",
-    "itemstackFluid",
+    "itemstack_fluid_stack",
+    "itemstack_fluidstack",
   ];
   static override symbol = "fluidstack";
   static override interactName = "itemstackFluidStack";
+  static override operatorName = "fluidstack" as const;
+  static override displayName = "Fluid" as const;
+  static override fullDisplayName = "Item Fluid" as const;
+  static override tooltipInfo = "The fluid from the given item" as const;
+
+  static override kind = "itemstack" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

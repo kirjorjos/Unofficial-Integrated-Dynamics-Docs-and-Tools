@@ -15,20 +15,32 @@ export class OPERATOR_OBJECT_FLUIDSTACK_DATA_VALUE extends BaseOperator<
     "integrateddynamics:fluidstack_datavalue" as const;
   static override numericID = 285;
   static override nicknames = [
-    "FluidstackDataValue",
-    "fluidstackDataValue",
-    "fluid_stack_data_value",
-    "fluidStackDataValue",
-    "fluid_data_value",
     "fluidDataValue",
-    "fluid_NBT_value",
-    "fluidStackNBTValue",
-    "fluid_stack_NBT_value",
-    "fluidstack_NBT_value",
     "fluidNBTValue",
+    "fluidstackDatavalue",
+    "fluidstackDataValue",
+    "fluidStackDataValue",
+    "FluidstackDataValue",
+    "fluidstackFluidstackDatavalue",
+    "fluidStackNBTValue",
+    "fluid_data_value",
+    "fluid_n_b_t_value",
+    "fluid_NBT_value",
+    "fluid_stack_data_value",
+    "fluid_stack_n_b_t_value",
+    "fluid_stack_NBT_value",
+    "fluidstack_data_value",
+    "fluidstack_datavalue",
+    "fluidstack_NBT_value",
+    "fluidstackFluidstack_datavalue",
   ];
   static override symbol = "data_value";
   static override interactName = "fluidstackDataValue";
+  static override operatorName = "fluidstack_datavalue" as const;
+  static override displayName = "Fluid Data Value" as const;
+  static override fullDisplayName = "Fluid Fluid Data Value" as const;
+  static override kind = "fluidstack" as const;
+  static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

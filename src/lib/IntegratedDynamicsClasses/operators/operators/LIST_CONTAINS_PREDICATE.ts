@@ -11,13 +11,26 @@ export class OPERATOR_LIST_CONTAINS_PREDICATE extends BaseOperator<
   static override internalName = "integrateddynamics:list_contains_p" as const;
   static override numericID = 103;
   static override nicknames = [
+    "containsP",
+    "containsPredicate",
     "listContainsP",
     "listContainsPredicate",
-    "containsPredicate",
-    "containsP",
+    "contains_p",
+    "contains_predicate",
+    "list_contains_p",
+    "list_contains_predicate",
+    "listContains_p",
   ];
   static override symbol = "contains_p";
   static override interactName = "listContainsPredicate";
+  static override operatorName = "contains_p" as const;
+  static override displayName = "Contains Predicate" as const;
+  static override fullDisplayName = "List Contains Predicate" as const;
+  static override tooltipInfo =
+    "If at least one of the elements of the list returns true for the given predicate." as const;
+
+  static override kind = "list" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

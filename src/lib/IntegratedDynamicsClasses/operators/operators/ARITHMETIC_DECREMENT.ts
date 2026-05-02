@@ -10,12 +10,19 @@ export class OPERATOR_ARITHMETIC_DECREMENT extends BaseOperator<
     "integrateddynamics:arithmetic_decrement" as const;
   static override numericID = 82;
   static override nicknames = [
-    "decrement",
     "arithmeticDecrement",
+    "decrement",
     "numberDecrement",
+    "arithmetic_decrement",
+    "number_decrement",
   ];
   static override symbol = "--";
   static override interactName = "numberDecrement";
+  static override operatorName = "decrement" as const;
+  static override displayName = "Decrement" as const;
+  static override fullDisplayName = "Arithmetic Decrement" as const;
+  static override kind = "arithmetic" as const;
+  static override renderPattern = "SUFFIX_1" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

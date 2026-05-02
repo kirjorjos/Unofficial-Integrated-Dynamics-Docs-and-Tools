@@ -11,15 +11,27 @@ export class OPERATOR_OBJECT_ITEMSTACK_INVENTORYSIZE extends BaseOperator<
     "integrateddynamics:itemstack_inventorysize" as const;
   static override numericID = 135;
   static override nicknames = [
-    "ItemstackInventorysize",
-    "itemstack_inventory_size",
-    "itemstackInventorySize",
-    "item_inventory_size",
-    "itemInventorySize",
+    "inventorysize",
     "inventorySize",
+    "itemInventorySize",
+    "itemstackInventorysize",
+    "itemstackInventorySize",
+    "ItemstackInventorysize",
+    "inventory_size",
+    "item_inventory_size",
+    "itemstack_inventory_size",
+    "itemstack_inventorysize",
   ];
   static override symbol = "inventory_size";
   static override interactName = "itemstackInventorySize";
+  static override operatorName = "inventorysize" as const;
+  static override displayName = "Item Inventory Size" as const;
+  static override fullDisplayName = "Item Item Inventory Size" as const;
+  static override tooltipInfo =
+    "Retrieve the inventory size of the given item handler contents" as const;
+
+  static override kind = "itemstack" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

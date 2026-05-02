@@ -10,15 +10,24 @@ export class OPERATOR_OBJECT_FLUIDSTACK_BLOCK extends BaseOperator<
   static override internalName = "integrateddynamics:fluidstack_block" as const;
   static override numericID = 38;
   static override nicknames = [
-    "FluidstackBlock",
-    "fluidstackBlock",
-    "fluid_stack_block",
-    "fluidStackBlock",
-    "fluid_block",
+    "block",
     "fluidBlock",
+    "fluidstackBlock",
+    "fluidStackBlock",
+    "FluidstackBlock",
+    "fluid_block",
+    "fluid_stack_block",
+    "fluidstack_block",
   ];
   static override symbol = "block";
   static override interactName = "fluidstackBlock";
+  static override operatorName = "block" as const;
+  static override displayName = "Block" as const;
+  static override fullDisplayName = "Fluid Block" as const;
+  static override tooltipInfo = "The block of the fluid" as const;
+
+  static override kind = "fluidstack" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

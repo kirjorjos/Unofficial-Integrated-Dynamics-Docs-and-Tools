@@ -14,21 +14,34 @@ export class OPERATOR_OBJECT_FLUIDSTACK_DATAKEYS extends BaseOperator<
     "integrateddynamics:fluidstack_datakeys" as const;
   static override numericID = 284;
   static override nicknames = [
-    "FluidstackDataKeys",
-    "fluidstackDataKeys",
-    "fluid_stack_data_keys",
-    "fluidStackDataKeys",
-    "fluid_data_keys",
     "fluidDataKeys",
-    "fluid_NBT_keys",
-    "fluidStackNBTKeys",
-    "fluid_stack_NBT_keys",
-    "fluidstack_NBT_keys",
-    "fluidstackNBTKeys",
     "fluidNBTKeys",
+    "fluidstackDatakeys",
+    "fluidstackDataKeys",
+    "fluidStackDataKeys",
+    "FluidstackDataKeys",
+    "fluidstackFluidstackDatakeys",
+    "fluidstackNBTKeys",
+    "fluidStackNBTKeys",
+    "fluid_data_keys",
+    "fluid_n_b_t_keys",
+    "fluid_NBT_keys",
+    "fluid_stack_data_keys",
+    "fluid_stack_n_b_t_keys",
+    "fluid_stack_NBT_keys",
+    "fluidstack_data_keys",
+    "fluidstack_datakeys",
+    "fluidstack_n_b_t_keys",
+    "fluidstack_NBT_keys",
+    "fluidstackFluidstack_datakeys",
   ];
   static override symbol = "data_keys";
   static override interactName = "fluidstackDataKeys";
+  static override operatorName = "fluidstack_datakeys" as const;
+  static override displayName = "Fluid Data Keys" as const;
+  static override fullDisplayName = "Fluid Fluid Data Keys" as const;
+  static override kind = "fluidstack" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

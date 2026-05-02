@@ -12,13 +12,26 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISDATAEQUAL extends BaseOperator<
     "integrateddynamics:itemstack_isnbtequal" as const;
   static override numericID = 283;
   static override nicknames = [
-    "itemstackIsNbtEqual",
-    "ItemstackIsdataequal",
-    "itemstack_is_dataequal",
+    "isnbtequal",
     "itemstackIsDataequal",
+    "ItemstackIsdataequal",
+    "itemstackIsnbtequal",
+    "itemstackIsNbtEqual",
+    "itemstack_is_dataequal",
+    "itemstack_is_nbt_equal",
+    "itemstack_isdataequal",
+    "itemstack_isnbtequal",
   ];
   static override symbol = "=NBT=";
   static override interactName = "itemstackIsNbtEqual";
+  static override operatorName = "isnbtequal" as const;
+  static override displayName = "NBT equals" as const;
+  static override fullDisplayName = "Item NBT equals" as const;
+  static override tooltipInfo =
+    "If the NBT tags of the given items are equal" as const;
+
+  static override kind = "itemstack" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

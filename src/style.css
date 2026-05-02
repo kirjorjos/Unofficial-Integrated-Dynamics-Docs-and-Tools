@@ -72,6 +72,28 @@ button {
   font-size: 0.95rem;
 }
 
+.sidebar-search {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0 0.5rem 1rem;
+}
+
+.sidebar-search-label {
+  color: #355866;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.sidebar-search-input {
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid #9cc9d3;
+  border-radius: 0.5rem;
+  background: rgba(248, 253, 254, 0.82);
+  color: #18303a;
+  font: inherit;
+}
+
 .sidebar-nav {
   display: grid;
   gap: 0.9rem;
@@ -115,6 +137,14 @@ button {
 .file-list {
   display: grid;
   gap: 0.15rem;
+}
+
+.nested-folder-row {
+  padding-left: 1.5rem;
+}
+
+.nested-file-list {
+  padding-left: 1rem;
 }
 
 .file-row {
@@ -217,13 +247,17 @@ button {
   color: #4a6974;
 }
 
+.operator-doc-page {
+  max-width: 1240px;
+}
+
 .operator-meta {
-  display: grid;
-  gap: 1rem;
   margin: 1.5rem 0 0;
 }
 
-.operator-meta div {
+.operator-meta-card {
+  display: grid;
+  gap: 0.35rem;
   padding: 0.9rem 1rem;
   border: 1px solid #abd0d9;
   border-radius: 0.65rem;
@@ -231,15 +265,48 @@ button {
 }
 
 .operator-meta dt {
-  margin: 0 0 0.25rem;
+  margin: 0.3rem 0 0;
   font-weight: 600;
   color: #2b505d;
+}
+
+.operator-meta dt:first-child {
+  margin-top: 0;
 }
 
 .operator-meta dd {
   margin: 0;
   color: #153946;
   overflow-wrap: anywhere;
+}
+
+.operator-preview {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.operator-preview-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.operator-preview-panel {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.operator-preview-panel h3 {
+  margin: 0;
+  color: #224855;
+  font-size: 1rem;
+}
+
+.operator-preview-controls {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
 }
 
 .transformer-layout {
@@ -356,6 +423,524 @@ button {
   min-height: 1.5em;
 }
 
+.logic-programmer-sequence {
+  display: grid;
+  gap: 1rem;
+}
+
+.logic-programmer-shot {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.display-panel-row {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.logic-programmer-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+
+.logic-programmer-step {
+  font-size: 0.84rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #45656f;
+}
+
+.logic-programmer-step-title {
+  font-weight: 600;
+  color: #153946;
+  overflow-wrap: anywhere;
+}
+
+.logic-programmer-frame-shell {
+  width: calc(256px * 2);
+  height: calc(240px * 2);
+  max-width: 100%;
+  overflow: visible;
+}
+
+.logic-programmer-frame {
+  position: relative;
+  width: 256px;
+  height: 240px;
+  background: url("/gui/logic_programmer.png") top left / 256px 256px no-repeat;
+  image-rendering: pixelated;
+  box-shadow: 0 14px 30px rgba(24, 48, 58, 0.18);
+  overflow: visible;
+  transform: scale(2);
+  transform-origin: top left;
+}
+
+.logic-programmer-overlay {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 256px;
+  height: 240px;
+  font-family:
+    "JetBrains Mono", "IBM Plex Mono", "Fira Code", ui-monospace,
+    SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", monospace;
+  color: #2d2d2d;
+}
+
+.fit-text {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  line-height: inherit;
+}
+
+.fit-text-inner {
+  position: absolute;
+  display: inline-block;
+  white-space: nowrap;
+  line-height: inherit;
+}
+
+.logic-search-overlay,
+.logic-clear-button-overlay,
+.logic-operator-canvas,
+.logic-element-tab,
+.logic-item-placeholder-label,
+.logic-item-placeholder-arrow,
+.logic-operator-dropdown-field,
+.logic-operator-signature-line,
+.logic-label-ok-icon,
+.logic-slot-overlay,
+.logic-value-box,
+.logic-write-card,
+.logic-label-field,
+.logic-labeller-badge {
+  position: absolute;
+}
+
+.logic-search-overlay {
+  left: 7px;
+  top: 5px;
+  width: 69px;
+  height: 12px;
+  display: flex;
+  align-items: center;
+  padding: 0 4px;
+  background: transparent;
+  color: #2f2f2f;
+  font-size: 10px;
+  line-height: 12px;
+  letter-spacing: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-shadow: 1px 1px 0 rgba(244, 244, 244, 0.45);
+}
+
+.logic-element-tab {
+  left: 19px;
+  width: 56px;
+  height: 17px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: rgba(189, 202, 206, 0.18);
+  color: #303030;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -1px 0 rgba(84, 84, 84, 0.12);
+  font-weight: 400;
+  text-shadow: 1px 1px 0 rgba(244, 244, 244, 0.45);
+}
+
+.logic-element-tab-active {
+  background: rgba(213, 227, 231, 0.34);
+  color: #282828;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.24),
+    inset 0 -1px 0 rgba(84, 84, 84, 0.18);
+}
+
+.logic-element-tab-operator {
+  font-size: 12px;
+}
+
+.logic-element-tab-type {
+  font-size: 8px;
+}
+
+.logic-element-tab-arrow {
+  position: absolute;
+  left: 1px;
+  top: 1px;
+  bottom: 1px;
+  display: flex;
+  align-items: center;
+  color: #303030;
+  font-size: 9px;
+  line-height: 1;
+  text-shadow: 1px 1px 0 rgba(244, 244, 244, 0.45);
+}
+
+.logic-element-tab-symbol {
+  display: block;
+  width: 100%;
+  height: 100%;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.logic-clear-button-overlay {
+  left: 87px;
+  top: 5px;
+  width: 30px;
+  height: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(to bottom, #8b8b8b 0 50%, #777777 50% 100%);
+  box-shadow:
+    inset 1px 1px 0 rgba(255, 255, 255, 0.28),
+    inset -1px -1px 0 rgba(45, 45, 45, 0.52),
+    0 0 0 1px rgba(30, 30, 30, 0.65);
+  color: #e0e0e0;
+  font-size: 8px;
+  font-weight: 400;
+  line-height: 12px;
+  text-shadow: 1px 1px 0 rgba(63, 63, 63, 0.8);
+}
+
+.logic-operator-dropdown-field,
+.logic-operator-signature-line {
+  color: #2f2f2f;
+  text-shadow: 1px 1px 0 rgba(244, 244, 244, 0.45);
+}
+
+.logic-operator-canvas {
+  border: 1px solid transparent;
+  border-image-source: url("/gui/sub_gui_light.png");
+  border-image-slice: 1 fill;
+  border-image-repeat: stretch;
+  image-rendering: pixelated;
+}
+
+.logic-operator-dropdown-field {
+  height: 12px;
+  padding: 1px 4px 0;
+  background: #000000;
+  box-shadow: 0 0 0 1px #a0a0a0;
+  color: #e0e0e0;
+  font-size: 9px;
+  line-height: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.8);
+}
+
+.logic-operator-signature-line {
+  font-size: 9px;
+  line-height: 9px;
+  white-space: pre;
+}
+
+.logic-operator-signature-prefix {
+  color: #2f2f2f;
+}
+
+.logic-slot-overlay,
+.logic-write-card {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  background: rgba(205, 205, 205, 0.42);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.55);
+}
+
+.logic-value-box {
+  font-size: 9px;
+  line-height: 1.1;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.logic-value-box {
+  height: 8px;
+  padding: 0 4px;
+  line-height: 8px;
+  background: #000000;
+  box-shadow: 0 0 0 1px #a0a0a0;
+  color: #e0e0e0;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.8);
+}
+
+.logic-slot-card-composite,
+.logic-write-card-composite {
+  width: 16px;
+  height: 16px;
+  image-rendering: pixelated;
+  display: block;
+  background-position: center, center;
+  background-repeat: no-repeat, no-repeat;
+  background-size:
+    16px 16px,
+    16px 16px;
+}
+
+.logic-symbol-overlay {
+  position: absolute;
+  min-width: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #18303a;
+  text-align: center;
+  transform: translateX(-50%);
+}
+
+.logic-symbol-overlay-text {
+  min-width: 18px;
+  font-size: 6px;
+  font-weight: 400;
+  line-height: 18px;
+}
+
+.logic-item-placeholder-label {
+  width: 36px;
+  height: 12px;
+  color: #2f2f2f;
+  font-size: 8px;
+  line-height: 12px;
+  text-shadow: 1px 1px 0 rgba(244, 244, 244, 0.45);
+  white-space: nowrap;
+}
+
+.logic-item-placeholder-arrow {
+  width: 12px;
+  height: 6px;
+  background:
+    linear-gradient(to right, rgba(47, 47, 47, 0.92), rgba(47, 47, 47, 0.92)) 0
+      2px / 7px 1px no-repeat,
+    linear-gradient(to right, rgba(47, 47, 47, 0.92), rgba(47, 47, 47, 0.92))
+      7px 1px / 3px 1px no-repeat,
+    linear-gradient(to right, rgba(47, 47, 47, 0.92), rgba(47, 47, 47, 0.92))
+      7px 3px / 3px 1px no-repeat,
+    linear-gradient(to right, rgba(47, 47, 47, 0.92), rgba(47, 47, 47, 0.92))
+      10px 2px / 2px 1px no-repeat;
+  image-rendering: pixelated;
+  transform: scale(1.1);
+  transform-origin: top left;
+}
+
+.logic-card-overlay-has-tooltip {
+  overflow: visible;
+}
+
+.logic-tooltip-anchor {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.logic-card-tooltip {
+  pointer-events: none;
+}
+
+.logic-card-tooltip-floating {
+  position: fixed;
+  z-index: 9999;
+  transform: scale(2);
+  transform-origin: top left;
+}
+
+.mc-tooltip {
+  min-width: max-content;
+  max-width: 240px;
+  padding: 3px;
+  border: 1px solid #2a0a63;
+  background: linear-gradient(
+    180deg,
+    rgba(16, 0, 16, 0.96) 0%,
+    rgba(10, 0, 10, 0.96) 100%
+  );
+  box-shadow:
+    inset 1px 1px 0 rgba(80, 0, 255, 0.5),
+    inset -1px -1px 0 rgba(40, 0, 120, 0.72);
+  font-family: "Lucida Console", "Courier New", monospace;
+  font-size: 8px;
+  line-height: 10px;
+  white-space: nowrap;
+}
+
+.mc-tooltip-line {
+  color: #ffffff;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.9);
+}
+
+.mc-tooltip-title {
+  margin-bottom: 1px;
+}
+
+.mc-tooltip-bold {
+  font-weight: 700;
+}
+
+.mc-tooltip-italic {
+  font-style: italic;
+}
+
+.mc-tooltip-color-0 {
+  color: #000000;
+}
+
+.mc-tooltip-color-1 {
+  color: #0000aa;
+}
+
+.mc-tooltip-color-2 {
+  color: #00aa00;
+}
+
+.mc-tooltip-color-3 {
+  color: #00aaaa;
+}
+
+.mc-tooltip-color-4 {
+  color: #aa0000;
+}
+
+.mc-tooltip-color-5 {
+  color: #aa00aa;
+}
+
+.mc-tooltip-color-6 {
+  color: #ffaa00;
+}
+
+.mc-tooltip-color-7 {
+  color: #aaaaaa;
+}
+
+.mc-tooltip-color-8 {
+  color: #555555;
+}
+
+.mc-tooltip-color-9 {
+  color: #5555ff;
+}
+
+.mc-tooltip-color-a {
+  color: #55ff55;
+}
+
+.mc-tooltip-color-b {
+  color: #55ffff;
+}
+
+.mc-tooltip-color-c {
+  color: #ff5555;
+}
+
+.mc-tooltip-color-d {
+  color: #ff55ff;
+}
+
+.mc-tooltip-color-e {
+  color: #ffff55;
+}
+
+.mc-tooltip-color-f {
+  color: #ffffff;
+}
+
+.logic-write-arrow {
+  position: absolute;
+  left: 228px;
+  top: 106px;
+  width: 4px;
+  height: 4px;
+  background: url("/gui/logic_programmer.png") -3px -240px / 256px 256px
+    no-repeat;
+  image-rendering: pixelated;
+}
+
+.logic-write-card {
+  left: 232px;
+  top: 110px;
+}
+
+.logic-write-card-composite {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.logic-label-field {
+  left: 90px;
+  top: 110px;
+  width: 113px;
+  height: 11px;
+  padding: 0 4px;
+  background: #000000;
+  box-shadow: 0 0 0 1px #a0a0a0;
+  color: #e0e0e0;
+  font-size: 9px;
+  line-height: 11px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.8);
+}
+
+.logic-label-ok-icon {
+  left: 205px;
+  top: 110px;
+  width: 14px;
+  height: 12px;
+  background: url("/gui/icons.png") -72px 0 / 256px 256px no-repeat;
+  image-rendering: pixelated;
+}
+
+.logic-labeller-badge {
+  left: 220px;
+  top: 111px;
+  width: 6px;
+  height: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(to bottom, #8b8b8b 0 50%, #777777 50% 100%);
+  box-shadow:
+    inset 1px 1px 0 rgba(255, 255, 255, 0.28),
+    inset -1px -1px 0 rgba(45, 45, 45, 0.52),
+    0 0 0 1px rgba(30, 30, 30, 0.65);
+  font-size: 7px;
+  font-weight: 400;
+  line-height: 10px;
+  text-align: center;
+  color: #e0e0e0;
+  text-shadow: 1px 1px 0 rgba(63, 63, 63, 0.8);
+}
+
+@media (max-width: 800px) {
+  .logic-programmer-frame-shell {
+    width: calc(256px * 1.5);
+    height: calc(240px * 1.5);
+  }
+
+  .logic-programmer-frame {
+    transform: scale(1.5);
+  }
+}
+
 .angle-group {
   display: inline;
 }
@@ -444,5 +1029,9 @@ button {
 
   .doc-page {
     padding: 1.25rem;
+  }
+
+  .operator-preview-grid {
+    grid-template-columns: 1fr;
   }
 }

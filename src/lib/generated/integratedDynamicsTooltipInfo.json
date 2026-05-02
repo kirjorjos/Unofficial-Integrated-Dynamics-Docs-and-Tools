@@ -1,0 +1,8 @@
+{
+  "valuetype.integrateddynamics.any.info": "Accepts any type of value.",
+  "valuetype.integrateddynamics.number.info": "Accepts all number types.",
+  "valuetype.integrateddynamics.named.info": "Something that has a name, such as display names of items and blocks.",
+  "valuetype.integrateddynamics.uniquely_named.info": "Something that has a unique name, such as items and blocks.",
+  "valuetype.integrateddynamics.ingredients.slot.info": "Shift click to configure",
+  "item.integrateddynamics.variable.info": "Clear or copy in a crafting grid"
+}

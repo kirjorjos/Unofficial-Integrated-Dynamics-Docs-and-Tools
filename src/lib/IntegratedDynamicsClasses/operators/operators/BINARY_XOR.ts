@@ -8,9 +8,20 @@ export class OPERATOR_BINARY_XOR extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:binary_xor" as const;
   static override numericID = 12;
-  static override nicknames = ["binaryXor", "integerXor"];
+  static override nicknames = [
+    "binaryXor",
+    "integerXor",
+    "xor",
+    "binary_xor",
+    "integer_xor",
+  ];
   static override symbol = "^";
   static override interactName = "integerXor";
+  static override operatorName = "xor" as const;
+  static override displayName = "Xor" as const;
+  static override fullDisplayName = "Binary Xor" as const;
+  static override kind = "binary" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

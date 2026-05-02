@@ -8,9 +8,25 @@ export class OPERATOR_NAMED_NAME extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:string_name" as const;
   static override numericID = 80;
-  static override nicknames = ["name", "namedName", "toString"];
+  static override nicknames = [
+    "name",
+    "namedName",
+    "stringName",
+    "toString",
+    "named_name",
+    "string_name",
+    "to_string",
+  ];
   static override symbol = "name";
   static override interactName = "namedName";
+  static override operatorName = "name" as const;
+  static override displayName = "To String" as const;
+  static override fullDisplayName = "String To String" as const;
+  static override tooltipInfo =
+    "Get the string or name of a named object or converts it to a string" as const;
+
+  static override kind = "string" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

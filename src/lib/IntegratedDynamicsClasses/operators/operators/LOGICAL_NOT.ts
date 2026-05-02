@@ -5,9 +5,20 @@ import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 export class OPERATOR_LOGICAL_NOT extends BaseOperator<iBoolean, iBoolean> {
   static override internalName = "integrateddynamics:logical_not" as const;
   static override numericID = 69;
-  static override nicknames = ["booleanNot", "not", "logicalNot"];
+  static override nicknames = [
+    "booleanNot",
+    "logicalNot",
+    "not",
+    "boolean_not",
+    "logical_not",
+  ];
   static override symbol = "!";
   static override interactName = "booleanNot";
+  static override operatorName = "not" as const;
+  static override displayName = "Not" as const;
+  static override fullDisplayName = "Logical Not" as const;
+  static override kind = "logical" as const;
+  static override renderPattern = "PREFIX_1" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

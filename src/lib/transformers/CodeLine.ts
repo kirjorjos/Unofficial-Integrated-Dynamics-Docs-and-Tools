@@ -3,7 +3,9 @@ import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperat
 import {
   getOpName,
   resolveImplicitFlipOperator,
-} from "lib/HelperClasses/UtilityFunctions";
+  setOperatorSourceName,
+  flattenAnonymousBaseOperatorApplication,
+} from "lib/transformers/helpers";
 
 export const ASTToCodeLine = (ast: TypeAST.AST, isTopLevel = true): string => {
   const stringify = (node: TypeAST.AST, topLevel = false): string => {
@@ -69,8 +71,13 @@ export const ASTToCodeLine = (ast: TypeAST.AST, isTopLevel = true): string => {
         break;
 
       case "Curry": {
-        const base = stringify(node.base);
-        const args = node.args.map((a) => wrap(a)).join(" ");
+        const flattened = flattenAnonymousBaseOperatorApplication(node);
+        const base = stringify(
+          flattened?.fullyApplied ? flattened.operator : node.base
+        );
+        const args = (flattened?.fullyApplied ? flattened.args : node.args)
+          .map((a) => wrap(a))
+          .join(" ");
         result = `${base} ${args}`;
         // if (!topLevel) result = `(${result})`;
         break;
@@ -378,7 +385,10 @@ export const CodeLineToAST = (
 
     const internalKey = operatorRegistry.operatorByNickname(token);
     if (internalKey) {
-      return { type: "Operator", opName: internalKey as TypeOperatorKey };
+      return setOperatorSourceName(
+        { type: "Operator", opName: internalKey as TypeOperatorKey },
+        token
+      );
     }
 
     const implicitFlip = resolveImplicitFlipOperator(token);

@@ -7,9 +7,23 @@ import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 export class OPERATOR_NBT_AS_FLOAT extends BaseOperator<FloatTag, Double> {
   static override internalName = "integrateddynamics:nbt_as_float" as const;
   static override numericID = 245;
-  static override nicknames = ["nbtAsFloat"];
+  static override nicknames = [
+    "asFloat",
+    "nbtAsFloat",
+    "as_float",
+    "nbt_as_float",
+    "nbtAs_float",
+  ];
   static override symbol = "NBT.as_float";
   static override interactName = "nbtAsFloat";
+  static override operatorName = "as_float" as const;
+  static override displayName = "NBT Float As Double" as const;
+  static override fullDisplayName = "NBT NBT Float As Double" as const;
+  static override tooltipInfo =
+    "Get the Double value of the given NBT Float tag" as const;
+
+  static override kind = "nbt" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

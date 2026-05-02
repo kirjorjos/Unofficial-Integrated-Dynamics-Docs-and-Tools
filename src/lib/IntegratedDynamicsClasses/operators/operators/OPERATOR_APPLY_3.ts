@@ -14,9 +14,22 @@ export class OPERATOR_OPERATOR_APPLY_3 extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:operator_apply3" as const;
   static override numericID = 141;
-  static override nicknames = ["operatorApply3", "operatorApply_3", "apply3"];
+  static override nicknames = [
+    "apply3",
+    "operatorApply3",
+    "operator_apply3",
+    "operatorApply_3",
+  ];
   static override symbol = "apply3";
   static override interactName = "operatorApply3";
+  static override operatorName = "apply3" as const;
+  static override displayName = "Apply 3" as const;
+  static override fullDisplayName = "Operator Apply 3" as const;
+  static override tooltipInfo =
+    "Apply for a given operator the given three value." as const;
+
+  static override kind = "operator" as const;
+  static override renderPattern = "INFIX_3" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

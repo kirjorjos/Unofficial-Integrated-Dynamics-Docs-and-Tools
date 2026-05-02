@@ -10,13 +10,24 @@ export class OPERATOR_OBJECT_BLOCK_STEPSOUND extends BaseOperator<
   static override internalName = "integrateddynamics:block_stepsound" as const;
   static override numericID = 18;
   static override nicknames = [
-    "BlockStepsound",
+    "blockStepsound",
     "blockStepSound",
-    "block_step_sound",
+    "BlockStepsound",
+    "stepsound",
     "stepSound",
+    "block_step_sound",
+    "block_stepsound",
+    "step_sound",
   ];
   static override symbol = "step_sound";
   static override interactName = "blockStepSound";
+  static override operatorName = "stepsound" as const;
+  static override displayName = "Block Step Sound" as const;
+  static override fullDisplayName = "Block Block Step Sound" as const;
+  static override tooltipInfo = "The step sound of the given block" as const;
+
+  static override kind = "block" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

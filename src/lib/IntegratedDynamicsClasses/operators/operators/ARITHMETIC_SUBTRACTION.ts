@@ -10,12 +10,20 @@ export class OPERATOR_ARITHMETIC_SUBTRACTION extends BaseOperator<
     "integrateddynamics:arithmetic_subtraction" as const;
   static override numericID = 5;
   static override nicknames = [
-    "subtract",
     "arithmeticSubtraction",
     "numberSubtract",
+    "subtract",
+    "subtraction",
+    "arithmetic_subtraction",
+    "number_subtract",
   ];
   static override symbol = "-";
   static override interactName = "numberSubtract";
+  static override operatorName = "subtraction" as const;
+  static override displayName = "Subtraction" as const;
+  static override fullDisplayName = "Arithmetic Subtraction" as const;
+  static override kind = "arithmetic" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

@@ -10,9 +10,20 @@ export class OPERATOR_STRING_JOIN extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:string_join" as const;
   static override numericID = 198;
-  static override nicknames = ["stringJoin"];
+  static override nicknames = [
+    "generalJoin",
+    "join",
+    "stringJoin",
+    "general_join",
+    "string_join",
+  ];
   static override symbol = "join";
   static override interactName = "stringJoin";
+  static override operatorName = "join" as const;
+  static override displayName = "Join" as const;
+  static override fullDisplayName = "General Join" as const;
+  static override kind = "general" as const;
+  static override renderPattern = "PREFIX_2" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

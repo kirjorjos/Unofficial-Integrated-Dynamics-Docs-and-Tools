@@ -13,12 +13,19 @@ export class OPERATOR_LIST_EQUALS_MULTISET extends BaseOperator<
     "integrateddynamics:list_equals_multiset" as const;
   static override numericID = 301;
   static override nicknames = [
-    "listEquals_multiset",
-    "listEqualsMultiset",
     "equalsMultiset",
+    "listEqualsMultiset",
+    "equals_multiset",
+    "list_equals_multiset",
+    "listEquals_multiset",
   ];
   static override symbol = "=multiset=";
   static override interactName = "listEquals_multiset";
+  static override operatorName = "equals_multiset" as const;
+  static override displayName = "List Equals (Multiset)" as const;
+  static override fullDisplayName = "List List Equals (Multiset)" as const;
+  static override kind = "list" as const;
+  static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

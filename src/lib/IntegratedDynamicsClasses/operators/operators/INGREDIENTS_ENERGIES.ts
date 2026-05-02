@@ -10,9 +10,22 @@ export class OPERATOR_INGREDIENTS_ENERGIES extends BaseOperator<
   static override internalName =
     "integrateddynamics:ingredients_energies" as const;
   static override numericID = 148;
-  static override nicknames = ["ingredientsEnergies", "Ingr.energies"];
+  static override nicknames = [
+    "energies",
+    "Ingr.energies",
+    "ingredientsEnergies",
+    "ingredients_energies",
+  ];
   static override symbol = "Ingr.energies";
   static override interactName = "ingredientsEnergies";
+  static override operatorName = "energies" as const;
+  static override displayName = "Ingredient energy elements" as const;
+  static override fullDisplayName =
+    "Ingredients Ingredient energy elements" as const;
+  static override tooltipInfo = "The list of energy elements" as const;
+
+  static override kind = "ingredients" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

@@ -6,9 +6,25 @@ import { iString } from "lib/IntegratedDynamicsClasses/typeWrappers/iString";
 export class OPERATOR_NBT_FROM_STRING extends BaseOperator<iString, StringTag> {
   static override internalName = "integrateddynamics:nbt_from_string" as const;
   static override numericID = 264;
-  static override nicknames = ["stringAsNbt", "nbtFromString"];
+  static override nicknames = [
+    "fromString",
+    "nbtFromString",
+    "stringAsNbt",
+    "from_string",
+    "nbt_from_string",
+    "nbtFrom_string",
+    "string_as_nbt",
+  ];
   static override symbol = "NBT.from_string";
   static override interactName = "stringAsNbt";
+  static override operatorName = "from_string" as const;
+  static override displayName = "NBT String From String" as const;
+  static override fullDisplayName = "NBT NBT String From String" as const;
+  static override tooltipInfo =
+    "Create an NBT String tag from the given String value" as const;
+
+  static override kind = "nbt" as const;
+  static override renderPattern = "PREFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

@@ -12,11 +12,24 @@ export class OPERATOR_NULLABLE_ISNOTNULL extends BaseOperator<
   static override numericID = 46;
   static override nicknames = [
     "anyIsNotNull",
+    "generalIsnotnull",
+    "isnotnull",
     "isNotNull",
     "nullableIsnotnull",
+    "any_is_not_null",
+    "general_isnotnull",
+    "is_not_null",
+    "nullable_isnotnull",
   ];
   static override symbol = "∅";
   static override interactName = "anyIsNotNull";
+  static override operatorName = "isnotnull" as const;
+  static override displayName = "Is Not Null" as const;
+  static override fullDisplayName = "General Is Not Null" as const;
+  static override tooltipInfo = "If the given value is not null" as const;
+
+  static override kind = "general" as const;
+  static override renderPattern = "PREFIX_1" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

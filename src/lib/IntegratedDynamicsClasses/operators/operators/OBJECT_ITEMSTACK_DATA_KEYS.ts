@@ -14,14 +14,25 @@ export class OPERATOR_OBJECT_ITEMSTACK_DATA_KEYS extends BaseOperator<
     "integrateddynamics:itemstack_datakeys" as const;
   static override numericID = 287;
   static override nicknames = [
+    "itemNBTKeys",
+    "itemstackDatakeys",
+    "itemstackDataKeys",
     "itemStackDataKeys",
     "ItemstackDatakeys",
+    "itemstackItemstackDatakeys",
+    "item_n_b_t_keys",
+    "item_stack_data_keys",
     "itemstack_data_keys",
-    "itemstackDataKeys",
-    "itemNBTKeys",
+    "itemstack_datakeys",
+    "itemstackItemstack_datakeys",
   ];
   static override symbol = "data_keys";
   static override interactName = "itemStackDataKeys";
+  static override operatorName = "itemstack_datakeys" as const;
+  static override displayName = "Item Data Keys" as const;
+  static override fullDisplayName = "Item Item Data Keys" as const;
+  static override kind = "itemstack" as const;
+  static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({
       parsedSignature: new ParsedSignature(

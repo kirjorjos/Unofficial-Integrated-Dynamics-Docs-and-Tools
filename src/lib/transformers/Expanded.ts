@@ -5,7 +5,9 @@ import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 import {
   getOpName,
   getNicknameRegex,
-} from "lib/HelperClasses/UtilityFunctions";
+  getOperatorSourceName,
+  flattenAnonymousBaseOperatorApplication,
+} from "lib/transformers/helpers";
 
 const getLabel = (index: number): string => {
   let label = "";
@@ -215,6 +217,10 @@ const collectVariables = (
 
 let varCounter = 0;
 
+export const resetExpandedVarCounter = (): void => {
+  varCounter = 0;
+};
+
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 const getInternalName = (node: TypeAST.AST): string | undefined => {
@@ -266,10 +272,10 @@ const isSelfNicknameShadow = (varName: string, node: TypeAST.AST): boolean => {
   return node.opName === nicknameInternalKey;
 };
 
+let unamedStrings = 0;
+
 const getVarName = (node: TypeAST.AST): string => {
   if (node.varName) return node.varName;
-
-  const sanitize = (s: string) => s.replace(/[^A-Za-z0-9\\._&|{}]/g, "");
 
   switch (node.type) {
     case "Integer":
@@ -277,7 +283,7 @@ const getVarName = (node: TypeAST.AST): string => {
     case "Double":
       return node.value.toString().replace(/^-/, "neg");
     case "String":
-      return sanitize(node.value.slice(0, 10));
+      return `string${++unamedStrings}`;
     case "Boolean":
       return node.value ? "true" : "false";
     case "Null":
@@ -285,6 +291,8 @@ const getVarName = (node: TypeAST.AST): string => {
     case "Variable":
       return node.name;
     case "Operator": {
+      const sourceName = getOperatorSourceName(node);
+      if (sourceName) return sourceName;
       const formal = getOpName(node.opName);
       return formal.charAt(0).toLowerCase() + formal.slice(1);
     }
@@ -332,7 +340,8 @@ const getVarName = (node: TypeAST.AST): string => {
         connector = "On";
       } else {
         name = getVarName(base);
-        connector = name.endsWith("On") ? "On" : "By";
+        connector =
+          name.endsWith("On") || name.startsWith("flip") ? "On" : "By";
       }
 
       if (args.length === 0) return name;
@@ -367,7 +376,7 @@ const getVarName = (node: TypeAST.AST): string => {
       return `${hName}With${capitalize(fName)}And${capitalize(gName)}`;
     }
     case "Flip":
-      return `${getVarName(node.arg)}On`;
+      return `flip${capitalize(getVarName(node.arg))}`;
     case "List":
       return "list";
   }
@@ -377,8 +386,18 @@ const getVarName = (node: TypeAST.AST): string => {
 
 const decomposeAST = (node: TypeAST.AST): TypeAST.AST => {
   if (node.type === "Curry") {
-    const base = decomposeAST(node.base) as TypeAST.Operator;
+    const flattened = flattenAnonymousBaseOperatorApplication(node);
+
+    if (flattened?.fullyApplied) {
+      return {
+        ...node,
+        base: flattened.operator,
+        args: flattened.args.map(decomposeAST),
+      };
+    }
+
     const args = node.args.map(decomposeAST);
+    const base = decomposeAST(node.base) as TypeAST.Operator;
 
     if (base.type === "Operator" && args.length === 0) {
       return base;
@@ -439,11 +458,20 @@ const decomposeAST = (node: TypeAST.AST): TypeAST.AST => {
   return node;
 };
 
+export const getExpandedVarName = (node: TypeAST.AST): string => {
+  return getVarName(node);
+};
+
+export const decomposeASTForExpanded = (node: TypeAST.AST): TypeAST.AST => {
+  resetExpandedVarCounter();
+  return decomposeAST(structuredClone(node));
+};
+
 export const ASTToExpanded = (
   ast: TypeAST.AST,
   style: "CodeLine" | "Condensed" = "Condensed"
 ): string => {
-  varCounter = 0;
+  resetExpandedVarCounter();
 
   const initialVars = new Set<TypeAST.AST>();
   collectVariables(ast, initialVars, new Set());

@@ -1,11 +1,11 @@
-# Integrated Dynamics unofficial Documentation and Tools
+# Unofficial Integrated Dynamics Docs and Tools
 
 This project is a TypeScript implementation of the core logic from the [Integrated Dynamics](https://github.com/cyclopsmc/IntegratedDynamics/) Minecraft mod as well as documentation and guides for learning the mod.
 
 ## Live Deployment
 
 This project is hosted and deployed live on GitHub Pages:
-[https://kirjorjos.github.io/WIP-Integrated-Dynamics-Project/](https://kirjorjos.github.io/WIP-Integrated-Dynamics-Project/)
+[https://kirjorjos.github.io/Unofficial-Integrated-Dynamics-Docs-and-Tools/](https://kirjorjos.github.io/Unofficial-Integrated-Dynamics-Docs-and-Tools/)
 
 ## Project Roadmap
 
@@ -13,9 +13,9 @@ Current plans for this project are as follows:
 
 - [x] Ability to eval custom operators
 - [ ] Ability to convert to and from AST:
-  - [] SNBT
+  - [ ] SNBT
     - [x] JSON
-    - [] Add stringify and parse for JSON in correct places
+    - [ ] Add stringify and parse for JSON in correct places
   - [x] Condensed
   - [x] Expanded
   - [x] CodeLine
@@ -37,8 +37,8 @@ Current plans for this project are as follows:
 
 If you think something is wrong or missing, feel free to [open an issue](https://github.com/kirjorjos/WIP-Integrated-Dynamics-Project/issues) or [submit a pull request](https://github.com/kirjorjos/WIP-Integrated-Dynamics-Project/pulls).
 
-Before committing any changes, please build the project to automatically format and test:
+When committing changes, please use the automated tools to test and format staged changes:
 
 ```bash
-npm run build
+npm run commit -- "commit message here"
 ```
