@@ -22,7 +22,6 @@ export class OPERATOR_NBT_COMPOUND_WITH_SHORT extends BaseOperator<
     "n_b_t_with_short",
     "nbt_compound_with_short",
     "nbt_with_short",
-    "nbtCompound_with_short",
   ];
   static override symbol = "NBT{}.with_short";
   static override interactName = "nbtWithShort";

@@ -15,7 +15,6 @@ export class OPERATOR_OBJECT_FLUIDSTACK_MODNAME extends BaseOperator<
     "fluidstackModname",
     "fluidStackModname",
     "FluidstackModname",
-    "mod",
     "fluid_mod_name",
     "fluid_stack_modname",
     "fluidstack_mod",

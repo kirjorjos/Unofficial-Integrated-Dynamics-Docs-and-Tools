@@ -18,7 +18,6 @@ export class OPERATOR_NBT_FROM_LONG_LIST extends BaseOperator<
     "from_long_list",
     "long_list_as_nbt",
     "nbt_from_long_list",
-    "nbtFrom_long_list",
   ];
   static override symbol = "NBT.from_long_list";
   static override interactName = "longListAsNbt";

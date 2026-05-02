@@ -28,7 +28,6 @@ export class OPERATOR_NBT_COMPOUND_VALUE_LIST_INT extends BaseOperator<
     "compound_value_list_integer",
     "nbt_compound_value_list_int",
     "nbt_get_list_int",
-    "nbtCompound_value_list_int",
   ];
   static override symbol = "NBT{}.get_list_int";
   static override interactName = "nbtGetListInt";

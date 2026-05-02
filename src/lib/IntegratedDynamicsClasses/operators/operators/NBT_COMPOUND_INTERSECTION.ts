@@ -18,7 +18,6 @@ export class OPERATOR_NBT_COMPOUND_INTERSECTION extends BaseOperator<
     "compound_intersection",
     "nbt_compound_intersection",
     "nbt_intersection",
-    "nbtCompound_intersection",
   ];
   static override symbol = "NBT{}.∩";
   static override interactName = "nbtIntersection";

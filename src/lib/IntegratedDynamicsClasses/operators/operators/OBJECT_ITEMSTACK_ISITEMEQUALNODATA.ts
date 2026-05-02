@@ -13,18 +13,22 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISITEMEQUALNODATA extends BaseOperator<
   static override numericID = 282;
   static override nicknames = [
     "isitemequalnonbt",
+    "isItemEqualNonNbt",
+    "isItemEqualNonNBT",
+    "isEqualNoNBT",
     "itemstackIsItemequalnodata",
     "ItemstackIsitemequalnodata",
     "itemstackIsitemequalnonbt",
-    "itemstackIsNbtEqual",
+    "itemstackIsEqualNonNbt",
     "itemstack_is_itemequalnodata",
-    "itemstack_is_nbt_equal",
     "itemstack_isitemequalnodata",
     "itemstack_isitemequalnonbt",
+    "is_item_equal_no_nbt",
+    "is_equal_no_nbt",
   ];
   static override symbol = "=NoNBT=";
-  static override interactName = "itemstackIsNbtEqual";
-  static override operatorName = "isitemequalnonbt" as const;
+  static override interactName = "itemstackIsEqualNonNbt";
+  static override operatorName = "isitemequalnonnbt" as const;
   static override displayName = "Raw item equals no NBT" as const;
   static override fullDisplayName = "Item Raw item equals no NBT" as const;
   static override tooltipInfo =
@@ -61,6 +65,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISITEMEQUALNODATA extends BaseOperator<
           );
         };
       },
+      flipTarget: "OBJECT_ITEMSTACK_ISITEMEQUALNODATA",
     });
   }
 }

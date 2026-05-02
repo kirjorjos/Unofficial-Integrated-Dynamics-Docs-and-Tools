@@ -14,8 +14,10 @@ export class OPERATOR_LIST_EMPTY extends BaseOperator<
     "empty",
     "listEmpty",
     "listIsEmpty",
+    "isEmpty",
     "list_empty",
     "list_is_empty",
+    "is_empty",
   ];
   static override symbol = "∅";
   static override interactName = "listIsEmpty";

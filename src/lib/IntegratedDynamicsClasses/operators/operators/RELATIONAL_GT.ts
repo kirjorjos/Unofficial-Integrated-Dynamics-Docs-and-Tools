@@ -13,8 +13,11 @@ export class OPERATOR_RELATIONAL_GT extends BaseOperator<
     "gt",
     "numberGreaterThan",
     "relationalGt",
+    "greaterThan",
     "number_greater_than",
     "relational_gt",
+    "greater_than",
+    ">",
   ];
   static override symbol = ">";
   static override interactName = "numberGreaterThan";
@@ -48,6 +51,7 @@ export class OPERATOR_RELATIONAL_GT extends BaseOperator<
           return new iBoolean(num1.gt(num2));
         };
       },
+      flipTarget: "RELATIONAL_LT",
     });
   }
 }

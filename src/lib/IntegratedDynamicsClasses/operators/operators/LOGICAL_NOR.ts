@@ -15,6 +15,7 @@ export class OPERATOR_LOGICAL_NOR extends BaseOperator<
     "nor",
     "boolean_nor",
     "logical_nor",
+    "!||",
   ];
   static override symbol = "!||";
   static override interactName = "booleanNor";
@@ -48,6 +49,7 @@ export class OPERATOR_LOGICAL_NOR extends BaseOperator<
           return new iBoolean(!(bool1.valueOf() || bool2.valueOf()));
         };
       },
+      flipTarget: "LOGICAL_NOR",
     });
   }
 }

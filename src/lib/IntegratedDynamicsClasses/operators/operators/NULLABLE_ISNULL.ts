@@ -14,6 +14,7 @@ export class OPERATOR_NULLABLE_ISNULL extends BaseOperator<
     "generalIsnull",
     "isnull",
     "isNull",
+    "null",
     "nullableIsnull",
     "any_is_null",
     "GENERAL_IS_NULL",

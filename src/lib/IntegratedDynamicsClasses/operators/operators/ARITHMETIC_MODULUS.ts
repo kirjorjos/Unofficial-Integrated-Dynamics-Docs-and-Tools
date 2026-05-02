@@ -15,6 +15,7 @@ export class OPERATOR_ARITHMETIC_MODULUS extends BaseOperator<
     "numberModulus",
     "arithmetic_modulus",
     "number_modulus",
+    "%",
   ];
   static override symbol = "%";
   static override interactName = "numberModulus";

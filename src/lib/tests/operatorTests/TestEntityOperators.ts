@@ -352,29 +352,29 @@ describe("TestEntityOperators", () => {
    */
 
   it("testBlockWidth", () => {
-    const res1 = new operatorRegistry.ENTITY_WIDTH().evaluate(eZombie);
+    const res1 = new operatorRegistry.OBJECT_ENTITY_WIDTH().evaluate(eZombie);
     expect(res1).toBeInstanceOf(Double);
     expect((res1 as Double).toJSNumber()).toBe(0.6);
 
-    const res2 = new operatorRegistry.ENTITY_WIDTH().evaluate(eItem);
+    const res2 = new operatorRegistry.OBJECT_ENTITY_WIDTH().evaluate(eItem);
     expect((res2 as Double).toJSNumber()).toBe(0.25);
   });
 
   it("testInvalidInputSizeWidthLarge", () => {
     expect(() => {
-      new operatorRegistry.ENTITY_WIDTH().evaluate(eZombie, eZombie);
+      new operatorRegistry.OBJECT_ENTITY_WIDTH().evaluate(eZombie, eZombie);
     }).toThrow();
   });
 
   it("testInvalidInputSizeWidthSmall", () => {
     expect(() => {
-      new operatorRegistry.ENTITY_WIDTH().evaluate();
+      new operatorRegistry.OBJECT_ENTITY_WIDTH().evaluate();
     }).toThrow();
   });
 
   it("testInvalidInputTypeWidth", () => {
     expect(() => {
-      new operatorRegistry.ENTITY_WIDTH().evaluate(DUMMY_VARIABLE);
+      new operatorRegistry.OBJECT_ENTITY_WIDTH().evaluate(DUMMY_VARIABLE);
     }).toThrow();
   });
 

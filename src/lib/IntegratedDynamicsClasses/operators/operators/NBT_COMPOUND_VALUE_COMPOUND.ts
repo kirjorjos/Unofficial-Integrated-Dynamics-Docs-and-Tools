@@ -19,7 +19,6 @@ export class OPERATOR_NBT_COMPOUND_VALUE_COMPOUND extends BaseOperator<
     "compound_value_compound",
     "nbt_compound_value_compound",
     "nbt_get_compound",
-    "nbtCompound_value_compound",
   ];
   static override symbol = "NBT{}.get_compound";
   static override interactName = "nbtGetCompound";

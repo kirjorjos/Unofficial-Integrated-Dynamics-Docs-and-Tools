@@ -62,6 +62,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISDATAEQUAL extends BaseOperator<
           return item1.getNBT().equals(item2.getNBT());
         };
       },
+      flipTarget: "OBJECT_ITEMSTACK_ISDATAEQUAL",
     });
   }
 }

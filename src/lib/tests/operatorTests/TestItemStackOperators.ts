@@ -1014,29 +1014,29 @@ describe("TestItemStackOperators", () => {
    */
 
   it("testItemStackTag", () => {
-    const res1 = new operatorRegistry.ITEMSTACK_TAG().evaluate(iStone);
+    const res1 = new operatorRegistry.OBJECT_ITEMSTACK_TAG().evaluate(iStone);
     expect(res1).toBeInstanceOf(iArrayEager);
     expect((res1 as iArrayEager<any>).size().toJSNumber()).toBe(2);
 
-    const res2 = new operatorRegistry.ITEMSTACK_TAG().evaluate(iWrench);
+    const res2 = new operatorRegistry.OBJECT_ITEMSTACK_TAG().evaluate(iWrench);
     expect((res2 as iArrayEager<any>).size().toJSNumber()).toBe(1);
   });
 
   it("testInvalidInputSizeTagLarge", () => {
     expect(() => {
-      new operatorRegistry.ITEMSTACK_TAG().evaluate(iHoe, iHoe);
+      new operatorRegistry.OBJECT_ITEMSTACK_TAG().evaluate(iHoe, iHoe);
     }).toThrow();
   });
 
   it("testInvalidInputSizeTagSmall", () => {
     expect(() => {
-      new operatorRegistry.ITEMSTACK_TAG().evaluate();
+      new operatorRegistry.OBJECT_ITEMSTACK_TAG().evaluate();
     }).toThrow();
   });
 
   it("testInvalidInputTypeTag", () => {
     expect(() => {
-      new operatorRegistry.ITEMSTACK_TAG().evaluate(DUMMY_VARIABLE);
+      new operatorRegistry.OBJECT_ITEMSTACK_TAG().evaluate(DUMMY_VARIABLE);
     }).toThrow();
   });
 

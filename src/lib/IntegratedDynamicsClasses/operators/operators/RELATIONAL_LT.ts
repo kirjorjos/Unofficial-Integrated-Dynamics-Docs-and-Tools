@@ -13,8 +13,11 @@ export class OPERATOR_RELATIONAL_LT extends BaseOperator<
     "lt",
     "numberLessThan",
     "relationalLt",
+    "lessThan",
     "number_less_than",
     "relational_lt",
+    "less_than",
+    "<",
   ];
   static override symbol = "<";
 
@@ -49,6 +52,7 @@ export class OPERATOR_RELATIONAL_LT extends BaseOperator<
           return new iBoolean(num1.lt(num2));
         };
       },
+      flipTarget: "RELATIONAL_GT",
     });
   }
 }

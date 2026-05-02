@@ -13,7 +13,6 @@ export class OPERATOR_NBT_AS_SHORT extends BaseOperator<ShortTag, Integer> {
     "nbtAsShort",
     "as_short",
     "nbt_as_short",
-    "nbtAs_short",
   ];
   static override symbol = "NBT.as_short";
   static override interactName = "nbtAsShort";

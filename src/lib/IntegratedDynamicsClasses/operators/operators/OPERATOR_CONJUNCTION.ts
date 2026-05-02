@@ -17,6 +17,7 @@ export class OPERATOR_OPERATOR_CONJUNCTION extends BaseOperator<
     "conjunction",
     "operatorConjunction",
     "operator_conjunction",
+    ".&&.",
   ];
   static override symbol = ".&&.";
   static override interactName = "operatorConjunction";
@@ -80,6 +81,7 @@ export class OPERATOR_OPERATOR_CONJUNCTION extends BaseOperator<
           };
         };
       },
+      flipTarget: "OPERATOR_CONJUNCTION",
     });
   }
 }

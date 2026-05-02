@@ -52,16 +52,20 @@ export class BaseOperator<
   static numericID: number = -1;
   static renderPattern: LogicProgrammerRenderPatternKey = "NONE";
   serializer?: string;
-  static readonly nicknameRegexAllowedChars = "A-Za-z0-9._&|{}";
+  static readonly nicknameRegexAllowedChars =
+    "A-Za-z0-9._&|{}!+*%/√<^~⌈⌉⌊⌋∩?=>\-";
+  flipTarget?: TypeOperatorKey;
 
   constructor({
     parsedSignature,
     function: fn,
     serializer,
+    flipTarget,
   }: {
     parsedSignature: ParsedSignature;
     function: TypeLambda<any, any>;
     serializer?: string;
+    flipTarget?: TypeOperatorKey;
   }) {
     const staticThis = new.target as typeof BaseOperator;
     super({
@@ -70,6 +74,7 @@ export class BaseOperator<
       interactName: staticThis.interactName,
     });
     this.serializer = serializer;
+    this.flipTarget = flipTarget;
   }
 
   get nicknames(): string[] {

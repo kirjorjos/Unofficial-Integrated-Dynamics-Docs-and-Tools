@@ -17,13 +17,9 @@ export class OPERATOR_OBJECT_ITEMSTACK_TAG_STACKS extends BaseOperator<
     "ItemstackTags",
     "itemstackTagVal",
     "itemstackTagValues",
-    "itemTagNames",
     "stringTag",
-    "tag",
-    "item_tag_names",
     "itemstack_tag_val",
     "itemstack_tag_values",
-    "itemstack_tags",
     "string_tag",
   ];
   static override symbol = "item_tag_val";

@@ -19,7 +19,6 @@ export class OPERATOR_NBT_COMPOUND_SUBSET extends BaseOperator<
     "compound_subset",
     "nbt_compound_subset",
     "nbt_is_subset",
-    "nbtCompound_subset",
   ];
   static override symbol = "NBT{}.⊆";
   static override interactName = "nbtIsSubset";

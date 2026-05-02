@@ -19,7 +19,6 @@ export class OPERATOR_NBT_COMPOUND_WITHOUT extends BaseOperator<
     "compound_without",
     "nbt_compound_without",
     "nbt_without",
-    "nbtCompound_without",
   ];
   static override symbol = "NBT{}.without";
   static override interactName = "nbtWithout";

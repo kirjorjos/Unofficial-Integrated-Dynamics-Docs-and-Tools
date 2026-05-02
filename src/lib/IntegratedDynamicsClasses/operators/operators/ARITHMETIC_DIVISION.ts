@@ -16,6 +16,7 @@ export class OPERATOR_ARITHMETIC_DIVISION extends BaseOperator<
     "numberDivide",
     "arithmetic_division",
     "number_divide",
+    "/",
   ];
   static override symbol = "/";
   static override interactName = "numberDivide";

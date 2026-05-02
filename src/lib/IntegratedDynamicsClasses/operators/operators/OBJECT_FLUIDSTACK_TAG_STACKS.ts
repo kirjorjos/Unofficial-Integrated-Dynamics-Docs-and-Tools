@@ -16,10 +16,8 @@ export class OPERATOR_OBJECT_FLUIDSTACK_TAG_STACKS extends BaseOperator<
   static override nicknames = [
     "fluidStackTagStacks",
     "FluidstackTagStacks",
-    "fluidtag",
     "fluidTagStacks",
     "stringFluidsByTag",
-    "stringFluidtag",
     "fluid_stack_tag_stacks",
     "fluid_tag_stacks",
     "fluidstack_tag_stacks",

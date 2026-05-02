@@ -26,7 +26,6 @@ export class OPERATOR_NBT_COMPOUND_VALUE_LIST_LONG extends BaseOperator<
     "compound_value_list_long",
     "nbt_compound_value_list_long",
     "nbt_get_list_long",
-    "nbtCompound_value_list_long",
   ];
   static override symbol = "NBT{}.get_list_long";
   static override interactName = "nbtGetListLong";

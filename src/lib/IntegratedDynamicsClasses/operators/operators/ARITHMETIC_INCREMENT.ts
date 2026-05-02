@@ -15,6 +15,7 @@ export class OPERATOR_ARITHMETIC_INCREMENT extends BaseOperator<
     "numberIncrement",
     "arithmetic_increment",
     "number_increment",
+    "++",
   ];
   static override symbol = "++";
   static override interactName = "numberIncrement";

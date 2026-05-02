@@ -16,6 +16,7 @@ export class OPERATOR_ARITHMETIC_MULTIPLICATION extends BaseOperator<
     "numberMultiply",
     "arithmetic_multiplication",
     "number_multiply",
+    "*",
   ];
   static override symbol = "*";
   static override interactName = "numberMultiply";
@@ -51,6 +52,7 @@ export class OPERATOR_ARITHMETIC_MULTIPLICATION extends BaseOperator<
           return higherOrder.multiply(lowerOrder);
         };
       },
+      flipTarget: "ARITHMETIC_MULTIPLICATION",
     });
   }
 }

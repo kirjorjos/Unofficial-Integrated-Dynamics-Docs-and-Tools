@@ -28,7 +28,6 @@ import { OPERATOR_ENTITY_HELDITEM } from "lib/IntegratedDynamicsClasses/operator
 import { OPERATOR_ENTITY_HELDITEMOFFHAND } from "lib/IntegratedDynamicsClasses/operators/operators/ENTITY_HELDITEMOFFHAND";
 import { OPERATOR_ENTITY_ISMINECART } from "lib/IntegratedDynamicsClasses/operators/operators/ENTITY_ISMINECART";
 import { OPERATOR_ENTITY_ITEM } from "lib/IntegratedDynamicsClasses/operators/operators/ENTITY_ITEM";
-import { OPERATOR_ENTITY_WIDTH } from "lib/IntegratedDynamicsClasses/operators/operators/ENTITY_WIDTH";
 import { OPERATOR_GENERAL_CHOICE } from "lib/IntegratedDynamicsClasses/operators/operators/GENERAL_CHOICE";
 import { OPERATOR_GENERAL_CONSTANT } from "lib/IntegratedDynamicsClasses/operators/operators/GENERAL_CONSTANT";
 import { OPERATOR_GENERAL_IDENTITY } from "lib/IntegratedDynamicsClasses/operators/operators/GENERAL_IDENTITY";
@@ -48,7 +47,6 @@ import { OPERATOR_ITEMSTACK_DATAVALUE } from "lib/IntegratedDynamicsClasses/oper
 import { OPERATOR_ITEMSTACK_ISFECONTAINER } from "lib/IntegratedDynamicsClasses/operators/operators/ITEMSTACK_ISFECONTAINER";
 import { OPERATOR_ITEMSTACK_ITEMBYNAME } from "lib/IntegratedDynamicsClasses/operators/operators/ITEMSTACK_ITEMBYNAME";
 import { OPERATOR_ITEMSTACK_ITEMLISTCOUNT } from "lib/IntegratedDynamicsClasses/operators/operators/ITEMSTACK_ITEMLISTCOUNT";
-import { OPERATOR_ITEMSTACK_TAG } from "lib/IntegratedDynamicsClasses/operators/operators/ITEMSTACK_TAG";
 import { OPERATOR_ITEMSTACK_TOOLTIP } from "lib/IntegratedDynamicsClasses/operators/operators/ITEMSTACK_TOOLTIP";
 import { OPERATOR_ITEMSTACK_WITH_NBT } from "lib/IntegratedDynamicsClasses/operators/operators/ITEMSTACK_WITH_NBT";
 import { OPERATOR_ITEMSTACK_WITHDATA } from "lib/IntegratedDynamicsClasses/operators/operators/ITEMSTACK_WITHDATA";
@@ -302,7 +300,6 @@ import { OPERATOR_STRING_SPLIT_ON } from "lib/IntegratedDynamicsClasses/operator
 import { OPERATOR_STRING_SPLIT_ON_REGEX } from "lib/IntegratedDynamicsClasses/operators/operators/STRING_SPLIT_ON_REGEX";
 import { OPERATOR_STRING_STARTS_WITH } from "lib/IntegratedDynamicsClasses/operators/operators/STRING_STARTS_WITH";
 import { OPERATOR_STRING_SUBSTRING } from "lib/IntegratedDynamicsClasses/operators/operators/STRING_SUBSTRING";
-import { OPERATOR_STRING_TAG } from "lib/IntegratedDynamicsClasses/operators/operators/STRING_TAG";
 import { OPERATOR_UNIQUELY_NAMED_UNIQUE_NAME } from "lib/IntegratedDynamicsClasses/operators/operators/UNIQUELY_NAMED_UNIQUE_NAME";
 import { OPERATOR_BINARY_RZSHIFT } from "lib/IntegratedDynamicsClasses/operators/operators/BINARY_RZSHIFT";
 import { OPERATOR_LIST_LAZYBUILT } from "lib/IntegratedDynamicsClasses/operators/operators/LIST_LAZYBUILT";
@@ -453,9 +450,7 @@ const operatorRegistryClass = class operatorRegistryClass {
   OBJECT_ITEMSTACK_MODNAME = OPERATOR_OBJECT_ITEMSTACK_MODNAME;
   OBJECT_ITEMSTACK_FUELBURNTIME = OPERATOR_OBJECT_ITEMSTACK_FUELBURNTIME;
   ITEMSTACK_CANBURN = OPERATOR_ITEMSTACK_CANBURN;
-  ITEMSTACK_TAG = OPERATOR_ITEMSTACK_TAG;
   OBJECT_ITEMSTACK_TAG = OPERATOR_OBJECT_ITEMSTACK_TAG;
-  STRING_TAG = OPERATOR_STRING_TAG;
   OBJECT_ITEMSTACK_TAG_STACKS = OPERATOR_OBJECT_ITEMSTACK_TAG_STACKS;
   OBJECT_ITEMSTACK_WITHSIZE = OPERATOR_OBJECT_ITEMSTACK_WITHSIZE;
   ITEMSTACK_ISFECONTAINER = OPERATOR_ITEMSTACK_ISFECONTAINER;
@@ -484,7 +479,6 @@ const operatorRegistryClass = class operatorRegistryClass {
   ENTITY_ISMINECART = OPERATOR_ENTITY_ISMINECART;
   ENTITY_ITEM = OPERATOR_ENTITY_ITEM;
   ENTITY_HEALTH = OPERATOR_ENTITY_HEALTH;
-  ENTITY_WIDTH = OPERATOR_ENTITY_WIDTH;
   OBJECT_ENTITY_WIDTH = OPERATOR_OBJECT_ENTITY_WIDTH;
   OBJECT_ENTITY_HEIGHT = OPERATOR_OBJECT_ENTITY_HEIGHT;
   OBJECT_ENTITY_ISBURNING = OPERATOR_OBJECT_ENTITY_ISBURNING;

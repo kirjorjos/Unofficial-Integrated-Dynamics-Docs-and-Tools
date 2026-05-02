@@ -14,7 +14,7 @@ export class OPERATOR_PARSE_NBT extends BaseOperator<iString, CompoundTag> {
     "stringParseAsNbt",
     "parse_n_b_t",
     "parse_nbt",
-    "parseParse_nbt",
+    "parse_parse_nbt",
     "string_parse_as_nbt",
   ];
   static override symbol = "parse_nbt";

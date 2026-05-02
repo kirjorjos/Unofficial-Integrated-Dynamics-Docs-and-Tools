@@ -11,7 +11,6 @@ export class OPERATOR_LOGICAL_AND extends BaseOperator<
   static override numericID = 68;
   static override nicknames = [
     "&&",
-    "and",
     "booleanAnd",
     "logicalAnd",
     "boolean_and",
@@ -50,6 +49,7 @@ export class OPERATOR_LOGICAL_AND extends BaseOperator<
           return new iBoolean(bool1.valueOf() && bool2.valueOf());
         };
       },
+      flipTarget: "LOGICAL_AND",
     });
   }
 }

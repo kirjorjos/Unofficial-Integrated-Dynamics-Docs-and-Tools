@@ -11,11 +11,12 @@ export class OPERATOR_OBJECT_ITEMSTACK_PLANTTYPE extends BaseOperator<
     "integrateddynamics:itemstack_plant_type" as const;
   static override numericID = 125;
   static override nicknames = [
+    "itemPlantType",
+    "itemstackPlantType",
     "itemstackPlanttype",
-    "planttype",
-    "plantType",
+    "item_plant_type",
     "itemstack_planttype",
-    "plant_type",
+    "itemstack_plant_type",
   ];
   static override symbol = "plant_type";
   static override interactName = "plantType";

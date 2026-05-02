@@ -19,7 +19,6 @@ export class OPERATOR_NBT_PATH_MATCH_FIRST extends BaseOperator<
     "pathMatchFirst",
     "stringNbtPathMatchFirst",
     "nbt_path_match_first",
-    "nbtPath_match_first",
     "path_match_first",
     "string_nbt_path_match_first",
   ];

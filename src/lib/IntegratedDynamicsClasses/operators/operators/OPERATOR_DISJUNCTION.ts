@@ -17,6 +17,7 @@ export class OPERATOR_OPERATOR_DISJUNCTION extends BaseOperator<
     "disjunction",
     "operatorDisjunction",
     "operator_disjunction",
+    ".||.",
   ];
   static override symbol = ".||.";
   static override interactName = "operatorDisjunction";
@@ -80,6 +81,7 @@ export class OPERATOR_OPERATOR_DISJUNCTION extends BaseOperator<
           };
         };
       },
+      flipTarget: "OPERATOR_DISJUNCTION",
     });
   }
 }

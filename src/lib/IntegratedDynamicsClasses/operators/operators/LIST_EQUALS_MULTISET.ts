@@ -18,6 +18,7 @@ export class OPERATOR_LIST_EQUALS_MULTISET extends BaseOperator<
     "equals_multiset",
     "list_equals_multiset",
     "listEquals_multiset",
+    "=multiset=",
   ];
   static override symbol = "=multiset=";
   static override interactName = "listEquals_multiset";
@@ -67,6 +68,7 @@ export class OPERATOR_LIST_EQUALS_MULTISET extends BaseOperator<
           return new iBoolean(true);
         };
       },
+      flipTarget: "LIST_EQUALS_MULTISET",
     });
   }
 }

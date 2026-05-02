@@ -22,7 +22,6 @@ export class OPERATOR_NBT_COMPOUND_VALUE_DOUBLE extends BaseOperator<
     "compound_value_double",
     "nbt_compound_value_double",
     "nbt_get_double",
-    "nbtCompound_value_double",
   ];
   static override symbol = "NBT{}.get_double";
   static override interactName = "nbtGetDouble";

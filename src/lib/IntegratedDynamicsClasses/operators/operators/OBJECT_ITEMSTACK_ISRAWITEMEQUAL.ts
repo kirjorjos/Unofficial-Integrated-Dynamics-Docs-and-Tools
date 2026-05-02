@@ -60,6 +60,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISRAWITEMEQUAL extends BaseOperator<
           );
         };
       },
+      flipTarget: "OBJECT_ITEMSTACK_ISRAWITEMEQUAL",
     });
   }
 }

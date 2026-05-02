@@ -14,6 +14,7 @@ export class OPERATOR_BINARY_XOR extends BaseOperator<
     "xor",
     "binary_xor",
     "integer_xor",
+    "^",
   ];
   static override symbol = "^";
   static override interactName = "integerXor";
@@ -47,6 +48,7 @@ export class OPERATOR_BINARY_XOR extends BaseOperator<
           return int1.binaryXor(int2);
         };
       },
+      flipTarget: "BINARY_XOR",
     });
   }
 }

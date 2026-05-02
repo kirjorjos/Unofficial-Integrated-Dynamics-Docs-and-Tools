@@ -174,7 +174,7 @@ describe("TestCondensedTransformer", () => {
   it("testLambdaRule3", () => {
     // x => f x y  =>  flip f y
     const ast = CondensedToAST("x => numberAdd(x, 1)");
-    expect(ASTToCondensed(ast)).toBe("apply(operatorFlip(numberAdd), 1)");
+    expect(ASTToCondensed(ast)).toBe("apply(numberAdd, 1)");
   });
 
   it("testLambdaRule4", () => {
@@ -212,7 +212,8 @@ describe("TestCondensedTransformer", () => {
   });
 
   it("testLambdaConjunction", () => {
-    const code = "x => and(itemstackIsStackable(x), itemstackIsDamageable(x))";
+    const code =
+      "x => logicalAnd(itemstackIsStackable(x), itemstackIsDamageable(x))";
     const ast = CondensedToAST(code);
     expect(ASTToCondensed(ast)).toBe(
       "operatorConjunction(itemstackIsStackable, itemstackIsDamageable)"
@@ -220,7 +221,8 @@ describe("TestCondensedTransformer", () => {
   });
 
   it("testLambdaDisjunction", () => {
-    const code = "x => or(itemstackIsStackable(x), itemstackIsDamageable(x))";
+    const code =
+      "x => logicalOr(itemstackIsStackable(x), itemstackIsDamageable(x))";
     const ast = CondensedToAST(code);
     expect(ASTToCondensed(ast)).toBe(
       "operatorDisjunction(itemstackIsStackable, itemstackIsDamageable)"
@@ -269,16 +271,16 @@ describe("TestCondensedTransformer", () => {
 
   it("testLambdaShort", () => {
     const ast = CondensedToAST("\\x.numberAdd(x, 1)");
-    expect(ASTToCondensed(ast)).toBe("apply(operatorFlip(numberAdd), 1)");
+    expect(ASTToCondensed(ast)).toBe("apply(numberAdd, 1)");
   });
 
   it("testLambdaArrow", () => {
     const ast = CondensedToAST("x -> numberAdd(x, 1)");
-    expect(ASTToCondensed(ast)).toBe("apply(operatorFlip(numberAdd), 1)");
+    expect(ASTToCondensed(ast)).toBe("apply(numberAdd, 1)");
   });
 
   it("testLambdaVarWithDot", () => {
     const ast = CondensedToAST("\\var.with.dot.numberAdd(var.with.dot, 1)");
-    expect(ASTToCondensed(ast)).toBe("apply(operatorFlip(numberAdd), 1)");
+    expect(ASTToCondensed(ast)).toBe("apply(numberAdd, 1)");
   });
 });

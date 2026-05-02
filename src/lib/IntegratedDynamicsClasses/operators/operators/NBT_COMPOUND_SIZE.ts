@@ -18,7 +18,6 @@ export class OPERATOR_NBT_COMPOUND_SIZE extends BaseOperator<
     "compound_size",
     "nbt_compound_size",
     "nbt_size",
-    "nbtCompound_size",
   ];
   static override symbol = "NBT{}.size";
   static override interactName = "nbtSize";

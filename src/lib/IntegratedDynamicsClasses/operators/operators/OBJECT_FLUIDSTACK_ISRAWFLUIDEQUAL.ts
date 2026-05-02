@@ -72,6 +72,7 @@ export class OPERATOR_OBJECT_FLUIDSTACK_ISRAWFLUIDEQUAL extends BaseOperator<
           );
         };
       },
+      flipTarget: "OBJECT_FLUIDSTACK_ISRAWFLUIDEQUAL",
     });
   }
 }

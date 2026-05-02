@@ -13,8 +13,11 @@ export class OPERATOR_RELATIONAL_LE extends BaseOperator<
     "anyLessThanOrEquals",
     "le",
     "relationalLe",
+    "lessThanOrEquals",
     "any_less_than_or_equals",
     "relational_le",
+    "less_than_or_equals",
+    "<=",
   ];
   static override symbol = "<=";
   static override interactName = "anyLessThanOrEquals";
@@ -48,6 +51,7 @@ export class OPERATOR_RELATIONAL_LE extends BaseOperator<
           return new iBoolean(num1.lte(num2));
         };
       },
+      flipTarget: "RELATIONAL_GE",
     });
   }
 }

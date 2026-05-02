@@ -21,7 +21,6 @@ export class OPERATOR_NBT_COMPOUND_WITH_STRING extends BaseOperator<
     "n_b_t_with_string",
     "nbt_compound_with_string",
     "nbt_with_string",
-    "nbtCompound_with_string",
   ];
   static override symbol = "NBT{}.with_string";
   static override interactName = "nbtWithString";

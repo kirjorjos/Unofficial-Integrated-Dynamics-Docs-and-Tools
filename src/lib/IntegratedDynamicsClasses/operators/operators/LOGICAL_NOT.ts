@@ -11,6 +11,7 @@ export class OPERATOR_LOGICAL_NOT extends BaseOperator<iBoolean, iBoolean> {
     "not",
     "boolean_not",
     "logical_not",
+    "!",
   ];
   static override symbol = "!";
   static override interactName = "booleanNot";

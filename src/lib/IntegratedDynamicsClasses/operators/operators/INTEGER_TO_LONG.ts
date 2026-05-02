@@ -6,16 +6,14 @@ export class OPERATOR_INTEGER_TO_LONG extends BaseOperator<Integer, Long> {
     "integrateddynamics:operator.integrateddynamics.castintegrateddynamics_integer__integrateddynamics_long" as const;
   static override numericID = 87;
   static override nicknames = [
-    "castLong",
     "integerIntegerToLong",
     "integerLong",
     "intToLong",
-    "numberCastLong",
-    "cast_long",
+    "integerToLong",
     "int_to_long",
     "integer_integer_to_long",
     "integer_long",
-    "numberCast_long",
+    "integer_to_long",
   ];
   static override symbol = "()";
   static override interactName = "integerIntegerToLong";

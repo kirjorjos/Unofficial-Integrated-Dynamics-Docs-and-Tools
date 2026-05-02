@@ -15,6 +15,7 @@ export class OPERATOR_LOGICAL_NAND extends BaseOperator<
     "nand",
     "boolean_nand",
     "logical_nand",
+    "!&&",
   ];
   static override symbol = "!&&";
   static override interactName = "booleanNand";
@@ -48,6 +49,7 @@ export class OPERATOR_LOGICAL_NAND extends BaseOperator<
           return new iBoolean(!(bool1.valueOf() && bool2.valueOf()));
         };
       },
+      flipTarget: "LOGICAL_NAND",
     });
   }
 }

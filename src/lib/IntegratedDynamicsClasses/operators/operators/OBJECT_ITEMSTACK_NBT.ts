@@ -15,7 +15,6 @@ export class OPERATOR_OBJECT_ITEMSTACK_NBT extends BaseOperator<
     "itemstackNBT",
     "itemStackNBT",
     "ItemstackNbt",
-    "nbt",
     "item_n_b_t",
     "item_stack_n_b_t",
     "itemstack_n_b_t",

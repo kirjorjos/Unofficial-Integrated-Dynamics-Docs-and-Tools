@@ -22,7 +22,6 @@ export class OPERATOR_NBT_COMPOUND_WITH_FLOAT extends BaseOperator<
     "n_b_t_with_float",
     "nbt_compound_with_float",
     "nbt_with_float",
-    "nbtCompound_with_float",
   ];
   static override symbol = "NBT{}.with_float";
   static override interactName = "nbtWithFloat";

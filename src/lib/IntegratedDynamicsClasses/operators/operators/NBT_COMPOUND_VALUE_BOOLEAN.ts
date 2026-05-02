@@ -21,7 +21,6 @@ export class OPERATOR_NBT_COMPOUND_VALUE_BOOLEAN extends BaseOperator<
     "compound_value_boolean",
     "nbt_compound_value_boolean",
     "nbt_get_boolean",
-    "nbtCompound_value_boolean",
   ];
   static override symbol = "NBT{}.get_iBoolean";
   static override interactName = "nbtGetBoolean";

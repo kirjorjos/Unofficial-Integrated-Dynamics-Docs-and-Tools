@@ -644,6 +644,16 @@ export const CondensedToAST = (
           args: [body.op1],
         });
       }
+      const condensedOp1 = condense(body.op1);
+      const condensedOp2 = condense(body.op2);
+      if (condensedOp1 === body.op1 && condensedOp2 === body.op2) {
+        return body;
+      }
+      return condense({
+        type: "Pipe",
+        op1: condensedOp1,
+        op2: condensedOp2,
+      });
     }
     if (body.type === "Curry") {
       if (body.base.type === "Curry") {
@@ -653,6 +663,19 @@ export const CondensedToAST = (
           args: [...body.base.args, ...body.args],
         });
       }
+      const condensedBase = condense(body.base);
+      const condensedArgs = body.args.map(condense);
+      if (
+        condensedBase === body.base &&
+        condensedArgs.every((a, i) => a === body.args[i])
+      ) {
+        return body;
+      }
+      return condense({
+        type: "Curry",
+        base: condensedBase,
+        args: condensedArgs,
+      });
     }
     if (body.type === "Pipe2") {
       if (body.op3.type === "Operator" && body.op3.opName === "LOGICAL_AND") {
@@ -669,6 +692,39 @@ export const CondensedToAST = (
           args: [body.op1, body.op2],
         });
       }
+      const condensedOp1 = condense(body.op1);
+      const condensedOp2 = condense(body.op2);
+      const condensedOp3 = condense(body.op3);
+      if (
+        condensedOp1 === body.op1 &&
+        condensedOp2 === body.op2 &&
+        condensedOp3 === body.op3
+      ) {
+        return body;
+      }
+      return condense({
+        type: "Pipe2",
+        op1: condensedOp1,
+        op2: condensedOp2,
+        op3: condensedOp3,
+      });
+    }
+    if (body.type === "Flip" && body.arg.type === "Operator") {
+      const originalOp = new operatorRegistry[body.arg.opName]();
+      if (originalOp instanceof BaseOperator && originalOp.flipTarget) {
+        return {
+          type: "Operator",
+          opName: originalOp.flipTarget,
+        };
+      }
+      const condensedArg = condense(body.arg);
+      if (condensedArg === body.arg) {
+        return body;
+      }
+      return condense({
+        type: "Flip",
+        arg: condensedArg,
+      });
     }
     return body;
   }

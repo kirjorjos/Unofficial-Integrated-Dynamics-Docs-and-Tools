@@ -5,6 +5,7 @@ import { Ingredients } from "lib/IntegratedDynamicsClasses/Ingredients";
 import { Item } from "lib/IntegratedDynamicsClasses/Item";
 import { CompoundTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
 import { Tag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/Tag";
+import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
 import { CurriedOperator } from "lib/IntegratedDynamicsClasses/operators/CurriedOperator";
 import { FlipOperator } from "lib/IntegratedDynamicsClasses/operators/FlipOperator";
 import { Operator } from "lib/IntegratedDynamicsClasses/operators/Operator";
@@ -209,6 +210,9 @@ export const OperatortoAST = (val: IntegratedValue): TypeAST.AST => {
   }
 
   if (val instanceof FlipOperator) {
+    if (val.op instanceof BaseOperator && val.op.flipTarget) {
+      return { type: "Operator", opName: val.op.flipTarget };
+    }
     return {
       type: "Flip",
       arg: OperatortoAST(val.op) as TypeAST.Operator,

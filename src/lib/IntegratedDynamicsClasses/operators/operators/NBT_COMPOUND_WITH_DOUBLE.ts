@@ -22,7 +22,6 @@ export class OPERATOR_NBT_COMPOUND_WITH_DOUBLE extends BaseOperator<
     "n_b_t_with_double",
     "nbt_compound_with_double",
     "nbt_with_double",
-    "nbtCompound_with_double",
   ];
   static override symbol = "NBT{}.with_double";
   static override interactName = "nbtWithDouble";

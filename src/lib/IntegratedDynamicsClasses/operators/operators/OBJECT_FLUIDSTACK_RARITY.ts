@@ -15,7 +15,6 @@ export class OPERATOR_OBJECT_FLUIDSTACK_RARITY extends BaseOperator<
     "fluidstackRarity",
     "fluidStackRarity",
     "FluidstackRarity",
-    "rarity",
     "fluid_rarity",
     "fluid_stack_rarity",
     "fluidstack_rarity",

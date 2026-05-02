@@ -15,7 +15,6 @@ export class OPERATOR_NBT_AS_INT_LIST extends BaseOperator<ListTag, Integer> {
     "nbtAsIntList",
     "as_int_list",
     "nbt_as_int_list",
-    "nbtAs_int_list",
   ];
   static override symbol = "NBT.as_int_list";
   static override interactName = "nbtAsIntList";

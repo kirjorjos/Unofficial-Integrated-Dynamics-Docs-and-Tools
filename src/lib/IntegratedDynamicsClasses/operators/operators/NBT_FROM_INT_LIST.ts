@@ -18,7 +18,6 @@ export class OPERATOR_NBT_FROM_INT_LIST extends BaseOperator<
     "from_int_list",
     "int_list_as_nbt",
     "nbt_from_int_list",
-    "nbtFrom_int_list",
   ];
   static override symbol = "NBT.from_int_list";
   static override interactName = "intListAsNbt";

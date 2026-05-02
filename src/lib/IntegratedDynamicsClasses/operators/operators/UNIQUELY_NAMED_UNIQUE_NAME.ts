@@ -14,12 +14,11 @@ export class OPERATOR_UNIQUELY_NAMED_UNIQUE_NAME extends BaseOperator<
     "stringUniqueName",
     "uname",
     "uniquelynamedUniquename",
-    "uniquelyNamedUniqueName",
-    "uniqueName",
-    "stringUnique_name",
-    "unique_name",
     "uniquely_namedUniqueName",
-    "uniquelynamed_uniquename",
+    "uniqueName",
+    "string_unique_name",
+    "unique_name",
+    "uniquely_named_unique_name",
   ];
   static override symbol = "uname";
   static override interactName = "uniquely_namedUniqueName";

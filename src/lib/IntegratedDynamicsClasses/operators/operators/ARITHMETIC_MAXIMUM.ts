@@ -53,6 +53,7 @@ export class OPERATOR_ARITHMETIC_MAXIMUM extends BaseOperator<
           return higherOrder.max(lowerOrder);
         };
       },
+      flipTarget: "ARITHMETIC_MAXIMUM",
     });
   }
 }

@@ -19,7 +19,6 @@ export class OPERATOR_NBT_COMPOUND_KEYS extends BaseOperator<
     "compound_keys",
     "nbt_compound_keys",
     "nbt_keys",
-    "nbtCompound_keys",
   ];
   static override symbol = "NBT{}.keys";
   static override interactName = "nbtKeys";

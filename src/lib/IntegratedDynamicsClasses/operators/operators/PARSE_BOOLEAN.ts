@@ -13,7 +13,7 @@ export class OPERATOR_PARSE_BOOLEAN extends BaseOperator<iString, iBoolean> {
     "parseParseBoolean",
     "stringParseAsBoolean",
     "parse_boolean",
-    "parseParse_boolean",
+    "parse_parse_boolean",
     "string_parse_as_boolean",
   ];
   static override symbol = "parse_iBoolean";

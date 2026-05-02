@@ -19,7 +19,6 @@ export class OPERATOR_STRING_SPLIT_ON_REGEX extends BaseOperator<
     "stringSplitOnRegex",
     "split_on_regex",
     "string_split_on_regex",
-    "stringSplit_on_regex",
   ];
   static override symbol = "split_on_regex";
   static override interactName = "stringSplitOnRegex";

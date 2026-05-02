@@ -14,7 +14,6 @@ export class OPERATOR_OBJECT_ENTITY_INVENTORY extends BaseOperator<
     "entityInventory",
     "entityInventoryContents",
     "EntityInventoryContents",
-    "inventory",
     "entity_inventory",
     "entity_inventory_contents",
   ];

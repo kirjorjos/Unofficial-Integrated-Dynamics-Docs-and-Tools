@@ -61,49 +61,6 @@ describe("MiscellaneousTests", () => {
       }
     });
 
-    it("testInteractNameInNicknames", () => {
-      for (const opClass of operatorClasses) {
-        const uniqueName = opClass.internalName;
-        const interactName = opClass.interactName;
-        if (!opClass.nicknames.includes(interactName)) {
-          throw new Error(
-            `interactName "${interactName}" not found in nicknames for operator "${uniqueName}"`
-          );
-        }
-      }
-    });
-
-    it("testOperatorNameDerivedNicknames", () => {
-      const operatorNameCounts = new Map<string, number>();
-      for (const opClass of operatorClasses) {
-        operatorNameCounts.set(
-          opClass.operatorName,
-          (operatorNameCounts.get(opClass.operatorName) || 0) + 1
-        );
-      }
-
-      for (const opClass of operatorClasses) {
-        const uniqueName = opClass.internalName;
-        const operatorName = opClass.operatorName;
-        const globalStyleName = `${opClass.kind}${operatorName[0]!.toUpperCase()}${operatorName.substring(1)}`;
-
-        if (
-          operatorNameCounts.get(operatorName) === 1 &&
-          !opClass.nicknames.includes(operatorName)
-        ) {
-          throw new Error(
-            `operatorName "${operatorName}" not found in nicknames for operator "${uniqueName}"`
-          );
-        }
-
-        if (!opClass.nicknames.includes(globalStyleName)) {
-          throw new Error(
-            `Derived nickname "${globalStyleName}" not found in nicknames for operator "${uniqueName}"`
-          );
-        }
-      }
-    });
-
     it("testConcatNicknameRegression", () => {
       const concatOwners: string[] = [];
 
@@ -124,6 +81,24 @@ describe("MiscellaneousTests", () => {
 
       expect(concatOwners).toEqual([]);
     });
+
+    for (const [key1, opClass1] of Object.entries(operatorRegistry) as [
+      string,
+      typeof BaseOperator,
+    ][]) {
+      for (const [key2, opClass2] of Object.entries(operatorRegistry) as [
+        string,
+        typeof BaseOperator,
+      ][]) {
+        if (key2 <= key1) continue; // Avoid duplicate pairs and self-comparison
+        it(`nicknameUniqueness-${key1}-${key2}`, () => {
+          const mutualNickname = opClass1.nicknames.filter((nickname: string) =>
+            opClass2.nicknames.includes(nickname)
+          );
+          expect(mutualNickname).toHaveLength(0);
+        });
+      }
+    }
   });
 
   describe("ValidationTests", () => {

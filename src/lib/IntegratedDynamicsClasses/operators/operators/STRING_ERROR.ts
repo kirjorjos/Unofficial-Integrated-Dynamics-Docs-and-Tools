@@ -15,7 +15,6 @@ export class OPERATOR_STRING_ERROR extends BaseOperator<
     "stringStringError",
     "string_error",
     "string_string_error",
-    "stringString_error",
   ];
   static override symbol = "error";
   static override interactName = "stringStringError";

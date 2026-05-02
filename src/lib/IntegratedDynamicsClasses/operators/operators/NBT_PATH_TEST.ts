@@ -18,7 +18,6 @@ export class OPERATOR_NBT_PATH_TEST extends BaseOperator<
     "pathTest",
     "stringNbtPathTest",
     "n_b_t_path_test",
-    "nbtPath_test",
     "path_test",
     "string_nbt_path_test",
   ];

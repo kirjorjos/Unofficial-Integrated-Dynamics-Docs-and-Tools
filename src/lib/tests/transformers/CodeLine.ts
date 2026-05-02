@@ -34,19 +34,19 @@ describe("TestCodeLineTransformer", () => {
   it("testLambda", () => {
     const code = "x => (numberAdd x 1)";
     const ast = CodeLineToAST(code);
-    expect(ASTToCodeLine(ast)).toBe("(operatorFlip numberAdd) 1");
+    expect(ASTToCodeLine(ast)).toBe("numberAdd 1");
   });
 
   it("testLambdaShort", () => {
     const code = "\\x.numberAdd x 1";
     const ast = CodeLineToAST(code);
-    expect(ASTToCodeLine(ast)).toBe("(operatorFlip numberAdd) 1");
+    expect(ASTToCodeLine(ast)).toBe("numberAdd 1");
   });
 
   it("testLambdaArrow", () => {
     const code = "x -> numberAdd x 1";
     const ast = CodeLineToAST(code);
-    expect(ASTToCodeLine(ast)).toBe("(operatorFlip numberAdd) 1");
+    expect(ASTToCodeLine(ast)).toBe("numberAdd 1");
   });
 
   it("testLambdaRule1", () => {
@@ -67,7 +67,7 @@ describe("TestCodeLineTransformer", () => {
     // x => f x y  =>  flip f y
     const code = "x => (numberAdd x 1)";
     const ast = CodeLineToAST(code);
-    expect(ASTToCodeLine(ast)).toBe("(operatorFlip numberAdd) 1");
+    expect(ASTToCodeLine(ast)).toBe("numberAdd 1");
   });
 
   it("testLambdaRule4", () => {
@@ -105,7 +105,7 @@ describe("TestCodeLineTransformer", () => {
 
   it("testLambdaConjunction", () => {
     const code =
-      "x => (and (itemstackIsStackable x) (itemstackIsDamageable x))";
+      "x => (logicalAnd (itemstackIsStackable x) (itemstackIsDamageable x))";
     const ast = CodeLineToAST(code);
     expect(ASTToCodeLine(ast)).toBe(
       "operatorConjunction itemstackIsStackable itemstackIsDamageable"
@@ -113,7 +113,8 @@ describe("TestCodeLineTransformer", () => {
   });
 
   it("testLambdaDisjunction", () => {
-    const code = "x => (or (itemstackIsStackable x) (itemstackIsDamageable x))";
+    const code =
+      "x => (logicalOr (itemstackIsStackable x) (itemstackIsDamageable x))";
     const ast = CodeLineToAST(code);
     expect(ASTToCodeLine(ast)).toBe(
       "operatorDisjunction itemstackIsStackable itemstackIsDamageable"
@@ -123,12 +124,12 @@ describe("TestCodeLineTransformer", () => {
   it("testLambdaVarWithDot", () => {
     const code = "\\var.with.dot.numberAdd var.with.dot 1";
     const ast = CodeLineToAST(code);
-    expect(ASTToCodeLine(ast)).toBe("(operatorFlip numberAdd) 1");
+    expect(ASTToCodeLine(ast)).toBe("numberAdd 1");
   });
 
   it("testComplicated2", () => {
     const code =
-      "pipe (pipe (pipe lt (pipe listLength)) map) (flip pipe (reduce1 and)) min";
+      "pipe (pipe (pipe lt (pipe listLength)) map) (flip pipe (reduce1 logicalAnd)) min";
     const ast = CodeLineToAST(code);
     const back = ASTToCodeLine(ast);
     expect(CodeLineToAST(back)).toEqual(ast);

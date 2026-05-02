@@ -15,6 +15,7 @@ export class OPERATOR_LIST_INTERSECTION extends BaseOperator<
     "intersection",
     "listIntersection",
     "list_intersection",
+    "∩",
   ];
   static override symbol = "∩";
   static override interactName = "listIntersection";

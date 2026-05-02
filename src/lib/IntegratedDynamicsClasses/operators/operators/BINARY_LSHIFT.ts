@@ -14,6 +14,9 @@ export class OPERATOR_BINARY_LSHIFT extends BaseOperator<
     "lshift",
     "binary_lshift",
     "integer_left_shift",
+    "leftShift",
+    "left_shift",
+    "<<",
   ];
   static override symbol = "<<";
   static override interactName = "integerLeftShift";

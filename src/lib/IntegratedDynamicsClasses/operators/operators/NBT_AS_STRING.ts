@@ -12,7 +12,6 @@ export class OPERATOR_NBT_AS_STRING extends BaseOperator<StringTag, iString> {
     "nbtAsString",
     "as_string",
     "nbt_as_string",
-    "nbtAs_string",
   ];
   static override symbol = "NBT.as_string";
   static override interactName = "nbtAsString";
