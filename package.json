@@ -31,7 +31,7 @@
     "typecheck": "vue-tsc --noEmit -p tsconfig.app.json",
     "build": "npm run format && npm run test && vite build",
     "preview": "vite preview",
-    "commit": "((git diff --quiet && npm test) || (git stash push -u -k && (npm test && git stash apply && git stash drop) || (git stash apply && git stash drop; exit 1))) && npm run format:staged && git commit -m"
+    "commit": "((git diff --quiet && npm test) || (git stash push -u -k && (npm test && git stash apply && git stash drop) || (git stash apply && git stash drop; exit 1))) && npm run format:staged && git commit"
   },
   "prettier": {
     "tabWidth": 2,

@@ -35,10 +35,18 @@ Current plans for this project are as follows:
 
 ## Contributing
 
-If you think something is wrong or missing, feel free to [open an issue](https://github.com/kirjorjos/WIP-Integrated-Dynamics-Project/issues) or [submit a pull request](https://github.com/kirjorjos/WIP-Integrated-Dynamics-Project/pulls).
+If you think something is wrong or missing, feel free to [open an issue](https://github.com/kirjorjos/Unofficial-Integrated-Dynamics-Docs-and-Tools/issues) or [submit a pull request](https://github.com/kirjorjos/Unofficial-Integrated-Dynamics-Docs-and-Tools/pulls).
 
 When committing changes, please use the automated tools to test and format staged changes:
 
+To be prompted for commit message:
+
 ```bash
-npm run commit -- "commit message here"
+npm run commit
+```
+
+To specify commit message in-line:
+
+```bash
+npm run commit -- -m "commit message here"
 ```
