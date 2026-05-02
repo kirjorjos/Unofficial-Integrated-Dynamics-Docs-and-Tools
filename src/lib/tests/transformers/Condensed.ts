@@ -212,7 +212,8 @@ describe("TestCondensedTransformer", () => {
   });
 
   it("testLambdaConjunction", () => {
-    const code = "x => and(itemstackIsStackable(x), itemstackIsDamageable(x))";
+    const code =
+      "x => logicalAnd(itemstackIsStackable(x), itemstackIsDamageable(x))";
     const ast = CondensedToAST(code);
     expect(ASTToCondensed(ast)).toBe(
       "operatorConjunction(itemstackIsStackable, itemstackIsDamageable)"
@@ -220,7 +221,8 @@ describe("TestCondensedTransformer", () => {
   });
 
   it("testLambdaDisjunction", () => {
-    const code = "x => or(itemstackIsStackable(x), itemstackIsDamageable(x))";
+    const code =
+      "x => logicalOr(itemstackIsStackable(x), itemstackIsDamageable(x))";
     const ast = CondensedToAST(code);
     expect(ASTToCondensed(ast)).toBe(
       "operatorDisjunction(itemstackIsStackable, itemstackIsDamageable)"

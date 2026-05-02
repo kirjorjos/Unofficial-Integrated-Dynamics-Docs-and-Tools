@@ -23,7 +23,6 @@ export class OPERATOR_NBT_COMPOUND_WITH_LIST_BYTE extends BaseOperator<
     "n_b_t_with_byte_list",
     "nbt_compound_with_list_byte",
     "nbt_with_byte_list",
-    "nbtCompound_with_list_byte",
   ];
   static override symbol = "NBT{}.with_byte_list";
   static override interactName = "nbtWithByteList";

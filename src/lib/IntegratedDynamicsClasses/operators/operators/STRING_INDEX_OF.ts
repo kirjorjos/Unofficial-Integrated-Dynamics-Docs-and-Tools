@@ -15,7 +15,6 @@ export class OPERATOR_STRING_INDEX_OF extends BaseOperator<
     "stringIndexOf",
     "index_of",
     "string_index_of",
-    "stringIndex_of",
   ];
   static override symbol = "index_of";
   static override interactName = "stringIndexOf";

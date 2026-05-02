@@ -16,9 +16,9 @@ export class OPERATOR_STRING_MATCHES_REGEX extends BaseOperator<
   static override nicknames = [
     "matchesRegex",
     "stringMatchesRegex",
+    "stringMatches_regex",
     "matches_regex",
     "string_matches_regex",
-    "stringMatches_regex",
   ];
   static override symbol = "matches_regex";
   static override interactName = "stringMatchesRegex";

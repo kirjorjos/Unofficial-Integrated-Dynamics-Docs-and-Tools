@@ -12,7 +12,6 @@ export class OPERATOR_NBT_FROM_SHORT extends BaseOperator<Integer, ShortTag> {
     "shortAsNbt",
     "from_short",
     "nbt_from_short",
-    "nbtFrom_short",
     "short_as_nbt",
   ];
   static override symbol = "NBT.from_short";

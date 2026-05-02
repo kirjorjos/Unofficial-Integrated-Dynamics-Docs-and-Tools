@@ -13,7 +13,6 @@ export class OPERATOR_NBT_FROM_LONG extends BaseOperator<Long, LongTag> {
     "from_long",
     "long_as_nbt",
     "nbt_from_long",
-    "nbtFrom_long",
   ];
   static override symbol = "NBT.from_long";
   static override interactName = "longAsNbt";

@@ -13,7 +13,6 @@ export class OPERATOR_NBT_FROM_FLOAT extends BaseOperator<Double, FloatTag> {
     "float_as_nbt",
     "from_float",
     "nbt_from_float",
-    "nbtFrom_float",
   ];
   static override symbol = "NBT.from_float";
   static override interactName = "floatAsNbt";

@@ -18,6 +18,8 @@ export class OPERATOR_GENERAL_CHOICE extends BaseOperator<
     "boolean_choice",
     "general_choice",
     "if_else",
+    "?",
+    "ternary",
   ];
   static override symbol = "?";
   static override interactName = "booleanChoice";

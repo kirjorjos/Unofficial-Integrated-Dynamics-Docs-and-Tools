@@ -27,7 +27,6 @@ export class OPERATOR_NBT_COMPOUND_VALUE_LIST_TAG extends BaseOperator<
     "nbt_compound_value_list",
     "nbt_compound_value_list_tag",
     "nbt_get_generic_list_tag",
-    "nbtCompound_value_list_tag",
   ];
   static override symbol = "NBT{}.get_list_tag";
   static override interactName = "nbtGetGenericListTag";

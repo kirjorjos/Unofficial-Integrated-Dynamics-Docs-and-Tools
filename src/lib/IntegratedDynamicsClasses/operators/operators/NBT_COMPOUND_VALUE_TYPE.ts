@@ -21,7 +21,6 @@ export class OPERATOR_NBT_COMPOUND_VALUE_TYPE extends BaseOperator<
     "n_b_t_value_type",
     "nbt_compound_value_type",
     "nbt_type",
-    "nbtCompound_type",
   ];
   static override symbol = "NBT{}.type";
   static override interactName = "nbtType";

@@ -14,7 +14,6 @@ export class OPERATOR_OBJECT_ENTITY_ISSHEARABLE extends BaseOperator<
     "entityIsshearable",
     "entityIsShearable",
     "EntityIsshearable",
-    "isshearable",
     "entity_is_shearable",
     "entity_isshearable",
   ];

@@ -16,6 +16,8 @@ export class OPERATOR_ARITHMETIC_SUBTRACTION extends BaseOperator<
     "subtraction",
     "arithmetic_subtraction",
     "number_subtract",
+    "minus",
+    "-",
   ];
   static override symbol = "-";
   static override interactName = "numberSubtract";

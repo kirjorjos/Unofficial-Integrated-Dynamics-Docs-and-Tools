@@ -12,12 +12,10 @@ export class OPERATOR_LIST_NOT_EMPTY extends BaseOperator<
   static override numericID = 106;
   static override nicknames = [
     "listIsNotEmpty",
-    "listNotempty",
     "listNotEmpty",
-    "notempty",
+    "notEmpty",
     "list_is_not_empty",
     "list_not_empty",
-    "list_notempty",
   ];
   static override symbol = "o";
   static override interactName = "listIsNotEmpty";

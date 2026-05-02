@@ -16,7 +16,6 @@ export class OPERATOR_STRING_SPLIT_ON extends BaseOperator<
     "stringSplitOn",
     "split_on",
     "string_split_on",
-    "stringSplit_on",
   ];
   static override symbol = "split_on";
   static override interactName = "stringSplitOn";

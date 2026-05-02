@@ -11,9 +11,11 @@ export class OPERATOR_PARSE_DOUBLE extends BaseOperator<iString, Double> {
     "parseDouble",
     "parseParseDouble",
     "stringParseAsDouble",
+    "parseFloat",
     "parse_double",
-    "parseParse_double",
+    "parse_parse_double",
     "string_parse_as_double",
+    "parse_float",
   ];
   static override symbol = "parse_double";
   static override interactName = "stringParseAsDouble";

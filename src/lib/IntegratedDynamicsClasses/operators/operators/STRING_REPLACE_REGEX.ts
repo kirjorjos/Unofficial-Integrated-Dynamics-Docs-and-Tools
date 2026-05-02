@@ -20,7 +20,6 @@ export class OPERATOR_STRING_REPLACE_REGEX extends BaseOperator<
     "stringReplaceRegex",
     "replace_regex",
     "string_replace_regex",
-    "stringReplace_regex",
   ];
   static override symbol = "replace_regex";
   static override interactName = "stringReplaceRegex";

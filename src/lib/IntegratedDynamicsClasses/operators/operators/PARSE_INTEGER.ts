@@ -11,9 +11,11 @@ export class OPERATOR_PARSE_INTEGER extends BaseOperator<iString, Integer> {
     "parseInteger",
     "parseParseInteger",
     "stringParseAsInteger",
+    "parseInt",
     "parse_integer",
-    "parseParse_integer",
+    "parse_parse_integer",
     "string_parse_as_integer",
+    "parse_int",
   ];
   static override symbol = "parse_integer";
   static override interactName = "stringParseAsInteger";

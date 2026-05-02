@@ -13,7 +13,6 @@ export class OPERATOR_NBT_FROM_BYTE extends BaseOperator<Integer, ByteTag> {
     "byte_as_nbt",
     "from_byte",
     "nbt_from_byte",
-    "nbtFrom_byte",
   ];
   static override symbol = "NBT.from_byte";
   static override interactName = "byteAsNbt";

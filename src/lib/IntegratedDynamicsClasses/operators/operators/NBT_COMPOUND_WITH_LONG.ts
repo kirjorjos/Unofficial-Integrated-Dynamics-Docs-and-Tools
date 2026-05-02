@@ -22,7 +22,6 @@ export class OPERATOR_NBT_COMPOUND_WITH_LONG extends BaseOperator<
     "n_b_t_with_long",
     "nbt_compound_with_long",
     "nbt_with_long",
-    "nbtCompound_with_long",
   ];
   static override symbol = "NBT{}.with_long";
   static override interactName = "nbtWithLong";

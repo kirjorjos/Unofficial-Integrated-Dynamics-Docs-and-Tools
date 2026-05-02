@@ -20,7 +20,6 @@ export class OPERATOR_NBT_PATH_MATCH_ALL extends BaseOperator<
     "pathMatchAll",
     "stringNbtPathMatchAll",
     "nbt_path_match_all",
-    "nbtPath_match_all",
     "path_match_all",
     "string_nbt_path_match_all",
   ];

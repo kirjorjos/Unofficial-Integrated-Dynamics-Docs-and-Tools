@@ -12,7 +12,7 @@ export class OPERATOR_PARSE_LONG extends BaseOperator<iString, Long> {
     "parseParseLong",
     "stringParseAsLong",
     "parse_long",
-    "parseParse_long",
+    "parse_parse_long",
     "string_parse_as_long",
   ];
   static override symbol = "parse_long";

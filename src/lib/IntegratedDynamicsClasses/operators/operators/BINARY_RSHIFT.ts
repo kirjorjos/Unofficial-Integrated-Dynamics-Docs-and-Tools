@@ -14,6 +14,9 @@ export class OPERATOR_BINARY_RSHIFT extends BaseOperator<
     "rshift",
     "binary_rshift",
     "integer_right_shift",
+    "rightShift",
+    "right_shift",
+    ">>",
   ];
   static override symbol = ">>";
   static override interactName = "integerRightShift";

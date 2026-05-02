@@ -10,6 +10,7 @@ export class OPERATOR_OPERATOR_PIPE2 extends BaseOperator<any, any> {
     "pipe.2",
     "pipe2",
     "operator_pipe2",
+    ".2",
   ];
   static override symbol = ".2";
   static override interactName = "operatorPipe2";

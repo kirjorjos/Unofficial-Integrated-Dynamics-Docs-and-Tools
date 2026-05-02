@@ -11,6 +11,7 @@ export class OPERATOR_ENTITY_HEALTH extends BaseOperator<Entity, Double> {
     "health",
     "entity_health",
     "entity_health_value",
+    "hp",
   ];
   static override symbol = "health";
   static override interactName = "entityHealth";

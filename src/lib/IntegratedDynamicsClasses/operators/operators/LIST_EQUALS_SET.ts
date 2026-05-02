@@ -17,6 +17,7 @@ export class OPERATOR_LIST_EQUALS_SET extends BaseOperator<
     "equals_set",
     "list_equals_set",
     "listEquals_set",
+    "=set",
   ];
   static override symbol = "=set=";
   static override interactName = "listEquals_set";

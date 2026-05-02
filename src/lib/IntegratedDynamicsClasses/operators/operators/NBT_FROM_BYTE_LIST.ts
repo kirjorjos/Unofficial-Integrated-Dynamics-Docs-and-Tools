@@ -18,7 +18,6 @@ export class OPERATOR_NBT_FROM_BYTE_LIST extends BaseOperator<
     "byte_list_as_nbt",
     "from_byte_list",
     "nbt_from_byte_list",
-    "nbtFrom_byte_list",
   ];
   static override symbol = "NBT.from_byte_list";
   static override interactName = "byteListAsNbt";

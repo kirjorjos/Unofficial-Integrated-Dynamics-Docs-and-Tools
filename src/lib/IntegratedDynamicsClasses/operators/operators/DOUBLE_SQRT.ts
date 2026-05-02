@@ -4,7 +4,14 @@ import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperat
 export class OPERATOR_DOUBLE_SQRT extends BaseOperator<Double, Double> {
   static override internalName = "integrateddynamics:double_sqrt" as const;
   static override numericID = 295;
-  static override nicknames = ["doubleSqrt", "sqrt", "double_sqrt"];
+  static override nicknames = [
+    "doubleSqrt",
+    "sqrt",
+    "double_sqrt",
+    "squareRoot",
+    "square_root",
+    "√",
+  ];
   static override symbol = "sqrt";
   static override interactName = "doubleSqrt";
   static override operatorName = "sqrt" as const;

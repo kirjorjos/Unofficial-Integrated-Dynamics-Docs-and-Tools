@@ -18,7 +18,6 @@ export class OPERATOR_STRING_INDEX_OF_REGEX extends BaseOperator<
     "stringIndexOfRegex",
     "index_of_regex",
     "string_index_of_regex",
-    "stringIndex_of_regex",
   ];
   static override symbol = "index_of_regex";
   static override interactName = "stringIndexOfRegex";

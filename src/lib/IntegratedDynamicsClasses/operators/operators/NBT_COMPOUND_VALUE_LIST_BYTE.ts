@@ -26,7 +26,6 @@ export class OPERATOR_NBT_COMPOUND_VALUE_LIST_BYTE extends BaseOperator<
     "compound_value_list_byte",
     "nbt_compound_value_list_byte",
     "nbt_get_list_byte",
-    "nbtCompound_value_list_byte",
   ];
   static override symbol = "NBT{}.get_list_byte";
   static override interactName = "nbtGetListByte";

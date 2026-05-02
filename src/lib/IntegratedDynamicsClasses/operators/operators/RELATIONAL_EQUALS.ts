@@ -14,9 +14,11 @@ export class OPERATOR_RELATIONAL_EQUALS extends BaseOperator<
     "anyEquals",
     "eq",
     "equals",
+    "equal",
     "relationalEquals",
     "any_equals",
     "relational_equals",
+    "==",
   ];
   static override symbol = "==";
 

@@ -13,8 +13,11 @@ export class OPERATOR_RELATIONAL_GE extends BaseOperator<
     "anyGreaterThanOrEquals",
     "ge",
     "relationalGe",
+    "greaterThanOrEquals",
     "any_greater_than_or_equals",
     "relational_ge",
+    "greater_than_or_equals",
+    ">=",
   ];
   static override symbol = ">=";
   static override interactName = "anyGreaterThanOrEquals";

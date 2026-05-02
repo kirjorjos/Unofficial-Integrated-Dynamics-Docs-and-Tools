@@ -13,7 +13,6 @@ export class OPERATOR_LOGICAL_OR extends BaseOperator<
     "||",
     "booleanOr",
     "logicalOr",
-    "or",
     "boolean_or",
     "logical_or",
   ];

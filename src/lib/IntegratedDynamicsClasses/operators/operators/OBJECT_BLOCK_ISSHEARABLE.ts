@@ -12,7 +12,6 @@ export class OPERATOR_OBJECT_BLOCK_ISSHEARABLE extends BaseOperator<
   static override nicknames = [
     "blockIsshearable",
     "blockIsShearable",
-    "isshearable",
     "block_is_shearable",
     "block_isshearable",
   ];

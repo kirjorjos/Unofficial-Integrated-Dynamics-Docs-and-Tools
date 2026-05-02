@@ -11,7 +11,6 @@ export class OPERATOR_LOGICAL_AND extends BaseOperator<
   static override numericID = 68;
   static override nicknames = [
     "&&",
-    "and",
     "booleanAnd",
     "logicalAnd",
     "boolean_and",

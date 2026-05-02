@@ -15,14 +15,9 @@ export class OPERATOR_OBJECT_FLUIDSTACK_TAG extends BaseOperator<
     "fluidstackTag",
     "FluidstackTag",
     "fluidstackTags",
-    "fluidstackTagStack",
-    "fluidstackTagStacks",
     "fluidTag",
-    "tag",
     "fluid_tag",
     "fluidstack_tag",
-    "fluidstack_tag_stack",
-    "fluidstack_tag_stacks",
     "fluidstack_tags",
   ];
   static override symbol = "fluid_tag_names";

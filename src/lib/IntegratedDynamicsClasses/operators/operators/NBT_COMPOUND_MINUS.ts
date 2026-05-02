@@ -18,7 +18,6 @@ export class OPERATOR_NBT_COMPOUND_MINUS extends BaseOperator<
     "compound_minus",
     "nbt_compound_minus",
     "nbt_minus",
-    "nbtCompound_minus",
   ];
   static override symbol = "NBT{}.∖";
   static override interactName = "nbtMinus";

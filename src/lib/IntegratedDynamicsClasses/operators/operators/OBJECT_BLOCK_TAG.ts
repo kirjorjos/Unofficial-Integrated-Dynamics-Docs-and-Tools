@@ -14,7 +14,6 @@ export class OPERATOR_OBJECT_BLOCK_TAG extends BaseOperator<
     "blockTag",
     "BlockTag",
     "blockTags",
-    "tag",
     "block_tag",
     "block_tags",
   ];

@@ -12,10 +12,17 @@ export class OPERATOR_RELATIONAL_NOTEQUALS extends BaseOperator<
   static override numericID = 77;
   static override nicknames = [
     "anyNotEquals",
+    "notEquals",
     "notequals",
+    "relationalNotEquals",
     "relationalNotequals",
+    "notEqual",
     "any_not_equals",
     "relational_notequals",
+    "relational_not_equals",
+    "not_equal",
+    "not_equals",
+    "!=",
   ];
   static override symbol = "!=";
   static override interactName = "anyNotEquals";

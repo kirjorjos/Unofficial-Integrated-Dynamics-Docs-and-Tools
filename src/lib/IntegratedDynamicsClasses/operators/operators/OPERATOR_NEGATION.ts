@@ -14,6 +14,7 @@ export class OPERATOR_OPERATOR_NEGATION extends BaseOperator<
     "negation",
     "operatorNegation",
     "operator_negation",
+    "!.",
   ];
   static override symbol = "!.";
   static override interactName = "operatorNegation";

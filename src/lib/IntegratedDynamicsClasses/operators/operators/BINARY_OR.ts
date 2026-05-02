@@ -11,9 +11,9 @@ export class OPERATOR_BINARY_OR extends BaseOperator<
   static override nicknames = [
     "binaryOr",
     "integerBinaryOr",
-    "or",
     "binary_or",
     "integer_binary_or",
+    "|",
   ];
   static override symbol = "|";
   static override interactName = "integerBinaryOr";

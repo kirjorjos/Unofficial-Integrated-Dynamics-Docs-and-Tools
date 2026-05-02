@@ -13,7 +13,6 @@ export class OPERATOR_NBT_FROM_INT extends BaseOperator<Integer, IntTag> {
     "from_int",
     "integer_as_nbt",
     "nbt_from_int",
-    "nbtFrom_int",
   ];
   static override symbol = "NBT.from_int";
   static override interactName = "integerAsNbt";

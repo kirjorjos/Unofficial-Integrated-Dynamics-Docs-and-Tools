@@ -10,13 +10,7 @@ export class OPERATOR_OBJECT_BLOCK_ISPLANTABLE extends BaseOperator<
   static override internalName =
     "integrateddynamics:block_is_plantable" as const;
   static override numericID = 119;
-  static override nicknames = [
-    "blockIsplantable",
-    "isplantable",
-    "isPlantable",
-    "block_isplantable",
-    "is_plantable",
-  ];
+  static override nicknames = ["blockIsPlantable", "block_is_plantable"];
   static override symbol = "is_plantable";
   static override interactName = "isPlantable";
   static override operatorName = "isplantable" as const;

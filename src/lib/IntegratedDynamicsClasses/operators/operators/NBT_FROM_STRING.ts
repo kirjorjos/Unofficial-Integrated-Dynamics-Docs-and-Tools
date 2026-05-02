@@ -12,7 +12,6 @@ export class OPERATOR_NBT_FROM_STRING extends BaseOperator<iString, StringTag> {
     "stringAsNbt",
     "from_string",
     "nbt_from_string",
-    "nbtFrom_string",
     "string_as_nbt",
   ];
   static override symbol = "NBT.from_string";

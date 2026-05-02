@@ -105,7 +105,7 @@ describe("TestCodeLineTransformer", () => {
 
   it("testLambdaConjunction", () => {
     const code =
-      "x => (and (itemstackIsStackable x) (itemstackIsDamageable x))";
+      "x => (logicalAnd (itemstackIsStackable x) (itemstackIsDamageable x))";
     const ast = CodeLineToAST(code);
     expect(ASTToCodeLine(ast)).toBe(
       "operatorConjunction itemstackIsStackable itemstackIsDamageable"
@@ -113,7 +113,8 @@ describe("TestCodeLineTransformer", () => {
   });
 
   it("testLambdaDisjunction", () => {
-    const code = "x => (or (itemstackIsStackable x) (itemstackIsDamageable x))";
+    const code =
+      "x => (logicalOr (itemstackIsStackable x) (itemstackIsDamageable x))";
     const ast = CodeLineToAST(code);
     expect(ASTToCodeLine(ast)).toBe(
       "operatorDisjunction itemstackIsStackable itemstackIsDamageable"
@@ -128,7 +129,7 @@ describe("TestCodeLineTransformer", () => {
 
   it("testComplicated2", () => {
     const code =
-      "pipe (pipe (pipe lt (pipe listLength)) map) (flip pipe (reduce1 and)) min";
+      "pipe (pipe (pipe lt (pipe listLength)) map) (flip pipe (reduce1 logicalAnd)) min";
     const ast = CodeLineToAST(code);
     const back = ASTToCodeLine(ast);
     expect(CodeLineToAST(back)).toEqual(ast);

@@ -16,7 +16,6 @@ export class OPERATOR_NBT_AS_TAG_LIST extends BaseOperator<
     "nbtAsTagList",
     "as_tag_list",
     "nbt_as_tag_list",
-    "nbtAs_tag_list",
   ];
   static override symbol = "NBT.as_tag_list";
   static override interactName = "nbtAsTagList";

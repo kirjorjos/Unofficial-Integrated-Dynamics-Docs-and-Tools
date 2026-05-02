@@ -11,7 +11,6 @@ export class OPERATOR_OBJECT_ITEMSTACK_INVENTORY extends BaseOperator<
     "integrateddynamics:itemstack_inventory" as const;
   static override numericID = 134;
   static override nicknames = [
-    "inventory",
     "itemInventory",
     "itemstackInventory",
     "ItemstackInventory",

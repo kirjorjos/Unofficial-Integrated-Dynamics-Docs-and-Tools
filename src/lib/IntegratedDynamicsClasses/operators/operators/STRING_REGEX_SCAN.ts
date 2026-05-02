@@ -20,7 +20,6 @@ export class OPERATOR_STRING_REGEX_SCAN extends BaseOperator<
     "stringRegexScan",
     "regex_scan",
     "string_regex_scan",
-    "stringRegex_scan",
   ];
   static override symbol = "regex_scan";
   static override interactName = "stringRegexScan";

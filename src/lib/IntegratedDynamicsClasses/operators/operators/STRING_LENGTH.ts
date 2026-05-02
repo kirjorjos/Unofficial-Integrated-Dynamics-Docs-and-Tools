@@ -6,7 +6,7 @@ import { Integer } from "lib/JavaNumberClasses/Integer";
 export class OPERATOR_STRING_LENGTH extends BaseOperator<iString, Integer> {
   static override internalName = "integrateddynamics:string_length" as const;
   static override numericID = 79;
-  static override nicknames = ["length", "stringLength", "string_length"];
+  static override nicknames = ["stringLength", "string_length", "strlen"];
   static override symbol = "len";
   static override interactName = "stringLength";
   static override operatorName = "length" as const;

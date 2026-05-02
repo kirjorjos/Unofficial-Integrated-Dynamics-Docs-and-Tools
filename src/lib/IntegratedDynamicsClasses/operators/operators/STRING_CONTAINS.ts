@@ -10,7 +10,11 @@ export class OPERATOR_STRING_CONTAINS extends BaseOperator<
 > {
   static override internalName = "integrateddynamics:string_contains" as const;
   static override numericID = 156;
-  static override nicknames = ["contains", "stringContains", "string_contains"];
+  static override nicknames = [
+    "scontains",
+    "stringContains",
+    "string_contains",
+  ];
   static override symbol = "contains";
   static override interactName = "stringContains";
   static override operatorName = "contains" as const;

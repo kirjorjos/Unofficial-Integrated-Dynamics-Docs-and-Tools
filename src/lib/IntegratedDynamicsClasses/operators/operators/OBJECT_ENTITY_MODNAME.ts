@@ -13,7 +13,6 @@ export class OPERATOR_OBJECT_ENTITY_MODNAME extends BaseOperator<
     "entityMod",
     "EntityMod",
     "entityModName",
-    "mod",
     "entity_mod",
     "entity_mod_name",
   ];

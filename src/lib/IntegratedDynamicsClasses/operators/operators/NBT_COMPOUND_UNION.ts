@@ -18,7 +18,6 @@ export class OPERATOR_NBT_COMPOUND_UNION extends BaseOperator<
     "compound_union",
     "nbt_compound_union",
     "nbt_union",
-    "nbtCompound_union",
   ];
   static override symbol = "NBT{}.∪";
   static override interactName = "nbtUnion";

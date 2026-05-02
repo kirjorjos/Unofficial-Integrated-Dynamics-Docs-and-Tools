@@ -19,7 +19,6 @@ export class OPERATOR_STRING_REGEX_GROUPS extends BaseOperator<
     "stringRegexGroups",
     "regex_groups",
     "string_regex_groups",
-    "stringRegex_groups",
   ];
   static override symbol = "regex_groups";
   static override interactName = "stringRegexGroups";

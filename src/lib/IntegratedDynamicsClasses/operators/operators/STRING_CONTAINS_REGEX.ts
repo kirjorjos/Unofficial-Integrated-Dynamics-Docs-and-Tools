@@ -16,9 +16,9 @@ export class OPERATOR_STRING_CONTAINS_REGEX extends BaseOperator<
   static override nicknames = [
     "containsRegex",
     "stringContainsRegex",
+    "stringContains_regex",
     "contains_regex",
     "string_contains_regex",
-    "stringContains_regex",
   ];
   static override symbol = "contains_regex";
   static override interactName = "stringContainsRegex";

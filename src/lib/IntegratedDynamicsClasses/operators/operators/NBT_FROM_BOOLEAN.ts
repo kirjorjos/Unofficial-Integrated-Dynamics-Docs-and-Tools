@@ -15,7 +15,6 @@ export class OPERATOR_NBT_FROM_BOOLEAN extends BaseOperator<iBoolean, ByteTag> {
     "boolean_as_nbt",
     "from_boolean",
     "nbt_from_boolean",
-    "nbtFrom_boolean",
   ];
   static override symbol = "NBT.from_iBoolean";
   static override interactName = "booleanAsNbt";

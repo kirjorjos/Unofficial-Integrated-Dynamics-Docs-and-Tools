@@ -16,7 +16,6 @@ export class OPERATOR_OBJECT_ITEMSTACK_TAG extends BaseOperator<
     "itemstackTagNames",
     "itemstackTags",
     "itemTagNames",
-    "tag",
     "item_tag_names",
     "itemstack_tag",
     "itemstack_tag_names",

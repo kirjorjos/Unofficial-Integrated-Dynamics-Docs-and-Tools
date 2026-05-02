@@ -12,7 +12,6 @@ export class OPERATOR_OBJECT_ITEMSTACK_RARITY extends BaseOperator<
   static override nicknames = [
     "itemstackRarity",
     "ItemstackRarity",
-    "rarity",
     "itemstack_rarity",
   ];
   static override symbol = "rarity";

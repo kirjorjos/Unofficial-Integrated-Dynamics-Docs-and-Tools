@@ -14,7 +14,6 @@ export class OPERATOR_OBJECT_ITEMSTACK_MODNAME extends BaseOperator<
     "itemModname",
     "itemstackMod",
     "ItemstackModname",
-    "mod",
     "item_mod",
     "item_modname",
     "itemstack_mod",
