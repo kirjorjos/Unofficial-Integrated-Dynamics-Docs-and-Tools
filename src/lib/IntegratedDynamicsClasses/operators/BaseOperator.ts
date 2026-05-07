@@ -52,8 +52,14 @@ export class BaseOperator<
   static numericID: number = -1;
   static renderPattern: LogicProgrammerRenderPatternKey = "NONE";
   serializer?: string;
-  static readonly nicknameRegexAllowedChars =
-    "A-Za-z0-9._&|{}!+*%/√<^~⌈⌉⌊⌋∩?=>\-";
+  static readonly nicknameRegexDisallowedChars = [
+    "()",
+    "\\[\\]",
+    ",",
+    "\\\\",
+    '"',
+    "\\s",
+  ];
   flipTarget?: TypeOperatorKey;
 
   constructor({
