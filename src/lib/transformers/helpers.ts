@@ -70,14 +70,16 @@ export const getOpName = (opName: TypeOperatorKey): string => {
 };
 
 export const getNicknameRegex = (): RegExp =>
-  new RegExp(`^[${BaseOperator.nicknameRegexAllowedChars}]+$`);
+  new RegExp(
+    `^(?!.*--)(?!.*::)(?!.*=>)(?!.*->)[^${BaseOperator.nicknameRegexDisallowedChars.join("")}]+$`
+  );
 
 export const getNicknameCharacterRegex = (): RegExp =>
-  new RegExp(`^[${BaseOperator.nicknameRegexAllowedChars}]$`);
+  new RegExp(`^[^${BaseOperator.nicknameRegexDisallowedChars.join("")}]$`);
 
 export const getImplicitFlipNameRegex = (): RegExp => {
   return new RegExp(
-    `^flip([A-Z][${BaseOperator.nicknameRegexAllowedChars}]*)$`
+    `^(?!.*--)(?!.*::)(?!.*=>)(?!.*->)flip([A-Z][^${BaseOperator.nicknameRegexDisallowedChars.join("")}]*)$`
   );
 };
 

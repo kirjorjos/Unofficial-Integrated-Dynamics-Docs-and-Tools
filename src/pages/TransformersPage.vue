@@ -99,10 +99,10 @@ const inputLineNumbers = computed(() => {
 });
 
 const nicknamePrefixRegex = new RegExp(
-  `^[${BaseOperator.nicknameRegexAllowedChars}]+\\s*=`
+  `^[^${BaseOperator.nicknameRegexDisallowedChars.join("")}]+\\s*=`
 );
 const condensedCallRegex = new RegExp(
-  `^[${BaseOperator.nicknameRegexAllowedChars}]+\\(`
+  `^[^${BaseOperator.nicknameRegexDisallowedChars.join("")}]+\\(`
 );
 
 const detectInputFormat = (value: string): FormatKey => {

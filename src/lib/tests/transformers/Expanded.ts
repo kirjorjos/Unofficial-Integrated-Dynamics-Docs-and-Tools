@@ -102,7 +102,7 @@ operatorPipe = operatorPipe
 
   it("testInvalidVarNameThrows", () => {
     const input = `
-invalid°name = 5
+invalid(name) = 5
 `;
     expect(() => ExpandedToAST(input.trim())).toThrow();
   });
