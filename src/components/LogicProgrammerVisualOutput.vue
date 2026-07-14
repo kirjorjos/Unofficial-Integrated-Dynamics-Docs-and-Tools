@@ -774,42 +774,102 @@ const getDisplayPanelText = (
         return step.output;
       }
 
-      // For Curry types, show operator name + signature when partially
-      // applied, or the compact value when fully applied (concrete type)
+      // For Curry types, show the resolved value when fully applied,
+      // or operator name + signature when partially applied
       if (nodeType === "Curry") {
         if (typeof (op as any).getName !== "function") {
           return step.output;
         }
         const sig = (op as any).getParsedSignature();
-        // If fully applied (not a function signature), show the evaluated value
+        // If fully applied (not a function signature), try to show the value
         if (sig.getRootType() !== "Function") {
+          // Helper: try to resolve an AST/operator to a concrete value
+          const resolveArg = (arg: any): any => {
+            try {
+              if (typeof arg?.getFn === "function") {
+                const fn = arg.getFn();
+                if (typeof fn === "function") {
+                  const result = fn(null);
+                  // Only accept if it's a concrete value (not another operator)
+                  if (result != null && typeof result.getFn !== "function") {
+                    return result;
+                  }
+                }
+              }
+            } catch {
+              // skip
+            }
+            return arg;
+          };
+
+          // Fast path: try fn(null) on the combined CurriedOperator
           try {
             const fn = (op as any).getFn();
             if (typeof fn === "function") {
-              const evaluated = fn(null);
-              if (evaluated != null) {
-                const val =
-                  typeof evaluated.valueOf === "function"
-                    ? evaluated.valueOf()
-                    : evaluated;
+              const evaluated = resolveArg(fn(null));
+              if (evaluated != null && typeof evaluated.valueOf === "function") {
+                const val = evaluated.valueOf();
                 if (Array.isArray(val)) {
+                  if (val.length === 0) return "(empty)";
                   return val
                     .map((item: unknown) => {
-                      const display =
-                        item != null &&
-                        typeof (item as any).valueOf === "function"
-                          ? String((item as any).valueOf())
-                          : String(item);
-                      return `- ${display}`;
+                      const d = item != null && typeof (item as any).valueOf === "function"
+                        ? String((item as any).valueOf())
+                        : String(item);
+                      return `- ${d}`;
                     })
                     .join("\n");
                 }
+                const display = val != null && typeof (val as any).valueOf === "function"
+                  ? String((val as any).valueOf())
+                  : String(val);
+                return display;
               }
             }
           } catch {
-            // Fall through to compact value text
+            // Fast path failed, try per-arg resolution
           }
-          return getCompactValueTextForAst(step.node);
+
+          // Fallback: evaluate each arg separately via flattened AST
+          try {
+            const flat = flattenAnonymousBaseOperatorApplication(step.node as TypeAST.AST);
+            if (flat && flat.operator.type === "Operator") {
+              // Resolve each arg AST to a concrete value
+              const argValues: any[] = [];
+              for (const argAst of flat.args) {
+                const argOp = ASTtoOperator(argAst);
+                argValues.push(resolveArg(argOp));
+              }
+              // Apply the base operator with resolved args
+              const baseOp = ASTtoOperator(flat.operator) as any;
+              let result: any = typeof baseOp.getFn === "function" ? baseOp.getFn() : baseOp;
+              for (const argVal of argValues) {
+                if (typeof result === "function") {
+                  result = result(argVal);
+                } else if (typeof result?.apply === "function") {
+                  result = result.apply(argVal);
+                } else {
+                  break;
+                }
+              }
+              if (result != null && typeof result.valueOf === "function") {
+                const val = result.valueOf();
+                if (!Array.isArray(val)) {
+                  return String(val != null && typeof (val as any).valueOf === "function"
+                    ? (val as any).valueOf()
+                    : val);
+                }
+                if (val.length === 0) return "(empty)";
+                return val
+                  .map((item: any) => `- ${String(typeof item?.valueOf === "function" ? item.valueOf() : item)}`)
+                  .join("\n");
+              }
+            }
+          } catch {
+            // Fall through
+          }
+
+          return step.output;
         }
         const name = (op as any).getName().valueOf();
         const flatSig = new ParsedSignature(sig.getAst(), false).toFlatSignature();
@@ -1121,7 +1181,44 @@ const buildOperatorCardTooltip = (
         };
       }
     } catch {
-      // Fall through to default registry-based handling
+      // Fallback: for Curry types, use the base operator's info
+      if (step.sourceType === "Curry") {
+        const flattened = flattenAnonymousBaseOperatorApplication(
+          step.node as TypeAST.AST
+        );
+        if (flattened?.operator.type === "Operator") {
+          const baseMeta = getOperatorTooltipMeta(flattened.operator.opName);
+          const lines = [
+            formatTemplate(OPERATOR_NAME_TEMPLATE, baseMeta.displayName, baseMeta.symbol),
+            formatTemplate(OPERATOR_CATEGORY_TEMPLATE, baseMeta.categoryName),
+            ...baseMeta.inputTypes.map((inputType, index) => {
+              const inputMeta = getValueTypeMeta(inputType);
+              return formatTemplate(
+                OPERATOR_INPUT_TYPE_TEMPLATE,
+                `${index + 1}`,
+                `${inputMeta.colorCode}${inputMeta.label}`
+              );
+            }),
+            formatTemplate(
+              OPERATOR_OUTPUT_TYPE_TEMPLATE,
+              `${
+                baseMeta.outputType === "Any"
+                  ? "§0"
+                  : getValueTypeMeta(baseMeta.outputType).colorCode
+              }${getValueTypeMeta(baseMeta.outputType).label}`
+            ),
+            formatTemplate(
+              OPERATOR_VARIABLE_IDS_TEMPLATE,
+              getOperatorReferenceText(step.inputs)
+            ),
+            ...getBaseTooltipLines(variableId),
+          ];
+          return {
+            title: getCardTitle(step.output),
+            lines,
+          };
+        }
+      }
     }
   }
 
@@ -1239,8 +1336,7 @@ const steps = computed<VisualStep[]>(() => {
   const visit = (ast: TypeAST.AST): VisualCardRef => {
     if (seen.has(ast)) return seen.get(ast)!;
 
-    const nextName = getCardName(ast);
-    const register = (
+    const nextName = getCardName(ast);      const register = (
       step: Omit<VisualStep, "variableId" | "tooltip">
     ): VisualCardRef => {
       const variableId = props.startVariableId + result.length;
@@ -1253,7 +1349,7 @@ const steps = computed<VisualStep[]>(() => {
       result.push(fullStep);
       const card = {
         name: fullStep.output,
-        type: fullStep.sourceType,
+        type: getStepActualOutputType(fullStep),
         variableId,
         tooltip,
       };
@@ -1272,6 +1368,7 @@ const steps = computed<VisualStep[]>(() => {
           symbol: operator.symbol,
           kind: "operator",
           sourceType: ast.type,
+          renderPattern: operator.renderPattern,
           inputs: [],
           output: nextName,
           detail: ast.opName,
@@ -1295,7 +1392,7 @@ const steps = computed<VisualStep[]>(() => {
             symbol: getOperatorDisplay(flattened.operator.opName).symbol,
             kind: "operator" as const,
             sourceType: ast.type,
-            renderPattern: virtualOperator.renderPattern,
+            renderPattern: getOperatorDisplay(flattened.operator.opName).renderPattern,
             inputs: argOutputs,
             output: finalVarName,
             node: ast,
@@ -1324,7 +1421,10 @@ const steps = computed<VisualStep[]>(() => {
             symbol: virtualOperator.symbol,
             kind: "operator" as const,
             sourceType: chunk.node.type,
-            renderPattern: virtualOperator.renderPattern,
+            renderPattern:
+              stepBase.type === "Operator"
+                ? getOperatorDisplay(stepBase.opName).renderPattern
+                : virtualOperator.renderPattern,
             inputs: [currentBaseOutput, ...argOutputs],
             output: chunk.node.varName!,
             node: chunk.node,
@@ -1514,6 +1614,29 @@ const getPatternBox = (step: VisualStep) => {
   const workspaceHeight = 87;
 
   if (step.workspaceMode === "operatorValue") {
+    // If the operator has a render pattern, use it for slots and symbol
+    if (step.renderPattern && step.renderPattern !== "NONE") {
+      const pattern = LOGIC_PROGRAMMER_RENDER_PATTERNS[step.renderPattern];
+      const left = workspaceX + Math.floor((workspaceWidth - pattern.width) / 2);
+      const top = workspaceY + Math.floor((workspaceHeight - pattern.height) / 2);
+
+      return {
+        slots: pattern.slotPositions.map((slot) => ({
+          left: left + slot.left,
+          top: top + slot.top,
+        })),
+        symbol: pattern.symbolPosition
+          ? {
+              left: left + pattern.symbolPosition.left,
+              top: top + pattern.symbolPosition.top,
+            }
+          : null,
+        valueBox: null as { left: number; top: number; width: number } | null,
+        canvas: { left, top, width: pattern.width, height: pattern.height },
+      };
+    }
+
+    // Fallback: no render pattern - show generic NONE_CANVAS
     const pattern = LOGIC_PROGRAMMER_RENDER_PATTERNS.NONE_CANVAS;
     const left = workspaceX + Math.floor((workspaceWidth - pattern.width) / 2);
     const top = workspaceY + Math.floor((workspaceHeight - pattern.height) / 2);
@@ -1834,41 +1957,86 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
                 }"
               />
 
-              <div
-                class="logic-operator-dropdown-field"
-                :style="{
-                  left: `${getPatternBox(step).canvas!.left + 14}px`,
-                  top: `${getPatternBox(step).canvas!.top + 6}px`,
-                  width: `${getPatternBox(step).canvas!.width - 28}px`,
-                }"
-              >
-                <FitText
-                  :text="step.panelLabel ?? step.title"
-                  :min-scale="0.7"
-                />
-              </div>
-
-              <div
-                v-for="(line, lineIndex) in getOperatorValueSignatureLines(
-                  step.detail as TypeOperatorKey
-                )"
-                :key="`${step.id}-signature-${lineIndex}`"
-                class="logic-operator-signature-line"
-                :style="{
-                  left: `${getPatternBox(step).canvas!.left + 10}px`,
-                  top: `${getPatternBox(step).canvas!.top + 25 + lineIndex * 9}px`,
-                }"
-              >
-                <span
-                  class="logic-operator-signature-prefix"
-                  :style="{ color: '#000000' }"
+              <!-- When operator has a render pattern, show its slots and symbol -->
+              <template v-if="getPatternBox(step).slots.length > 0">
+                <div
+                  v-for="(slot, inputIndex) in getPatternBox(step).slots"
+                  :key="`${step.id}-op-slot-${inputIndex}`"
+                  class="logic-slot-overlay"
+                  :class="{
+                    'logic-card-overlay-has-tooltip': !!getInputSlotTooltip(
+                      step,
+                      inputIndex
+                    ),
+                  }"
+                  :style="{ left: `${slot.left}px`, top: `${slot.top}px` }"
                 >
-                  {{ line.prefix }}
-                </span>
-                <span :style="{ color: line.color }">
-                  {{ line.label }}
-                </span>
-              </div>
+                  <HoverMinecraftTooltip
+                    v-if="getInputSlotTooltip(step, inputIndex)"
+                    :title="getInputSlotTooltip(step, inputIndex)!.title"
+                    :lines="getInputSlotTooltip(step, inputIndex)!.lines"
+                  >
+                    <div
+                      v-if="step.inputs[inputIndex]"
+                      class="logic-slot-card-composite"
+                      :style="{
+                        backgroundImage: `url('${publicAsset(`valuetype/${getValueTypeTextureName(step.inputs[inputIndex]?.type ?? 'Null')}.png`)}'), url('${publicAsset('item/variable.png')}')`,
+                      }"
+                    />
+                  </HoverMinecraftTooltip>
+                </div>
+
+                <div
+                  v-if="getPatternBox(step).symbol"
+                  class="logic-symbol-overlay"
+                  :class="{ 'logic-symbol-overlay-text': step.symbol.length > 2 }"
+                  :style="{
+                    left: `${getPatternBox(step).symbol!.left}px`,
+                    top: `${getPatternBox(step).symbol!.top}px`,
+                  }"
+                >
+                  {{ step.symbol }}
+                </div>
+              </template>
+
+              <!-- No render pattern: show generic dropdown + signature -->
+              <template v-else>
+                <div
+                  class="logic-operator-dropdown-field"
+                  :style="{
+                    left: `${getPatternBox(step).canvas!.left + 14}px`,
+                    top: `${getPatternBox(step).canvas!.top + 6}px`,
+                    width: `${getPatternBox(step).canvas!.width - 28}px`,
+                  }"
+                >
+                  <FitText
+                    :text="step.panelLabel ?? step.title"
+                    :min-scale="0.7"
+                  />
+                </div>
+
+                <div
+                  v-for="(line, lineIndex) in getOperatorValueSignatureLines(
+                    step.detail as TypeOperatorKey
+                  )"
+                  :key="`${step.id}-signature-${lineIndex}`"
+                  class="logic-operator-signature-line"
+                  :style="{
+                    left: `${getPatternBox(step).canvas!.left + 10}px`,
+                    top: `${getPatternBox(step).canvas!.top + 25 + lineIndex * 9}px`,
+                  }"
+                >
+                  <span
+                    class="logic-operator-signature-prefix"
+                    :style="{ color: '#000000' }"
+                  >
+                    {{ line.prefix }}
+                  </span>
+                  <span :style="{ color: line.color }">
+                    {{ line.label }}
+                  </span>
+                </div>
+              </template>
             </template>
 
             <template v-else-if="getValueBox(step)">

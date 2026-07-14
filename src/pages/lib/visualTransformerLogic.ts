@@ -598,7 +598,36 @@ export const buildOperatorCardTooltip = (
         };
       }
     } catch {
-      // Fall through to default registry-based handling
+      // Fallback: for Curry types, use the base operator's info
+      if (step.sourceType === "Curry") {
+        const flattened = flattenAnonymousBaseOperatorApplication(
+          step.node as TypeAST.AST
+        );
+        if (flattened?.operator.type === "Operator") {
+          const baseMeta = getOperatorTooltipMeta(flattened.operator.opName);
+          const lines = [
+            `§eOperator: §r${baseMeta.displayName} (${baseMeta.symbol})`,
+            `§eCategory: §r${baseMeta.categoryName}`,
+            ...baseMeta.inputTypes.map((inputType, index) => {
+              const inputMeta = getValueTypeMeta(inputType);
+              return `§eInput Type ${index + 1}: §r${inputMeta.colorCode}${inputMeta.label}`;
+            }),
+            `§eOutput Type: §r${
+              baseMeta.outputType === "Any"
+                ? "§0"
+                : getValueTypeMeta(baseMeta.outputType).colorCode
+            }${getValueTypeMeta(baseMeta.outputType).label}`,
+            `§eVariable IDs: §r§o{${step.inputs
+              .map((input) => `${input.name}:${input.variableId}`)
+              .join(",")}}`,
+            ...getBaseTooltipLines(variableId),
+          ];
+          return {
+            title: getCardTitle(step.output),
+            lines,
+          };
+        }
+      }
     }
   }
 
@@ -707,6 +736,29 @@ export const getPatternBox = (step: VisualStep): PatternBox => {
   const workspaceHeight = 87;
 
   if (step.workspaceMode === "operatorValue") {
+    // If the operator has a render pattern, use it for slots and symbol
+    if (step.renderPattern && step.renderPattern !== "NONE") {
+      const pattern = LOGIC_PROGRAMMER_RENDER_PATTERNS[step.renderPattern];
+      const left = workspaceX + Math.floor((workspaceWidth - pattern.width) / 2);
+      const top = workspaceY + Math.floor((workspaceHeight - pattern.height) / 2);
+
+      return {
+        slots: pattern.slotPositions.map((slot) => ({
+          left: left + slot.left,
+          top: top + slot.top,
+        })),
+        symbol: pattern.symbolPosition
+          ? {
+              left: left + pattern.symbolPosition.left,
+              top: top + pattern.symbolPosition.top,
+            }
+          : null,
+        valueBox: null as { left: number; top: number; width: number } | null,
+        canvas: { left, top, width: pattern.width, height: pattern.height },
+      };
+    }
+
+    // Fallback: no render pattern - show generic NONE_CANVAS
     const pattern = LOGIC_PROGRAMMER_RENDER_PATTERNS.NONE_CANVAS;
     const left = workspaceX + Math.floor((workspaceWidth - pattern.width) / 2);
     const top = workspaceY + Math.floor((workspaceHeight - pattern.height) / 2);
@@ -994,8 +1046,7 @@ export const generateVisualSteps = (
   const visit = (ast: TypeAST.AST): VisualCardRef => {
     if (seen.has(ast)) return seen.get(ast)!;
 
-    const nextName = getCardName(ast);
-    const register = (
+    const nextName = getCardName(ast);      const register = (
       step: Omit<VisualStep, "variableId" | "tooltip">
     ): VisualCardRef => {
       const variableId = startVariableId + result.length;
@@ -1008,7 +1059,7 @@ export const generateVisualSteps = (
       result.push(fullStep);
       const card = {
         name: fullStep.output,
-        type: fullStep.sourceType,
+        type: getStepActualOutputType(fullStep),
         variableId,
         tooltip,
       };
@@ -1027,6 +1078,7 @@ export const generateVisualSteps = (
           symbol: operator.symbol,
           kind: "operator",
           sourceType: ast.type,
+          renderPattern: operator.renderPattern,
           inputs: [],
           output: nextName,
           detail: ast.opName,
@@ -1050,7 +1102,7 @@ export const generateVisualSteps = (
             symbol: getOperatorDisplay(flattened.operator.opName).symbol,
             kind: "operator" as const,
             sourceType: ast.type,
-            renderPattern: virtualOperator.renderPattern,
+            renderPattern: getOperatorDisplay(flattened.operator.opName).renderPattern,
             inputs: argOutputs,
             output: finalVarName,
             node: ast,
@@ -1079,7 +1131,10 @@ export const generateVisualSteps = (
             symbol: virtualOperator.symbol,
             kind: "operator" as const,
             sourceType: chunk.node.type,
-            renderPattern: virtualOperator.renderPattern,
+            renderPattern:
+              stepBase.type === "Operator"
+                ? getOperatorDisplay(stepBase.opName).renderPattern
+                : virtualOperator.renderPattern,
             inputs: [currentBaseOutput, ...argOutputs],
             output: chunk.node.varName!,
             node: chunk.node,
