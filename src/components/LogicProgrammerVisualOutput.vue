@@ -731,7 +731,7 @@ const getDisplayPanelText = (
   // For List types, show each element as a bullet point
   if (step.sourceType === "List") {
     const elements = (step.node as any).value as TypeAST.AST[];
-    if (elements.length === 0) return "(empty)";
+    if (elements.length === 0) return "";
     return elements
       .map((elem: TypeAST.AST) => `- ${getCompactValueTextForAst(elem)}`)
       .join("\n");
@@ -811,7 +811,7 @@ const getDisplayPanelText = (
               if (evaluated != null && typeof evaluated.valueOf === "function") {
                 const val = evaluated.valueOf();
                 if (Array.isArray(val)) {
-                  if (val.length === 0) return "(empty)";
+                  if (val.length === 0) return "";
                   return val
                     .map((item: unknown) => {
                       const d = item != null && typeof (item as any).valueOf === "function"
@@ -860,7 +860,7 @@ const getDisplayPanelText = (
                     ? (val as any).valueOf()
                     : val);
                 }
-                if (val.length === 0) return "(empty)";
+                if (val.length === 0) return "";
                 return val
                   .map((item: any) => `- ${String(typeof item?.valueOf === "function" ? item.valueOf() : item)}`)
                   .join("\n");
