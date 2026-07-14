@@ -948,8 +948,30 @@ export const getOperatorValueSignatureTypes = (
 };
 
 export const getOutputTextureName = (
-  step: Pick<VisualStep, "sourceType" | "detail" | "tooltipOperatorKey">
+  step: Pick<
+    VisualStep,
+    "sourceType" | "detail" | "tooltipOperatorKey" | "forceOperatorTabActive"
+  > & { node?: TypeAST.AST }
 ): TypeAST.AST["type"] => {
+  // Operator types or force-operator mode should always show operator icon
+  if (step.sourceType === "Operator" || step.forceOperatorTabActive) {
+    return "Operator";
+  }
+  // For Curry types, always show operator icon - the step represents
+  // applying an operator, not the resulting value
+  if (step.sourceType === "Curry") {
+    return "Operator";
+  }
+  // For serializer types (Flip, Pipe, Pipe2) used from their respective tabs
+  const opKey = step.tooltipOperatorKey;
+  if (
+    opKey &&
+    (opKey === "OPERATOR_FLIP" ||
+      opKey === "OPERATOR_PIPE" ||
+      opKey === "OPERATOR_PIPE2")
+  ) {
+    return "Operator";
+  }
   return getStepActualOutputType(step) as TypeAST.AST["type"];
 };
 
@@ -1089,7 +1111,9 @@ export const generateVisualSteps = (
       result.push(fullStep);
       const card = {
         name: fullStep.output,
-        type: getStepActualOutputType(fullStep) as TypeAST.AST["type"],
+        type: (step.sourceType === "Operator" || step.sourceType === "Curry")
+          ? "Operator"
+          : getStepActualOutputType(fullStep) as TypeAST.AST["type"],
         variableId,
         tooltip,
       };
