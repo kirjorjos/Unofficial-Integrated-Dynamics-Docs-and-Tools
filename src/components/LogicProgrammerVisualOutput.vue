@@ -1290,8 +1290,10 @@ const buildStepTooltip = (
 const steps = computed<VisualStep[]>(() => {
   resetExpandedVarCounter();
 
+  const isPatternMode = props.operatorPreviewMode === "pattern";
+
   if (
-    props.operatorPreviewMode === "pattern" &&
+    isPatternMode &&
     props.ast.type === "Operator"
   ) {
     const operator = getOperatorDisplay(props.ast.opName);
@@ -1301,7 +1303,7 @@ const steps = computed<VisualStep[]>(() => {
     const step: Omit<VisualStep, "variableId" | "tooltip"> = {
       id: "operator-pattern-preview",
       title: operator.title,
-      searchLabel: operator.searchLabel,
+      searchLabel: "Operator",
       panelLabel: operator.panelLabel,
       symbol: operator.symbol,
       kind: "value",
@@ -1363,7 +1365,7 @@ const steps = computed<VisualStep[]>(() => {
         return register({
           id: `step-${result.length + 1}`,
           title: operator.title,
-          searchLabel: "Operator",
+          searchLabel: isPatternMode ? "Operator" : operator.searchLabel,
           panelLabel: operator.panelLabel,
           symbol: operator.symbol,
           kind: "operator",
@@ -1374,7 +1376,8 @@ const steps = computed<VisualStep[]>(() => {
           detail: ast.opName,
           node: ast,
           tooltipOperatorKey: ast.opName,
-          workspaceMode: "operatorValue",
+          forceOperatorTabActive: isPatternMode ? true : undefined,
+          workspaceMode: isPatternMode ? "pattern" : "operatorValue",
         });
       }
       case "Curry": {
@@ -1689,6 +1692,20 @@ const getPatternBox = (step: VisualStep) => {
     };
   }
 
+  if (step.workspaceMode === "pattern") {
+    // Pattern mode: always show the generic NONE_CANVAS (dropdown + signature)
+    const pattern = LOGIC_PROGRAMMER_RENDER_PATTERNS.NONE_CANVAS;
+    const left = workspaceX + Math.floor((workspaceWidth - pattern.width) / 2);
+    const top = workspaceY + Math.floor((workspaceHeight - pattern.height) / 2);
+
+    return {
+      slots: [] as { left: number; top: number }[],
+      symbol: null,
+      valueBox: null as { left: number; top: number; width: number } | null,
+      canvas: { left, top, width: pattern.width, height: pattern.height },
+    };
+  }
+
   if (isItemStackBackedValueType(step.sourceType)) {
     const pattern = LOGIC_PROGRAMMER_RENDER_PATTERNS.SINGLE_SLOT;
     const left = workspaceX + Math.floor((workspaceWidth - pattern.width) / 2);
@@ -1783,13 +1800,19 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
   const valueTypeEntries = getValueTypeDisplayEntries().filter(
     (entry) => !search || entry.matchString.includes(search)
   );
+
   const operatorEntries = operatorListEntries
     .filter((operatorClass) => {
       const fullName = new operatorClass(false)
         .getFullDisplayName()
         .toLowerCase();
       const symbol = (operatorClass.symbol ?? "").toLowerCase();
-      return fullName.includes(search) || symbol.includes(search);
+      const operatorName = (operatorClass.operatorName ?? "").toLowerCase();
+      return (
+        fullName.includes(search) ||
+        symbol.includes(search) ||
+        operatorName.includes(search)
+      );
     })
     .map((operatorClass) => ({
       symbol: operatorClass.symbol ?? "",
@@ -1801,6 +1824,12 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
     }));
 
   const filtered = [...valueTypeEntries, ...operatorEntries]
+    .sort((a, b) => {
+      // Put the matching operator entry first so .slice(0,10) includes it
+      if (a.symbol === step.symbol) return -1;
+      if (b.symbol === step.symbol) return 1;
+      return 0;
+    })
     .slice(0, 10)
     .map((entry) => ({
       symbol: entry.symbol,
@@ -1813,7 +1842,8 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
               (step.sourceType === "Operator"
                 ? "Operator"
                 : getValueTypeSearchLabel(step.sourceType))
-          : (step.forceOperatorTabActive || step.sourceType !== "Operator") &&
+          : (step.forceOperatorTabActive ||
+              step.sourceType !== "Operator") &&
             (entry.symbol === step.symbol || entry.matchString === search),
     }));
 
@@ -1988,7 +2018,7 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
               </div>
             </template>
 
-            <template v-else-if="step.workspaceMode === 'operatorValue'">
+            <template v-else-if="step.workspaceMode === 'operatorValue' || step.workspaceMode === 'pattern'">
               <div
                 class="logic-operator-canvas"
                 :style="{
