@@ -726,6 +726,14 @@ const getDisplayPanelText = (
   if (step.sourceType === "String" && step.detail) {
     return step.detail;
   }
+  // For List types, show each element as a bullet point
+  if (step.sourceType === "List") {
+    const elements = (step.node as any).value as TypeAST.AST[];
+    if (elements.length === 0) return "(empty)";
+    return elements
+      .map((elem: TypeAST.AST) => `- ${getCompactValueTextForAst(elem)}`)
+      .join("\n");
+  }
   if (step.node) {
     try {
       const op = ASTtoOperator(step.node) as any;
@@ -1718,7 +1726,104 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
 
             <div class="logic-clear-button-overlay">Clear</div>
 
-            <template v-if="step.workspaceMode === 'operatorValue'">
+            <template v-if="step.sourceType === 'List'">
+              <div class="logic-list-nav-btn logic-list-nav-prev">◀</div>
+              <div class="logic-list-search">
+                <FitText
+                  :text="step.inputs.length > 0 ? step.inputs[0].type : 'Any'"
+                  align="left"
+                />
+              </div>
+              <div class="logic-list-nav-btn logic-list-nav-next">▶</div>
+              <div class="logic-list-add-btn">+</div>
+
+              <div
+                v-if="step.inputs.length > 0"
+                class="logic-list-editor"
+              >
+                <div
+                  class="logic-list-editor-prev"
+                  :class="{ 'logic-list-editor-btn-disabled': step.inputs.length <= 1 }"
+                >
+                  ◀
+                </div>
+                <div class="logic-list-editor-pos">
+                  1 / {{ step.inputs.length }}
+                </div>
+                <div
+                  class="logic-list-editor-next"
+                  :class="{ 'logic-list-editor-btn-disabled': step.inputs.length <= 1 }"
+                >
+                  ▶
+                </div>
+
+                <!-- Operator type: show operator dropdown + signature -->
+                <template v-if="(step.node as any).value[0]?.type === 'Operator'">
+                  <div class="logic-list-editor-op-canvas" />
+                  <div class="logic-list-editor-op-field">
+                    <FitText
+                      :text="getOperatorDisplay((step.node as any).value[0].opName).title"
+                      align="left"
+                      :min-scale="0.6"
+                    />
+                  </div>
+                  <div
+                    v-for="(line, lineIndex) in getOperatorValueSignatureLines(
+                      (step.node as any).value[0].opName
+                    )"
+                    :key="`list-op-sig-${lineIndex}`"
+                    class="logic-list-editor-sig-line"
+                    :style="{
+                      top: `${44 + lineIndex * 9}px`,
+                    }"
+                  >
+                    <span style="color: #000">{{ line.prefix }}</span>
+                    <span :style="{ color: line.color }">
+                      {{ line.label }}
+                    </span>
+                  </div>
+                </template>
+
+                <!-- Item/Block/Fluid: show slot + placeholder -->
+                <template v-else-if="isItemStackBackedValueType(step.inputs[0].type)">
+                  <div class="logic-list-editor-item-label">
+                    {{ getItemStackPlaceholder(step.inputs[0].type) }}
+                  </div>
+                  <div class="logic-list-editor-item-arrow" />
+                  <div
+                    class="logic-slot-overlay"
+                    :style="{
+                      left: `${80}px`,
+                      top: `${50}px`,
+                    }"
+                  >
+                    <div
+                      class="logic-slot-card-composite"
+                      :style="{
+                        backgroundImage: `url('${publicAsset(`valuetype/${getValueTypeTextureName(step.inputs[0].type)}.png`)}'), url('${publicAsset('item/variable.png')}')`,
+                      }"
+                    />
+                  </div>
+                </template>
+
+                <!-- Primitive value types: show value box -->
+                <template v-else>
+                  <div class="logic-list-editor-value-box">
+                    <FitText
+                      :text="getCompactValueTextForAst(
+                        (step.node as any).value[0]
+                      )"
+                      align="left"
+                      :min-scale="0.5"
+                    />
+                  </div>
+                </template>
+
+                <div class="logic-list-editor-minus">−</div>
+              </div>
+            </template>
+
+            <template v-else-if="step.workspaceMode === 'operatorValue'">
               <div
                 class="logic-operator-canvas"
                 :style="{
