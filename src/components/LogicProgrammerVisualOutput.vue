@@ -1408,8 +1408,29 @@ const steps = computed<VisualStep[]>(() => {
                         ? argOp.getSignatureNode()
                         : null;
                   if (sig) {
-                    const hardened = sig.rewrite().getRootType();
+                    let hardened = sig.rewrite().getRootType();
+                    // If type is still unresolved via the type system, try
+                    // evaluating the argument to get a concrete value type.
+                    // This works because all inputs are known constants.
+                    if (hardened === "Any" && typeof argOp?.getFn === "function") {
+                      try {
+                        const evaluated = argOp.getFn()(null);
+                        if (evaluated != null && typeof evaluated.getSignatureNode === "function") {
+                          const evalType = evaluated.getSignatureNode().getRootType();
+                          if (evalType !== "Any") {
+                            hardened = evalType;
+                          }
+                        }
+                      } catch {
+                        // Evaluation failed, keep type-system result
+                      }
+                    }
                     if (hardened !== expected) {
+                      // If type is still "Any" after hardening, it's genuinely
+                      // unknown — treat as compatible (no error)
+                      if (hardened === "Any") {
+                        continue;
+                      }
                       typeError = `Type mismatch: expected ${expected}, got ${hardened}`;
                       break;
                     }
