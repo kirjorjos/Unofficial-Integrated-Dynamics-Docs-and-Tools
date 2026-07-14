@@ -911,15 +911,9 @@ const getDisplayPanelColor = (
   if (step.sourceType === "Operator" || step.forceOperatorTabActive) {
     return LOGIC_PROGRAMMER_TYPE_COLORS["Operator"] ?? "#2be72f";
   }
-  // For Curry types, check if fully applied to get the actual output color
+  // For Curry types, always use operator color - the step represents
+  // applying an operator, not the resulting value
   if (step.sourceType === "Curry") {
-    if (step.node) {
-      const flattened = flattenAnonymousBaseOperatorApplication(step.node);
-      if (flattened?.fullyApplied) {
-        const outputType = getStepActualOutputType(step);
-        return LOGIC_PROGRAMMER_TYPE_COLORS[outputType] ?? "#f0f0f0";
-      }
-    }
     return LOGIC_PROGRAMMER_TYPE_COLORS["Operator"] ?? "#2be72f";
   }
   // For serializer types (Flip, Pipe, Pipe2) used from their respective tabs
@@ -967,14 +961,9 @@ const getOutputTextureName = (
   if (step.sourceType === "Operator" || step.forceOperatorTabActive) {
     return "Operator";
   }
-  // For Curry types, check if fully applied to get the actual output type
+  // For Curry types, always show operator icon - the step represents
+  // applying an operator, not the resulting value
   if (step.sourceType === "Curry") {
-    if (step.node) {
-      const flattened = flattenAnonymousBaseOperatorApplication(step.node);
-      if (flattened?.fullyApplied) {
-        return getStepActualOutputType(step) as TypeAST.AST["type"];
-      }
-    }
     return "Operator";
   }
   // For serializer types (Flip, Pipe, Pipe2) used from their respective tabs
@@ -1352,7 +1341,9 @@ const steps = computed<VisualStep[]>(() => {
       result.push(fullStep);
       const card = {
         name: fullStep.output,
-        type: getStepActualOutputType(fullStep) as TypeAST.AST["type"],
+        type: (step.sourceType === "Operator" || step.sourceType === "Curry")
+          ? "Operator"
+          : getStepActualOutputType(fullStep) as TypeAST.AST["type"],
         variableId,
         tooltip,
       };
