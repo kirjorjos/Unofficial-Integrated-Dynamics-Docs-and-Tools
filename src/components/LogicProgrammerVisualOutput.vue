@@ -731,7 +731,8 @@ const getDisplayPanelText = (
       const op = ASTtoOperator(step.node) as any;
       const nodeType = step.node.type;
 
-      // For serializer types (Flip, Pipe, Pipe2)
+      // For serializer types (Flip, Pipe, Pipe2, Curry), use the resolved
+      // signature from the AST node instead of the generic registry signature
       if (nodeType === "Flip" || nodeType === "Pipe" || nodeType === "Pipe2") {
         const opKey = step.tooltipOperatorKey;
         if (opKey) {
@@ -752,17 +753,14 @@ const getDisplayPanelText = (
           const virtualKey = virtualKeyMap[opKey];
           if (virtualKey) {
             const operatorDisplay = getVirtualOperatorDisplay(virtualKey);
-            // Get signature from operator registry instead of reconstructing
-            const operatorClass = getOperatorClass(opKey as TypeOperatorKey);
-            if (operatorClass) {
-              const parsedSig = new operatorClass(false).getParsedSignature();
-              const signature = parsedSig.toFlatSignature();
-              const indent = "\u00A0";
-              const sigLines = signature
-                .map((type, i) => (i === 0 ? type : `${indent}-> ${type}`))
-                .join("\n");
-              return `${operatorDisplay.title} ::\n${sigLines}`;
-            }
+            // Use the resolved operator's signature from the AST node
+            const resolvedSig = op.getParsedSignature();
+            const flatSig = resolvedSig.toFlatSignature();
+            const indent = "\u00A0";
+            const sigLines = flatSig
+              .map((type, i) => (i === 0 ? type : `${indent}-> ${type}`))
+              .join("\n");
+            return `${operatorDisplay.title} ::\n${sigLines}`;
           }
         }
         return step.output;
@@ -980,10 +978,20 @@ const buildOperatorCardTooltip = (
     };
   }
 
-  // For Curry types (partially applied operators), resolve the actual
-  // signature from the AST node instead of showing the generic OPERATOR_APPLY
-  // signature (which always shows Operator -> Any -> Any)
-  if (step.sourceType === "Curry" && step.node) {
+  // For serializer types (Curry/Pipe/Pipe2/Flip), resolve the actual
+  // signature from the AST node instead of showing the generic registry
+  // signature (which always shows type variables like Operator -> Any -> Any)
+  const serializerTypes: ReadonlySet<string> = new Set([
+    "Curry",
+    "Pipe",
+    "Pipe2",
+    "Flip",
+  ]);
+  if (
+    step.sourceType &&
+    serializerTypes.has(step.sourceType) &&
+    step.node
+  ) {
     try {
       const op = ASTtoOperator(step.node) as any;
       if (typeof op?.getParsedSignature === "function") {
@@ -994,17 +1002,33 @@ const buildOperatorCardTooltip = (
         );
         const resolvedOutputType = resolvedSig.getOutput(-1).getRootType();
 
-        // Try to get the base operator info for display name/symbol/category
+        // Determine display name/symbol/category
         let displayName: string = operatorKey;
         let categoryName = "Operator";
         let symbol: string = operatorKey;
 
-        const flattened = flattenAnonymousBaseOperatorApplication(step.node);
-        if (flattened?.operator.type === "Operator") {
-          const baseMeta = getOperatorTooltipMeta(flattened.operator.opName);
-          displayName = baseMeta.displayName;
-          categoryName = baseMeta.categoryName;
-          symbol = baseMeta.symbol;
+        if (step.sourceType === "Curry") {
+          // For Curry, try to get the inner operator's info
+          const flattened = flattenAnonymousBaseOperatorApplication(step.node);
+          if (flattened?.operator.type === "Operator") {
+            const baseMeta = getOperatorTooltipMeta(flattened.operator.opName);
+            displayName = baseMeta.displayName;
+            categoryName = baseMeta.categoryName;
+            symbol = baseMeta.symbol;
+          }
+        } else {
+          // For Pipe/Pipe2/Flip, use the virtual operator display
+          const virtualKeyMap: Record<string, "pipe" | "pipe2" | "flip"> = {
+            Pipe: "pipe",
+            Pipe2: "pipe2",
+            Flip: "flip",
+          };
+          const virtualKey = virtualKeyMap[step.sourceType];
+          if (virtualKey) {
+            const virtualDisplay = getVirtualOperatorDisplay(virtualKey);
+            displayName = virtualDisplay.title;
+            symbol = virtualDisplay.symbol;
+          }
         }
 
         const lines = [
@@ -1026,7 +1050,7 @@ const buildOperatorCardTooltip = (
                 : getValueTypeMeta(resolvedOutputType).colorCode
             }${getValueTypeMeta(resolvedOutputType).label}`
           ),
-          // Curry steps use virtual apply operators; skip irrelevant tooltip info
+          // Skip tooltip info for virtual serializer operators
           formatTemplate(
             OPERATOR_VARIABLE_IDS_TEMPLATE,
             getOperatorReferenceText(step.inputs)
