@@ -53,6 +53,7 @@ type VisualStep = {
   expectedOutputType?: string;
   forceOperatorTabActive?: boolean;
   workspaceMode?: "operatorValue" | "pattern";
+  typeError?: string;
 };
 
 type VisualCardRef = {
@@ -1384,6 +1385,19 @@ const steps = computed<VisualStep[]>(() => {
         if (flattened?.fullyApplied && flattened.operator.type === "Operator") {
           const argOutputs = flattened.args.map(visit);
           const finalVarName = ast.varName || getExpandedVarName(ast);
+
+          // Validate input types against operator's expected types
+          let typeError: string | undefined;
+          const opMeta = getOperatorTooltipMeta(flattened.operator.opName);
+          for (let i = 0; i < Math.min(opMeta.inputTypes.length, argOutputs.length); i++) {
+            const expected = opMeta.inputTypes[i];
+            const actual = argOutputs[i].type;
+            if (expected !== "Any" && expected !== "Operator" && actual !== expected) {
+              typeError = `Type mismatch: expected ${expected}, got ${actual}`;
+              break;
+            }
+          }
+
           const step = {
             id: `step-${result.length + 1}`,
             title: getOperatorDisplay(flattened.operator.opName).title,
@@ -1397,6 +1411,7 @@ const steps = computed<VisualStep[]>(() => {
             output: finalVarName,
             node: ast,
             tooltipOperatorKey: getCurryTooltipKey(flattened.args.length),
+            typeError,
           };
           const finalCard = register(step);
           seen.set(ast, finalCard);
@@ -2168,12 +2183,14 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
           :text-color="getDisplayPanelColor(step)"
           :align="getDisplayPanelAlign(step)"
           :type-name="step.sourceType"
+          :type-error="step.typeError"
         />
         <DisplayPanelView
           :text="getDisplayPanelText(step)"
           :text-color="getDisplayPanelColor(step)"
           :align="getDisplayPanelAlign(step)"
           :type-name="step.sourceType"
+          :type-error="step.typeError"
         />
       </DisplayPanelViewHolder>
     </article>
