@@ -772,6 +772,20 @@ export const getPatternBox = (step: VisualStep): PatternBox => {
     };
   }
 
+  if (step.workspaceMode === "pattern") {
+    // Pattern mode: always show the generic NONE_CANVAS (dropdown + signature)
+    const pattern = LOGIC_PROGRAMMER_RENDER_PATTERNS.NONE_CANVAS;
+    const left = workspaceX + Math.floor((workspaceWidth - pattern.width) / 2);
+    const top = workspaceY + Math.floor((workspaceHeight - pattern.height) / 2);
+
+    return {
+      slots: [] as { left: number; top: number }[],
+      symbol: null,
+      valueBox: null as { left: number; top: number; width: number } | null,
+      canvas: { left, top, width: pattern.width, height: pattern.height },
+    };
+  }
+
   if (isItemStackBackedValueType(step.sourceType)) {
     const pattern = LOGIC_PROGRAMMER_RENDER_PATTERNS.SINGLE_SLOT;
     const left = workspaceX + Math.floor((workspaceWidth - pattern.width) / 2);
@@ -859,13 +873,19 @@ export const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
   const valueTypeEntries = getValueTypeDisplayEntries().filter(
     (entry) => !search || entry.matchString.includes(search)
   );
+
   const operatorEntries = operatorListEntries
     .filter((operatorClass) => {
       const fullName = new operatorClass(false)
         .getFullDisplayName()
         .toLowerCase();
       const symbol = (operatorClass.symbol ?? "").toLowerCase();
-      return fullName.includes(search) || symbol.includes(search);
+      const operatorName = (operatorClass.operatorName ?? "").toLowerCase();
+      return (
+        fullName.includes(search) ||
+        symbol.includes(search) ||
+        operatorName.includes(search)
+      );
     })
     .map((operatorClass) => ({
       symbol: operatorClass.symbol ?? "",
@@ -877,6 +897,12 @@ export const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
     }));
 
   const filtered = [...valueTypeEntries, ...operatorEntries]
+    .sort((a, b) => {
+      // Put the matching operator entry first so .slice(0,10) includes it
+      if (a.symbol === step.symbol) return -1;
+      if (b.symbol === step.symbol) return 1;
+      return 0;
+    })
     .slice(0, 10)
     .map((entry) => ({
       symbol: entry.symbol,
@@ -889,7 +915,8 @@ export const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
               (step.sourceType === "Operator"
                 ? "Operator"
                 : getValueTypeSearchLabel(step.sourceType))
-          : (step.forceOperatorTabActive || step.sourceType !== "Operator") &&
+          : (step.forceOperatorTabActive ||
+              step.sourceType !== "Operator") &&
             (entry.symbol === step.symbol || entry.matchString === search),
     }));
 
@@ -932,6 +959,8 @@ export const generateVisualSteps = (
   operatorPreviewMode?: "value" | "pattern"
 ): VisualStep[] => {
   resetExpandedVarCounter();
+
+  const isPatternMode = operatorPreviewMode === "pattern";
 
   const getExpandedCurryChunks = (
     ast: TypeAST.Curried
@@ -1012,7 +1041,7 @@ export const generateVisualSteps = (
     const step: Omit<VisualStep, "variableId" | "tooltip"> = {
       id: "operator-pattern-preview",
       title: operator.title,
-      searchLabel: operator.searchLabel,
+      searchLabel: "Operator",
       panelLabel: operator.panelLabel,
       symbol: operator.symbol,
       kind: "value",
@@ -1074,7 +1103,7 @@ export const generateVisualSteps = (
         return register({
           id: `step-${result.length + 1}`,
           title: operator.title,
-          searchLabel: "Operator",
+          searchLabel: isPatternMode ? "Operator" : operator.searchLabel,
           panelLabel: operator.panelLabel,
           symbol: operator.symbol,
           kind: "operator",
@@ -1085,7 +1114,8 @@ export const generateVisualSteps = (
           detail: ast.opName,
           node: ast,
           tooltipOperatorKey: ast.opName,
-          workspaceMode: "operatorValue",
+          forceOperatorTabActive: isPatternMode ? true : undefined,
+          workspaceMode: isPatternMode ? "pattern" : "operatorValue",
         });
       }
       case "Curry": {
