@@ -1,6 +1,7 @@
 import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
 import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 import { iString } from "lib/IntegratedDynamicsClasses/typeWrappers/iString";
+import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 
 export class OPERATOR_STRING_ERROR extends BaseOperator<
   iString,
@@ -36,7 +37,7 @@ export class OPERATOR_STRING_ERROR extends BaseOperator<
         normalizeSignature
       ),
       function: (message: iString): never => {
-        throw new Error(`Error: ${message.valueOf()}`);
+        throw new iError(`Error: ${message.valueOf()}`);
       },
     });
   }

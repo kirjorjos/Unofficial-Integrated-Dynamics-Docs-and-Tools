@@ -3,6 +3,7 @@ import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperat
 import { Operator } from "lib/IntegratedDynamicsClasses/operators/Operator";
 import { iString } from "lib/IntegratedDynamicsClasses/typeWrappers/iString";
 import { operatorRegistry } from "lib/IntegratedDynamicsClasses/registries/operatorRegistry";
+import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 
 export class OPERATOR_OPERATOR_BY_NAME extends BaseOperator<
   iString,
@@ -52,7 +53,7 @@ export class OPERATOR_OPERATOR_BY_NAME extends BaseOperator<
       ),
       function: (name: iString): Operator<IntegratedValue, IntegratedValue> => {
         const result = operatorRegistry.find(name.valueOf());
-        if (!result) throw new Error(`No operator found: ${name.valueOf()}`);
+        if (!result) throw new iError(`No operator found: ${name.valueOf()}`);
         return result;
       },
     });

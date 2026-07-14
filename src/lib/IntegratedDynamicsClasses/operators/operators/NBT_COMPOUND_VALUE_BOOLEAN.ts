@@ -6,6 +6,7 @@ import { iBoolean } from "lib/IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { Operator } from "lib/IntegratedDynamicsClasses/operators/Operator";
 import { ByteTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ByteTag";
 import { NullTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/NullTag";
+import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 
 export class OPERATOR_NBT_COMPOUND_VALUE_BOOLEAN extends BaseOperator<
   CompoundTag,
@@ -61,7 +62,7 @@ export class OPERATOR_NBT_COMPOUND_VALUE_BOOLEAN extends BaseOperator<
           if (value instanceof NullTag) {
             return new iBoolean(false);
           }
-          throw new Error(
+          throw new iError(
             `${key.valueOf()} is not a boolean in ${JSON.stringify(
               nbt.toJSON()
             )}`

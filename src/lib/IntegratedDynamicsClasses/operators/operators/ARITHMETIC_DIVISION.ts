@@ -1,6 +1,7 @@
 import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
 import { Operator } from "lib/IntegratedDynamicsClasses/operators/Operator";
 import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
+import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 
 export class OPERATOR_ARITHMETIC_DIVISION extends BaseOperator<
   TypeNumber,
@@ -48,7 +49,7 @@ export class OPERATOR_ARITHMETIC_DIVISION extends BaseOperator<
       function: (num1: TypeNumber): TypeLambda<TypeNumber, TypeNumber> => {
         return (num2: TypeNumber): TypeNumber => {
           if (num2.toJSNumber() === 0) {
-            throw new Error("Division by zero");
+            throw new iError("Division by zero");
           }
           if (num1.getOrder() < num2.getOrder()) {
             num1 = num1[`to${num2.getType()}`]();

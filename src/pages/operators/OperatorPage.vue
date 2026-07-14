@@ -111,6 +111,7 @@ const operatorAst = computed<TypeAST.Operator>(() => {
             :start-variable-id="variableId"
             :show-step-numbers="false"
             :show-step-titles="false"
+            operator-preview-mode="pattern"
           />
         </section>
 
@@ -121,7 +122,6 @@ const operatorAst = computed<TypeAST.Operator>(() => {
             :start-variable-id="variableId"
             :show-step-numbers="false"
             :show-step-titles="false"
-            operator-preview-mode="pattern"
           />
         </section>
       </div>

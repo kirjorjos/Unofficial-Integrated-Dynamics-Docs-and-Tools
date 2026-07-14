@@ -7,6 +7,7 @@ import { Double } from "lib/JavaNumberClasses/Double";
 import { DoubleTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/DoubleTag";
 import { FloatTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/FloatTag";
 import { NullTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/NullTag";
+import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 
 export class OPERATOR_NBT_COMPOUND_VALUE_DOUBLE extends BaseOperator<
   CompoundTag,
@@ -62,7 +63,7 @@ export class OPERATOR_NBT_COMPOUND_VALUE_DOUBLE extends BaseOperator<
           if (value instanceof NullTag) {
             return new Double(0);
           }
-          throw new Error(
+          throw new iError(
             `${key.valueOf()} is not a double in ${JSON.stringify(
               nbt.toJSON()
             )}`

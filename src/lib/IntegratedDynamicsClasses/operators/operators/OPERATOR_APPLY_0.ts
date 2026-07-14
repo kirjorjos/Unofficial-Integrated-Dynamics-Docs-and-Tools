@@ -1,6 +1,7 @@
 import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
 import { Operator } from "lib/IntegratedDynamicsClasses/operators/Operator";
+import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 
 export class OPERATOR_OPERATOR_APPLY_0 extends BaseOperator<
   Operator<IntegratedValue, IntegratedValue>,
@@ -56,7 +57,7 @@ export class OPERATOR_OPERATOR_APPLY_0 extends BaseOperator<
 
   override evaluate(...args: IntegratedValue[]): IntegratedValue {
     if (args.length !== 1)
-      throw new Error(`Operator expected 1 arg, got ${args.length}`);
+      throw new iError(`Operator expected 1 arg, got ${args.length}`);
     const op = args[0] as Operator<IntegratedValue, IntegratedValue>;
     if (op.getParsedSignature().getArity() === 0) return op.getFn()();
     return new Operator<IntegratedValue, IntegratedValue>({

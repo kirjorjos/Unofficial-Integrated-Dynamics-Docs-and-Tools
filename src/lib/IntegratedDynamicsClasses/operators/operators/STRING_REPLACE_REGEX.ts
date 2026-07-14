@@ -1,6 +1,7 @@
 import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
 import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 import { iString } from "lib/IntegratedDynamicsClasses/typeWrappers/iString";
+import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 import { Operator } from "lib/IntegratedDynamicsClasses/operators/Operator";
 import { RE2 } from "re2-wasm";
 import {
@@ -74,7 +75,7 @@ export class OPERATOR_STRING_REPLACE_REGEX extends BaseOperator<
               .some((n) => n > groupCount && n !== 0);
 
             if (badRef) {
-              throw new Error("Invalid replacement group reference");
+              throw new iError("Invalid replacement group reference");
             }
 
             replacement = sanitizeReplacement(replacement);

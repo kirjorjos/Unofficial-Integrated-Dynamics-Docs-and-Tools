@@ -6,6 +6,7 @@ import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperat
 import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 import { iString } from "lib/IntegratedDynamicsClasses/typeWrappers/iString";
 import { Operator } from "lib/IntegratedDynamicsClasses/operators/Operator";
+import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 
 export class OPERATOR_NBT_PATH_MATCH_FIRST extends BaseOperator<
   iString,
@@ -57,7 +58,7 @@ export class OPERATOR_NBT_PATH_MATCH_FIRST extends BaseOperator<
       ): TypeLambda<CompoundTag, Tag<IntegratedValue>> => {
         return (nbt: CompoundTag): Tag<IntegratedValue> => {
           let expression = NbtPath.parse(path.valueOf());
-          if (!expression) throw new Error(`Invalid path: ${path.valueOf()}`);
+          if (!expression) throw new iError(`Invalid path: ${path.valueOf()}`);
           return expression.match(nbt).getMatches()[0] ?? new NullTag();
         };
       },

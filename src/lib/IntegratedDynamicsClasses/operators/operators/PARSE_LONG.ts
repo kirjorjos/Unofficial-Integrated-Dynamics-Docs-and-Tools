@@ -2,6 +2,7 @@ import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
 import { Long } from "lib/JavaNumberClasses/Long";
 import { iString } from "lib/IntegratedDynamicsClasses/typeWrappers/iString";
+import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 
 export class OPERATOR_PARSE_LONG extends BaseOperator<iString, Long> {
   static override internalName =
@@ -40,7 +41,7 @@ export class OPERATOR_PARSE_LONG extends BaseOperator<iString, Long> {
         try {
           return new Long(data.valueOf());
         } catch (e: any) {
-          throw new Error(
+          throw new iError(
             `Could not parse long from "${data.valueOf()}": ${e.message}`
           );
         }

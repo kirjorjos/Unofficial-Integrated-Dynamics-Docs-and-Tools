@@ -2,6 +2,7 @@ import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperat
 import { Operator } from "lib/IntegratedDynamicsClasses/operators/Operator";
 import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 import { iArray } from "lib/IntegratedDynamicsClasses/typeWrappers/iArray";
+import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 
 export class OPERATOR_LIST_APPEND extends BaseOperator<
   iArray<IntegratedValue>,
@@ -41,7 +42,7 @@ export class OPERATOR_LIST_APPEND extends BaseOperator<
           const listType = list.getSignatureNode().getOutput().getRootType();
           const elementType = element.getSignatureNode().getRootType();
           if (listType !== elementType)
-            throw new Error(`Can't add ${elementType} to ${listType}[]`);
+            throw new iError(`Can't add ${elementType} to ${listType}[]`);
           return list.append(element);
         };
       },
