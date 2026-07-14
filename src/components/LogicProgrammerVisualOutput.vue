@@ -966,7 +966,10 @@ const buildValueCardTooltip = (
 };
 
 const buildOperatorCardTooltip = (
-  step: Pick<VisualStep, "output" | "inputs" | "tooltipOperatorKey">,
+  step: Pick<
+    VisualStep,
+    "output" | "inputs" | "tooltipOperatorKey" | "sourceType"
+  > & { node?: TypeAST.AST },
   variableId: number
 ): TooltipData => {
   const operatorKey = step.tooltipOperatorKey;
@@ -975,6 +978,70 @@ const buildOperatorCardTooltip = (
       title: getCardTitle(step.output),
       lines: getBaseTooltipLines(variableId),
     };
+  }
+
+  // For Curry types (partially applied operators), resolve the actual
+  // signature from the AST node instead of showing the generic OPERATOR_APPLY
+  // signature (which always shows Operator -> Any -> Any)
+  if (step.sourceType === "Curry" && step.node) {
+    try {
+      const op = ASTtoOperator(step.node) as any;
+      if (typeof op?.getParsedSignature === "function") {
+        const resolvedSig = op.getParsedSignature();
+        const resolvedInputTypes = Array.from(
+          { length: resolvedSig.getArity() },
+          (_, index) => resolvedSig.getInput(index).getRootType()
+        );
+        const resolvedOutputType = resolvedSig.getOutput(-1).getRootType();
+
+        // Try to get the base operator info for display name/symbol/category
+        let displayName: string = operatorKey;
+        let categoryName = "Operator";
+        let symbol: string = operatorKey;
+
+        const flattened = flattenAnonymousBaseOperatorApplication(step.node);
+        if (flattened?.operator.type === "Operator") {
+          const baseMeta = getOperatorTooltipMeta(flattened.operator.opName);
+          displayName = baseMeta.displayName;
+          categoryName = baseMeta.categoryName;
+          symbol = baseMeta.symbol;
+        }
+
+        const lines = [
+          formatTemplate(OPERATOR_NAME_TEMPLATE, displayName, symbol),
+          formatTemplate(OPERATOR_CATEGORY_TEMPLATE, categoryName),
+          ...resolvedInputTypes.map((inputType, index) => {
+            const inputMeta = getValueTypeMeta(inputType);
+            return formatTemplate(
+              OPERATOR_INPUT_TYPE_TEMPLATE,
+              `${index + 1}`,
+              `${inputMeta.colorCode}${inputMeta.label}`
+            );
+          }),
+          formatTemplate(
+            OPERATOR_OUTPUT_TYPE_TEMPLATE,
+            `${
+              resolvedOutputType === "Any"
+                ? "§0"
+                : getValueTypeMeta(resolvedOutputType).colorCode
+            }${getValueTypeMeta(resolvedOutputType).label}`
+          ),
+          // Curry steps use virtual apply operators; skip irrelevant tooltip info
+          formatTemplate(
+            OPERATOR_VARIABLE_IDS_TEMPLATE,
+            getOperatorReferenceText(step.inputs)
+          ),
+          ...getBaseTooltipLines(variableId),
+        ];
+
+        return {
+          title: getCardTitle(step.output),
+          lines,
+        };
+      }
+    } catch {
+      // Fall through to default registry-based handling
+    }
   }
 
   const operatorMeta = getOperatorTooltipMeta(operatorKey);
@@ -1172,10 +1239,7 @@ const steps = computed<VisualStep[]>(() => {
               stepBase.type === "Operator"
                 ? getOperatorDisplay(stepBase.opName).title
                 : virtualOperator.title,
-            searchLabel:
-              stepBase.type === "Operator"
-                ? getOperatorDisplay(stepBase.opName).searchLabel
-                : virtualOperator.searchLabel,
+            searchLabel: virtualOperator.searchLabel,
             symbol: virtualOperator.symbol,
             kind: "operator" as const,
             sourceType: chunk.node.type,
