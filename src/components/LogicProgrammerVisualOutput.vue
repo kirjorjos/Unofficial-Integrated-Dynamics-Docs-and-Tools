@@ -725,7 +725,7 @@ const getDisplayPanelText = (
   >
 ): string => {
   // For string types without custom name, show the value
-  if (step.sourceType === "String" && step.detail) {
+  if (step.sourceType === "String" && step.detail && step.detail !== step.output) {
     return step.detail;
   }
   // For List types, show each element as a bullet point
@@ -743,8 +743,7 @@ const getDisplayPanelText = (
 
       // For serializer types (Flip, Pipe, Pipe2, Curry), use the resolved
       // signature from the AST node instead of the generic registry signature
-      if (nodeType === "Flip" || nodeType === "Pipe" || nodeType === "Pipe2") {
-        const opKey = step.tooltipOperatorKey;
+      if (nodeType === "Flip" || nodeType === "Pipe" || nodeType === "Pipe2") {          const opKey = step.tooltipOperatorKey;
         if (opKey) {
           // Map tooltip keys to virtual operator keys
           const virtualKeyMap: Record<
@@ -772,14 +771,14 @@ const getDisplayPanelText = (
             return `${operatorDisplay.title} ::\n${sigLines}`;
           }
         }
-        return step.output;
+        return "";
       }
 
       // For Curry types, show the resolved value when fully applied,
       // or operator name + signature when partially applied
       if (nodeType === "Curry") {
         if (typeof (op as any).getName !== "function") {
-          return step.output;
+          return "";
         }
         const sig = (op as any).getParsedSignature();
         // If fully applied (not a function signature), try to show the value
@@ -870,7 +869,7 @@ const getDisplayPanelText = (
             // Fall through
           }
 
-          return step.output;
+          return "";
         }
         const name = (op as any).getName().valueOf();
         const flatSig = new ParsedSignature(sig.getAst(), false).toFlatSignature();
@@ -882,7 +881,7 @@ const getDisplayPanelText = (
       }
 
       if (typeof (op as any).getFullDisplayName !== "function") {
-        return step.output;
+        return "";
       }
 
       const name = op.getFullDisplayName();
@@ -896,10 +895,10 @@ const getDisplayPanelText = (
         .join("\n");
       return `${name} ::\n${sigLines}`;
     } catch {
-      return step.output;
+      return "";
     }
   }
-  return step.output;
+  return "";
 };
 
 const getDisplayPanelColor = (
@@ -961,9 +960,15 @@ const getOutputTextureName = (
   if (step.sourceType === "Operator" || step.forceOperatorTabActive) {
     return "Operator";
   }
-  // For Curry types, always show operator icon - the step represents
-  // applying an operator, not the resulting value
+  // For Curry types, show operator icon when partially applied,
+  // or the actual output type when fully applied
   if (step.sourceType === "Curry") {
+    if (step.node) {
+      const flattened = flattenAnonymousBaseOperatorApplication(step.node);
+      if (flattened?.fullyApplied) {
+        return getStepActualOutputType(step) as TypeAST.AST["type"];
+      }
+    }
     return "Operator";
   }
   // For serializer types (Flip, Pipe, Pipe2) used from their respective tabs
@@ -1341,9 +1346,13 @@ const steps = computed<VisualStep[]>(() => {
       result.push(fullStep);
       const card = {
         name: fullStep.output,
-        type: (step.sourceType === "Operator" || step.sourceType === "Curry")
+        type: step.sourceType === "Operator"
           ? "Operator"
-          : getStepActualOutputType(fullStep) as TypeAST.AST["type"],
+          : step.sourceType === "Curry" && step.node
+            ? flattenAnonymousBaseOperatorApplication(step.node)?.fullyApplied
+              ? getStepActualOutputType(fullStep) as TypeAST.AST["type"]
+              : "Operator"
+            : getStepActualOutputType(fullStep) as TypeAST.AST["type"],
         variableId,
         tooltip,
       };
