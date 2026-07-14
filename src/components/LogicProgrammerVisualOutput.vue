@@ -718,6 +718,8 @@ const getOperatorValueSignatureText = (opName: TypeOperatorKey): string => {
     .join(" §r-> ");
 };
 
+const runtimeErrors = new WeakMap<TypeAST.AST, string>();
+
 const getDisplayPanelText = (
   step: Pick<
     VisualStep,
@@ -826,8 +828,11 @@ const getDisplayPanelText = (
                 return display;
               }
             }
-          } catch {
-            // Fast path failed, try per-arg resolution
+          } catch (e) {
+            // Fast path failed — capture runtime error
+            if (step.node) {
+              runtimeErrors.set(step.node, e instanceof Error ? e.message : String(e));
+            }
           }
 
           // Fallback: evaluate each arg separately via flattened AST
@@ -865,8 +870,11 @@ const getDisplayPanelText = (
                   .join("\n");
               }
             }
-          } catch {
-            // Fall through
+          } catch (e) {
+            // Fall through — capture runtime error
+            if (step.node) {
+              runtimeErrors.set(step.node, e instanceof Error ? e.message : String(e));
+            }
           }
 
           return "";
@@ -894,11 +902,18 @@ const getDisplayPanelText = (
         .map((type: string, i: number) => (i === 0 ? type : `${indent}-> ${type}`))
         .join("\n");
       return `${name} ::\n${sigLines}`;
-    } catch {
+    } catch (e) {
+      if (step.node) {
+        runtimeErrors.set(step.node, e instanceof Error ? e.message : String(e));
+      }
       return "";
     }
   }
   return "";
+};
+
+const getStepDisplayError = (step: VisualStep): string | undefined => {
+  return step.typeError ?? runtimeErrors.get(step.node) ?? undefined;
 };
 
 const getDisplayPanelColor = (
@@ -2261,14 +2276,14 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
           :text-color="getDisplayPanelColor(step)"
           :align="getDisplayPanelAlign(step)"
           :type-name="step.sourceType"
-          :type-error="step.typeError"
+          :type-error="getStepDisplayError(step)"
         />
         <DisplayPanelView
           :text="getDisplayPanelText(step)"
           :text-color="getDisplayPanelColor(step)"
           :align="getDisplayPanelAlign(step)"
           :type-name="step.sourceType"
-          :type-error="step.typeError"
+          :type-error="getStepDisplayError(step)"
         />
       </DisplayPanelViewHolder>
     </article>

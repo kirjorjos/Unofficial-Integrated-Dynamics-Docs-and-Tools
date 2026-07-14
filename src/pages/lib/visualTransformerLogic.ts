@@ -92,6 +92,8 @@ const OPERATOR_SIGNATURE_TEMPLATE = "§eSignature: §r%s";
 const EXPECTED_INPUT_TYPE_TEMPLATE = "§eExpected Type: %s";
 const EXPECTED_OUTPUT_TYPE_TEMPLATE = "§eExpected Output: %s";
 
+const runtimeErrors = new WeakMap<TypeAST.AST, string>();
+
 export const getOperatorClass = (
   opName: TypeOperatorKey
 ): OperatorClassLike | undefined => {
@@ -419,11 +421,18 @@ export const getDisplayPanelText = (
         .map((type, i) => (i === 0 ? type : `${indent}-> ${type}`))
         .join("\n");
       return `${name} ::\n${sigLines}`;
-    } catch {
+    } catch (e) {
+      if (step.node) {
+        runtimeErrors.set(step.node, e instanceof Error ? e.message : String(e));
+      }
       return step.output;
     }
   }
   return step.output;
+};
+
+export const getStepRuntimeError = (step: VisualStep): string | undefined => {
+  return runtimeErrors.get(step.node) ?? undefined;
 };
 
 const TOP_ALIGNED_TYPES = new Set([
