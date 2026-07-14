@@ -138,7 +138,14 @@ export class TypeMap {
         }
         return null;
       }
-      this.aliases.set(bBaseAlias, a);
+      // Don't alias type variables to parent types (Named/UniquelyNamed)
+      // These are type categories used for input constraints (e.g. operator
+      // inputs like Named → String) and should not propagate through type
+      // variable resolution. Parent types should only appear as explicit
+      // input/output constraints, not as resolved type variable values.
+      if (a.getRootType() !== "Named" && a.getRootType() !== "UniquelyNamed") {
+        this.aliases.set(bBaseAlias, a);
+      }
       return null;
     }
 
