@@ -92,7 +92,24 @@ export class TypeMap {
       const aBaseID = this.findBaseID(a.getTypeID());
       const bBaseID = this.findBaseID(b.getTypeID());
       if (aBaseID === bBaseID) return null;
-      this.aliases.set(aBaseID, bBaseID);
+
+      const aResolved = this.findBase(a.getTypeID());
+      const bResolved = this.findBase(b.getTypeID());
+
+      if (aResolved instanceof ParsedSignature && bResolved instanceof ParsedSignature) {
+        // Both have concrete type aliases — unify them (may promote Named→String)
+        return this.unify(aResolved, bResolved, false);
+      }
+      if (aResolved instanceof ParsedSignature) {
+        // a has a concrete type — make b point to a (preserves a's alias)
+        this.aliases.set(bBaseID, aBaseID);
+      } else if (bResolved instanceof ParsedSignature) {
+        // b has a concrete type — make a point to b
+        this.aliases.set(aBaseID, bBaseID);
+      } else {
+        // Neither has a concrete type — normal behavior
+        this.aliases.set(aBaseID, bBaseID);
+      }
       return null;
     }
 
@@ -102,8 +119,24 @@ export class TypeMap {
     if (a.getRootType() !== "Any" && b.getRootType() === "Any") {
       const bBaseAlias = this.findBase(b.getTypeID());
       if (bBaseAlias instanceof ParsedSignature) {
-        // b has an solid type alias
-        return this.unify(a, bBaseAlias, false);
+        /* 
+        **b has a solid type alias — try to unify, and if the existing
+        ** alias is a less-specific parent (Named/UniquelyNamed), promote
+        ** it to the more specific concrete type
+        */
+        const error = this.unify(a, bBaseAlias, false);
+        if (error) return error;
+        const oldRoot = bBaseAlias.getRootType();
+        const newRoot = a.getRootType();
+        if (
+          oldRoot !== newRoot &&
+          (oldRoot === "Named" || oldRoot === "UniquelyNamed") &&
+          newRoot !== "Named" &&
+          newRoot !== "UniquelyNamed"
+        ) {
+          this.aliases.set(this.findBaseID(b.getTypeID()), a);
+        }
+        return null;
       }
       this.aliases.set(bBaseAlias, a);
       return null;

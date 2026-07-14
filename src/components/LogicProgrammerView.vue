@@ -141,36 +141,81 @@ const outputTooltip = computed(() => getOutputSlotTooltip(props.step));
           }"
         />
 
-        <div
-          class="logic-operator-dropdown-field"
-          :style="{
-            left: `${patternBox.canvas!.left + 14}px`,
-            top: `${patternBox.canvas!.top + 6}px`,
-            width: `${patternBox.canvas!.width - 28}px`,
-          }"
-        >
-          <FitText :text="step.panelLabel ?? step.title" :min-scale="0.7" />
-        </div>
-
-        <div
-          v-for="(line, lineIndex) in signatureLines"
-          :key="`${step.id}-signature-${lineIndex}`"
-          class="logic-operator-signature-line"
-          :style="{
-            left: `${patternBox.canvas!.left + 10}px`,
-            top: `${patternBox.canvas!.top + 25 + lineIndex * 9}px`,
-          }"
-        >
-          <span
-            class="logic-operator-signature-prefix"
-            :style="{ color: '#000000' }"
+        <!-- When operator has a render pattern, show its slots and symbol -->
+        <template v-if="patternBox.slots.length > 0">
+          <div
+            v-for="(slot, inputIndex) in patternBox.slots"
+            :key="`${step.id}-op-slot-${inputIndex}`"
+            class="logic-slot-overlay"
+            :class="{
+              'logic-card-overlay-has-tooltip': !!getInputSlotTooltip(
+                step,
+                inputIndex
+              ),
+            }"
+            :style="{ left: `${slot.left}px`, top: `${slot.top}px` }"
           >
-            {{ line.prefix }}
-          </span>
-          <span :style="{ color: line.color }">
-            {{ line.label }}
-          </span>
-        </div>
+            <HoverMinecraftTooltip
+              v-if="getInputSlotTooltip(step, inputIndex)"
+              :title="getInputSlotTooltip(step, inputIndex)!.title"
+              :lines="getInputSlotTooltip(step, inputIndex)!.lines"
+            >
+              <div
+                v-if="step.inputs[inputIndex]"
+                class="logic-slot-card-composite"
+                :style="{
+                  backgroundImage: `url('${publicAsset(`valuetype/${getTextureName(step.inputs[inputIndex]?.type ?? 'Null')}.png`)}'), url('${publicAsset('item/variable.png')}')`,
+                }"
+              />
+            </HoverMinecraftTooltip>
+          </div>
+
+          <div
+            v-if="patternBox.symbol"
+            class="logic-symbol-overlay"
+            :class="{ 'logic-symbol-overlay-text': step.symbol.length > 2 }"
+            :style="{
+              left: `${patternBox.symbol.left}px`,
+              top: `${patternBox.symbol.top}px`,
+            }"
+          >
+            {{ step.symbol }}
+          </div>
+        </template>
+
+        <!-- No render pattern: show generic dropdown + signature -->
+        <template v-else>
+          <div
+            class="logic-operator-dropdown-field"
+            :style="{
+              left: `${patternBox.canvas!.left + 14}px`,
+              top: `${patternBox.canvas!.top + 6}px`,
+              width: `${patternBox.canvas!.width - 28}px`,
+            }"
+          >
+            <FitText :text="step.panelLabel ?? step.title" :min-scale="0.7" />
+          </div>
+
+          <div
+            v-for="(line, lineIndex) in signatureLines"
+            :key="`${step.id}-signature-${lineIndex}`"
+            class="logic-operator-signature-line"
+            :style="{
+              left: `${patternBox.canvas!.left + 10}px`,
+              top: `${patternBox.canvas!.top + 25 + lineIndex * 9}px`,
+            }"
+          >
+            <span
+              class="logic-operator-signature-prefix"
+              :style="{ color: '#000000' }"
+            >
+              {{ line.prefix }}
+            </span>
+            <span :style="{ color: line.color }">
+              {{ line.label }}
+            </span>
+          </div>
+        </template>
       </template>
 
       <template v-else-if="patternBox.valueBox">
