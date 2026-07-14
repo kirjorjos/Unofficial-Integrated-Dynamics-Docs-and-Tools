@@ -8,6 +8,7 @@ const props = defineProps<{
   textColor?: string;
   align?: string;
   typeName?: string;
+  typeError?: string;
 }>();
 
 const textColor = computed(() => {
@@ -65,12 +66,20 @@ onUnmounted(() => {
 <template>
   <div class="display-panel-wrapper">
     <div class="normal-panel" @click="handlePanelClick">
-      <DisplayPanel
-        :text="props.text"
-        :text-color="textColor"
-        :align="align"
-        :type-name="props.typeName"
-      />
+      <div class="display-panel-stack">
+        <DisplayPanel
+          :text="props.typeError ? '' : props.text"
+          :text-color="textColor"
+          :align="align"
+          :type-name="props.typeName"
+        />
+        <div
+          v-if="props.typeError"
+          class="display-panel-error-overlay"
+        >
+          <span class="logic-type-error-icon" />
+        </div>
+      </div>
     </div>
     <div
       v-if="isFullscreen"
@@ -78,19 +87,51 @@ onUnmounted(() => {
       @click="handleOverlayClick"
     >
       <div class="fullscreen-content" @click.stop>
-        <DisplayPanel
-          :text="props.text"
-          :text-color="textColor"
-          :align="align"
-          :type-name="props.typeName"
-          :is-fullscreen="true"
-        />
+        <div class="display-panel-stack">
+          <DisplayPanel
+            :text="props.typeError ? '' : props.text"
+            :text-color="textColor"
+            :align="align"
+            :type-name="props.typeName"
+            :is-fullscreen="true"
+          />
+          <div
+            v-if="props.typeError"
+            class="display-panel-error-overlay"
+          >
+            <span class="logic-type-error-icon" />
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
+.display-panel-stack {
+  position: relative;
+  display: inline-block;
+}
+
+.display-panel-error-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.display-panel-error-overlay .logic-type-error-icon {
+  transform: scale(12.4) translate(0.5px, 0.5px);
+  image-rendering: pixelated;
+}
+
+.fullscreen-content .display-panel-error-overlay .logic-type-error-icon {
+  transform: scale(18) translate(0.5px, 0.5px);
+  image-rendering: pixelated;
+}
+
 .fullscreen-overlay {
   position: fixed;
   top: 0;

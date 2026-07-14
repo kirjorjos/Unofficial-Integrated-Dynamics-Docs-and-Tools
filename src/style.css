@@ -909,6 +909,14 @@ button {
   image-rendering: pixelated;
 }
 
+.logic-type-error-icon {
+  width: 14px;
+  height: 14px;
+  background: url("/gui/icons.png") -54px 0 / 256px 256px no-repeat;
+  image-rendering: pixelated;
+  display: inline-block;
+}
+
 /* ====== List Editor UI ====== */
 .logic-list-nav-btn {
   position: absolute;
