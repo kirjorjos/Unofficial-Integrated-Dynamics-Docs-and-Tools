@@ -8,6 +8,7 @@ import { IntTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClas
 import { ByteTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ByteTag";
 import { ShortTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ShortTag";
 import { NullTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/NullTag";
+import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 
 export class OPERATOR_NBT_COMPOUND_VALUE_INTEGER extends BaseOperator<
   CompoundTag,
@@ -67,7 +68,7 @@ export class OPERATOR_NBT_COMPOUND_VALUE_INTEGER extends BaseOperator<
           if (value instanceof NullTag) {
             return new Integer(0);
           }
-          throw new Error(
+          throw new iError(
             `${key.valueOf()} is not an integer in ${JSON.stringify(nbt.toJSON())}`
           );
         };

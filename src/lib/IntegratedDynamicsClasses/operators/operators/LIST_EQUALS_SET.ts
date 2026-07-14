@@ -4,6 +4,7 @@ import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperat
 import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 import { Operator } from "lib/IntegratedDynamicsClasses/operators/Operator";
 import { iArrayLazy } from "lib/IntegratedDynamicsClasses/typeWrappers/iArrayLazy";
+import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 
 export class OPERATOR_LIST_EQUALS_SET extends BaseOperator<
   iArray<IntegratedValue>,
@@ -47,7 +48,7 @@ export class OPERATOR_LIST_EQUALS_SET extends BaseOperator<
       ): TypeLambda<iArray<IntegratedValue>, iBoolean> => {
         return (list2: iArray<IntegratedValue>): iBoolean => {
           if (list1 instanceof iArrayLazy || list2 instanceof iArrayLazy)
-            throw new Error("Equals Set not supported for infinite lists.");
+            throw new iError("Equals Set not supported for infinite lists.");
           const set1 = new Set(list1.valueOf());
           const set2 = new Set(list2.valueOf());
           if (

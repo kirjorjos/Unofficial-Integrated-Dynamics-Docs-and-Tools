@@ -6,7 +6,7 @@ import {
   generateVisualSteps,
   getDisplayPanelText,
   getDisplayPanelAlignment,
-  getStepRuntimeError,
+  getCumulativeStepError,
 } from "pages-lib/visualTransformerLogic";
 import { getDisplayPanelColor } from "pages-lib/visualTransformer";
 
@@ -60,14 +60,14 @@ const steps = computed(() =>
           :text-color="getDisplayPanelColor(step)"
           :align="getDisplayPanelAlignment(step.sourceType)"
           :type-name="step.sourceType"
-          :type-error="getStepRuntimeError(step)"
+          :type-error="getCumulativeStepError(steps, step.variableId)"
         />
         <DisplayPanelView
           :text="getDisplayPanelText(step)"
           :text-color="getDisplayPanelColor(step)"
           :align="getDisplayPanelAlignment(step.sourceType)"
           :type-name="step.sourceType"
-          :type-error="getStepRuntimeError(step)"
+          :type-error="getCumulativeStepError(steps, step.variableId)"
         />
       </DisplayPanelViewHolder>
     </article>

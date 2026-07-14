@@ -2,6 +2,7 @@ import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
 import { Operator } from "lib/IntegratedDynamicsClasses/operators/Operator";
 import { iArray } from "lib/IntegratedDynamicsClasses/typeWrappers/iArray";
+import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 
 export class OPERATOR_OPERATOR_APPLY_N extends BaseOperator<
   Operator<IntegratedValue, IntegratedValue>,
@@ -59,12 +60,12 @@ export class OPERATOR_OPERATOR_APPLY_N extends BaseOperator<
           let result: IntegratedValue = op;
           for (const arg of args.valueOf()) {
             if (arg === undefined || arg === null) {
-              throw new Error(
+              throw new iError(
                 "applyn requires all arguments to be defined and non-null."
               );
             }
             if (!(result instanceof Operator)) {
-              throw new Error(`apply_n got too big a list`);
+              throw new iError(`apply_n got too big a list`);
             }
             result = result.apply(arg);
           }

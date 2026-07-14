@@ -1,5 +1,6 @@
 import { operatorRegistry } from "lib";
 import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
+import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 import { ASTtoOperator } from "lib/transformers/Operator";
 import {
   BaseOperator,
@@ -92,7 +93,7 @@ const OPERATOR_SIGNATURE_TEMPLATE = "§eSignature: §r%s";
 const EXPECTED_INPUT_TYPE_TEMPLATE = "§eExpected Type: %s";
 const EXPECTED_OUTPUT_TYPE_TEMPLATE = "§eExpected Output: %s";
 
-const runtimeErrors = new WeakMap<TypeAST.AST, string>();
+const runtimeErrors = new WeakMap<TypeAST.AST, { message: string; isIError: boolean }>();
 
 export const getOperatorClass = (
   opName: TypeOperatorKey
@@ -423,7 +424,10 @@ export const getDisplayPanelText = (
       return `${name} ::\n${sigLines}`;
     } catch (e) {
       if (step.node) {
-        runtimeErrors.set(step.node, e instanceof Error ? e.message : String(e));
+        runtimeErrors.set(step.node, {
+          message: e instanceof Error ? e.message : String(e),
+          isIError: e instanceof iError,
+        });
       }
       return step.output;
     }
@@ -431,8 +435,51 @@ export const getDisplayPanelText = (
   return step.output;
 };
 
-export const getStepRuntimeError = (step: VisualStep): string | undefined => {
-  return runtimeErrors.get(step.node) ?? undefined;
+export const getCumulativeStepError = (
+  steps: Pick<VisualStep, "variableId" | "inputs" | "node">[],
+  targetVariableId: number
+): string | undefined => {
+  const seen = new Set<number>();
+  const iErrorMessages: string[] = [];
+  const nativeErrors: { variableId: number; message: string }[] = [];
+
+  const collect = (variableId: number) => {
+    if (seen.has(variableId)) return;
+    seen.add(variableId);
+
+    const step = steps.find((s) => s.variableId === variableId);
+    if (!step) return;
+
+    // Process inputs first (prepend their errors before this step's own)
+    for (const input of step.inputs) {
+      collect(input.variableId);
+    }
+
+    // Process this step's own error
+    const errorInfo = runtimeErrors.get(step.node);
+    if (errorInfo) {
+      if (errorInfo.isIError) {
+        iErrorMessages.push(errorInfo.message);
+      } else {
+        nativeErrors.push({ variableId, message: errorInfo.message });
+      }
+    }
+  };
+
+  collect(targetVariableId);
+
+  if (iErrorMessages.length > 0) {
+    return iErrorMessages.join("\n");
+  }
+
+  if (nativeErrors.length > 0) {
+    for (const err of nativeErrors) {
+      console.error("[iError] Internal error:", err.message);
+    }
+    return "This is an internal bug, please report to the github";
+  }
+
+  return undefined;
 };
 
 const TOP_ALIGNED_TYPES = new Set([

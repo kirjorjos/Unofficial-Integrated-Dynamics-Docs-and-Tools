@@ -4,6 +4,7 @@ import { Integer } from "lib/JavaNumberClasses/Integer";
 import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
 import { Operator } from "lib/IntegratedDynamicsClasses/operators/Operator";
 import { iArrayEager } from "lib/IntegratedDynamicsClasses/typeWrappers/iArrayEager";
+import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 
 export class OPERATOR_LIST_SLICE extends BaseOperator<
   iArray<IntegratedValue>,
@@ -52,7 +53,7 @@ export class OPERATOR_LIST_SLICE extends BaseOperator<
         ): TypeLambda<Integer, iArray<IntegratedValue>> => {
           return (end: Integer): iArray<IntegratedValue> => {
             if (start.lt(Integer.ZERO) || start.gte(end)) {
-              throw new Error(
+              throw new iError(
                 `Invalid slice range: [${start.toString()}, ${end.toString()}) for list of length ${list.size().toString()}`
               );
             }
