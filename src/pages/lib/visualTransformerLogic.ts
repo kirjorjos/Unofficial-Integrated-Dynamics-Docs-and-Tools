@@ -957,9 +957,15 @@ export const getOutputTextureName = (
   if (step.sourceType === "Operator" || step.forceOperatorTabActive) {
     return "Operator";
   }
-  // For Curry types, always show operator icon - the step represents
-  // applying an operator, not the resulting value
+  // For Curry types, show operator icon when partially applied,
+  // or the actual output type when fully applied
   if (step.sourceType === "Curry") {
+    if (step.node) {
+      const flattened = flattenAnonymousBaseOperatorApplication(step.node);
+      if (flattened?.fullyApplied) {
+        return getStepActualOutputType(step) as TypeAST.AST["type"];
+      }
+    }
     return "Operator";
   }
   // For serializer types (Flip, Pipe, Pipe2) used from their respective tabs
@@ -1111,9 +1117,13 @@ export const generateVisualSteps = (
       result.push(fullStep);
       const card = {
         name: fullStep.output,
-        type: (step.sourceType === "Operator" || step.sourceType === "Curry")
+        type: step.sourceType === "Operator"
           ? "Operator"
-          : getStepActualOutputType(fullStep) as TypeAST.AST["type"],
+          : step.sourceType === "Curry" && step.node
+            ? flattenAnonymousBaseOperatorApplication(step.node)?.fullyApplied
+              ? getStepActualOutputType(fullStep) as TypeAST.AST["type"]
+              : "Operator"
+            : getStepActualOutputType(fullStep) as TypeAST.AST["type"],
         variableId,
         tooltip,
       };
