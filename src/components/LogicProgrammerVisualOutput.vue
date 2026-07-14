@@ -766,18 +766,47 @@ const getDisplayPanelText = (
         return step.output;
       }
 
-      // For Curry types, use getName() which returns "Applied <operator> [args]"
+      // For Curry types, show operator name + signature when partially
+      // applied, or the compact value when fully applied (concrete type)
       if (nodeType === "Curry") {
         if (typeof (op as any).getName !== "function") {
           return step.output;
         }
+        const sig = (op as any).getParsedSignature();
+        // If fully applied (not a function signature), show the evaluated value
+        if (sig.getRootType() !== "Function") {
+          try {
+            const fn = (op as any).getFn();
+            if (typeof fn === "function") {
+              const evaluated = fn(null);
+              if (evaluated != null) {
+                const val =
+                  typeof evaluated.valueOf === "function"
+                    ? evaluated.valueOf()
+                    : evaluated;
+                if (Array.isArray(val)) {
+                  return val
+                    .map((item: unknown) => {
+                      const display =
+                        item != null &&
+                        typeof (item as any).valueOf === "function"
+                          ? String((item as any).valueOf())
+                          : String(item);
+                      return `- ${display}`;
+                    })
+                    .join("\n");
+                }
+              }
+            }
+          } catch {
+            // Fall through to compact value text
+          }
+          return getCompactValueTextForAst(step.node);
+        }
         const name = (op as any).getName().valueOf();
-        const signature = new ParsedSignature(
-          (op as any).getParsedSignature().getAst(),
-          false
-        ).toFlatSignature();
+        const flatSig = new ParsedSignature(sig.getAst(), false).toFlatSignature();
         const indent = "\u00A0";
-        const sigLines = signature
+        const sigLines = flatSig
           .map((type, i) => (i === 0 ? type : `${indent}-> ${type}`))
           .join("\n");
         return `${name} ::\n${sigLines}`;
@@ -813,8 +842,15 @@ const getDisplayPanelColor = (
   if (step.sourceType === "Operator" || step.forceOperatorTabActive) {
     return LOGIC_PROGRAMMER_TYPE_COLORS["Operator"] ?? "#2be72f";
   }
-  // For Curry types, the output is an operator (b -> c), so use Operator color
+  // For Curry types, check if fully applied to get the actual output color
   if (step.sourceType === "Curry") {
+    if (step.node) {
+      const flattened = flattenAnonymousBaseOperatorApplication(step.node);
+      if (flattened?.fullyApplied) {
+        const outputType = getStepActualOutputType(step);
+        return LOGIC_PROGRAMMER_TYPE_COLORS[outputType] ?? "#f0f0f0";
+      }
+    }
     return LOGIC_PROGRAMMER_TYPE_COLORS["Operator"] ?? "#2be72f";
   }
   // For serializer types (Flip, Pipe, Pipe2) used from their respective tabs
@@ -853,14 +889,23 @@ const getDisplayPanelAlign = (
 const getOutputTextureName = (
   step: Pick<
     VisualStep,
-    "sourceType" | "detail" | "tooltipOperatorKey" | "forceOperatorTabActive"
-  >
+    | "sourceType"
+    | "detail"
+    | "tooltipOperatorKey"
+    | "forceOperatorTabActive"
+  > & { node?: TypeAST.AST }
 ): TypeAST.AST["type"] => {
   if (step.sourceType === "Operator" || step.forceOperatorTabActive) {
     return "Operator";
   }
-  // For Curry types, the output is an operator (b -> c), so use Operator texture
+  // For Curry types, check if fully applied to get the actual output type
   if (step.sourceType === "Curry") {
+    if (step.node) {
+      const flattened = flattenAnonymousBaseOperatorApplication(step.node);
+      if (flattened?.fullyApplied) {
+        return getStepActualOutputType(step) as TypeAST.AST["type"];
+      }
+    }
     return "Operator";
   }
   // For serializer types (Flip, Pipe, Pipe2) used from their respective tabs
@@ -886,7 +931,11 @@ const getStepActualOutputType = (
     try {
       const op = ASTtoOperator(step.node) as any;
       if (typeof op?.getParsedSignature === "function") {
-        return op.getParsedSignature().getOutput(-1).getRootType();
+        const sig = op.getParsedSignature();
+        if (sig.getRootType() === "Function") {
+          return sig.getOutput(-1).getRootType();
+        }
+        return sig.getRootType();
       }
     } catch {
       // Fall through to default handling
