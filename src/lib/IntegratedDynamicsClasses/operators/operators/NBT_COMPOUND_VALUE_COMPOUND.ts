@@ -4,6 +4,7 @@ import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 import { iString } from "lib/IntegratedDynamicsClasses/typeWrappers/iString";
 import { Operator } from "lib/IntegratedDynamicsClasses/operators/Operator";
 import { NullTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/NullTag";
+import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 
 export class OPERATOR_NBT_COMPOUND_VALUE_COMPOUND extends BaseOperator<
   CompoundTag,
@@ -59,7 +60,7 @@ export class OPERATOR_NBT_COMPOUND_VALUE_COMPOUND extends BaseOperator<
           if (value instanceof NullTag) {
             return new CompoundTag({});
           }
-          throw new Error(
+          throw new iError(
             `${key.valueOf()} is not a Compound in ${JSON.stringify(
               nbt.toJSON()
             )}`

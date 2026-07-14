@@ -1,6 +1,7 @@
 import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
 import { Operator } from "lib/IntegratedDynamicsClasses/operators/Operator";
+import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 
 export class OPERATOR_OPERATOR_PIPE extends BaseOperator<
   Operator<IntegratedValue, IntegratedValue>,
@@ -81,10 +82,10 @@ export class OPERATOR_OPERATOR_PIPE extends BaseOperator<
 
   override evaluate(...args: IntegratedValue[]) {
     if (args.length !== 2)
-      throw new Error(`Pipe expected 2 args, got ${args.length}`);
+      throw new iError(`Pipe expected 2 args, got ${args.length}`);
     const [arg1, arg2] = args;
     if (!(arg1 instanceof Operator && arg2 instanceof Operator))
-      throw new Error("Can't pipe a non-operator");
+      throw new iError("Can't pipe a non-operator");
     return arg1.pipe(arg2);
   }
 }

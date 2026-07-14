@@ -1,5 +1,6 @@
 import { operatorRegistry } from "lib";
 import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
+import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 import { ASTtoOperator } from "lib/transformers/Operator";
 import {
   BaseOperator,
@@ -91,6 +92,8 @@ const VALUE_TEMPLATE = "§e§oValue: §r%s";
 const OPERATOR_SIGNATURE_TEMPLATE = "§eSignature: §r%s";
 const EXPECTED_INPUT_TYPE_TEMPLATE = "§eExpected Type: %s";
 const EXPECTED_OUTPUT_TYPE_TEMPLATE = "§eExpected Output: %s";
+
+const runtimeErrors = new WeakMap<TypeAST.AST, { message: string; isIError: boolean }>();
 
 export const getOperatorClass = (
   opName: TypeOperatorKey
@@ -419,11 +422,64 @@ export const getDisplayPanelText = (
         .map((type, i) => (i === 0 ? type : `${indent}-> ${type}`))
         .join("\n");
       return `${name} ::\n${sigLines}`;
-    } catch {
+    } catch (e) {
+      if (step.node) {
+        runtimeErrors.set(step.node, {
+          message: e instanceof Error ? e.message : String(e),
+          isIError: e instanceof iError,
+        });
+      }
       return step.output;
     }
   }
   return step.output;
+};
+
+export const getCumulativeStepError = (
+  steps: Pick<VisualStep, "variableId" | "inputs" | "node">[],
+  targetVariableId: number
+): string | undefined => {
+  const seen = new Set<number>();
+  const iErrorMessages: string[] = [];
+  const nativeErrors: { variableId: number; message: string }[] = [];
+
+  const collect = (variableId: number) => {
+    if (seen.has(variableId)) return;
+    seen.add(variableId);
+
+    const step = steps.find((s) => s.variableId === variableId);
+    if (!step) return;
+
+    // Process inputs first (prepend their errors before this step's own)
+    for (const input of step.inputs) {
+      collect(input.variableId);
+    }
+
+    // Process this step's own error
+    const errorInfo = runtimeErrors.get(step.node);
+    if (errorInfo) {
+      if (errorInfo.isIError) {
+        iErrorMessages.push(errorInfo.message);
+      } else {
+        nativeErrors.push({ variableId, message: errorInfo.message });
+      }
+    }
+  };
+
+  collect(targetVariableId);
+
+  if (iErrorMessages.length > 0) {
+    return iErrorMessages.join("\n");
+  }
+
+  if (nativeErrors.length > 0) {
+    for (const err of nativeErrors) {
+      console.error("[iError] Internal error:", err.message);
+    }
+    return "This is an internal bug, please report to the github";
+  }
+
+  return undefined;
 };
 
 const TOP_ALIGNED_TYPES = new Set([
@@ -772,6 +828,20 @@ export const getPatternBox = (step: VisualStep): PatternBox => {
     };
   }
 
+  if (step.workspaceMode === "pattern") {
+    // Pattern mode: always show the generic NONE_CANVAS (dropdown + signature)
+    const pattern = LOGIC_PROGRAMMER_RENDER_PATTERNS.NONE_CANVAS;
+    const left = workspaceX + Math.floor((workspaceWidth - pattern.width) / 2);
+    const top = workspaceY + Math.floor((workspaceHeight - pattern.height) / 2);
+
+    return {
+      slots: [] as { left: number; top: number }[],
+      symbol: null,
+      valueBox: null as { left: number; top: number; width: number } | null,
+      canvas: { left, top, width: pattern.width, height: pattern.height },
+    };
+  }
+
   if (isItemStackBackedValueType(step.sourceType)) {
     const pattern = LOGIC_PROGRAMMER_RENDER_PATTERNS.SINGLE_SLOT;
     const left = workspaceX + Math.floor((workspaceWidth - pattern.width) / 2);
@@ -859,13 +929,19 @@ export const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
   const valueTypeEntries = getValueTypeDisplayEntries().filter(
     (entry) => !search || entry.matchString.includes(search)
   );
+
   const operatorEntries = operatorListEntries
     .filter((operatorClass) => {
       const fullName = new operatorClass(false)
         .getFullDisplayName()
         .toLowerCase();
       const symbol = (operatorClass.symbol ?? "").toLowerCase();
-      return fullName.includes(search) || symbol.includes(search);
+      const operatorName = (operatorClass.operatorName ?? "").toLowerCase();
+      return (
+        fullName.includes(search) ||
+        symbol.includes(search) ||
+        operatorName.includes(search)
+      );
     })
     .map((operatorClass) => ({
       symbol: operatorClass.symbol ?? "",
@@ -877,6 +953,12 @@ export const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
     }));
 
   const filtered = [...valueTypeEntries, ...operatorEntries]
+    .sort((a, b) => {
+      // Put the matching operator entry first so .slice(0,10) includes it
+      if (a.symbol === step.symbol) return -1;
+      if (b.symbol === step.symbol) return 1;
+      return 0;
+    })
     .slice(0, 10)
     .map((entry) => ({
       symbol: entry.symbol,
@@ -889,7 +971,8 @@ export const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
               (step.sourceType === "Operator"
                 ? "Operator"
                 : getValueTypeSearchLabel(step.sourceType))
-          : (step.forceOperatorTabActive || step.sourceType !== "Operator") &&
+          : (step.forceOperatorTabActive ||
+              step.sourceType !== "Operator") &&
             (entry.symbol === step.symbol || entry.matchString === search),
     }));
 
@@ -921,8 +1004,36 @@ export const getOperatorValueSignatureTypes = (
 };
 
 export const getOutputTextureName = (
-  step: Pick<VisualStep, "sourceType" | "detail" | "tooltipOperatorKey">
+  step: Pick<
+    VisualStep,
+    "sourceType" | "detail" | "tooltipOperatorKey" | "forceOperatorTabActive"
+  > & { node?: TypeAST.AST }
 ): TypeAST.AST["type"] => {
+  // Operator types or force-operator mode should always show operator icon
+  if (step.sourceType === "Operator" || step.forceOperatorTabActive) {
+    return "Operator";
+  }
+  // For Curry types, show operator icon when partially applied,
+  // or the actual output type when fully applied
+  if (step.sourceType === "Curry") {
+    if (step.node) {
+      const flattened = flattenAnonymousBaseOperatorApplication(step.node);
+      if (flattened?.fullyApplied) {
+        return getStepActualOutputType(step) as TypeAST.AST["type"];
+      }
+    }
+    return "Operator";
+  }
+  // For serializer types (Flip, Pipe, Pipe2) used from their respective tabs
+  const opKey = step.tooltipOperatorKey;
+  if (
+    opKey &&
+    (opKey === "OPERATOR_FLIP" ||
+      opKey === "OPERATOR_PIPE" ||
+      opKey === "OPERATOR_PIPE2")
+  ) {
+    return "Operator";
+  }
   return getStepActualOutputType(step) as TypeAST.AST["type"];
 };
 
@@ -932,6 +1043,8 @@ export const generateVisualSteps = (
   operatorPreviewMode?: "value" | "pattern"
 ): VisualStep[] => {
   resetExpandedVarCounter();
+
+  const isPatternMode = operatorPreviewMode === "pattern";
 
   const getExpandedCurryChunks = (
     ast: TypeAST.Curried
@@ -1012,7 +1125,7 @@ export const generateVisualSteps = (
     const step: Omit<VisualStep, "variableId" | "tooltip"> = {
       id: "operator-pattern-preview",
       title: operator.title,
-      searchLabel: operator.searchLabel,
+      searchLabel: "Operator",
       panelLabel: operator.panelLabel,
       symbol: operator.symbol,
       kind: "value",
@@ -1060,7 +1173,13 @@ export const generateVisualSteps = (
       result.push(fullStep);
       const card = {
         name: fullStep.output,
-        type: getStepActualOutputType(fullStep) as TypeAST.AST["type"],
+        type: step.sourceType === "Operator"
+          ? "Operator"
+          : step.sourceType === "Curry" && step.node
+            ? flattenAnonymousBaseOperatorApplication(step.node)?.fullyApplied
+              ? getStepActualOutputType(fullStep) as TypeAST.AST["type"]
+              : "Operator"
+            : getStepActualOutputType(fullStep) as TypeAST.AST["type"],
         variableId,
         tooltip,
       };
@@ -1074,7 +1193,7 @@ export const generateVisualSteps = (
         return register({
           id: `step-${result.length + 1}`,
           title: operator.title,
-          searchLabel: "Operator",
+          searchLabel: isPatternMode ? "Operator" : operator.searchLabel,
           panelLabel: operator.panelLabel,
           symbol: operator.symbol,
           kind: "operator",
@@ -1085,7 +1204,8 @@ export const generateVisualSteps = (
           detail: ast.opName,
           node: ast,
           tooltipOperatorKey: ast.opName,
-          workspaceMode: "operatorValue",
+          forceOperatorTabActive: isPatternMode ? true : undefined,
+          workspaceMode: isPatternMode ? "pattern" : "operatorValue",
         });
       }
       case "Curry": {
@@ -1115,8 +1235,29 @@ export const generateVisualSteps = (
                         ? argOp.getSignatureNode()
                         : null;
                   if (sig) {
-                    const hardened = sig.rewrite().getRootType();
+                    let hardened = sig.rewrite().getRootType();
+                    // If type is still unresolved via the type system, try
+                    // evaluating the argument to get a concrete value type.
+                    // This works because all inputs are known constants.
+                    if (hardened === "Any" && typeof argOp?.getFn === "function") {
+                      try {
+                        const evaluated = argOp.getFn()(null);
+                        if (evaluated != null && typeof evaluated.getSignatureNode === "function") {
+                          const evalType = evaluated.getSignatureNode().getRootType();
+                          if (evalType !== "Any") {
+                            hardened = evalType;
+                          }
+                        }
+                      } catch {
+                        // Evaluation failed, keep type-system result
+                      }
+                    }
                     if (hardened !== expected) {
+                      // If type is still "Any" after hardening, it's genuinely
+                      // unknown — treat as compatible (no error)
+                      if (hardened === "Any") {
+                        continue;
+                      }
                       typeError = `Type mismatch: expected ${expected}, got ${hardened}`;
                       break;
                     }

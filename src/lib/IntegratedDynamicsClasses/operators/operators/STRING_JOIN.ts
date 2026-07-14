@@ -3,6 +3,7 @@ import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 import { iString } from "lib/IntegratedDynamicsClasses/typeWrappers/iString";
 import { iArray } from "lib/IntegratedDynamicsClasses/typeWrappers/iArray";
 import { Operator } from "lib/IntegratedDynamicsClasses/operators/Operator";
+import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 
 export class OPERATOR_STRING_JOIN extends BaseOperator<
   iString,
@@ -49,7 +50,7 @@ export class OPERATOR_STRING_JOIN extends BaseOperator<
               .valueOf()
               .some((item) => typeof item.valueOf() !== "string")
           ) {
-            throw new Error("stringJoin expects a list of strings");
+            throw new iError("stringJoin expects a list of strings");
           }
           return new iString(
             stringList

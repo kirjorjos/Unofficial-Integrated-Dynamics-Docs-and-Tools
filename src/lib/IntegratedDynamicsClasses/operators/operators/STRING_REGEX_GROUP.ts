@@ -5,6 +5,7 @@ import { Integer } from "lib/JavaNumberClasses/Integer";
 import { Operator } from "lib/IntegratedDynamicsClasses/operators/Operator";
 import { RE2 } from "re2-wasm";
 import { sanitizeForRe2 } from "lib/HelperClasses/UtilityFunctions";
+import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 
 export class OPERATOR_STRING_REGEX_GROUP extends BaseOperator<
   iString,
@@ -59,7 +60,7 @@ export class OPERATOR_STRING_REGEX_GROUP extends BaseOperator<
         return (groupIndex: Integer) => {
           return (fullString: iString) => {
             if (groupIndex.toJSNumber() < 0)
-              throw new Error(
+              throw new iError(
                 `Group index cannot be negative, got ${groupIndex.toJSNumber()}`
               );
 
@@ -67,13 +68,13 @@ export class OPERATOR_STRING_REGEX_GROUP extends BaseOperator<
             const match = regex.exec(fullString.valueOf());
 
             if (!match) {
-              throw new Error(
+              throw new iError(
                 `No match found for group index ${groupIndex.valueOf()} in regex "${regexString.valueOf()}" on string "${fullString.valueOf()}"`
               );
             }
 
             if (groupIndex.toJSNumber() > match.length - 1)
-              throw new Error(
+              throw new iError(
                 `Index ${groupIndex} not found in regex ${regexString.valueOf()}`
               );
 

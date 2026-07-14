@@ -2,6 +2,7 @@ import { iArray } from "lib/IntegratedDynamicsClasses/typeWrappers/iArray";
 import { Integer } from "lib/JavaNumberClasses/Integer";
 import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
 import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
+import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 
 export class OPERATOR_LIST_TAIL extends BaseOperator<
   iArray<IntegratedValue>,
@@ -32,7 +33,7 @@ export class OPERATOR_LIST_TAIL extends BaseOperator<
       ),
       function: (list: iArray<IntegratedValue>): iArray<IntegratedValue> => {
         if (list.size().equals(Integer.ZERO).valueOf()) {
-          throw new Error("tail called on an empty list");
+          throw new iError("tail called on an empty list");
         }
         return list.slice(Integer.ONE);
       },

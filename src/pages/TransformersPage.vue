@@ -402,6 +402,8 @@ onMounted(() => {
           :start-variable-id="initialVariableId"
           :show-step-numbers="true"
           :show-step-titles="true"
+          operator-preview-mode="pattern"
+          force-show-output-card
         />
         <textarea
           v-else
