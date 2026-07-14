@@ -11,6 +11,7 @@ import { iArrayEager } from "lib/IntegratedDynamicsClasses/typeWrappers/iArrayEa
 import { NullTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/NullTag";
 import { LongTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/LongTag";
 import { Long } from "lib/JavaNumberClasses/Long";
+import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 
 export class OPERATOR_NBT_COMPOUND_VALUE_LIST_LONG extends BaseOperator<
   CompoundTag,
@@ -68,7 +69,7 @@ export class OPERATOR_NBT_COMPOUND_VALUE_LIST_LONG extends BaseOperator<
           if (value instanceof ListTag) {
             let list = value.getArray();
             if (!list.every((e) => e instanceof LongTag))
-              throw new Error(
+              throw new iError(
                 `${key.valueOf()} is not a list of long in ${JSON.stringify(
                   nbt.toJSON()
                 )}`
@@ -88,7 +89,7 @@ export class OPERATOR_NBT_COMPOUND_VALUE_LIST_LONG extends BaseOperator<
               })
             ) as iArray<Long>;
           }
-          throw new Error(
+          throw new iError(
             `${key.valueOf()} is not a list of long in ${JSON.stringify(
               nbt.toJSON()
             )}`

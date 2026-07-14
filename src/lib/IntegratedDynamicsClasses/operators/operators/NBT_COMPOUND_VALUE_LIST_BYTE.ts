@@ -11,6 +11,7 @@ import { ByteArrayTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/Minecra
 import { iArrayEager } from "lib/IntegratedDynamicsClasses/typeWrappers/iArrayEager";
 import { NullTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/NullTag";
 import { ByteTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ByteTag";
+import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 
 export class OPERATOR_NBT_COMPOUND_VALUE_LIST_BYTE extends BaseOperator<
   CompoundTag,
@@ -68,7 +69,7 @@ export class OPERATOR_NBT_COMPOUND_VALUE_LIST_BYTE extends BaseOperator<
           if (value instanceof ListTag) {
             let list = value.getArray();
             if (!list.every((e) => e instanceof ByteTag))
-              throw new Error(
+              throw new iError(
                 `${key.valueOf()} is not a list of byte in ${JSON.stringify(
                   nbt.toJSON()
                 )}`
@@ -88,7 +89,7 @@ export class OPERATOR_NBT_COMPOUND_VALUE_LIST_BYTE extends BaseOperator<
               })
             ) as iArray<Integer>;
           }
-          throw new Error(
+          throw new iError(
             `${key.valueOf()} is not a list of byte in ${JSON.stringify(
               nbt.toJSON()
             )}`

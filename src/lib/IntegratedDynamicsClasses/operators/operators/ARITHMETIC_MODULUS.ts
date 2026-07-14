@@ -1,6 +1,7 @@
 import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
 import { Operator } from "lib/IntegratedDynamicsClasses/operators/Operator";
+import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 
 export class OPERATOR_ARITHMETIC_MODULUS extends BaseOperator<
   TypeNumber,
@@ -47,7 +48,7 @@ export class OPERATOR_ARITHMETIC_MODULUS extends BaseOperator<
       function: (num1: TypeNumber): TypeLambda<TypeNumber, TypeNumber> => {
         return (num2: TypeNumber): TypeNumber => {
           if (num2.toJSNumber() === 0) {
-            throw new Error("Modulus by zero");
+            throw new iError("Modulus by zero");
           }
           if (num1.getOrder() < num2.getOrder()) {
             num1 = num1[`to${num2.getType()}`]();

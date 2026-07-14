@@ -18,6 +18,7 @@ import {
   type LogicProgrammerRenderPatternKey,
 } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
 import { flattenAnonymousBaseOperatorApplication } from "lib/transformers/helpers";
+import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 import tooltipInfo from "lib/generated/integratedDynamicsTooltipInfo.json";
 import { LOGIC_PROGRAMMER_RENDER_PATTERNS } from "./logicProgrammerRenderPatterns";
 
@@ -718,7 +719,7 @@ const getOperatorValueSignatureText = (opName: TypeOperatorKey): string => {
     .join(" §r-> ");
 };
 
-const runtimeErrors = new WeakMap<TypeAST.AST, string>();
+const runtimeErrors = new WeakMap<TypeAST.AST, { message: string; isIError: boolean }>();
 
 const getDisplayPanelText = (
   step: Pick<
@@ -831,7 +832,10 @@ const getDisplayPanelText = (
           } catch (e) {
             // Fast path failed — capture runtime error
             if (step.node) {
-              runtimeErrors.set(step.node, e instanceof Error ? e.message : String(e));
+              runtimeErrors.set(step.node, {
+                message: e instanceof Error ? e.message : String(e),
+                isIError: e instanceof iError,
+              });
             }
           }
 
@@ -873,7 +877,10 @@ const getDisplayPanelText = (
           } catch (e) {
             // Fall through — capture runtime error
             if (step.node) {
-              runtimeErrors.set(step.node, e instanceof Error ? e.message : String(e));
+              runtimeErrors.set(step.node, {
+                message: e instanceof Error ? e.message : String(e),
+                isIError: e instanceof iError,
+              });
             }
           }
 
@@ -904,7 +911,10 @@ const getDisplayPanelText = (
       return `${name} ::\n${sigLines}`;
     } catch (e) {
       if (step.node) {
-        runtimeErrors.set(step.node, e instanceof Error ? e.message : String(e));
+        runtimeErrors.set(step.node, {
+          message: e instanceof Error ? e.message : String(e),
+          isIError: e instanceof iError,
+        });
       }
       return "";
     }
@@ -913,7 +923,51 @@ const getDisplayPanelText = (
 };
 
 const getStepDisplayError = (step: VisualStep): string | undefined => {
-  return step.typeError ?? runtimeErrors.get(step.node) ?? undefined;
+  if (step.typeError) return step.typeError;
+
+  // Follow the input dependency graph by variableId to collect iError messages
+  const seen = new Set<number>();
+  const iErrorMessages: string[] = [];
+  const nativeErrors: { variableId: number; message: string }[] = [];
+  const currentSteps = steps.value;
+
+  const collect = (variableId: number) => {
+    if (seen.has(variableId)) return;
+    seen.add(variableId);
+
+    const step = currentSteps.find((s) => s.variableId === variableId);
+    if (!step) return;
+
+    // Process inputs first (prepend their errors before this step's own)
+    for (const input of step.inputs) {
+      collect(input.variableId);
+    }
+
+    // Process this step's own error
+    const errorInfo = runtimeErrors.get(step.node);
+    if (errorInfo) {
+      if (errorInfo.isIError) {
+        iErrorMessages.push(errorInfo.message);
+      } else {
+        nativeErrors.push({ variableId, message: errorInfo.message });
+      }
+    }
+  };
+
+  collect(step.variableId);
+
+  if (iErrorMessages.length > 0) {
+    return iErrorMessages.join("\n");
+  }
+
+  if (nativeErrors.length > 0) {
+    for (const err of nativeErrors) {
+      console.error("[iError] Internal error:", err.message);
+    }
+    return "This is an internal bug, please report to the github";
+  }
+
+  return undefined;
 };
 
 const getDisplayPanelColor = (

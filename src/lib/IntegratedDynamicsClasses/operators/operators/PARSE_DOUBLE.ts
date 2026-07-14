@@ -2,6 +2,7 @@ import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
 import { Double } from "lib/JavaNumberClasses/Double";
 import { iString } from "lib/IntegratedDynamicsClasses/typeWrappers/iString";
+import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 
 export class OPERATOR_PARSE_DOUBLE extends BaseOperator<iString, Double> {
   static override internalName =
@@ -42,7 +43,7 @@ export class OPERATOR_PARSE_DOUBLE extends BaseOperator<iString, Double> {
         try {
           return new Double(data.valueOf());
         } catch (e: any) {
-          throw new Error(
+          throw new iError(
             `Could not parse double from "${data.valueOf()}": ${e.message}`
           );
         }

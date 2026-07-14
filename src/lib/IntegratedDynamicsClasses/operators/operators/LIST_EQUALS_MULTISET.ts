@@ -4,6 +4,7 @@ import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperat
 import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 import { Operator } from "lib/IntegratedDynamicsClasses/operators/Operator";
 import { iArrayLazy } from "lib/IntegratedDynamicsClasses/typeWrappers/iArrayLazy";
+import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 
 export class OPERATOR_LIST_EQUALS_MULTISET extends BaseOperator<
   iArray<IntegratedValue>,
@@ -48,7 +49,7 @@ export class OPERATOR_LIST_EQUALS_MULTISET extends BaseOperator<
       ): TypeLambda<iArray<IntegratedValue>, iBoolean> => {
         return (list2: iArray<IntegratedValue>): iBoolean => {
           if (list1 instanceof iArrayLazy || list2 instanceof iArrayLazy)
-            throw new Error(
+            throw new iError(
               "Equals Multiset not supported for infinite lists."
             );
           const newList1 = [...list1.valueOf()].sort();

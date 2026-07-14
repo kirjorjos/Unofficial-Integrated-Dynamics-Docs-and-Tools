@@ -7,6 +7,7 @@ import { iString } from "lib/IntegratedDynamicsClasses/typeWrappers/iString";
 import { iArray } from "lib/IntegratedDynamicsClasses/typeWrappers/iArray";
 import { Operator } from "lib/IntegratedDynamicsClasses/operators/Operator";
 import { iArrayEager } from "lib/IntegratedDynamicsClasses/typeWrappers/iArrayEager";
+import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 
 export class OPERATOR_NBT_PATH_MATCH_ALL extends BaseOperator<
   iString,
@@ -56,7 +57,7 @@ export class OPERATOR_NBT_PATH_MATCH_ALL extends BaseOperator<
       ): TypeLambda<CompoundTag, iArray<Tag<IntegratedValue>>> => {
         return (nbt: CompoundTag): iArray<Tag<IntegratedValue>> => {
           let expression = NbtPath.parse(path.valueOf());
-          if (!expression) throw new Error(`Invalid path: ${path.valueOf()}`);
+          if (!expression) throw new iError(`Invalid path: ${path.valueOf()}`);
           return new iArrayEager(expression.match(nbt).getMatches());
         };
       },

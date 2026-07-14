@@ -5,6 +5,7 @@ import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 import { iString } from "lib/IntegratedDynamicsClasses/typeWrappers/iString";
 import { iBoolean } from "lib/IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { Operator } from "lib/IntegratedDynamicsClasses/operators/Operator";
+import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 
 export class OPERATOR_NBT_PATH_TEST extends BaseOperator<
   iString,
@@ -54,7 +55,7 @@ export class OPERATOR_NBT_PATH_TEST extends BaseOperator<
       function: (path: iString): TypeLambda<CompoundTag, iBoolean> => {
         return (nbt: CompoundTag): iBoolean => {
           let expression = NbtPath.parse(path.valueOf());
-          if (!expression) throw new Error(`Invalid path: ${path.valueOf()}`);
+          if (!expression) throw new iError(`Invalid path: ${path.valueOf()}`);
           return new iBoolean(expression.test(nbt));
         };
       },

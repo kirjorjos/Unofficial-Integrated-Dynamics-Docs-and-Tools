@@ -11,6 +11,7 @@ import { IntArrayTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/Minecraf
 import { iArrayEager } from "lib/IntegratedDynamicsClasses/typeWrappers/iArrayEager";
 import { NullTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/NullTag";
 import { IntTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/IntTag";
+import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 
 export class OPERATOR_NBT_COMPOUND_VALUE_LIST_INT extends BaseOperator<
   CompoundTag,
@@ -70,7 +71,7 @@ export class OPERATOR_NBT_COMPOUND_VALUE_LIST_INT extends BaseOperator<
           if (value instanceof ListTag) {
             let list = value.getArray();
             if (!list.every((e) => e instanceof IntTag))
-              throw new Error(
+              throw new iError(
                 `${key.valueOf()} is not a list of int in ${JSON.stringify(
                   nbt.toJSON()
                 )}`
@@ -90,7 +91,7 @@ export class OPERATOR_NBT_COMPOUND_VALUE_LIST_INT extends BaseOperator<
               })
             ) as iArray<Integer>;
           }
-          throw new Error(
+          throw new iError(
             `${key.valueOf()} is not a list of int in ${JSON.stringify(
               nbt.toJSON()
             )}`

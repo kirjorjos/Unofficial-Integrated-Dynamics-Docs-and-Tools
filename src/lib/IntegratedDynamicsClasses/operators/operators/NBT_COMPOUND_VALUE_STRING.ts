@@ -11,6 +11,7 @@ import { LongTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftCla
 import { ShortTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ShortTag";
 import { NullTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/NullTag";
 import { IntTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/IntTag";
+import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 
 export class OPERATOR_NBT_COMPOUND_VALUE_STRING extends BaseOperator<
   CompoundTag,
@@ -76,7 +77,7 @@ export class OPERATOR_NBT_COMPOUND_VALUE_STRING extends BaseOperator<
           if (value instanceof NullTag) {
             return new iString("");
           }
-          throw new Error(
+          throw new iError(
             `${key.valueOf()} is not a string in ${JSON.stringify(
               nbt.toJSON()
             )}`

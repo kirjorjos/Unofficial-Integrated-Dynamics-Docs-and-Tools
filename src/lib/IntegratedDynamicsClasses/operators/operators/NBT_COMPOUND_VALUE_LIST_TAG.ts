@@ -8,6 +8,7 @@ import { Operator } from "lib/IntegratedDynamicsClasses/operators/Operator";
 import { ListTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ListTag";
 import { iArrayEager } from "lib/IntegratedDynamicsClasses/typeWrappers/iArrayEager";
 import { NullTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/NullTag";
+import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 
 export class OPERATOR_NBT_COMPOUND_VALUE_LIST_TAG extends BaseOperator<
   CompoundTag,
@@ -68,7 +69,7 @@ export class OPERATOR_NBT_COMPOUND_VALUE_LIST_TAG extends BaseOperator<
             return new iArrayEager([]);
           }
           if (listTag.getType() != Tag.TAG_LIST)
-            throw new Error(
+            throw new iError(
               `${key.valueOf()} is not a list of NBT in ${JSON.stringify(nbt.toJSON())}`
             );
           return (listTag as ListTag).getArray();

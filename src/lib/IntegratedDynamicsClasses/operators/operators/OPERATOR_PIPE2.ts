@@ -1,6 +1,7 @@
 import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
 import { Operator } from "lib/IntegratedDynamicsClasses/operators/Operator";
+import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 
 export class OPERATOR_OPERATOR_PIPE2 extends BaseOperator<any, any> {
   static override internalName = "integrateddynamics:operator_pipe2" as const;
@@ -103,7 +104,7 @@ export class OPERATOR_OPERATOR_PIPE2 extends BaseOperator<any, any> {
 
   override evaluate(...args: IntegratedValue[]) {
     if (args.length !== 3)
-      throw new Error(`Pipe2 expected 3 args, got ${args.length}`);
+      throw new iError(`Pipe2 expected 3 args, got ${args.length}`);
     const [arg1, arg2, arg3] = args;
     if (
       !(
@@ -112,7 +113,7 @@ export class OPERATOR_OPERATOR_PIPE2 extends BaseOperator<any, any> {
         arg3 instanceof Operator
       )
     )
-      throw new Error("Can't pipe2 a non-operator");
+      throw new iError("Can't pipe2 a non-operator");
     return arg1.pipe2(arg2, arg3);
   }
 }

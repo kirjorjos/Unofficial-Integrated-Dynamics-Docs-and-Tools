@@ -2,6 +2,7 @@ import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperat
 import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 import { Entity } from "lib/IntegratedDynamicsClasses/Entity";
 import { Integer } from "lib/JavaNumberClasses/Integer";
+import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 
 export class OPERATOR_OBJECT_ITEMFRAME_ROTATION extends BaseOperator<
   Entity,
@@ -50,7 +51,7 @@ export class OPERATOR_OBJECT_ITEMFRAME_ROTATION extends BaseOperator<
         if (entity.isItemFrame().valueOf()) {
           return entity.getItemFrameRotation();
         } else {
-          throw new Error("Entity is not an item frame.");
+          throw new iError("Entity is not an item frame.");
         }
       },
     });
