@@ -518,10 +518,20 @@ export const buildOperatorCardTooltip = (
     };
   }
 
-  // For Curry types (partially applied operators), resolve the actual
-  // signature from the AST node instead of showing the generic OPERATOR_APPLY
-  // signature (which always shows Operator -> Any -> Any)
-  if (step.sourceType === "Curry" && step.node) {
+  // For serializer types (Curry/Pipe/Pipe2/Flip), resolve the actual
+  // signature from the AST node instead of showing the generic registry
+  // signature (which always shows type variables like Operator -> Any -> Any)
+  const serializerTypes: ReadonlySet<string> = new Set([
+    "Curry",
+    "Pipe",
+    "Pipe2",
+    "Flip",
+  ]);
+  if (
+    step.sourceType &&
+    serializerTypes.has(step.sourceType) &&
+    step.node
+  ) {
     try {
       const op = ASTtoOperator(step.node) as any;
       if (typeof op?.getParsedSignature === "function") {
@@ -532,17 +542,33 @@ export const buildOperatorCardTooltip = (
         );
         const resolvedOutputType = resolvedSig.getOutput(-1).getRootType();
 
-        // Try to get the base operator info for display name/symbol/category
+        // Determine display name/symbol/category
         let displayName: string = operatorKey;
         let categoryName = "Operator";
         let symbol: string = operatorKey;
 
-        const flattened = flattenAnonymousBaseOperatorApplication(step.node);
-        if (flattened?.operator.type === "Operator") {
-          const baseMeta = getOperatorTooltipMeta(flattened.operator.opName);
-          displayName = baseMeta.displayName;
-          categoryName = baseMeta.categoryName;
-          symbol = baseMeta.symbol;
+        if (step.sourceType === "Curry") {
+          // For Curry, try to get the inner operator's info
+          const flattened = flattenAnonymousBaseOperatorApplication(step.node);
+          if (flattened?.operator.type === "Operator") {
+            const baseMeta = getOperatorTooltipMeta(flattened.operator.opName);
+            displayName = baseMeta.displayName;
+            categoryName = baseMeta.categoryName;
+            symbol = baseMeta.symbol;
+          }
+        } else {
+          // For Pipe/Pipe2/Flip, use the virtual operator display
+          const virtualKeyMap: Record<string, "pipe" | "pipe2" | "flip"> = {
+            Pipe: "pipe",
+            Pipe2: "pipe2",
+            Flip: "flip",
+          };
+          const virtualKey = virtualKeyMap[step.sourceType];
+          if (virtualKey) {
+            const virtualDisplay = getVirtualOperatorDisplay(virtualKey);
+            displayName = virtualDisplay.title;
+            symbol = virtualDisplay.symbol;
+          }
         }
 
         const lines = [
