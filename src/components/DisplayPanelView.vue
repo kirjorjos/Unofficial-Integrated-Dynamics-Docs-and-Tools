@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, onMounted, onUnmounted } from "vue";
 import DisplayPanel from "./DisplayPanel.vue";
+import HoverMinecraftTooltip from "./HoverMinecraftTooltip.vue";
 import { getTypeColor } from "pages-lib/visualTransformer";
 
 const props = defineProps<{
@@ -77,7 +78,9 @@ onUnmounted(() => {
           v-if="props.typeError"
           class="display-panel-error-overlay"
         >
-          <span class="logic-type-error-icon" />
+          <HoverMinecraftTooltip :title="props.typeError" :lines="[]">
+            <span class="logic-type-error-icon" />
+          </HoverMinecraftTooltip>
         </div>
       </div>
     </div>
@@ -99,7 +102,9 @@ onUnmounted(() => {
             v-if="props.typeError"
             class="display-panel-error-overlay"
           >
-            <span class="logic-type-error-icon" />
+            <HoverMinecraftTooltip :title="props.typeError" :lines="[]">
+              <span class="logic-type-error-icon" />
+            </HoverMinecraftTooltip>
           </div>
         </div>
       </div>
@@ -120,6 +125,10 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   pointer-events: none;
+}
+
+.display-panel-error-overlay :deep(.logic-tooltip-anchor) {
+  pointer-events: auto;
 }
 
 .display-panel-error-overlay .logic-type-error-icon {

@@ -1060,7 +1060,7 @@ export const generateVisualSteps = (
       result.push(fullStep);
       const card = {
         name: fullStep.output,
-        type: getStepActualOutputType(fullStep),
+        type: getStepActualOutputType(fullStep) as TypeAST.AST["type"],
         variableId,
         tooltip,
       };
@@ -1099,12 +1099,38 @@ export const generateVisualSteps = (
           // Validate input types against operator's expected types
           let typeError: string | undefined;
           const opMeta = getOperatorTooltipMeta(flattened.operator.opName);
+          const isArityOne = opMeta.inputTypes.length === 1;
           for (let i = 0; i < Math.min(opMeta.inputTypes.length, argOutputs.length); i++) {
-            const expected = opMeta.inputTypes[i];
-            const actual = argOutputs[i].type;
+            const expected = opMeta.inputTypes[i]!;
+            const actual: string = argOutputs[i]!.type;
             if (expected !== "Any" && expected !== "Operator" && actual !== expected) {
-              typeError = `Type mismatch: expected ${expected}, got ${actual}`;
-              break;
+              // For arity 1 operators, try to harden "Any" into a concrete type
+              if (actual === "Any" && isArityOne) {
+                try {
+                  const argOp = ASTtoOperator(flattened.args[i]!) as any;
+                  const sig =
+                    typeof argOp?.getParsedSignature === "function"
+                      ? argOp.getParsedSignature()
+                      : typeof argOp?.getSignatureNode === "function"
+                        ? argOp.getSignatureNode()
+                        : null;
+                  if (sig) {
+                    const hardened = sig.rewrite().getRootType();
+                    if (hardened !== expected) {
+                      typeError = `Type mismatch: expected ${expected}, got ${hardened}`;
+                      break;
+                    }
+                    // Hardened matches expected — no error
+                    continue;
+                  }
+                } catch {
+                  // Couldn't harden, fall through
+                }
+              }
+              if (isArityOne || actual !== "Any") {
+                typeError = `Type mismatch: expected ${expected}, got ${actual}`;
+                break;
+              }
             }
           }
 

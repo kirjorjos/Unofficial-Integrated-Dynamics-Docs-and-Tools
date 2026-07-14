@@ -766,9 +766,8 @@ const getDisplayPanelText = (
             const resolvedSig = op.getParsedSignature();
             const flatSig = resolvedSig.toFlatSignature();
             const indent = "\u00A0";
-            const sigLines = flatSig
-              .map((type, i) => (i === 0 ? type : `${indent}-> ${type}`))
-              .join("\n");
+            const sigLines = flatSig              .map((type: string, i: number) => (i === 0 ? type : `${indent}-> ${type}`))
+            .join("\n");
             return `${operatorDisplay.title} ::\n${sigLines}`;
           }
         }
@@ -876,7 +875,7 @@ const getDisplayPanelText = (
         const flatSig = new ParsedSignature(sig.getAst(), false).toFlatSignature();
         const indent = "\u00A0";
         const sigLines = flatSig
-          .map((type, i) => (i === 0 ? type : `${indent}-> ${type}`))
+          .map((type: string, i: number) => (i === 0 ? type : `${indent}-> ${type}`))
           .join("\n");
         return `${name} ::\n${sigLines}`;
       }
@@ -892,7 +891,7 @@ const getDisplayPanelText = (
       ).toFlatSignature();
       const indent = "\u00A0";
       const sigLines = signature
-        .map((type, i) => (i === 0 ? type : `${indent}-> ${type}`))
+        .map((type: string, i: number) => (i === 0 ? type : `${indent}-> ${type}`))
         .join("\n");
       return `${name} ::\n${sigLines}`;
     } catch {
@@ -1350,7 +1349,7 @@ const steps = computed<VisualStep[]>(() => {
       result.push(fullStep);
       const card = {
         name: fullStep.output,
-        type: getStepActualOutputType(fullStep),
+        type: getStepActualOutputType(fullStep) as TypeAST.AST["type"],
         variableId,
         tooltip,
       };
@@ -1389,12 +1388,38 @@ const steps = computed<VisualStep[]>(() => {
           // Validate input types against operator's expected types
           let typeError: string | undefined;
           const opMeta = getOperatorTooltipMeta(flattened.operator.opName);
+          const isArityOne = opMeta.inputTypes.length === 1;
           for (let i = 0; i < Math.min(opMeta.inputTypes.length, argOutputs.length); i++) {
-            const expected = opMeta.inputTypes[i];
-            const actual = argOutputs[i].type;
+            const expected = opMeta.inputTypes[i]!;
+            const actual: string = argOutputs[i]!.type;
             if (expected !== "Any" && expected !== "Operator" && actual !== expected) {
-              typeError = `Type mismatch: expected ${expected}, got ${actual}`;
-              break;
+              // For arity 1 operators, try to harden "Any" into a concrete type
+              if (actual === "Any" && isArityOne) {
+                try {
+                  const argOp = ASTtoOperator(flattened.args[i]!) as any;
+                  const sig =
+                    typeof argOp?.getParsedSignature === "function"
+                      ? argOp.getParsedSignature()
+                      : typeof argOp?.getSignatureNode === "function"
+                        ? argOp.getSignatureNode()
+                        : null;
+                  if (sig) {
+                    const hardened = sig.rewrite().getRootType();
+                    if (hardened !== expected) {
+                      typeError = `Type mismatch: expected ${expected}, got ${hardened}`;
+                      break;
+                    }
+                    // Hardened matches expected — no error
+                    continue;
+                  }
+                } catch {
+                  // Couldn't harden, fall through
+                }
+              }
+              if (isArityOne || actual !== "Any") {
+                typeError = `Type mismatch: expected ${expected}, got ${actual}`;
+                break;
+              }
             }
           }
 
@@ -1741,6 +1766,8 @@ const getPatternBox = (step: VisualStep) => {
   };
 };
 
+const getCanvasBox = (step: VisualStep) => getPatternBox(step).canvas ?? { left: 0, top: 0, width: 0, height: 0 };
+const getSymbolPos = (step: VisualStep) => getPatternBox(step).symbol ?? { left: 0, top: 0 };
 const getValueBox = (step: VisualStep) => getPatternBox(step).valueBox;
 const getValueBoxLeft = (step: VisualStep) => getValueBox(step)?.left ?? 0;
 const getValueBoxTop = (step: VisualStep) => getValueBox(step)?.top ?? 0;
@@ -1868,7 +1895,7 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
               <div class="logic-list-nav-btn logic-list-nav-prev">◀</div>
               <div class="logic-list-search">
                 <FitText
-                  :text="step.inputs.length > 0 ? step.inputs[0].type : 'Any'"
+                  :text="step.inputs.length > 0 ? step.inputs[0]!.type : 'Any'"
                   align="left"
                 />
               </div>
@@ -1923,9 +1950,9 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
                 </template>
 
                 <!-- Item/Block/Fluid: show slot + placeholder -->
-                <template v-else-if="isItemStackBackedValueType(step.inputs[0].type)">
+                <template v-else-if="isItemStackBackedValueType(step.inputs[0]!.type)">
                   <div class="logic-list-editor-item-label">
-                    {{ getItemStackPlaceholder(step.inputs[0].type) }}
+                    {{ getItemStackPlaceholder(step.inputs[0]!.type) }}
                   </div>
                   <div class="logic-list-editor-item-arrow" />
                   <div
@@ -1938,7 +1965,7 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
                     <div
                       class="logic-slot-card-composite"
                       :style="{
-                        backgroundImage: `url('${publicAsset(`valuetype/${getValueTypeTextureName(step.inputs[0].type)}.png`)}'), url('${publicAsset('item/variable.png')}')`,
+                        backgroundImage: `url('${publicAsset(`valuetype/${getValueTypeTextureName(step.inputs[0]!.type)}.png`)}'), url('${publicAsset('item/variable.png')}')`,
                       }"
                     />
                   </div>
@@ -1965,10 +1992,10 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
               <div
                 class="logic-operator-canvas"
                 :style="{
-                  left: `${getPatternBox(step).canvas!.left}px`,
-                  top: `${getPatternBox(step).canvas!.top}px`,
-                  width: `${getPatternBox(step).canvas!.width}px`,
-                  height: `${getPatternBox(step).canvas!.height}px`,
+                  left: `${getCanvasBox(step).left}px`,
+                  top: `${getCanvasBox(step).top}px`,
+                  width: `${getCanvasBox(step).width}px`,
+                  height: `${getCanvasBox(step).height}px`,
                 }"
               />
 
@@ -2006,8 +2033,8 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
                   class="logic-symbol-overlay"
                   :class="{ 'logic-symbol-overlay-text': step.symbol.length > 2 }"
                   :style="{
-                    left: `${getPatternBox(step).symbol!.left}px`,
-                    top: `${getPatternBox(step).symbol!.top}px`,
+                    left: `${getSymbolPos(step).left}px`,
+                    top: `${getSymbolPos(step).top}px`,
                   }"
                 >
                   {{ step.symbol }}
@@ -2019,9 +2046,9 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
                 <div
                   class="logic-operator-dropdown-field"
                   :style="{
-                    left: `${getPatternBox(step).canvas!.left + 14}px`,
-                    top: `${getPatternBox(step).canvas!.top + 6}px`,
-                    width: `${getPatternBox(step).canvas!.width - 28}px`,
+                    left: `${getCanvasBox(step).left + 14}px`,
+                    top: `${getCanvasBox(step).top + 6}px`,
+                    width: `${getCanvasBox(step).width - 28}px`,
                   }"
                 >
                   <FitText
@@ -2037,8 +2064,8 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
                   :key="`${step.id}-signature-${lineIndex}`"
                   class="logic-operator-signature-line"
                   :style="{
-                    left: `${getPatternBox(step).canvas!.left + 10}px`,
-                    top: `${getPatternBox(step).canvas!.top + 25 + lineIndex * 9}px`,
+                    left: `${getCanvasBox(step).left + 10}px`,
+                    top: `${getCanvasBox(step).top + 25 + lineIndex * 9}px`,
                   }"
                 >
                   <span
@@ -2059,10 +2086,10 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
                 v-if="getPatternBox(step).canvas"
                 class="logic-operator-canvas"
                 :style="{
-                  left: `${getPatternBox(step).canvas!.left}px`,
-                  top: `${getPatternBox(step).canvas!.top}px`,
-                  width: `${getPatternBox(step).canvas!.width}px`,
-                  height: `${getPatternBox(step).canvas!.height}px`,
+                  left: `${getCanvasBox(step).left}px`,
+                  top: `${getCanvasBox(step).top}px`,
+                  width: `${getCanvasBox(step).width}px`,
+                  height: `${getCanvasBox(step).height}px`,
                 }"
               />
               <div
@@ -2086,18 +2113,18 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
                 v-if="getPatternBox(step).canvas"
                 class="logic-operator-canvas"
                 :style="{
-                  left: `${getPatternBox(step).canvas!.left}px`,
-                  top: `${getPatternBox(step).canvas!.top}px`,
-                  width: `${getPatternBox(step).canvas!.width}px`,
-                  height: `${getPatternBox(step).canvas!.height}px`,
+                  left: `${getCanvasBox(step).left}px`,
+                  top: `${getCanvasBox(step).top}px`,
+                  width: `${getCanvasBox(step).width}px`,
+                  height: `${getCanvasBox(step).height}px`,
                 }"
               />
               <template v-if="isItemStackBackedValueType(step.sourceType)">
                 <div
                   class="logic-item-placeholder-label"
                   :style="{
-                    left: `${getPatternBox(step).canvas!.left - 64}px`,
-                    top: `${getPatternBox(step).canvas!.top + 3}px`,
+                    left: `${getCanvasBox(step).left - 64}px`,
+                    top: `${getCanvasBox(step).top + 3}px`,
                   }"
                 >
                   {{ getItemStackPlaceholder(step.sourceType) }}
@@ -2105,8 +2132,8 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
                 <div
                   class="logic-item-placeholder-arrow"
                   :style="{
-                    left: `${getPatternBox(step).canvas!.left - 15}px`,
-                    top: `${getPatternBox(step).canvas!.top + 6}px`,
+                    left: `${getCanvasBox(step).left - 15}px`,
+                    top: `${getCanvasBox(step).top + 6}px`,
                   }"
                 />
               </template>
@@ -2135,17 +2162,16 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
                     }"
                   />
                 </HoverMinecraftTooltip>
-              </div>
-              <div
-                v-if="getPatternBox(step).symbol"
-                class="logic-symbol-overlay"
-                :class="{ 'logic-symbol-overlay-text': step.symbol.length > 2 }"
-                :style="{
-                  left: `${getPatternBox(step).symbol!.left}px`,
-                  top: `${getPatternBox(step).symbol!.top}px`,
-                }"
-              >
-                {{ step.symbol }}
+              </div>                <div
+                  v-if="getPatternBox(step).symbol"
+                  class="logic-symbol-overlay"
+                  :class="{ 'logic-symbol-overlay-text': step.symbol.length > 2 }"
+                  :style="{
+                    left: `${getSymbolPos(step).left}px`,
+                    top: `${getSymbolPos(step).top}px`,
+                  }"
+                >
+                  {{ step.symbol }}
               </div>
             </template>
 
