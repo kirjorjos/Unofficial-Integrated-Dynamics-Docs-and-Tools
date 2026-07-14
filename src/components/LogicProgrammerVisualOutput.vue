@@ -123,6 +123,7 @@ const props = defineProps<{
   showStepNumbers?: boolean;
   showStepTitles?: boolean;
   operatorPreviewMode?: "value" | "pattern";
+  forceShowOutputCard?: boolean;
 }>();
 
 const SHIFT_HELD_TOOLTIP_INFO = tooltipInfo as Record<string, string>;
@@ -2220,13 +2221,13 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
                 :title="getOutputSlotTooltip(step).title"
                 :lines="getOutputSlotTooltip(step).lines"
               >
-                <div
-                  v-if="step.workspaceMode !== 'pattern'"
-                  class="logic-write-card-composite"
-                  :style="{
-                    backgroundImage: `url('${publicAsset(`valuetype/${getValueTypeTextureName(getOutputTextureName(step))}.png`)}'), url('${publicAsset('item/variable.png')}')`,
-                  }"
-                />
+            <div
+              v-if="props.forceShowOutputCard || step.workspaceMode !== 'pattern'"
+              class="logic-write-card-composite"
+              :style="{
+                backgroundImage: `url('${publicAsset(`valuetype/${getValueTypeTextureName(getOutputTextureName(step))}.png`)}'), url('${publicAsset('item/variable.png')}')`,
+              }"
+            />
               </HoverMinecraftTooltip>
             </div>
           </div>

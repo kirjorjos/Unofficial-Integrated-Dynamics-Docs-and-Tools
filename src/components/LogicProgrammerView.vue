@@ -46,6 +46,7 @@ type VisualStep = {
 
 const props = defineProps<{
   step: VisualStep;
+  forceShowOutputCard?: boolean;
 }>();
 
 const getTextureName = (type: string): string => {
@@ -327,14 +328,13 @@ const outputTooltip = computed(() => getOutputSlotTooltip(props.step));
         <HoverMinecraftTooltip
           :title="outputTooltip.title"
           :lines="outputTooltip.lines"
-        >
-          <div
-            v-if="step.workspaceMode !== 'pattern'"
-            class="logic-write-card-composite"
-            :style="{
-              backgroundImage: `url('${publicAsset(`valuetype/${getTextureName(outputTextureName)}.png`)}'), url('${publicAsset('item/variable.png')}')`,
-            }"
-          />
+        >            <div
+              v-if="props.forceShowOutputCard || step.workspaceMode !== 'pattern'"
+              class="logic-write-card-composite"
+              :style="{
+                backgroundImage: `url('${publicAsset(`valuetype/${getTextureName(outputTextureName)}.png`)}'), url('${publicAsset('item/variable.png')}')`,
+              }"
+            />
         </HoverMinecraftTooltip>
       </div>
     </div>
