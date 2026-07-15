@@ -1,6 +1,10 @@
 import { getArity } from "lib/transformers/helpers";
 import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
 import { operatorRegistry } from "lib/IntegratedDynamicsClasses/registries/operatorRegistry";
+import {
+  getExpandedVarName,
+  resetExpandedVarCounter,
+} from "lib/transformers/Expanded";
 
 const textEncoder = new TextEncoder();
 const textDecoder = new TextDecoder();
@@ -517,15 +521,9 @@ const getNicknamesForNode = (node: ASTNode): string[] | undefined => {
     opName = "OPERATOR_PIPE";
   } else if (node.type === "Pipe2") {
     opName = "OPERATOR_PIPE2";
-  } else if (
-    node.type === "Curry" &&
-    node.base.type === "Operator"
-  ) {
-    // For Curry nodes wrapping a base operator, inherit its nicknames.
-    // This covers the common case where a curried operator's varName
-    // matches one of the underlying operator's nicknames.
-    opName = node.base.opName;
   }
+  // Note: Curry nodes use getExpandedVarName() auto-generation check
+  // in writeNodeMetadata/readNodeMetadata instead of nickname lookup
   if (opName) {
     const opClass = getOperatorClassByOpName(opName);
     if (opClass) return opClass.nicknames;
@@ -534,6 +532,21 @@ const getNicknamesForNode = (node: ASTNode): string[] | undefined => {
 };
 
 const writeNodeMetadata = (writer: BitWriter, node: ASTNode) => {
+  // For Curry nodes: skip saving varName if it matches the auto-generated name.
+  // The decoder can reconstruct it from the operator and arg varNames.
+  if (node.varName && node.type === "Curry") {
+    resetExpandedVarCounter();
+    // Temporarily strip varName so getVarName computes the auto-generated name
+    const savedVarName = node.varName;
+    delete (node as { varName?: string }).varName;
+    const autoName = getExpandedVarName(node);
+    node.varName = savedVarName;
+    if (savedVarName === autoName) {
+      writer.writeBit(false); // hasVarName = 0 — derivable from structure
+      return;
+    }
+  }
+
   writer.writeBit(Boolean(node.varName));
   if (node.varName) {
     const nicknames = getNicknamesForNode(node);
@@ -567,6 +580,12 @@ const readNodeMetadata = (reader: BitReader, node: ASTNode) => {
       }
       node.varName = nicknames[index];
     }
+  }
+
+  // Reconstruct auto-generated name for Curry nodes where it wasn't stored
+  if (node.type === "Curry" && !node.varName) {
+    resetExpandedVarCounter();
+    node.varName = getExpandedVarName(node);
   }
 };
 
