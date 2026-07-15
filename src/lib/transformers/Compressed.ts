@@ -479,6 +479,14 @@ const getNicknamesForNode = (node: ASTNode): string[] | undefined => {
     opName = "OPERATOR_PIPE";
   } else if (node.type === "Pipe2") {
     opName = "OPERATOR_PIPE2";
+  } else if (
+    node.type === "Curry" &&
+    node.base.type === "Operator"
+  ) {
+    // For Curry nodes wrapping a base operator, inherit its nicknames.
+    // This covers the common case where a curried operator's varName
+    // matches one of the underlying operator's nicknames.
+    opName = node.base.opName;
   }
   if (opName) {
     const opClass = getOperatorClassByOpName(opName);
