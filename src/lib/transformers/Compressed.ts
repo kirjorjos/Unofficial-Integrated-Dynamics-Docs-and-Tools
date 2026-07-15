@@ -199,13 +199,30 @@ const readVarUint = (reader: BitReader): number => {
 };
 
 const writeString = (writer: BitWriter, value: string) => {
-  const bytes = textEncoder.encode(value);
-  writeVarUint(writer, bytes.length);
-  writer.writeBytes(bytes);
+  const asciiOnly = [...value].every((c) => c.charCodeAt(0) <= 127);
+  writer.writeBit(asciiOnly);
+  if (asciiOnly) {
+    writeVarUint(writer, value.length);
+    for (let i = 0; i < value.length; i++) {
+      writer.writeBits(value.charCodeAt(i), 7);
+    }
+  } else {
+    const bytes = textEncoder.encode(value);
+    writeVarUint(writer, bytes.length);
+    writer.writeBytes(bytes);
+  }
 };
 
 const readString = (reader: BitReader): string => {
+  const isAscii = reader.readBit();
   const length = readVarUint(reader);
+  if (isAscii) {
+    let result = "";
+    for (let i = 0; i < length; i++) {
+      result += String.fromCharCode(reader.readNumber(7));
+    }
+    return result;
+  }
   return textDecoder.decode(reader.readBytes(length));
 };
 
