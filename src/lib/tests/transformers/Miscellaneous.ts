@@ -114,5 +114,16 @@ describe("MiscellaneousTests", () => {
         }
       }
     });
+
+    it("testNicknameCountLimit", () => {
+      for (const opClass of operatorClasses) {
+        const uniqueName = opClass.internalName;
+        if (opClass.nicknames.length > 32) {
+          throw new Error(
+            `Operator "${uniqueName}" has ${opClass.nicknames.length} nicknames, exceeding the 32-name limit of the 5-bit compressed encoding`
+          );
+        }
+      }
+    });
   });
 });
