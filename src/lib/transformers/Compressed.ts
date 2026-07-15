@@ -1,6 +1,10 @@
 import { getArity } from "lib/transformers/helpers";
 import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
 import { operatorRegistry } from "lib/IntegratedDynamicsClasses/registries/operatorRegistry";
+import {
+  getExpandedVarName,
+  resetExpandedVarCounter,
+} from "lib/transformers/Expanded";
 
 const textEncoder = new TextEncoder();
 const textDecoder = new TextDecoder();
@@ -199,13 +203,30 @@ const readVarUint = (reader: BitReader): number => {
 };
 
 const writeString = (writer: BitWriter, value: string) => {
-  const bytes = textEncoder.encode(value);
-  writeVarUint(writer, bytes.length);
-  writer.writeBytes(bytes);
+  const asciiOnly = [...value].every((c) => c.charCodeAt(0) <= 127);
+  writer.writeBit(asciiOnly);
+  if (asciiOnly) {
+    writeVarUint(writer, value.length);
+    for (let i = 0; i < value.length; i++) {
+      writer.writeBits(value.charCodeAt(i), 7);
+    }
+  } else {
+    const bytes = textEncoder.encode(value);
+    writeVarUint(writer, bytes.length);
+    writer.writeBytes(bytes);
+  }
 };
 
 const readString = (reader: BitReader): string => {
+  const isAscii = reader.readBit();
   const length = readVarUint(reader);
+  if (isAscii) {
+    let result = "";
+    for (let i = 0; i < length; i++) {
+      result += String.fromCharCode(reader.readNumber(7));
+    }
+    return result;
+  }
   return textDecoder.decode(reader.readBytes(length));
 };
 
@@ -403,6 +424,44 @@ const readJSONValue = (reader: BitReader): jsonData => {
   }
 };
 
+// Bitmask-based object encoding for Block/Item/Fluid/Entity.
+// Replaces JSON key-value encoding with a compact bitmask approach:
+// [bitmask: N bits][values in key order for bits that are 1]
+
+const BLOCK_KEYS = ["id", "properties"] as const;
+const ITEM_KEYS = ["id", "size", "tag"] as const;
+const FLUID_KEYS = ["id", "amount", "tag"] as const;
+const ENTITY_KEYS = ["id", "properties"] as const;
+
+const writeBitmaskObject = (
+  writer: BitWriter,
+  value: jsonObject,
+  keys: readonly string[]
+) => {
+  for (const key of keys) {
+    writer.writeBit(key in value);
+  }
+  for (const key of keys) {
+    if (key in value) {
+      writeJSONValue(writer, value[key] as jsonData);
+    }
+  }
+};
+
+const readBitmaskObject = (
+  reader: BitReader,
+  keys: readonly string[]
+): jsonObject => {
+  const result: jsonObject = {};
+  const present = keys.map(() => reader.readBit());
+  for (let i = 0; i < keys.length; i++) {
+    if (present[i]) {
+      result[keys[i]!] = readJSONValue(reader);
+    }
+  }
+  return result;
+};
+
 const getOperatorMaps = () => {
   const byID = new Map<number, TypeOperatorKey>();
   const byName = new Map<TypeOperatorKey, number>();
@@ -437,16 +496,96 @@ const getOperatorMaps = () => {
 
 const operatorMaps = getOperatorMaps();
 
+const getOperatorClassByOpName = (
+  opName: TypeOperatorKey
+): (typeof BaseOperator) | undefined => {
+  const opClass = operatorRegistry[opName];
+  if (
+    opClass &&
+    typeof opClass === "function" &&
+    (opClass.prototype instanceof BaseOperator ||
+      (opClass as unknown as { numericID?: number }).numericID !== undefined)
+  ) {
+    return opClass as unknown as typeof BaseOperator;
+  }
+  return undefined;
+};
+
+const getNicknamesForNode = (node: ASTNode): string[] | undefined => {
+  let opName: TypeOperatorKey | undefined;
+  if (node.type === "Operator") {
+    opName = node.opName;
+  } else if (node.type === "Flip") {
+    opName = "OPERATOR_FLIP";
+  } else if (node.type === "Pipe") {
+    opName = "OPERATOR_PIPE";
+  } else if (node.type === "Pipe2") {
+    opName = "OPERATOR_PIPE2";
+  }
+  // Note: Curry nodes use getExpandedVarName() auto-generation check
+  // in writeNodeMetadata/readNodeMetadata instead of nickname lookup
+  if (opName) {
+    const opClass = getOperatorClassByOpName(opName);
+    if (opClass) return opClass.nicknames;
+  }
+  return undefined;
+};
+
 const writeNodeMetadata = (writer: BitWriter, node: ASTNode) => {
+  // For Curry nodes: skip saving varName if it matches the auto-generated name.
+  // The decoder can reconstruct it from the operator and arg varNames.
+  if (node.varName && node.type === "Curry") {
+    resetExpandedVarCounter();
+    // Temporarily strip varName so getVarName computes the auto-generated name
+    const savedVarName = node.varName;
+    delete (node as { varName?: string }).varName;
+    const autoName = getExpandedVarName(node);
+    node.varName = savedVarName;
+    if (savedVarName === autoName) {
+      writer.writeBit(false); // hasVarName = 0 — derivable from structure
+      return;
+    }
+  }
+
   writer.writeBit(Boolean(node.varName));
   if (node.varName) {
+    const nicknames = getNicknamesForNode(node);
+    if (nicknames) {
+      const nicknameIndex = nicknames.indexOf(node.varName);
+      if (nicknameIndex !== -1) {
+        writer.writeBit(false); // nickname index encoding
+        writer.writeBits(nicknameIndex, 5);
+        return;
+      }
+    }
+    writer.writeBit(true); // full string encoding
     writeString(writer, node.varName);
   }
 };
 
 const readNodeMetadata = (reader: BitReader, node: ASTNode) => {
   if (reader.readBit()) {
-    node.varName = readString(reader);
+    const encodingType = reader.readBit();
+    if (encodingType) {
+      // Full string
+      node.varName = readString(reader);
+    } else {
+      // Nickname index
+      const nicknames = getNicknamesForNode(node);
+      const index = reader.readNumber(5);
+      if (!nicknames || index >= nicknames.length) {
+        throw new Error(
+          `Invalid nickname index ${index} for node type ${node.type}`
+        );
+      }
+      node.varName = nicknames[index];
+    }
+  }
+
+  // Reconstruct auto-generated name for Curry nodes where it wasn't stored
+  if (node.type === "Curry" && !node.varName) {
+    resetExpandedVarCounter();
+    node.varName = getExpandedVarName(node);
   }
 };
 
@@ -658,28 +797,28 @@ const writeNode = (
     case "Block":
       writer.writeBits(NodeKind.Literal, 2);
       writeLiteralKind(writer, LiteralKind.Block);
-      writeJSONValue(writer, node.value);
+      writeBitmaskObject(writer, node.value, BLOCK_KEYS);
       writeNodeMetadata(writer, node);
       return;
 
     case "Item":
       writer.writeBits(NodeKind.Literal, 2);
       writeLiteralKind(writer, LiteralKind.Item);
-      writeJSONValue(writer, node.value);
+      writeBitmaskObject(writer, node.value, ITEM_KEYS);
       writeNodeMetadata(writer, node);
       return;
 
     case "Fluid":
       writer.writeBits(NodeKind.Literal, 2);
       writeLiteralKind(writer, LiteralKind.Fluid);
-      writeJSONValue(writer, node.value);
+      writeBitmaskObject(writer, node.value, FLUID_KEYS);
       writeNodeMetadata(writer, node);
       return;
 
     case "Entity":
       writer.writeBits(NodeKind.Literal, 2);
       writeLiteralKind(writer, LiteralKind.Entity);
-      writeJSONValue(writer, node.value);
+      writeBitmaskObject(writer, node.value, ENTITY_KEYS);
       writeNodeMetadata(writer, node);
       return;
 
@@ -843,16 +982,28 @@ const readNode = (
           node = { type: "Null" };
           break;
         case LiteralKind.Block:
-          node = { type: "Block", value: readJSONValue(reader) as jsonObject };
+          node = {
+            type: "Block",
+            value: readBitmaskObject(reader, BLOCK_KEYS),
+          };
           break;
         case LiteralKind.Item:
-          node = { type: "Item", value: readJSONValue(reader) as jsonObject };
+          node = {
+            type: "Item",
+            value: readBitmaskObject(reader, ITEM_KEYS),
+          };
           break;
         case LiteralKind.Fluid:
-          node = { type: "Fluid", value: readJSONValue(reader) as jsonObject };
+          node = {
+            type: "Fluid",
+            value: readBitmaskObject(reader, FLUID_KEYS),
+          };
           break;
         case LiteralKind.Entity:
-          node = { type: "Entity", value: readJSONValue(reader) as jsonObject };
+          node = {
+            type: "Entity",
+            value: readBitmaskObject(reader, ENTITY_KEYS),
+          };
           break;
         case LiteralKind.Ingredients:
           node = {
