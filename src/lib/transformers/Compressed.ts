@@ -420,6 +420,44 @@ const readJSONValue = (reader: BitReader): jsonData => {
   }
 };
 
+// Bitmask-based object encoding for Block/Item/Fluid/Entity.
+// Replaces JSON key-value encoding with a compact bitmask approach:
+// [bitmask: N bits][values in key order for bits that are 1]
+
+const BLOCK_KEYS = ["id", "properties"] as const;
+const ITEM_KEYS = ["id", "size", "tag"] as const;
+const FLUID_KEYS = ["id", "amount", "tag"] as const;
+const ENTITY_KEYS = ["id", "properties"] as const;
+
+const writeBitmaskObject = (
+  writer: BitWriter,
+  value: jsonObject,
+  keys: readonly string[]
+) => {
+  for (const key of keys) {
+    writer.writeBit(key in value);
+  }
+  for (const key of keys) {
+    if (key in value) {
+      writeJSONValue(writer, value[key] as jsonData);
+    }
+  }
+};
+
+const readBitmaskObject = (
+  reader: BitReader,
+  keys: readonly string[]
+): jsonObject => {
+  const result: jsonObject = {};
+  const present = keys.map(() => reader.readBit());
+  for (let i = 0; i < keys.length; i++) {
+    if (present[i]) {
+      result[keys[i]!] = readJSONValue(reader);
+    }
+  }
+  return result;
+};
+
 const getOperatorMaps = () => {
   const byID = new Map<number, TypeOperatorKey>();
   const byName = new Map<TypeOperatorKey, number>();
@@ -740,28 +778,28 @@ const writeNode = (
     case "Block":
       writer.writeBits(NodeKind.Literal, 2);
       writeLiteralKind(writer, LiteralKind.Block);
-      writeJSONValue(writer, node.value);
+      writeBitmaskObject(writer, node.value, BLOCK_KEYS);
       writeNodeMetadata(writer, node);
       return;
 
     case "Item":
       writer.writeBits(NodeKind.Literal, 2);
       writeLiteralKind(writer, LiteralKind.Item);
-      writeJSONValue(writer, node.value);
+      writeBitmaskObject(writer, node.value, ITEM_KEYS);
       writeNodeMetadata(writer, node);
       return;
 
     case "Fluid":
       writer.writeBits(NodeKind.Literal, 2);
       writeLiteralKind(writer, LiteralKind.Fluid);
-      writeJSONValue(writer, node.value);
+      writeBitmaskObject(writer, node.value, FLUID_KEYS);
       writeNodeMetadata(writer, node);
       return;
 
     case "Entity":
       writer.writeBits(NodeKind.Literal, 2);
       writeLiteralKind(writer, LiteralKind.Entity);
-      writeJSONValue(writer, node.value);
+      writeBitmaskObject(writer, node.value, ENTITY_KEYS);
       writeNodeMetadata(writer, node);
       return;
 
@@ -925,16 +963,28 @@ const readNode = (
           node = { type: "Null" };
           break;
         case LiteralKind.Block:
-          node = { type: "Block", value: readJSONValue(reader) as jsonObject };
+          node = {
+            type: "Block",
+            value: readBitmaskObject(reader, BLOCK_KEYS),
+          };
           break;
         case LiteralKind.Item:
-          node = { type: "Item", value: readJSONValue(reader) as jsonObject };
+          node = {
+            type: "Item",
+            value: readBitmaskObject(reader, ITEM_KEYS),
+          };
           break;
         case LiteralKind.Fluid:
-          node = { type: "Fluid", value: readJSONValue(reader) as jsonObject };
+          node = {
+            type: "Fluid",
+            value: readBitmaskObject(reader, FLUID_KEYS),
+          };
           break;
         case LiteralKind.Entity:
-          node = { type: "Entity", value: readJSONValue(reader) as jsonObject };
+          node = {
+            type: "Entity",
+            value: readBitmaskObject(reader, ENTITY_KEYS),
+          };
           break;
         case LiteralKind.Ingredients:
           node = {
