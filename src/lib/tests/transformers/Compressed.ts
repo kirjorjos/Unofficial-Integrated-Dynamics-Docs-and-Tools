@@ -96,8 +96,8 @@ describe("TestCompressedTransformer", () => {
       type: "Ingredients",
       value: {
         items: [
-          { type: "Item", value: { id: "minecraft:stone", count: 1 } },
-          { type: "Item", value: { id: "minecraft:dirt", count: 2 } },
+          { type: "Item", value: { id: "minecraft:stone", size: 1 } },
+          { type: "Item", value: { id: "minecraft:dirt", size: 2 } },
         ],
         fluids: [
           { type: "Fluid", value: { id: "minecraft:water", amount: 1000 } },
@@ -125,7 +125,7 @@ describe("TestCompressedTransformer", () => {
   it("testSharedNodeReferences", () => {
     const shared: TypeAST.Item = {
       type: "Item",
-      value: { id: "minecraft:stone", count: 1 },
+      value: { id: "minecraft:stone", size: 1 },
       varName: "sharedItem",
     };
     const ast: TypeAST.Curried = {
