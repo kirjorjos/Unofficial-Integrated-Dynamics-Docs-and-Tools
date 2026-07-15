@@ -454,16 +454,73 @@ const getOperatorMaps = () => {
 
 const operatorMaps = getOperatorMaps();
 
+const getOperatorClassByOpName = (
+  opName: TypeOperatorKey
+): (typeof BaseOperator) | undefined => {
+  const opClass = operatorRegistry[opName];
+  if (
+    opClass &&
+    typeof opClass === "function" &&
+    (opClass.prototype instanceof BaseOperator ||
+      (opClass as unknown as { numericID?: number }).numericID !== undefined)
+  ) {
+    return opClass as unknown as typeof BaseOperator;
+  }
+  return undefined;
+};
+
+const getNicknamesForNode = (node: ASTNode): string[] | undefined => {
+  let opName: TypeOperatorKey | undefined;
+  if (node.type === "Operator") {
+    opName = node.opName;
+  } else if (node.type === "Flip") {
+    opName = "OPERATOR_FLIP";
+  } else if (node.type === "Pipe") {
+    opName = "OPERATOR_PIPE";
+  } else if (node.type === "Pipe2") {
+    opName = "OPERATOR_PIPE2";
+  }
+  if (opName) {
+    const opClass = getOperatorClassByOpName(opName);
+    if (opClass) return opClass.nicknames;
+  }
+  return undefined;
+};
+
 const writeNodeMetadata = (writer: BitWriter, node: ASTNode) => {
   writer.writeBit(Boolean(node.varName));
   if (node.varName) {
+    const nicknames = getNicknamesForNode(node);
+    if (nicknames) {
+      const nicknameIndex = nicknames.indexOf(node.varName);
+      if (nicknameIndex !== -1) {
+        writer.writeBit(false); // nickname index encoding
+        writer.writeBits(nicknameIndex, 5);
+        return;
+      }
+    }
+    writer.writeBit(true); // full string encoding
     writeString(writer, node.varName);
   }
 };
 
 const readNodeMetadata = (reader: BitReader, node: ASTNode) => {
   if (reader.readBit()) {
-    node.varName = readString(reader);
+    const encodingType = reader.readBit();
+    if (encodingType) {
+      // Full string
+      node.varName = readString(reader);
+    } else {
+      // Nickname index
+      const nicknames = getNicknamesForNode(node);
+      const index = reader.readNumber(5);
+      if (!nicknames || index >= nicknames.length) {
+        throw new Error(
+          `Invalid nickname index ${index} for node type ${node.type}`
+        );
+      }
+      node.varName = nicknames[index];
+    }
   }
 };
 
