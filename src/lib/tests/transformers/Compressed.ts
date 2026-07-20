@@ -1,5 +1,15 @@
 import { ASTToCompressed, CompressedToAST } from "lib/transformers/Compressed";
 import { operatorRegistry } from "lib/IntegratedDynamicsClasses/registries/operatorRegistry";
+import { RedstoneReader } from "lib/IntegratedDynamicsClasses/readers/RedstoneReader";
+import { FluidReader } from "lib/IntegratedDynamicsClasses/readers/FluidReader";
+import { InventoryReader } from "lib/IntegratedDynamicsClasses/readers/InventoryReader";
+import { WorldReader } from "lib/IntegratedDynamicsClasses/readers/WorldReader";
+import { NetworkReader } from "lib/IntegratedDynamicsClasses/readers/NetworkReader";
+import { BlockReader } from "lib/IntegratedDynamicsClasses/readers/BlockReader";
+import { EntityReader } from "lib/IntegratedDynamicsClasses/readers/EntityReader";
+import { ExtradimensionalReader } from "lib/IntegratedDynamicsClasses/readers/ExtradimensionalReader";
+import { MachineReader } from "lib/IntegratedDynamicsClasses/readers/MachineReader";
+import { AudioReader } from "lib/IntegratedDynamicsClasses/readers/AudioReader";
 
 type OperatorStatic = {
   numericID: number;
@@ -137,6 +147,68 @@ describe("TestCompressedTransformer", () => {
     const back = CompressedToAST(ASTToCompressed(ast)) as TypeAST.Curried;
     expect(back.args[0]).toBe(back.args[1]);
     expect(back.args[0]).toEqual(shared);
+  });
+
+  it("testReaderNumericIDs", () => {
+    // Every reader must have a unique numericID within 0-29 (5-bit LiteralKind range).
+    // IDs 0-29 are reserved for LiteralKind entries, with reader IDs matching
+    // their chronological position in the aspects.json ordering.
+    const readerClasses = [
+      RedstoneReader,
+      InventoryReader,
+      WorldReader,
+      FluidReader,
+      NetworkReader,
+      BlockReader,
+      EntityReader,
+      ExtradimensionalReader,
+      MachineReader,
+      AudioReader,
+    ] as const;
+
+    const expectedIDs = [1, 3, 4, 5, 10, 15, 16, 17, 18, 19];
+
+    const ids = new Map<number, string>();
+    for (const cls of readerClasses) {
+      const numericID = cls.numericID;
+      expect(Number.isInteger(numericID)).toBe(true);
+      expect(numericID).toBeGreaterThanOrEqual(0);
+      expect(numericID).toBeLessThanOrEqual(29);
+      expect(ids.has(numericID)).toBe(false);
+      ids.set(numericID, cls.typeName);
+    }
+
+    // Verify exact expected IDs
+    for (let i = 0; i < readerClasses.length; i++) {
+      expect(readerClasses[i].numericID).toBe(expectedIDs[i]);
+    }
+
+    // Verify getAspectBitWidth is inherited from ReaderBase
+    for (const cls of readerClasses) {
+      expect(typeof cls.getAspectBitWidth).toBe("function");
+      const bitWidth = cls.getAspectBitWidth();
+      expect(bitWidth).toBeGreaterThanOrEqual(1);
+      expect(bitWidth).toBeLessThanOrEqual(8);
+    }
+  });
+
+  it("testReaderOutputTypeMapping", () => {
+    // Spot-check that reader aspects resolve to the correct output types
+    expect(RedstoneReader.aspectOutputType["BOOLEAN_LOW"]).toBe("Boolean");
+    expect(RedstoneReader.aspectOutputType["INTEGER_VALUE"]).toBe("Integer");
+    expect(FluidReader.aspectOutputType["FLUIDSTACK"]).toBe("Fluid");
+    expect(FluidReader.aspectOutputType["DOUBLE_FILLRATIO"]).toBe("Double");
+    expect(InventoryReader.aspectOutputType["OBJECT_ITEM_STACK_SLOT"]).toBe("Item");
+    expect(WorldReader.aspectOutputType["LONG_TIME"]).toBe("Long");
+    expect(WorldReader.aspectOutputType["LIST_PLAYERS"]).toBe("List");
+    expect(NetworkReader.aspectOutputType["BOOLEAN_APPLICABLE"]).toBe("Boolean");
+    expect(NetworkReader.aspectOutputType["OPERATOR_GETVARIABLEBYID"]).toBe("Operator");
+    expect(NetworkReader.aspectOutputType["ANY_VALUE"]).toBe("Any");
+    expect(BlockReader.aspectOutputType["BLOCK"]).toBe("Block");
+    expect(BlockReader.aspectOutputType["NBT"]).toBe("NBT");
+    expect(EntityReader.aspectOutputType["ENTITY"]).toBe("Entity");
+    expect(MachineReader.aspectOutputType["LIST_GETRECIPES"]).toBe("List");
+    expect(AudioReader.aspectOutputType["INTEGER_HARP_NOTE"]).toBe("Integer");
   });
 
   it("testRejectUnknownOperatorID", () => {

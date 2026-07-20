@@ -16,23 +16,43 @@ const enum NodeKind {
   Reference = 0b11,
 }
 
+/**
+ * Literal kind IDs, ordered chronologically by when each type/reader was
+ * added to the IntegratedDynamics mod (sourced from git history).
+ * Abstract type groupings and our constructs are appended at the end.
+ * Extended to 5 bits (32 slots) to accommodate all entries.
+ */
 const enum LiteralKind {
-  Integer = 0,
-  Long = 1,
-  Double = 2,
-  String = 3,
-  Boolean = 4,
-  Null = 5,
-  Block = 6,
-  Item = 7,
-  Fluid = 8,
-  Entity = 9,
-  Ingredients = 10,
-  Recipe = 11,
-  NBT = 12,
-  List = 13,
-  Variable = 14,
-  Curry = 15,
+  Boolean = 0,
+  RedstoneReader = 1,
+  Integer = 2,
+  InventoryReader = 3,
+  WorldReader = 4,
+  FluidReader = 5,
+  String = 6,
+  Double = 7,
+  Block = 8,
+  Item = 9,
+  NetworkReader = 10,
+  Long = 11,
+  List = 12,
+  Entity = 13,
+  Fluid = 14,
+  BlockReader = 15,
+  EntityReader = 16,
+  ExtraDimensionalReader = 17,
+  MachineReader = 18,
+  AudioReader = 19,
+  Operator = 20,
+  NBT = 21,
+  Ingredients = 22,
+  Recipe = 23,
+  Number = 24,
+  Named = 25,
+  UniquelyNamed = 26,
+  Null = 27,
+  Variable = 28,
+  Curry = 29,
 }
 
 const enum JSONKind {
@@ -615,7 +635,7 @@ const isOperatorNode = (node: ASTNode): node is TypeAST.Operator => {
 };
 
 const writeLiteralKind = (writer: BitWriter, kind: LiteralKind) => {
-  writer.writeBits(kind, 4);
+  writer.writeBits(kind, 5);
 };
 
 const encodeIngredients = (
@@ -938,7 +958,7 @@ const readNode = (
     case NodeKind.Literal: {
       const slot = decoded.length;
       decoded.push(undefined);
-      const literalKind = reader.readNumber(4);
+      const literalKind = reader.readNumber(5);
       let node: ASTNode;
 
       switch (literalKind) {
@@ -1054,6 +1074,19 @@ const readNode = (
           }
           node = { type: "Curry", base, args };
           break;
+        }
+        case LiteralKind.RedstoneReader:
+        case LiteralKind.InventoryReader:
+        case LiteralKind.WorldReader:
+        case LiteralKind.FluidReader:
+        case LiteralKind.NetworkReader:
+        case LiteralKind.BlockReader:
+        case LiteralKind.EntityReader:
+        case LiteralKind.ExtraDimensionalReader:
+        case LiteralKind.MachineReader:
+        case LiteralKind.AudioReader: {
+          // TODO: Implement reader decoding — placeholder throws for now
+          throw new Error("Reader literal kind not yet implemented");
         }
         default:
           throw new Error(`Unknown compressed literal kind ${literalKind}`);
