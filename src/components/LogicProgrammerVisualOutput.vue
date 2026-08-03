@@ -721,6 +721,127 @@ const getOperatorValueSignatureText = (opName: TypeOperatorKey): string => {
 
 const runtimeErrors = new WeakMap<TypeAST.AST, { message: string; isIError: boolean }>();
 
+/**
+ * Recursively checks whether an AST contains any Flip/Pipe/Pipe2 (serializer)
+ * node, either as the Curry base, in the Curry args, or nested inside a List /
+ * Recipe / Ingredients value.
+ */
+const astContainsSerializerNode = (node: TypeAST.AST): boolean => {
+  switch (node.type) {
+    case "Flip":
+    case "Pipe":
+    case "Pipe2":
+      return true;
+    case "Curry":
+      return (
+        astContainsSerializerNode(node.base as TypeAST.AST) ||
+        node.args.some(astContainsSerializerNode)
+      );
+    case "List":
+      return node.value.some(astContainsSerializerNode);
+    case "Ingredients":
+      return (
+        (node.value.items ?? []).some(astContainsSerializerNode) ||
+        (node.value.fluids ?? []).some(astContainsSerializerNode) ||
+        (node.value.energy ?? []).some(astContainsSerializerNode)
+      );
+    case "Recipe":
+      return (
+        astContainsSerializerNode(node.value.input) ||
+        astContainsSerializerNode(node.value.output)
+      );
+    default:
+      return false;
+  }
+};
+
+/**
+ * Fallback display text for a step whose AST contains a Flip/Pipe/Pipe2 node
+ * that can't be constructed (e.g. flipping an operator with fewer than two
+ * inputs). Walks the Curry base chain to find the outermost serializer and
+ * shows its virtual display title.
+ */
+const getSerializerFallbackText = (
+  step: Pick<VisualStep, "output" | "node">
+): string => {
+  let current: TypeAST.AST = step.node;
+  while (current.type === "Curry") {
+    current = current.base as TypeAST.AST;
+  }
+  if (current.type === "Flip") return getVirtualOperatorDisplay("flip").title;
+  if (current.type === "Pipe") return getVirtualOperatorDisplay("pipe").title;
+  if (current.type === "Pipe2") return getVirtualOperatorDisplay("pipe2").title;
+  return step.output || "";
+};
+
+/**
+ * Whether a runtime value is an operator (any Operator subclass — e.g. a
+ * CurriedOperator that still expects arguments, or a Flip/Pipe value).
+ * Plain value types (Integer, iString, Block, ...) don't expose getFn.
+ */
+const isOperatorValue = (value: any): boolean =>
+  value != null &&
+  typeof value === "object" &&
+  typeof value.getFn === "function";
+
+/**
+ * Renders an operator instance as "<name> ::\n<signature>" so that
+ * operator-valued results (e.g. an arity-1 curried operator) display their
+ * signature instead of "[object Object]".
+ */
+const getOperatorSignatureText = (op: any): string => {
+  const sig =
+    typeof op.getParsedSignature === "function"
+      ? op.getParsedSignature()
+      : op.getSignatureNode();
+  const name =
+    typeof op.getName === "function" ? String(op.getName().valueOf()) : "";
+  const flatSig = new ParsedSignature(sig.getAst(), false).toFlatSignature();
+  const indent = "\u00A0";
+  const sigLines = flatSig
+    .map((type: string, i: number) => (i === 0 ? type : `${indent}-> ${type}`))
+    .join("\n");
+  return `${name} ::\n${sigLines}`;
+};
+
+/**
+ * Display name for Named value objects (Block/Item/Fluid/Entity/Ingredients/
+ * Recipe) via getName(), or undefined when not applicable.
+ */
+const getNamedValueText = (value: any): string | undefined => {
+  if (typeof value?.getName !== "function") return undefined;
+  try {
+    const name = value.getName();
+    if (name != null && typeof name.valueOf === "function") {
+      return String(name.valueOf());
+    }
+  } catch {
+    // fall through
+  }
+  return undefined;
+};
+
+/**
+ * Safely stringifies a scalar for the display panel. Never renders
+ * "[object Object]": raw objects with no primitive form return "".
+ */
+const getScalarDisplayText = (value: any): string => {
+  if (value == null) return String(value);
+  if (typeof value !== "object") return String(value);
+  let raw: any = value;
+  try {
+    if (typeof value.toJSON === "function") {
+      return JSON.stringify(value.toJSON()) ?? "";
+    }
+    if (typeof value.valueOf === "function") raw = value.valueOf();
+  } catch {
+    // fall through
+  }
+  if (raw === value) return "";
+  if (raw !== null && typeof raw === "object") return "";
+  return String(raw);
+};
+
 const getDisplayPanelText = (
   step: Pick<
     VisualStep,
@@ -740,42 +861,52 @@ const getDisplayPanelText = (
       .join("\n");
   }
   if (step.node) {
-    try {
-      const op = ASTtoOperator(step.node) as any;
-      const nodeType = step.node.type;
+    const nodeType = step.node.type;
 
-      // For serializer types (Flip, Pipe, Pipe2, Curry), use the resolved
-      // signature from the AST node instead of the generic registry signature
-      if (nodeType === "Flip" || nodeType === "Pipe" || nodeType === "Pipe2") {          const opKey = step.tooltipOperatorKey;
-        if (opKey) {
-          // Map tooltip keys to virtual operator keys
-          const virtualKeyMap: Record<
-            string,
-            "flip" | "pipe" | "pipe2" | "apply"
-          > = {
-            OPERATOR_FLIP: "flip",
-            OPERATOR_PIPE: "pipe",
-            OPERATOR_PIPE2: "pipe2",
-            OPERATOR_APPLY: "apply",
-            OPERATOR_APPLY_2: "apply",
-            OPERATOR_APPLY_3: "apply",
-            OPERATOR_APPLY_0: "apply",
-            OPERATOR_APPLY_N: "apply",
-          };
-          const virtualKey = virtualKeyMap[opKey];
-          if (virtualKey) {
-            const operatorDisplay = getVirtualOperatorDisplay(virtualKey);
-            // Use the resolved operator's signature from the AST node
+    // For serializer types (Flip, Pipe, Pipe2), try to resolve the
+    // signature from the AST node directly. If ASTtoOperator fails
+    // (e.g. Flip on an arity-1 operator), fall back to showing just
+    // the operator name — don't store an error for this.
+    if (nodeType === "Flip" || nodeType === "Pipe" || nodeType === "Pipe2") {        const opKey = step.tooltipOperatorKey;
+      if (opKey) {
+        // Map tooltip keys to virtual operator keys
+        const virtualKeyMap: Record<
+          string,
+          "flip" | "pipe" | "pipe2" | "apply"
+        > = {
+          OPERATOR_FLIP: "flip",
+          OPERATOR_PIPE: "pipe",
+          OPERATOR_PIPE2: "pipe2",
+          OPERATOR_APPLY: "apply",
+          OPERATOR_APPLY_2: "apply",
+          OPERATOR_APPLY_3: "apply",
+          OPERATOR_APPLY_0: "apply",
+          OPERATOR_APPLY_N: "apply",
+        };
+        const virtualKey = virtualKeyMap[opKey];
+        if (virtualKey) {
+          const operatorDisplay = getVirtualOperatorDisplay(virtualKey);
+          // Try to get the resolved operator signature — may fail for
+          // invalid Flip/Pipe/Pipe2 constructs (e.g. flipping an arity-1 op)
+          try {
+            const op = ASTtoOperator(step.node) as any;
             const resolvedSig = op.getParsedSignature();
             const flatSig = resolvedSig.toFlatSignature();
             const indent = "\u00A0";
             const sigLines = flatSig              .map((type: string, i: number) => (i === 0 ? type : `${indent}-> ${type}`))
             .join("\n");
             return `${operatorDisplay.title} ::\n${sigLines}`;
+          } catch {
+            // Can't resolve the operator — show just the display name
+            return operatorDisplay.title;
           }
         }
-        return "";
       }
+      return "";
+    }
+
+    try {
+      const op = ASTtoOperator(step.node) as any;
 
       // For Curry types, show the resolved value when fully applied,
       // or operator name + signature when partially applied
@@ -793,8 +924,17 @@ const getDisplayPanelText = (
                 const fn = arg.getFn();
                 if (typeof fn === "function") {
                   const result = fn(null);
-                  // Only accept if it's a concrete value (not another operator)
-                  if (result != null && typeof result.getFn !== "function") {
+                  // Only accept if it's a concrete value. Plain JS closures
+                  // (returned when evaluating operator-typed args, e.g. a
+                  // Flip/Pipe or partially-applied Curry) are NOT values and
+                  // must be rejected — otherwise they flow into the
+                  // application chain below, where Function.prototype.apply
+                  // would be invoked on them and corrupt the argument bindings.
+                  if (
+                    result != null &&
+                    typeof result !== "function" &&
+                    typeof result.getFn !== "function"
+                  ) {
                     return result;
                   }
                 }
@@ -805,54 +945,29 @@ const getDisplayPanelText = (
             return arg;
           };
 
-          // Fast path: try fn(null) on the combined CurriedOperator
-          try {
-            const fn = (op as any).getFn();
-            if (typeof fn === "function") {
-              const evaluated = resolveArg(fn(null));
-              if (evaluated != null && typeof evaluated.valueOf === "function") {
-                const val = evaluated.valueOf();
-                if (Array.isArray(val)) {
-                  if (val.length === 0) return "";
-                  return val
-                    .map((item: unknown) => {
-                      const d = item != null && typeof (item as any).valueOf === "function"
-                        ? String((item as any).valueOf())
-                        : String(item);
-                      return `- ${d}`;
-                    })
-                    .join("\n");
-                }
-                const display = val != null && typeof (val as any).valueOf === "function"
-                  ? String((val as any).valueOf())
-                  : String(val);
-                return display;
-              }
-            }
-          } catch (e) {
-            // Fast path failed — capture runtime error
-            if (step.node) {
-              runtimeErrors.set(step.node, {
-                message: e instanceof Error ? e.message : String(e),
-                isIError: e instanceof iError,
-              });
-            }
-          }
-
-          // Fallback: evaluate each arg separately via flattened AST
+          // Evaluate via flattened AST only — avoids the issue of calling
+          // fn(null) on a CurriedOperator which would inject null as an
+          // extra argument and cause operator internal errors.
+          runtimeErrors.delete(step.node);
           try {
             const flat = flattenAnonymousBaseOperatorApplication(step.node as TypeAST.AST);
             if (flat && flat.operator.type === "Operator") {
               // Resolve each arg AST to a concrete value
               const argValues: any[] = [];
               for (const argAst of flat.args) {
-                const argOp = ASTtoOperator(argAst);
-                argValues.push(resolveArg(argOp));
+                try {
+                  const argOp = ASTtoOperator(argAst);
+                  argValues.push(resolveArg(argOp));
+                } catch {
+                  // Argument AST could not be converted to an operator
+                  // (e.g. a Flip wrapping an arity-1 operator). Skip it.
+                }
               }
               // Apply the base operator with resolved args
               const baseOp = ASTtoOperator(flat.operator) as any;
               let result: any = typeof baseOp.getFn === "function" ? baseOp.getFn() : baseOp;
               for (const argVal of argValues) {
+                if (argVal == null) continue;
                 if (typeof result === "function") {
                   result = result(argVal);
                 } else if (typeof result?.apply === "function") {
@@ -861,26 +976,67 @@ const getDisplayPanelText = (
                   break;
                 }
               }
-              if (result != null && typeof result.valueOf === "function") {
+              if (
+                result != null &&
+                typeof result !== "function" &&
+                typeof result.valueOf === "function"
+              ) {
+                // Operator-valued results (e.g. a partially-applied curried
+                // operator, or an operator-typed output) display their
+                // signature — stringifying the object would render
+                // "[object Object]" instead.
+                if (isOperatorValue(result)) {
+                  return getOperatorSignatureText(result);
+                }
+
                 const val = result.valueOf();
+
+                // Named objects (Block/Item/Fluid/Entity/Ingredients/
+                // Recipe) have no primitive form — valueOf() returns the
+                // object itself — so show their display name instead of
+                // stringifying the object.
+                if (typeof result.getName === "function" && val === result) {
+                  const namedText = getNamedValueText(result);
+                  if (namedText != null) return namedText;
+                }
+
                 if (!Array.isArray(val)) {
-                  return String(val != null && typeof (val as any).valueOf === "function"
-                    ? (val as any).valueOf()
-                    : val);
+                  return getScalarDisplayText(val);
                 }
                 if (val.length === 0) return "";
                 return val
-                  .map((item: any) => `- ${String(typeof item?.valueOf === "function" ? item.valueOf() : item)}`)
+                  .map((item: any) => {
+                    if (isOperatorValue(item)) {
+                      return `- ${getOperatorSignatureText(item)}`;
+                    }
+                    const itemVal =
+                      typeof item?.valueOf === "function"
+                        ? item.valueOf()
+                        : item;
+                    if (typeof item?.getName === "function" && itemVal === item) {
+                      const itemNamed = getNamedValueText(item);
+                      if (itemNamed != null) return `- ${itemNamed}`;
+                    }
+                    return `- ${getScalarDisplayText(item)}`;
+                  })
                   .join("\n");
               }
             }
           } catch (e) {
-            // Fall through — capture runtime error
-            if (step.node) {
-              runtimeErrors.set(step.node, {
-                message: e instanceof Error ? e.message : String(e),
-                isIError: e instanceof iError,
-              });
+            // Only surface operator-level (iError) failures — e.g. "Division
+            // by zero" — which are meaningful to the user. Native errors from
+            // this best-effort value display are display artifacts, not
+            // internal bugs, so don't record them — but log them for
+            // developers.
+            if (e instanceof iError) {
+              if (step.node) {
+                runtimeErrors.set(step.node, {
+                  message: e instanceof Error ? e.message : String(e),
+                  isIError: true,
+                });
+              }
+            } else {
+              console.warn("[getDisplayPanelText] value display failed:", e);
             }
           }
 
@@ -911,6 +1067,15 @@ const getDisplayPanelText = (
       return `${name} ::\n${sigLines}`;
     } catch (e) {
       if (step.node) {
+        // Steps whose AST contains Flip/Pipe/Pipe2 nodes can legitimately
+        // fail to construct when the serializer wraps an operator that can't
+        // be transformed (e.g. flipping an operator with fewer than two
+        // inputs, or flipping a partially-applied operator). Those are user
+        // input errors, not internal bugs — degrade gracefully instead of
+        // recording them.
+        if (astContainsSerializerNode(step.node)) {
+          return getSerializerFallbackText(step);
+        }
         runtimeErrors.set(step.node, {
           message: e instanceof Error ? e.message : String(e),
           isIError: e instanceof iError,

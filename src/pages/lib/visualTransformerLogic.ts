@@ -406,13 +406,56 @@ export const getOperatorValueSignatureText = (
     .join(" §r-> ");
 };
 
+/**
+ * Recursively checks whether an AST contains any Flip/Pipe/Pipe2 (serializer)
+ * node, either as the Curry base, in the Curry args, or nested inside a List /
+ * Recipe / Ingredients value.
+ */
+const astContainsSerializerNode = (node: TypeAST.AST): boolean => {
+  switch (node.type) {
+    case "Flip":
+    case "Pipe":
+    case "Pipe2":
+      return true;
+    case "Curry":
+      return (
+        astContainsSerializerNode(node.base as TypeAST.AST) ||
+        node.args.some(astContainsSerializerNode)
+      );
+    case "List":
+      return node.value.some(astContainsSerializerNode);
+    case "Ingredients":
+      return (
+        (node.value.items ?? []).some(astContainsSerializerNode) ||
+        (node.value.fluids ?? []).some(astContainsSerializerNode) ||
+        (node.value.energy ?? []).some(astContainsSerializerNode)
+      );
+    case "Recipe":
+      return (
+        astContainsSerializerNode(node.value.input) ||
+        astContainsSerializerNode(node.value.output)
+      );
+    default:
+      return false;
+  }
+};
+
 export const getDisplayPanelText = (
   step: Pick<VisualStep, "output" | "node">
 ): string => {
   if (step.node) {
     try {
       const op = ASTtoOperator(step.node) as any;
-      const name = op.getFullDisplayName();
+      // CurriedOperator (and other Operator subclasses that aren't
+      // BaseOperators) don't implement getFullDisplayName — fall back to
+      // getName() so partially-applied curries still show name + signature
+      // instead of silently falling through to the raw step output.
+      const name =
+        typeof op.getFullDisplayName === "function"
+          ? op.getFullDisplayName()
+          : typeof op.getName === "function"
+            ? String(op.getName().valueOf())
+            : step.output;
       const signature = new ParsedSignature(
         op.getParsedSignature().getAst(),
         false
@@ -423,7 +466,12 @@ export const getDisplayPanelText = (
         .join("\n");
       return `${name} ::\n${sigLines}`;
     } catch (e) {
-      if (step.node) {
+      // Steps whose AST contains Flip/Pipe/Pipe2 nodes can legitimately
+      // fail to construct when the serializer wraps an operator that can't
+      // be transformed (e.g. flipping an operator with fewer than two
+      // inputs). Those are user input errors, not internal bugs — degrade
+      // gracefully instead of recording them.
+      if (step.node && !astContainsSerializerNode(step.node)) {
         runtimeErrors.set(step.node, {
           message: e instanceof Error ? e.message : String(e),
           isIError: e instanceof iError,
