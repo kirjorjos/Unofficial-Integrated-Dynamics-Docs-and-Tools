@@ -118,6 +118,8 @@ export class Operator<I extends IntegratedValue, O extends IntegratedValue>
   }
 
   apply(arg: I, updateSignature = true): O {
+    if (arg == null)
+      throw new Error("Cannot apply operator to null/undefined");
     if (arg instanceof Operator && arg.varID === this.varID)
       throw new Error("Tried to apply operator to it's self");
 

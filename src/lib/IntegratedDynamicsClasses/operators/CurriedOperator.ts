@@ -25,6 +25,9 @@ export class CurriedOperator<
   ) {
     let signature = baseOperator.getSignatureNode();
     for (const arg of appliedArgs) {
+      if (arg == null) {
+        throw new Error("Cannot curry operator with null/undefined argument");
+      }
       if (signature.getRootType() === "Function") {
         signature = signature.apply(arg.getSignatureNode());
       }
@@ -101,7 +104,7 @@ export class CurriedOperator<
 
   override getName(): iString {
     const argTypes = this.appliedArgs.map((arg) =>
-      arg.getSignatureNode().getRootType()
+      arg == null ? "?" : arg.getSignatureNode().getRootType()
     );
     return new iString(
       `Applied ${this.baseOperator.getName().valueOf()} [${argTypes.join("; ")}]`
