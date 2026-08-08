@@ -5,6 +5,9 @@ export type ScalingParams = {
   minScale?: number;
 };
 
+export const snapToPixelGrid = (px: number): number =>
+  Math.max(1, Math.floor(px));
+
 // Direct calculation - no DOM needed
 export const calculateScaleFromContainer = (
   textWidth: number,

@@ -7,6 +7,7 @@ import {
   ref,
   watch,
 } from "vue";
+import { snapToPixelGrid } from "pages-lib/visualTextScaling";
 
 const props = withDefaults(
   defineProps<{
@@ -52,6 +53,18 @@ const updateScale = () => {
     return;
   }
 
+  // Convert the em multiplier to px via the container's computed font size:
+  // the pre-snapping code set `fontSize = ${scaleEm}em`, which resolves against
+  // the container's font-size — so `scaleEm * parentPx` px is the same size,
+  // then snapped to an integer pixel (this was left undefined, throwing a
+  // ReferenceError on every updateScale and silently rendering all text at 1em).
+  const parentPx =
+    Number.parseFloat(getComputedStyle(container).fontSize) || 16;
+
+  const applySize = (scaleEm: number) => {
+    content.style.fontSize = `${snapToPixelGrid(scaleEm * parentPx)}px`;
+  };
+
   // Calculate scale to fit BOTH dimensions
   const widthRatio = availableWidth / baseWidth;
   const heightRatio = availableHeight / baseHeight;
@@ -75,10 +88,10 @@ const updateScale = () => {
 
   if (neededScale >= 1) {
     if (isSpecialType) {
-      content.style.fontSize = `${neededScale}em`;
+      applySize(neededScale);
       return;
     }
-    content.style.fontSize = "1em";
+    applySize(1);
     return;
   }
 
@@ -88,12 +101,12 @@ const updateScale = () => {
     baseHeight * minScale <= availableHeight;
 
   if (fitsAtMinScale) {
-    content.style.fontSize = `${minScale}em`;
+    applySize(minScale);
     return;
   }
 
   // Need to scale down more than minScale allows
-  content.style.fontSize = `${neededScale}em`;
+  applySize(neededScale);
 };
 
 const scheduleUpdate = () => {
@@ -136,6 +149,9 @@ watch(
 
 onMounted(() => {
   scheduleUpdate();
+  if (document.fonts?.ready) {
+    void document.fonts.ready.then(() => scheduleUpdate());
+  }
   resizeObserver = new ResizeObserver(scheduleUpdate);
   if (containerRef.value) resizeObserver.observe(containerRef.value);
   window.addEventListener("resize", scheduleUpdate);

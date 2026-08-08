@@ -39,6 +39,12 @@ If you think something is wrong or missing, feel free to [open an issue](https:/
 
 When committing changes, please use the automated tools to test and format staged changes:
 
+After cloning the repo or pulling new changes, run the generation script to regenerate environment-specific artifacts:
+
+```bash
+npm run generate
+```
+
 To be prompted for commit message:
 
 ```bash

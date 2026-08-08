@@ -1,6 +1,7 @@
 .*
 !.gitignore
 !.prettierignore
+!.github/
 
 boot.sh
 Integrated Dynamics Website.code-workspace
@@ -10,3 +11,12 @@ node_modules/
 docs/
 *.log
 *.disabled
+
+# Playwright artifacts (baselines themselves live in src/assets/visual-snapshots/)
+test-results/
+playwright-report/
+scripts/.gen-*
+
+# Local screenshot sandbox (`npm run generate-screenshots`) — machine-specific
+# PNGs never enter PRs; committed baselines are always CI-born (spec §3.7).
+/.local-snapshots/

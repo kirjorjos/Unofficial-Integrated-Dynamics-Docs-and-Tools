@@ -184,9 +184,7 @@ function getPixelColor(index: number): string {
   align-items: center;
   justify-content: center;
   padding: 6px;
-  font-family:
-    "JetBrains Mono", "IBM Plex Mono", "Fira Code", ui-monospace,
-    SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", monospace;
+  font-family: "Minecraft", "Tinos", "SymbolsFallback";
   color: #00ff00;
   font-size: 32px;
   overflow: hidden;

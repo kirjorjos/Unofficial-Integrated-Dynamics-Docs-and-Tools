@@ -1,0 +1,134 @@
+import {
+  getOperatorDisplay,
+  getVirtualOperatorDisplay,
+} from "pages-lib/visualTransformerLogic";
+import { beforeEachVisualTransformer, makeAst, steps } from "./fixtures";
+
+describe("generateVisualSteps", () => {
+  beforeEach(beforeEachVisualTransformer);
+
+  it("testFullyAppliedArithmeticValueValueOperator", () => {
+    const result = steps(makeAst.arithmetic());
+    expect(result).toHaveLength(3);
+    expect(result.map((s) => s.kind)).toEqual(["value", "value", "operator"]);
+    expect(result.map((s) => s.sourceType)).toEqual([
+      "Integer",
+      "Integer",
+      "Curry",
+    ]);
+    expect(result.map((s) => s.variableId)).toEqual([0, 1, 2]);
+    expect(result[2]!.inputs.map((i) => i.variableId)).toEqual([0, 1]);
+    expect(result[2]!.title).toBe(
+      getOperatorDisplay("ARITHMETIC_ADDITION").title
+    );
+    expect(result[2]!.tooltipOperatorKey).toBe("OPERATOR_APPLY_2");
+  });
+
+  it("testHonorsStartVariableIdOffset", () => {
+    const result = steps(makeAst.arithmetic(), 10);
+    expect(result.map((s) => s.variableId)).toEqual([10, 11, 12]);
+    expect(result[2]!.inputs.map((i) => i.variableId)).toEqual([10, 11]);
+  });
+
+  it("testNestedCurryProducesFiveStepsWiredCorrectly", () => {
+    const result = steps(makeAst.chained());
+    expect(result).toHaveLength(5);
+    expect(result[4]!.inputs.map((i) => i.variableId)).toEqual([2, 3]);
+    expect(result[4]!.title).toBe(
+      getOperatorDisplay("ARITHMETIC_MULTIPLICATION").title
+    );
+  });
+
+  it("testPartialApplicationThenPartialApplyStep", () => {
+    const result = steps(makeAst.partial());
+    expect(result).toHaveLength(3);
+    expect(result[0]!.kind).toBe("operator");
+    expect(result[0]!.sourceType).toBe("Operator");
+    expect(result[1]!.sourceType).toBe("Integer");
+    expect(result[2]!.sourceType).toBe("Curry");
+    expect(result[2]!.inputs.map((i) => i.variableId)).toEqual([0, 1]);
+    expect(result[2]!.tooltipOperatorKey).toBe("OPERATOR_APPLY");
+  });
+
+  it("testFlipThenVirtualFlippedStep", () => {
+    const result = steps(makeAst.flip());
+    expect(result).toHaveLength(2);
+    expect(result[0]!.sourceType).toBe("Operator");
+    expect(result[1]!.sourceType).toBe("Flip");
+    expect(result[1]!.title).toBe(getVirtualOperatorDisplay("flip").title);
+    expect(result[1]!.tooltipOperatorKey).toBe("OPERATOR_FLIP");
+    expect(result[1]!.inputs.map((i) => i.variableId)).toEqual([0]);
+  });
+
+  it("testInvalidFlipStillGeneratesStepsWithoutThrowing", () => {
+    const result = steps(makeAst.invalidFlip());
+    expect(result).toHaveLength(2);
+    expect(result[1]!.sourceType).toBe("Flip");
+  });
+
+  it("testPipeThenVirtualPipedStep", () => {
+    const result = steps(makeAst.pipe());
+    expect(result).toHaveLength(3);
+    expect(result[0]!.title).toBe(
+      getOperatorDisplay("ARITHMETIC_INCREMENT").title
+    );
+    expect(result[1]!.title).toBe(
+      getOperatorDisplay("ARITHMETIC_MULTIPLICATION").title
+    );
+    expect(result[2]!.sourceType).toBe("Pipe");
+    expect(result[2]!.title).toBe(getVirtualOperatorDisplay("pipe").title);
+    expect(result[2]!.tooltipOperatorKey).toBe("OPERATOR_PIPE");
+    expect(result[2]!.inputs.map((i) => i.variableId)).toEqual([0, 1]);
+  });
+
+  it("testPipe2ThenVirtualPiped2Step", () => {
+    const result = steps(makeAst.pipe2());
+    expect(result).toHaveLength(4);
+    expect(result[3]!.sourceType).toBe("Pipe2");
+    expect(result[3]!.inputs.map((i) => i.variableId)).toEqual([0, 1, 2]);
+  });
+
+  it("testListValueElementsThenListStep", () => {
+    const result = steps(makeAst.list());
+    expect(result).toHaveLength(4);
+    expect(result[3]!.sourceType).toBe("List");
+    expect(result[3]!.kind).toBe("value");
+    expect(result[3]!.symbol).toBe("[]");
+    expect(result[3]!.inputs.map((i) => i.variableId)).toEqual([0, 1, 2]);
+  });
+
+  it("testNumberLiteralsFlagNumberIntegerMismatch", () => {
+    const result = steps(makeAst.divzero());
+    expect(result).toHaveLength(3);
+    expect(result[2]!.typeError).toBe(
+      "Type mismatch: expected Number, got Integer"
+    );
+  });
+
+  it("testCleanApplicationsCarryNoTypeError", () => {
+    const result = steps(makeAst.stringConcat());
+    expect(result).toHaveLength(3);
+    expect(result.every((s) => s.typeError === undefined)).toBe(true);
+  });
+
+  it("testOperatorPatternPreviewModeProducesSingleStep", () => {
+    const result = steps(makeAst.operatorNode(), 0, "pattern");
+    expect(result).toHaveLength(1);
+    const step = result[0]!;
+    expect(step.sourceType).toBe("Operator");
+    expect(step.workspaceMode).toBe("pattern");
+    expect(step.forceOperatorTabActive).toBe(true);
+    expect(step.variableId).toBe(0);
+    expect(step.expectedInputTypes).toEqual(["Number"]);
+    expect(step.expectedOutputType).toBe("Number");
+    expect(step.inputs).toEqual([]);
+  });
+
+  it("testValueStepsExposePrimitiveDetails", () => {
+    const result = steps(makeAst.stringVal());
+    expect(result).toHaveLength(1);
+    expect(result[0]!.sourceType).toBe("String");
+    expect(result[0]!.kind).toBe("value");
+    expect(result[0]!.detail).toBe("hello");
+  });
+});

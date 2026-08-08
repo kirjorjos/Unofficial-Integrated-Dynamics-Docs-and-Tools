@@ -1,6 +1,63 @@
+/* 
+ * ===== Self-hosted webfonts (all SIL OFL 1.1 — see THIRD_PARTY_LICENSES.txt) =====
+ */
+@font-face {
+  font-family: "Minecraft";
+  src: url("./assets/fonts/minecraft-regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Minecraft";
+  src: url("./assets/fonts/minecraft-bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Tinos";
+  src: url("./assets/fonts/tinos-regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Tinos";
+  src: url("./assets/fonts/tinos-italic.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Tinos";
+  src: url("./assets/fonts/tinos-bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Tinos";
+  src: url("./assets/fonts/tinos-bolditalic.woff2") format("woff2");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "SymbolsFallback";
+  src: url("./assets/fonts/symbols-fallback.woff2") format("woff2");
+  font-display: swap;
+}
+
 :root {
   font-family:
-    Inter,
+    "Tinos",
     system-ui,
     -apple-system,
     BlinkMacSystemFont,
@@ -431,6 +488,8 @@ button {
 .logic-programmer-shot {
   display: grid;
   gap: 0.5rem;
+  font-family: "Minecraft", "Tinos", "SymbolsFallback";
+  font-synthesis: weight style;
 }
 
 .display-panel-row {
@@ -485,9 +544,7 @@ button {
   top: 0;
   width: 256px;
   height: 240px;
-  font-family:
-    "JetBrains Mono", "IBM Plex Mono", "Fira Code", ui-monospace,
-    SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", monospace;
+  font-family: "Minecraft", "Tinos", "SymbolsFallback";
   color: #2d2d2d;
 }
 
@@ -775,7 +832,8 @@ button {
   box-shadow:
     inset 1px 1px 0 rgba(80, 0, 255, 0.5),
     inset -1px -1px 0 rgba(40, 0, 120, 0.72);
-  font-family: "Lucida Console", "Courier New", monospace;
+  font-family: "Minecraft", "Tinos", "SymbolsFallback";
+  font-synthesis: weight style;
   font-size: 8px;
   line-height: 10px;
   white-space: nowrap;
