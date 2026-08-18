@@ -43,6 +43,7 @@ jobs:
         id: changed
         if: steps.compare.outcome != 'skipped'
         run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
           BASE_SHA="${{ github.event.pull_request.base.sha }}"
           if [ -z "$BASE_SHA" ]; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
