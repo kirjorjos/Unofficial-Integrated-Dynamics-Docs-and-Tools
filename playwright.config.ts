@@ -5,6 +5,14 @@ const BASE_PATH = "/Unofficial-Integrated-Dynamics-Docs-and-Tools/";
 const BASE_URL = `http://localhost:${PORT}${BASE_PATH}`;
 const LOCAL_SNAPSHOTS = process.env.LOCAL_SNAPSHOTS === "1";
 
+if (!LOCAL_SNAPSHOTS && process.env.CI !== "true") {
+  console.warn(
+    "[playwright] Running without LOCAL_SNAPSHOTS=1: snapshots will be compared against " +
+      "src/assets/visual-snapshots/ (CI baselines) and missing ones will be written there. " +
+      "Locally, use `npm test` or run with LOCAL_SNAPSHOTS=1 to use .local-snapshots/."
+  );
+}
+
 export default defineConfig({
   testDir: "./ui-tests",
   fullyParallel: true,
