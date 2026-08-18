@@ -2,6 +2,7 @@ import {
   getDisplayPanelText,
   isTypeAssignable,
 } from "pages-lib/visualTransformerLogic";
+import { ExpandedToAST } from "lib/transformers/Expanded";
 import { beforeEachVisualTransformer, makeAst, steps } from "./fixtures";
 
 describe("getDisplayPanelText", () => {
@@ -82,6 +83,21 @@ describe("getDisplayPanelText", () => {
     for (const step of result) {
       expect(() => getDisplayPanelText(step)).not.toThrow();
     }
+  });
+
+  it("testResolvesPipeSignatureOverApplyBasedCurry", () => {
+    const ast = ExpandedToAST(
+      `isLiteral = operatorPipe(apply(apply(operatorFlip, nbtGetString), "t"), apply(anyEquals, "l"))`
+    );
+    const result = steps(ast);
+    const pipeStep = result[result.length - 1]!;
+    const text = getDisplayPanelText(pipeStep);
+    expect(text).toBe("Virtual Piped Operator ::\nNBT\n\u00A0-> Boolean");
+
+    const curryStep = result.find((s) => s.sourceType === "Curry")!;
+    const curryText = getDisplayPanelText(curryStep);
+    expect(curryText).toContain("NBT");
+    expect(curryText).not.toContain("::\nAny");
   });
 });
 

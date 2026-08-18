@@ -80,6 +80,32 @@ export const ASTtoOperator = (ast: TypeAST.AST): IntegratedValue => {
     }
 
     case "Curry": {
+      const isOperatorAst = (a: TypeAST.AST): boolean =>
+        a.type === "Operator" ||
+        a.type === "Curry" ||
+        a.type === "Flip" ||
+        a.type === "Pipe" ||
+        a.type === "Pipe2";
+      const isApplyFamilyBase =
+        ast.base.type === "Operator" &&
+        (ast.base.opName === "OPERATOR_APPLY" ||
+          ast.base.opName === "OPERATOR_APPLY_2" ||
+          ast.base.opName === "OPERATOR_APPLY_3");
+      if (
+        isApplyFamilyBase &&
+        ast.args.length >= 1 &&
+        isOperatorAst(ast.args[0]!)
+      ) {
+        const base = ASTtoOperator(ast.args[0]!) as Operator<
+          IntegratedValue,
+          IntegratedValue
+        >;
+        const args = ast.args
+          .slice(1)
+          .map((a) => lazyValue(() => ASTtoOperator(a)));
+        return new CurriedOperator(base, args);
+      }
+
       const base = ASTtoOperator(ast.base) as Operator<
         IntegratedValue,
         IntegratedValue
@@ -189,9 +215,7 @@ export const OperatortoAST = (val: IntegratedValue): TypeAST.AST => {
   }
 
   if (val instanceof CurriedOperator) {
-    const forcedArgs = val.appliedArgs.map(
-      (arg) => forceValue(arg)
-    );
+    const forcedArgs = val.appliedArgs.map((arg) => forceValue(arg));
     return {
       type: "Curry",
       base: OperatortoAST(val.baseOperator) as TypeAST.Operator,
