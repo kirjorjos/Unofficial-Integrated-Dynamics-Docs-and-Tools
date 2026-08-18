@@ -1098,6 +1098,48 @@ export const getOutputTextureName = (
   return getStepActualOutputType(step) as TypeAST.AST["type"];
 };
 
+const astContentKey = (ast: TypeAST.AST): string => {
+  switch (ast.type) {
+    case "Operator":
+      return `Operator:${ast.opName}`;
+    case "Curry":
+      return `Curry:${astContentKey(ast.base)}(${ast.args
+        .map(astContentKey)
+        .join(",")})`;
+    case "Pipe":
+      return `Pipe(${astContentKey(ast.op1)},${astContentKey(ast.op2)})`;
+    case "Pipe2":
+      return `Pipe2(${astContentKey(ast.op1)},${astContentKey(ast.op2)},${astContentKey(ast.op3)})`;
+    case "Flip":
+      return `Flip(${astContentKey(ast.arg)})`;
+    case "List":
+      return `List[${ast.value.map(astContentKey).join(",")}]`;
+    case "Variable":
+      return `Variable:${ast.name}`;
+    case "String":
+      return `String:${ast.value}`;
+    case "Boolean":
+      return `Boolean:${ast.value}`;
+    case "Integer":
+    case "Long":
+    case "Double":
+      return `${ast.type}:${ast.value}`;
+    case "Null":
+      return "Null";
+    case "NBT":
+      return `NBT:${JSON.stringify(ast.value)}`;
+    case "Block":
+    case "Item":
+    case "Fluid":
+    case "Entity":
+    case "Ingredients":
+    case "Recipe":
+      return `${ast.type}:${JSON.stringify(ast.value)}`;
+    default:
+      return (ast as TypeAST.AST).type;
+  }
+};
+
 export const generateVisualSteps = (
   ast: TypeAST.AST,
   startVariableId: number,
@@ -1217,9 +1259,17 @@ export const generateVisualSteps = (
 
   const result: VisualStep[] = [];
   const seen = new Map<TypeAST.AST, VisualCardRef>();
+  const contentSeen = new Map<string, VisualCardRef>();
 
   const visit = (ast: TypeAST.AST): VisualCardRef => {
     if (seen.has(ast)) return seen.get(ast)!;
+
+    const contentKey = astContentKey(ast);
+    const existing = contentSeen.get(contentKey);
+    if (existing) {
+      seen.set(ast, existing);
+      return existing;
+    }
 
     const nextName = getCardName(ast);
     const register = (
@@ -1247,6 +1297,7 @@ export const generateVisualSteps = (
         tooltip,
       };
       seen.set(ast, card);
+      contentSeen.set(contentKey, card);
       return card;
     };
 

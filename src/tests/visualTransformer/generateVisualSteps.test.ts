@@ -91,9 +91,28 @@ describe("generateVisualSteps", () => {
 
   it("testPipe2ThenVirtualPiped2Step", () => {
     const result = steps(makeAst.pipe2());
-    expect(result).toHaveLength(4);
-    expect(result[3]!.sourceType).toBe("Pipe2");
-    expect(result[3]!.inputs.map((i) => i.variableId)).toEqual([0, 1, 2]);
+    expect(result).toHaveLength(3);
+    expect(result[2]!.sourceType).toBe("Pipe2");
+    expect(result[2]!.title).toBe(getVirtualOperatorDisplay("pipe2").title);
+    expect(result[2]!.tooltipOperatorKey).toBe("OPERATOR_PIPE2");
+  });
+
+  it("testSharedCardUsedTwiceIsNotRecreated", () => {
+    const result = steps(makeAst.pipe2());
+    expect(result.map((s) => s.title)).toEqual([
+      "numberIncrement",
+      "numberAdd",
+      getVirtualOperatorDisplay("pipe2").title,
+    ]);
+    expect(result[2]!.inputs.map((i) => i.variableId)).toEqual([0, 0, 1]);
+    expect(result[0]!.variableId).toBe(0);
+  });
+
+  it("testRepeatedLiteralValueSharesOneCard", () => {
+    const result = steps(makeAst.conjunction());
+    expect(result).toHaveLength(2);
+    expect(result[0]!.sourceType).toBe("Boolean");
+    expect(result[1]!.inputs.map((i) => i.variableId)).toEqual([0, 0]);
   });
 
   it("testListValueElementsThenListStep", () => {

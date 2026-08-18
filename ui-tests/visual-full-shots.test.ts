@@ -38,7 +38,7 @@ const EXPECTED_STEPS: Record<(typeof FIXTURES)[number]["name"], number> = {
   flipNumberAdd: 2,
   invalidFlipNumberIncrement: 2,
   pipeIncrementMultiply: 3,
-  pipe2IncrementIncrementAdd: 4,
+  pipe2IncrementIncrementAdd: 3,
   listOneTwoThree: 4,
   stringHello: 1,
   booleanTrue: 1,
