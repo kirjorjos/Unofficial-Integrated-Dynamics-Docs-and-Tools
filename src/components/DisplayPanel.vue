@@ -146,6 +146,7 @@ function getPixelColor(index: number): string {
         :min-scale="0.5"
         :align="props.align ?? 'center'"
         :type-name="props.typeName"
+        fill
       />
     </div>
   </div>

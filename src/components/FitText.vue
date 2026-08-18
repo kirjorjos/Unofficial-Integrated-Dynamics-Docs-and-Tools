@@ -16,10 +16,12 @@ const props = withDefaults(
     align?: "left" | "center" | "top";
     color?: string;
     typeName?: string;
+    fill?: boolean;
   }>(),
   {
     minScale: 0.5,
     align: "left",
+    fill: false,
   }
 );
 
@@ -69,9 +71,11 @@ const updateScale = () => {
   const widthRatio = availableWidth / baseWidth;
   const heightRatio = availableHeight / baseHeight;
 
-  // For integer, string, and operator types, normalize to larger dimension (treat as square-ish)
-  // so text fills container in the dominant dimension
+  // For integer, string, and operator types (or when explicitly asked to
+  // fill), normalize to larger dimension (treat as square-ish) so text fills
+  // container in the dominant dimension
   const isSpecialType =
+    props.fill ||
     props.typeName === "Integer" ||
     props.typeName === "String" ||
     props.typeName === "Operator";

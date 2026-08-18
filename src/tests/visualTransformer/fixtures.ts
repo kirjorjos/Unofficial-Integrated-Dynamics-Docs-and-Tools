@@ -27,6 +27,8 @@ export const makeAst = {
     CodeLineToAST("apply operatorConjunction true true"),
   stringVal: (): TypeAST.AST => CodeLineToAST('"hello"'),
   boolVal: (): TypeAST.AST => CodeLineToAST("true"),
+  numVal: (): TypeAST.AST => CodeLineToAST("42"),
+  doubleVal: (): TypeAST.AST => CodeLineToAST("1.5"),
   operatorNode: (): TypeAST.AST => CodeLineToAST("numberIncrement"),
 };
 

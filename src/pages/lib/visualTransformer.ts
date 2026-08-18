@@ -1,4 +1,8 @@
 import { operatorRegistry } from "lib";
+import {
+  evaluateFullyAppliedCurry,
+  flattenAnonymousBaseOperatorApplication,
+} from "lib/transformers/helpers";
 import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 import {
   BaseOperator,
@@ -224,7 +228,15 @@ export function getStepActualOutputType(step: {
   sourceType: string;
   detail?: string;
   tooltipOperatorKey?: string;
+  node?: TypeAST.AST;
 }): string {
+  if (step.sourceType === "Curry" && step.node) {
+    const evaluated = evaluateFullyAppliedCurry(step.node);
+    if (evaluated != null && typeof evaluated.getSignatureNode === "function") {
+      const rootType = evaluated.getSignatureNode().getRootType();
+      if (rootType !== "Any") return rootType;
+    }
+  }
   const opKey = step.detail ?? step.tooltipOperatorKey;
   if (opKey) {
     const operatorClass = getOperatorClass(opKey as TypeOperatorKey);
@@ -245,12 +257,22 @@ export function getDisplayPanelColor(step: {
   detail?: string;
   tooltipOperatorKey?: string;
   forceOperatorTabActive?: boolean;
+  node?: TypeAST.AST;
 }): string {
-  if (
-    step.sourceType === "Operator" ||
-    step.forceOperatorTabActive ||
-    step.tooltipOperatorKey
-  ) {
+  if (step.sourceType === "Operator" || step.forceOperatorTabActive) {
+    return getTypeColor("Operator");
+  }
+  if (step.sourceType === "Curry" && step.node) {
+    const flattened = flattenAnonymousBaseOperatorApplication(step.node);
+    if (flattened?.fullyApplied) {
+      const outputType = getStepActualOutputType(step);
+      if (outputType !== "Operator" && outputType !== "Any") {
+        return getTypeColor(outputType);
+      }
+    }
+    return getTypeColor("Operator");
+  }
+  if (step.tooltipOperatorKey) {
     return getTypeColor("Operator");
   }
   const outputType = getStepActualOutputType(step);

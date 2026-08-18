@@ -29,11 +29,12 @@ test.describe("transformersPageVisualOutputDom", () => {
     await expect(titles.nth(2)).not.toBeEmpty();
   });
 
-  test("testIntegerLiteralsSurfaceNumberIntegerTypeMismatch", async ({
-    page,
-  }) => {
+  test("testIntegerLiteralsAreAcceptedByNumberInputs", async ({ page }) => {
     await openVisual(page, (await CODE).arithmetic);
-    await expect(page.locator(".display-panel-error-overlay")).toHaveCount(2);
+    await expect(page.locator(".display-panel-error-overlay")).toHaveCount(0);
+    await expect(
+      page.locator(".display-panel .fit-text-inner").filter({ hasText: "3" })
+    ).toHaveCount(2);
   });
 
   test("testCleanApplicationShowsNoErrorOverlay", async ({ page }) => {
@@ -64,6 +65,20 @@ test.describe("transformersPageVisualOutputDom", () => {
     );
     expect(backgroundImage).toContain("valuetype/boolean.png");
     expect(backgroundImage).toContain("item/variable.png");
+  });
+
+  test("testFullyAppliedCurryOutputCardShowsConcreteValueType", async ({
+    page,
+  }) => {
+    await openVisual(page, (await CODE).arithmetic);
+    const card = page
+      .locator(".logic-programmer-shot")
+      .last()
+      .locator(".logic-write-card-composite");
+    const backgroundImage = await card.evaluate(
+      (el) => getComputedStyle(el).backgroundImage
+    );
+    expect(backgroundImage).toContain("valuetype/integer.png");
   });
 
   test("testVarIdParamShiftsVariableIdsShownInTooltips", async ({ page }) => {

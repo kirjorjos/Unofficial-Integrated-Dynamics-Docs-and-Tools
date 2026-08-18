@@ -93,7 +93,10 @@ const OPERATOR_SIGNATURE_TEMPLATE = "§eSignature: §r%s";
 const EXPECTED_INPUT_TYPE_TEMPLATE = "§eExpected Type: %s";
 const EXPECTED_OUTPUT_TYPE_TEMPLATE = "§eExpected Output: %s";
 
-const runtimeErrors = new WeakMap<TypeAST.AST, { message: string; isIError: boolean }>();
+const runtimeErrors = new WeakMap<
+  TypeAST.AST,
+  { message: string; isIError: boolean }
+>();
 
 export const getOperatorClass = (
   opName: TypeOperatorKey
@@ -101,6 +104,14 @@ export const getOperatorClass = (
   return operatorRegistry[
     opName as keyof typeof operatorRegistry
   ] as unknown as OperatorClassLike | undefined;
+};
+
+export const isTypeAssignable = (actual: string, expected: string): boolean => {
+  if (expected === "Any") return true;
+  return (
+    ParsedSignature.typeEquals(expected as never, actual as never) ||
+    ParsedSignature.typeEquals(actual as never, expected as never)
+  );
 };
 
 export const getOperatorDisplay = (opName: TypeOperatorKey) => {
@@ -440,10 +451,28 @@ const astContainsSerializerNode = (node: TypeAST.AST): boolean => {
   }
 };
 
+const VALUE_NODE_TYPES = new Set<string>([
+  "Integer",
+  "Long",
+  "Double",
+  "Boolean",
+  "Null",
+  "NBT",
+  "Block",
+  "Item",
+  "Fluid",
+  "Entity",
+  "Ingredients",
+  "Recipe",
+]);
+
 export const getDisplayPanelText = (
   step: Pick<VisualStep, "output" | "node">
 ): string => {
   if (step.node) {
+    if (VALUE_NODE_TYPES.has(step.node.type)) {
+      return getCompactValueTextForAst(step.node);
+    }
     try {
       const op = ASTtoOperator(step.node) as any;
       // CurriedOperator (and other Operator subclasses that aren't
@@ -530,14 +559,6 @@ export const getCumulativeStepError = (
   return undefined;
 };
 
-const TOP_ALIGNED_TYPES = new Set([
-  "Operator",
-  "Pipe",
-  "Integer",
-  "Double",
-  "Number",
-]);
-
 export const getCurryTooltipKey = (argCount: number): TypeOperatorKey => {
   switch (argCount) {
     case 0:
@@ -553,8 +574,8 @@ export const getCurryTooltipKey = (argCount: number): TypeOperatorKey => {
   }
 };
 
-export const getDisplayPanelAlignment = (sourceType: string): string => {
-  return TOP_ALIGNED_TYPES.has(sourceType) ? "left" : "center";
+export const getDisplayPanelAlignment = (_sourceType: string): string => {
+  return "center";
 };
 
 export const getCardTitle = (name: string): string => {
@@ -632,11 +653,7 @@ export const buildOperatorCardTooltip = (
     "Pipe2",
     "Flip",
   ]);
-  if (
-    step.sourceType &&
-    serializerTypes.has(step.sourceType) &&
-    step.node
-  ) {
+  if (step.sourceType && serializerTypes.has(step.sourceType) && step.node) {
     try {
       const op = ASTtoOperator(step.node) as any;
       if (typeof op?.getParsedSignature === "function") {
@@ -844,8 +861,10 @@ export const getPatternBox = (step: VisualStep): PatternBox => {
     // If the operator has a render pattern, use it for slots and symbol
     if (step.renderPattern && step.renderPattern !== "NONE") {
       const pattern = LOGIC_PROGRAMMER_RENDER_PATTERNS[step.renderPattern];
-      const left = workspaceX + Math.floor((workspaceWidth - pattern.width) / 2);
-      const top = workspaceY + Math.floor((workspaceHeight - pattern.height) / 2);
+      const left =
+        workspaceX + Math.floor((workspaceWidth - pattern.width) / 2);
+      const top =
+        workspaceY + Math.floor((workspaceHeight - pattern.height) / 2);
 
       return {
         slots: pattern.slotPositions.map((slot) => ({
@@ -1019,8 +1038,7 @@ export const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
               (step.sourceType === "Operator"
                 ? "Operator"
                 : getValueTypeSearchLabel(step.sourceType))
-          : (step.forceOperatorTabActive ||
-              step.sourceType !== "Operator") &&
+          : (step.forceOperatorTabActive || step.sourceType !== "Operator") &&
             (entry.symbol === step.symbol || entry.matchString === search),
     }));
 
@@ -1208,7 +1226,8 @@ export const generateVisualSteps = (
   const visit = (ast: TypeAST.AST): VisualCardRef => {
     if (seen.has(ast)) return seen.get(ast)!;
 
-    const nextName = getCardName(ast);      const register = (
+    const nextName = getCardName(ast);
+    const register = (
       step: Omit<VisualStep, "variableId" | "tooltip">
     ): VisualCardRef => {
       const variableId = startVariableId + result.length;
@@ -1221,13 +1240,14 @@ export const generateVisualSteps = (
       result.push(fullStep);
       const card = {
         name: fullStep.output,
-        type: step.sourceType === "Operator"
-          ? "Operator"
-          : step.sourceType === "Curry" && step.node
-            ? flattenAnonymousBaseOperatorApplication(step.node)?.fullyApplied
-              ? getStepActualOutputType(fullStep) as TypeAST.AST["type"]
-              : "Operator"
-            : getStepActualOutputType(fullStep) as TypeAST.AST["type"],
+        type:
+          step.sourceType === "Operator"
+            ? "Operator"
+            : step.sourceType === "Curry" && step.node
+              ? flattenAnonymousBaseOperatorApplication(step.node)?.fullyApplied
+                ? (getStepActualOutputType(fullStep) as TypeAST.AST["type"])
+                : "Operator"
+              : (getStepActualOutputType(fullStep) as TypeAST.AST["type"]),
         variableId,
         tooltip,
       };
@@ -1268,10 +1288,18 @@ export const generateVisualSteps = (
           let typeError: string | undefined;
           const opMeta = getOperatorTooltipMeta(flattened.operator.opName);
           const isArityOne = opMeta.inputTypes.length === 1;
-          for (let i = 0; i < Math.min(opMeta.inputTypes.length, argOutputs.length); i++) {
+          for (
+            let i = 0;
+            i < Math.min(opMeta.inputTypes.length, argOutputs.length);
+            i++
+          ) {
             const expected = opMeta.inputTypes[i]!;
             const actual: string = argOutputs[i]!.type;
-            if (expected !== "Any" && expected !== "Operator" && actual !== expected) {
+            if (
+              expected !== "Any" &&
+              expected !== "Operator" &&
+              !isTypeAssignable(actual, expected)
+            ) {
               // For arity 1 operators, try to harden "Any" into a concrete type
               if (actual === "Any" && isArityOne) {
                 try {
@@ -1287,11 +1315,19 @@ export const generateVisualSteps = (
                     // If type is still unresolved via the type system, try
                     // evaluating the argument to get a concrete value type.
                     // This works because all inputs are known constants.
-                    if (hardened === "Any" && typeof argOp?.getFn === "function") {
+                    if (
+                      hardened === "Any" &&
+                      typeof argOp?.getFn === "function"
+                    ) {
                       try {
                         const evaluated = argOp.getFn()(null);
-                        if (evaluated != null && typeof evaluated.getSignatureNode === "function") {
-                          const evalType = evaluated.getSignatureNode().getRootType();
+                        if (
+                          evaluated != null &&
+                          typeof evaluated.getSignatureNode === "function"
+                        ) {
+                          const evalType = evaluated
+                            .getSignatureNode()
+                            .getRootType();
                           if (evalType !== "Any") {
                             hardened = evalType;
                           }
@@ -1300,7 +1336,7 @@ export const generateVisualSteps = (
                         // Evaluation failed, keep type-system result
                       }
                     }
-                    if (hardened !== expected) {
+                    if (!isTypeAssignable(hardened, expected)) {
                       // If type is still "Any" after hardening, it's genuinely
                       // unknown — treat as compatible (no error)
                       if (hardened === "Any") {
@@ -1331,7 +1367,8 @@ export const generateVisualSteps = (
             symbol: getOperatorDisplay(flattened.operator.opName).symbol,
             kind: "operator" as const,
             sourceType: ast.type,
-            renderPattern: getOperatorDisplay(flattened.operator.opName).renderPattern,
+            renderPattern: getOperatorDisplay(flattened.operator.opName)
+              .renderPattern,
             inputs: argOutputs,
             output: finalVarName,
             node: ast,

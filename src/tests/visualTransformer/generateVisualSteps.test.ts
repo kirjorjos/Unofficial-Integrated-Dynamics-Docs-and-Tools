@@ -1,7 +1,13 @@
 import {
   getOperatorDisplay,
   getVirtualOperatorDisplay,
+  getOutputTextureName,
+  getDisplayPanelAlignment,
 } from "pages-lib/visualTransformerLogic";
+import {
+  getDisplayPanelColor,
+  LOGIC_PROGRAMMER_TYPE_COLORS,
+} from "pages-lib/visualTransformer";
 import { beforeEachVisualTransformer, makeAst, steps } from "./fixtures";
 
 describe("generateVisualSteps", () => {
@@ -97,11 +103,34 @@ describe("generateVisualSteps", () => {
     expect(result[3]!.inputs.map((i) => i.variableId)).toEqual([0, 1, 2]);
   });
 
-  it("testNumberLiteralsFlagNumberIntegerMismatch", () => {
+  it("testNumberLiteralsDoNotFlagNumberIntegerMismatch", () => {
     const result = steps(makeAst.divzero());
     expect(result).toHaveLength(3);
-    expect(result[2]!.typeError).toBe(
-      "Type mismatch: expected Number, got Integer"
+    expect(result.every((s) => s.typeError === undefined)).toBe(true);
+  });
+
+  it("testFullyAppliedCurryOutputResolvesToConcreteValueType", () => {
+    const result = steps(makeAst.arithmetic());
+    expect(getOutputTextureName(result[2]!)).toBe("Integer");
+  });
+
+  it("testFullyAppliedCurryDisplayPanelUsesValueColorAndCenteredAlign", () => {
+    const result = steps(makeAst.arithmetic());
+    expect(getDisplayPanelColor(result[2]!)).toBe(
+      LOGIC_PROGRAMMER_TYPE_COLORS["Integer"]
+    );
+    expect(getDisplayPanelAlignment(result[2]!.sourceType)).toBe("center");
+    // Number literal steps are centered too
+    expect(getDisplayPanelAlignment(result[0]!.sourceType)).toBe("center");
+  });
+
+  it("testPartialCurryOutputStaysOperatorTyped", () => {
+    const result = steps(makeAst.partial());
+    // Steps: [add operator, 1 literal, partial curry]
+    expect(getOutputTextureName(result[2]!)).toBe("Operator");
+    // A partially-applied curry still represents the operator itself
+    expect(getDisplayPanelColor(result[2]!)).toBe(
+      LOGIC_PROGRAMMER_TYPE_COLORS["Operator"]
     );
   });
 
