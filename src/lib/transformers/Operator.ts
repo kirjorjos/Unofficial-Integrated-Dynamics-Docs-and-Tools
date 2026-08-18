@@ -21,6 +21,10 @@ import { iString } from "lib/IntegratedDynamicsClasses/typeWrappers/iString";
 import { Double } from "lib/JavaNumberClasses/Double";
 import { Integer } from "lib/JavaNumberClasses/Integer";
 import { Long } from "lib/JavaNumberClasses/Long";
+import {
+  forceValue,
+  lazyValue,
+} from "lib/IntegratedDynamicsClasses/typeWrappers/ValueVariable";
 
 /**
  * Transforms an AST to an Operator.
@@ -80,7 +84,7 @@ export const ASTtoOperator = (ast: TypeAST.AST): IntegratedValue => {
         IntegratedValue,
         IntegratedValue
       >;
-      const args = ast.args.map(ASTtoOperator);
+      const args = ast.args.map((a) => lazyValue(() => ASTtoOperator(a)));
       return new CurriedOperator(base, args);
     }
 
@@ -185,10 +189,13 @@ export const OperatortoAST = (val: IntegratedValue): TypeAST.AST => {
   }
 
   if (val instanceof CurriedOperator) {
+    const forcedArgs = val.appliedArgs.map(
+      (arg) => forceValue(arg)
+    );
     return {
       type: "Curry",
       base: OperatortoAST(val.baseOperator) as TypeAST.Operator,
-      args: val.appliedArgs.map(OperatortoAST),
+      args: forcedArgs.map(OperatortoAST),
     };
   }
 

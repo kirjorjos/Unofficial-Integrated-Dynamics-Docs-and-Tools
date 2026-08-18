@@ -8,8 +8,9 @@
     "vue": "^3.5.31"
   },
   "devDependencies": {
+    "@playwright/test": "1.62.1",
     "@types/jest": "^30.0.0",
-    "@types/node": "^24.7.2",
+    "@types/node": "^24.13.3",
     "@vitejs/plugin-vue": "^5.2.4",
     "esbuild": "^0.27.0",
     "git-format-staged": "^4.0.1",
@@ -24,12 +25,17 @@
   },
   "scripts": {
     "dev": "vite",
+    "test": "jest && npm run typecheck && node scripts/run-visual-tests.mjs",
     "test:debug": "jest --runInBand --no-cache",
-    "test": "jest && npm run typecheck",
+    "test:screenshots": "node scripts/run-visual-tests.mjs",
+    "test:report": "playwright show-report",
+    "generate": "npm run generate:screenshots",
+    "generate:screenshots": "node scripts/generate-screenshots.mjs",
     "format": "prettier --write .",
     "format:staged": "git diff --cached --name-only --diff-filter=ACMR | xargs -r git-format-staged --formatter 'prettier --ignore-unknown --stdin-filepath \"{}\"'",
-    "typecheck": "vue-tsc --noEmit -p tsconfig.app.json",
+    "typecheck": "vue-tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.ui-tests.json",
     "build": "npm run format && npm run test && vite build",
+    "build:ci": "npm run format && npx jest && npm run typecheck && npx playwright test --output=test-results && vite build",
     "preview": "vite preview",
     "commit": "((git diff --quiet && npm test) || (git stash push -u -k && (npm test && git stash apply && git stash drop) || (git stash apply && git stash drop; exit 1))) && npm run format:staged && git commit"
   },

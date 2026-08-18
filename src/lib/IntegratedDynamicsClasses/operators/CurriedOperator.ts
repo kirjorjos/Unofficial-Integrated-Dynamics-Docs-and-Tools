@@ -10,6 +10,7 @@ import { iArrayEager } from "lib/IntegratedDynamicsClasses/typeWrappers/iArrayEa
 import { ValueHelpers } from "lib/IntegratedDynamicsClasses/ValueHelpers";
 import { StringTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/StringTag";
 import { iBoolean } from "lib/IntegratedDynamicsClasses/typeWrappers/iBoolean";
+import { forceValue } from "lib/IntegratedDynamicsClasses/typeWrappers/ValueVariable";
 
 export class CurriedOperator<
   I extends IntegratedValue,
@@ -24,6 +25,9 @@ export class CurriedOperator<
   ) {
     let signature = baseOperator.getSignatureNode();
     for (const arg of appliedArgs) {
+      if (arg == null) {
+        throw new Error("Cannot curry operator with null/undefined argument");
+      }
       if (signature.getRootType() === "Function") {
         signature = signature.apply(arg.getSignatureNode());
       }
@@ -100,7 +104,7 @@ export class CurriedOperator<
 
   override getName(): iString {
     const argTypes = this.appliedArgs.map((arg) =>
-      arg.getSignatureNode().getRootType()
+      arg == null ? "?" : arg.getSignatureNode().getRootType()
     );
     return new iString(
       `Applied ${this.baseOperator.getName().valueOf()} [${argTypes.join("; ")}]`
@@ -108,10 +112,15 @@ export class CurriedOperator<
   }
 
   serializeNBT(): CompoundTag {
+    // Force-evaluate all lazy args before serialization
+    // (ValueHelpers needs real instances for instanceof checks)
     const values = this.appliedArgs.map((arg) => {
+      const realArg = forceValue(arg);
       return new CompoundTag({
-        valueType: new StringTag(new iString(ValueHelpers.getTypeName(arg))),
-        value: ValueHelpers.serializeRaw(arg),
+        valueType: new StringTag(
+          new iString(ValueHelpers.getTypeName(realArg))
+        ),
+        value: ValueHelpers.serializeRaw(realArg),
       });
     });
 
@@ -174,7 +183,10 @@ export class CurriedOperator<
     return new iBoolean(
       this.appliedArgs.every((arg, i) => {
         const otherArg = other.appliedArgs[i];
-        return otherArg ? arg.equals(otherArg).valueOf() : false;
+        // Force-evaluate both sides for instanceof-dependent comparisons
+        return otherArg
+          ? forceValue(arg).equals(forceValue(otherArg)).valueOf()
+          : false;
       })
     );
   }

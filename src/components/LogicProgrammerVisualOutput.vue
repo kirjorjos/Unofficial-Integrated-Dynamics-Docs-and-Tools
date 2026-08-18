@@ -10,6 +10,8 @@ import {
   operatorRegistry,
   resetExpandedVarCounter,
   getCurryTooltipKey,
+  isTypeAssignable,
+  evaluateFullyAppliedCurry,
 } from "lib";
 import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 import { ASTtoOperator } from "lib/transformers/Operator";
@@ -99,23 +101,36 @@ const LOGIC_PROGRAMMER_DATA_TYPE_TABS = [
   "Recipe",
 ] as const;
 
-const LOGIC_PROGRAMMER_TYPE_COLORS: Record<string, string> = {
-  Any: "#f0f0f0",
-  Boolean: "#2b2fe7",
-  Integer: "#f39604",
-  Double: "#ebea17",
-  Long: "#d7fe17",
-  String: "#fa0a0d",
-  List: "#af0301",
-  Operator: "#2be72f",
-  NBT: "#00aaaa",
-  Block: "#f3f3f3",
-  Item: "#f3f3f3",
-  Entity: "#f3f3f3",
-  Fluid: "#f3f3f3",
-  Ingredients: "#f3f3f3",
-  Recipe: "#f3f3f3",
-  Null: "#f0f0f0",
+type ValueTypeColor = {
+  primary: string;
+  alt?: string;
+};
+
+const LOGIC_PROGRAMMER_TYPE_COLORS: Record<string, ValueTypeColor> = {
+  Any: { primary: "#000000", alt: "#ffffff" },
+  Number: { primary: "#ffaa00" },
+  Named: { primary: "#ff5555" },
+  UniquelyNamed: { primary: "#ff5555" },
+  Nullable: { primary: "#ff55ff" }, // Bright to signify error
+  Boolean: { primary: "#2b2fe7" },
+  Integer: { primary: "#f39604" },
+  Double: { primary: "#ebea17" },
+  Long: { primary: "#d7fe17" },
+  String: { primary: "#fa0a0d" },
+  List: { primary: "#af0301" },
+  Operator: { primary: "#2be72f" },
+  NBT: { primary: "#00aaaa" },
+  Block: { primary: "#f3f3f3" },
+  Item: { primary: "#f3f3f3" },
+  Entity: { primary: "#f3f3f3" },
+  Fluid: { primary: "#f3f3f3" },
+  Ingredients: { primary: "#f3f3f3" },
+  Recipe: { primary: "#f3f3f3" },
+  Null: { primary: "#f0f0f0" },
+};
+
+const getTypeColor = (typeName: string): string => {
+  return LOGIC_PROGRAMMER_TYPE_COLORS[typeName]?.primary ?? "#f0f0f0";
 };
 
 const props = defineProps<{
@@ -181,13 +196,15 @@ const getCardTitle = (name: string): string => {
 type ValueTypeTooltipMeta = {
   label: string;
   colorCode: string;
+  altColorCode?: string;
   infoKey?: string;
 };
 
 const VALUE_TYPE_TOOLTIP_META: Record<string, ValueTypeTooltipMeta> = {
   Any: {
     label: "Any",
-    colorCode: "§r",
+    colorCode: "§0",
+    altColorCode: "§f",
     infoKey: "valuetype.integrateddynamics.any.info",
   },
   Number: {
@@ -553,10 +570,10 @@ const getValueTypeDisplayEntries = () =>
     symbol: tab,
     matchString: tab.toLowerCase(),
     tabKind: "type" as const,
-    color: LOGIC_PROGRAMMER_TYPE_COLORS[tab] ?? "#f0f0f0",
+    color: getTypeColor(tab),
   }));
 
-const getValueTypeTextureName = (type: TypeAST.AST["type"]): string => {
+const getValueTypeTextureName = (type: string): string => {
   switch (type) {
     case "Boolean":
       return "boolean";
@@ -585,6 +602,12 @@ const getValueTypeTextureName = (type: TypeAST.AST["type"]): string => {
     case "Ingredients":
     case "Recipe":
       return "object";
+    case "Number":
+      return "number";
+    case "Named":
+      return "named";
+    case "Nullable":
+      return "nullable";
     default:
       return "any";
   }
@@ -629,6 +652,48 @@ const getOperatorOutputType = (operatorClass: OperatorClassLike): string => {
 const getCardName = (ast: TypeAST.AST): string => {
   if (ast.varName) return ast.varName;
   return getExpandedVarName(ast);
+};
+
+const astContentKey = (ast: TypeAST.AST): string => {
+  switch (ast.type) {
+    case "Operator":
+      return `Operator:${ast.opName}`;
+    case "Curry":
+      return `Curry:${astContentKey(ast.base)}(${ast.args
+        .map(astContentKey)
+        .join(",")})`;
+    case "Pipe":
+      return `Pipe(${astContentKey(ast.op1)},${astContentKey(ast.op2)})`;
+    case "Pipe2":
+      return `Pipe2(${astContentKey(ast.op1)},${astContentKey(ast.op2)},${astContentKey(ast.op3)})`;
+    case "Flip":
+      return `Flip(${astContentKey(ast.arg)})`;
+    case "List":
+      return `List[${ast.value.map(astContentKey).join(",")}]`;
+    case "Variable":
+      return `Variable:${ast.name}`;
+    case "String":
+      return `String:${ast.value}`;
+    case "Boolean":
+      return `Boolean:${ast.value}`;
+    case "Integer":
+    case "Long":
+    case "Double":
+      return `${ast.type}:${ast.value}`;
+    case "Null":
+      return "Null";
+    case "NBT":
+      return `NBT:${JSON.stringify(ast.value)}`;
+    case "Block":
+    case "Item":
+    case "Fluid":
+    case "Entity":
+    case "Ingredients":
+    case "Recipe":
+      return `${ast.type}:${JSON.stringify(ast.value)}`;
+    default:
+      return (ast as TypeAST.AST).type;
+  }
 };
 
 const getExpandedCurryChunks = (
@@ -714,12 +779,151 @@ const getOperatorValueSignatureText = (opName: TypeOperatorKey): string => {
   return signature
     .map((typeName) => {
       const meta = getValueTypeMeta(typeName);
-      return `${meta.colorCode}${meta.label}`;
+      return `${meta.altColorCode ?? meta.colorCode}${meta.label}`;
     })
     .join(" §r-> ");
 };
 
-const runtimeErrors = new WeakMap<TypeAST.AST, { message: string; isIError: boolean }>();
+const runtimeErrors = new WeakMap<
+  TypeAST.AST,
+  { message: string; isIError: boolean }
+>();
+
+/**
+ * Recursively checks whether an AST contains any Flip/Pipe/Pipe2 (serializer)
+ * node, either as the Curry base, in the Curry args, or nested inside a List /
+ * Recipe / Ingredients value.
+ */
+const astContainsSerializerNode = (node: TypeAST.AST): boolean => {
+  switch (node.type) {
+    case "Flip":
+    case "Pipe":
+    case "Pipe2":
+      return true;
+    case "Curry":
+      return (
+        astContainsSerializerNode(node.base as TypeAST.AST) ||
+        node.args.some(astContainsSerializerNode)
+      );
+    case "List":
+      return node.value.some(astContainsSerializerNode);
+    case "Ingredients":
+      return (
+        (node.value.items ?? []).some(astContainsSerializerNode) ||
+        (node.value.fluids ?? []).some(astContainsSerializerNode) ||
+        (node.value.energy ?? []).some(astContainsSerializerNode)
+      );
+    case "Recipe":
+      return (
+        astContainsSerializerNode(node.value.input) ||
+        astContainsSerializerNode(node.value.output)
+      );
+    default:
+      return false;
+  }
+};
+
+/**
+ * Fallback display text for a step whose AST contains a Flip/Pipe/Pipe2 node
+ * that can't be constructed (e.g. flipping an operator with fewer than two
+ * inputs). Walks the Curry base chain to find the outermost serializer and
+ * shows its virtual display title.
+ */
+const getSerializerFallbackText = (
+  step: Pick<VisualStep, "output" | "node">
+): string => {
+  let current: TypeAST.AST = step.node;
+  while (current.type === "Curry") {
+    current = current.base as TypeAST.AST;
+  }
+  if (current.type === "Flip") return getVirtualOperatorDisplay("flip").title;
+  if (current.type === "Pipe") return getVirtualOperatorDisplay("pipe").title;
+  if (current.type === "Pipe2") return getVirtualOperatorDisplay("pipe2").title;
+  return step.output || "";
+};
+
+/**
+ * Whether a runtime value is an operator (any Operator subclass — e.g. a
+ * CurriedOperator that still expects arguments, or a Flip/Pipe value).
+ * Plain value types (Integer, iString, Block, ...) don't expose getFn.
+ */
+const isOperatorValue = (value: any): boolean =>
+  value != null &&
+  typeof value === "object" &&
+  typeof value.getFn === "function";
+
+/**
+ * Renders an operator instance as "<name> ::\n<signature>" so that
+ * operator-valued results (e.g. an arity-1 curried operator) display their
+ * signature instead of "[object Object]".
+ */
+const getOperatorSignatureText = (op: any): string => {
+  const sig =
+    typeof op.getParsedSignature === "function"
+      ? op.getParsedSignature()
+      : op.getSignatureNode();
+  const name =
+    typeof op.getName === "function" ? String(op.getName().valueOf()) : "";
+  const flatSig = new ParsedSignature(sig.getAst(), false).toFlatSignature();
+  const indent = "\u00A0";
+  const sigLines = flatSig
+    .map((type: string, i: number) => (i === 0 ? type : `${indent}-> ${type}`))
+    .join("\n");
+  return `${name} ::\n${sigLines}`;
+};
+
+/**
+ * Display name for Named value objects (Block/Item/Fluid/Entity/Ingredients/
+ * Recipe) via getName(), or undefined when not applicable.
+ */
+const getNamedValueText = (value: any): string | undefined => {
+  if (typeof value?.getName !== "function") return undefined;
+  try {
+    const name = value.getName();
+    if (name != null && typeof name.valueOf === "function") {
+      return String(name.valueOf());
+    }
+  } catch {
+    // fall through
+  }
+  return undefined;
+};
+
+/**
+ * Safely stringifies a scalar for the display panel. Never renders
+ * "[object Object]": raw objects with no primitive form return "".
+ */
+const getScalarDisplayText = (value: any): string => {
+  if (value == null) return String(value);
+  if (typeof value !== "object") return String(value);
+  let raw: any = value;
+  try {
+    if (typeof value.toJSON === "function") {
+      return JSON.stringify(value.toJSON()) ?? "";
+    }
+    if (typeof value.valueOf === "function") raw = value.valueOf();
+  } catch {
+    // fall through
+  }
+  if (raw === value) return "";
+  if (raw !== null && typeof raw === "object") return "";
+  return String(raw);
+};
+
+const VALUE_NODE_TYPES = new Set<string>([
+  "Integer",
+  "Long",
+  "Double",
+  "Boolean",
+  "Null",
+  "NBT",
+  "Block",
+  "Item",
+  "Fluid",
+  "Entity",
+  "Ingredients",
+  "Recipe",
+]);
 
 const getDisplayPanelText = (
   step: Pick<
@@ -728,7 +932,11 @@ const getDisplayPanelText = (
   >
 ): string => {
   // For string types without custom name, show the value
-  if (step.sourceType === "String" && step.detail && step.detail !== step.output) {
+  if (
+    step.sourceType === "String" &&
+    step.detail &&
+    step.detail !== step.output
+  ) {
     return step.detail;
   }
   // For List types, show each element as a bullet point
@@ -740,42 +948,62 @@ const getDisplayPanelText = (
       .join("\n");
   }
   if (step.node) {
-    try {
-      const op = ASTtoOperator(step.node) as any;
-      const nodeType = step.node.type;
+    const nodeType = step.node.type;
 
-      // For serializer types (Flip, Pipe, Pipe2, Curry), use the resolved
-      // signature from the AST node instead of the generic registry signature
-      if (nodeType === "Flip" || nodeType === "Pipe" || nodeType === "Pipe2") {          const opKey = step.tooltipOperatorKey;
-        if (opKey) {
-          // Map tooltip keys to virtual operator keys
-          const virtualKeyMap: Record<
-            string,
-            "flip" | "pipe" | "pipe2" | "apply"
-          > = {
-            OPERATOR_FLIP: "flip",
-            OPERATOR_PIPE: "pipe",
-            OPERATOR_PIPE2: "pipe2",
-            OPERATOR_APPLY: "apply",
-            OPERATOR_APPLY_2: "apply",
-            OPERATOR_APPLY_3: "apply",
-            OPERATOR_APPLY_0: "apply",
-            OPERATOR_APPLY_N: "apply",
-          };
-          const virtualKey = virtualKeyMap[opKey];
-          if (virtualKey) {
-            const operatorDisplay = getVirtualOperatorDisplay(virtualKey);
-            // Use the resolved operator's signature from the AST node
+    // Plain value nodes (numbers, booleans, named values, ...) have no
+    // operator instance — show the value directly instead of an empty panel.
+    if (VALUE_NODE_TYPES.has(nodeType)) {
+      return getCompactValueTextForAst(step.node);
+    }
+
+    // For serializer types (Flip, Pipe, Pipe2), try to resolve the
+    // signature from the AST node directly. If ASTtoOperator fails
+    // (e.g. Flip on an arity-1 operator), fall back to showing just
+    // the operator name — don't store an error for this.
+    if (nodeType === "Flip" || nodeType === "Pipe" || nodeType === "Pipe2") {
+      const opKey = step.tooltipOperatorKey;
+      if (opKey) {
+        // Map tooltip keys to virtual operator keys
+        const virtualKeyMap: Record<
+          string,
+          "flip" | "pipe" | "pipe2" | "apply"
+        > = {
+          OPERATOR_FLIP: "flip",
+          OPERATOR_PIPE: "pipe",
+          OPERATOR_PIPE2: "pipe2",
+          OPERATOR_APPLY: "apply",
+          OPERATOR_APPLY_2: "apply",
+          OPERATOR_APPLY_3: "apply",
+          OPERATOR_APPLY_0: "apply",
+          OPERATOR_APPLY_N: "apply",
+        };
+        const virtualKey = virtualKeyMap[opKey];
+        if (virtualKey) {
+          const operatorDisplay = getVirtualOperatorDisplay(virtualKey);
+          // Try to get the resolved operator signature — may fail for
+          // invalid Flip/Pipe/Pipe2 constructs (e.g. flipping an arity-1 op)
+          try {
+            const op = ASTtoOperator(step.node) as any;
             const resolvedSig = op.getParsedSignature();
             const flatSig = resolvedSig.toFlatSignature();
             const indent = "\u00A0";
-            const sigLines = flatSig              .map((type: string, i: number) => (i === 0 ? type : `${indent}-> ${type}`))
-            .join("\n");
+            const sigLines = flatSig
+              .map((type: string, i: number) =>
+                i === 0 ? type : `${indent}-> ${type}`
+              )
+              .join("\n");
             return `${operatorDisplay.title} ::\n${sigLines}`;
+          } catch {
+            // Can't resolve the operator — show just the display name
+            return operatorDisplay.title;
           }
         }
-        return "";
       }
+      return "";
+    }
+
+    try {
+      const op = ASTtoOperator(step.node) as any;
 
       // For Curry types, show the resolved value when fully applied,
       // or operator name + signature when partially applied
@@ -793,8 +1021,17 @@ const getDisplayPanelText = (
                 const fn = arg.getFn();
                 if (typeof fn === "function") {
                   const result = fn(null);
-                  // Only accept if it's a concrete value (not another operator)
-                  if (result != null && typeof result.getFn !== "function") {
+                  // Only accept if it's a concrete value. Plain JS closures
+                  // (returned when evaluating operator-typed args, e.g. a
+                  // Flip/Pipe or partially-applied Curry) are NOT values and
+                  // must be rejected — otherwise they flow into the
+                  // application chain below, where Function.prototype.apply
+                  // would be invoked on them and corrupt the argument bindings.
+                  if (
+                    result != null &&
+                    typeof result !== "function" &&
+                    typeof result.getFn !== "function"
+                  ) {
                     return result;
                   }
                 }
@@ -805,54 +1042,32 @@ const getDisplayPanelText = (
             return arg;
           };
 
-          // Fast path: try fn(null) on the combined CurriedOperator
+          // Evaluate via flattened AST only — avoids the issue of calling
+          // fn(null) on a CurriedOperator which would inject null as an
+          // extra argument and cause operator internal errors.
+          runtimeErrors.delete(step.node);
           try {
-            const fn = (op as any).getFn();
-            if (typeof fn === "function") {
-              const evaluated = resolveArg(fn(null));
-              if (evaluated != null && typeof evaluated.valueOf === "function") {
-                const val = evaluated.valueOf();
-                if (Array.isArray(val)) {
-                  if (val.length === 0) return "";
-                  return val
-                    .map((item: unknown) => {
-                      const d = item != null && typeof (item as any).valueOf === "function"
-                        ? String((item as any).valueOf())
-                        : String(item);
-                      return `- ${d}`;
-                    })
-                    .join("\n");
-                }
-                const display = val != null && typeof (val as any).valueOf === "function"
-                  ? String((val as any).valueOf())
-                  : String(val);
-                return display;
-              }
-            }
-          } catch (e) {
-            // Fast path failed — capture runtime error
-            if (step.node) {
-              runtimeErrors.set(step.node, {
-                message: e instanceof Error ? e.message : String(e),
-                isIError: e instanceof iError,
-              });
-            }
-          }
-
-          // Fallback: evaluate each arg separately via flattened AST
-          try {
-            const flat = flattenAnonymousBaseOperatorApplication(step.node as TypeAST.AST);
+            const flat = flattenAnonymousBaseOperatorApplication(
+              step.node as TypeAST.AST
+            );
             if (flat && flat.operator.type === "Operator") {
               // Resolve each arg AST to a concrete value
               const argValues: any[] = [];
               for (const argAst of flat.args) {
-                const argOp = ASTtoOperator(argAst);
-                argValues.push(resolveArg(argOp));
+                try {
+                  const argOp = ASTtoOperator(argAst);
+                  argValues.push(resolveArg(argOp));
+                } catch {
+                  // Argument AST could not be converted to an operator
+                  // (e.g. a Flip wrapping an arity-1 operator). Skip it.
+                }
               }
               // Apply the base operator with resolved args
               const baseOp = ASTtoOperator(flat.operator) as any;
-              let result: any = typeof baseOp.getFn === "function" ? baseOp.getFn() : baseOp;
+              let result: any =
+                typeof baseOp.getFn === "function" ? baseOp.getFn() : baseOp;
               for (const argVal of argValues) {
+                if (argVal == null) continue;
                 if (typeof result === "function") {
                   result = result(argVal);
                 } else if (typeof result?.apply === "function") {
@@ -861,36 +1076,85 @@ const getDisplayPanelText = (
                   break;
                 }
               }
-              if (result != null && typeof result.valueOf === "function") {
+              if (
+                result != null &&
+                typeof result !== "function" &&
+                typeof result.valueOf === "function"
+              ) {
+                // Operator-valued results (e.g. a partially-applied curried
+                // operator, or an operator-typed output) display their
+                // signature — stringifying the object would render
+                // "[object Object]" instead.
+                if (isOperatorValue(result)) {
+                  return getOperatorSignatureText(result);
+                }
+
                 const val = result.valueOf();
+
+                // Named objects (Block/Item/Fluid/Entity/Ingredients/
+                // Recipe) have no primitive form — valueOf() returns the
+                // object itself — so show their display name instead of
+                // stringifying the object.
+                if (typeof result.getName === "function" && val === result) {
+                  const namedText = getNamedValueText(result);
+                  if (namedText != null) return namedText;
+                }
+
                 if (!Array.isArray(val)) {
-                  return String(val != null && typeof (val as any).valueOf === "function"
-                    ? (val as any).valueOf()
-                    : val);
+                  return getScalarDisplayText(val);
                 }
                 if (val.length === 0) return "";
                 return val
-                  .map((item: any) => `- ${String(typeof item?.valueOf === "function" ? item.valueOf() : item)}`)
+                  .map((item: any) => {
+                    if (isOperatorValue(item)) {
+                      return `- ${getOperatorSignatureText(item)}`;
+                    }
+                    const itemVal =
+                      typeof item?.valueOf === "function"
+                        ? item.valueOf()
+                        : item;
+                    if (
+                      typeof item?.getName === "function" &&
+                      itemVal === item
+                    ) {
+                      const itemNamed = getNamedValueText(item);
+                      if (itemNamed != null) return `- ${itemNamed}`;
+                    }
+                    return `- ${getScalarDisplayText(item)}`;
+                  })
                   .join("\n");
               }
             }
           } catch (e) {
-            // Fall through — capture runtime error
-            if (step.node) {
-              runtimeErrors.set(step.node, {
-                message: e instanceof Error ? e.message : String(e),
-                isIError: e instanceof iError,
-              });
+            // Only surface operator-level (iError) failures — e.g. "Division
+            // by zero" — which are meaningful to the user. Native errors from
+            // this best-effort value display are display artifacts, not
+            // internal bugs, so don't record them — but log them for
+            // developers.
+            if (e instanceof iError) {
+              if (step.node) {
+                runtimeErrors.set(step.node, {
+                  message: e instanceof Error ? e.message : String(e),
+                  isIError: true,
+                });
+              }
+            } else {
+              console.warn("[getDisplayPanelText] value display failed:", e);
             }
           }
 
           return "";
         }
         const name = (op as any).getName().valueOf();
-        const flatSig = new ParsedSignature(sig.getAst(), false).toFlatSignature();
+        const flatSig = new ParsedSignature(
+          sig.getAst(),
+          false
+        ).toFlatSignature();
         const indent = "\u00A0";
         const sigLines = flatSig
-          .map((type: string, i: number) => (i === 0 ? type : `${indent}-> ${type}`))
+          .map((type: string, i: number) =>
+            i === 0 ? type : `${indent}-> ${type}`
+          )
           .join("\n");
         return `${name} ::\n${sigLines}`;
       }
@@ -906,11 +1170,22 @@ const getDisplayPanelText = (
       ).toFlatSignature();
       const indent = "\u00A0";
       const sigLines = signature
-        .map((type: string, i: number) => (i === 0 ? type : `${indent}-> ${type}`))
+        .map((type: string, i: number) =>
+          i === 0 ? type : `${indent}-> ${type}`
+        )
         .join("\n");
       return `${name} ::\n${sigLines}`;
     } catch (e) {
       if (step.node) {
+        // Steps whose AST contains Flip/Pipe/Pipe2 nodes can legitimately
+        // fail to construct when the serializer wraps an operator that can't
+        // be transformed (e.g. flipping an operator with fewer than two
+        // inputs, or flipping a partially-applied operator). Those are user
+        // input errors, not internal bugs — degrade gracefully instead of
+        // recording them.
+        if (astContainsSerializerNode(step.node)) {
+          return getSerializerFallbackText(step);
+        }
         runtimeErrors.set(step.node, {
           message: e instanceof Error ? e.message : String(e),
           isIError: e instanceof iError,
@@ -977,12 +1252,22 @@ const getDisplayPanelColor = (
   > & { node?: TypeAST.AST }
 ): string => {
   if (step.sourceType === "Operator" || step.forceOperatorTabActive) {
-    return LOGIC_PROGRAMMER_TYPE_COLORS["Operator"] ?? "#2be72f";
+    return getTypeColor("Operator");
   }
-  // For Curry types, always use operator color - the step represents
-  // applying an operator, not the resulting value
+  // Fully-applied Curry steps produce a concrete value (a direct base
+  // operator call) — color the panel by the actual output type. Partially
+  // applied Curries still represent the operator itself.
   if (step.sourceType === "Curry") {
-    return LOGIC_PROGRAMMER_TYPE_COLORS["Operator"] ?? "#2be72f";
+    if (step.node) {
+      const flattened = flattenAnonymousBaseOperatorApplication(step.node);
+      if (flattened?.fullyApplied) {
+        const outputType = getStepActualOutputType(step);
+        if (outputType !== "Operator" && outputType !== "Any") {
+          return getTypeColor(outputType);
+        }
+      }
+    }
+    return getTypeColor("Operator");
   }
   // For serializer types (Flip, Pipe, Pipe2) used from their respective tabs
   const opKey = step.tooltipOperatorKey;
@@ -992,38 +1277,23 @@ const getDisplayPanelColor = (
       opKey === "OPERATOR_PIPE" ||
       opKey === "OPERATOR_PIPE2")
   ) {
-    return LOGIC_PROGRAMMER_TYPE_COLORS["Operator"] ?? "#2be72f";
+    return getTypeColor("Operator");
   }
   const outputType = getStepActualOutputType(step);
-  return LOGIC_PROGRAMMER_TYPE_COLORS[outputType] ?? "#f0f0f0";
+  return getTypeColor(outputType);
 };
 
+// Display panel text is always centered, matching the in-game panel.
 const getDisplayPanelAlign = (
-  step: Pick<VisualStep, "sourceType">
+  _step: Pick<VisualStep, "sourceType">
 ): "left" | "center" | "top" => {
-  const sourceType = step.sourceType;
-  if (
-    sourceType === "Operator" ||
-    sourceType === "Integer" ||
-    sourceType === "Double" ||
-    sourceType === "Long" ||
-    sourceType === "Flip" ||
-    sourceType === "Pipe" ||
-    sourceType === "Pipe2" ||
-    sourceType === "Curry"
-  ) {
-    return "top";
-  }
   return "center";
 };
 
 const getOutputTextureName = (
   step: Pick<
     VisualStep,
-    | "sourceType"
-    | "detail"
-    | "tooltipOperatorKey"
-    | "forceOperatorTabActive"
+    "sourceType" | "detail" | "tooltipOperatorKey" | "forceOperatorTabActive"
   > & { node?: TypeAST.AST }
 ): TypeAST.AST["type"] => {
   if (step.sourceType === "Operator" || step.forceOperatorTabActive) {
@@ -1058,9 +1328,26 @@ const getStepActualOutputType = (
     node?: TypeAST.AST;
   }
 ): string => {
-  // For Curry types, use the actual CurriedOperator's output type
+  // For fully-applied Curry types, resolve the actual output type by
+  // evaluating the node — it's a direct base-operator call producing a
+  // concrete value (e.g. `apply add 1 2` → Integer), not a generic "apply".
   if (step.sourceType === "Curry" && step.node) {
+    const evaluated = evaluateFullyAppliedCurry(step.node);
+    if (evaluated != null && typeof evaluated.getSignatureNode === "function") {
+      const rootType = evaluated.getSignatureNode().getRootType();
+      if (rootType !== "Any") return rootType;
+    }
+    // Evaluation failed (e.g. division by zero) — a fully-applied direct
+    // base-operator call still resolves to the base operator's output type.
+    const flattened = flattenAnonymousBaseOperatorApplication(step.node);
+    if (flattened?.fullyApplied && flattened.operator.type === "Operator") {
+      const outputType = getOperatorTooltipMeta(
+        flattened.operator.opName
+      ).outputType;
+      if (outputType !== "Any") return outputType;
+    }
     try {
+      // Fall back to the CurriedOperator's static signature
       const op = ASTtoOperator(step.node) as any;
       if (typeof op?.getParsedSignature === "function") {
         const sig = op.getParsedSignature();
@@ -1112,7 +1399,7 @@ const buildValueCardTooltip = (
   const lines = [
     formatTemplate(
       VALUE_TYPE_NAME_TEMPLATE,
-      `${typeMeta.colorCode}${typeMeta.label}`
+      `${typeMeta.altColorCode ?? typeMeta.colorCode}${typeMeta.label}`
     ),
     ...getTooltipInfoLines(typeMeta.infoKey),
   ];
@@ -1168,11 +1455,7 @@ const buildOperatorCardTooltip = (
     "Pipe2",
     "Flip",
   ]);
-  if (
-    step.sourceType &&
-    serializerTypes.has(step.sourceType) &&
-    step.node
-  ) {
+  if (step.sourceType && serializerTypes.has(step.sourceType) && step.node) {
     try {
       const op = ASTtoOperator(step.node) as any;
       if (typeof op?.getParsedSignature === "function") {
@@ -1220,15 +1503,14 @@ const buildOperatorCardTooltip = (
             return formatTemplate(
               OPERATOR_INPUT_TYPE_TEMPLATE,
               `${index + 1}`,
-              `${inputMeta.colorCode}${inputMeta.label}`
+              `${inputMeta.altColorCode ?? inputMeta.colorCode}${inputMeta.label}`
             );
           }),
           formatTemplate(
             OPERATOR_OUTPUT_TYPE_TEMPLATE,
             `${
-              resolvedOutputType === "Any"
-                ? "§0"
-                : getValueTypeMeta(resolvedOutputType).colorCode
+              getValueTypeMeta(resolvedOutputType).altColorCode ??
+              getValueTypeMeta(resolvedOutputType).colorCode
             }${getValueTypeMeta(resolvedOutputType).label}`
           ),
           // Skip tooltip info for virtual serializer operators
@@ -1253,22 +1535,25 @@ const buildOperatorCardTooltip = (
         if (flattened?.operator.type === "Operator") {
           const baseMeta = getOperatorTooltipMeta(flattened.operator.opName);
           const lines = [
-            formatTemplate(OPERATOR_NAME_TEMPLATE, baseMeta.displayName, baseMeta.symbol),
+            formatTemplate(
+              OPERATOR_NAME_TEMPLATE,
+              baseMeta.displayName,
+              baseMeta.symbol
+            ),
             formatTemplate(OPERATOR_CATEGORY_TEMPLATE, baseMeta.categoryName),
             ...baseMeta.inputTypes.map((inputType, index) => {
               const inputMeta = getValueTypeMeta(inputType);
               return formatTemplate(
                 OPERATOR_INPUT_TYPE_TEMPLATE,
                 `${index + 1}`,
-                `${inputMeta.colorCode}${inputMeta.label}`
+                `${inputMeta.altColorCode ?? inputMeta.colorCode}${inputMeta.label}`
               );
             }),
             formatTemplate(
               OPERATOR_OUTPUT_TYPE_TEMPLATE,
               `${
-                baseMeta.outputType === "Any"
-                  ? "§0"
-                  : getValueTypeMeta(baseMeta.outputType).colorCode
+                getValueTypeMeta(baseMeta.outputType).altColorCode ??
+                getValueTypeMeta(baseMeta.outputType).colorCode
               }${getValueTypeMeta(baseMeta.outputType).label}`
             ),
             formatTemplate(
@@ -1306,15 +1591,14 @@ const buildOperatorCardTooltip = (
       return formatTemplate(
         OPERATOR_INPUT_TYPE_TEMPLATE,
         `${index + 1}`,
-        `${inputMeta.colorCode}${inputMeta.label}`
+        `${inputMeta.altColorCode ?? inputMeta.colorCode}${inputMeta.label}`
       );
     }),
     formatTemplate(
       OPERATOR_OUTPUT_TYPE_TEMPLATE,
       `${
-        operatorMeta.outputType === "Any"
-          ? "§0"
-          : getValueTypeMeta(operatorMeta.outputType).colorCode
+        getValueTypeMeta(operatorMeta.outputType).altColorCode ??
+        getValueTypeMeta(operatorMeta.outputType).colorCode
       }${getValueTypeMeta(operatorMeta.outputType).label}`
     ),
     ...operatorInfoLines,
@@ -1356,10 +1640,7 @@ const steps = computed<VisualStep[]>(() => {
 
   const isPatternMode = props.operatorPreviewMode === "pattern";
 
-  if (
-    isPatternMode &&
-    props.ast.type === "Operator"
-  ) {
+  if (isPatternMode && props.ast.type === "Operator") {
     const operator = getOperatorDisplay(props.ast.opName);
     const operatorMeta = getOperatorTooltipMeta(props.ast.opName);
     const signatureTypes = getOperatorValueSignatureTypes(props.ast.opName);
@@ -1398,11 +1679,20 @@ const steps = computed<VisualStep[]>(() => {
 
   const result: VisualStep[] = [];
   const seen = new Map<TypeAST.AST, VisualCardRef>();
+  const contentSeen = new Map<string, VisualCardRef>();
 
   const visit = (ast: TypeAST.AST): VisualCardRef => {
     if (seen.has(ast)) return seen.get(ast)!;
 
-    const nextName = getCardName(ast);      const register = (
+    const contentKey = astContentKey(ast);
+    const existing = contentSeen.get(contentKey);
+    if (existing) {
+      seen.set(ast, existing);
+      return existing;
+    }
+
+    const nextName = getCardName(ast);
+    const register = (
       step: Omit<VisualStep, "variableId" | "tooltip">
     ): VisualCardRef => {
       const variableId = props.startVariableId + result.length;
@@ -1415,17 +1705,19 @@ const steps = computed<VisualStep[]>(() => {
       result.push(fullStep);
       const card = {
         name: fullStep.output,
-        type: step.sourceType === "Operator"
-          ? "Operator"
-          : step.sourceType === "Curry" && step.node
-            ? flattenAnonymousBaseOperatorApplication(step.node)?.fullyApplied
-              ? getStepActualOutputType(fullStep) as TypeAST.AST["type"]
-              : "Operator"
-            : getStepActualOutputType(fullStep) as TypeAST.AST["type"],
+        type:
+          step.sourceType === "Operator"
+            ? "Operator"
+            : step.sourceType === "Curry" && step.node
+              ? flattenAnonymousBaseOperatorApplication(step.node)?.fullyApplied
+                ? (getStepActualOutputType(fullStep) as TypeAST.AST["type"])
+                : "Operator"
+              : (getStepActualOutputType(fullStep) as TypeAST.AST["type"]),
         variableId,
         tooltip,
       };
       seen.set(ast, card);
+      contentSeen.set(contentKey, card);
       return card;
     };
 
@@ -1462,10 +1754,18 @@ const steps = computed<VisualStep[]>(() => {
           let typeError: string | undefined;
           const opMeta = getOperatorTooltipMeta(flattened.operator.opName);
           const isArityOne = opMeta.inputTypes.length === 1;
-          for (let i = 0; i < Math.min(opMeta.inputTypes.length, argOutputs.length); i++) {
+          for (
+            let i = 0;
+            i < Math.min(opMeta.inputTypes.length, argOutputs.length);
+            i++
+          ) {
             const expected = opMeta.inputTypes[i]!;
             const actual: string = argOutputs[i]!.type;
-            if (expected !== "Any" && expected !== "Operator" && actual !== expected) {
+            if (
+              expected !== "Any" &&
+              expected !== "Operator" &&
+              !isTypeAssignable(actual, expected)
+            ) {
               // For arity 1 operators, try to harden "Any" into a concrete type
               if (actual === "Any" && isArityOne) {
                 try {
@@ -1481,11 +1781,19 @@ const steps = computed<VisualStep[]>(() => {
                     // If type is still unresolved via the type system, try
                     // evaluating the argument to get a concrete value type.
                     // This works because all inputs are known constants.
-                    if (hardened === "Any" && typeof argOp?.getFn === "function") {
+                    if (
+                      hardened === "Any" &&
+                      typeof argOp?.getFn === "function"
+                    ) {
                       try {
                         const evaluated = argOp.getFn()(null);
-                        if (evaluated != null && typeof evaluated.getSignatureNode === "function") {
-                          const evalType = evaluated.getSignatureNode().getRootType();
+                        if (
+                          evaluated != null &&
+                          typeof evaluated.getSignatureNode === "function"
+                        ) {
+                          const evalType = evaluated
+                            .getSignatureNode()
+                            .getRootType();
                           if (evalType !== "Any") {
                             hardened = evalType;
                           }
@@ -1494,7 +1802,7 @@ const steps = computed<VisualStep[]>(() => {
                         // Evaluation failed, keep type-system result
                       }
                     }
-                    if (hardened !== expected) {
+                    if (!isTypeAssignable(hardened, expected)) {
                       // If type is still "Any" after hardening, it's genuinely
                       // unknown — treat as compatible (no error)
                       if (hardened === "Any") {
@@ -1525,7 +1833,8 @@ const steps = computed<VisualStep[]>(() => {
             symbol: getOperatorDisplay(flattened.operator.opName).symbol,
             kind: "operator" as const,
             sourceType: ast.type,
-            renderPattern: getOperatorDisplay(flattened.operator.opName).renderPattern,
+            renderPattern: getOperatorDisplay(flattened.operator.opName)
+              .renderPattern,
             inputs: argOutputs,
             output: finalVarName,
             node: ast,
@@ -1687,10 +1996,7 @@ const getOperatorValueSignatureLines = (
     return {
       prefix: index === 0 ? "" : "  -> ",
       label: typeMeta.label,
-      color:
-        typeName === "Any"
-          ? "#000000"
-          : (LOGIC_PROGRAMMER_TYPE_COLORS[typeName] ?? "#f0f0f0"),
+      color: getTypeColor(typeName),
     };
   });
 };
@@ -1702,7 +2008,7 @@ const getExpectedInputTooltip = (typeName: string): TooltipData => {
     lines: [
       formatTemplate(
         EXPECTED_INPUT_TYPE_TEMPLATE,
-        `${typeMeta.colorCode}${typeMeta.label}`
+        `${typeMeta.altColorCode ?? typeMeta.colorCode}${typeMeta.label}`
       ),
     ],
   };
@@ -1715,7 +2021,7 @@ const getExpectedOutputTooltip = (typeName: string): TooltipData => {
     lines: [
       formatTemplate(
         EXPECTED_OUTPUT_TYPE_TEMPLATE,
-        `${typeMeta.colorCode}${typeMeta.label}`
+        `${typeMeta.altColorCode ?? typeMeta.colorCode}${typeMeta.label}`
       ),
     ],
   };
@@ -1751,8 +2057,10 @@ const getPatternBox = (step: VisualStep) => {
     // If the operator has a render pattern, use it for slots and symbol
     if (step.renderPattern && step.renderPattern !== "NONE") {
       const pattern = LOGIC_PROGRAMMER_RENDER_PATTERNS[step.renderPattern];
-      const left = workspaceX + Math.floor((workspaceWidth - pattern.width) / 2);
-      const top = workspaceY + Math.floor((workspaceHeight - pattern.height) / 2);
+      const left =
+        workspaceX + Math.floor((workspaceWidth - pattern.width) / 2);
+      const top =
+        workspaceY + Math.floor((workspaceHeight - pattern.height) / 2);
 
       return {
         slots: pattern.slotPositions.map((slot) => ({
@@ -1874,8 +2182,10 @@ const getPatternBox = (step: VisualStep) => {
   };
 };
 
-const getCanvasBox = (step: VisualStep) => getPatternBox(step).canvas ?? { left: 0, top: 0, width: 0, height: 0 };
-const getSymbolPos = (step: VisualStep) => getPatternBox(step).symbol ?? { left: 0, top: 0 };
+const getCanvasBox = (step: VisualStep) =>
+  getPatternBox(step).canvas ?? { left: 0, top: 0, width: 0, height: 0 };
+const getSymbolPos = (step: VisualStep) =>
+  getPatternBox(step).symbol ?? { left: 0, top: 0 };
 const getValueBox = (step: VisualStep) => getPatternBox(step).valueBox;
 const getValueBoxLeft = (step: VisualStep) => getValueBox(step)?.left ?? 0;
 const getValueBoxTop = (step: VisualStep) => getValueBox(step)?.top ?? 0;
@@ -1909,9 +2219,7 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
       symbol: operatorClass.symbol ?? "",
       tabKind: "operator" as const,
       matchString: new operatorClass(false).getFullDisplayName().toLowerCase(),
-      color:
-        LOGIC_PROGRAMMER_TYPE_COLORS[getOperatorOutputType(operatorClass)] ??
-        "#f0f0f0",
+      color: getTypeColor(getOperatorOutputType(operatorClass)),
     }));
 
   const filtered = [...valueTypeEntries, ...operatorEntries]
@@ -1933,8 +2241,7 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
               (step.sourceType === "Operator"
                 ? "Operator"
                 : getValueTypeSearchLabel(step.sourceType))
-          : (step.forceOperatorTabActive ||
-              step.sourceType !== "Operator") &&
+          : (step.forceOperatorTabActive || step.sourceType !== "Operator") &&
             (entry.symbol === step.symbol || entry.matchString === search),
     }));
 
@@ -2023,13 +2330,12 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
               <div class="logic-list-nav-btn logic-list-nav-next">▶</div>
               <div class="logic-list-add-btn">+</div>
 
-              <div
-                v-if="step.inputs.length > 0"
-                class="logic-list-editor"
-              >
+              <div v-if="step.inputs.length > 0" class="logic-list-editor">
                 <div
                   class="logic-list-editor-prev"
-                  :class="{ 'logic-list-editor-btn-disabled': step.inputs.length <= 1 }"
+                  :class="{
+                    'logic-list-editor-btn-disabled': step.inputs.length <= 1,
+                  }"
                 >
                   ◀
                 </div>
@@ -2038,17 +2344,24 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
                 </div>
                 <div
                   class="logic-list-editor-next"
-                  :class="{ 'logic-list-editor-btn-disabled': step.inputs.length <= 1 }"
+                  :class="{
+                    'logic-list-editor-btn-disabled': step.inputs.length <= 1,
+                  }"
                 >
                   ▶
                 </div>
 
                 <!-- Operator type: show operator dropdown + signature -->
-                <template v-if="(step.node as any).value[0]?.type === 'Operator'">
+                <template
+                  v-if="(step.node as any).value[0]?.type === 'Operator'"
+                >
                   <div class="logic-list-editor-op-canvas" />
                   <div class="logic-list-editor-op-field">
                     <FitText
-                      :text="getOperatorDisplay((step.node as any).value[0].opName).title"
+                      :text="
+                        getOperatorDisplay((step.node as any).value[0].opName)
+                          .title
+                      "
                       align="left"
                       :min-scale="0.6"
                     />
@@ -2071,7 +2384,9 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
                 </template>
 
                 <!-- Item/Block/Fluid: show slot + placeholder -->
-                <template v-else-if="isItemStackBackedValueType(step.inputs[0]!.type)">
+                <template
+                  v-else-if="isItemStackBackedValueType(step.inputs[0]!.type)"
+                >
                   <div class="logic-list-editor-item-label">
                     {{ getItemStackPlaceholder(step.inputs[0]!.type) }}
                   </div>
@@ -2096,9 +2411,9 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
                 <template v-else>
                   <div class="logic-list-editor-value-box">
                     <FitText
-                      :text="getCompactValueTextForAst(
-                        (step.node as any).value[0]
-                      )"
+                      :text="
+                        getCompactValueTextForAst((step.node as any).value[0])
+                      "
                       align="left"
                       :min-scale="0.5"
                     />
@@ -2109,7 +2424,12 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
               </div>
             </template>
 
-            <template v-else-if="step.workspaceMode === 'operatorValue' || step.workspaceMode === 'pattern'">
+            <template
+              v-else-if="
+                step.workspaceMode === 'operatorValue' ||
+                step.workspaceMode === 'pattern'
+              "
+            >
               <div
                 class="logic-operator-canvas"
                 :style="{
@@ -2152,7 +2472,9 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
                 <div
                   v-if="getPatternBox(step).symbol"
                   class="logic-symbol-overlay"
-                  :class="{ 'logic-symbol-overlay-text': step.symbol.length > 2 }"
+                  :class="{
+                    'logic-symbol-overlay-text': step.symbol.length > 2,
+                  }"
                   :style="{
                     left: `${getSymbolPos(step).left}px`,
                     top: `${getSymbolPos(step).top}px`,
@@ -2283,16 +2605,17 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
                     }"
                   />
                 </HoverMinecraftTooltip>
-              </div>                <div
-                  v-if="getPatternBox(step).symbol"
-                  class="logic-symbol-overlay"
-                  :class="{ 'logic-symbol-overlay-text': step.symbol.length > 2 }"
-                  :style="{
-                    left: `${getSymbolPos(step).left}px`,
-                    top: `${getSymbolPos(step).top}px`,
-                  }"
-                >
-                  {{ step.symbol }}
+              </div>
+              <div
+                v-if="getPatternBox(step).symbol"
+                class="logic-symbol-overlay"
+                :class="{ 'logic-symbol-overlay-text': step.symbol.length > 2 }"
+                :style="{
+                  left: `${getSymbolPos(step).left}px`,
+                  top: `${getSymbolPos(step).top}px`,
+                }"
+              >
+                {{ step.symbol }}
               </div>
             </template>
 
@@ -2302,7 +2625,12 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
               <FitText :text="step.output" />
             </div>
 
-            <div class="logic-label-ok-icon" aria-hidden="true" />
+            <div
+              v-if="!step.typeError"
+              class="logic-label-ok-icon"
+              aria-hidden="true"
+            />
+            <div v-else class="logic-label-error-icon" aria-hidden="true" />
 
             <div class="logic-labeller-badge">E</div>
 
@@ -2311,13 +2639,20 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
                 :title="getOutputSlotTooltip(step).title"
                 :lines="getOutputSlotTooltip(step).lines"
               >
-            <div
-              v-if="props.forceShowOutputCard || step.workspaceMode !== 'pattern'"
-              class="logic-write-card-composite"
-              :style="{
-                backgroundImage: `url('${publicAsset(`valuetype/${getValueTypeTextureName(getOutputTextureName(step))}.png`)}'), url('${publicAsset('item/variable.png')}')`,
-              }"
-            />
+                <div
+                  v-if="
+                    props.forceShowOutputCard ||
+                    step.workspaceMode !== 'pattern'
+                  "
+                  class="logic-write-card-composite"
+                  :style="{
+                    // Type-mismatched steps produce a blank (untyped) var card
+                    // rather than a card typed by the (wrong) output type.
+                    backgroundImage: step.typeError
+                      ? `url('${publicAsset('item/variable.png')}')`
+                      : `url('${publicAsset(`valuetype/${getValueTypeTextureName(getOutputTextureName(step))}.png`)}'), url('${publicAsset('item/variable.png')}')`,
+                  }"
+                />
               </HoverMinecraftTooltip>
             </div>
           </div>

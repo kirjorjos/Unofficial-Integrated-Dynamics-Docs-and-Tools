@@ -1,7 +1,10 @@
 /** @type {import("jest").Config} **/
 module.exports = {
   testEnvironment: "node",
-  testMatch: ["<rootDir>/src/lib/tests/**/*.ts", "<rootDir>/src/tests/**/*.ts"],
+  testMatch: [
+    "<rootDir>/src/lib/tests/**/*.ts",
+    "<rootDir>/src/tests/**/*.test.ts",
+  ],
   transform: {
     "^.+\\.ts$": [
       "ts-jest",
@@ -14,5 +17,6 @@ module.exports = {
     "^lib$": "<rootDir>/src/lib/index.ts",
     "^lib/(.*)$": "<rootDir>/src/lib/$1",
     "^components/(.*)$": "<rootDir>/src/components/$1",
+    "^pages-lib/(.*)$": "<rootDir>/src/pages/lib/$1",
   },
 };
