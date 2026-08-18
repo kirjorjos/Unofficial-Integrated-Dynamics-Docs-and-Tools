@@ -5,6 +5,7 @@ import {
   getArity,
   expectsOperatorArgument,
   getNicknameCharacterRegex,
+  getNicknameRegex,
   resolveImplicitFlipOperator,
   setOperatorSourceName,
   flattenAnonymousBaseOperatorApplication,
@@ -31,9 +32,7 @@ const charTokenCheckers: Record<string, (c: char, state: State) => boolean> = {
   null: (c, state) =>
     !state.inString && state.inJSON === 0 && /^[nul]$/i.test(c),
   identifier: (c, state) =>
-    !state.inString &&
-    state.inJSON === 0 &&
-    (getNicknameCharacterRegex().test(c) || c === "="),
+    !state.inString && (getNicknameCharacterRegex().test(c) || c === "="),
 };
 
 const resolveType = (value: string, possible: string[]): string => {
@@ -52,7 +51,10 @@ const resolveType = (value: string, possible: string[]): string => {
     if (/^-?(?:\d+\.\d+[dD]?|\d+\.|\d+[dD])$/.test(value)) return "double";
   }
   if (value.startsWith('"')) return "string";
-  if (value.startsWith("{")) return "nbt";
+  if (value.startsWith("{")) {
+    const isBraceVarName = value !== "{}" && getNicknameRegex().test(value);
+    if (!isBraceVarName) return "nbt";
+  }
   return "identifier";
 };
 

@@ -1,5 +1,7 @@
 import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
+import { Operator } from "lib/IntegratedDynamicsClasses/operators/Operator";
 import { operatorRegistry } from "lib/IntegratedDynamicsClasses/registries/operatorRegistry";
+import { ASTtoOperator } from "lib/transformers/Operator";
 
 export interface FlattenedBaseOperatorApplication {
   operator: TypeAST.Operator;
@@ -35,6 +37,61 @@ export const flattenAnonymousBaseOperatorApplication = (
     args,
     fullyApplied: args.length === getArity(currentBase),
   };
+};
+
+export const evaluateFullyAppliedCurry = (
+  node: TypeAST.AST
+): IntegratedValue | undefined => {
+  const flat = flattenAnonymousBaseOperatorApplication(node);
+  if (!flat || !flat.fullyApplied || flat.operator.type !== "Operator") {
+    return undefined;
+  }
+
+  const resolveArg = (arg: IntegratedValue): IntegratedValue => {
+    if (arg instanceof Operator) {
+      const result = arg.getFn()(null);
+      if (
+        result != null &&
+        typeof result !== "function" &&
+        !(result instanceof Operator)
+      ) {
+        return result;
+      }
+    }
+    return arg;
+  };
+
+  try {
+    const argValues: IntegratedValue[] = [];
+    for (const argAst of flat.args) {
+      try {
+        argValues.push(resolveArg(ASTtoOperator(argAst)));
+      } catch {}
+    }
+
+    const baseOp = ASTtoOperator(flat.operator);
+    if (!(baseOp instanceof Operator)) {
+      return undefined;
+    }
+
+    let result: unknown = baseOp.getFn();
+    for (const argVal of argValues) {
+      if (typeof result === "function") {
+        result = (result as (arg: IntegratedValue) => unknown)(argVal);
+      } else if (result instanceof Operator) {
+        result = result.apply(argVal);
+      } else {
+        break;
+      }
+    }
+
+    if (typeof result === "function" || result instanceof Operator) {
+      return undefined;
+    }
+    return result as IntegratedValue;
+  } catch {
+    return undefined;
+  }
 };
 
 const operatorSourceNameMap = new WeakMap<TypeAST.BaseOperator, string>();

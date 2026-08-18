@@ -294,4 +294,67 @@ whitelistTagList = ["c:armor", "c:tools"]
     expect(ASTToExpanded(CodeLineToAST("gt"))).toContain("gt ::");
     expect(ASTToExpanded(CodeLineToAST("flip pipe"))).toContain("flipPipe ::");
   });
+
+  it("testFullyAppliedCurryArgBecomesNamedStep", () => {
+    const ast = CodeLineToAST("apply numberAdd (numberAdd 5 10)");
+    const expanded = ASTToExpanded(ast);
+
+    expect(expanded).toContain("{numberAddBy5}by10 = numberAdd(5, 10)");
+    expect(expanded).toContain(
+      "numberAddBy{numberAddBy5}by10 = apply(numberAdd, {numberAddBy5}by10)"
+    );
+  });
+
+  it("testNestedPipeDecomposesIntoSteps", () => {
+    const ast = CodeLineToAST(
+      "pipe (pipe numberIncrement numberIncrement) numberIncrement"
+    );
+    const expanded = ASTToExpanded(ast);
+
+    expect(expanded).toContain(
+      "numberIncrementWithNumberIncrement = operatorPipe(numberIncrement, numberIncrement)"
+    );
+    expect(expanded).toContain(
+      "numberIncrementWithNumberIncrementWithNumberIncrement = operatorPipe(numberIncrementWithNumberIncrement, numberIncrement)"
+    );
+    expect(expanded).not.toContain(
+      "operatorPipe(operatorPipe(numberIncrement, numberIncrement), numberIncrement)"
+    );
+  });
+
+  it("testBraceVarNameReferenceRoundTrips", () => {
+    const input = `{numberAddBy5}by10 = numberAdd(5, 10)
+result = apply(numberAdd, {numberAddBy5}by10)`;
+    const ast = ExpandedToAST(input);
+    expect(ast.varName).toBe("result");
+    expect((ast as TypeAST.Curried).args[0]!.varName).toBe(
+      "{numberAddBy5}by10"
+    );
+  });
+
+  it("testEmptyNbtStillParses", () => {
+    const ast = ExpandedToAST("emptyTag = {}");
+    expect(ast).toEqual({ type: "NBT", value: {}, varName: "emptyTag" });
+  });
+
+  it("testIndexOfListFullyDecomposesAndRoundTrips", () => {
+    const input =
+      "indexOfList = (l) => (el) => head(filter((idx) => equals(el, listGet(l, idx)), slice(lazybuilt(0, increment), 0, listLength(l))))";
+    const ast = ExpandedToAST(input);
+    const expanded = ASTToExpanded(ast);
+
+    expect(expanded).toContain(
+      "{lazybuiltBy0}byIncrement = anyLazyBuilt(0, numberIncrement)"
+    );
+    expect(expanded).toContain(
+      "sliceBy{lazybuiltBy0}byIncrement = apply(listSlice, {lazybuiltBy0}byIncrement)"
+    );
+    expect(expanded).not.toContain(
+      "apply(listSlice, anyLazyBuilt(0, numberIncrement))"
+    );
+    expect(expanded).not.toContain("indexOfList = operatorPipe(operatorPipe2(");
+
+    const backAst = ExpandedToAST(expanded);
+    expect(backAst.varName).toBe("indexOfList");
+  });
 });

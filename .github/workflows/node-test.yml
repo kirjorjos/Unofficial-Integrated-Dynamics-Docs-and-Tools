@@ -2,15 +2,105 @@ name: Node.js test
 
 on: [pull_request]
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   build:
-    runs-on: ubuntu-latest
+    container: mcr.microsoft.com/playwright:v1.62.1-noble
+    runs-on: ubuntu-24.04
 
     steps:
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
-      - run: npm ci
-      - run: npm test
+          node-version: "20.x"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Jest + typecheck
+        run: npx jest && npm run typecheck
+
+      - name: Playwright — compare against committed baselines
+        id: compare
+        continue-on-error: true
+        run: npx playwright test --output=test-results
+
+      - name: Regenerate failing screenshots
+        id: regen
+        if: steps.compare.outcome == 'failure'
+        continue-on-error: true
+        run: npx playwright test --output=test-results --last-failed --update-snapshots
+
+      - name: Detect changed baselines vs base branch
+        id: changed
+        if: steps.compare.outcome != 'skipped'
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          BASE_SHA="${{ github.event.pull_request.base.sha }}"
+          if [ -z "$BASE_SHA" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if ! git cat-file -e "$BASE_SHA^{commit}" 2>/dev/null; then
+            git fetch --no-tags --depth=1 origin "$BASE_SHA"
+          fi
+          git add -N src/assets/visual-snapshots/ || true
+          CHANGED="$(git diff --name-only "$BASE_SHA" -- src/assets/visual-snapshots/ | sort)"
+          if [ -z "$CHANGED" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "list<<EOF" >> "$GITHUB_OUTPUT"
+            echo "$CHANGED" >> "$GITHUB_OUTPUT"
+            echo "EOF" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Fail — screenshot failures could not be regenerated
+        if: steps.compare.outcome == 'failure' && steps.regen.outcome != 'success'
+        run: exit 1
+
+      - name: Comment baseline changes on the PR
+        if: steps.changed.outputs.changed == 'true'
+        continue-on-error: true
+        uses: actions/github-script@v7
+        env:
+          CHANGED_LIST: ${{ steps.changed.outputs.list }}
+        with:
+          script: |
+            const marker = "<!-- visual-baselines:changed -->";
+            const changed = (process.env.CHANGED_LIST ?? "")
+              .split("\n")
+              .map((line) => line.trim())
+              .filter(Boolean);
+            const body = [
+              marker,
+              "",
+              `Screenshot baselines differ from the base branch at commit \`${context.payload.pull_request.head.sha.slice(0, 7)}\` (${changed.length} snapshot${changed.length === 1 ? "" : "s"}):`,
+              "",
+              ...changed.map((file) => `- \`${file}\``),
+              "",
+              "The above screenshots differ and will be regenerated and commited via CI on PR merge",
+            ].join("\n");
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body,
+            });
+
+      - name: Upload Playwright report on failure (or after a regen)
+        if: failure() || steps.compare.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report
+          retention-days: 7
+          if-no-files-found: ignore

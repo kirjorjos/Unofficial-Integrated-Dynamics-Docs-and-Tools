@@ -1,0 +1,141 @@
+name: Post-merge baseline sync
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+  issues: read
+
+concurrency:
+  group: baseline-sync
+  cancel-in-progress: false
+
+jobs:
+  resolve:
+    runs-on: ubuntu-24.04
+    outputs:
+      should_sync: ${{ steps.resolve.outputs.should_sync }}
+      specs: ${{ steps.resolve.outputs.specs }}
+      pr_number: ${{ steps.resolve.outputs.pr_number }}
+    steps:
+      - name: Resolve merged PR + read marker comment
+        id: resolve
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          MARKER='<!-- visual-baselines:changed -->'
+          PR=""
+          SPECS=""
+          SHOULD_SYNC="false"
+
+          if [ "${GITHUB_EVENT_NAME}" = "workflow_dispatch" ]; then
+            echo "workflow_dispatch: regenerating all visual specs"
+            SHOULD_SYNC="true"
+            SPECS="ALL"
+          else
+            if PR_JSON="$(gh api "repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/pulls" \
+              --jq '.[0].number // empty' 2>/dev/null)"; then
+              PR="${PR_JSON}"
+            else
+              echo "PR resolution API failed for ${GITHUB_SHA} — falling through to regen-all"
+              PR=""
+            fi
+
+            if [ -n "${PR}" ]; then
+              BODY="$(gh api "repos/${GITHUB_REPOSITORY}/issues/${PR}/comments" --paginate \
+                --jq "[.[] | select(.body | contains(\"${MARKER}\"))] | if length == 0 then empty else .[-1].body end" 2>/dev/null || true)"
+              CHANGED="$(printf '%s\n' "${BODY}" | grep -oE '\- `[^`]+\.png`' | sed -e 's/^- `//' -e 's/`$//' || true)"
+
+              if [ -n "${CHANGED}" ]; then
+                SPECS="$(printf '%s\n' "${CHANGED}" | sed -n 's#^src/assets/visual-snapshots/\([^/]*\.test\.ts\)/.*#ui-tests/\1#p' | sort -u | xargs)"
+                if [ -z "${SPECS}" ]; then
+                  echo "marker on PR #${PR} but no spec files derivable — regen-all fallback"
+                  SPECS="ALL"
+                fi
+                SHOULD_SYNC="true"
+              else
+                echo "PR #${PR} has no marker comment — nothing to sync (lost-marker forks: re-run manually)"
+              fi
+            else
+              echo "no merged PR resolvable for ${GITHUB_SHA} (rebase merge / direct push) — regen-all fallback"
+              SHOULD_SYNC="true"
+              SPECS="ALL"
+            fi
+          fi
+
+          echo "should_sync=${SHOULD_SYNC}" >> "$GITHUB_OUTPUT"
+          echo "specs=${SPECS}" >> "$GITHUB_OUTPUT"
+          echo "pr_number=${PR}" >> "$GITHUB_OUTPUT"
+
+  sync:
+    needs: resolve
+    if: needs.resolve.outputs.should_sync == 'true'
+    container: mcr.microsoft.com/playwright:v1.62.1-noble
+    runs-on: ubuntu-24.04
+    outputs:
+      committed: ${{ steps.commit.outputs.committed }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate GitHub App installation token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.GH_APP_ID }}
+          private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ github.event.repository.name }}
+
+      - name: Regenerate baselines on the pinned runner
+        run: |
+          SPECS="${{ needs.resolve.outputs.specs }}"
+          if [ "${SPECS}" = "ALL" ]; then
+            SPECS="$(grep -l toHaveScreenshot ui-tests/*.test.ts)"
+          fi
+          npx playwright test --output=test-results ${SPECS} --update-snapshots
+
+      - name: Commit and push regenerated baselines
+        id: commit
+        env:
+          PUSH_TOKEN: ${{ steps.app-token.outputs.token }}
+          PR_NUMBER: ${{ needs.resolve.outputs.pr_number }}
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git add src/assets/visual-snapshots/
+          if git diff --cached --quiet -- src/assets/visual-snapshots/; then
+            echo "no baseline changes to commit"
+            echo "committed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git remote set-url origin "https://x-access-token:${PUSH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git commit -m "chore: re-normalize visual baselines${PR_NUMBER:+ (PR #${PR_NUMBER})}"
+          git push origin HEAD:main || {
+            echo "push to main failed — is branch protection blocking it?" >&2
+            echo "Check the GitHub App install + bypass-list setup (see comment above)." >&2
+            exit 1
+          }
+          echo "committed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sync-playwright-report
+          path: playwright-report
+          retention-days: 7
+          if-no-files-found: ignore

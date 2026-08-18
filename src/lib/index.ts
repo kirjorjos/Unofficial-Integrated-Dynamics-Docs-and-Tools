@@ -13,12 +13,17 @@ export {
   getExpandedVarName,
   resetExpandedVarCounter,
 } from "lib/transformers/Expanded";
+export {
+  flattenAnonymousBaseOperatorApplication,
+  evaluateFullyAppliedCurry,
+} from "lib/transformers/helpers";
 export { ASTtoJSON, JSONtoAST } from "lib/transformers/JSON";
 export {
   LOGIC_PROGRAMMER_TYPE_COLORS,
   LOGIC_PROGRAMMER_DATA_TYPE_TABS,
   VALUE_TYPE_TOOLTIP_META,
   getTypeColor,
+  getTypeAltColor,
   getValueTypeMeta,
   getValueTypeMetaForAst,
   getOperatorValueSignatureLines,
@@ -40,6 +45,7 @@ export {
   buildOperatorCardTooltip,
   buildStepTooltip,
   getOperatorTooltipMeta,
+  isTypeAssignable,
   getOperatorDisplay,
   getVirtualOperatorDisplay,
   isItemStackBackedValueType,
