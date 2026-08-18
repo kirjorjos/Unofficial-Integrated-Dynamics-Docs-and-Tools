@@ -389,11 +389,14 @@ const decomposeAST = (node: TypeAST.AST): TypeAST.AST => {
     const flattened = flattenAnonymousBaseOperatorApplication(node);
 
     if (flattened?.fullyApplied) {
-      return {
+      const result = {
         ...node,
         base: flattened.operator,
         args: flattened.args.map(decomposeAST),
       };
+
+      if (!result.varName) result.varName = getVarName(result);
+      return result;
     }
 
     const args = node.args.map(decomposeAST);
@@ -438,22 +441,32 @@ const decomposeAST = (node: TypeAST.AST): TypeAST.AST => {
     return current;
   }
   if (node.type === "Pipe") {
-    return {
+    const result = {
       ...node,
       op1: decomposeAST(node.op1) as TypeAST.Operator,
       op2: decomposeAST(node.op2) as TypeAST.Operator,
     };
+
+    if (!result.varName) result.varName = getVarName(result);
+    return result;
   }
   if (node.type === "Pipe2") {
-    return {
+    const result = {
       ...node,
       op1: decomposeAST(node.op1) as TypeAST.Operator,
       op2: decomposeAST(node.op2) as TypeAST.Operator,
       op3: decomposeAST(node.op3) as TypeAST.Operator,
     };
+    if (!result.varName) result.varName = getVarName(result);
+    return result;
   }
   if (node.type === "Flip") {
-    return { ...node, arg: decomposeAST(node.arg) as TypeAST.Operator };
+    const result = {
+      ...node,
+      arg: decomposeAST(node.arg) as TypeAST.Operator,
+    };
+    if (!result.varName) result.varName = getVarName(result);
+    return result;
   }
   return node;
 };
