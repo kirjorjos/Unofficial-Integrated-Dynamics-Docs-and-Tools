@@ -36,6 +36,25 @@ describe("valueCardTooltips", () => {
     );
     expect(tooltip.title).toBe("Variable Card");
   });
+
+  it("testAnyTypeRendersWithAltColorInTooltips", () => {
+    const tooltip = buildValueCardTooltip(
+      { output: "", sourceType: "Any", node: { type: "Any" } } as any,
+      0
+    );
+    expect(tooltip.lines[0]).toBe("§eType: §r§fAny");
+
+    const expected = getExpectedOutputTooltip("Any");
+    expect(expected.lines[0]).toBe("§eExpected Output: §fAny");
+  });
+
+  it("testNonAnyTypesFallBackToPrimaryColorInTooltips", () => {
+    const tooltip = buildValueCardTooltip(
+      { output: "", sourceType: "Integer", node: { type: "Integer" } } as any,
+      0
+    );
+    expect(tooltip.lines[0]).toBe("§eType: §r§6Integer");
+  });
 });
 
 describe("operatorCardTooltips", () => {

@@ -573,6 +573,7 @@ button {
 .logic-operator-dropdown-field,
 .logic-operator-signature-line,
 .logic-label-ok-icon,
+.logic-label-error-icon,
 .logic-slot-overlay,
 .logic-value-box,
 .logic-write-card,
@@ -964,6 +965,15 @@ button {
   width: 14px;
   height: 12px;
   background: url("/gui/icons.png") -72px 0 / 256px 256px no-repeat;
+  image-rendering: pixelated;
+}
+
+.logic-label-error-icon {
+  left: 205px;
+  top: 110px;
+  width: 14px;
+  height: 12px;
+  background: url("/gui/icons.png") -54px 0 / 256px 256px no-repeat;
   image-rendering: pixelated;
 }
 

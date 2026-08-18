@@ -6,7 +6,9 @@ import {
 } from "pages-lib/visualTransformerLogic";
 import {
   getDisplayPanelColor,
-  LOGIC_PROGRAMMER_TYPE_COLORS,
+  getTypeColor,
+  getTypeAltColor,
+  getOperatorValueSignatureLines,
 } from "pages-lib/visualTransformer";
 import { beforeEachVisualTransformer, makeAst, steps } from "./fixtures";
 
@@ -114,11 +116,14 @@ describe("generateVisualSteps", () => {
     expect(getOutputTextureName(result[2]!)).toBe("Integer");
   });
 
+  it("testFailedEvaluationDirectCallOutputsBaseOperatorType", () => {
+    const result = steps(makeAst.divzero());
+    expect(getOutputTextureName(result[2]!)).toBe("Number");
+  });
+
   it("testFullyAppliedCurryDisplayPanelUsesValueColorAndCenteredAlign", () => {
     const result = steps(makeAst.arithmetic());
-    expect(getDisplayPanelColor(result[2]!)).toBe(
-      LOGIC_PROGRAMMER_TYPE_COLORS["Integer"]
-    );
+    expect(getDisplayPanelColor(result[2]!)).toBe(getTypeColor("Integer"));
     expect(getDisplayPanelAlignment(result[2]!.sourceType)).toBe("center");
     // Number literal steps are centered too
     expect(getDisplayPanelAlignment(result[0]!.sourceType)).toBe("center");
@@ -129,9 +134,7 @@ describe("generateVisualSteps", () => {
     // Steps: [add operator, 1 literal, partial curry]
     expect(getOutputTextureName(result[2]!)).toBe("Operator");
     // A partially-applied curry still represents the operator itself
-    expect(getDisplayPanelColor(result[2]!)).toBe(
-      LOGIC_PROGRAMMER_TYPE_COLORS["Operator"]
-    );
+    expect(getDisplayPanelColor(result[2]!)).toBe(getTypeColor("Operator"));
   });
 
   it("testCleanApplicationsCarryNoTypeError", () => {
@@ -159,5 +162,21 @@ describe("generateVisualSteps", () => {
     expect(result[0]!.sourceType).toBe("String");
     expect(result[0]!.kind).toBe("value");
     expect(result[0]!.detail).toBe("hello");
+  });
+
+  it("testTypeColorsUsePrimaryAndAlt", () => {
+    expect(getTypeColor("Any")).toBe("#000000");
+    expect(getTypeAltColor("Any")).toBe("#ffffff");
+    // Alt falls back to primary when unset
+    expect(getTypeAltColor("Integer")).toBe(getTypeColor("Integer"));
+    expect(getTypeAltColor("Operator")).toBe(getTypeColor("Operator"));
+  });
+
+  it("testOperatorValueSignatureLinesUsePrimaryColor", () => {
+    const lines = getOperatorValueSignatureLines("OPERATOR_APPLY_2");
+    expect(lines.length).toBeGreaterThan(0);
+    for (const line of lines) {
+      expect(line.color).toBe(getTypeColor(line.label));
+    }
   });
 });

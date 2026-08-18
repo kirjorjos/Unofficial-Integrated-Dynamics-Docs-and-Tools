@@ -23,6 +23,7 @@ export {
   LOGIC_PROGRAMMER_DATA_TYPE_TABS,
   VALUE_TYPE_TOOLTIP_META,
   getTypeColor,
+  getTypeAltColor,
   getValueTypeMeta,
   getValueTypeMetaForAst,
   getOperatorValueSignatureLines,

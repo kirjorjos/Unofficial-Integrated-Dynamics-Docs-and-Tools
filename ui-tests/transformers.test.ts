@@ -10,6 +10,7 @@ const FIXTURES = [
   { name: "boolval", input: "true" },
   { name: "invalid-flip", input: "flip numberIncrement" },
   { name: "list", input: "[1, 2, 3]" },
+  { name: "divzero", input: "apply divide 10 0" },
 ] as const;
 
 const CODE = compileFixtures(FIXTURES);
@@ -53,6 +54,22 @@ test.describe("transformersPageVisualOutputDom", () => {
     ).toBeVisible();
   });
 
+  test("testTypeMismatchResultShowsErrorIconAndBlankOutputCard", async ({
+    page,
+  }) => {
+    await openVisual(page, (await CODE)["type-mismatch"]);
+    const resultShot = page.locator(".logic-programmer-shot").last();
+
+    await expect(resultShot.locator(".logic-label-error-icon")).toHaveCount(1);
+    await expect(resultShot.locator(".logic-label-ok-icon")).toHaveCount(0);
+
+    const backgroundImage = await resultShot
+      .locator(".logic-write-card-composite")
+      .evaluate((el) => getComputedStyle(el).backgroundImage);
+    expect(backgroundImage).not.toContain("valuetype/");
+    expect(backgroundImage).toContain("item/variable.png");
+  });
+
   test("testOutputCardIconMatchesStepValueType", async ({ page }) => {
     await openVisual(page, (await CODE).boolval);
     const card = page
@@ -79,6 +96,20 @@ test.describe("transformersPageVisualOutputDom", () => {
       (el) => getComputedStyle(el).backgroundImage
     );
     expect(backgroundImage).toContain("valuetype/integer.png");
+  });
+
+  test("testFailedEvaluationDirectCallShowsBaseOperatorTexture", async ({
+    page,
+  }) => {
+    await openVisual(page, (await CODE).divzero);
+    const card = page
+      .locator(".logic-programmer-shot")
+      .last()
+      .locator(".logic-write-card-composite");
+    const backgroundImage = await card.evaluate(
+      (el) => getComputedStyle(el).backgroundImage
+    );
+    expect(backgroundImage).toContain("valuetype/number.png");
   });
 
   test("testVarIdParamShiftsVariableIdsShownInTooltips", async ({ page }) => {

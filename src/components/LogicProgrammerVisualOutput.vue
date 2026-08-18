@@ -101,23 +101,36 @@ const LOGIC_PROGRAMMER_DATA_TYPE_TABS = [
   "Recipe",
 ] as const;
 
-const LOGIC_PROGRAMMER_TYPE_COLORS: Record<string, string> = {
-  Any: "#f0f0f0",
-  Boolean: "#2b2fe7",
-  Integer: "#f39604",
-  Double: "#ebea17",
-  Long: "#d7fe17",
-  String: "#fa0a0d",
-  List: "#af0301",
-  Operator: "#2be72f",
-  NBT: "#00aaaa",
-  Block: "#f3f3f3",
-  Item: "#f3f3f3",
-  Entity: "#f3f3f3",
-  Fluid: "#f3f3f3",
-  Ingredients: "#f3f3f3",
-  Recipe: "#f3f3f3",
-  Null: "#f0f0f0",
+type ValueTypeColor = {
+  primary: string;
+  alt?: string;
+};
+
+const LOGIC_PROGRAMMER_TYPE_COLORS: Record<string, ValueTypeColor> = {
+  Any: { primary: "#000000", alt: "#ffffff" },
+  Number: { primary: "#ffaa00" },
+  Named: { primary: "#ff5555" },
+  UniquelyNamed: { primary: "#ff5555" },
+  Nullable: { primary: "#ff55ff" }, // Bright to signify error
+  Boolean: { primary: "#2b2fe7" },
+  Integer: { primary: "#f39604" },
+  Double: { primary: "#ebea17" },
+  Long: { primary: "#d7fe17" },
+  String: { primary: "#fa0a0d" },
+  List: { primary: "#af0301" },
+  Operator: { primary: "#2be72f" },
+  NBT: { primary: "#00aaaa" },
+  Block: { primary: "#f3f3f3" },
+  Item: { primary: "#f3f3f3" },
+  Entity: { primary: "#f3f3f3" },
+  Fluid: { primary: "#f3f3f3" },
+  Ingredients: { primary: "#f3f3f3" },
+  Recipe: { primary: "#f3f3f3" },
+  Null: { primary: "#f0f0f0" },
+};
+
+const getTypeColor = (typeName: string): string => {
+  return LOGIC_PROGRAMMER_TYPE_COLORS[typeName]?.primary ?? "#f0f0f0";
 };
 
 const props = defineProps<{
@@ -183,13 +196,15 @@ const getCardTitle = (name: string): string => {
 type ValueTypeTooltipMeta = {
   label: string;
   colorCode: string;
+  altColorCode?: string;
   infoKey?: string;
 };
 
 const VALUE_TYPE_TOOLTIP_META: Record<string, ValueTypeTooltipMeta> = {
   Any: {
     label: "Any",
-    colorCode: "§r",
+    colorCode: "§0",
+    altColorCode: "§f",
     infoKey: "valuetype.integrateddynamics.any.info",
   },
   Number: {
@@ -555,10 +570,10 @@ const getValueTypeDisplayEntries = () =>
     symbol: tab,
     matchString: tab.toLowerCase(),
     tabKind: "type" as const,
-    color: LOGIC_PROGRAMMER_TYPE_COLORS[tab] ?? "#f0f0f0",
+    color: getTypeColor(tab),
   }));
 
-const getValueTypeTextureName = (type: TypeAST.AST["type"]): string => {
+const getValueTypeTextureName = (type: string): string => {
   switch (type) {
     case "Boolean":
       return "boolean";
@@ -587,6 +602,12 @@ const getValueTypeTextureName = (type: TypeAST.AST["type"]): string => {
     case "Ingredients":
     case "Recipe":
       return "object";
+    case "Number":
+      return "number";
+    case "Named":
+      return "named";
+    case "Nullable":
+      return "nullable";
     default:
       return "any";
   }
@@ -716,7 +737,7 @@ const getOperatorValueSignatureText = (opName: TypeOperatorKey): string => {
   return signature
     .map((typeName) => {
       const meta = getValueTypeMeta(typeName);
-      return `${meta.colorCode}${meta.label}`;
+      return `${meta.altColorCode ?? meta.colorCode}${meta.label}`;
     })
     .join(" §r-> ");
 };
@@ -1189,7 +1210,7 @@ const getDisplayPanelColor = (
   > & { node?: TypeAST.AST }
 ): string => {
   if (step.sourceType === "Operator" || step.forceOperatorTabActive) {
-    return LOGIC_PROGRAMMER_TYPE_COLORS["Operator"] ?? "#2be72f";
+    return getTypeColor("Operator");
   }
   // Fully-applied Curry steps produce a concrete value (a direct base
   // operator call) — color the panel by the actual output type. Partially
@@ -1200,11 +1221,11 @@ const getDisplayPanelColor = (
       if (flattened?.fullyApplied) {
         const outputType = getStepActualOutputType(step);
         if (outputType !== "Operator" && outputType !== "Any") {
-          return LOGIC_PROGRAMMER_TYPE_COLORS[outputType] ?? "#f0f0f0";
+          return getTypeColor(outputType);
         }
       }
     }
-    return LOGIC_PROGRAMMER_TYPE_COLORS["Operator"] ?? "#2be72f";
+    return getTypeColor("Operator");
   }
   // For serializer types (Flip, Pipe, Pipe2) used from their respective tabs
   const opKey = step.tooltipOperatorKey;
@@ -1214,10 +1235,10 @@ const getDisplayPanelColor = (
       opKey === "OPERATOR_PIPE" ||
       opKey === "OPERATOR_PIPE2")
   ) {
-    return LOGIC_PROGRAMMER_TYPE_COLORS["Operator"] ?? "#2be72f";
+    return getTypeColor("Operator");
   }
   const outputType = getStepActualOutputType(step);
-  return LOGIC_PROGRAMMER_TYPE_COLORS[outputType] ?? "#f0f0f0";
+  return getTypeColor(outputType);
 };
 
 // Display panel text is always centered, matching the in-game panel.
@@ -1274,6 +1295,15 @@ const getStepActualOutputType = (
       const rootType = evaluated.getSignatureNode().getRootType();
       if (rootType !== "Any") return rootType;
     }
+    // Evaluation failed (e.g. division by zero) — a fully-applied direct
+    // base-operator call still resolves to the base operator's output type.
+    const flattened = flattenAnonymousBaseOperatorApplication(step.node);
+    if (flattened?.fullyApplied && flattened.operator.type === "Operator") {
+      const outputType = getOperatorTooltipMeta(
+        flattened.operator.opName
+      ).outputType;
+      if (outputType !== "Any") return outputType;
+    }
     try {
       // Fall back to the CurriedOperator's static signature
       const op = ASTtoOperator(step.node) as any;
@@ -1327,7 +1357,7 @@ const buildValueCardTooltip = (
   const lines = [
     formatTemplate(
       VALUE_TYPE_NAME_TEMPLATE,
-      `${typeMeta.colorCode}${typeMeta.label}`
+      `${typeMeta.altColorCode ?? typeMeta.colorCode}${typeMeta.label}`
     ),
     ...getTooltipInfoLines(typeMeta.infoKey),
   ];
@@ -1431,15 +1461,14 @@ const buildOperatorCardTooltip = (
             return formatTemplate(
               OPERATOR_INPUT_TYPE_TEMPLATE,
               `${index + 1}`,
-              `${inputMeta.colorCode}${inputMeta.label}`
+              `${inputMeta.altColorCode ?? inputMeta.colorCode}${inputMeta.label}`
             );
           }),
           formatTemplate(
             OPERATOR_OUTPUT_TYPE_TEMPLATE,
             `${
-              resolvedOutputType === "Any"
-                ? "§0"
-                : getValueTypeMeta(resolvedOutputType).colorCode
+              getValueTypeMeta(resolvedOutputType).altColorCode ??
+              getValueTypeMeta(resolvedOutputType).colorCode
             }${getValueTypeMeta(resolvedOutputType).label}`
           ),
           // Skip tooltip info for virtual serializer operators
@@ -1475,15 +1504,14 @@ const buildOperatorCardTooltip = (
               return formatTemplate(
                 OPERATOR_INPUT_TYPE_TEMPLATE,
                 `${index + 1}`,
-                `${inputMeta.colorCode}${inputMeta.label}`
+                `${inputMeta.altColorCode ?? inputMeta.colorCode}${inputMeta.label}`
               );
             }),
             formatTemplate(
               OPERATOR_OUTPUT_TYPE_TEMPLATE,
               `${
-                baseMeta.outputType === "Any"
-                  ? "§0"
-                  : getValueTypeMeta(baseMeta.outputType).colorCode
+                getValueTypeMeta(baseMeta.outputType).altColorCode ??
+                getValueTypeMeta(baseMeta.outputType).colorCode
               }${getValueTypeMeta(baseMeta.outputType).label}`
             ),
             formatTemplate(
@@ -1521,15 +1549,14 @@ const buildOperatorCardTooltip = (
       return formatTemplate(
         OPERATOR_INPUT_TYPE_TEMPLATE,
         `${index + 1}`,
-        `${inputMeta.colorCode}${inputMeta.label}`
+        `${inputMeta.altColorCode ?? inputMeta.colorCode}${inputMeta.label}`
       );
     }),
     formatTemplate(
       OPERATOR_OUTPUT_TYPE_TEMPLATE,
       `${
-        operatorMeta.outputType === "Any"
-          ? "§0"
-          : getValueTypeMeta(operatorMeta.outputType).colorCode
+        getValueTypeMeta(operatorMeta.outputType).altColorCode ??
+        getValueTypeMeta(operatorMeta.outputType).colorCode
       }${getValueTypeMeta(operatorMeta.outputType).label}`
     ),
     ...operatorInfoLines,
@@ -1918,10 +1945,7 @@ const getOperatorValueSignatureLines = (
     return {
       prefix: index === 0 ? "" : "  -> ",
       label: typeMeta.label,
-      color:
-        typeName === "Any"
-          ? "#000000"
-          : (LOGIC_PROGRAMMER_TYPE_COLORS[typeName] ?? "#f0f0f0"),
+      color: getTypeColor(typeName),
     };
   });
 };
@@ -1933,7 +1957,7 @@ const getExpectedInputTooltip = (typeName: string): TooltipData => {
     lines: [
       formatTemplate(
         EXPECTED_INPUT_TYPE_TEMPLATE,
-        `${typeMeta.colorCode}${typeMeta.label}`
+        `${typeMeta.altColorCode ?? typeMeta.colorCode}${typeMeta.label}`
       ),
     ],
   };
@@ -1946,7 +1970,7 @@ const getExpectedOutputTooltip = (typeName: string): TooltipData => {
     lines: [
       formatTemplate(
         EXPECTED_OUTPUT_TYPE_TEMPLATE,
-        `${typeMeta.colorCode}${typeMeta.label}`
+        `${typeMeta.altColorCode ?? typeMeta.colorCode}${typeMeta.label}`
       ),
     ],
   };
@@ -2144,9 +2168,7 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
       symbol: operatorClass.symbol ?? "",
       tabKind: "operator" as const,
       matchString: new operatorClass(false).getFullDisplayName().toLowerCase(),
-      color:
-        LOGIC_PROGRAMMER_TYPE_COLORS[getOperatorOutputType(operatorClass)] ??
-        "#f0f0f0",
+      color: getTypeColor(getOperatorOutputType(operatorClass)),
     }));
 
   const filtered = [...valueTypeEntries, ...operatorEntries]
@@ -2552,7 +2574,12 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
               <FitText :text="step.output" />
             </div>
 
-            <div class="logic-label-ok-icon" aria-hidden="true" />
+            <div
+              v-if="!step.typeError"
+              class="logic-label-ok-icon"
+              aria-hidden="true"
+            />
+            <div v-else class="logic-label-error-icon" aria-hidden="true" />
 
             <div class="logic-labeller-badge">E</div>
 
@@ -2568,7 +2595,11 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
                   "
                   class="logic-write-card-composite"
                   :style="{
-                    backgroundImage: `url('${publicAsset(`valuetype/${getValueTypeTextureName(getOutputTextureName(step))}.png`)}'), url('${publicAsset('item/variable.png')}')`,
+                    // Type-mismatched steps produce a blank (untyped) var card
+                    // rather than a card typed by the (wrong) output type.
+                    backgroundImage: step.typeError
+                      ? `url('${publicAsset('item/variable.png')}')`
+                      : `url('${publicAsset(`valuetype/${getValueTypeTextureName(getOutputTextureName(step))}.png`)}'), url('${publicAsset('item/variable.png')}')`,
                   }"
                 />
               </HoverMinecraftTooltip>

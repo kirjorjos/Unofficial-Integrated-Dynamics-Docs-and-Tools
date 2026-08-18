@@ -17,7 +17,7 @@ import {
   getValueTypeMetaForAst,
   getOperatorOutputType,
   getStepActualOutputType,
-  LOGIC_PROGRAMMER_TYPE_COLORS,
+  getTypeColor,
   LOGIC_PROGRAMMER_DATA_TYPE_TABS,
 } from "pages-lib/visualTransformer";
 
@@ -237,7 +237,7 @@ export const getValueTypeDisplayEntries = () =>
     symbol: tab,
     matchString: tab.toLowerCase(),
     tabKind: "type" as const,
-    color: LOGIC_PROGRAMMER_TYPE_COLORS[tab] ?? "#f0f0f0",
+    color: getTypeColor(tab),
   }));
 
 export const getEntryStyle = (entry: VisibleListEntry) => {
@@ -412,7 +412,7 @@ export const getOperatorValueSignatureText = (
   return signature
     .map((typeName) => {
       const meta = getValueTypeMeta(typeName);
-      return `${meta.colorCode}${meta.label}`;
+      return `${meta.altColorCode ?? meta.colorCode}${meta.label}`;
     })
     .join(" §r-> ");
 };
@@ -600,7 +600,7 @@ export const buildValueCardTooltip = (
   const lines = [
     formatTemplate(
       VALUE_TYPE_NAME_TEMPLATE,
-      `${typeMeta.colorCode}${typeMeta.label}`
+      `${typeMeta.altColorCode ?? typeMeta.colorCode}${typeMeta.label}`
     ),
   ];
 
@@ -698,12 +698,11 @@ export const buildOperatorCardTooltip = (
           `§eCategory: §r${categoryName}`,
           ...resolvedInputTypes.map((inputType, index) => {
             const inputMeta = getValueTypeMeta(inputType);
-            return `§eInput Type ${index + 1}: §r${inputMeta.colorCode}${inputMeta.label}`;
+            return `§eInput Type ${index + 1}: §r${inputMeta.altColorCode ?? inputMeta.colorCode}${inputMeta.label}`;
           }),
           `§eOutput Type: §r${
-            resolvedOutputType === "Any"
-              ? "§0"
-              : getValueTypeMeta(resolvedOutputType).colorCode
+            getValueTypeMeta(resolvedOutputType).altColorCode ??
+            getValueTypeMeta(resolvedOutputType).colorCode
           }${getValueTypeMeta(resolvedOutputType).label}`,
           formatTemplate(
             "§eVariable IDs: §r§o{%s}",
@@ -732,12 +731,11 @@ export const buildOperatorCardTooltip = (
             `§eCategory: §r${baseMeta.categoryName}`,
             ...baseMeta.inputTypes.map((inputType, index) => {
               const inputMeta = getValueTypeMeta(inputType);
-              return `§eInput Type ${index + 1}: §r${inputMeta.colorCode}${inputMeta.label}`;
+              return `§eInput Type ${index + 1}: §r${inputMeta.altColorCode ?? inputMeta.colorCode}${inputMeta.label}`;
             }),
             `§eOutput Type: §r${
-              baseMeta.outputType === "Any"
-                ? "§0"
-                : getValueTypeMeta(baseMeta.outputType).colorCode
+              getValueTypeMeta(baseMeta.outputType).altColorCode ??
+              getValueTypeMeta(baseMeta.outputType).colorCode
             }${getValueTypeMeta(baseMeta.outputType).label}`,
             `§eVariable IDs: §r§o{${step.inputs
               .map((input) => `${input.name}:${input.variableId}`)
@@ -759,12 +757,11 @@ export const buildOperatorCardTooltip = (
     `§eCategory: §r${operatorMeta.categoryName}`,
     ...operatorMeta.inputTypes.map((inputType, index) => {
       const inputMeta = getValueTypeMeta(inputType);
-      return `§eInput Type ${index + 1}: §r${inputMeta.colorCode}${inputMeta.label}`;
+      return `§eInput Type ${index + 1}: §r${inputMeta.altColorCode ?? inputMeta.colorCode}${inputMeta.label}`;
     }),
     `§eOutput Type: §r${
-      operatorMeta.outputType === "Any"
-        ? "§0"
-        : getValueTypeMeta(operatorMeta.outputType).colorCode
+      getValueTypeMeta(operatorMeta.outputType).altColorCode ??
+      getValueTypeMeta(operatorMeta.outputType).colorCode
     }${getValueTypeMeta(operatorMeta.outputType).label}`,
     formatTemplate(
       "§eVariable IDs: §r§o{%s}",
@@ -806,7 +803,7 @@ export const getExpectedInputTooltip = (typeName: string): TooltipData => {
     lines: [
       formatTemplate(
         EXPECTED_INPUT_TYPE_TEMPLATE,
-        `${typeMeta.colorCode}${typeMeta.label}`
+        `${typeMeta.altColorCode ?? typeMeta.colorCode}${typeMeta.label}`
       ),
     ],
   };
@@ -819,7 +816,7 @@ export const getExpectedOutputTooltip = (typeName: string): TooltipData => {
     lines: [
       formatTemplate(
         EXPECTED_OUTPUT_TYPE_TEMPLATE,
-        `${typeMeta.colorCode}${typeMeta.label}`
+        `${typeMeta.altColorCode ?? typeMeta.colorCode}${typeMeta.label}`
       ),
     ],
   };
@@ -1014,9 +1011,7 @@ export const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
       symbol: operatorClass.symbol ?? "",
       tabKind: "operator" as const,
       matchString: new operatorClass(false).getFullDisplayName().toLowerCase(),
-      color:
-        LOGIC_PROGRAMMER_TYPE_COLORS[getOperatorOutputType(operatorClass)] ??
-        "#f0f0f0",
+      color: getTypeColor(getOperatorOutputType(operatorClass)),
     }));
 
   const filtered = [...valueTypeEntries, ...operatorEntries]

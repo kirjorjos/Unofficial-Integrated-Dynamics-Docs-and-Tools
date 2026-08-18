@@ -26,6 +26,7 @@ type OperatorClassLike = {
 export type ValueTypeTooltipMeta = {
   label: string;
   colorCode: string;
+  altColorCode?: string;
   infoKey?: string;
 };
 
@@ -52,29 +53,39 @@ export const LOGIC_PROGRAMMER_DATA_TYPE_TABS = [
   "Recipe",
 ] as const;
 
-export const LOGIC_PROGRAMMER_TYPE_COLORS: Record<string, string> = {
-  Any: "#f0f0f0",
-  Boolean: "#2b2fe7",
-  Integer: "#f39604",
-  Double: "#ebea17",
-  Long: "#d7fe17",
-  String: "#fa0a0d",
-  List: "#af0301",
-  Operator: "#2be72f",
-  NBT: "#00aaaa",
-  Block: "#f3f3f3",
-  Item: "#f3f3f3",
-  Entity: "#f3f3f3",
-  Fluid: "#f3f3f3",
-  Ingredients: "#f3f3f3",
-  Recipe: "#f3f3f3",
-  Null: "#f0f0f0",
+export type ValueTypeColor = {
+  primary: string;
+  alt?: string;
+};
+
+export const LOGIC_PROGRAMMER_TYPE_COLORS: Record<string, ValueTypeColor> = {
+  Any: { primary: "#000000", alt: "#ffffff" },
+  Number: { primary: "#ffaa00" },
+  Named: { primary: "#ff5555" },
+  UniquelyNamed: { primary: "#ff5555" },
+  Nullable: { primary: "#ff55ff" }, // Bright to signify error
+  Boolean: { primary: "#2b2fe7" },
+  Integer: { primary: "#f39604" },
+  Double: { primary: "#ebea17" },
+  Long: { primary: "#d7fe17" },
+  String: { primary: "#fa0a0d" },
+  List: { primary: "#af0301" },
+  Operator: { primary: "#2be72f" },
+  NBT: { primary: "#00aaaa" },
+  Block: { primary: "#f3f3f3" },
+  Item: { primary: "#f3f3f3" },
+  Entity: { primary: "#f3f3f3" },
+  Fluid: { primary: "#f3f3f3" },
+  Ingredients: { primary: "#f3f3f3" },
+  Recipe: { primary: "#f3f3f3" },
+  Null: { primary: "#f0f0f0" },
 };
 
 export const VALUE_TYPE_TOOLTIP_META: Record<string, ValueTypeTooltipMeta> = {
   Any: {
     label: "Any",
-    colorCode: "§r",
+    colorCode: "§0",
+    altColorCode: "§f",
     infoKey: "valuetype.integrateddynamics.any.info",
   },
   Number: {
@@ -172,7 +183,11 @@ export function getValueTypeMetaForAst(
 }
 
 export function getTypeColor(typeName: string): string {
-  return LOGIC_PROGRAMMER_TYPE_COLORS[typeName] ?? "#f0f0f0";
+  return LOGIC_PROGRAMMER_TYPE_COLORS[typeName]?.primary ?? "#f0f0f0";
+}
+
+export function getTypeAltColor(typeName: string): string {
+  return LOGIC_PROGRAMMER_TYPE_COLORS[typeName]?.alt ?? getTypeColor(typeName);
 }
 
 export function getOperatorClass(
@@ -219,7 +234,7 @@ export function getOperatorValueSignatureLines(
     return {
       prefix: index === 0 ? "" : "  -> ",
       label: typeMeta.label,
-      color: typeName === "Any" ? "#000000" : getTypeColor(typeName),
+      color: getTypeColor(typeName),
     };
   });
 }
@@ -235,6 +250,14 @@ export function getStepActualOutputType(step: {
     if (evaluated != null && typeof evaluated.getSignatureNode === "function") {
       const rootType = evaluated.getSignatureNode().getRootType();
       if (rootType !== "Any") return rootType;
+    }
+    const flattened = flattenAnonymousBaseOperatorApplication(step.node);
+    if (flattened?.fullyApplied && flattened.operator.type === "Operator") {
+      const operatorClass = getOperatorClass(flattened.operator.opName);
+      if (operatorClass) {
+        const outputType = getOperatorOutputType(operatorClass);
+        if (outputType !== "Any") return outputType;
+      }
     }
   }
   const opKey = step.detail ?? step.tooltipOperatorKey;
