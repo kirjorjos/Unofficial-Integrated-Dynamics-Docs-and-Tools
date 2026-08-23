@@ -68,6 +68,7 @@ export type VisualCardRef = {
 export type VisibleListEntry = {
   symbol: string;
   matchString?: string;
+  registryKey?: string;
   active: boolean;
   tabKind: "type" | "operator";
   color: string;
@@ -236,6 +237,7 @@ export const getValueTypeDisplayEntries = () =>
   LOGIC_PROGRAMMER_DATA_TYPE_TABS.map((tab) => ({
     symbol: tab,
     matchString: tab.toLowerCase(),
+    registryKey: undefined as string | undefined,
     tabKind: "type" as const,
     color: getTypeColor(tab),
   }));
@@ -983,10 +985,10 @@ export const getPatternBox = (step: VisualStep): PatternBox => {
   };
 };
 
-const operatorListEntries = Object.values(operatorRegistry).filter(
-  (value): value is OperatorClassLike =>
+const operatorListEntries = Object.entries(operatorRegistry).filter(
+  ([, value]) =>
     typeof value === "function" && value.prototype instanceof BaseOperator
-);
+) as [string, OperatorClassLike][];
 
 export const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
   const search = step.searchLabel.trim().toLowerCase();
@@ -995,7 +997,7 @@ export const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
   );
 
   const operatorEntries = operatorListEntries
-    .filter((operatorClass) => {
+    .filter(([, operatorClass]) => {
       const fullName = new operatorClass(false)
         .getFullDisplayName()
         .toLowerCase();
@@ -1007,10 +1009,11 @@ export const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
         operatorName.includes(search)
       );
     })
-    .map((operatorClass) => ({
+    .map(([registryKey, operatorClass]) => ({
       symbol: operatorClass.symbol ?? "",
       tabKind: "operator" as const,
-      matchString: new operatorClass(false).getFullDisplayName().toLowerCase(),
+      matchString: (operatorClass.operatorName ?? "").toLowerCase(),
+      registryKey,
       color: getTypeColor(getOperatorOutputType(operatorClass)),
     }));
 
@@ -1026,6 +1029,7 @@ export const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
       symbol: entry.symbol,
       tabKind: entry.tabKind,
       color: entry.color,
+      registryKey: entry.registryKey,
       active:
         entry.tabKind === "type"
           ? !step.forceOperatorTabActive &&
@@ -1033,8 +1037,9 @@ export const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
               (step.sourceType === "Operator"
                 ? "Operator"
                 : getValueTypeSearchLabel(step.sourceType))
-          : (step.forceOperatorTabActive || step.sourceType !== "Operator") &&
-            (entry.symbol === step.symbol || entry.matchString === search),
+          : entry.tabKind === "operator" &&
+            !!step.detail &&
+            entry.registryKey === step.detail,
     }));
 
   if (filtered.some((entry) => entry.active)) {
@@ -1417,6 +1422,7 @@ export const generateVisualSteps = (
               .renderPattern,
             inputs: argOutputs,
             output: finalVarName,
+            detail: flattened.operator.opName,
             node: ast,
             tooltipOperatorKey: getCurryTooltipKey(flattened.args.length),
             typeError,
