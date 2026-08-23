@@ -2,8 +2,7 @@
 import { computed } from "vue";
 import FitText from "./FitText.vue";
 import HoverMinecraftTooltip from "./HoverMinecraftTooltip.vue";
-import DisplayPanelView from "./DisplayPanelView.vue";
-import DisplayPanelViewHolder from "./DisplayPanelViewHolder.vue";
+import VisualTransformerStep from "./VisualTransformerStep.vue";
 import {
   ASTToCondensed,
   getExpandedVarName,
@@ -2259,330 +2258,180 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
 
 <template>
   <section class="logic-programmer-sequence">
-    <article
+    <VisualTransformerStep
       v-for="(step, index) in steps"
       :key="step.id"
-      class="logic-programmer-shot"
+      :step="step"
+      :index="index"
+      :all-steps="steps"
+      :show-step-numbers="props.showStepNumbers"
+      :show-step-titles="props.showStepTitles"
+      :force-show-output-card="props.forceShowOutputCard"
+      :display-panel-text="getDisplayPanelText(step)"
+      :display-panel-color="getDisplayPanelColor(step)"
+      :display-panel-align="getDisplayPanelAlign(step)"
+      :display-panel-error="getStepDisplayError(step)"
     >
-      <div
-        v-if="props.showStepNumbers !== false || props.showStepTitles !== false"
-        class="logic-programmer-meta"
-      >
-        <div
-          v-if="props.showStepNumbers !== false"
-          class="logic-programmer-step"
-        >
-          Step {{ index + 1 }}
-        </div>
-        <div
-          v-if="props.showStepTitles !== false"
-          class="logic-programmer-step-title"
-        >
-          {{ step.output }}
-        </div>
-      </div>
+      <div class="logic-programmer-frame">
+        <div class="logic-programmer-overlay">
+          <div class="logic-search-overlay">
+            <FitText :text="step.searchLabel" />
+          </div>
 
-      <div class="logic-programmer-frame-shell">
-        <div class="logic-programmer-frame">
-          <div class="logic-programmer-overlay">
-            <div class="logic-search-overlay">
-              <FitText :text="step.searchLabel" />
-            </div>
-
-            <div
-              v-for="(entry, entryIndex) in getVisibleListEntries(step)"
-              :key="`${step.id}-entry-${entryIndex}`"
-              class="logic-element-tab"
-              :class="[
-                `logic-element-tab-${entry.tabKind}`,
-                { 'logic-element-tab-active': entry.active },
-              ]"
-              :style="{
-                top: `${18 + entryIndex * 18}px`,
-                ...getEntryStyle(entry),
-              }"
+          <div
+            v-for="(entry, entryIndex) in getVisibleListEntries(step)"
+            :key="`${step.id}-entry-${entryIndex}`"
+            class="logic-element-tab"
+            :class="[
+              `logic-element-tab-${entry.tabKind}`,
+              { 'logic-element-tab-active': entry.active },
+            ]"
+            :style="{
+              top: `${18 + entryIndex * 18}px`,
+              ...getEntryStyle(entry),
+            }"
+          >
+            <span
+              v-if="entry.active"
+              class="logic-element-tab-arrow"
+              aria-hidden="true"
             >
-              <span
-                v-if="entry.active"
-                class="logic-element-tab-arrow"
-                aria-hidden="true"
+              ▶
+            </span>
+            <FitText
+              class="logic-element-tab-symbol"
+              :text="entry.symbol"
+              align="center"
+              :min-scale="0.35"
+            />
+          </div>
+
+          <div class="logic-clear-button-overlay">Clear</div>
+
+          <template v-if="step.sourceType === 'List'">
+            <div class="logic-list-nav-btn logic-list-nav-prev">◀</div>
+            <div class="logic-list-search">
+              <FitText
+                :text="step.inputs.length > 0 ? step.inputs[0]!.type : 'Any'"
+                align="left"
+              />
+            </div>
+            <div class="logic-list-nav-btn logic-list-nav-next">▶</div>
+            <div class="logic-list-add-btn">+</div>
+
+            <div v-if="step.inputs.length > 0" class="logic-list-editor">
+              <div
+                class="logic-list-editor-prev"
+                :class="{
+                  'logic-list-editor-btn-disabled': step.inputs.length <= 1,
+                }"
+              >
+                ◀
+              </div>
+              <div class="logic-list-editor-pos">
+                1 / {{ step.inputs.length }}
+              </div>
+              <div
+                class="logic-list-editor-next"
+                :class="{
+                  'logic-list-editor-btn-disabled': step.inputs.length <= 1,
+                }"
               >
                 ▶
-              </span>
-              <FitText
-                class="logic-element-tab-symbol"
-                :text="entry.symbol"
-                align="center"
-                :min-scale="0.35"
-              />
-            </div>
-
-            <div class="logic-clear-button-overlay">Clear</div>
-
-            <template v-if="step.sourceType === 'List'">
-              <div class="logic-list-nav-btn logic-list-nav-prev">◀</div>
-              <div class="logic-list-search">
-                <FitText
-                  :text="step.inputs.length > 0 ? step.inputs[0]!.type : 'Any'"
-                  align="left"
-                />
               </div>
-              <div class="logic-list-nav-btn logic-list-nav-next">▶</div>
-              <div class="logic-list-add-btn">+</div>
 
-              <div v-if="step.inputs.length > 0" class="logic-list-editor">
-                <div
-                  class="logic-list-editor-prev"
-                  :class="{
-                    'logic-list-editor-btn-disabled': step.inputs.length <= 1,
-                  }"
-                >
-                  ◀
-                </div>
-                <div class="logic-list-editor-pos">
-                  1 / {{ step.inputs.length }}
-                </div>
-                <div
-                  class="logic-list-editor-next"
-                  :class="{
-                    'logic-list-editor-btn-disabled': step.inputs.length <= 1,
-                  }"
-                >
-                  ▶
-                </div>
-
-                <!-- Operator type: show operator dropdown + signature -->
-                <template
-                  v-if="(step.node as any).value[0]?.type === 'Operator'"
-                >
-                  <div class="logic-list-editor-op-canvas" />
-                  <div class="logic-list-editor-op-field">
-                    <FitText
-                      :text="
-                        getOperatorDisplay((step.node as any).value[0].opName)
-                          .title
-                      "
-                      align="left"
-                      :min-scale="0.6"
-                    />
-                  </div>
-                  <div
-                    v-for="(line, lineIndex) in getOperatorValueSignatureLines(
-                      (step.node as any).value[0].opName
-                    )"
-                    :key="`list-op-sig-${lineIndex}`"
-                    class="logic-list-editor-sig-line"
-                    :style="{
-                      top: `${44 + lineIndex * 9}px`,
-                    }"
-                  >
-                    <span style="color: #000">{{ line.prefix }}</span>
-                    <span :style="{ color: line.color }">
-                      {{ line.label }}
-                    </span>
-                  </div>
-                </template>
-
-                <!-- Item/Block/Fluid: show slot + placeholder -->
-                <template
-                  v-else-if="isItemStackBackedValueType(step.inputs[0]!.type)"
-                >
-                  <div class="logic-list-editor-item-label">
-                    {{ getItemStackPlaceholder(step.inputs[0]!.type) }}
-                  </div>
-                  <div class="logic-list-editor-item-arrow" />
-                  <div
-                    class="logic-slot-overlay"
-                    :style="{
-                      left: `${80}px`,
-                      top: `${50}px`,
-                    }"
-                  >
-                    <div
-                      class="logic-slot-card-composite"
-                      :style="{
-                        backgroundImage: `url('${publicAsset(`valuetype/${getValueTypeTextureName(step.inputs[0]!.type)}.png`)}'), url('${publicAsset('item/variable.png')}')`,
-                      }"
-                    />
-                  </div>
-                </template>
-
-                <!-- Primitive value types: show value box -->
-                <template v-else>
-                  <div class="logic-list-editor-value-box">
-                    <FitText
-                      :text="
-                        getCompactValueTextForAst((step.node as any).value[0])
-                      "
-                      align="left"
-                      :min-scale="0.5"
-                    />
-                  </div>
-                </template>
-
-                <div class="logic-list-editor-minus">−</div>
-              </div>
-            </template>
-
-            <template
-              v-else-if="
-                step.workspaceMode === 'operatorValue' ||
-                step.workspaceMode === 'pattern'
-              "
-            >
-              <div
-                class="logic-operator-canvas"
-                :style="{
-                  left: `${getCanvasBox(step).left}px`,
-                  top: `${getCanvasBox(step).top}px`,
-                  width: `${getCanvasBox(step).width}px`,
-                  height: `${getCanvasBox(step).height}px`,
-                }"
-              />
-
-              <!-- When operator has a render pattern, show its slots and symbol -->
-              <template v-if="getPatternBox(step).slots.length > 0">
-                <div
-                  v-for="(slot, inputIndex) in getPatternBox(step).slots"
-                  :key="`${step.id}-op-slot-${inputIndex}`"
-                  class="logic-slot-overlay"
-                  :class="{
-                    'logic-card-overlay-has-tooltip': !!getInputSlotTooltip(
-                      step,
-                      inputIndex
-                    ),
-                  }"
-                  :style="{ left: `${slot.left}px`, top: `${slot.top}px` }"
-                >
-                  <HoverMinecraftTooltip
-                    v-if="getInputSlotTooltip(step, inputIndex)"
-                    :title="getInputSlotTooltip(step, inputIndex)!.title"
-                    :lines="getInputSlotTooltip(step, inputIndex)!.lines"
-                  >
-                    <div
-                      v-if="step.inputs[inputIndex]"
-                      class="logic-slot-card-composite"
-                      :style="{
-                        backgroundImage: `url('${publicAsset(`valuetype/${getValueTypeTextureName(step.inputs[inputIndex]?.type ?? 'Null')}.png`)}'), url('${publicAsset('item/variable.png')}')`,
-                      }"
-                    />
-                  </HoverMinecraftTooltip>
-                </div>
-
-                <div
-                  v-if="getPatternBox(step).symbol"
-                  class="logic-symbol-overlay"
-                  :class="{
-                    'logic-symbol-overlay-text': step.symbol.length > 2,
-                  }"
-                  :style="{
-                    left: `${getSymbolPos(step).left}px`,
-                    top: `${getSymbolPos(step).top}px`,
-                  }"
-                >
-                  {{ step.symbol }}
-                </div>
-              </template>
-
-              <!-- No render pattern: show generic dropdown + signature -->
-              <template v-else>
-                <div
-                  class="logic-operator-dropdown-field"
-                  :style="{
-                    left: `${getCanvasBox(step).left + 14}px`,
-                    top: `${getCanvasBox(step).top + 6}px`,
-                    width: `${getCanvasBox(step).width - 28}px`,
-                  }"
-                >
+              <!-- Operator type: show operator dropdown + signature -->
+              <template v-if="(step.node as any).value[0]?.type === 'Operator'">
+                <div class="logic-list-editor-op-canvas" />
+                <div class="logic-list-editor-op-field">
                   <FitText
-                    :text="step.panelLabel ?? step.title"
-                    :min-scale="0.7"
+                    :text="
+                      getOperatorDisplay((step.node as any).value[0].opName)
+                        .title
+                    "
+                    align="left"
+                    :min-scale="0.6"
                   />
                 </div>
-
                 <div
                   v-for="(line, lineIndex) in getOperatorValueSignatureLines(
-                    step.detail as TypeOperatorKey
+                    (step.node as any).value[0].opName
                   )"
-                  :key="`${step.id}-signature-${lineIndex}`"
-                  class="logic-operator-signature-line"
+                  :key="`list-op-sig-${lineIndex}`"
+                  class="logic-list-editor-sig-line"
                   :style="{
-                    left: `${getCanvasBox(step).left + 10}px`,
-                    top: `${getCanvasBox(step).top + 25 + lineIndex * 9}px`,
+                    top: `${44 + lineIndex * 9}px`,
                   }"
                 >
-                  <span
-                    class="logic-operator-signature-prefix"
-                    :style="{ color: '#000000' }"
-                  >
-                    {{ line.prefix }}
-                  </span>
+                  <span style="color: #000">{{ line.prefix }}</span>
                   <span :style="{ color: line.color }">
                     {{ line.label }}
                   </span>
                 </div>
               </template>
-            </template>
 
-            <template v-else-if="getValueBox(step)">
-              <div
-                v-if="getPatternBox(step).canvas"
-                class="logic-operator-canvas"
-                :style="{
-                  left: `${getCanvasBox(step).left}px`,
-                  top: `${getCanvasBox(step).top}px`,
-                  width: `${getCanvasBox(step).width}px`,
-                  height: `${getCanvasBox(step).height}px`,
-                }"
-              />
-              <div
-                class="logic-value-box"
-                :style="{
-                  left: `${getValueBoxLeft(step)}px`,
-                  top: `${getValueBoxTop(step)}px`,
-                  width: `${getValueBoxWidth(step)}px`,
-                }"
+              <!-- Item/Block/Fluid: show slot + placeholder -->
+              <template
+                v-else-if="isItemStackBackedValueType(step.inputs[0]!.type)"
               >
-                <FitText
-                  :text="step.detail ?? step.title"
-                  align="left"
-                  :min-scale="0.4"
-                />
-              </div>
-            </template>
-
-            <template v-else>
-              <div
-                v-if="getPatternBox(step).canvas"
-                class="logic-operator-canvas"
-                :style="{
-                  left: `${getCanvasBox(step).left}px`,
-                  top: `${getCanvasBox(step).top}px`,
-                  width: `${getCanvasBox(step).width}px`,
-                  height: `${getCanvasBox(step).height}px`,
-                }"
-              />
-              <template v-if="isItemStackBackedValueType(step.sourceType)">
+                <div class="logic-list-editor-item-label">
+                  {{ getItemStackPlaceholder(step.inputs[0]!.type) }}
+                </div>
+                <div class="logic-list-editor-item-arrow" />
                 <div
-                  class="logic-item-placeholder-label"
+                  class="logic-slot-overlay"
                   :style="{
-                    left: `${getCanvasBox(step).left - 64}px`,
-                    top: `${getCanvasBox(step).top + 3}px`,
+                    left: `${80}px`,
+                    top: `${50}px`,
                   }"
                 >
-                  {{ getItemStackPlaceholder(step.sourceType) }}
+                  <div
+                    class="logic-slot-card-composite"
+                    :style="{
+                      backgroundImage: `url('${publicAsset(`valuetype/${getValueTypeTextureName(step.inputs[0]!.type)}.png`)}'), url('${publicAsset('item/variable.png')}')`,
+                    }"
+                  />
                 </div>
-                <div
-                  class="logic-item-placeholder-arrow"
-                  :style="{
-                    left: `${getCanvasBox(step).left - 15}px`,
-                    top: `${getCanvasBox(step).top + 6}px`,
-                  }"
-                />
               </template>
+
+              <!-- Primitive value types: show value box -->
+              <template v-else>
+                <div class="logic-list-editor-value-box">
+                  <FitText
+                    :text="
+                      getCompactValueTextForAst((step.node as any).value[0])
+                    "
+                    align="left"
+                    :min-scale="0.5"
+                  />
+                </div>
+              </template>
+
+              <div class="logic-list-editor-minus">−</div>
+            </div>
+          </template>
+
+          <template
+            v-else-if="
+              step.workspaceMode === 'operatorValue' ||
+              step.workspaceMode === 'pattern'
+            "
+          >
+            <div
+              class="logic-operator-canvas"
+              :style="{
+                left: `${getCanvasBox(step).left}px`,
+                top: `${getCanvasBox(step).top}px`,
+                width: `${getCanvasBox(step).width}px`,
+                height: `${getCanvasBox(step).height}px`,
+              }"
+            />
+
+            <!-- When operator has a render pattern, show its slots and symbol -->
+            <template v-if="getPatternBox(step).slots.length > 0">
               <div
                 v-for="(slot, inputIndex) in getPatternBox(step).slots"
-                :key="`${step.id}-slot-${inputIndex}`"
+                :key="`${step.id}-op-slot-${inputIndex}`"
                 class="logic-slot-overlay"
                 :class="{
                   'logic-card-overlay-has-tooltip': !!getInputSlotTooltip(
@@ -2606,10 +2455,13 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
                   />
                 </HoverMinecraftTooltip>
               </div>
+
               <div
                 v-if="getPatternBox(step).symbol"
                 class="logic-symbol-overlay"
-                :class="{ 'logic-symbol-overlay-text': step.symbol.length > 2 }"
+                :class="{
+                  'logic-symbol-overlay-text': step.symbol.length > 2,
+                }"
                 :style="{
                   left: `${getSymbolPos(step).left}px`,
                   top: `${getSymbolPos(step).top}px`,
@@ -2619,62 +2471,178 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
               </div>
             </template>
 
-            <div class="logic-write-arrow" />
+            <!-- No render pattern: show generic dropdown + signature -->
+            <template v-else>
+              <div
+                class="logic-operator-dropdown-field"
+                :style="{
+                  left: `${getCanvasBox(step).left + 14}px`,
+                  top: `${getCanvasBox(step).top + 6}px`,
+                  width: `${getCanvasBox(step).width - 28}px`,
+                }"
+              >
+                <FitText
+                  :text="step.panelLabel ?? step.title"
+                  :min-scale="0.7"
+                />
+              </div>
 
-            <div class="logic-label-field">
-              <FitText :text="step.output" />
-            </div>
+              <div
+                v-for="(line, lineIndex) in getOperatorValueSignatureLines(
+                  step.detail as TypeOperatorKey
+                )"
+                :key="`${step.id}-signature-${lineIndex}`"
+                class="logic-operator-signature-line"
+                :style="{
+                  left: `${getCanvasBox(step).left + 10}px`,
+                  top: `${getCanvasBox(step).top + 25 + lineIndex * 9}px`,
+                }"
+              >
+                <span
+                  class="logic-operator-signature-prefix"
+                  :style="{ color: '#000000' }"
+                >
+                  {{ line.prefix }}
+                </span>
+                <span :style="{ color: line.color }">
+                  {{ line.label }}
+                </span>
+              </div>
+            </template>
+          </template>
 
+          <template v-else-if="getValueBox(step)">
             <div
-              v-if="!step.typeError"
-              class="logic-label-ok-icon"
-              aria-hidden="true"
+              v-if="getPatternBox(step).canvas"
+              class="logic-operator-canvas"
+              :style="{
+                left: `${getCanvasBox(step).left}px`,
+                top: `${getCanvasBox(step).top}px`,
+                width: `${getCanvasBox(step).width}px`,
+                height: `${getCanvasBox(step).height}px`,
+              }"
             />
-            <div v-else class="logic-label-error-icon" aria-hidden="true" />
+            <div
+              class="logic-value-box"
+              :style="{
+                left: `${getValueBoxLeft(step)}px`,
+                top: `${getValueBoxTop(step)}px`,
+                width: `${getValueBoxWidth(step)}px`,
+              }"
+            >
+              <FitText
+                :text="step.detail ?? step.title"
+                align="left"
+                :min-scale="0.4"
+              />
+            </div>
+          </template>
 
-            <div class="logic-labeller-badge">E</div>
-
-            <div class="logic-write-card logic-card-overlay-has-tooltip">
+          <template v-else>
+            <div
+              v-if="getPatternBox(step).canvas"
+              class="logic-operator-canvas"
+              :style="{
+                left: `${getCanvasBox(step).left}px`,
+                top: `${getCanvasBox(step).top}px`,
+                width: `${getCanvasBox(step).width}px`,
+                height: `${getCanvasBox(step).height}px`,
+              }"
+            />
+            <template v-if="isItemStackBackedValueType(step.sourceType)">
+              <div
+                class="logic-item-placeholder-label"
+                :style="{
+                  left: `${getCanvasBox(step).left - 64}px`,
+                  top: `${getCanvasBox(step).top + 3}px`,
+                }"
+              >
+                {{ getItemStackPlaceholder(step.sourceType) }}
+              </div>
+              <div
+                class="logic-item-placeholder-arrow"
+                :style="{
+                  left: `${getCanvasBox(step).left - 15}px`,
+                  top: `${getCanvasBox(step).top + 6}px`,
+                }"
+              />
+            </template>
+            <div
+              v-for="(slot, inputIndex) in getPatternBox(step).slots"
+              :key="`${step.id}-slot-${inputIndex}`"
+              class="logic-slot-overlay"
+              :class="{
+                'logic-card-overlay-has-tooltip': !!getInputSlotTooltip(
+                  step,
+                  inputIndex
+                ),
+              }"
+              :style="{ left: `${slot.left}px`, top: `${slot.top}px` }"
+            >
               <HoverMinecraftTooltip
-                :title="getOutputSlotTooltip(step).title"
-                :lines="getOutputSlotTooltip(step).lines"
+                v-if="getInputSlotTooltip(step, inputIndex)"
+                :title="getInputSlotTooltip(step, inputIndex)!.title"
+                :lines="getInputSlotTooltip(step, inputIndex)!.lines"
               >
                 <div
-                  v-if="
-                    props.forceShowOutputCard ||
-                    step.workspaceMode !== 'pattern'
-                  "
-                  class="logic-write-card-composite"
+                  v-if="step.inputs[inputIndex]"
+                  class="logic-slot-card-composite"
                   :style="{
-                    // Type-mismatched steps produce a blank (untyped) var card
-                    // rather than a card typed by the (wrong) output type.
-                    backgroundImage: step.typeError
-                      ? `url('${publicAsset('item/variable.png')}')`
-                      : `url('${publicAsset(`valuetype/${getValueTypeTextureName(getOutputTextureName(step))}.png`)}'), url('${publicAsset('item/variable.png')}')`,
+                    backgroundImage: `url('${publicAsset(`valuetype/${getValueTypeTextureName(step.inputs[inputIndex]?.type ?? 'Null')}.png`)}'), url('${publicAsset('item/variable.png')}')`,
                   }"
                 />
               </HoverMinecraftTooltip>
             </div>
+            <div
+              v-if="getPatternBox(step).symbol"
+              class="logic-symbol-overlay"
+              :class="{ 'logic-symbol-overlay-text': step.symbol.length > 2 }"
+              :style="{
+                left: `${getSymbolPos(step).left}px`,
+                top: `${getSymbolPos(step).top}px`,
+              }"
+            >
+              {{ step.symbol }}
+            </div>
+          </template>
+
+          <div class="logic-write-arrow" />
+
+          <div class="logic-label-field">
+            <FitText :text="step.output" />
+          </div>
+
+          <div
+            v-if="!step.typeError"
+            class="logic-label-ok-icon"
+            aria-hidden="true"
+          />
+          <div v-else class="logic-label-error-icon" aria-hidden="true" />
+
+          <div class="logic-labeller-badge">E</div>
+
+          <div class="logic-write-card logic-card-overlay-has-tooltip">
+            <HoverMinecraftTooltip
+              :title="getOutputSlotTooltip(step).title"
+              :lines="getOutputSlotTooltip(step).lines"
+            >
+              <div
+                v-if="
+                  props.forceShowOutputCard || step.workspaceMode !== 'pattern'
+                "
+                class="logic-write-card-composite"
+                :style="{
+                  // Type-mismatched steps produce a blank (untyped) var card
+                  // rather than a card typed by the (wrong) output type.
+                  backgroundImage: step.typeError
+                    ? `url('${publicAsset('item/variable.png')}')`
+                    : `url('${publicAsset(`valuetype/${getValueTypeTextureName(getOutputTextureName(step))}.png`)}'), url('${publicAsset('item/variable.png')}')`,
+                }"
+              />
+            </HoverMinecraftTooltip>
           </div>
         </div>
       </div>
-
-      <DisplayPanelViewHolder>
-        <DisplayPanelView
-          :text="getDisplayPanelText(step)"
-          :text-color="getDisplayPanelColor(step)"
-          :align="getDisplayPanelAlign(step)"
-          :type-name="step.sourceType"
-          :type-error="getStepDisplayError(step)"
-        />
-        <DisplayPanelView
-          :text="getDisplayPanelText(step)"
-          :text-color="getDisplayPanelColor(step)"
-          :align="getDisplayPanelAlign(step)"
-          :type-name="step.sourceType"
-          :type-error="getStepDisplayError(step)"
-        />
-      </DisplayPanelViewHolder>
-    </article>
+    </VisualTransformerStep>
   </section>
 </template>

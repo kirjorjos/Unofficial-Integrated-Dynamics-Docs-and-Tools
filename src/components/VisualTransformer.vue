@@ -1,14 +1,8 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import DisplayPanelView from "./DisplayPanelView.vue";
-import DisplayPanelViewHolder from "./DisplayPanelViewHolder.vue";
-import {
-  generateVisualSteps,
-  getDisplayPanelText,
-  getDisplayPanelAlignment,
-  getCumulativeStepError,
-} from "pages-lib/visualTransformerLogic";
-import { getDisplayPanelColor } from "pages-lib/visualTransformer";
+import VisualTransformerStep from "./VisualTransformerStep.vue";
+import LogicProgrammerView from "./LogicProgrammerView.vue";
+import { generateVisualSteps } from "pages-lib/visualTransformerLogic";
 
 const props = defineProps<{
   ast: globalThis.TypeAST.AST;
@@ -16,6 +10,7 @@ const props = defineProps<{
   showStepNumbers?: boolean;
   showStepTitles?: boolean;
   operatorPreviewMode?: "value" | "pattern";
+  forceShowOutputCard?: boolean;
 }>();
 
 const startId = props.startVariableId ?? 0;
@@ -27,49 +22,20 @@ const steps = computed(() =>
 
 <template>
   <section class="logic-programmer-sequence">
-    <article
+    <VisualTransformerStep
       v-for="(step, index) in steps"
       :key="step.id"
-      class="logic-programmer-shot"
+      :step="step"
+      :index="index"
+      :all-steps="steps"
+      :show-step-numbers="props.showStepNumbers"
+      :show-step-titles="props.showStepTitles"
+      :force-show-output-card="props.forceShowOutputCard"
     >
-      <div
-        v-if="props.showStepNumbers !== false || props.showStepTitles !== false"
-        class="logic-programmer-meta"
-      >
-        <div
-          v-if="props.showStepNumbers !== false"
-          class="logic-programmer-step"
-        >
-          Step {{ index + 1 }}
-        </div>
-        <div
-          v-if="props.showStepTitles !== false"
-          class="logic-programmer-step-title"
-        >
-          {{ step.output }}
-        </div>
-      </div>
-
-      <div class="logic-programmer-frame-shell">
-        <!-- LogicProgrammerView will go here -->
-      </div>
-
-      <DisplayPanelViewHolder>
-        <DisplayPanelView
-          :text="getDisplayPanelText(step)"
-          :text-color="getDisplayPanelColor(step)"
-          :align="getDisplayPanelAlignment(step.sourceType)"
-          :type-name="step.sourceType"
-          :type-error="getCumulativeStepError(steps, step.variableId)"
-        />
-        <DisplayPanelView
-          :text="getDisplayPanelText(step)"
-          :text-color="getDisplayPanelColor(step)"
-          :align="getDisplayPanelAlignment(step.sourceType)"
-          :type-name="step.sourceType"
-          :type-error="getCumulativeStepError(steps, step.variableId)"
-        />
-      </DisplayPanelViewHolder>
-    </article>
+      <LogicProgrammerView
+        :step="step"
+        :force-show-output-card="props.forceShowOutputCard"
+      />
+    </VisualTransformerStep>
   </section>
 </template>
