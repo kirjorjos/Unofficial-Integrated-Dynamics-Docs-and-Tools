@@ -9,17 +9,53 @@ export class BlockReader extends ReaderBase {
 
   static aspects: Record<
     string,
-    { settings: Record<string, number | boolean | string> }
+    {
+      settings: Record<string, number | boolean | string>;
+      icon: string;
+      displayName: string;
+    }
   > = {
-    BOOLEAN_BLOCK: { settings: {} },
-    INTEGER_DIMENSION: { settings: {} },
-    INTEGER_POSX: { settings: {} },
-    INTEGER_POSY: { settings: {} },
-    INTEGER_POSZ: { settings: {} },
-    BLOCK: { settings: {} },
-    NBT: { settings: {} },
-    STRING_BIOME: { settings: {} },
-    INTEGER_LIGHT: { settings: {} },
+    BOOLEAN_BLOCK: {
+      settings: {},
+      icon: "boolean/block/block",
+      displayName: "Has Block",
+    },
+    INTEGER_DIMENSION: {
+      settings: {},
+      icon: "string/block/dimension",
+      displayName: "Dimension",
+    },
+    INTEGER_POSX: {
+      settings: {},
+      icon: "integer/block/posx",
+      displayName: "X Coordinate",
+    },
+    INTEGER_POSY: {
+      settings: {},
+      icon: "integer/block/posy",
+      displayName: "Y Coordinate",
+    },
+    INTEGER_POSZ: {
+      settings: {},
+      icon: "integer/block/posz",
+      displayName: "Z Coordinate",
+    },
+    BLOCK: { settings: {}, icon: "block", displayName: "Block" },
+    NBT: {
+      settings: {},
+      icon: "nbt/block/tile",
+      displayName: "Tile Entity NBT",
+    },
+    STRING_BIOME: {
+      settings: {},
+      icon: "string/block/biome",
+      displayName: "Biome",
+    },
+    INTEGER_LIGHT: {
+      settings: {},
+      icon: "integer/block/light",
+      displayName: "Light Level",
+    },
   };
 
   static aspectOutputType: Record<string, string> = {

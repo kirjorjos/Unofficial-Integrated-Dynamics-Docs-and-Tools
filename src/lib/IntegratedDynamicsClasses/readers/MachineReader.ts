@@ -9,36 +9,152 @@ export class MachineReader extends ReaderBase {
 
   static aspects: Record<
     string,
-    { settings: Record<string, number | boolean | string> }
+    {
+      settings: Record<string, number | boolean | string>;
+      icon: string;
+      displayName: string;
+    }
   > = {
-    BOOLEAN_ISWORKER: { settings: {} },
-    BOOLEAN_HASWORK: { settings: {} },
-    BOOLEAN_CANWORK: { settings: {} },
-    BOOLEAN_ISWORKING: { settings: {} },
-    BOOLEAN_ISTEMPERATURE: { settings: {} },
-    DOUBLE_TEMPERATURE: { settings: {} },
-    DOUBLE_MAXTEMPERATURE: { settings: {} },
-    DOUBLE_MINTEMPERATURE: { settings: {} },
-    DOUBLE_DEFAULTTEMPERATURE: { settings: {} },
-    BOOLEAN_ISRECIPEHANDLER: { settings: {} },
-    LIST_GETRECIPES: { settings: {} },
-    OPERATOR_GETRECIPEBYINPUT: { settings: {} },
-    OPERATOR_GETRECIPEBYOUTPUT: { settings: {} },
-    OPERATOR_GETRECIPESBYINPUT: { settings: {} },
-    OPERATOR_GETRECIPESBYOUTPUT: { settings: {} },
-    OPERATOR_GETRECIPEOUTPUT: { settings: {} },
-    OPERATOR_GETRECIPEINPUTS: { settings: {} },
-    BOOLEAN_ISENERGY: { settings: {} },
-    BOOLEAN_ISENERGYRECEIVER: { settings: {} },
-    BOOLEAN_ISENERGYPROVIDER: { settings: {} },
-    BOOLEAN_CANEXTRACTENERGY: { settings: {} },
-    BOOLEAN_CANINSERTENERGY: { settings: {} },
-    BOOLEAN_ISENERGYFULL: { settings: {} },
-    BOOLEAN_ISENERGYEMPTY: { settings: {} },
-    BOOLEAN_ISENERGYNONEMPTY: { settings: {} },
-    INTEGER_ENERGYSTORED: { settings: {} },
-    INTEGER_ENERGYCAPACITY: { settings: {} },
-    DOUBLE_ENERGYFILLRATIO: { settings: {} },
+    BOOLEAN_ISWORKER: {
+      settings: {},
+      icon: "boolean/machine/isworker",
+      displayName: "Is Worker",
+    },
+    BOOLEAN_HASWORK: {
+      settings: {},
+      icon: "boolean/machine/haswork",
+      displayName: "Has Work",
+    },
+    BOOLEAN_CANWORK: {
+      settings: {},
+      icon: "boolean/machine/canwork",
+      displayName: "Can Work",
+    },
+    BOOLEAN_ISWORKING: {
+      settings: {},
+      icon: "boolean/machine/isworking",
+      displayName: "Is Working",
+    },
+    BOOLEAN_ISTEMPERATURE: {
+      settings: {},
+      icon: "boolean/temperature/istemperature",
+      displayName: "Has Temperature",
+    },
+    DOUBLE_TEMPERATURE: {
+      settings: {},
+      icon: "double/temperature/temperature",
+      displayName: "Temperature",
+    },
+    DOUBLE_MAXTEMPERATURE: {
+      settings: {},
+      icon: "double/temperature/maxtemperature",
+      displayName: "Maximum Temperature",
+    },
+    DOUBLE_MINTEMPERATURE: {
+      settings: {},
+      icon: "double/temperature/mintemperature",
+      displayName: "Minimum Temperature",
+    },
+    DOUBLE_DEFAULTTEMPERATURE: {
+      settings: {},
+      icon: "double/temperature/defaulttemperature",
+      displayName: "Default Temperature",
+    },
+    BOOLEAN_ISRECIPEHANDLER: {
+      settings: {},
+      icon: "boolean/recipehandler/applicable",
+      displayName: "Is Recipe Handler",
+    },
+    LIST_GETRECIPES: {
+      settings: {},
+      icon: "list/recipehandler/recipes",
+      displayName: "Recipes",
+    },
+    OPERATOR_GETRECIPEBYINPUT: {
+      settings: {},
+      icon: "operator/recipehandler/recipeinputsingle",
+      displayName: "Recipe By Input",
+    },
+    OPERATOR_GETRECIPEBYOUTPUT: {
+      settings: {},
+      icon: "operator/recipehandler/recipeoutputsingle",
+      displayName: "Recipe By Output",
+    },
+    OPERATOR_GETRECIPESBYINPUT: {
+      settings: {},
+      icon: "operator/recipehandler/recipeinputlist",
+      displayName: "Recipes By Input",
+    },
+    OPERATOR_GETRECIPESBYOUTPUT: {
+      settings: {},
+      icon: "operator/recipehandler/recipeoutputlist",
+      displayName: "Recipes By Output",
+    },
+    OPERATOR_GETRECIPEOUTPUT: {
+      settings: {},
+      icon: "operator/recipehandler/recipeinput",
+      displayName: "Recipe Output By Input",
+    },
+    OPERATOR_GETRECIPEINPUTS: {
+      settings: {},
+      icon: "operator/recipehandler/recipeoutput",
+      displayName: "Recipe Inputs By Output",
+    },
+    BOOLEAN_ISENERGY: {
+      settings: {},
+      icon: "boolean/fe/applicable",
+      displayName: "Is FE Handler",
+    },
+    BOOLEAN_ISENERGYRECEIVER: {
+      settings: {},
+      icon: "boolean/fe/isreceiver",
+      displayName: "Is FE Receiver",
+    },
+    BOOLEAN_ISENERGYPROVIDER: {
+      settings: {},
+      icon: "boolean/fe/isprovider",
+      displayName: "Is FE Provider",
+    },
+    BOOLEAN_CANEXTRACTENERGY: {
+      settings: {},
+      icon: "boolean/fe/canextract",
+      displayName: "Can Extract FE",
+    },
+    BOOLEAN_CANINSERTENERGY: {
+      settings: {},
+      icon: "boolean/fe/caninsert",
+      displayName: "Can Insert FE",
+    },
+    BOOLEAN_ISENERGYFULL: {
+      settings: {},
+      icon: "boolean/fe/isfull",
+      displayName: "Is FE Buffer Full",
+    },
+    BOOLEAN_ISENERGYEMPTY: {
+      settings: {},
+      icon: "boolean/fe/isempty",
+      displayName: "Is FE Buffer Empty",
+    },
+    BOOLEAN_ISENERGYNONEMPTY: {
+      settings: {},
+      icon: "boolean/fe/isnonempty",
+      displayName: "Is FE Buffer Not Empty",
+    },
+    INTEGER_ENERGYSTORED: {
+      settings: {},
+      icon: "integer/fe/amount",
+      displayName: "Stored FE",
+    },
+    INTEGER_ENERGYCAPACITY: {
+      settings: {},
+      icon: "integer/fe/capacity",
+      displayName: "FE Capacity",
+    },
+    DOUBLE_ENERGYFILLRATIO: {
+      settings: {},
+      icon: "double/fe/fillratio",
+      displayName: "FE Fill Ratio",
+    },
   };
 
   static aspectOutputType: Record<string, string> = {

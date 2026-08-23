@@ -14,6 +14,7 @@ import DelayerPage from "./pages/starting-out/DelayerPage.vue";
 import LogicProgrammerAndLabellerPage from "./pages/starting-out/LogicProgrammerAndLabellerPage.vue";
 import MaterializerPage from "./pages/starting-out/MaterializerPage.vue";
 import ReadersAndWritersPage from "./pages/starting-out/ReadersAndWritersPage.vue";
+import ReaderGuiPreviewPage from "./pages/starting-out/ReaderGuiPreviewPage.vue";
 import OperatorPage from "./pages/operators/OperatorPage.vue";
 import { humanizeIdentifier } from "./lib/HelperClasses/UtilityFunctions";
 
@@ -199,6 +200,12 @@ const startingOutPages: FilePage[] = [
     id: "starting-out-readers-and-writers",
     label: "Readers and writers",
     component: ReadersAndWritersPage,
+  },
+  {
+    kind: "page",
+    id: "reader-gui-preview",
+    label: "Reader GUI preview (dev)",
+    component: ReaderGuiPreviewPage,
   },
   {
     kind: "page",

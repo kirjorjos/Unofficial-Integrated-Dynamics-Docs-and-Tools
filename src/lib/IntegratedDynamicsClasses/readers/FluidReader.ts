@@ -9,22 +9,82 @@ export class FluidReader extends ReaderBase {
 
   static aspects: Record<
     string,
-    { settings: Record<string, number | boolean | string> }
+    {
+      settings: Record<string, number | boolean | string>;
+      icon: string;
+      displayName: string;
+    }
   > = {
-    BOOLEAN_FULL: { settings: {} },
-    BOOLEAN_EMPTY: { settings: {} },
-    BOOLEAN_NONEMPTY: { settings: {} },
-    BOOLEAN_APPLICABLE: { settings: {} },
-    INTEGER_AMOUNT: { settings: { tankid: 0 } },
-    INTEGER_AMOUNTTOTAL: { settings: {} },
-    INTEGER_CAPACITY: { settings: { tankid: 0 } },
-    INTEGER_CAPACITYTOTAL: { settings: {} },
-    INTEGER_TANKS: { settings: {} },
-    DOUBLE_FILLRATIO: { settings: { tankid: 0 } },
-    LIST_TANKFLUIDS: { settings: {} },
-    LIST_TANKCAPACITIES: { settings: {} },
-    FLUIDSTACK: { settings: { tankid: 0 } },
-    BLOCK: { settings: {} },
+    BOOLEAN_FULL: {
+      settings: {},
+      icon: "boolean/fluid/full",
+      displayName: "Tank Full",
+    },
+    BOOLEAN_EMPTY: {
+      settings: {},
+      icon: "boolean/fluid/empty",
+      displayName: "Tank Empty",
+    },
+    BOOLEAN_NONEMPTY: {
+      settings: {},
+      icon: "boolean/fluid/nonempty",
+      displayName: "Tank Not Empty",
+    },
+    BOOLEAN_APPLICABLE: {
+      settings: {},
+      icon: "boolean/fluid/applicable",
+      displayName: "Is Tank",
+    },
+    INTEGER_AMOUNT: {
+      settings: { tankid: 0 },
+      icon: "integer/fluid/amount",
+      displayName: "Fluid Amount",
+    },
+    INTEGER_AMOUNTTOTAL: {
+      settings: {},
+      icon: "integer/fluid/totalamount",
+      displayName: "Total Fluid Amount",
+    },
+    INTEGER_CAPACITY: {
+      settings: { tankid: 0 },
+      icon: "integer/fluid/capacity",
+      displayName: "Fluid Capacity",
+    },
+    INTEGER_CAPACITYTOTAL: {
+      settings: {},
+      icon: "integer/fluid/totalcapacity",
+      displayName: "Total Fluid Capacity",
+    },
+    INTEGER_TANKS: {
+      settings: {},
+      icon: "integer/fluid/tanks",
+      displayName: "Tanks",
+    },
+    DOUBLE_FILLRATIO: {
+      settings: { tankid: 0 },
+      icon: "double/fluid/fillratio",
+      displayName: "Fluid Fill Ratio",
+    },
+    LIST_TANKFLUIDS: {
+      settings: {},
+      icon: "list/fluid/fluidstacks",
+      displayName: "Tank Fluids",
+    },
+    LIST_TANKCAPACITIES: {
+      settings: {},
+      icon: "list/fluid/capacities",
+      displayName: "Tank Capacities",
+    },
+    FLUIDSTACK: {
+      settings: { tankid: 0 },
+      icon: "fluidstack/fluid",
+      displayName: "Tank Fluid",
+    },
+    BLOCK: {
+      settings: {},
+      icon: "fluidstack/block",
+      displayName: "Block Fluid",
+    },
   };
 
   static aspectOutputType: Record<string, string> = {

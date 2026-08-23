@@ -4,6 +4,8 @@ export type AspectSettings = Record<string, number | boolean | string>;
 
 export type AspectDefinition = {
   settings: AspectSettings;
+  icon?: string;
+  displayName?: string;
 };
 
 export type ReaderAspects = Record<string, AspectDefinition>;

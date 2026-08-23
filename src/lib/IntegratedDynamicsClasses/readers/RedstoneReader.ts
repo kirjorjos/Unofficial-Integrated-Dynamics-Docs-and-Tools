@@ -9,14 +9,42 @@ export class RedstoneReader extends ReaderBase {
 
   static aspects: Record<
     string,
-    { settings: Record<string, number | boolean | string> }
+    {
+      settings: Record<string, number | boolean | string>;
+      icon: string;
+      displayName: string;
+    }
   > = {
-    BOOLEAN_LOW: { settings: {} },
-    BOOLEAN_NONLOW: { settings: {} },
-    BOOLEAN_HIGH: { settings: {} },
-    BOOLEAN_CLOCK: { settings: { interval: 20, length: 1, offset: 0 } },
-    INTEGER_VALUE: { settings: {} },
-    INTEGER_COMPARATOR: { settings: {} },
+    BOOLEAN_LOW: {
+      settings: {},
+      icon: "boolean/redstone/low",
+      displayName: "Redstone Low",
+    },
+    BOOLEAN_NONLOW: {
+      settings: {},
+      icon: "boolean/redstone/nonlow",
+      displayName: "Redstone",
+    },
+    BOOLEAN_HIGH: {
+      settings: {},
+      icon: "boolean/redstone/high",
+      displayName: "Redstone High",
+    },
+    BOOLEAN_CLOCK: {
+      settings: { interval: 20, length: 1, offset: 0 },
+      icon: "boolean/redstone/clock",
+      displayName: "Redstone Clock",
+    },
+    INTEGER_VALUE: {
+      settings: {},
+      icon: "integer/redstone/value",
+      displayName: "Redstone",
+    },
+    INTEGER_COMPARATOR: {
+      settings: {},
+      icon: "integer/redstone/comparator",
+      displayName: "Comparator",
+    },
   };
 
   static aspectOutputType: Record<string, string> = {

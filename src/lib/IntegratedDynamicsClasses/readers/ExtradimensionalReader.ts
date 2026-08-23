@@ -9,13 +9,37 @@ export class ExtradimensionalReader extends ReaderBase {
 
   static aspects: Record<
     string,
-    { settings: Record<string, number | boolean | string> }
+    {
+      settings: Record<string, number | boolean | string>;
+      icon: string;
+      displayName: string;
+    }
   > = {
-    INTEGER_RANDOM: { settings: {} },
-    INTEGER_PLAYERCOUNT: { settings: {} },
-    INTEGER_TICKTIME: { settings: {} },
-    DOUBLE_TPS: { settings: {} },
-    LIST_PLAYERS: { settings: {} },
+    INTEGER_RANDOM: {
+      settings: {},
+      icon: "integer/extradimensional/random",
+      displayName: "Random",
+    },
+    INTEGER_PLAYERCOUNT: {
+      settings: {},
+      icon: "integer/extradimensional/playercount",
+      displayName: "Player Count",
+    },
+    INTEGER_TICKTIME: {
+      settings: {},
+      icon: "integer/extradimensional/ticktime",
+      displayName: "Tick time",
+    },
+    DOUBLE_TPS: {
+      settings: {},
+      icon: "double/extradimensional/tps",
+      displayName: "TPS",
+    },
+    LIST_PLAYERS: {
+      settings: {},
+      icon: "list/extradimensional/players",
+      displayName: "Players",
+    },
   };
 
   static aspectOutputType: Record<string, string> = {

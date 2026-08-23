@@ -9,22 +9,74 @@ export class WorldReader extends ReaderBase {
 
   static aspects: Record<
     string,
-    { settings: Record<string, number | boolean | string> }
+    {
+      settings: Record<string, number | boolean | string>;
+      icon: string;
+      displayName: string;
+    }
   > = {
-    BOOLEAN_WEATHER_CLEAR: { settings: {} },
-    BOOLEAN_WEATHER_RAINING: { settings: {} },
-    BOOLEAN_WEATHER_THUNDER: { settings: {} },
-    BOOLEAN_ISDAY: { settings: {} },
-    BOOLEAN_ISNIGHT: { settings: {} },
-    INTEGER_RAINCOUNTDOWN: { settings: {} },
-    INTEGER_TICKTIME: { settings: {} },
-    INTEGER_DAYTIME: { settings: {} },
-    INTEGER_LIGHTLEVEL: { settings: {} },
-    DOUBLE_TPS: { settings: {} },
-    LONG_TIME: { settings: {} },
-    LONG_TOTALTIME: { settings: {} },
-    STRING_NAME: { settings: {} },
-    LIST_PLAYERS: { settings: {} },
+    BOOLEAN_WEATHER_CLEAR: {
+      settings: {},
+      icon: "boolean/world/weather/clear",
+      displayName: "Weather: Clear",
+    },
+    BOOLEAN_WEATHER_RAINING: {
+      settings: {},
+      icon: "boolean/world/weather/raining",
+      displayName: "Weather: Rain",
+    },
+    BOOLEAN_WEATHER_THUNDER: {
+      settings: {},
+      icon: "boolean/world/weather/thunder",
+      displayName: "Weather: Thunder",
+    },
+    BOOLEAN_ISDAY: {
+      settings: {},
+      icon: "boolean/world/isday",
+      displayName: "Is Day",
+    },
+    BOOLEAN_ISNIGHT: {
+      settings: {},
+      icon: "boolean/world/isnight",
+      displayName: "Is Night",
+    },
+    INTEGER_RAINCOUNTDOWN: {
+      settings: {},
+      icon: "integer/world/raincountdown",
+      displayName: "Rain Countdown",
+    },
+    INTEGER_TICKTIME: {
+      settings: {},
+      icon: "integer/world/ticktime",
+      displayName: "Tick time",
+    },
+    INTEGER_DAYTIME: {
+      settings: {},
+      icon: "integer/world/daytime",
+      displayName: "Day Time",
+    },
+    INTEGER_LIGHTLEVEL: {
+      settings: {},
+      icon: "integer/world/lightlevel",
+      displayName: "Light Level",
+    },
+    DOUBLE_TPS: { settings: {}, icon: "double/world/tps", displayName: "TPS" },
+    LONG_TIME: { settings: {}, icon: "long/world/time", displayName: "Time" },
+    LONG_TOTALTIME: {
+      settings: {},
+      icon: "long/world/totaltime",
+      displayName: "Total Time",
+    },
+    STRING_NAME: {
+      settings: {},
+      icon: "string/world/worldname",
+      displayName: "World Name",
+    },
+    LIST_PLAYERS: {
+      settings: {},
+      icon: "list/world/players",
+      displayName: "Players",
+    },
   };
 
   static aspectOutputType: Record<string, string> = {

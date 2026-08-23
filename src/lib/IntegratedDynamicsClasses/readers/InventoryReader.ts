@@ -9,18 +9,62 @@ export class InventoryReader extends ReaderBase {
 
   static aspects: Record<
     string,
-    { settings: Record<string, number | boolean | string> }
+    {
+      settings: Record<string, number | boolean | string>;
+      icon: string;
+      displayName: string;
+    }
   > = {
-    BOOLEAN_FULL: { settings: {} },
-    BOOLEAN_EMPTY: { settings: {} },
-    BOOLEAN_NONEMPTY: { settings: {} },
-    BOOLEAN_APPLICABLE: { settings: {} },
-    INTEGER_COUNT: { settings: {} },
-    INTEGER_SLOTS: { settings: {} },
-    INTEGER_SLOTSFILLED: { settings: {} },
-    DOUBLE_FILLRATIO: { settings: {} },
-    LIST_ITEMSTACKS: { settings: {} },
-    OBJECT_ITEM_STACK_SLOT: { settings: { slotid: 0 } },
+    BOOLEAN_FULL: {
+      settings: {},
+      icon: "boolean/inventory/full",
+      displayName: "Inventory Full",
+    },
+    BOOLEAN_EMPTY: {
+      settings: {},
+      icon: "boolean/inventory/empty",
+      displayName: "Inventory Empty",
+    },
+    BOOLEAN_NONEMPTY: {
+      settings: {},
+      icon: "boolean/inventory/nonempty",
+      displayName: "Inventory Not Empty",
+    },
+    BOOLEAN_APPLICABLE: {
+      settings: {},
+      icon: "boolean/inventory/applicable",
+      displayName: "Is Inventory",
+    },
+    INTEGER_COUNT: {
+      settings: {},
+      icon: "integer/inventory/count",
+      displayName: "Inventory Count",
+    },
+    INTEGER_SLOTS: {
+      settings: {},
+      icon: "integer/inventory/slots",
+      displayName: "Slots",
+    },
+    INTEGER_SLOTSFILLED: {
+      settings: {},
+      icon: "integer/inventory/slotsfilled",
+      displayName: "Slots Filled",
+    },
+    DOUBLE_FILLRATIO: {
+      settings: {},
+      icon: "double/inventory/fillratio",
+      displayName: "Fill Ratio",
+    },
+    LIST_ITEMSTACKS: {
+      settings: {},
+      icon: "list/inventory/itemstacks",
+      displayName: "Items",
+    },
+    OBJECT_ITEM_STACK_SLOT: {
+      settings: { slotid: 0 },
+      icon: "inventory/itemstack",
+      displayName: "Slot Item",
+    },
   };
 
   static aspectOutputType: Record<string, string> = {

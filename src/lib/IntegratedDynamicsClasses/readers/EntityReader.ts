@@ -9,13 +9,37 @@ export class EntityReader extends ReaderBase {
 
   static aspects: Record<
     string,
-    { settings: Record<string, number | boolean | string> }
+    {
+      settings: Record<string, number | boolean | string>;
+      icon: string;
+      displayName: string;
+    }
   > = {
-    INTEGER_ITEMFRAMEROTATION: { settings: {} },
-    LIST_ENTITIES: { settings: {} },
-    LIST_PLAYERS: { settings: {} },
-    ENTITY: { settings: { listindex: 0 } },
-    ITEMSTACK_ITEMFRAMECONTENTS: { settings: {} },
+    INTEGER_ITEMFRAMEROTATION: {
+      settings: {},
+      icon: "integer/entity/itemframerotation",
+      displayName: "Item Frame Rotation",
+    },
+    LIST_ENTITIES: {
+      settings: {},
+      icon: "list/entity/entities",
+      displayName: "Entities",
+    },
+    LIST_PLAYERS: {
+      settings: {},
+      icon: "list/entity/players",
+      displayName: "Players",
+    },
+    ENTITY: {
+      settings: { listindex: 0 },
+      icon: "entity/entity",
+      displayName: "Entity",
+    },
+    ITEMSTACK_ITEMFRAMECONTENTS: {
+      settings: {},
+      icon: "itemstack/entity/itemframecontents",
+      displayName: "Item Frame",
+    },
   };
 
   static aspectOutputType: Record<string, string> = {

@@ -17,6 +17,8 @@ const props = withDefaults(
     color?: string;
     typeName?: string;
     fill?: boolean;
+    /** When true, scale to exact fit instead of flooring to minScale. */
+    exactFit?: boolean;
   }>(),
   {
     minScale: 0.5,
@@ -99,18 +101,19 @@ const updateScale = () => {
     return;
   }
 
-  // Text needs to shrink - check if minScale would work
-  const fitsAtMinScale =
-    baseWidth * minScale <= availableWidth &&
-    baseHeight * minScale <= availableHeight;
-
-  if (fitsAtMinScale) {
-    applySize(minScale);
-    return;
+  if (props.exactFit) {
+    // Scale to the exact fit size — best for contexts where text should be
+    // as large as possible (e.g. the reader GUI search bar).
+    applySize(Math.max(neededScale, minScale));
+  } else {
+    // Legacy behaviour: floor to minScale when text fits there, so
+    // display panels and other existing callers keep their baseline
+    // layout unchanged.
+    const fitsAtMinScale =
+      baseWidth * minScale <= availableWidth &&
+      baseHeight * minScale <= availableHeight;
+    applySize(fitsAtMinScale ? minScale : neededScale);
   }
-
-  // Need to scale down more than minScale allows
-  applySize(neededScale);
 };
 
 const scheduleUpdate = () => {
