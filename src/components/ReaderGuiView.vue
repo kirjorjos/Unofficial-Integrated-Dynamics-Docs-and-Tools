@@ -41,8 +41,17 @@ const getTypeName = (aspectKey: string): string =>
 const getAspectName = (aspectKey: string): string =>
   props.reader.aspects[aspectKey]?.fullDisplayName ?? aspectKey;
 
-const getTypeColor = (aspectKey: string): string =>
-  LOGIC_PROGRAMMER_TYPE_COLORS[getTypeName(aspectKey)]?.primary ?? "#f3f3f3";
+const STRING_RED = LOGIC_PROGRAMMER_TYPE_COLORS["String"]?.primary ?? "#fa0a0d";
+
+const hasTypeError = (aspectKey: string): boolean =>
+  aspectKey === props.focusedAspect && !!props.typeError;
+
+const getTypeColor = (aspectKey: string): string => {
+  if (hasTypeError(aspectKey)) return STRING_RED;
+  return (
+    LOGIC_PROGRAMMER_TYPE_COLORS[getTypeName(aspectKey)]?.primary ?? "#f3f3f3"
+  );
+};
 
 const getAspectDefaultValue = (aspectKey: string): string =>
   getReaderAspectDefaultValue(props.reader, aspectKey);
@@ -56,8 +65,10 @@ const getSmoothenedColor = (hex: string): string => {
   return `rgb(${channels.join(", ")})`;
 };
 
-const getAspectValue = (aspectKey: string): string =>
-  props.values?.[aspectKey] ?? getAspectDefaultValue(aspectKey);
+const getAspectValue = (aspectKey: string): string => {
+  if (hasTypeError(aspectKey)) return "ERROR";
+  return props.values?.[aspectKey] ?? getAspectDefaultValue(aspectKey);
+};
 
 const getAspectHasSettings = (aspectKey: string): boolean => {
   const settings = props.reader.aspects[aspectKey]?.settings;

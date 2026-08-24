@@ -4,6 +4,10 @@ import {
   getReaderAspectOperatorDisplayText,
   getReaderClassByTypeName,
 } from "lib/IntegratedDynamicsClasses/readers/readerRegistry";
+import {
+  isResolvedReaderSimulatedValueError,
+  resolveReaderSimulatedValue,
+} from "lib/IntegratedDynamicsClasses/readers/readerSimulatedValueResolver";
 import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 import { ASTtoOperator } from "lib/transformers/Operator";
@@ -423,10 +427,15 @@ export const getCompactValueTextForAst = (ast: TypeAST.AST): string => {
       break;
     }
     case "Reader": {
-      if (ast.value.simulatedOutput) {
-        return getCompactValueTextForAst(ast.value.simulatedOutput);
-      }
       const readerClass = getReaderClassByTypeName(ast.value.reader);
+      if (ast.value.simulatedOutput && readerClass) {
+        const resolved = resolveReaderSimulatedValue(
+          readerClass,
+          ast.value.aspect,
+          ast.value.simulatedOutput
+        );
+        if (resolved.ok) return getCompactValueTextForAst(resolved.value);
+      }
       return readerClass
         ? getReaderAspectDefaultValue(readerClass, ast.value.aspect)
         : "";
@@ -1621,16 +1630,14 @@ export const generateVisualSteps = (
       case "Reader": {
         const readerClass = getReaderClassByTypeName(ast.value.reader);
         let typeError: string | undefined;
-        if (ast.value.simulatedOutput) {
-          const aspect = readerClass?.aspects[ast.value.aspect];
-          if (aspect?.signature && aspect.signature.length > 0) {
-            typeError = `${aspect.fullDisplayName} does not support an overridden simulatedValue.`;
-          } else {
-            const expected = aspect?.outputType ?? "Any";
-            const actual = ast.value.simulatedOutput.type;
-            if (!isTypeAssignable(actual, expected)) {
-              typeError = `Expected output type ${expected}, got simulatedOutput type ${actual}`;
-            }
+        if (ast.value.simulatedOutput && readerClass) {
+          const resolved = resolveReaderSimulatedValue(
+            readerClass,
+            ast.value.aspect,
+            ast.value.simulatedOutput
+          );
+          if (isResolvedReaderSimulatedValueError(resolved)) {
+            typeError = resolved.error;
           }
         }
         return register({

@@ -9,6 +9,7 @@ import {
   getReaderAspectOperatorDisplayText,
   getReaderClassByTypeName,
 } from "lib/IntegratedDynamicsClasses/readers/readerRegistry";
+import { resolveReaderSimulatedValue } from "lib/IntegratedDynamicsClasses/readers/readerSimulatedValueResolver";
 import type { ReaderStatic } from "lib/IntegratedDynamicsClasses/readers/ReaderBase";
 import {
   ASTToCondensed,
@@ -503,10 +504,15 @@ const getCompactValueTextForAst = (ast: TypeAST.AST): string => {
       break;
     }
     case "Reader": {
-      if (ast.value.simulatedOutput) {
-        return getCompactValueTextForAst(ast.value.simulatedOutput);
-      }
       const readerClass = getReaderClassByTypeName(ast.value.reader);
+      if (ast.value.simulatedOutput && readerClass) {
+        const resolved = resolveReaderSimulatedValue(
+          readerClass,
+          ast.value.aspect,
+          ast.value.simulatedOutput
+        );
+        if (resolved.ok) return getCompactValueTextForAst(resolved.value);
+      }
       return readerClass
         ? getReaderAspectDefaultValue(readerClass, ast.value.aspect)
         : "";
@@ -2426,11 +2432,9 @@ const getReaderViewFocusedAspect = (step: VisualStep): string | undefined => {
 const getReaderViewValues = (
   step: VisualStep
 ): Record<string, string> | undefined => {
-  if (step.node?.type === "Reader" && step.node.value.simulatedOutput) {
+  if (step.node?.type === "Reader") {
     return {
-      [step.node.value.aspect]: getCompactValueTextForAst(
-        step.node.value.simulatedOutput
-      ),
+      [step.node.value.aspect]: getCompactValueTextForAst(step.node),
     };
   }
   return undefined;

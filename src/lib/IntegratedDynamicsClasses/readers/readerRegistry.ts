@@ -221,24 +221,4 @@ export const getAspectSettingsEntries = (
   });
 };
 
-export const assertReaderSimulatedOutputType = (
-  readerClass: ReaderClass,
-  aspectKey: string,
-  simulatedOutput: { type: string } | undefined
-): void => {
-  if (!simulatedOutput) return;
-  const aspect = readerClass.aspects[aspectKey];
-  if (aspect?.signature && aspect.signature.length > 0) {
-    throw new Error(
-      `${aspect.fullDisplayName} does not support an overridden simulatedValue.`
-    );
-  }
-  const expected = aspect?.outputType ?? "Any";
-  if (!isReaderOutputTypeAssignable(simulatedOutput.type, expected)) {
-    throw new Error(
-      `Expected output type ${expected}, got simulatedOutput type ${simulatedOutput.type}`
-    );
-  }
-};
-
 export { ReaderBase };

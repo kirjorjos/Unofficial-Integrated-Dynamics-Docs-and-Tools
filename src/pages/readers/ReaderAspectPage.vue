@@ -4,14 +4,16 @@ import DisplayPanelView from "../../components/DisplayPanelView.vue";
 import DisplayPanelViewHolder from "../../components/DisplayPanelViewHolder.vue";
 import ReaderGuiView from "../../components/ReaderGuiView.vue";
 import { getTypeColor } from "pages-lib/visualTransformer";
+import { getCompactValueTextForAst } from "pages-lib/visualTransformerLogic";
 import type { ReaderClass } from "lib/IntegratedDynamicsClasses/readers/readerRegistry";
+import { resolveReaderSimulatedValue } from "lib/IntegratedDynamicsClasses/readers/readerSimulatedValueResolver";
 import {
   getAspectSettingsEntries,
   getReaderAspect,
   getReaderAspectDefaultValue,
   getReaderAspectKey,
   getReaderClassByName,
-  getReaderSimulatedValueTypeError,
+  isSimulatedValueParseError,
   parseSimulatedValueText,
 } from "lib/IntegratedDynamicsClasses/readers/readerRegistry";
 
@@ -80,13 +82,38 @@ watch(
 const parseResult = computed(() => parseSimulatedValueText(valueText.value));
 
 const typeError = computed<string | undefined>(() => {
-  if (isOperatorAspect.value) return undefined;
-  return getReaderSimulatedValueTypeError(outputType.value, parseResult.value);
+  if (isOperatorAspect.value || !readerClass.value || !resolvedAspectKey.value)
+    return undefined;
+  const parse = parseResult.value;
+  if (isSimulatedValueParseError(parse)) return parse.message;
+  if (!parse.ast) return undefined;
+  const resolved = resolveReaderSimulatedValue(
+    readerClass.value,
+    resolvedAspectKey.value,
+    parse.ast
+  );
+  return resolved.ok ? undefined : resolved.error;
 });
 
-const effectiveText = computed(
-  () => valueText.value.trim() || defaultText.value
-);
+const resolvedValueAst = computed<TypeAST.AST | undefined>(() => {
+  if (isOperatorAspect.value || !readerClass.value || !resolvedAspectKey.value)
+    return undefined;
+  const parse = parseResult.value;
+  if (!parse.ok || !parse.ast) return undefined;
+  const resolved = resolveReaderSimulatedValue(
+    readerClass.value,
+    resolvedAspectKey.value,
+    parse.ast
+  );
+  return resolved.ok ? resolved.value : undefined;
+});
+
+const effectiveText = computed(() => {
+  if (resolvedValueAst.value) {
+    return getCompactValueTextForAst(resolvedValueAst.value);
+  }
+  return valueText.value.trim() || defaultText.value;
+});
 
 const readerValues = computed<Record<string, string> | undefined>(() => {
   if (isOperatorAspect.value || !resolvedAspectKey.value) return undefined;

@@ -1,7 +1,7 @@
 import { operatorRegistry } from "lib/IntegratedDynamicsClasses/registries/operatorRegistry";
 import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
+import { assertReaderSimulatedOutputType } from "lib/IntegratedDynamicsClasses/readers/readerSimulatedValueResolver";
 import {
-  assertReaderSimulatedOutputType,
   getReaderAspectDisplayName,
   getReaderAspectKey,
   getReaderClassByName,

@@ -35,11 +35,9 @@ const getReaderViewReader = (step: (typeof steps.value)[number]) => {
 const getReaderViewValues = (
   step: (typeof steps.value)[number]
 ): Record<string, string> | undefined => {
-  if (step.node?.type === "Reader" && step.node.value.simulatedOutput) {
+  if (step.node?.type === "Reader") {
     return {
-      [step.node.value.aspect]: getCompactValueTextForAst(
-        step.node.value.simulatedOutput
-      ),
+      [step.node.value.aspect]: getCompactValueTextForAst(step.node),
     };
   }
   return undefined;
