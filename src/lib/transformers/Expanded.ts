@@ -9,6 +9,7 @@ import {
   getOperatorSourceName,
   flattenAnonymousBaseOperatorApplication,
 } from "lib/transformers/helpers";
+import { buildNetworkCards } from "lib/transformers/NetworkCards";
 
 const getLabel = (index: number): string => {
   let label = "";
@@ -633,7 +634,10 @@ export const ASTToExpanded = (
   return output.join("\n");
 };
 
-export const ExpandedToAST = (expanded: string): TypeAST.AST => {
+export const ExpandedToAST = (
+  expanded: string,
+  startVariableId = 0
+): TypeAST.AST => {
   const rawLines = expanded.split("\n");
   const processedLines: string[] = [];
 
@@ -728,10 +732,10 @@ export const ExpandedToAST = (expanded: string): TypeAST.AST => {
 
     let lineAST: TypeAST.AST;
     try {
-      lineAST = CondensedToAST(exprStr, scope);
+      lineAST = CondensedToAST(exprStr, scope, 0, true);
     } catch (e) {
       try {
-        lineAST = CodeLineToAST(exprStr, scope);
+        lineAST = CodeLineToAST(exprStr, scope, 0, true);
       } catch (e2) {
         throw new Error(
           `Failed to parse line ${
@@ -739,6 +743,12 @@ export const ExpandedToAST = (expanded: string): TypeAST.AST => {
           }: "${exprStr}"\nCondensed error: ${e}\nCodeLine error: ${e2}`
         );
       }
+    }
+
+    if (lineAST.type === "NetworkCards") {
+      throw new Error(
+        `Line ${i + 1} contains semicolon-separated statements, which are only valid at the top level`
+      );
     }
 
     if (
@@ -761,5 +771,9 @@ export const ExpandedToAST = (expanded: string): TypeAST.AST => {
 
   if (!finalAST) throw new Error("Could not determine final AST");
 
-  return { type: "NetworkCards", definitions };
+  return buildNetworkCards(
+    definitions.map((d) => d.node),
+    startVariableId,
+    definitions.map((d) => d.name)
+  );
 };

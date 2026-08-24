@@ -1342,7 +1342,7 @@ export const generateVisualSteps = (
 
   const result: VisualStep[] = [];
   const seen = new Map<TypeAST.AST, VisualCardRef>();
-  const contentSeen = new Map<string, VisualCardRef>();
+  let contentSeen = new Map<string, VisualCardRef>();
 
   const visit = (ast: TypeAST.AST, forceNew = false): VisualCardRef => {
     if (seen.has(ast)) return seen.get(ast)!;
@@ -1389,12 +1389,12 @@ export const generateVisualSteps = (
 
     switch (ast.type) {
       case "NetworkCards": {
-        // Each explicit definition is its own card (even if unused or
-        // duplicate-valued). The last definition is the root expression, so
-        // its card is the final card of the network.
         let lastCard: VisualCardRef | undefined;
         for (const def of ast.definitions) {
+          const savedContentSeen = contentSeen;
+          contentSeen = new Map();
           lastCard = visit(def.node, true);
+          contentSeen = savedContentSeen;
         }
         return lastCard!;
       }

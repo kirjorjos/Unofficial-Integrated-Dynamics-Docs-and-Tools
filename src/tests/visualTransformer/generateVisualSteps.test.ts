@@ -255,4 +255,28 @@ describe("generateVisualSteps", () => {
       expect(line.color).toBe(getTypeColor(line.label));
     }
   });
+
+  it("testDuplicateValuesAcrossNetworkDefinitionsGetOwnCards", () => {
+    const ast = CodeLineToAST("5; add 5 1") as TypeAST.NetworkCards;
+    const result = steps(ast);
+    expect(result.map((s) => s.variableId)).toEqual([0, 1, 2, 3]);
+    expect(result[0]!.output).toBe("5");
+    expect(result[1]!.output).toBe("5");
+    expect(result[2]!.output).toBe("1");
+    expect(result[3]!.sourceType).toBe("Curry");
+    expect(result[3]!.inputs.map((i) => i.variableId)).toEqual([1, 2]);
+  });
+
+  it("testNetworkCardsDefinitionsRenderInOrderWithAtRefsResolved", () => {
+    const ast = CodeLineToAST(
+      "319; 236; map NetworkReader.variableValueById [@0, @1]"
+    ) as TypeAST.NetworkCards;
+    const result = steps(ast);
+    expect(result).toHaveLength(7);
+    expect(result[0]!.output).toBe("319");
+    expect(result[1]!.output).toBe("236");
+    expect(result[6]!.kind).toBe("operator");
+    expect(result[5]!.inputs.map((i) => i.variableId)).toEqual([3, 4]);
+    expect(result[6]!.inputs.map((i) => i.variableId)).toEqual([2, 5]);
+  });
 });

@@ -1781,7 +1781,7 @@ const steps = computed<VisualStep[]>(() => {
 
   const result: VisualStep[] = [];
   const seen = new Map<TypeAST.AST, VisualCardRef>();
-  const contentSeen = new Map<string, VisualCardRef>();
+  let contentSeen = new Map<string, VisualCardRef>();
 
   const visit = (ast: TypeAST.AST, forceNew = false): VisualCardRef => {
     if (seen.has(ast)) return seen.get(ast)!;
@@ -1830,10 +1830,16 @@ const steps = computed<VisualStep[]>(() => {
       case "NetworkCards": {
         // Each explicit definition is its own card (even if unused or
         // duplicate-valued). The last definition is the root expression, so
-        // its card is the final card of the network.
+        // its card is the final card of the network. Content-dedup is scoped
+        // per definition (a `5; add 5 1` input makes two separate 5 cards),
+        // while identity-based dedup stays shared so expanded name references
+        // (e.g. `b = add a 1` reusing a's card) keep working.
         let lastCard: VisualCardRef | undefined;
         for (const def of ast.definitions) {
+          const savedContentSeen = contentSeen;
+          contentSeen = new Map();
           lastCard = visit(def.node, true);
+          contentSeen = savedContentSeen;
         }
         return lastCard!;
       }

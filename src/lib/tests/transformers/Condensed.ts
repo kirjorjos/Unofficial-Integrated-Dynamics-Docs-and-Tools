@@ -422,4 +422,60 @@ describe("TestCondensedTransformer", () => {
       expect(ASTToCondensed(CondensedToAST(back))).toBe(back);
     }
   });
+
+  it("testSemicolonSplitsIntoNetworkCards", () => {
+    const ast = CondensedToAST(
+      "319; 236; apply(apply(map, NetworkReader.variableValueById), [@0, @1])"
+    );
+    expect(ast.type).toBe("NetworkCards");
+    const nc = ast as TypeAST.NetworkCards;
+    expect(nc.definitions.length).toBe(3);
+    const mapNode = JSON.stringify(nc.definitions[2]!.node);
+    expect(mapNode).toContain('"value":"0"');
+    expect(mapNode).toContain('"value":"1"');
+    expect(mapNode).not.toContain("@");
+  });
+
+  it("testSingleSegmentReturnsPlainAst", () => {
+    expect(CondensedToAST("apply(numberAdd, 1)").type).toBe("Curry");
+  });
+
+  it("testSemicolonInsideStringIsNotASeparator", () => {
+    const ast = CondensedToAST('"a;b"') as TypeAST.String;
+    expect(ast.value).toBe("a;b");
+  });
+
+  it("testSemicolonInsideNbtIsNotASeparator", () => {
+    const ast = CondensedToAST('{"a;b": 1}') as TypeAST.Nbt;
+    expect(ast.value).toEqual({ "a;b": 1 });
+  });
+
+  it("testAtRefRejectedForFutureDefinition", () => {
+    expect(() =>
+      CondensedToAST(
+        "apply(apply(map, NetworkReader.variableValueById), [@1]); 236"
+      )
+    ).toThrow(/not created yet/);
+  });
+
+  it("testStartVariableIdOffsetsAtResolution", () => {
+    const ast = CondensedToAST(
+      "319; apply(apply(map, NetworkReader.variableValueById), [@0])",
+      undefined,
+      10
+    ) as TypeAST.NetworkCards;
+    const mapNode = JSON.stringify(ast.definitions[1]!.node);
+    expect(mapNode).toContain('"value":"10"');
+  });
+
+  it("testNetworkCardsEmitsSemicolonSeparated", () => {
+    const ast = CondensedToAST(
+      "319; 236; apply(apply(map, NetworkReader.variableValueById), [@0, @1])"
+    );
+    const out = ASTToCondensed(ast);
+    expect(out).toBe(
+      "319; 236; operatorMap(NetworkReader.variableValueById, [0, 1])"
+    );
+    expect(ASTToCondensed(CondensedToAST(out))).toBe(out);
+  });
 });

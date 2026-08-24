@@ -483,9 +483,69 @@ final = [step0, step1]`;
     expect(CompressedToAST(ASTToCompressed(network))).toEqual(network);
   });
 
-  it("testNetworkCardsThrowsInCondensedAndCodeLine", () => {
+  it("testNetworkCardsEmitsInCondensedAndCodeLine", () => {
     const network = ExpandedToAST("a = 5\nfinal = a");
-    expect(() => ASTToCondensed(network)).toThrow(/not yet implemented/i);
-    expect(() => ASTToCodeLine(network)).toThrow(/not yet implemented/i);
+    expect(ASTToCondensed(network)).toBe("5; 5");
+    expect(ASTToCodeLine(network)).toBe("5; 5");
+  });
+
+  it("testNetworkCardsEmitsSharedRefsAsRawVarIds", () => {
+    const network = ExpandedToAST("a = 5\nb = add a 1\nfinal = [a, b]");
+    expect(ASTToCodeLine(network)).toBe("5; numberAdd 0 1; [0, 2]");
+    expect(ASTToCondensed(network)).toBe("5; numberAdd(0, 1); [0, 2]");
+    const back = CodeLineToAST("5; add @0 1; [@0, @1]");
+    expect(back.type).toBe("NetworkCards");
+  });
+
+  it("testAtVarNameResolvesToLastCardId", () => {
+    const network = ExpandedToAST(
+      "step0 = 319\nstep1 = 236\nfinal = apply(apply(map, NetworkReader.variableValueById), [@step0, @step1])"
+    ) as TypeAST.NetworkCards;
+    const mapNode = JSON.stringify(network.definitions[2]!.node);
+    expect(mapNode).toContain('"value":"0"');
+    expect(mapNode).toContain('"value":"1"');
+    expect(mapNode).not.toContain("@");
+  });
+
+  it("testAtVarNameResolvesToLastCardOfDecomposedDefinition", () => {
+    const network = ExpandedToAST(
+      "addLine = apply(apply(numberAdd, 5), 1)\nfinal = apply(apply(map, NetworkReader.variableValueById), [@addLine])"
+    ) as TypeAST.NetworkCards;
+    const mapNode = JSON.stringify(network.definitions[1]!.node);
+    expect(mapNode).toContain('"value":"2"');
+  });
+
+  it("testAtVarNameUnknownNameThrows", () => {
+    expect(() =>
+      ExpandedToAST(
+        "a = 5\nfinal = apply(apply(map, NetworkReader.variableValueById), [@nope])"
+      )
+    ).toThrow(/Unknown card reference/);
+  });
+
+  it("testAtVarNameSelfReferenceThrows", () => {
+    expect(() =>
+      ExpandedToAST(
+        "final = apply(apply(map, NetworkReader.variableValueById), [@final])"
+      )
+    ).toThrow(/not created yet/);
+  });
+
+  it("testStartVariableIdOffsetsAtVarNameResolution", () => {
+    const network = ExpandedToAST(
+      "a = 319\nfinal = apply(apply(map, NetworkReader.variableValueById), [@a])",
+      10
+    ) as TypeAST.NetworkCards;
+    const mapNode = JSON.stringify(network.definitions[1]!.node);
+    expect(mapNode).toContain('"value":"10"');
+  });
+
+  it("testAtAndSemicolonRejectedInVarNames", () => {
+    expect(() => ExpandedToAST("a@b = 5\nc = a@b")).toThrow(
+      /Invalid variable name/
+    );
+    expect(() => ExpandedToAST("a;b = 5\nc = a;b")).toThrow(
+      /Invalid variable name/
+    );
   });
 });

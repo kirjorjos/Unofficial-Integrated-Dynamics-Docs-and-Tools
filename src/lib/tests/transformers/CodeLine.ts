@@ -1,4 +1,5 @@
 import { ASTToCodeLine, CodeLineToAST } from "lib/transformers/CodeLine";
+import { ExpandedToAST } from "lib/transformers/Expanded";
 
 describe("TestCodeLineTransformer", () => {
   it("testBlock", () => {
@@ -338,5 +339,81 @@ describe("TestCodeLineTransformer", () => {
       const back = ASTToCodeLine(ast);
       expect(ASTToCodeLine(CodeLineToAST(back))).toBe(back);
     }
+  });
+
+  it("testSemicolonSplitsIntoNetworkCards", () => {
+    const ast = CodeLineToAST(
+      "319; 236; map NetworkReader.variableValueById [@0, @1]"
+    );
+    expect(ast.type).toBe("NetworkCards");
+    const nc = ast as TypeAST.NetworkCards;
+    expect(nc.definitions.length).toBe(3);
+    expect(nc.definitions[0]!.node).toEqual({ type: "Integer", value: "319" });
+    expect(nc.definitions[1]!.node).toEqual({ type: "Integer", value: "236" });
+    const mapNode = JSON.stringify(nc.definitions[2]!.node);
+    expect(mapNode).toContain('"value":"0"');
+    expect(mapNode).toContain('"value":"1"');
+    expect(mapNode).not.toContain("@");
+  });
+
+  it("testSingleSegmentReturnsPlainAst", () => {
+    expect(CodeLineToAST("add 5 1").type).toBe("Curry");
+  });
+
+  it("testSemicolonInsideStringIsNotASeparator", () => {
+    const ast = CodeLineToAST('"a;b"') as TypeAST.String;
+    expect(ast.value).toBe("a;b");
+  });
+
+  it("testSemicolonInsideNbtIsNotASeparator", () => {
+    const ast = CodeLineToAST('{"a;b": 1}') as TypeAST.Nbt;
+    expect(ast.value).toEqual({ "a;b": 1 });
+  });
+
+  it("testAtRefRejectedForCurrentDefinition", () => {
+    expect(() =>
+      CodeLineToAST("map NetworkReader.variableValueById [@0]")
+    ).toThrow(/only valid inside a multi-statement/i);
+  });
+
+  it("testAtRefRejectedForFutureDefinition", () => {
+    expect(() =>
+      CodeLineToAST("map NetworkReader.variableValueById [@1]; 236")
+    ).toThrow(/not created yet/);
+  });
+
+  it("testLiteralFutureIdsNotValidated", () => {
+    const ast = CodeLineToAST(
+      "5; map NetworkReader.variableValueById [7]"
+    ) as TypeAST.NetworkCards;
+    expect(ast.type).toBe("NetworkCards");
+  });
+
+  it("testStartVariableIdOffsetsAtResolution", () => {
+    const ast = CodeLineToAST(
+      "319; map NetworkReader.variableValueById [@0]",
+      undefined,
+      10
+    ) as TypeAST.NetworkCards;
+    const mapNode = JSON.stringify(ast.definitions[1]!.node);
+    expect(mapNode).toContain('"value":"10"');
+  });
+
+  it("testNetworkCardsEmitsSemicolonSeparated", () => {
+    const ast = CodeLineToAST(
+      "319; 236; map NetworkReader.variableValueById [@0, @1]"
+    );
+    const out = ASTToCodeLine(ast);
+    expect(out).toBe(
+      "319; 236; operatorMap (NetworkReader.variableValueById) [0, 1]"
+    );
+    expect(ASTToCodeLine(CodeLineToAST(out))).toBe(out);
+  });
+
+  it("testNetworkCardsEmitsRawVarIdsForSharedDefinitions", () => {
+    const ast = ExpandedToAST("a = 5\nb = add a 1\nfinal = [a, b]");
+    expect(ASTToCodeLine(ast)).toBe("5; numberAdd 0 1; [0, 2]");
+    const back = CodeLineToAST("5; add @0 1; [@0, @1]") as TypeAST.NetworkCards;
+    expect(back.type).toBe("NetworkCards");
   });
 });

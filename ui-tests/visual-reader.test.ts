@@ -30,6 +30,10 @@ const FIXTURES = [
 step1 = 236
 final = apply apply reduce1 add (apply apply map readers.network.variableValueById [0, 1])`,
   },
+  {
+    name: "varByIdAtRefs",
+    input: "319; 236; map readers.network.variableValueById [@0, @1]",
+  },
 ] as const;
 
 const CODE = compileFixtures(FIXTURES);
@@ -61,6 +65,7 @@ const EXPECTED_STEPS: Record<(typeof FIXTURES)[number]["name"], number> = {
   redstoneValueFeedsAdd: 3,
   varById: 1,
   varByIdMapReduce: 9,
+  varByIdAtRefs: 7,
 };
 
 test.describe("readerVisualOutput", () => {
@@ -190,6 +195,63 @@ test.describe("readerVisualOutput", () => {
     ).toContainText("555");
 
     await expect(page.locator(".display-panel-error-overlay")).toHaveCount(0);
+  });
+
+  test("testAtRefSyntaxResolvesVarIdsInDisplayPanels", async ({ page }) => {
+    await openVisual(page, (await CODE).varByIdAtRefs);
+
+    const shots = page.locator(".logic-programmer-shot");
+    await expect(shots).toHaveCount(7);
+
+    // The two integer cards 319 and 236 (steps 0 and 1)
+    await expect(
+      shots.nth(0).locator(".display-panel .fit-text-inner").first()
+    ).toContainText("319");
+    await expect(
+      shots.nth(1).locator(".display-panel .fit-text-inner").first()
+    ).toContainText("236");
+
+    // Step 2 is the Variable Value By ID reader GUI
+    await expect(shots.nth(2).locator(".reader-title")).toContainText(
+      "Network Reader"
+    );
+
+    // Step 6 (map over the @0/@1-resolved ids) -> [319, 236]
+    await expect(
+      shots.nth(6).locator(".display-panel .fit-text-inner").first()
+    ).toContainText("319");
+    await expect(
+      shots.nth(6).locator(".display-panel .fit-text-inner").first()
+    ).toContainText("236");
+
+    await expect(page.locator(".display-panel-error-overlay")).toHaveCount(0);
+  });
+
+  test("testAtRefSyntaxHoversShowDifferentVarIds", async ({ page }) => {
+    await openVisual(page, (await CODE).varByIdAtRefs);
+
+    const shots = page.locator(".logic-programmer-shot");
+    await expect(shots).toHaveCount(7);
+
+    // Hover the 319 card's output card: Variable ID 0
+    const firstCard = shots.nth(0).locator(".logic-write-card-composite");
+    await firstCard.hover();
+    await expect(
+      page
+        .locator(".logic-card-tooltip")
+        .filter({ hasText: /Variable ID: .*0/ })
+    ).toBeVisible();
+    await expect(page).toHaveScreenshot("varByIdAtRefs-step-0-hover.png");
+
+    // Hover the map result card: a different Variable ID (6)
+    const mapCard = shots.nth(6).locator(".logic-write-card-composite");
+    await mapCard.hover();
+    await expect(
+      page
+        .locator(".logic-card-tooltip")
+        .filter({ hasText: /Variable ID: .*6/ })
+    ).toBeVisible();
+    await expect(page).toHaveScreenshot("varByIdAtRefs-step-6-hover.png");
   });
 
   test("testVarByIdMapReduceHoversShowDifferentVarIds", async ({ page }) => {

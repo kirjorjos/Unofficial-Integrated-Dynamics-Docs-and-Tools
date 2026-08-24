@@ -14,9 +14,25 @@ import {
   setOperatorSourceName,
   flattenAnonymousBaseOperatorApplication,
 } from "lib/transformers/helpers";
+import {
+  assertNoVarRefs,
+  buildNetworkCards,
+  getNetworkDefLastCardIds,
+} from "lib/transformers/NetworkCards";
 
-export const ASTToCodeLine = (ast: TypeAST.AST, isTopLevel = true): string => {
+export const ASTToCodeLine = (
+  ast: TypeAST.AST,
+  isTopLevel = true,
+  startVariableId = 0
+): string => {
+  const defLastCardIds = getNetworkDefLastCardIds(ast, startVariableId);
+
   const stringify = (node: TypeAST.AST, topLevel = false): string => {
+    const lastCardId = defLastCardIds.get(node);
+    if (lastCardId !== undefined && !topLevel) {
+      return String(lastCardId);
+    }
+
     if (node.varName && !topLevel) {
       return node.varName;
     }
@@ -172,9 +188,15 @@ export const ASTToCodeLine = (ast: TypeAST.AST, isTopLevel = true): string => {
       }
 
       case "NetworkCards":
-        throw new Error(
-          "NetworkCards are not yet implemented in the CodeLine format"
-        );
+        return node.definitions
+          .map((def) => {
+            const oldVarName = def.node.varName;
+            delete def.node.varName;
+            const statement = stringify(def.node, true);
+            if (oldVarName) def.node.varName = oldVarName;
+            return statement;
+          })
+          .join("; ");
     }
 
     if (node.varName && topLevel) {
@@ -188,7 +210,9 @@ export const ASTToCodeLine = (ast: TypeAST.AST, isTopLevel = true): string => {
 
 export const CodeLineToAST = (
   codeLine: string,
-  externalScope: Map<string, TypeAST.AST> = new Map()
+  externalScope: Map<string, TypeAST.AST> = new Map(),
+  startVariableId = 0,
+  allowVarRefs = false
 ): TypeAST.AST => {
   const tokens: string[] = [];
   let current = "";
@@ -226,7 +250,8 @@ export const CodeLineToAST = (
       char === "," ||
       char === "\\" ||
       char === "[" ||
-      char === "]"
+      char === "]" ||
+      char === ";"
     ) {
       if (current.trim()) tokens.push(current.trim());
       tokens.push(char);
@@ -396,6 +421,8 @@ export const CodeLineToAST = (
     if (token.startsWith('"'))
       return { type: "String", value: JSON.parse(token) };
     if (token.startsWith("{")) return { type: "NBT", value: JSON.parse(token) };
+    if (token.startsWith("@"))
+      return { type: "Variable", name: token } as InternalAST;
     if (/^-?\d+$/.test(token))
       return { type: "Integer", value: token as TypeNumericString };
     if (/^-?\d+l$/i.test(token))
@@ -447,9 +474,13 @@ export const CodeLineToAST = (
   function parseSequence(scope: Set<string>, consumeAll: boolean): InternalAST {
     let result: InternalAST | undefined = undefined;
 
-    while (pos < tokens.length && (consumeAll || tokens[pos] !== ")")) {
+    while (
+      pos < tokens.length &&
+      (consumeAll || tokens[pos] !== ")") &&
+      tokens[pos] !== ";"
+    ) {
       const next = tokens[pos];
-      if (next === ")") break;
+      if (next === ")" || next === ";") break;
 
       const expr = parseExpression(scope);
       if (result === undefined) {
@@ -1141,11 +1172,23 @@ export const CodeLineToAST = (
     throw new Error(`Could not abstract "${param}" from expression`);
   }
 
-  const result = parseSequence(new Set(), true);
+  const segments: InternalAST[] = [];
+  while (pos < tokens.length) {
+    segments.push(parseSequence(new Set(), true));
+    if (tokens[pos] === ";") {
+      pos++;
+      continue;
+    }
+    break;
+  }
   if (pos < tokens.length) {
     throw new Error(
       `Unexpected trailing tokens: ${tokens.slice(pos).join(" ")}`
     );
   }
-  return result as TypeAST.AST;
+  if (segments.length === 1) {
+    if (!allowVarRefs) assertNoVarRefs(segments[0] as TypeAST.AST);
+    return segments[0] as TypeAST.AST;
+  }
+  return buildNetworkCards(segments as TypeAST.AST[], startVariableId);
 };

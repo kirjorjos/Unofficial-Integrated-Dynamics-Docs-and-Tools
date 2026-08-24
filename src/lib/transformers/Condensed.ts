@@ -18,6 +18,11 @@ import {
   setOperatorSourceName,
   flattenAnonymousBaseOperatorApplication,
 } from "lib/transformers/helpers";
+import {
+  assertNoVarRefs,
+  buildNetworkCards,
+  getNetworkDefLastCardIds,
+} from "lib/transformers/NetworkCards";
 
 type char = string;
 interface State {
@@ -40,7 +45,8 @@ const charTokenCheckers: Record<string, (c: char, state: State) => boolean> = {
   null: (c, state) =>
     !state.inString && state.inJSON === 0 && /^[nul]$/i.test(c),
   identifier: (c, state) =>
-    !state.inString && (getNicknameCharacterRegex().test(c) || c === "="),
+    !state.inString &&
+    (getNicknameCharacterRegex().test(c) || c === "=" || c === "@"),
 };
 
 const resolveType = (value: string, possible: string[]): string => {
@@ -116,7 +122,7 @@ export const tokenize = (condensed: string) => {
     }
 
     const isStructural =
-      !state.inString && state.inJSON === 0 && /^[()[\],\\]$/.test(char);
+      !state.inString && state.inJSON === 0 && /^[()[\],;\\]$/.test(char);
     const isWhitespace =
       !state.inString && state.inJSON === 0 && /^\s$/.test(char);
 
@@ -198,7 +204,9 @@ export const tokenize = (condensed: string) => {
 
 export const CondensedToAST = (
   condensed: string,
-  externalScope: Map<string, TypeAST.AST> = new Map()
+  externalScope: Map<string, TypeAST.AST> = new Map(),
+  startVariableId = 0,
+  allowVarRefs = false
 ): TypeAST.AST => {
   const tokens = tokenize(condensed);
   let pos = 0;
@@ -371,7 +379,8 @@ export const CondensedToAST = (
         const values: InternalAST[] = [];
         while (
           tokens[pos] &&
-          !(tokens[pos]!.type === "structural" && tokens[pos]!.value === "]")
+          !(tokens[pos]!.type === "structural" && tokens[pos]!.value === "]") &&
+          !(tokens[pos]!.type === "structural" && tokens[pos]!.value === ";")
         ) {
           values.push(parseExpression(scope));
           if (
@@ -391,6 +400,9 @@ export const CondensedToAST = (
         pos++;
         return { type: "List", value: values };
       }
+      if (token.value === ";") {
+        throw new Error("Unexpected ';' inside expression");
+      }
       throw new Error(`Unexpected structural token: ${token.value}`);
     }
 
@@ -403,7 +415,8 @@ export const CondensedToAST = (
       const args: InternalAST[] = [];
       while (
         tokens[pos] &&
-        !(tokens[pos]!.type === "structural" && tokens[pos]!.value === ")")
+        !(tokens[pos]!.type === "structural" && tokens[pos]!.value === ")") &&
+        !(tokens[pos]!.type === "structural" && tokens[pos]!.value === ";")
       ) {
         const arg = parseExpression(scope);
         args.push(arg);
@@ -1369,6 +1382,8 @@ export const CondensedToAST = (
       case "nbt":
         return { type: "NBT", value: JSON.parse(token.value) };
       case "identifier":
+        if (token.value.startsWith("@"))
+          return { type: "Variable", name: token.value } as InternalAST;
         if (scope.has(token.value))
           return { type: "Variable", name: token.value };
         if (externalScope.has(token.value))
@@ -1401,7 +1416,19 @@ export const CondensedToAST = (
     }
   }
 
-  const result = parseExpression(new Set());
+  const segments: InternalAST[] = [];
+  while (pos < tokens.length) {
+    segments.push(parseExpression(new Set()));
+    if (
+      pos < tokens.length &&
+      tokens[pos]!.type === "structural" &&
+      tokens[pos]!.value === ";"
+    ) {
+      pos++;
+      continue;
+    }
+    break;
+  }
   if (pos < tokens.length) {
     throw new Error(
       `Unexpected trailing tokens in Condensed: ${tokens
@@ -1410,11 +1437,26 @@ export const CondensedToAST = (
         .join(" ")}`
     );
   }
-  return result as TypeAST.AST;
+  if (segments.length === 1) {
+    if (!allowVarRefs) assertNoVarRefs(segments[0] as TypeAST.AST);
+    return segments[0] as TypeAST.AST;
+  }
+  return buildNetworkCards(segments as TypeAST.AST[], startVariableId);
 };
 
-export const ASTToCondensed = (ast: TypeAST.AST, isTopLevel = true): string => {
+export const ASTToCondensed = (
+  ast: TypeAST.AST,
+  isTopLevel = true,
+  startVariableId = 0
+): string => {
+  const defLastCardIds = getNetworkDefLastCardIds(ast, startVariableId);
+
   const stringify = (node: TypeAST.AST, topLevel = false): string => {
+    const lastCardId = defLastCardIds.get(node);
+    if (lastCardId !== undefined && !topLevel) {
+      return String(lastCardId);
+    }
+
     if (node.varName && !topLevel) {
       return node.varName;
     }
@@ -1562,9 +1604,15 @@ export const ASTToCondensed = (ast: TypeAST.AST, isTopLevel = true): string => {
         break;
 
       case "NetworkCards":
-        throw new Error(
-          "NetworkCards are not yet implemented in the Condensed format"
-        );
+        return node.definitions
+          .map((def) => {
+            const oldVarName = def.node.varName;
+            delete def.node.varName;
+            const statement = stringify(def.node, true);
+            if (oldVarName) def.node.varName = oldVarName;
+            return statement;
+          })
+          .join("; ");
     }
 
     if (node.varName && topLevel) {
