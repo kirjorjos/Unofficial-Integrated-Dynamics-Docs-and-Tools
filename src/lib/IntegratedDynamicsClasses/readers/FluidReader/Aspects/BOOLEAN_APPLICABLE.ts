@@ -7,4 +7,5 @@ export class FLUID_BOOLEAN_APPLICABLE extends FluidAspectBase {
   static settings = {};
   static icon = "boolean/fluid/applicable";
   static outputType = "Boolean";
+  static tooltipInfo = "If the target has a fluid tank";
 }

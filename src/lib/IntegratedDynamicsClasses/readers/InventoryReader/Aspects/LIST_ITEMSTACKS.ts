@@ -14,4 +14,5 @@ export class INVENTORY_LIST_ITEMSTACKS extends InventoryAspectBase {
   static settings = {};
   static icon = "list/inventory/itemstacks";
   static outputType = "List";
+  static tooltipInfo = "Get a list of the items in the inventory";
 }

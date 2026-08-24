@@ -13,4 +13,5 @@ export class WORLD_LIST_PLAYERS extends WorldAspectBase {
   static settings = {};
   static icon = "list/world/players";
   static outputType = "List";
+  static tooltipInfo = "The players that are in this world";
 }

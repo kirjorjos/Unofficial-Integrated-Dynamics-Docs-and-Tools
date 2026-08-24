@@ -13,4 +13,5 @@ export class BLOCK_STRING_BIOME extends BlockAspectBase {
   static settings = {};
   static icon = "string/block/biome";
   static outputType = "String";
+  static tooltipInfo = "The biome name at the target";
 }

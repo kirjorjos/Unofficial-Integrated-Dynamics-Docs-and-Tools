@@ -15,4 +15,5 @@ export class BLOCK_NBT extends BlockAspectBase {
   static settings = {};
   static icon = "nbt/block/tile";
   static outputType = "NBT";
+  static tooltipInfo = "The target Tile Entity as NBT";
 }

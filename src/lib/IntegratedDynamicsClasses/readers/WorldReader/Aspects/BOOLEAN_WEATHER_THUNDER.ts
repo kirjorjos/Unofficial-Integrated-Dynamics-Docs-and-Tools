@@ -13,4 +13,5 @@ export class WORLD_BOOLEAN_WEATHER_THUNDER extends WorldAspectBase {
   static settings = {};
   static icon = "boolean/world/weather/thunder";
   static outputType = "Boolean";
+  static tooltipInfo = "If there is a thunderstorm in the world";
 }

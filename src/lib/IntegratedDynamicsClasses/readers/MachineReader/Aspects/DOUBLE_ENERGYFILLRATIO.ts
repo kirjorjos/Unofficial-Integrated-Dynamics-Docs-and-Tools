@@ -14,4 +14,5 @@ export class MACHINE_DOUBLE_ENERGYFILLRATIO extends MachineAspectBase {
   static settings = {};
   static icon = "double/fe/fillratio";
   static outputType = "Double";
+  static tooltipInfo = "The amount of FE in the target divided by its capacity";
 }

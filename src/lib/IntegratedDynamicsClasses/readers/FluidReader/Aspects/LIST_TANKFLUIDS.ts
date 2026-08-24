@@ -13,4 +13,5 @@ export class FLUID_LIST_TANKFLUIDS extends FluidAspectBase {
   static settings = {};
   static icon = "list/fluid/fluidstacks";
   static outputType = "List";
+  static tooltipInfo = "The list of fluids in all tanks";
 }

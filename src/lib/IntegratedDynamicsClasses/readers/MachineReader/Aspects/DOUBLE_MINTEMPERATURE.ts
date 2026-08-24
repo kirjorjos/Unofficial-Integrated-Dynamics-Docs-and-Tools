@@ -12,4 +12,6 @@ export class MACHINE_DOUBLE_MINTEMPERATURE extends MachineAspectBase {
   static settings = {};
   static icon = "double/temperature/mintemperature";
   static outputType = "Double";
+  static tooltipInfo =
+    "The minimum temperature of the target in degrees Kelvin";
 }

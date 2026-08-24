@@ -13,4 +13,6 @@ export class ENTITY_INTEGER_ITEMFRAMEROTATION extends EntityAspectBase {
   static settings = {};
   static icon = "integer/entity/itemframerotation";
   static outputType = "Integer";
+  static tooltipInfo =
+    "The index of the rotation the item in the attached Item Frame has.";
 }

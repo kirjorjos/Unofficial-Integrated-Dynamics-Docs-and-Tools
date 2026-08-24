@@ -12,4 +12,5 @@ export class INVENTORY_BOOLEAN_APPLICABLE extends InventoryAspectBase {
   static settings = {};
   static icon = "boolean/inventory/applicable";
   static outputType = "Boolean";
+  static tooltipInfo = "If the target has an inventory";
 }

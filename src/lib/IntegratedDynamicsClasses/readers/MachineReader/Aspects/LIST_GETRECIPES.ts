@@ -13,4 +13,5 @@ export class MACHINE_LIST_GETRECIPES extends MachineAspectBase {
   static settings = {};
   static icon = "list/recipehandler/recipes";
   static outputType = "List";
+  static tooltipInfo = "Recipes that can be handled by the target";
 }

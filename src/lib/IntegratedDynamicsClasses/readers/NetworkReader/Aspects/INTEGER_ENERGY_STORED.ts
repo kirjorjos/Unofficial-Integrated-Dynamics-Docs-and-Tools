@@ -11,6 +11,10 @@ export class NETWORK_INTEGER_ENERGY_STORED extends NetworkAspectBase {
     "stored",
   ];
   static settings = { channel: -1 };
+  static settingsInfo = {
+    channel: { displayName: "Channel" },
+  };
   static icon = "integer/network/energy/stored";
   static outputType = "Integer";
+  static tooltipInfo = "The amount of energy available in the target network";
 }

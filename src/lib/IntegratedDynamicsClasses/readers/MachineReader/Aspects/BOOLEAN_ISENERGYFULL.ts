@@ -16,4 +16,5 @@ export class MACHINE_BOOLEAN_ISENERGYFULL extends MachineAspectBase {
   static settings = {};
   static icon = "boolean/fe/isfull";
   static outputType = "Boolean";
+  static tooltipInfo = "If the target's FE buffer is completely full";
 }

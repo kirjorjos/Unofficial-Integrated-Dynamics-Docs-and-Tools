@@ -12,4 +12,6 @@ export class NETWORK_INTEGER_ENERGY_CONSUMPTION_RATE extends NetworkAspectBase {
   static settings = {};
   static icon = "integer/network/energy/consumptionrate";
   static outputType = "Integer";
+  static tooltipInfo =
+    "The current energy consumption rate of all ID parts within the target network per tick";
 }

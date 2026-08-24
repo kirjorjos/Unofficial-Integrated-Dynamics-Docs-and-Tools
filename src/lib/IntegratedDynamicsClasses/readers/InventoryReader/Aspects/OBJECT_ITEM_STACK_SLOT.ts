@@ -12,6 +12,9 @@ export class INVENTORY_OBJECT_ITEM_STACK_SLOT extends InventoryAspectBase {
     "inventory_slot_item",
   ];
   static settings = { slotid: 0 };
+  static settingsInfo = {
+    slotid: { displayName: "Slot ID" },
+  };
   static icon = "inventory/itemstack";
   static outputType = "Item";
 }

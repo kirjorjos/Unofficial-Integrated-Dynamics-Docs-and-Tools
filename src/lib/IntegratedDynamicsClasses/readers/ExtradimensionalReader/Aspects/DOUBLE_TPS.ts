@@ -7,4 +7,5 @@ export class EXTRADIMENSIONAL_DOUBLE_TPS extends ExtradimensionalAspectBase {
   static settings = {};
   static icon = "double/extradimensional/tps";
   static outputType = "Double";
+  static tooltipInfo = "The average number of ticks per second over all worlds";
 }

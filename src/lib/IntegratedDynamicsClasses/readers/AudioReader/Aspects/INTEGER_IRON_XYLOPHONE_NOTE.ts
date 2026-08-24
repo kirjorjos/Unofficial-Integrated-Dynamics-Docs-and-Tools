@@ -10,4 +10,5 @@ export class AUDIO_INTEGER_IRON_XYLOPHONE_NOTE extends AudioAspectBase {
     "iron_xylophone",
   ];
   static icon = "integer/audio/instrument/iron_xylophone";
+  static tooltipInfo = "Reads an iron xylophone note, expected range [0, 24]";
 }

@@ -7,4 +7,5 @@ export class WORLD_DOUBLE_TPS extends WorldAspectBase {
   static settings = {};
   static icon = "double/world/tps";
   static outputType = "Double";
+  static tooltipInfo = "The number of ticks per second in this world";
 }

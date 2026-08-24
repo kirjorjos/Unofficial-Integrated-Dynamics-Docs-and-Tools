@@ -14,4 +14,5 @@ export class EXTRADIMENSIONAL_INTEGER_PLAYERCOUNT extends ExtradimensionalAspect
   static settings = {};
   static icon = "integer/extradimensional/playercount";
   static outputType = "Integer";
+  static tooltipInfo = "The amount of players in the server";
 }

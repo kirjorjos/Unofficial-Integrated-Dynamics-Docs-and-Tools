@@ -7,4 +7,5 @@ export class WORLD_INTEGER_LIGHTLEVEL extends WorldAspectBase {
   static settings = {};
   static icon = "integer/world/lightlevel";
   static outputType = "Integer";
+  static tooltipInfo = "The light level at the target";
 }

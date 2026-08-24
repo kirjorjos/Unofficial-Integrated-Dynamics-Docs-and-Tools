@@ -13,4 +13,5 @@ export class BLOCK_INTEGER_LIGHT extends BlockAspectBase {
   static settings = {};
   static icon = "integer/block/light";
   static outputType = "Integer";
+  static tooltipInfo = "The light level at the target";
 }

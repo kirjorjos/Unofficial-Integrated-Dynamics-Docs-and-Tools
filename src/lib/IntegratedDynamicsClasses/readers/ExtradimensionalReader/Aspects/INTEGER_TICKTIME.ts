@@ -7,4 +7,5 @@ export class EXTRADIMENSIONAL_INTEGER_TICKTIME extends ExtradimensionalAspectBas
   static settings = {};
   static icon = "integer/extradimensional/ticktime";
   static outputType = "Integer";
+  static tooltipInfo = "The average tick time in nanoseconds for the server";
 }

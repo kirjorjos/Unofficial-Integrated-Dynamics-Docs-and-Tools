@@ -5,4 +5,5 @@ export class AUDIO_INTEGER_COW_BELL_NOTE extends AudioAspectBase {
   static fullDisplayName = "Cow Bell Note";
   static nicknames = ["cowBellNote", "cow_bell_note", "cowBell", "cow_bell"];
   static icon = "integer/audio/instrument/cow_bell";
+  static tooltipInfo = "Reads a cow bell note, expected range [0, 24]";
 }

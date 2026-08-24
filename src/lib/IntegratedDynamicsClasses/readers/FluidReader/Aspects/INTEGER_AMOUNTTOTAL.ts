@@ -12,4 +12,5 @@ export class FLUID_INTEGER_AMOUNTTOTAL extends FluidAspectBase {
   static settings = {};
   static icon = "integer/fluid/totalamount";
   static outputType = "Integer";
+  static tooltipInfo = "The total amount of fluid in mB";
 }

@@ -14,4 +14,5 @@ export class MACHINE_BOOLEAN_ISENERGY extends MachineAspectBase {
   static settings = {};
   static icon = "boolean/fe/applicable";
   static outputType = "Boolean";
+  static tooltipInfo = "If the target in some way handles FE";
 }

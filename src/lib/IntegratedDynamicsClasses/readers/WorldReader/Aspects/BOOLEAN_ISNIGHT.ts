@@ -7,4 +7,5 @@ export class WORLD_BOOLEAN_ISNIGHT extends WorldAspectBase {
   static settings = {};
   static icon = "boolean/world/isnight";
   static outputType = "Boolean";
+  static tooltipInfo = "If it is night in the target world";
 }

@@ -7,4 +7,5 @@ export class WORLD_INTEGER_TICKTIME extends WorldAspectBase {
   static settings = {};
   static icon = "integer/world/ticktime";
   static outputType = "Integer";
+  static tooltipInfo = "The average tick time in milliseconds for this world";
 }

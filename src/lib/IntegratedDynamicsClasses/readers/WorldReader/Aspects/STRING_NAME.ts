@@ -7,4 +7,5 @@ export class WORLD_STRING_NAME extends WorldAspectBase {
   static settings = {};
   static icon = "string/world/worldname";
   static outputType = "String";
+  static tooltipInfo = "The target world name";
 }

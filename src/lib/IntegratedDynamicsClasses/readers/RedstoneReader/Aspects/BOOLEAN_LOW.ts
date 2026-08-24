@@ -7,4 +7,5 @@ export class REDSTONE_BOOLEAN_LOW extends RedstoneAspectBase {
   static settings = {};
   static icon = "boolean/redstone/low";
   static outputType = "Boolean";
+  static tooltipInfo = "If there is no redstone level";
 }

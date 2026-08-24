@@ -14,4 +14,5 @@ export class BLOCK_BOOLEAN_BLOCK extends BlockAspectBase {
   static settings = {};
   static icon = "boolean/block/block";
   static outputType = "Boolean";
+  static tooltipInfo = "If the target space has a block";
 }

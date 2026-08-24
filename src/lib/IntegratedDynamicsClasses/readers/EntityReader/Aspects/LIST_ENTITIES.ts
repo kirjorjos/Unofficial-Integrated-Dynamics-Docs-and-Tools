@@ -13,4 +13,5 @@ export class ENTITY_LIST_ENTITIES extends EntityAspectBase {
   static settings = {};
   static icon = "list/entity/entities";
   static outputType = "List";
+  static tooltipInfo = "The entities in the target space";
 }

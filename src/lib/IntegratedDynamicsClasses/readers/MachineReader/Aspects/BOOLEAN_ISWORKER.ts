@@ -7,4 +7,5 @@ export class MACHINE_BOOLEAN_ISWORKER extends MachineAspectBase {
   static settings = {};
   static icon = "boolean/machine/isworker";
   static outputType = "Boolean";
+  static tooltipInfo = "If the target is a worker machine";
 }

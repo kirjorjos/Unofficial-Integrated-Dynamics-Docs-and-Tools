@@ -13,4 +13,5 @@ export class EXTRADIMENSIONAL_LIST_PLAYERS extends ExtradimensionalAspectBase {
   static settings = {};
   static icon = "list/extradimensional/players";
   static outputType = "List";
+  static tooltipInfo = "The players that are online on this server";
 }

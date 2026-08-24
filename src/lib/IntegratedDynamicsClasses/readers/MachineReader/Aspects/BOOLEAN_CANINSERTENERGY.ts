@@ -14,4 +14,6 @@ export class MACHINE_BOOLEAN_CANINSERTENERGY extends MachineAspectBase {
   static settings = {};
   static icon = "boolean/fe/caninsert";
   static outputType = "Boolean";
+  static tooltipInfo =
+    "If FE can really be inserted into the target, takes into account storage and capacity";
 }

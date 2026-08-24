@@ -12,4 +12,5 @@ export class INVENTORY_INTEGER_SLOTSFILLED extends InventoryAspectBase {
   static settings = {};
   static icon = "integer/inventory/slotsfilled";
   static outputType = "Integer";
+  static tooltipInfo = "The number of slots that have an item";
 }

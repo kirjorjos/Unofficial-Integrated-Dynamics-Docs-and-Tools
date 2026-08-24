@@ -14,4 +14,5 @@ export class FLUID_BOOLEAN_NONEMPTY extends FluidAspectBase {
   static settings = {};
   static icon = "boolean/fluid/nonempty";
   static outputType = "Boolean";
+  static tooltipInfo = "If the target fluid tank has something in it";
 }

@@ -14,4 +14,5 @@ export class ENTITY_ITEMSTACK_ITEMFRAMECONTENTS extends EntityAspectBase {
   static settings = {};
   static icon = "itemstack/entity/itemframecontents";
   static outputType = "Item";
+  static tooltipInfo = "The item in an Item Frame attached to the reader";
 }

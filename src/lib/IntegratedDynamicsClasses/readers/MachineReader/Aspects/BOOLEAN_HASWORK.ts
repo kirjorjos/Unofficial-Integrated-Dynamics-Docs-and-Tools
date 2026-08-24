@@ -7,4 +7,5 @@ export class MACHINE_BOOLEAN_HASWORK extends MachineAspectBase {
   static settings = {};
   static icon = "boolean/machine/haswork";
   static outputType = "Boolean";
+  static tooltipInfo = "If the target has work to process";
 }

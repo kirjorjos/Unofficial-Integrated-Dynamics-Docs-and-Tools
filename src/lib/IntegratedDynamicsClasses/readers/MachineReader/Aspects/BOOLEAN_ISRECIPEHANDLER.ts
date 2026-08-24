@@ -12,4 +12,5 @@ export class MACHINE_BOOLEAN_ISRECIPEHANDLER extends MachineAspectBase {
   static settings = {};
   static icon = "boolean/recipehandler/applicable";
   static outputType = "Boolean";
+  static tooltipInfo = "If the target can handle recipes";
 }

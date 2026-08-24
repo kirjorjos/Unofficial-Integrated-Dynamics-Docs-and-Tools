@@ -7,4 +7,5 @@ export class FLUID_LIST_TANKCAPACITIES extends FluidAspectBase {
   static settings = {};
   static icon = "list/fluid/capacities";
   static outputType = "List";
+  static tooltipInfo = "The list of capacities of all tanks";
 }

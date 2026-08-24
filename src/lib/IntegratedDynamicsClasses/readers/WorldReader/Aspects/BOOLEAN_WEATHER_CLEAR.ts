@@ -12,4 +12,5 @@ export class WORLD_BOOLEAN_WEATHER_CLEAR extends WorldAspectBase {
   static settings = {};
   static icon = "boolean/world/weather/clear";
   static outputType = "Boolean";
+  static tooltipInfo = "If there is a clear weather in the world";
 }

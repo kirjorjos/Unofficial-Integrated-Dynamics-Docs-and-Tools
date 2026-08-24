@@ -7,4 +7,6 @@ export class MACHINE_DOUBLE_DEFAULTTEMPERATURE extends MachineAspectBase {
   static settings = {};
   static icon = "double/temperature/defaulttemperature";
   static outputType = "Double";
+  static tooltipInfo =
+    "The default temperature of the target in degrees Kelvin";
 }

@@ -12,4 +12,5 @@ export class REDSTONE_INTEGER_VALUE extends RedstoneAspectBase {
   static settings = {};
   static icon = "integer/redstone/value";
   static outputType = "Integer";
+  static tooltipInfo = "Get the exact redstone level";
 }

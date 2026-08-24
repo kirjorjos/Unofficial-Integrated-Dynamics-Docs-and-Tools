@@ -12,4 +12,5 @@ export class WORLD_LONG_TOTALTIME extends WorldAspectBase {
   static settings = {};
   static icon = "long/world/totaltime";
   static outputType = "Long";
+  static tooltipInfo = "The world time independent of the set time command";
 }

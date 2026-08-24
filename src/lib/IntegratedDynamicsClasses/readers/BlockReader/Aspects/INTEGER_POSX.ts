@@ -7,4 +7,5 @@ export class BLOCK_INTEGER_POSX extends BlockAspectBase {
   static settings = {};
   static icon = "integer/block/posx";
   static outputType = "Integer";
+  static tooltipInfo = "The X coordinate of the target";
 }

@@ -5,4 +5,5 @@ export class AUDIO_INTEGER_HAT_NOTE extends AudioAspectBase {
   static fullDisplayName = "Hat Note";
   static nicknames = ["hatNote", "hat_note", "hat"];
   static icon = "integer/audio/instrument/hat";
+  static tooltipInfo = "Reads a hat note, expected range [0, 24]";
 }

@@ -7,4 +7,5 @@ export class FLUID_BLOCK extends FluidAspectBase {
   static settings = {};
   static icon = "fluidstack/block";
   static outputType = "Fluid";
+  static tooltipInfo = "The fluid in the target block";
 }

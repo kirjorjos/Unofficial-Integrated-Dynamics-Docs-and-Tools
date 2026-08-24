@@ -7,4 +7,6 @@ export class MACHINE_BOOLEAN_CANWORK extends MachineAspectBase {
   static settings = {};
   static icon = "boolean/machine/canwork";
   static outputType = "Boolean";
+  static tooltipInfo =
+    "If the target would be able to start working in its current state";
 }

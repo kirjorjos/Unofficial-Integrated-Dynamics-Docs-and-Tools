@@ -7,4 +7,5 @@ export class INVENTORY_BOOLEAN_FULL extends InventoryAspectBase {
   static settings = {};
   static icon = "boolean/inventory/full";
   static outputType = "Boolean";
+  static tooltipInfo = "If all slots have at least one item";
 }

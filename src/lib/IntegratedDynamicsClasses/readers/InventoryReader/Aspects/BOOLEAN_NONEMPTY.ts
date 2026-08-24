@@ -12,4 +12,5 @@ export class INVENTORY_BOOLEAN_NONEMPTY extends InventoryAspectBase {
   static settings = {};
   static icon = "boolean/inventory/nonempty";
   static outputType = "Boolean";
+  static tooltipInfo = "If there is at least one item";
 }

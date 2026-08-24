@@ -12,4 +12,6 @@ export class MACHINE_DOUBLE_MAXTEMPERATURE extends MachineAspectBase {
   static settings = {};
   static icon = "double/temperature/maxtemperature";
   static outputType = "Double";
+  static tooltipInfo =
+    "The maximum temperature of the target in degrees Kelvin";
 }

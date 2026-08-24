@@ -12,4 +12,5 @@ export class FLUID_INTEGER_CAPACITYTOTAL extends FluidAspectBase {
   static settings = {};
   static icon = "integer/fluid/totalcapacity";
   static outputType = "Integer";
+  static tooltipInfo = "Total capacity of the tank";
 }

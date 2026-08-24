@@ -154,6 +154,12 @@ export const openVisual = async (page: Page, code: string, varId = 0) => {
   await waitForFontsAndNetworkIdle(page);
 };
 
+export const openReaderAspect = async (page: Page, pageId: string) => {
+  await page.goto(`/#${pageId}`);
+  await page.locator(".reader-aspect-doc-page").waitFor();
+  await waitForFontsAndNetworkIdle(page);
+};
+
 export const openOperatorPattern = async (page: Page, operatorKey: string) => {
   await page.goto(`/#operator-${operatorKey}`);
   const patternPanel = page.locator(

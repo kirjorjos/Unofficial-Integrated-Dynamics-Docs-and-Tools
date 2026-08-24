@@ -7,4 +7,5 @@ export class MACHINE_BOOLEAN_ISWORKING extends MachineAspectBase {
   static settings = {};
   static icon = "boolean/machine/isworking";
   static outputType = "Boolean";
+  static tooltipInfo = "If the target is currently working";
 }

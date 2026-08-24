@@ -10,6 +10,11 @@ export class FLUID_DOUBLE_FILLRATIO extends FluidAspectBase {
     "fill_ratio",
   ];
   static settings = { tankid: 0 };
+  static settingsInfo = {
+    tankid: { displayName: "Tank ID" },
+  };
   static icon = "double/fluid/fillratio";
   static outputType = "Double";
+  static tooltipInfo =
+    "The amount of fluid in the active tank divided by its capacity";
 }

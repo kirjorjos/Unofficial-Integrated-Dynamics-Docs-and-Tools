@@ -13,4 +13,5 @@ export class EXTRADIMENSIONAL_INTEGER_RANDOM extends ExtradimensionalAspectBase 
   static settings = {};
   static icon = "integer/extradimensional/random";
   static outputType = "Integer";
+  static tooltipInfo = "A random integer value";
 }

@@ -13,4 +13,5 @@ export class BLOCK_INTEGER_DIMENSION extends BlockAspectBase {
   static settings = {};
   static icon = "string/block/dimension";
   static outputType = "String";
+  static tooltipInfo = "The id of the target world dimension";
 }

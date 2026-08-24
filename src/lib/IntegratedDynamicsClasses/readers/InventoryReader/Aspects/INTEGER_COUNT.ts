@@ -12,4 +12,5 @@ export class INVENTORY_INTEGER_COUNT extends InventoryAspectBase {
   static settings = {};
   static icon = "integer/inventory/count";
   static outputType = "Integer";
+  static tooltipInfo = "Get the total amount of items";
 }

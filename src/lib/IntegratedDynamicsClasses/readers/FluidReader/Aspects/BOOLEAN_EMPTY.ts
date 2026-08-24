@@ -13,4 +13,5 @@ export class FLUID_BOOLEAN_EMPTY extends FluidAspectBase {
   static settings = {};
   static icon = "boolean/fluid/empty";
   static outputType = "Boolean";
+  static tooltipInfo = "If the target fluid tank is empty";
 }

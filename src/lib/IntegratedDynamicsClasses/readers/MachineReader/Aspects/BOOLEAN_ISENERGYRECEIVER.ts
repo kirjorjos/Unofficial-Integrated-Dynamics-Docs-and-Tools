@@ -14,4 +14,5 @@ export class MACHINE_BOOLEAN_ISENERGYRECEIVER extends MachineAspectBase {
   static settings = {};
   static icon = "boolean/fe/isreceiver";
   static outputType = "Boolean";
+  static tooltipInfo = "If the target can receive FE";
 }

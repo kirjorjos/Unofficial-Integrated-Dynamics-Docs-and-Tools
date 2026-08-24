@@ -12,4 +12,5 @@ export class REDSTONE_BOOLEAN_NONLOW extends RedstoneAspectBase {
   static settings = {};
   static icon = "boolean/redstone/nonlow";
   static outputType = "Boolean";
+  static tooltipInfo = "If there is a redstone level";
 }

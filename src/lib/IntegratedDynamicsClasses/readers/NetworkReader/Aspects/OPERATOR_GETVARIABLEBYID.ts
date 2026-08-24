@@ -17,4 +17,6 @@ export class NETWORK_OPERATOR_GETVARIABLEBYID extends NetworkAspectBase {
   static signature = ["Integer", "Any"];
   static inGameDisplayName =
     "Virtual operator.integrateddynamics.virtual.variablebyid";
+  static tooltipInfo =
+    "An operator that returns the value of a variable by its integer identifier";
 }

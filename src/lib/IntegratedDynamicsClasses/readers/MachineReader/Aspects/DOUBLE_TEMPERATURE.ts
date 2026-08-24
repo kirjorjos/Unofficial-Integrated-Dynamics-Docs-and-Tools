@@ -11,4 +11,6 @@ export class MACHINE_DOUBLE_TEMPERATURE extends MachineAspectBase {
   static settings = {};
   static icon = "double/temperature/temperature";
   static outputType = "Double";
+  static tooltipInfo =
+    "The current temperature of the target in degrees Kelvin";
 }

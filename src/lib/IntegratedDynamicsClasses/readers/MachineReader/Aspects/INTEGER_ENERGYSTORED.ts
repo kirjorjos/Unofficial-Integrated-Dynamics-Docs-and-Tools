@@ -15,4 +15,5 @@ export class MACHINE_INTEGER_ENERGYSTORED extends MachineAspectBase {
   static settings = {};
   static icon = "integer/fe/amount";
   static outputType = "Integer";
+  static tooltipInfo = "The amount of FE stored in the target";
 }

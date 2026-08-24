@@ -7,4 +7,5 @@ export class NETWORK_ANY_VALUE extends NetworkAspectBase {
   static settings = {};
   static icon = "any/network/value";
   static outputType = "Any";
+  static tooltipInfo = "The value that is being exposed by the target";
 }

@@ -11,6 +11,10 @@ export class NETWORK_INTEGER_ENERGY_MAX extends NetworkAspectBase {
     "capacity",
   ];
   static settings = { channel: -1 };
+  static settingsInfo = {
+    channel: { displayName: "Channel" },
+  };
   static icon = "integer/network/energy/max";
   static outputType = "Integer";
+  static tooltipInfo = "The energy capacity of the network";
 }

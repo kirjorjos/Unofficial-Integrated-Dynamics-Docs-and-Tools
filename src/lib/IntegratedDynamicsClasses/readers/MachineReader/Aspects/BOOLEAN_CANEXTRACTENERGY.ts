@@ -14,4 +14,6 @@ export class MACHINE_BOOLEAN_CANEXTRACTENERGY extends MachineAspectBase {
   static settings = {};
   static icon = "boolean/fe/canextract";
   static outputType = "Boolean";
+  static tooltipInfo =
+    "If FE can really be extracted from the target, takes into account storage";
 }

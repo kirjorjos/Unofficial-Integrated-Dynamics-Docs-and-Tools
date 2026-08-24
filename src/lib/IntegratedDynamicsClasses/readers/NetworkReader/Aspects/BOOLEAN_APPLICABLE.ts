@@ -12,4 +12,5 @@ export class NETWORK_BOOLEAN_APPLICABLE extends NetworkAspectBase {
   static settings = {};
   static icon = "boolean/network/applicable";
   static outputType = "Boolean";
+  static tooltipInfo = "If the target has a network";
 }

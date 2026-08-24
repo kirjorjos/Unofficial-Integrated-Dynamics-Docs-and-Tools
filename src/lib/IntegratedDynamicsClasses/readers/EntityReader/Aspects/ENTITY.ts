@@ -11,6 +11,10 @@ export class ENTITY_ENTITY extends EntityAspectBase {
     "entity_at",
   ];
   static settings = { listindex: 0 };
+  static settingsInfo = {
+    listindex: { displayName: "List Element" },
+  };
   static icon = "entity/entity";
   static outputType = "Entity";
+  static tooltipInfo = "The selected entity in the target space";
 }

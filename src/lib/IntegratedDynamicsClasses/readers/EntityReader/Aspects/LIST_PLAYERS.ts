@@ -13,4 +13,5 @@ export class ENTITY_LIST_PLAYERS extends EntityAspectBase {
   static settings = {};
   static icon = "list/entity/players";
   static outputType = "List";
+  static tooltipInfo = "The players that are in this world";
 }

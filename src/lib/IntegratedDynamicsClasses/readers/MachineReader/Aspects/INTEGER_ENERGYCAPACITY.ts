@@ -13,4 +13,5 @@ export class MACHINE_INTEGER_ENERGYCAPACITY extends MachineAspectBase {
   static settings = {};
   static icon = "integer/fe/capacity";
   static outputType = "Integer";
+  static tooltipInfo = "The FE capacity of the target";
 }

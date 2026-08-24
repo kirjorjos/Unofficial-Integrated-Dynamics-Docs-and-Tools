@@ -16,6 +16,9 @@ import MaterializerPage from "./pages/starting-out/MaterializerPage.vue";
 import ReadersAndWritersPage from "./pages/starting-out/ReadersAndWritersPage.vue";
 import ReaderGuiPreviewPage from "./pages/starting-out/ReaderGuiPreviewPage.vue";
 import OperatorPage from "./pages/operators/OperatorPage.vue";
+import ReaderAspectPage from "./pages/readers/ReaderAspectPage.vue";
+import { readerRegistry } from "./lib/IntegratedDynamicsClasses/readers/readerRegistry";
+import type { ReaderStatic } from "./lib/IntegratedDynamicsClasses/readers/ReaderBase";
 import { humanizeIdentifier } from "./lib/HelperClasses/UtilityFunctions";
 
 type FilePage = {
@@ -66,6 +69,19 @@ const compactNormalizedText = (value: string): string => {
 
 const getNormalizedSearchLength = (value: string): number => {
   return compactNormalizedText(value).length;
+};
+
+const READER_TITLES: Record<string, string> = {
+  redstone: "Redstone Reader",
+  inventory: "Inventory Reader",
+  world: "World Reader",
+  fluid: "Fluid Reader",
+  network: "Network Reader",
+  block: "Block Reader",
+  entity: "Entity Reader",
+  extradimensional: "Extra-Dimensional Reader",
+  machine: "Machine Reader",
+  audio: "Audio Reader",
 };
 
 const getSingleWordDirectMatch = (
@@ -138,7 +154,7 @@ const getPhraseMatch = (
   return best;
 };
 
-const matchOperatorDirect = (
+const matchPageDirect = (
   index: NonNullable<FilePage["searchIndex"]>,
   normalizedQuery: string
 ): MatchResult | null => {
@@ -157,7 +173,7 @@ const matchOperatorDirect = (
   );
 };
 
-const matchOperatorDescription = (
+const matchPageDescription = (
   index: NonNullable<FilePage["searchIndex"]>,
   normalizedQuery: string
 ): MatchResult | null => {
@@ -229,6 +245,7 @@ const operatorPages: FilePage[] = Object.keys(operatorRegistry)
     ] as {
       symbol?: string;
       interactName?: string;
+      fullDisplayName?: string;
       nicknames?: string[];
       internalName?: string;
       tooltipInfo?: string;
@@ -239,7 +256,8 @@ const operatorPages: FilePage[] = Object.keys(operatorRegistry)
       kind: "page" as const,
       id: `operator-${key}`,
       label: operatorClass.symbol ?? key,
-      tooltip: operatorClass.interactName ?? key,
+      tooltip:
+        operatorClass.fullDisplayName ?? operatorClass.interactName ?? key,
       searchIndex: {
         nicknames: (operatorClass.nicknames ?? []).map(normalizeSearchText),
         internalName: normalizeSearchText(operatorClass.internalName ?? ""),
@@ -273,6 +291,48 @@ const operatorFolderPages: FolderPage[] = Array.from(
   children: pages,
 }));
 
+const readerFolderPages: FolderPage[] = Object.values(readerRegistry)
+  .map((readerClass) => {
+    const reader = readerClass as unknown as ReaderStatic;
+    const title =
+      READER_TITLES[reader.shortName] ?? `${reader.shortName} Reader`;
+    const readerNames = [reader.shortName, reader.typeName, title];
+    const pages: FilePage[] = Object.entries(reader.aspects).map(
+      ([aspectKey, aspect]) => ({
+        kind: "page" as const,
+        id: `reader-${reader.shortName}-${aspectKey
+          .toLowerCase()
+          .replace(/_/g, "-")}`,
+        label: aspect.fullDisplayName,
+        tooltip: aspect.displayName,
+        searchIndex: {
+          nicknames: [
+            ...aspect.nicknames,
+            aspect.fullDisplayName,
+            aspect.displayName,
+            ...readerNames,
+          ].map(normalizeSearchText),
+          internalName: normalizeSearchText(aspectKey),
+          description: aspect.tooltipInfo
+            ? normalizeSearchText(aspect.tooltipInfo)
+            : undefined,
+        },
+        component: ReaderAspectPage,
+        props: {
+          readerKey: reader.typeName,
+          aspectKey,
+        },
+      })
+    );
+    return {
+      kind: "folder" as const,
+      id: `readers-${reader.shortName}`,
+      label: title,
+      children: pages,
+    };
+  })
+  .sort((left, right) => left.label.localeCompare(right.label));
+
 const sections: NavItem[] = [
   {
     kind: "page",
@@ -297,6 +357,12 @@ const sections: NavItem[] = [
     id: "operators",
     label: "Operators",
     children: operatorFolderPages,
+  },
+  {
+    kind: "folder",
+    id: "readers",
+    label: "Readers",
+    children: readerFolderPages,
   },
   {
     kind: "page",
@@ -333,9 +399,11 @@ const sections: NavItem[] = [
 const collapsedFolders = ref<Record<string, boolean>>({
   "starting-out": false,
   operators: false,
+  readers: false,
   ...Object.fromEntries(
     operatorFolderPages.map((folder) => [folder.id, false])
   ),
+  ...Object.fromEntries(readerFolderPages.map((folder) => [folder.id, false])),
 });
 const navSearch = ref("");
 
@@ -376,75 +444,99 @@ const normalizedNavSearch = computed(() =>
   normalizeSearchText(navSearch.value)
 );
 
+const getSectionSearchMatches = (
+  pages: FilePage[],
+  query: string
+): FilePage[] => {
+  const directMatches = pages
+    .map((page, index) => ({
+      page,
+      index,
+      match: page.searchIndex ? matchPageDirect(page.searchIndex, query) : null,
+    }))
+    .filter(
+      (entry): entry is { page: FilePage; index: number; match: MatchResult } =>
+        entry.match !== null
+    )
+    .sort(
+      (left, right) =>
+        left.match.tier - right.match.tier ||
+        left.match.matchLength - right.match.matchLength ||
+        left.index - right.index
+    );
+
+  if (directMatches.length > 0) {
+    return directMatches.map((entry) => entry.page);
+  }
+
+  if (getNormalizedSearchLength(query) < 3) {
+    return [];
+  }
+
+  const descriptionMatches = pages
+    .map((page, index) => ({
+      page,
+      index,
+      match: page.searchIndex
+        ? matchPageDescription(page.searchIndex, query)
+        : null,
+    }))
+    .filter(
+      (entry): entry is { page: FilePage; index: number; match: MatchResult } =>
+        entry.match !== null
+    )
+    .sort(
+      (left, right) =>
+        left.match.tier - right.match.tier ||
+        left.match.matchLength - right.match.matchLength ||
+        left.index - right.index
+    );
+
+  return descriptionMatches.map((entry) => entry.page);
+};
+
 const visibleSections = computed<NavItem[]>(() => {
   const query = normalizedNavSearch.value;
   if (!query) return sections;
 
   return sections.map((section) => {
     if (section.kind === "page") return section;
-    if (section.id !== "operators") return section;
+    if (section.id !== "operators" && section.id !== "readers") {
+      return section;
+    }
 
-    const operatorPages = flattenItems(section.children);
+    const matched = getSectionSearchMatches(
+      flattenItems(section.children),
+      query
+    );
 
-    const directMatches = operatorPages
-      .map((page, index) => ({
-        page,
-        index,
-        match: page.searchIndex
-          ? matchOperatorDirect(page.searchIndex, query)
-          : null,
-      }))
-      .filter(
-        (
-          entry
-        ): entry is { page: FilePage; index: number; match: MatchResult } =>
-          entry.match !== null
-      )
-      .sort(
-        (left, right) =>
-          left.match.tier - right.match.tier ||
-          left.match.matchLength - right.match.matchLength ||
-          left.index - right.index
-      );
-
-    if (directMatches.length > 0) {
+    if (section.id === "operators") {
       return {
         ...section,
-        children: directMatches.map((entry) => entry.page),
+        children: matched,
       };
     }
 
-    if (getNormalizedSearchLength(query) < 3) {
+    // readers: keep the reader-folder grouping, drop folders without matches
+    if (matched.length === 0) {
       return {
         ...section,
         children: [],
       };
     }
-
-    const descriptionMatches = operatorPages
-      .map((page, index) => ({
-        page,
-        index,
-        match: page.searchIndex
-          ? matchOperatorDescription(page.searchIndex, query)
-          : null,
-      }))
-      .filter(
-        (
-          entry
-        ): entry is { page: FilePage; index: number; match: MatchResult } =>
-          entry.match !== null
-      )
-      .sort(
-        (left, right) =>
-          left.match.tier - right.match.tier ||
-          left.match.matchLength - right.match.matchLength ||
-          left.index - right.index
-      );
-
+    const matchedIds = new Set(matched.map((page) => page.id));
     return {
       ...section,
-      children: descriptionMatches.map((entry) => entry.page),
+      children: section.children
+        .filter(
+          (item): item is FolderPage =>
+            item.kind === "folder" &&
+            item.children.some((page) => matchedIds.has(page.id))
+        )
+        .map((folder) => ({
+          ...folder,
+          children: folder.children.filter((page) => matchedIds.has(page.id)),
+        })),
     };
   });
 });
@@ -489,6 +581,10 @@ watch(selectedPageId, (pageId) => {
 watch(normalizedNavSearch, (query) => {
   if (query) {
     collapsedFolders.value["operators"] = false;
+    collapsedFolders.value["readers"] = false;
+    for (const folder of readerFolderPages) {
+      collapsedFolders.value[folder.id] = false;
+    }
   }
 });
 
@@ -521,7 +617,7 @@ onBeforeUnmount(() => {
           v-model="navSearch"
           class="sidebar-search-input"
           type="text"
-          placeholder="Filter operators for now"
+          placeholder="Search..."
           aria-label="Search tabs"
         />
       </label>

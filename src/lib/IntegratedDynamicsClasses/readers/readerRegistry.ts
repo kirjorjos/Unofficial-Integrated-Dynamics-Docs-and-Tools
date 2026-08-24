@@ -1,5 +1,7 @@
 import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 import type { AspectStatic } from "lib/IntegratedDynamicsClasses/readers/AspectBase";
+import { CodeLineToAST } from "lib/transformers/CodeLine";
+import { CondensedToAST } from "lib/transformers/Condensed";
 import { AudioReader } from "lib/IntegratedDynamicsClasses/readers/AudioReader/AudioReader";
 import { BlockReader } from "lib/IntegratedDynamicsClasses/readers/BlockReader/BlockReader";
 import { EntityReader } from "lib/IntegratedDynamicsClasses/readers/EntityReader/EntityReader";
@@ -160,6 +162,63 @@ export const isReaderOutputTypeAssignable = (
     ParsedSignature.typeEquals(expected as never, actual as never) ||
     ParsedSignature.typeEquals(actual as never, expected as never)
   );
+};
+
+export type SimulatedValueParseResult =
+  | { ok: true; ast: TypeAST.AST }
+  | { ok: true; ast: undefined }
+  | { ok: false; message: string };
+
+export const isSimulatedValueParseError = (
+  result: SimulatedValueParseResult
+): result is { ok: false; message: string } => !result.ok;
+
+export const parseSimulatedValueText = (
+  text: string
+): SimulatedValueParseResult => {
+  const trimmed = text.trim();
+  if (!trimmed) return { ok: true, ast: undefined };
+  try {
+    return { ok: true, ast: CondensedToAST(trimmed) };
+  } catch {
+    try {
+      return { ok: true, ast: CodeLineToAST(trimmed) };
+    } catch (error) {
+      return { ok: false, message: (error as Error).message };
+    }
+  }
+};
+
+export const getReaderSimulatedValueTypeError = (
+  outputType: string,
+  result: SimulatedValueParseResult
+): string | undefined => {
+  if (isSimulatedValueParseError(result)) return result.message;
+  if (!result.ast) return undefined;
+  const actual = result.ast.type;
+  if (!isReaderOutputTypeAssignable(actual, outputType)) {
+    return `Expected output type ${outputType}, got simulatedOutput type ${actual}`;
+  }
+  return undefined;
+};
+
+export const getAspectSettingsEntries = (
+  aspect: AspectStatic
+): {
+  key: string;
+  displayName: string;
+  value: string;
+  description?: string;
+}[] => {
+  return Object.entries(aspect.settings).map(([key, value]) => {
+    const info = aspect.settingsInfo?.[key];
+    return {
+      key,
+      displayName: info?.displayName ?? key,
+      value: String(value),
+      description: info?.description,
+    };
+  });
 };
 
 export const assertReaderSimulatedOutputType = (

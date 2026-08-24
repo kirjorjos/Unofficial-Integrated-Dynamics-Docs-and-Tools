@@ -12,4 +12,5 @@ export class REDSTONE_BOOLEAN_HIGH extends RedstoneAspectBase {
   static settings = {};
   static icon = "boolean/redstone/high";
   static outputType = "Boolean";
+  static tooltipInfo = "If the redstone level is at its maximum";
 }

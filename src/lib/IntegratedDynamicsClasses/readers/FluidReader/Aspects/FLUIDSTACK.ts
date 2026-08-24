@@ -11,6 +11,10 @@ export class FLUID_FLUIDSTACK extends FluidAspectBase {
     "fluid",
   ];
   static settings = { tankid: 0 };
+  static settingsInfo = {
+    tankid: { displayName: "Tank ID" },
+  };
   static icon = "fluidstack/fluid";
   static outputType = "Fluid";
+  static tooltipInfo = "The fluid in the target tank";
 }

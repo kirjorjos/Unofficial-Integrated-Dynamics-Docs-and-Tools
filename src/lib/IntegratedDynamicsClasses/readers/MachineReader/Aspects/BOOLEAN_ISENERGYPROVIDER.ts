@@ -14,4 +14,5 @@ export class MACHINE_BOOLEAN_ISENERGYPROVIDER extends MachineAspectBase {
   static settings = {};
   static icon = "boolean/fe/isprovider";
   static outputType = "Boolean";
+  static tooltipInfo = "If the target can provide FE";
 }

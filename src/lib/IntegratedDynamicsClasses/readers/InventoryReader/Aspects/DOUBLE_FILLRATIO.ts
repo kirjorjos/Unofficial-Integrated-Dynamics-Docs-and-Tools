@@ -12,4 +12,6 @@ export class INVENTORY_DOUBLE_FILLRATIO extends InventoryAspectBase {
   static settings = {};
   static icon = "double/inventory/fillratio";
   static outputType = "Double";
+  static tooltipInfo =
+    "The number of non-empty slots divided by the total number of slots";
 }

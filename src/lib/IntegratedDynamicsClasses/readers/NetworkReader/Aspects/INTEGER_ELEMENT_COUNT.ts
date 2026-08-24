@@ -13,4 +13,5 @@ export class NETWORK_INTEGER_ELEMENT_COUNT extends NetworkAspectBase {
   static settings = {};
   static icon = "integer/network/elementcount";
   static outputType = "Integer";
+  static tooltipInfo = "The amount of elements in the target network";
 }

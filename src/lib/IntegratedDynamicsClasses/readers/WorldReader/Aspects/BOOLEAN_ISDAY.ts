@@ -7,4 +7,5 @@ export class WORLD_BOOLEAN_ISDAY extends WorldAspectBase {
   static settings = {};
   static icon = "boolean/world/isday";
   static outputType = "Boolean";
+  static tooltipInfo = "If it is day in the target world";
 }

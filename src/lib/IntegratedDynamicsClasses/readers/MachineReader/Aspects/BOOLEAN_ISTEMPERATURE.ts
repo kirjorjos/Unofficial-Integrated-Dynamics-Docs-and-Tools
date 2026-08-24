@@ -12,4 +12,5 @@ export class MACHINE_BOOLEAN_ISTEMPERATURE extends MachineAspectBase {
   static settings = {};
   static icon = "boolean/temperature/istemperature";
   static outputType = "Boolean";
+  static tooltipInfo = "If the target has a certain temperature";
 }

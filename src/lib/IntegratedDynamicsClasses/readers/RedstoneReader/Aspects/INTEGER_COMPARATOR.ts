@@ -11,4 +11,5 @@ export class REDSTONE_INTEGER_COMPARATOR extends RedstoneAspectBase {
   static settings = {};
   static icon = "integer/redstone/comparator";
   static outputType = "Integer";
+  static tooltipInfo = "Get the comparator value";
 }

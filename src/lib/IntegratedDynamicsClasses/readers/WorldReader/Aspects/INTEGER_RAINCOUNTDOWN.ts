@@ -7,4 +7,5 @@ export class WORLD_INTEGER_RAINCOUNTDOWN extends WorldAspectBase {
   static settings = {};
   static icon = "integer/world/raincountdown";
   static outputType = "Integer";
+  static tooltipInfo = "The amount of ticks until it will rain in this world";
 }
