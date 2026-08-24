@@ -22,9 +22,9 @@ test.describe("readerAspectPages", () => {
   for (const pageDef of PAGES) {
     test(`testFullShot${pageDef.name}`, async ({ page }) => {
       await openReaderAspect(page, pageDef.pageId);
-      await expect(page).toHaveScreenshot(`${pageDef.name}.png`, {
-        fullPage: true,
-      });
+      await expect(page.locator(".reader-aspect-doc-page")).toHaveScreenshot(
+        `${pageDef.name}.png`
+      );
     });
   }
 

@@ -197,7 +197,7 @@ const hasSettings = computed(() => settingsEntries.value.length > 0);
       </template>
       <template v-else>
         <div class="reader-aspect-input-type" :style="{ color: typeColor }">
-          {{ outputType }}
+          Simulated Value
         </div>
         <input
           v-model="valueText"
@@ -348,12 +348,13 @@ const hasSettings = computed(() => settingsEntries.value.length > 0);
 .reader-aspect-reader-view {
   margin-top: 1.5rem;
   display: inline-flex;
-  background: #2b2b2b;
   padding: 8px 8px 8px 48px;
-  box-shadow: 0 14px 30px rgba(24, 48, 58, 0.18);
 }
 
 .reader-aspect-display-panel {
   margin-top: 1.5rem;
+  width: calc((195px * 2) + 48px + 8px);
+  padding-left: 48px;
+  padding-right: 8px;
 }
 </style>
