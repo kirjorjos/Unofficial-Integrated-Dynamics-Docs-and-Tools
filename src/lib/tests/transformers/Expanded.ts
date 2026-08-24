@@ -491,8 +491,12 @@ final = [step0, step1]`;
 
   it("testNetworkCardsEmitsSharedRefsAsRawVarIds", () => {
     const network = ExpandedToAST("a = 5\nb = add a 1\nfinal = [a, b]");
-    expect(ASTToCodeLine(network)).toBe("5; numberAdd 0 1; [0, 2]");
-    expect(ASTToCondensed(network)).toBe("5; numberAdd(0, 1); [0, 2]");
+    expect(ASTToCodeLine(network)).toBe(
+      "5; numberAdd 0 1; listConcat [0] (listAppend [] 2)"
+    );
+    expect(ASTToCondensed(network)).toBe(
+      "5; numberAdd(0, 1); listConcat([0], listAppend([], 2))"
+    );
     const back = CodeLineToAST("5; add @0 1; [@0, @1]");
     expect(back.type).toBe("NetworkCards");
   });
@@ -547,5 +551,40 @@ final = [step0, step1]`;
     expect(() => ExpandedToAST("a;b = 5\nc = a;b")).toThrow(
       /Invalid variable name/
     );
+  });
+
+  it("testMixedListNormalizesInExpanded", () => {
+    const ast = ExpandedToAST(
+      "a = [1, numberAdd(5, 1), numberAdd(2, 3)]"
+    ) as TypeAST.NetworkCards;
+    expect(ast.type).toBe("NetworkCards");
+    // hoisted derived elements become definitions; the segment keeps its name
+    expect(ast.definitions.map((d) => d.name)).toEqual(["var0", "var1", "a"]);
+
+    const expanded = ASTToExpanded(ast);
+    expect(expanded).toContain("var0 = numberAdd(5, 1)");
+    expect(expanded).toContain("var1 = numberAdd(2, 3)");
+    expect(expanded).toContain("a = listConcat");
+    expect(expanded).toContain(
+      "operatorMap(NetworkReader.variableValueById, [2, 5])"
+    );
+
+    // re-parsing the emitted expanded keeps the card layout (same var ids)
+    const back = ExpandedToAST(expanded) as TypeAST.NetworkCards;
+    const backJson = JSON.stringify(back);
+    expect(backJson).toContain('"value":"2"');
+    expect(backJson).toContain('"value":"5"');
+  });
+
+  it("testMixedListSingleDerivedInExpanded", () => {
+    const ast = ExpandedToAST(
+      "a = [1, numberAdd(5, 1), 2]"
+    ) as TypeAST.NetworkCards;
+    // single derived element stays in-tree via append, no hoisting
+    expect(ast.definitions.map((d) => d.name)).toEqual(["a"]);
+    const expanded = ASTToExpanded(ast);
+    expect(expanded).toContain("numberAdd(5, 1)");
+    expect(expanded).toContain("listAppend([], ");
+    expect(expanded).toContain("a = listConcat");
   });
 });

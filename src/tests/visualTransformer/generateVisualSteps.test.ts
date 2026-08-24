@@ -279,4 +279,33 @@ describe("generateVisualSteps", () => {
     expect(result[5]!.inputs.map((i) => i.variableId)).toEqual([3, 4]);
     expect(result[6]!.inputs.map((i) => i.variableId)).toEqual([2, 5]);
   });
+
+  it("testMixedListSingleDerivedRendersViaAppendConcat", () => {
+    const ast = CodeLineToAST("[1, 2, (add 5 1), 5, 6]");
+    const result = steps(ast);
+    expect(
+      result.map((s) => s.title).filter((t) => t === "listConcat")
+    ).toHaveLength(2);
+    const appendIdx = result.findIndex((s) => s.title === "listAppend");
+    expect(result[appendIdx]!.inputs.map((i) => i.variableId)).toEqual([3, 5]);
+  });
+
+  it("testMixedListMultiDerivedHoistsAndMapsById", () => {
+    const ast = CodeLineToAST(
+      "[1, (add 5 1), (add 2 3)]"
+    ) as TypeAST.NetworkCards;
+    const result = steps(ast);
+    expect(result).toHaveLength(14);
+    expect(result[2]!.output).toBe("var0");
+    expect(result[5]!.output).toBe("var1");
+    expect(result[2]!.inputs.map((i) => i.variableId)).toEqual([0, 1]);
+    expect(result[5]!.inputs.map((i) => i.variableId)).toEqual([3, 4]);
+    expect(result[9]!.output).toBe("2");
+    expect(result[10]!.output).toBe("5");
+    const mapIdx = result.findIndex((s) => s.title === "operatorMap");
+    expect(mapIdx).toBe(12);
+    expect(result[mapIdx]!.inputs.map((i) => i.variableId)).toEqual([8, 11]);
+    const concatIdx = result.findIndex((s) => s.title === "listConcat");
+    expect(result[concatIdx]!.inputs.map((i) => i.variableId)).toEqual([7, 12]);
+  });
 });

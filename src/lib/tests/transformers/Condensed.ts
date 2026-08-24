@@ -478,4 +478,48 @@ describe("TestCondensedTransformer", () => {
     );
     expect(ASTToCondensed(CondensedToAST(out))).toBe(out);
   });
+
+  it("testMixedListSingleDerivedNormalizes", () => {
+    const ast = CondensedToAST("[1, 2, numberAdd(5, 1), 5, 6]");
+    expect(ASTToCondensed(ast)).toBe(
+      "listConcat(listConcat([1, 2], listAppend([], numberAdd(5, 1))), [5, 6])"
+    );
+    const out = ASTToCondensed(ast);
+    expect(ASTToCondensed(CondensedToAST(out))).toBe(out);
+  });
+
+  it("testMixedListReaderElementNormalizes", () => {
+    const ast = CondensedToAST(
+      '[1, InventoryReader(0).slotItem({"slot":1}), 2]'
+    );
+    expect(ASTToCondensed(ast)).toBe(
+      'listConcat(listConcat([1], listAppend([], InventoryReader(0).slotItem({"slot":1}))), [2])'
+    );
+  });
+
+  it("testMixedListMultiDerivedHoists", () => {
+    const ast = CondensedToAST(
+      "[1, numberAdd(5, 1), numberAdd(2, 3)]"
+    ) as TypeAST.NetworkCards;
+    expect(ast.type).toBe("NetworkCards");
+    expect(ast.definitions.map((d) => d.name)).toEqual(["var0", "var1", ""]);
+    expect(ASTToCondensed(ast)).toBe(
+      "numberAdd(5, 1); numberAdd(2, 3); listConcat([1], operatorMap(NetworkReader.variableValueById, [2, 5]))"
+    );
+    const out = ASTToCondensed(ast);
+    expect(ASTToCondensed(CondensedToAST(out))).toBe(out);
+  });
+
+  it("testMixedListNestedNormalizes", () => {
+    const ast = CondensedToAST("[1, [2, numberAdd(3, 1)], 4]");
+    expect(ASTToCondensed(ast)).toBe(
+      "listConcat(listConcat([1], listAppend([], listConcat([2], listAppend([], numberAdd(3, 1))))), [4])"
+    );
+  });
+
+  it("testMixedListMixedTypesStaysList", () => {
+    const ast = CondensedToAST('[1, "a"]');
+    expect(ast.type).toBe("List");
+    expect(ASTToCondensed(ast)).toBe('[1, "a"]');
+  });
 });

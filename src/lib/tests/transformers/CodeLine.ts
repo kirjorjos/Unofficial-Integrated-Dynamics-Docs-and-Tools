@@ -412,8 +412,42 @@ describe("TestCodeLineTransformer", () => {
 
   it("testNetworkCardsEmitsRawVarIdsForSharedDefinitions", () => {
     const ast = ExpandedToAST("a = 5\nb = add a 1\nfinal = [a, b]");
-    expect(ASTToCodeLine(ast)).toBe("5; numberAdd 0 1; [0, 2]");
+    expect(ASTToCodeLine(ast)).toBe(
+      "5; numberAdd 0 1; listConcat [0] (listAppend [] 2)"
+    );
     const back = CodeLineToAST("5; add @0 1; [@0, @1]") as TypeAST.NetworkCards;
     expect(back.type).toBe("NetworkCards");
+  });
+
+  it("testMixedListSingleDerivedNormalizes", () => {
+    const ast = CodeLineToAST("[1, 2, (add 5 1), 5, 6]");
+    expect(ASTToCodeLine(ast)).toBe(
+      "listConcat (listConcat [1, 2] (listAppend [] (numberAdd 5 1))) [5, 6]"
+    );
+    expect(ASTToCodeLine(CodeLineToAST(ASTToCodeLine(ast)))).toBe(
+      ASTToCodeLine(ast)
+    );
+  });
+
+  it("testMixedListMultiDerivedHoists", () => {
+    const ast = CodeLineToAST(
+      "[1, (add 5 1), (add 2 3)]"
+    ) as TypeAST.NetworkCards;
+    expect(ast.type).toBe("NetworkCards");
+    expect(ast.definitions.map((d) => d.name)).toEqual(["var0", "var1", ""]);
+    expect(ASTToCodeLine(ast)).toBe(
+      "numberAdd 5 1; numberAdd 2 3; listConcat [1] (operatorMap (NetworkReader.variableValueById) [2, 5])"
+    );
+    const out = ASTToCodeLine(ast);
+    expect(ASTToCodeLine(CodeLineToAST(out))).toBe(out);
+  });
+
+  it("testMixedListOfOnlyVarIdRefsUnchanged", () => {
+    const ast = CodeLineToAST(
+      "5; 6; map NetworkReader.variableValueById [@0, @1]"
+    );
+    expect(ASTToCodeLine(ast)).toBe(
+      "5; 6; operatorMap (NetworkReader.variableValueById) [0, 1]"
+    );
   });
 });

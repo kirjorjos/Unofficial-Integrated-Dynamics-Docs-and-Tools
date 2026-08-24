@@ -23,6 +23,7 @@ import {
   buildNetworkCards,
   getNetworkDefLastCardIds,
 } from "lib/transformers/NetworkCards";
+import { normalizeSegments } from "lib/transformers/MixedLists";
 
 type char = string;
 interface State {
@@ -206,7 +207,8 @@ export const CondensedToAST = (
   condensed: string,
   externalScope: Map<string, TypeAST.AST> = new Map(),
   startVariableId = 0,
-  allowVarRefs = false
+  allowVarRefs = false,
+  normalizeMixedLists = true
 ): TypeAST.AST => {
   const tokens = tokenize(condensed);
   let pos = 0;
@@ -1437,11 +1439,18 @@ export const CondensedToAST = (
         .join(" ")}`
     );
   }
-  if (segments.length === 1) {
-    if (!allowVarRefs) assertNoVarRefs(segments[0] as TypeAST.AST);
-    return segments[0] as TypeAST.AST;
+  const normalized = normalizeMixedLists
+    ? normalizeSegments(segments as TypeAST.AST[])
+    : (segments as TypeAST.AST[]).map((segment) => ({
+        hoisted: [],
+        node: segment,
+      }));
+
+  if (normalized.length === 1 && normalized[0]!.hoisted.length === 0) {
+    if (!allowVarRefs) assertNoVarRefs(normalized[0]!.node);
+    return normalized[0]!.node;
   }
-  return buildNetworkCards(segments as TypeAST.AST[], startVariableId);
+  return buildNetworkCards(normalized, startVariableId);
 };
 
 export const ASTToCondensed = (

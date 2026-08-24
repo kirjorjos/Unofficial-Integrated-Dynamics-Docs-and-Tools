@@ -10,6 +10,7 @@ import {
   flattenAnonymousBaseOperatorApplication,
 } from "lib/transformers/helpers";
 import { buildNetworkCards } from "lib/transformers/NetworkCards";
+import { normalizeSegments } from "lib/transformers/MixedLists";
 
 const getLabel = (index: number): string => {
   let label = "";
@@ -732,10 +733,10 @@ export const ExpandedToAST = (
 
     let lineAST: TypeAST.AST;
     try {
-      lineAST = CondensedToAST(exprStr, scope, 0, true);
+      lineAST = CondensedToAST(exprStr, scope, 0, true, false);
     } catch (e) {
       try {
-        lineAST = CodeLineToAST(exprStr, scope, 0, true);
+        lineAST = CodeLineToAST(exprStr, scope, 0, true, false);
       } catch (e2) {
         throw new Error(
           `Failed to parse line ${
@@ -771,9 +772,13 @@ export const ExpandedToAST = (
 
   if (!finalAST) throw new Error("Could not determine final AST");
 
+  const names = definitions.map((d) => d.name);
   return buildNetworkCards(
-    definitions.map((d) => d.node),
+    normalizeSegments(
+      definitions.map((d) => d.node),
+      names
+    ),
     startVariableId,
-    definitions.map((d) => d.name)
+    names
   );
 };

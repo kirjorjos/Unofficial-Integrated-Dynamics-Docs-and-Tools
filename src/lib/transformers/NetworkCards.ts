@@ -1,5 +1,6 @@
 import { operatorRegistry } from "lib/IntegratedDynamicsClasses/registries/operatorRegistry";
 import { flattenAnonymousBaseOperatorApplication } from "lib/transformers/helpers";
+import type { NormalizedSegment } from "lib/transformers/MixedLists";
 
 export const isVarRefNode = (
   node: TypeAST.AST
@@ -194,24 +195,36 @@ const resolveVarRefs = (
 };
 
 export const buildNetworkCards = (
-  nodes: TypeAST.AST[],
+  segments: NormalizedSegment[],
   startVariableId = 0,
   names?: string[]
 ): TypeAST.NetworkCards => {
-  if (nodes.length === 0) {
+  if (segments.length === 0) {
     throw new Error("NetworkCards must contain at least one definition");
   }
 
+  const definitions: { name: string; node: TypeAST.AST }[] = [];
+  const segmentFlatIndex: number[] = [];
   const nameToIndex = new Map<string, number>();
-  if (names) {
-    names.forEach((name, index) => nameToIndex.set(name, index));
+
+  for (let i = 0; i < segments.length; i++) {
+    const segment = segments[i]!;
+    for (const hoisted of segment.hoisted) {
+      definitions.push({ name: hoisted.name, node: hoisted.node });
+      nameToIndex.set(hoisted.name, definitions.length - 1);
+    }
+    const segmentName = names?.[i] ?? segment.node.varName ?? "";
+    definitions.push({ name: segmentName, node: segment.node });
+    if (segmentName) nameToIndex.set(segmentName, definitions.length - 1);
+    segmentFlatIndex[i] = definitions.length - 1;
   }
 
   const resolveRefIndex = (refName: string, currentIndex: number): number => {
     const positional = refName.match(/^@(\d+)$/);
     let index: number | undefined;
     if (positional) {
-      index = parseInt(positional[1]!, 10);
+      const segmentIndex = parseInt(positional[1]!, 10);
+      index = segmentFlatIndex[segmentIndex];
     } else {
       index = nameToIndex.get(refName.slice(1));
     }
@@ -228,23 +241,18 @@ export const buildNetworkCards = (
 
   const seen = new Set<TypeAST.AST>();
   const prefixSums: number[] = [];
-  const definitions: { name: string; node: TypeAST.AST }[] = [];
   let cumulative = 0;
 
-  for (let i = 0; i < nodes.length; i++) {
-    const node = nodes[i]!;
-    resolveVarRefs(node, (refName) => {
+  for (let i = 0; i < definitions.length; i++) {
+    const definition = definitions[i]!;
+    resolveVarRefs(definition.node, (refName) => {
       const index = resolveRefIndex(refName, i);
       const id = startVariableId + prefixSums[index]! - 1;
       return String(id);
     });
-    const count = countCards(node, seen, new Set());
+    const count = countCards(definition.node, seen, new Set());
     cumulative += count;
     prefixSums[i] = cumulative;
-    definitions.push({
-      name: names ? names[i]! : (node.varName ?? ""),
-      node,
-    });
   }
 
   return { type: "NetworkCards", definitions };
