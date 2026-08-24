@@ -904,28 +904,28 @@ export const CondensedToAST = (
       if (name === "OPERATOR_PIPE" && args.length === 2) {
         return {
           type: "Pipe",
-          op1: args[0] as TypeAST.AST,
-          op2: args[1] as TypeAST.AST,
+          op1: args[0] as InternalAST,
+          op2: args[1] as InternalAST,
         };
       }
       if (name === "OPERATOR_PIPE2" && args.length === 3) {
         return {
           type: "Pipe2",
-          op1: args[0] as TypeAST.AST,
-          op2: args[1] as TypeAST.AST,
-          op3: args[2] as TypeAST.AST,
+          op1: args[0] as InternalAST,
+          op2: args[1] as InternalAST,
+          op3: args[2] as InternalAST,
         };
       }
       if (name === "OPERATOR_FLIP" && args.length === 1) {
-        return { type: "Flip", arg: args[0] as TypeAST.AST };
+        return { type: "Flip", arg: args[0] as InternalAST };
       }
     }
 
     if (args.length === 0) return base;
     return {
       type: "Curry",
-      base: base as TypeAST.AST,
-      args: args as TypeAST.AST[],
+      base: base as InternalAST,
+      args: args as InternalAST[],
     };
   }
 
@@ -1085,9 +1085,9 @@ export const CondensedToAST = (
       if (xInOp1 && xInOp2) {
         return condense({
           type: "Pipe2",
-          op1: abstract(param, body.op1) as TypeAST.AST,
-          op2: abstract(param, body.op2) as TypeAST.AST,
-          op3: ID_OP("OPERATOR_PIPE") as TypeAST.AST,
+          op1: abstract(param, body.op1) as InternalAST,
+          op2: abstract(param, body.op2) as InternalAST,
+          op3: ID_OP("OPERATOR_PIPE") as InternalAST,
         });
       } else if (xInOp2) {
         return condense({
@@ -1096,7 +1096,7 @@ export const CondensedToAST = (
           op2: {
             type: "Curry",
             base: ID_OP("OPERATOR_PIPE"),
-            args: [body.op1 as TypeAST.AST],
+            args: [body.op1 as InternalAST],
           },
         });
       } else {
@@ -1109,7 +1109,7 @@ export const CondensedToAST = (
               type: "Flip",
               arg: ID_OP("OPERATOR_PIPE"),
             },
-            args: [body.op2 as TypeAST.AST],
+            args: [body.op2 as InternalAST],
           },
         });
       }
@@ -1387,7 +1387,7 @@ export const CondensedToAST = (
           return { type: "Identifier", value: token.value };
         }
         const implicitFlip = resolveImplicitFlipOperator(token.value);
-        if (implicitFlip) return implicitFlip;
+        if (implicitFlip) return implicitFlip as InternalAST;
         const internalName = operatorRegistry.operatorByNickname(token.value);
         if (internalName) {
           return setOperatorSourceName(
@@ -1560,6 +1560,11 @@ export const ASTToCondensed = (ast: TypeAST.AST, isTopLevel = true): string => {
       case "Flip":
         result = `${getOpName("OPERATOR_FLIP")}(${stringify(node.arg, false)})`;
         break;
+
+      case "NetworkCards":
+        throw new Error(
+          "NetworkCards are not yet implemented in the Condensed format"
+        );
     }
 
     if (node.varName && topLevel) {

@@ -2,7 +2,9 @@ import {
   getPatternBox,
   getVisibleListEntries,
   getVirtualOperatorDisplay,
+  isDirectListValue,
 } from "pages-lib/visualTransformerLogic";
+import { CodeLineToAST } from "lib/transformers/CodeLine";
 import { LOGIC_PROGRAMMER_RENDER_PATTERNS } from "pages-lib/logicProgrammerRenderPatterns";
 import type { VisualStep } from "pages-lib/visualTransformerLogic";
 import { beforeEachVisualTransformer, makeAst, steps } from "./fixtures";
@@ -138,6 +140,45 @@ describe("getPatternBox", () => {
       width: pattern.width,
       height: pattern.height,
     });
+  });
+});
+
+describe("isDirectListValue", () => {
+  beforeEach(beforeEachVisualTransformer);
+
+  it("testSameTypeLiteralListIsDirect", () => {
+    expect(isDirectListValue(CodeLineToAST("[1, 2, 3]"))).toBe(true);
+    expect(isDirectListValue(CodeLineToAST('["a", "b"]'))).toBe(true);
+    expect(isDirectListValue(CodeLineToAST("[true, false]"))).toBe(true);
+  });
+
+  it("testListWithOperatorElementIsNotDirect", () => {
+    expect(
+      isDirectListValue(
+        CodeLineToAST(
+          "[319, 236, (apply apply reduce1 add (apply apply map readers.network.variableValueById [0, 1]))]"
+        )
+      )
+    ).toBe(false);
+  });
+
+  it("testMixedTypeListIsNotDirect", () => {
+    expect(isDirectListValue(CodeLineToAST('[1, "a"]'))).toBe(false);
+    expect(isDirectListValue(CodeLineToAST("[1, [2]]"))).toBe(false);
+  });
+
+  it("testListOfOperatorReferencesIsDirect", () => {
+    expect(
+      isDirectListValue(CodeLineToAST("[numberAdd, numberMultiply]"))
+    ).toBe(true);
+  });
+
+  it("testEmptyListIsNotDirect", () => {
+    expect(isDirectListValue(CodeLineToAST("[]"))).toBe(false);
+  });
+
+  it("testNonListNodeIsNotDirect", () => {
+    expect(isDirectListValue(CodeLineToAST("1"))).toBe(false);
   });
 });
 

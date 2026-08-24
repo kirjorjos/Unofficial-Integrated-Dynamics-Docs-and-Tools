@@ -239,6 +239,12 @@ describe("TestCodeLineTransformer", () => {
     );
   });
 
+  it("testReaderVarByIdRejectsSimulatedOutput", () => {
+    expect(() => CodeLineToAST("readers.network.variableValueById(5)")).toThrow(
+      "Variable Value By ID does not support an overridden simulatedValue."
+    );
+  });
+
   it("testReaderEnumKeyStillParses", () => {
     const ast = CodeLineToAST(
       'InventoryReader(0).OBJECT_ITEM_STACK_SLOT({"slot":1})'

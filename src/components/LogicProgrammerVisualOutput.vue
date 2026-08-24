@@ -6,6 +6,7 @@ import VisualTransformerStep from "./VisualTransformerStep.vue";
 import ReaderGuiView from "./ReaderGuiView.vue";
 import {
   getReaderAspectDefaultValue,
+  getReaderAspectOperatorDisplayText,
   getReaderClassByTypeName,
 } from "lib/IntegratedDynamicsClasses/readers/readerRegistry";
 import type { ReaderStatic } from "lib/IntegratedDynamicsClasses/readers/ReaderBase";
@@ -17,6 +18,11 @@ import {
   getCurryTooltipKey,
   isTypeAssignable,
   evaluateFullyAppliedCurry,
+  evaluateFullyAppliedCurryWithSteps,
+  buildVariableValueByIdOperator,
+  isVariableValueByIdReader,
+  astContainsVariableValueByIdReader,
+  type StepLikeWithNode,
 } from "lib";
 import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 import { ASTtoOperator } from "lib/transformers/Operator";
@@ -456,6 +462,14 @@ const cloneAstWithoutVarNames = (ast: TypeAST.AST): TypeAST.AST => {
             ? cloneAstWithoutVarNames(ast.value.simulatedOutput)
             : undefined,
         },
+      };
+    case "NetworkCards":
+      return {
+        type: "NetworkCards",
+        definitions: ast.definitions.map((def) => ({
+          name: def.name,
+          node: cloneAstWithoutVarNames(def.node),
+        })),
       };
   }
 };
@@ -955,11 +969,40 @@ const VALUE_NODE_TYPES = new Set<string>([
   "Reader",
 ]);
 
+const DIRECT_LIST_ELEMENT_TYPES = new Set<string>([
+  "Integer",
+  "Long",
+  "Double",
+  "String",
+  "Boolean",
+  "Null",
+  "NBT",
+  "Block",
+  "Item",
+  "Fluid",
+  "Entity",
+  "Ingredients",
+  "Recipe",
+  "Operator",
+  "Variable",
+]);
+
+const isDirectListStep = (step: VisualStep): boolean => {
+  const node = step.node;
+  if (!node || node.type !== "List") return false;
+  const elements = (node as TypeAST.List).value;
+  if (elements.length === 0) return false;
+  const firstType = elements[0]!.type;
+  if (!DIRECT_LIST_ELEMENT_TYPES.has(firstType)) return false;
+  return elements.every((element) => element.type === firstType);
+};
+
 const getDisplayPanelText = (
   step: Pick<
     VisualStep,
     "output" | "node" | "tooltipOperatorKey" | "sourceType" | "detail"
-  >
+  >,
+  allSteps: StepLikeWithNode[]
 ): string => {
   // For string types without custom name, show the value
   if (
@@ -979,6 +1022,17 @@ const getDisplayPanelText = (
   }
   if (step.node) {
     const nodeType = step.node.type;
+
+    if (nodeType === "Reader") {
+      const readerClass = getReaderClassByTypeName(step.node.value.reader);
+      if (readerClass) {
+        const operatorText = getReaderAspectOperatorDisplayText(
+          readerClass,
+          step.node.value.aspect
+        );
+        if (operatorText) return operatorText;
+      }
+    }
 
     // Plain value nodes (numbers, booleans, named values, ...) have no
     // operator instance — show the value directly instead of an empty panel.
@@ -1042,8 +1096,10 @@ const getDisplayPanelText = (
           return "";
         }
         const sig = (op as any).getParsedSignature();
-        // If fully applied (not a function signature), try to show the value
-        if (sig.getRootType() !== "Function") {
+        const hasVarById = astContainsVariableValueByIdReader(
+          step.node as TypeAST.AST
+        );
+        if (sig.getRootType() !== "Function" || hasVarById) {
           // Helper: try to resolve an AST/operator to a concrete value
           const resolveArg = (arg: any): any => {
             try {
@@ -1081,12 +1137,24 @@ const getDisplayPanelText = (
               step.node as TypeAST.AST
             );
             if (flat && flat.operator.type === "Operator") {
-              // Resolve each arg AST to a concrete value
+              const resolveArgAst = (argAst: TypeAST.AST): any => {
+                if (isVariableValueByIdReader(argAst)) {
+                  return buildVariableValueByIdOperator(allSteps);
+                }
+                if (argAst.type === "Curry") {
+                  const nested = evaluateFullyAppliedCurryWithSteps(
+                    argAst,
+                    allSteps
+                  );
+                  if (nested !== undefined) return nested;
+                }
+                const argOp = ASTtoOperator(argAst);
+                return resolveArg(argOp);
+              };
               const argValues: any[] = [];
               for (const argAst of flat.args) {
                 try {
-                  const argOp = ASTtoOperator(argAst);
-                  argValues.push(resolveArg(argOp));
+                  argValues.push(resolveArgAst(argAst));
                 } catch {
                   // Argument AST could not be converted to an operator
                   // (e.g. a Flip wrapping an arity-1 operator). Skip it.
@@ -1386,7 +1454,7 @@ const getStepActualOutputType = (
       if (typeof op?.getParsedSignature === "function") {
         const sig = op.getParsedSignature();
         if (sig.getRootType() === "Function") {
-          return sig.getOutput(-1).getRootType();
+          return "Operator";
         }
         return sig.getRootType();
       }
@@ -1715,12 +1783,12 @@ const steps = computed<VisualStep[]>(() => {
   const seen = new Map<TypeAST.AST, VisualCardRef>();
   const contentSeen = new Map<string, VisualCardRef>();
 
-  const visit = (ast: TypeAST.AST): VisualCardRef => {
+  const visit = (ast: TypeAST.AST, forceNew = false): VisualCardRef => {
     if (seen.has(ast)) return seen.get(ast)!;
 
     const contentKey = astContentKey(ast);
     const existing = contentSeen.get(contentKey);
-    if (existing) {
+    if (existing && !forceNew) {
       seen.set(ast, existing);
       return existing;
     }
@@ -1759,6 +1827,16 @@ const steps = computed<VisualStep[]>(() => {
     };
 
     switch (ast.type) {
+      case "NetworkCards": {
+        // Each explicit definition is its own card (even if unused or
+        // duplicate-valued). The last definition is the root expression, so
+        // its card is the final card of the network.
+        let lastCard: VisualCardRef | undefined;
+        for (const def of ast.definitions) {
+          lastCard = visit(def.node, true);
+        }
+        return lastCard!;
+      }
       case "Operator": {
         const operator = getOperatorDisplay(ast.opName);
         return register({
@@ -1784,7 +1862,7 @@ const steps = computed<VisualStep[]>(() => {
         const flattened = flattenAnonymousBaseOperatorApplication(ast);
 
         if (flattened?.fullyApplied && flattened.operator.type === "Operator") {
-          const argOutputs = flattened.args.map(visit);
+          const argOutputs = flattened.args.map((a) => visit(a));
           const finalVarName = ast.varName || getExpandedVarName(ast);
 
           // Validate input types against operator's expected types
@@ -1891,7 +1969,7 @@ const steps = computed<VisualStep[]>(() => {
 
         for (const chunk of chunks) {
           const stepBase = chunk.node.base;
-          const argOutputs = chunk.args.map(visit);
+          const argOutputs = chunk.args.map((a) => visit(a));
           const step = {
             id: `step-${result.length + 1}`,
             title:
@@ -1975,7 +2053,7 @@ const steps = computed<VisualStep[]>(() => {
           symbol: "[]",
           kind: "value",
           sourceType: ast.type,
-          inputs: ast.value.map(visit),
+          inputs: ast.value.map((a) => visit(a)),
           output: nextName,
           node: ast,
         });
@@ -1983,11 +2061,15 @@ const steps = computed<VisualStep[]>(() => {
         const readerClass = getReaderClassByTypeName(ast.value.reader);
         let typeError: string | undefined;
         if (ast.value.simulatedOutput) {
-          const expected =
-            readerClass?.aspects[ast.value.aspect]?.outputType ?? "Any";
-          const actual = ast.value.simulatedOutput.type;
-          if (!isTypeAssignable(actual, expected)) {
-            typeError = `Expected output type ${expected}, got simulatedOutput type ${actual}`;
+          const aspect = readerClass?.aspects[ast.value.aspect];
+          if (aspect?.signature && aspect.signature.length > 0) {
+            typeError = `${aspect.fullDisplayName} does not support an overridden simulatedValue.`;
+          } else {
+            const expected = aspect?.outputType ?? "Any";
+            const actual = ast.value.simulatedOutput.type;
+            if (!isTypeAssignable(actual, expected)) {
+              typeError = `Expected output type ${expected}, got simulatedOutput type ${actual}`;
+            }
           }
         }
         return register({
@@ -2360,7 +2442,7 @@ const getReaderViewValues = (
       :show-step-numbers="props.showStepNumbers"
       :show-step-titles="props.showStepTitles"
       :force-show-output-card="props.forceShowOutputCard"
-      :display-panel-text="getDisplayPanelText(step)"
+      :display-panel-text="getDisplayPanelText(step, steps)"
       :display-panel-color="getDisplayPanelColor(step)"
       :display-panel-align="getDisplayPanelAlign(step)"
       :display-panel-error="getStepDisplayError(step)"
@@ -2402,13 +2484,13 @@ const getReaderViewValues = (
               class="logic-element-tab-symbol"
               :text="entry.symbol"
               align="center"
-              :min-scale="0.35"
+              exact-fit
             />
           </div>
 
           <div class="logic-clear-button-overlay">Clear</div>
 
-          <template v-if="step.sourceType === 'List'">
+          <template v-if="isDirectListStep(step)">
             <div class="logic-list-nav-btn logic-list-nav-prev">◀</div>
             <div class="logic-list-search">
               <FitText
@@ -2450,7 +2532,7 @@ const getReaderViewValues = (
                         .title
                     "
                     align="left"
-                    :min-scale="0.6"
+                    end-fit
                   />
                 </div>
                 <div
@@ -2502,7 +2584,7 @@ const getReaderViewValues = (
                       getCompactValueTextForAst((step.node as any).value[0])
                     "
                     align="left"
-                    :min-scale="0.5"
+                    end-fit
                   />
                 </div>
               </template>
@@ -2581,10 +2663,7 @@ const getReaderViewValues = (
                   width: `${getCanvasBox(step).width - 28}px`,
                 }"
               >
-                <FitText
-                  :text="step.panelLabel ?? step.title"
-                  :min-scale="0.7"
-                />
+                <FitText :text="step.panelLabel ?? step.title" end-fit />
               </div>
 
               <div
@@ -2709,7 +2788,7 @@ const getReaderViewValues = (
           <div class="logic-write-arrow" />
 
           <div class="logic-label-field">
-            <FitText :text="step.output" />
+            <FitText :text="step.output" end-fit />
           </div>
 
           <div

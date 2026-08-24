@@ -216,6 +216,22 @@ describe("generateVisualSteps", () => {
     expect(result[0]!.typeError).toBeUndefined();
   });
 
+  it("testReaderVarByIdStepHasNoTypeErrorWithoutSimulatedOutput", () => {
+    const result = steps(makeAst.readerVarById());
+    expect(result).toHaveLength(1);
+    expect(result[0]!.sourceType).toBe("Reader");
+    expect(result[0]!.detail).toBe("OPERATOR_GETVARIABLEBYID");
+    expect(result[0]!.typeError).toBeUndefined();
+  });
+
+  it("testReaderVarByIdStepRejectsAnySimulatedOutput", () => {
+    const result = steps(makeAst.readerVarByIdWithSimulatedOutput());
+    expect(result).toHaveLength(1);
+    expect(result[0]!.typeError).toBe(
+      "Variable Value By ID does not support an overridden simulatedValue."
+    );
+  });
+
   it("testValueStepsExposePrimitiveDetails", () => {
     const result = steps(makeAst.stringVal());
     expect(result).toHaveLength(1);

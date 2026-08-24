@@ -57,6 +57,7 @@ const enum LiteralKind {
   Null = 27,
   Variable = 28,
   Curry = 29,
+  NetworkCards = 30,
 }
 
 const enum JSONKind {
@@ -929,6 +930,17 @@ const writeNode = (
       writeString(writer, node.name);
       writeNodeMetadata(writer, node);
       return;
+
+    case "NetworkCards":
+      writer.writeBits(NodeKind.Literal, 2);
+      writeLiteralKind(writer, LiteralKind.NetworkCards);
+      writeVarUint(writer, node.definitions.length);
+      for (const def of node.definitions) {
+        writeString(writer, def.name);
+        writeNode(writer, def.node, seen);
+      }
+      writeNodeMetadata(writer, node);
+      return;
   }
 };
 
@@ -1106,6 +1118,16 @@ const readNode = (
         case LiteralKind.Variable:
           node = { type: "Variable", name: readString(reader) };
           break;
+        case LiteralKind.NetworkCards: {
+          const defLength = readVarUint(reader);
+          const definitions: { name: string; node: ASTNode }[] = [];
+          for (let i = 0; i < defLength; i++) {
+            const name = readString(reader);
+            definitions.push({ name, node: readNode(reader, decoded) });
+          }
+          node = { type: "NetworkCards", definitions };
+          break;
+        }
         case LiteralKind.Curry: {
           const base = readNode(reader, decoded);
           if (!isOperatorNode(base)) {

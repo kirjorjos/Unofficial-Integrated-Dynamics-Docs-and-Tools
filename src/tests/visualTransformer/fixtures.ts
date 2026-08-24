@@ -43,6 +43,25 @@ export const makeAst = {
       simulatedOutput: { type: "String", value: "notanitem" },
     },
   }),
+  readerVarById: (): TypeAST.AST => ({
+    type: "Reader",
+    value: {
+      reader: "NetworkReader",
+      partId: "0",
+      aspect: "OPERATOR_GETVARIABLEBYID",
+      settings: {},
+    },
+  }),
+  readerVarByIdWithSimulatedOutput: (): TypeAST.AST => ({
+    type: "Reader",
+    value: {
+      reader: "NetworkReader",
+      partId: "0",
+      aspect: "OPERATOR_GETVARIABLEBYID",
+      settings: {},
+      simulatedOutput: { type: "Integer", value: "5" },
+    },
+  }),
 };
 
 export const steps = (

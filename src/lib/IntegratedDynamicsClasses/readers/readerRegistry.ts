@@ -106,10 +106,39 @@ export const getReaderAspect = (
   return readerClass.aspects[aspectKey];
 };
 
+export const getReaderAspectSignature = (
+  readerClass: Pick<ReaderClass, "aspects">,
+  aspectKey: string
+): string[] | undefined => {
+  return readerClass.aspects[aspectKey]?.signature;
+};
+
+export const getReaderAspectOperatorDisplayText = (
+  readerClass: Pick<ReaderClass, "aspects">,
+  aspectKey: string
+): string | undefined => {
+  const aspect = readerClass.aspects[aspectKey];
+  const signature = aspect?.signature;
+  if (!signature || signature.length === 0) return undefined;
+  const indent = "\u00A0";
+  const sigLines = signature
+    .map((type, i) => (i === 0 ? type : `${indent}-> ${type}`))
+    .join("\n");
+  return `${aspect!.fullDisplayName} ::\n${sigLines}`;
+};
+
 export const getReaderAspectDefaultValue = (
   readerClass: Pick<ReaderClass, "aspects">,
   aspectKey: string
 ): string => {
+  const aspect = readerClass.aspects[aspectKey];
+  if (aspect?.inGameDisplayName) {
+    return aspect.inGameDisplayName;
+  }
+  const signature = getReaderAspectSignature(readerClass, aspectKey);
+  if (signature && signature.length > 0) {
+    return signature.join(" -> ");
+  }
   switch (readerClass.aspects[aspectKey]?.outputType ?? "Any") {
     case "Boolean":
       return "false";
@@ -139,7 +168,13 @@ export const assertReaderSimulatedOutputType = (
   simulatedOutput: { type: string } | undefined
 ): void => {
   if (!simulatedOutput) return;
-  const expected = readerClass.aspects[aspectKey]?.outputType ?? "Any";
+  const aspect = readerClass.aspects[aspectKey];
+  if (aspect?.signature && aspect.signature.length > 0) {
+    throw new Error(
+      `${aspect.fullDisplayName} does not support an overridden simulatedValue.`
+    );
+  }
+  const expected = aspect?.outputType ?? "Any";
   if (!isReaderOutputTypeAssignable(simulatedOutput.type, expected)) {
     throw new Error(
       `Expected output type ${expected}, got simulatedOutput type ${simulatedOutput.type}`

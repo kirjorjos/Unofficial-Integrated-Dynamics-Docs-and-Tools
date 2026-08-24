@@ -125,7 +125,7 @@ const outputTooltip = computed(() => getOutputSlotTooltip(props.step));
           class="logic-element-tab-symbol"
           :text="entry.symbol"
           align="center"
-          :min-scale="0.35"
+          exact-fit
         />
       </div>
 
@@ -194,7 +194,7 @@ const outputTooltip = computed(() => getOutputSlotTooltip(props.step));
               width: `${patternBox.canvas!.width - 28}px`,
             }"
           >
-            <FitText :text="step.panelLabel ?? step.title" :min-scale="0.7" />
+            <FitText :text="step.panelLabel ?? step.title" end-fit />
           </div>
 
           <div
@@ -317,7 +317,7 @@ const outputTooltip = computed(() => getOutputSlotTooltip(props.step));
       <div class="logic-write-arrow" />
 
       <div class="logic-label-field">
-        <FitText :text="step.output" />
+        <FitText :text="step.output" end-fit />
       </div>
 
       <div class="logic-label-ok-icon" aria-hidden="true" />
@@ -328,13 +328,14 @@ const outputTooltip = computed(() => getOutputSlotTooltip(props.step));
         <HoverMinecraftTooltip
           :title="outputTooltip.title"
           :lines="outputTooltip.lines"
-        >            <div
-              v-if="props.forceShowOutputCard || step.workspaceMode !== 'pattern'"
-              class="logic-write-card-composite"
-              :style="{
-                backgroundImage: `url('${publicAsset(`valuetype/${getTextureName(outputTextureName)}.png`)}'), url('${publicAsset('item/variable.png')}')`,
-              }"
-            />
+        >
+          <div
+            v-if="props.forceShowOutputCard || step.workspaceMode !== 'pattern'"
+            class="logic-write-card-composite"
+            :style="{
+              backgroundImage: `url('${publicAsset(`valuetype/${getTextureName(outputTextureName)}.png`)}'), url('${publicAsset('item/variable.png')}')`,
+            }"
+          />
         </HoverMinecraftTooltip>
       </div>
     </div>

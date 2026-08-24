@@ -20,6 +20,12 @@ import { Item } from "lib/IntegratedDynamicsClasses/Item";
 import { Block } from "lib/IntegratedDynamicsClasses/Block";
 import { Tag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/Tag";
 import { operatorRegistry } from "lib/IntegratedDynamicsClasses/registries/operatorRegistry";
+import { CodeLineToAST } from "lib/transformers/CodeLine";
+import {
+  evaluateFullyAppliedCurryWithSteps,
+  buildVariableValueByIdOperator,
+} from "lib/transformers/helpers";
+import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 
 describe("Operator Transformer Tests", () => {
   let i10: Integer;
@@ -233,6 +239,53 @@ describe("Operator Transformer Tests", () => {
     it("testInvalidOperatorToAST", () => {
       const unknownType = { constructor: { name: "Unknown" } };
       expect(() => OperatortoAST(unknownType as any)).toThrow();
+    });
+  });
+
+  /**
+   * ------------------------- VariableValueById resolution -------------------------
+   */
+  describe("VariableValueByIdResolution Tests", () => {
+    const twoCardSteps = (): { variableId: number; node: TypeAST.AST }[] => [
+      { variableId: 0, node: { type: "Integer", value: "319" } },
+      { variableId: 1, node: { type: "Integer", value: "236" } },
+    ];
+
+    it("testMapOverVarIdsResolvesAgainstSteps", () => {
+      const ast = CodeLineToAST(
+        "apply apply map readers.network.variableValueById [0, 1]"
+      );
+      const value = evaluateFullyAppliedCurryWithSteps(ast, twoCardSteps());
+      expect(value).toBeDefined();
+      const arr = (value as any).valueOf();
+      expect(Array.isArray(arr)).toBe(true);
+      expect(arr.map((v: any) => v.toJSNumber())).toEqual([319, 236]);
+    });
+
+    it("testReduce1OverMappedVarIdsResolvesToSum", () => {
+      const ast = CodeLineToAST(
+        "apply apply reduce1 add (apply apply map readers.network.variableValueById [0, 1])"
+      );
+      const value = evaluateFullyAppliedCurryWithSteps(ast, twoCardSteps());
+      expect(value).toBeDefined();
+      expect((value as Integer).toJSNumber()).toBe(555);
+    });
+
+    it("testMissingStepFailsResolution", () => {
+      const ast = CodeLineToAST(
+        "apply apply map readers.network.variableValueById [0, 1]"
+      );
+      const value = evaluateFullyAppliedCurryWithSteps(ast, [
+        { variableId: 0, node: { type: "Integer", value: "319" } },
+      ]);
+      expect(value).toBeUndefined();
+    });
+
+    it("testVarByIdOperatorThrowsNotInNetworkForUnknownId", () => {
+      const op = buildVariableValueByIdOperator([
+        { variableId: 0, node: { type: "Integer", value: "319" } },
+      ]);
+      expect(() => op.apply(new Integer(5))).toThrow(iError);
     });
   });
 });

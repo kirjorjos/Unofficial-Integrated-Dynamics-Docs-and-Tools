@@ -16,6 +16,11 @@ export {
 export {
   flattenAnonymousBaseOperatorApplication,
   evaluateFullyAppliedCurry,
+  evaluateFullyAppliedCurryWithSteps,
+  buildVariableValueByIdOperator,
+  isVariableValueByIdReader,
+  astContainsVariableValueByIdReader,
+  type StepLikeWithNode,
 } from "lib/transformers/helpers";
 export { ASTtoJSON, JSONtoAST } from "lib/transformers/JSON";
 export {

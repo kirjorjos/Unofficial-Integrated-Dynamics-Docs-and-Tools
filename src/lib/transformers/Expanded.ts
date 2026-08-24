@@ -231,6 +231,13 @@ const computeSignature = (
       );
       break;
     }
+    case "NetworkCards": {
+      const root = node.definitions[node.definitions.length - 1]?.node;
+      if (!root)
+        throw new Error("NetworkCards must contain at least one definition");
+      signature = computeSignature(root, scope);
+      break;
+    }
   }
 
   if (scope) scope.set(node, signature);
@@ -264,6 +271,11 @@ const collectVariables = (
       break;
     case "List":
       for (const value of node.value) collectVariables(value, collected, seen);
+      break;
+    case "NetworkCards":
+      for (const def of node.definitions) {
+        collectVariables(def.node, collected, seen);
+      }
       break;
   }
 
@@ -563,9 +575,14 @@ export const ASTToExpanded = (
 ): string => {
   resetExpandedVarCounter();
 
+  const roots: TypeAST.AST[] =
+    ast.type === "NetworkCards" ? ast.definitions.map((d) => d.node) : [ast];
+
   const initialVars = new Set<TypeAST.AST>();
-  collectVariables(ast, initialVars, new Set());
-  initialVars.add(ast);
+  for (const root of roots) {
+    collectVariables(root, initialVars, new Set());
+    initialVars.add(root);
+  }
 
   const finalVars = new Set<TypeAST.AST>();
   const finalSeen = new Set<TypeAST.AST>();
@@ -664,6 +681,7 @@ export const ExpandedToAST = (expanded: string): TypeAST.AST => {
   if (processedLines.length === 0) throw new Error("Empty expanded input");
 
   const scope = new Map<string, TypeAST.AST>();
+  const definitions: { name: string; node: TypeAST.AST }[] = [];
   let finalAST: TypeAST.AST | null = null;
 
   for (let i = 0; i < processedLines.length; i++) {
@@ -736,10 +754,12 @@ export const ExpandedToAST = (expanded: string): TypeAST.AST => {
     if (varName) {
       lineAST.varName = varName;
       scope.set(varName, lineAST);
+      definitions.push({ name: varName, node: lineAST });
     }
     finalAST = lineAST;
   }
 
   if (!finalAST) throw new Error("Could not determine final AST");
-  return finalAST;
+
+  return { type: "NetworkCards", definitions };
 };

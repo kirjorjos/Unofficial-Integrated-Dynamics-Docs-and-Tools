@@ -85,6 +85,14 @@ describe("getDisplayPanelText", () => {
     }
   });
 
+  it("testRendersVarByIdStepAsOperatorSignature", () => {
+    const text = getDisplayPanelText({
+      output: "x",
+      node: makeAst.readerVarById(),
+    });
+    expect(text).toBe("Variable Value By ID ::\nInteger\n\u00A0-> Any");
+  });
+
   it("testResolvesPipeSignatureOverApplyBasedCurry", () => {
     const ast = ExpandedToAST(
       `isLiteral = operatorPipe(apply(apply(operatorFlip, nbtGetString), "t"), apply(anyEquals, "l"))`

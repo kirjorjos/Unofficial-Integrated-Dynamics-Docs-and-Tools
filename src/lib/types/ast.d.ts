@@ -100,6 +100,12 @@ namespace TypeAST {
 
   type Variable = { type: "Variable"; name: string; varName?: string };
 
+  type NetworkCards = {
+    type: "NetworkCards";
+    definitions: { name: string; node: AST }[];
+    varName?: string;
+  };
+
   type Constant =
     | Integer
     | Long
@@ -113,5 +119,5 @@ namespace TypeAST {
 
   type Operator = BaseOperator | Flip | Pipe | Pipe2 | Curried;
 
-  type AST = Constant | Operator;
+  type AST = Constant | Operator | NetworkCards;
 }

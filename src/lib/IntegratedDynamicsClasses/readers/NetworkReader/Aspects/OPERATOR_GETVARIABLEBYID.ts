@@ -14,4 +14,7 @@ export class NETWORK_OPERATOR_GETVARIABLEBYID extends NetworkAspectBase {
   static settings = {};
   static icon = "operator/network/variablebyid";
   static outputType = "Operator";
+  static signature = ["Integer", "Any"];
+  static inGameDisplayName =
+    "Virtual operator.integrateddynamics.virtual.variablebyid";
 }

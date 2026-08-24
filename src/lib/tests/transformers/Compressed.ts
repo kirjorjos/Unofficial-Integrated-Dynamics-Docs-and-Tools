@@ -226,6 +226,12 @@ describe("TestCompressedTransformer", () => {
     }
   });
 
+  it("testReaderVarByIdHasSignature", () => {
+    expect(
+      NetworkReader.aspects["OPERATOR_GETVARIABLEBYID"]!.signature
+    ).toEqual(["Integer", "Any"]);
+  });
+
   it("testReaderOutputTypeMapping", () => {
     expect(RedstoneReader.aspects["BOOLEAN_LOW"]!.outputType).toBe("Boolean");
     expect(RedstoneReader.aspects["INTEGER_VALUE"]!.outputType).toBe("Integer");

@@ -1,5 +1,7 @@
 import { ASTToExpanded, ExpandedToAST } from "lib/transformers/Expanded";
 import { ASTToCodeLine, CodeLineToAST } from "lib/transformers/CodeLine";
+import { ASTToCondensed } from "lib/transformers/Condensed";
+import { ASTToCompressed, CompressedToAST } from "lib/transformers/Compressed";
 import { globalMap } from "lib/HelperClasses/TypeMap";
 import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 
@@ -31,13 +33,18 @@ describe("TestExpandedTransformer", () => {
     }
   };
 
+  const rootOf = (ast: TypeAST.AST): TypeAST.AST =>
+    ast.type === "NetworkCards"
+      ? ast.definitions[ast.definitions.length - 1]!.node
+      : ast;
+
   it("testNestedScoping", () => {
     const input = `
 varName1 = pipe operatorPipe operatorPipe2
 varName2 = pipe varName1 operatorFlip
 final = apply varName2 3
 `;
-    const ast = ExpandedToAST(input.trim());
+    const ast = rootOf(ExpandedToAST(input.trim()));
 
     expect(ast.varName).toBe("final");
     expect(ast.type).toBe("Curry");
@@ -74,7 +81,7 @@ var1 = 5 -- Inline comment
 -- Solo line comment
 final = operatorFlip apply var1 numberIncrement
 `;
-    const ast = ExpandedToAST(input.trim());
+    const ast = rootOf(ExpandedToAST(input.trim()));
     expect(ast.varName).toBe("final");
     expect(ast.type).toBe("Curry");
     expect(((ast as TypeAST.Curried).args[0] as TypeAST.Integer).value).toBe(
@@ -94,9 +101,17 @@ operatorPipe = 5
 operatorPipe = operatorPipe
 `;
     expect(ExpandedToAST(input.trim())).toEqual({
-      type: "Operator",
-      opName: "OPERATOR_PIPE",
-      varName: "operatorPipe",
+      type: "NetworkCards",
+      definitions: [
+        {
+          name: "operatorPipe",
+          node: {
+            type: "Operator",
+            opName: "OPERATOR_PIPE",
+            varName: "operatorPipe",
+          },
+        },
+      ],
     });
   });
 
@@ -124,7 +139,7 @@ containsCommon = apply operatorStringContains stringCommon
 listContainsCommon = apply flipContainsPredicate containsCommon
 tooltipContainsCommon = pipe operatorTooltip listContainsCommon
 `;
-    const ast = ExpandedToAST(input.trim());
+    const ast = rootOf(ExpandedToAST(input.trim()));
     expect(ast.varName).toBe("tooltipContainsCommon");
     expect(ast.type).toBe("Pipe");
   });
@@ -135,7 +150,7 @@ var1 = pipe numberIncrement numberMultiply
 var2 = apply(var1, 10)
 final = apply(numberAdd, var2)
 `;
-    const ast = ExpandedToAST(input.trim());
+    const ast = rootOf(ExpandedToAST(input.trim()));
     expect(ast.varName).toBe("final");
     expect(ast.type).toBe("Curry");
     const curry = ast as TypeAST.Curried;
@@ -151,7 +166,7 @@ final = apply(numberAdd, var2)
     expect(expanded).toContain("::");
     expect(expanded).toContain("=");
 
-    const backAst = ExpandedToAST(expanded);
+    const backAst = rootOf(ExpandedToAST(expanded));
     deleteNestedVars(backAst);
     deleteNestedVars(ast);
     expect(ASTToCodeLine(backAst)).toContain("operatorPipe");
@@ -166,7 +181,7 @@ final = apply(numberAdd, var2)
     const lines = expanded.split("\n").filter((l) => l.includes("="));
     expect(lines.length).toBeGreaterThanOrEqual(2);
 
-    const backAst = ExpandedToAST(expanded);
+    const backAst = rootOf(ExpandedToAST(expanded));
     const ast1 = JSON.parse(JSON.stringify(ast)) as TypeAST.AST;
     const ast2 = JSON.parse(JSON.stringify(backAst)) as TypeAST.AST;
     deleteNestedVars(ast1);
@@ -268,7 +283,7 @@ whitelistTagList :: List<String>
 whitelistTagList = ["c:armor", "c:tools"]
 `;
     const ast = ExpandedToAST(input.trim());
-    expect(ast).toEqual({
+    expect(rootOf(ast)).toEqual({
       type: "List",
       value: [
         { type: "String", value: "c:armor" },
@@ -282,7 +297,7 @@ whitelistTagList = ["c:armor", "c:tools"]
   });
 
   it("testExpandedImplicitFlipOperatorReference", () => {
-    const ast = ExpandedToAST("final = flipListContainsPredicate");
+    const ast = rootOf(ExpandedToAST("final = flipListContainsPredicate"));
     expect(ast).toEqual({
       type: "Flip",
       arg: { type: "Operator", opName: "LIST_CONTAINS_PREDICATE" },
@@ -325,7 +340,7 @@ whitelistTagList = ["c:armor", "c:tools"]
   it("testBraceVarNameReferenceRoundTrips", () => {
     const input = `{numberAddBy5}by10 = numberAdd(5, 10)
 result = apply(numberAdd, {numberAddBy5}by10)`;
-    const ast = ExpandedToAST(input);
+    const ast = rootOf(ExpandedToAST(input));
     expect(ast.varName).toBe("result");
     expect((ast as TypeAST.Curried).args[0]!.varName).toBe(
       "{numberAddBy5}by10"
@@ -334,7 +349,11 @@ result = apply(numberAdd, {numberAddBy5}by10)`;
 
   it("testEmptyNbtStillParses", () => {
     const ast = ExpandedToAST("emptyTag = {}");
-    expect(ast).toEqual({ type: "NBT", value: {}, varName: "emptyTag" });
+    expect(rootOf(ast)).toEqual({
+      type: "NBT",
+      value: {},
+      varName: "emptyTag",
+    });
   });
 
   it("testExpandedReaderAutoName", () => {
@@ -350,8 +369,8 @@ result = apply(numberAdd, {numberAddBy5}by10)`;
     const input =
       'final = InventoryReader(0).slotItem({"slot":1}, Item("minecraft:stone", 1))';
     const ast = ExpandedToAST(input);
-    expect(ast.type).toBe("Reader");
-    const reader = ast as TypeAST.Reader;
+    const reader = rootOf(ast) as TypeAST.Reader;
+    expect(reader.type).toBe("Reader");
     expect(reader.value.reader).toBe("InventoryReader");
     expect(reader.value.partId).toBe("0");
     expect(reader.value.aspect).toBe("OBJECT_ITEM_STACK_SLOT");
@@ -363,11 +382,11 @@ result = apply(numberAdd, {numberAddBy5}by10)`;
       'final = InventoryReader(0).slotItem({"slot":1}, Item("minecraft:stone", 1))'
     );
 
-    const back = ExpandedToAST(expanded);
+    const back = rootOf(ExpandedToAST(expanded));
     deleteNestedVars(back);
-    deleteNestedVars(ast);
+    deleteNestedVars(reader);
     expect(JSON.parse(JSON.stringify(back))).toEqual(
-      JSON.parse(JSON.stringify(ast))
+      JSON.parse(JSON.stringify(reader))
     );
   });
 
@@ -398,7 +417,75 @@ result = apply(numberAdd, {numberAddBy5}by10)`;
     );
     expect(expanded).not.toContain("indexOfList = operatorPipe(operatorPipe2(");
 
-    const backAst = ExpandedToAST(expanded);
+    const backAst = rootOf(ExpandedToAST(expanded));
     expect(backAst.varName).toBe("indexOfList");
+  });
+  it("testExpandedToASTReturnsNetworkCards", () => {
+    const input = `
+a = 5
+b = add a 1
+final = apply b 2
+`;
+    const ast = ExpandedToAST(input.trim());
+    expect(ast.type).toBe("NetworkCards");
+    const network = ast as TypeAST.NetworkCards;
+    expect(network.definitions.map((d) => d.name)).toEqual(["a", "b", "final"]);
+    const root = network.definitions[network.definitions.length - 1]!.node;
+    expect(root.type).toBe("Curry");
+    expect(root.varName).toBe("final");
+  });
+
+  it("testUnusedDefinitionsArePreserved", () => {
+    const input = `
+step0 = 319
+step1 = 236
+final = apply add 3 4
+`;
+    const ast = ExpandedToAST(input.trim());
+    const network = ast as TypeAST.NetworkCards;
+    expect(network.definitions.map((d) => d.name)).toEqual([
+      "step0",
+      "step1",
+      "final",
+    ]);
+    expect(network.definitions[0]!.node).toEqual({
+      type: "Integer",
+      value: "319",
+      varName: "step0",
+    });
+    expect(network.definitions[1]!.node).toEqual({
+      type: "Integer",
+      value: "236",
+      varName: "step1",
+    });
+  });
+
+  it("testNetworkCardsRoundTripsThroughExpanded", () => {
+    const input = `step0 = 319
+step1 = 236
+final = [step0, step1]`;
+    const network = ExpandedToAST(input);
+    const expanded = ASTToExpanded(network);
+    expect(expanded).toContain("step0 = 319");
+    expect(expanded).toContain("step1 = 236");
+    expect(expanded).toContain("final = [step0, step1]");
+
+    const back = ExpandedToAST(expanded);
+    expect(JSON.parse(JSON.stringify(back))).toEqual(
+      JSON.parse(JSON.stringify(network))
+    );
+  });
+
+  it("testNetworkCardsCompressedRoundTrip", () => {
+    const network = ExpandedToAST(
+      "step0 = 319\nstep1 = 236\nfinal = [step0, step1]"
+    );
+    expect(CompressedToAST(ASTToCompressed(network))).toEqual(network);
+  });
+
+  it("testNetworkCardsThrowsInCondensedAndCodeLine", () => {
+    const network = ExpandedToAST("a = 5\nfinal = a");
+    expect(() => ASTToCondensed(network)).toThrow(/not yet implemented/i);
+    expect(() => ASTToCodeLine(network)).toThrow(/not yet implemented/i);
   });
 });

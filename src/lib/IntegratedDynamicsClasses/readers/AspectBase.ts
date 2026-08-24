@@ -7,6 +7,8 @@ export interface AspectStatic {
   settings: AspectSettings;
   icon: string;
   outputType: string;
+  signature?: string[];
+  inGameDisplayName?: string;
 }
 
 export abstract class AspectBase {}

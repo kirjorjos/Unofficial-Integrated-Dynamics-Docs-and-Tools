@@ -174,7 +174,6 @@ const thumbTop = computed(() => {
             <FitText
               :text="getAspectValue(aspectKey)"
               align="center"
-              :min-scale="0.5"
               :color="getTypeColor(aspectKey)"
               exact-fit
             />

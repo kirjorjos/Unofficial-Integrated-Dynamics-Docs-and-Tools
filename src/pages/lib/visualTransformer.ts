@@ -4,6 +4,7 @@ import {
   evaluateFullyAppliedCurry,
   flattenAnonymousBaseOperatorApplication,
 } from "lib/transformers/helpers";
+import { ASTtoOperator } from "lib/transformers/Operator";
 import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 import {
   BaseOperator,
@@ -268,6 +269,16 @@ export function getStepActualOutputType(step: {
         if (outputType !== "Any") return outputType;
       }
     }
+    try {
+      const op = ASTtoOperator(step.node) as any;
+      if (typeof op?.getParsedSignature === "function") {
+        const sig = op.getParsedSignature();
+        if (sig.getRootType() === "Function") {
+          return "Operator";
+        }
+        return sig.getRootType();
+      }
+    } catch {}
   }
   const opKey = step.detail ?? step.tooltipOperatorKey;
   if (opKey) {

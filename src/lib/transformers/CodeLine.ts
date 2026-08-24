@@ -170,6 +170,11 @@ export const ASTToCodeLine = (ast: TypeAST.AST, isTopLevel = true): string => {
         }`;
         break;
       }
+
+      case "NetworkCards":
+        throw new Error(
+          "NetworkCards are not yet implemented in the CodeLine format"
+        );
     }
 
     if (node.varName && topLevel) {
@@ -434,7 +439,7 @@ export const CodeLineToAST = (
     }
 
     const implicitFlip = resolveImplicitFlipOperator(token);
-    if (implicitFlip) return implicitFlip;
+    if (implicitFlip) return implicitFlip as InternalAST;
 
     throw new Error(`Unknown identifier: ${token}`);
   }
@@ -842,27 +847,27 @@ export const CodeLineToAST = (
       if (name === "OPERATOR_PIPE" && args.length === 2) {
         return {
           type: "Pipe",
-          op1: args[0] as TypeAST.AST,
-          op2: args[1] as TypeAST.AST,
+          op1: args[0] as InternalAST,
+          op2: args[1] as InternalAST,
         };
       }
       if (name === "OPERATOR_PIPE2" && args.length === 3) {
         return {
           type: "Pipe2",
-          op1: args[0] as TypeAST.AST,
-          op2: args[1] as TypeAST.AST,
-          op3: args[2] as TypeAST.AST,
+          op1: args[0] as InternalAST,
+          op2: args[1] as InternalAST,
+          op3: args[2] as InternalAST,
         };
       }
       if (name === "OPERATOR_FLIP" && args.length === 1) {
-        return { type: "Flip", arg: args[0] as TypeAST.AST };
+        return { type: "Flip", arg: args[0] as InternalAST };
       }
     }
 
     return {
       type: "Curry",
-      base: base as TypeAST.AST,
-      args: args as TypeAST.AST[],
+      base: base as InternalAST,
+      args: args as InternalAST[],
     };
   }
 

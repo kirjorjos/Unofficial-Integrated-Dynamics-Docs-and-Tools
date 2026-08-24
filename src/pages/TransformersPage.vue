@@ -82,7 +82,8 @@ const outputFormatters: Record<
   json: formatters.json,
   visual: {
     label: "Visual",
-    fromAST: (ast) => ASTToCondensed(ast),
+    fromAST: (ast) =>
+      ast.type === "NetworkCards" ? ASTToExpanded(ast) : ASTToCondensed(ast),
   },
 };
 
@@ -276,7 +277,9 @@ const copyOutput = async (): Promise<void> => {
     outputFormat.value === "expanded"
       ? (expandedOutputViewer.value?.getCopyText() ?? outputText.value)
       : outputFormat.value === "visual" && currentAst.value
-        ? ASTToCondensed(currentAst.value)
+        ? currentAst.value.type === "NetworkCards"
+          ? ASTToExpanded(currentAst.value)
+          : ASTToCondensed(currentAst.value)
         : outputText.value;
 
   await navigator.clipboard.writeText(textToCopy);

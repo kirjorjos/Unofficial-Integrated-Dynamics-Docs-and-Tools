@@ -305,6 +305,14 @@ describe("TestCondensedTransformer", () => {
     );
   });
 
+  it("testReaderVarByIdRejectsSimulatedOutput", () => {
+    expect(() =>
+      CondensedToAST("readers.network.variableValueById(5)")
+    ).toThrow(
+      "Variable Value By ID does not support an overridden simulatedValue."
+    );
+  });
+
   it("testReaderEnumKeyStillParses", () => {
     const ast = CondensedToAST(
       'InventoryReader(0).OBJECT_ITEM_STACK_SLOT({"slot":1})'

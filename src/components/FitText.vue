@@ -19,6 +19,7 @@ const props = withDefaults(
     fill?: boolean;
     /** When true, scale to exact fit instead of flooring to minScale. */
     exactFit?: boolean;
+    endFit?: boolean;
   }>(),
   {
     minScale: 0.5,
@@ -90,6 +91,12 @@ const updateScale = () => {
     neededScale = Math.min(widthRatio, heightRatio);
   }
 
+  if (props.endFit) {
+    applySize(Math.min(1, availableHeight / baseHeight));
+    endFitOverflows.value = content.scrollWidth > availableWidth;
+    return;
+  }
+
   const minScale = props.minScale ?? 0.5;
 
   if (neededScale >= 1) {
@@ -102,13 +109,26 @@ const updateScale = () => {
   }
 
   if (props.exactFit) {
-    // Scale to the exact fit size — best for contexts where text should be
-    // as large as possible (e.g. the reader GUI search bar).
-    applySize(Math.max(neededScale, minScale));
+    const targetPx = snapToPixelGrid(neededScale * parentPx);
+    content.style.fontSize = `${targetPx}px`;
+    if (
+      content.scrollWidth > availableWidth ||
+      content.scrollHeight > availableHeight
+    ) {
+      let px = targetPx - 1;
+      while (px >= 1) {
+        content.style.fontSize = `${px}px`;
+        if (
+          content.scrollWidth <= availableWidth &&
+          content.scrollHeight <= availableHeight
+        ) {
+          break;
+        }
+        px -= 1;
+      }
+    }
+    return;
   } else {
-    // Legacy behaviour: floor to minScale when text fits there, so
-    // display panels and other existing callers keep their baseline
-    // layout unchanged.
     const fitsAtMinScale =
       baseWidth * minScale <= availableWidth &&
       baseHeight * minScale <= availableHeight;
@@ -126,7 +146,23 @@ const scheduleUpdate = () => {
   });
 };
 
+const endFitOverflows = ref(false);
+
 const innerStyle = computed(() => {
+  if (props.endFit) {
+    if (endFitOverflows.value) {
+      return {
+        right: "0",
+        top: "50%",
+        transform: "translateY(-50%)",
+      };
+    }
+    return {
+      left: "0",
+      top: "50%",
+      transform: "translateY(-50%)",
+    };
+  }
   const isCenter = props.align === "center";
   const isTop = props.align === "top";
   return {
@@ -150,7 +186,7 @@ const lineStyle = computed(() => {
 });
 
 watch(
-  () => [props.text, props.align, props.minScale, props.color],
+  () => [props.text, props.align, props.minScale, props.color, props.endFit],
   scheduleUpdate
 );
 
