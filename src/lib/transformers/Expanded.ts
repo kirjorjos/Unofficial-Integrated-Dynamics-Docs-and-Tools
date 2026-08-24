@@ -635,6 +635,70 @@ export const ASTToExpanded = (
   return output.join("\n");
 };
 
+const findTopLevelOccurrence = (
+  line: string,
+  matches: (char: string, next: string | undefined) => boolean
+): number => {
+  let inString = false;
+  let inNBT = 0;
+  for (let j = 0; j < line.length; j++) {
+    const char = line[j]!;
+    if (char === '"') {
+      inString = !inString;
+      continue;
+    }
+    if (inString) continue;
+    if (char === "{") inNBT++;
+    if (char === "}") inNBT--;
+    if (inNBT === 0 && matches(char, line[j + 1])) return j;
+  }
+  return -1;
+};
+
+const DECLARED_TYPE_NAMES = [
+  "Any",
+  "Integer",
+  "Long",
+  "Double",
+  "String",
+  "Boolean",
+  "Null",
+  "NBT",
+  "Block",
+  "Item",
+  "Fluid",
+  "Entity",
+  "Ingredients",
+  "Recipe",
+  "Operator",
+  "List",
+] as const;
+
+const normalizeDeclaredTypeName = (text: string): string => {
+  const lowered = text.trim().toLowerCase();
+  const match = DECLARED_TYPE_NAMES.find(
+    (name) => name.toLowerCase() === lowered
+  );
+  if (!match) {
+    throw new Error(
+      `Unknown declared type "${text.trim()}". Valid types: ${DECLARED_TYPE_NAMES.join(", ")}`
+    );
+  }
+  return match;
+};
+
+const typeMatchesDeclaration = (
+  actualType: string,
+  declared: string
+): boolean => {
+  if (declared === "Any") return true;
+  if (actualType === "Any") return true;
+  if (declared === "Operator")
+    return actualType === "Operator" || actualType === "Function";
+  if (declared === "List") return actualType === "List";
+  return actualType.toLowerCase() === declared.toLowerCase();
+};
+
 export const ExpandedToAST = (
   expanded: string,
   startVariableId = 0
@@ -642,7 +706,14 @@ export const ExpandedToAST = (
   const rawLines = expanded.split("\n");
   const processedLines: string[] = [];
 
+  const hasTopLevelAssignment = (line: string): boolean =>
+    findTopLevelOccurrence(
+      line,
+      (char, next) => char === "=" && next !== ">"
+    ) !== -1;
+
   for (const line of rawLines) {
+    const lineHasAssignment = hasTopLevelAssignment(line);
     let inString = false;
     let escaped = false;
     let cleanLine = "";
@@ -671,8 +742,13 @@ export const ExpandedToAST = (
           break; // Ignore comment
         }
         if (char === ":" && line[i + 1] === ":") {
-          isSig = true;
-          break; // Ignore signature line
+          if (!lineHasAssignment) {
+            isSig = true;
+            break; // Ignore signature line
+          }
+          cleanLine += "::";
+          i++;
+          continue;
         }
       }
       cleanLine += char;
@@ -709,16 +785,49 @@ export const ExpandedToAST = (
       }
     }
 
+    const colonIdx = findTopLevelOccurrence(
+      line,
+      (char, next) => char === ":" && next === ":"
+    );
+
     let varName: string | null = null;
     let exprStr: string;
+    let declaredType: string | null = null;
 
-    if (eqIdx !== -1) {
+    if (colonIdx !== -1 && eqIdx !== -1 && colonIdx < eqIdx) {
+      const lhs = line.substring(0, colonIdx).trim();
+      const rest = line.substring(colonIdx + 2).trim();
+      const restEqIdx = findTopLevelOccurrence(
+        rest,
+        (char, next) => char === "=" && next !== ">"
+      );
+      if (!lhs || restEqIdx === -1) {
+        throw new Error(`Invalid typed definition on line ${i + 1}: "${line}"`);
+      }
+      if (!getNicknameRegex().test(lhs)) {
+        throw new Error(`Invalid variable name: "${lhs}"`);
+      }
+      declaredType = rest.substring(0, restEqIdx).trim();
+      exprStr = rest.substring(restEqIdx + 1).trim();
+      varName = lhs;
+    } else if (eqIdx !== -1) {
       varName = line.substring(0, eqIdx).trim();
-      exprStr = line.substring(eqIdx + 1).trim();
+
+      let rhs = line.substring(eqIdx + 1).trim();
+      // Typed definition: `varName = expression :: Type`
+      const rhsColonIdx = findTopLevelOccurrence(
+        rhs,
+        (char, next) => char === ":" && next === ":"
+      );
+      if (rhsColonIdx !== -1) {
+        declaredType = rhs.substring(rhsColonIdx + 2).trim();
+        rhs = rhs.substring(0, rhsColonIdx).trim();
+      }
 
       if (!getNicknameRegex().test(varName)) {
         throw new Error(`Invalid variable name: "${varName}"`);
       }
+      exprStr = rhs;
     } else {
       if (i === 0)
         throw new Error(
@@ -750,6 +859,16 @@ export const ExpandedToAST = (
       throw new Error(
         `Line ${i + 1} contains semicolon-separated statements, which are only valid at the top level`
       );
+    }
+
+    if (declaredType) {
+      const declared = normalizeDeclaredTypeName(declaredType);
+      const actualType = computeSignature(lineAST).getAst().type;
+      if (!typeMatchesDeclaration(actualType, declared)) {
+        throw new Error(
+          `Line ${i + 1}: variable "${varName}" is declared as type "${declared}" but the expression has type "${actualType}"`
+        );
+      }
     }
 
     if (
