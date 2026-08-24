@@ -587,4 +587,78 @@ final = [step0, step1]`;
     expect(expanded).toContain("listAppend([], ");
     expect(expanded).toContain("a = listConcat");
   });
+
+  it("testTypedDefinitionTypePrefix", () => {
+    const ast = rootOf(ExpandedToAST("x :: Integer = 5"));
+    expect(ast.varName).toBe("x");
+    expect((ast as TypeAST.Integer).value).toBe("5");
+  });
+
+  it("testTypedDefinitionTypeSuffix", () => {
+    const ast = rootOf(ExpandedToAST('x = "hello" :: String'));
+    expect(ast.varName).toBe("x");
+    expect((ast as TypeAST.String).value).toBe("hello");
+  });
+
+  it("testTypedDefinitionListAcceptsAnyList", () => {
+    const ast = rootOf(ExpandedToAST("x = [1, 2] :: List"));
+    expect(ast.varName).toBe("x");
+    expect(ast.type).toBe("List");
+  });
+
+  it("testTypedDefinitionAnyMatchesEverything", () => {
+    const ast = rootOf(ExpandedToAST("x :: Any = true"));
+    expect((ast as TypeAST.Boolean).value).toBe(true);
+  });
+
+  it("testTypedDefinitionCaseInsensitive", () => {
+    const ast = rootOf(ExpandedToAST("x = 1.5 :: double"));
+    expect(ast.type).toBe("Double");
+  });
+
+  it("testTypedDefinitionMultipleLines", () => {
+    const input = `
+total :: Integer = 3
+label = "id" :: String
+final = total
+`;
+    const ast = ExpandedToAST(input.trim()) as TypeAST.NetworkCards;
+    expect(ast.definitions.map((d) => d.name)).toEqual([
+      "total",
+      "label",
+      "final",
+    ]);
+    expect((ast.definitions[0]!.node as TypeAST.Integer).value).toBe("3");
+    expect((ast.definitions[1]!.node as TypeAST.String).value).toBe("id");
+  });
+
+  it("testTypedDefinitionMismatchThrows", () => {
+    expect(() => ExpandedToAST('x :: Integer = "oops"')).toThrow(
+      /declared as type "Integer" but the expression has type "String"/
+    );
+    expect(() => ExpandedToAST("y = [1, 2] :: Integer")).toThrow(
+      /declared as type "Integer" but the expression has type "List"/
+    );
+  });
+
+  it("testTypedDefinitionUnknownTypeThrows", () => {
+    expect(() => ExpandedToAST("x :: Widget = 5")).toThrow(
+      /Unknown declared type/
+    );
+  });
+
+  it("testTypedDefinitionInvalidNameThrows", () => {
+    expect(() => ExpandedToAST("bad name :: Integer = 5")).toThrow(
+      /Invalid variable name/
+    );
+  });
+
+  it("testSignatureLinesStillSkipped", () => {
+    const input = `
+var1 :: A -> B
+var1 = 5
+`;
+    const ast = rootOf(ExpandedToAST(input.trim()));
+    expect((ast as TypeAST.Integer).value).toBe("5");
+  });
 });
