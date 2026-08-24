@@ -1,0 +1,56 @@
+name: Bug report
+description: Report something broken, incorrect, or missing
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: >
+        Thanks for taking the time to file a bug! Please fill out the sections
+        below so the issue can be reproduced and triaged quickly.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected area
+      description: Where does the problem show up?
+      options:
+        - Logic Programmer / visual tools
+        - Reader documentation pages
+        - Documentation content
+        - Site / build
+        - Other / unsure
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: A clear description of what went wrong, including what you expected to happen.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Minimal steps or a link that shows the problem.
+      placeholder: |
+        1. Go to '...'
+        2. Click on '...'
+        3. See error
+
+  - type: input
+    id: version-info
+    attributes:
+      label: Environment
+      description: Browser/OS for site issues, or Minecraft/mod versions where relevant.
+      placeholder: e.g. Firefox 141 on Linux / Minecraft 1.21.1
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues for a duplicate
+          required: true
