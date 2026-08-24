@@ -1,6 +1,9 @@
+import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
 import { Operator } from "lib/IntegratedDynamicsClasses/operators/Operator";
+import { getReaderClassByTypeName } from "lib/IntegratedDynamicsClasses/readers/readerRegistry";
 import { operatorRegistry } from "lib/IntegratedDynamicsClasses/registries/operatorRegistry";
+import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 import { ASTtoOperator } from "lib/transformers/Operator";
 
 export interface FlattenedBaseOperatorApplication {
@@ -76,6 +79,137 @@ export const evaluateFullyAppliedCurry = (
 
     let result: unknown = baseOp.getFn();
     for (const argVal of argValues) {
+      if (typeof result === "function") {
+        result = (result as (arg: IntegratedValue) => unknown)(argVal);
+      } else if (result instanceof Operator) {
+        result = result.apply(argVal);
+      } else {
+        break;
+      }
+    }
+
+    if (typeof result === "function" || result instanceof Operator) {
+      return undefined;
+    }
+    return result as IntegratedValue;
+  } catch {
+    return undefined;
+  }
+};
+
+export interface StepLikeWithNode {
+  variableId: number;
+  node?: TypeAST.AST;
+}
+
+export const isVariableValueByIdReader = (ast: TypeAST.AST): boolean => {
+  if (ast.type !== "Reader") return false;
+  const aspect = getReaderClassByTypeName(ast.value.reader)?.aspects[
+    ast.value.aspect
+  ];
+  return (aspect?.signature?.length ?? 0) > 0;
+};
+
+export const astContainsVariableValueByIdReader = (
+  ast: TypeAST.AST
+): boolean => {
+  if (isVariableValueByIdReader(ast)) return true;
+  switch (ast.type) {
+    case "Curry":
+      return (
+        astContainsVariableValueByIdReader(ast.base) ||
+        ast.args.some(astContainsVariableValueByIdReader)
+      );
+    case "List":
+      return ast.value.some(astContainsVariableValueByIdReader);
+    case "Pipe":
+      return (
+        astContainsVariableValueByIdReader(ast.op1) ||
+        astContainsVariableValueByIdReader(ast.op2)
+      );
+    case "Pipe2":
+      return (
+        astContainsVariableValueByIdReader(ast.op1) ||
+        astContainsVariableValueByIdReader(ast.op2) ||
+        astContainsVariableValueByIdReader(ast.op3)
+      );
+    case "Flip":
+      return astContainsVariableValueByIdReader(ast.arg);
+    default:
+      return false;
+  }
+};
+
+export const buildVariableValueByIdOperator = (
+  steps: StepLikeWithNode[]
+): Operator<IntegratedValue, IntegratedValue> => {
+  return new Operator({
+    parsedSignature: new ParsedSignature(
+      {
+        type: "Function",
+        from: { type: "Integer" },
+        to: { type: "Any", typeID: ParsedSignature.getNewTypeID() },
+      },
+      false
+    ),
+    function: (n: IntegratedValue): IntegratedValue => {
+      const id = Number((n as any)?.valueOf?.());
+      const step = steps.find((s) => s.variableId === id);
+      if (!step?.node) {
+        throw new iError(`Variable with id ${id} is not in the network`);
+      }
+      return ASTtoOperator(step.node);
+    },
+    interactName: "variableValueById",
+    baseDisplayName: "Variable Value By ID",
+  });
+};
+
+export const evaluateFullyAppliedCurryWithSteps = (
+  node: TypeAST.AST,
+  steps: StepLikeWithNode[]
+): IntegratedValue | undefined => {
+  const flat = flattenAnonymousBaseOperatorApplication(node);
+  if (!flat || !flat.fullyApplied || flat.operator.type !== "Operator") {
+    return undefined;
+  }
+
+  const resolveArgAst = (argAst: TypeAST.AST): IntegratedValue | undefined => {
+    if (isVariableValueByIdReader(argAst)) {
+      return buildVariableValueByIdOperator(steps);
+    }
+    if (argAst.type === "Curry") {
+      const nested = evaluateFullyAppliedCurryWithSteps(argAst, steps);
+      if (nested !== undefined) return nested;
+    }
+    try {
+      const op = ASTtoOperator(argAst);
+      if (op instanceof Operator) {
+        const result = op.getFn()(null);
+        if (
+          result != null &&
+          typeof result !== "function" &&
+          !(result instanceof Operator)
+        ) {
+          return result;
+        }
+      }
+      return op;
+    } catch {
+      return undefined;
+    }
+  };
+
+  try {
+    const argValues = flat.args.map(resolveArgAst);
+    if (argValues.some((value) => value === undefined)) return undefined;
+    const resolvedArgs = argValues as IntegratedValue[];
+
+    const baseOp = ASTtoOperator(flat.operator);
+    if (!(baseOp instanceof Operator)) return undefined;
+
+    let result: unknown = baseOp.getFn();
+    for (const argVal of resolvedArgs) {
       if (typeof result === "function") {
         result = (result as (arg: IntegratedValue) => unknown)(argVal);
       } else if (result instanceof Operator) {

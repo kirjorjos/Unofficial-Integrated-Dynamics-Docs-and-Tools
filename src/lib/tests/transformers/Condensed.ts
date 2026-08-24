@@ -283,4 +283,243 @@ describe("TestCondensedTransformer", () => {
     const ast = CondensedToAST("\\var.with.dot.numberAdd(var.with.dot, 1)");
     expect(ASTToCondensed(ast)).toBe("apply(numberAdd, 1)");
   });
+  it("testReaderDottedForm", () => {
+    const code =
+      'InventoryReader(0).slotItem({"slot":1}, Item("minecraft:stone", 1))';
+    const ast = CondensedToAST(code) as TypeAST.Reader;
+    expect(ast.type).toBe("Reader");
+    expect(ast.value.reader).toBe("InventoryReader");
+    expect(ast.value.partId).toBe("0");
+    expect(ast.value.aspect).toBe("OBJECT_ITEM_STACK_SLOT");
+    expect(ast.value.settings).toEqual({ slot: 1 });
+    expect(ast.value.simulatedOutput).toEqual({
+      type: "Item",
+      value: { id: "minecraft:stone", size: "1" },
+    });
+    expect(ASTToCondensed(ast)).toBe(code);
+  });
+
+  it("testReaderSimulatedOutputTypeMismatchThrows", () => {
+    expect(() => CondensedToAST('InventoryReader(0).slotItem("test")')).toThrow(
+      "Expected output type Item, got simulatedOutput type String"
+    );
+  });
+
+  it("testReaderVarByIdRejectsSimulatedOutput", () => {
+    expect(() =>
+      CondensedToAST("readers.network.variableValueById(5)")
+    ).toThrow(
+      "Variable Value By ID does not support an overridden simulatedValue."
+    );
+  });
+
+  it("testReaderEnumKeyStillParses", () => {
+    const ast = CondensedToAST(
+      'InventoryReader(0).OBJECT_ITEM_STACK_SLOT({"slot":1})'
+    ) as TypeAST.Reader;
+    expect(ast.value.aspect).toBe("OBJECT_ITEM_STACK_SLOT");
+    expect(ASTToCondensed(ast)).toBe('InventoryReader(0).slotItem({"slot":1})');
+  });
+
+  it("testReaderNicknameParses", () => {
+    const ast = CondensedToAST(
+      "readers.inventory.itemStackSlot"
+    ) as TypeAST.Reader;
+    expect(ast.value.aspect).toBe("OBJECT_ITEM_STACK_SLOT");
+    expect(ASTToCondensed(ast)).toBe("InventoryReader.slotItem");
+  });
+
+  it("testReaderReadersDotForm", () => {
+    const ast = CondensedToAST("readers.inventory.slotItem") as TypeAST.Reader;
+    expect(ast.value.reader).toBe("InventoryReader");
+    expect(ast.value.partId).toBeUndefined();
+    expect(ast.value.aspect).toBe("OBJECT_ITEM_STACK_SLOT");
+    expect(ASTToCondensed(ast)).toBe("InventoryReader.slotItem");
+  });
+
+  it("testReaderEmptyPartIdParens", () => {
+    const ast = CondensedToAST("InventoryReader().slotItem") as TypeAST.Reader;
+    expect(ast.value.partId).toBeUndefined();
+    expect(ASTToCondensed(ast)).toBe("InventoryReader.slotItem");
+  });
+
+  it("testReaderSplitDotTokens", () => {
+    const ast = CondensedToAST(
+      "InventoryReader(0) . slotItem"
+    ) as TypeAST.Reader;
+    expect(ast.value.partId).toBe("0");
+    expect(ast.value.aspect).toBe("OBJECT_ITEM_STACK_SLOT");
+  });
+
+  it("testReaderFunctionalForm", () => {
+    const ast = CondensedToAST(
+      'inventoryReader("Slot Item", {"slot":0})'
+    ) as TypeAST.Reader;
+    expect(ast.value.reader).toBe("InventoryReader");
+    expect(ast.value.aspect).toBe("OBJECT_ITEM_STACK_SLOT");
+    expect(ast.value.settings).toEqual({ slot: 0 });
+    expect(ASTToCondensed(ast)).toBe('InventoryReader.slotItem({"slot":0})');
+  });
+
+  it("testReaderGenericForm", () => {
+    const ast = CondensedToAST(
+      'reader("inventory", "slot_item")'
+    ) as TypeAST.Reader;
+    expect(ast.value.reader).toBe("InventoryReader");
+    expect(ast.value.aspect).toBe("OBJECT_ITEM_STACK_SLOT");
+    expect(ASTToCondensed(ast)).toBe("InventoryReader.slotItem");
+  });
+
+  it("testReaderSimulatedOutputOnly", () => {
+    const code = 'InventoryReader().slotItem(Item("minecraft:stone", 1))';
+    const ast = CondensedToAST(code) as TypeAST.Reader;
+    expect(ast.value.simulatedOutput).toEqual({
+      type: "Item",
+      value: { id: "minecraft:stone", size: "1" },
+    });
+    expect(ASTToCondensed(ast)).toBe(
+      'InventoryReader.slotItem(Item("minecraft:stone", 1))'
+    );
+  });
+
+  it("testReaderArgsEitherOrder", () => {
+    const code =
+      'InventoryReader().slotItem(Item("minecraft:stone", 1), {"slot":1})';
+    const ast = CondensedToAST(code) as TypeAST.Reader;
+    expect(ast.value.settings).toEqual({ slot: 1 });
+    expect(ast.value.simulatedOutput).toEqual({
+      type: "Item",
+      value: { id: "minecraft:stone", size: "1" },
+    });
+    expect(ASTToCondensed(ast)).toBe(
+      'InventoryReader.slotItem({"slot":1}, Item("minecraft:stone", 1))'
+    );
+  });
+
+  it("testReaderCaseInsensitiveConstructor", () => {
+    const ast = CondensedToAST("inventoryreader.slotItem") as TypeAST.Reader;
+    expect(ast.value.reader).toBe("InventoryReader");
+  });
+
+  it("testReaderUnknownAspect", () => {
+    expect(() => CondensedToAST("InventoryReader.slotItemNope")).toThrow();
+  });
+
+  it("testReaderUnknownReader", () => {
+    expect(() => CondensedToAST('reader("notareader", "X")')).toThrow();
+  });
+
+  it("testReaderRoundTrip", () => {
+    const cases = [
+      "InventoryReader.slotItem",
+      'InventoryReader(0).slotItem({"slot":1})',
+      'InventoryReader().slotItem(Item("minecraft:stone", 1))',
+      'readers.redstone.redstoneLow({"interval":10}, true)',
+    ];
+    for (const c of cases) {
+      const ast = CondensedToAST(c);
+      const back = ASTToCondensed(ast);
+      expect(ASTToCondensed(CondensedToAST(back))).toBe(back);
+    }
+  });
+
+  it("testSemicolonSplitsIntoNetworkCards", () => {
+    const ast = CondensedToAST(
+      "319; 236; apply(apply(map, NetworkReader.variableValueById), [@0, @1])"
+    );
+    expect(ast.type).toBe("NetworkCards");
+    const nc = ast as TypeAST.NetworkCards;
+    expect(nc.definitions.length).toBe(3);
+    const mapNode = JSON.stringify(nc.definitions[2]!.node);
+    expect(mapNode).toContain('"value":"0"');
+    expect(mapNode).toContain('"value":"1"');
+    expect(mapNode).not.toContain("@");
+  });
+
+  it("testSingleSegmentReturnsPlainAst", () => {
+    expect(CondensedToAST("apply(numberAdd, 1)").type).toBe("Curry");
+  });
+
+  it("testSemicolonInsideStringIsNotASeparator", () => {
+    const ast = CondensedToAST('"a;b"') as TypeAST.String;
+    expect(ast.value).toBe("a;b");
+  });
+
+  it("testSemicolonInsideNbtIsNotASeparator", () => {
+    const ast = CondensedToAST('{"a;b": 1}') as TypeAST.Nbt;
+    expect(ast.value).toEqual({ "a;b": 1 });
+  });
+
+  it("testAtRefRejectedForFutureDefinition", () => {
+    expect(() =>
+      CondensedToAST(
+        "apply(apply(map, NetworkReader.variableValueById), [@1]); 236"
+      )
+    ).toThrow(/not created yet/);
+  });
+
+  it("testStartVariableIdOffsetsAtResolution", () => {
+    const ast = CondensedToAST(
+      "319; apply(apply(map, NetworkReader.variableValueById), [@0])",
+      undefined,
+      10
+    ) as TypeAST.NetworkCards;
+    const mapNode = JSON.stringify(ast.definitions[1]!.node);
+    expect(mapNode).toContain('"value":"10"');
+  });
+
+  it("testNetworkCardsEmitsSemicolonSeparated", () => {
+    const ast = CondensedToAST(
+      "319; 236; apply(apply(map, NetworkReader.variableValueById), [@0, @1])"
+    );
+    const out = ASTToCondensed(ast);
+    expect(out).toBe(
+      "319; 236; operatorMap(NetworkReader.variableValueById, [0, 1])"
+    );
+    expect(ASTToCondensed(CondensedToAST(out))).toBe(out);
+  });
+
+  it("testMixedListSingleDerivedNormalizes", () => {
+    const ast = CondensedToAST("[1, 2, numberAdd(5, 1), 5, 6]");
+    expect(ASTToCondensed(ast)).toBe(
+      "listConcat(listConcat([1, 2], listAppend([], numberAdd(5, 1))), [5, 6])"
+    );
+    const out = ASTToCondensed(ast);
+    expect(ASTToCondensed(CondensedToAST(out))).toBe(out);
+  });
+
+  it("testMixedListReaderElementNormalizes", () => {
+    const ast = CondensedToAST(
+      '[1, InventoryReader(0).slotItem({"slot":1}), 2]'
+    );
+    expect(ASTToCondensed(ast)).toBe(
+      'listConcat(listConcat([1], listAppend([], InventoryReader(0).slotItem({"slot":1}))), [2])'
+    );
+  });
+
+  it("testMixedListMultiDerivedHoists", () => {
+    const ast = CondensedToAST(
+      "[1, numberAdd(5, 1), numberAdd(2, 3)]"
+    ) as TypeAST.NetworkCards;
+    expect(ast.type).toBe("NetworkCards");
+    expect(ast.definitions.map((d) => d.name)).toEqual(["var0", "var1", ""]);
+    expect(ASTToCondensed(ast)).toBe(
+      "numberAdd(5, 1); numberAdd(2, 3); listConcat([1], operatorMap(NetworkReader.variableValueById, [2, 5]))"
+    );
+    const out = ASTToCondensed(ast);
+    expect(ASTToCondensed(CondensedToAST(out))).toBe(out);
+  });
+
+  it("testMixedListNestedNormalizes", () => {
+    const ast = CondensedToAST("[1, [2, numberAdd(3, 1)], 4]");
+    expect(ASTToCondensed(ast)).toBe(
+      "listConcat(listConcat([1], listAppend([], listConcat([2], listAppend([], numberAdd(3, 1))))), [4])"
+    );
+  });
+
+  it("testMixedListMixedTypesStaysList", () => {
+    const ast = CondensedToAST('[1, "a"]');
+    expect(ast.type).toBe("List");
+    expect(ASTToCondensed(ast)).toBe('[1, "a"]');
+  });
 });

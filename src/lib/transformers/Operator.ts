@@ -14,6 +14,7 @@ import { PipeOperator } from "lib/IntegratedDynamicsClasses/operators/PipeOperat
 import { Properties } from "lib/IntegratedDynamicsClasses/Properties";
 import { Recipe } from "lib/IntegratedDynamicsClasses/Recipe";
 import { operatorRegistry } from "lib/IntegratedDynamicsClasses/registries/operatorRegistry";
+import { getReaderClassByTypeName } from "lib/IntegratedDynamicsClasses/readers/readerRegistry";
 import { iArrayEager } from "lib/IntegratedDynamicsClasses/typeWrappers/iArrayEager";
 import { iBoolean } from "lib/IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { iNull } from "lib/IntegratedDynamicsClasses/typeWrappers/iNull";
@@ -80,6 +81,32 @@ export const ASTtoOperator = (ast: TypeAST.AST): IntegratedValue => {
     }
 
     case "Curry": {
+      const isOperatorAst = (a: TypeAST.AST): boolean =>
+        a.type === "Operator" ||
+        a.type === "Curry" ||
+        a.type === "Flip" ||
+        a.type === "Pipe" ||
+        a.type === "Pipe2";
+      const isApplyFamilyBase =
+        ast.base.type === "Operator" &&
+        (ast.base.opName === "OPERATOR_APPLY" ||
+          ast.base.opName === "OPERATOR_APPLY_2" ||
+          ast.base.opName === "OPERATOR_APPLY_3");
+      if (
+        isApplyFamilyBase &&
+        ast.args.length >= 1 &&
+        isOperatorAst(ast.args[0]!)
+      ) {
+        const base = ASTtoOperator(ast.args[0]!) as Operator<
+          IntegratedValue,
+          IntegratedValue
+        >;
+        const args = ast.args
+          .slice(1)
+          .map((a) => lazyValue(() => ASTtoOperator(a)));
+        return new CurriedOperator(base, args);
+      }
+
       const base = ASTtoOperator(ast.base) as Operator<
         IntegratedValue,
         IntegratedValue
@@ -129,6 +156,27 @@ export const ASTtoOperator = (ast: TypeAST.AST): IntegratedValue => {
 
     case "List":
       return new iArrayEager(ast.value.map(ASTtoOperator));
+
+    case "Reader": {
+      if (ast.value.simulatedOutput) {
+        return ASTtoOperator(ast.value.simulatedOutput);
+      }
+      const readerClass = getReaderClassByTypeName(ast.value.reader);
+      switch (readerClass?.aspects[ast.value.aspect]?.outputType) {
+        case "Boolean":
+          return new iBoolean(false);
+        case "Integer":
+          return new Integer(0);
+        case "Long":
+          return new Long(0);
+        case "Double":
+          return new Double(0);
+        case "String":
+          return new iString("");
+        default:
+          return new iNull();
+      }
+    }
 
     default:
       throw new Error(`Unsupported AST type: ${(ast as any).type}`);
@@ -189,9 +237,7 @@ export const OperatortoAST = (val: IntegratedValue): TypeAST.AST => {
   }
 
   if (val instanceof CurriedOperator) {
-    const forcedArgs = val.appliedArgs.map(
-      (arg) => forceValue(arg)
-    );
+    const forcedArgs = val.appliedArgs.map((arg) => forceValue(arg));
     return {
       type: "Curry",
       base: OperatortoAST(val.baseOperator) as TypeAST.Operator,

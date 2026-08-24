@@ -1,4 +1,5 @@
 import { ASTToCodeLine, CodeLineToAST } from "lib/transformers/CodeLine";
+import { ExpandedToAST } from "lib/transformers/Expanded";
 
 describe("TestCodeLineTransformer", () => {
   it("testBlock", () => {
@@ -214,5 +215,239 @@ describe("TestCodeLineTransformer", () => {
       const back = ASTToCodeLine(ast);
       expect(ASTToCodeLine(CodeLineToAST(back))).toBe(back);
     }
+  });
+
+  it("testReaderDottedForm", () => {
+    const code =
+      'InventoryReader(0).slotItem({"slot":1}, Item("minecraft:stone", 1))';
+    const ast = CodeLineToAST(code) as TypeAST.Reader;
+    expect(ast.type).toBe("Reader");
+    expect(ast.value.reader).toBe("InventoryReader");
+    expect(ast.value.partId).toBe("0");
+    expect(ast.value.aspect).toBe("OBJECT_ITEM_STACK_SLOT");
+    expect(ast.value.settings).toEqual({ slot: 1 });
+    expect(ast.value.simulatedOutput).toEqual({
+      type: "Item",
+      value: { id: "minecraft:stone", size: "1" },
+    });
+    // Emits the canonical display name
+    expect(ASTToCodeLine(ast)).toBe(code);
+  });
+
+  it("testReaderSimulatedOutputTypeMismatchThrows", () => {
+    expect(() => CodeLineToAST('InventoryReader(0).slotItem("test")')).toThrow(
+      "Expected output type Item, got simulatedOutput type String"
+    );
+  });
+
+  it("testReaderVarByIdRejectsSimulatedOutput", () => {
+    expect(() => CodeLineToAST("readers.network.variableValueById(5)")).toThrow(
+      "Variable Value By ID does not support an overridden simulatedValue."
+    );
+  });
+
+  it("testReaderEnumKeyStillParses", () => {
+    const ast = CodeLineToAST(
+      'InventoryReader(0).OBJECT_ITEM_STACK_SLOT({"slot":1})'
+    ) as TypeAST.Reader;
+    expect(ast.value.aspect).toBe("OBJECT_ITEM_STACK_SLOT");
+    expect(ASTToCodeLine(ast)).toBe('InventoryReader(0).slotItem({"slot":1})');
+  });
+
+  it("testReaderReadersDotForm", () => {
+    const ast = CodeLineToAST("readers.inventory.slotItem") as TypeAST.Reader;
+    expect(ast.value.reader).toBe("InventoryReader");
+    expect(ast.value.partId).toBeUndefined();
+    expect(ASTToCodeLine(ast)).toBe("InventoryReader.slotItem");
+  });
+
+  it("testReaderSplitDotTokens", () => {
+    const ast = CodeLineToAST(
+      "InventoryReader(0) . slotItem"
+    ) as TypeAST.Reader;
+    expect(ast.value.partId).toBe("0");
+    expect(ast.value.aspect).toBe("OBJECT_ITEM_STACK_SLOT");
+  });
+
+  it("testReaderFunctionalForm", () => {
+    const ast = CodeLineToAST(
+      'inventoryReader("Slot Item", {"slot":0})'
+    ) as TypeAST.Reader;
+    expect(ast.value.reader).toBe("InventoryReader");
+    expect(ast.value.aspect).toBe("OBJECT_ITEM_STACK_SLOT");
+    expect(ast.value.settings).toEqual({ slot: 0 });
+    expect(ASTToCodeLine(ast)).toBe('InventoryReader.slotItem({"slot":0})');
+  });
+
+  it("testReaderGenericForm", () => {
+    const ast = CodeLineToAST(
+      'reader("inventory", "slot_item")'
+    ) as TypeAST.Reader;
+    expect(ast.value.reader).toBe("InventoryReader");
+    expect(ast.value.aspect).toBe("OBJECT_ITEM_STACK_SLOT");
+    expect(ASTToCodeLine(ast)).toBe("InventoryReader.slotItem");
+  });
+
+  it("testReaderSimulatedOutputOnly", () => {
+    const code = 'InventoryReader().slotItem(Item("minecraft:stone", 1))';
+    const ast = CodeLineToAST(code) as TypeAST.Reader;
+    expect(ast.value.simulatedOutput).toEqual({
+      type: "Item",
+      value: { id: "minecraft:stone", size: "1" },
+    });
+    expect(ASTToCodeLine(ast)).toBe(
+      'InventoryReader.slotItem(Item("minecraft:stone", 1))'
+    );
+  });
+
+  it("testReaderArgsEitherOrder", () => {
+    const code =
+      'InventoryReader().slotItem(Item("minecraft:stone", 1), {"slot":1})';
+    const ast = CodeLineToAST(code) as TypeAST.Reader;
+    expect(ast.value.settings).toEqual({ slot: 1 });
+    expect(ast.value.simulatedOutput).toEqual({
+      type: "Item",
+      value: { id: "minecraft:stone", size: "1" },
+    });
+    expect(ASTToCodeLine(ast)).toBe(
+      'InventoryReader.slotItem({"slot":1}, Item("minecraft:stone", 1))'
+    );
+  });
+
+  it("testReaderCaseInsensitiveConstructor", () => {
+    const ast = CodeLineToAST("inventoryreader.slotItem") as TypeAST.Reader;
+    expect(ast.value.reader).toBe("InventoryReader");
+  });
+
+  it("testReaderUnknownAspect", () => {
+    expect(() => CodeLineToAST("InventoryReader.slotItemNope")).toThrow();
+  });
+
+  it("testReaderUnknownReader", () => {
+    expect(() => CodeLineToAST('reader("notareader", "X")')).toThrow();
+  });
+
+  it("testReaderRoundTrip", () => {
+    const cases = [
+      "InventoryReader.slotItem",
+      'InventoryReader(0).slotItem({"slot":1})',
+      'InventoryReader().slotItem(Item("minecraft:stone", 1))',
+      'readers.redstone.redstoneLow({"interval":10}, true)',
+    ];
+    for (const c of cases) {
+      const ast = CodeLineToAST(c);
+      const back = ASTToCodeLine(ast);
+      expect(ASTToCodeLine(CodeLineToAST(back))).toBe(back);
+    }
+  });
+
+  it("testSemicolonSplitsIntoNetworkCards", () => {
+    const ast = CodeLineToAST(
+      "319; 236; map NetworkReader.variableValueById [@0, @1]"
+    );
+    expect(ast.type).toBe("NetworkCards");
+    const nc = ast as TypeAST.NetworkCards;
+    expect(nc.definitions.length).toBe(3);
+    expect(nc.definitions[0]!.node).toEqual({ type: "Integer", value: "319" });
+    expect(nc.definitions[1]!.node).toEqual({ type: "Integer", value: "236" });
+    const mapNode = JSON.stringify(nc.definitions[2]!.node);
+    expect(mapNode).toContain('"value":"0"');
+    expect(mapNode).toContain('"value":"1"');
+    expect(mapNode).not.toContain("@");
+  });
+
+  it("testSingleSegmentReturnsPlainAst", () => {
+    expect(CodeLineToAST("add 5 1").type).toBe("Curry");
+  });
+
+  it("testSemicolonInsideStringIsNotASeparator", () => {
+    const ast = CodeLineToAST('"a;b"') as TypeAST.String;
+    expect(ast.value).toBe("a;b");
+  });
+
+  it("testSemicolonInsideNbtIsNotASeparator", () => {
+    const ast = CodeLineToAST('{"a;b": 1}') as TypeAST.Nbt;
+    expect(ast.value).toEqual({ "a;b": 1 });
+  });
+
+  it("testAtRefRejectedForCurrentDefinition", () => {
+    expect(() =>
+      CodeLineToAST("map NetworkReader.variableValueById [@0]")
+    ).toThrow(/only valid inside a multi-statement/i);
+  });
+
+  it("testAtRefRejectedForFutureDefinition", () => {
+    expect(() =>
+      CodeLineToAST("map NetworkReader.variableValueById [@1]; 236")
+    ).toThrow(/not created yet/);
+  });
+
+  it("testLiteralFutureIdsNotValidated", () => {
+    const ast = CodeLineToAST(
+      "5; map NetworkReader.variableValueById [7]"
+    ) as TypeAST.NetworkCards;
+    expect(ast.type).toBe("NetworkCards");
+  });
+
+  it("testStartVariableIdOffsetsAtResolution", () => {
+    const ast = CodeLineToAST(
+      "319; map NetworkReader.variableValueById [@0]",
+      undefined,
+      10
+    ) as TypeAST.NetworkCards;
+    const mapNode = JSON.stringify(ast.definitions[1]!.node);
+    expect(mapNode).toContain('"value":"10"');
+  });
+
+  it("testNetworkCardsEmitsSemicolonSeparated", () => {
+    const ast = CodeLineToAST(
+      "319; 236; map NetworkReader.variableValueById [@0, @1]"
+    );
+    const out = ASTToCodeLine(ast);
+    expect(out).toBe(
+      "319; 236; operatorMap (NetworkReader.variableValueById) [0, 1]"
+    );
+    expect(ASTToCodeLine(CodeLineToAST(out))).toBe(out);
+  });
+
+  it("testNetworkCardsEmitsRawVarIdsForSharedDefinitions", () => {
+    const ast = ExpandedToAST("a = 5\nb = add a 1\nfinal = [a, b]");
+    expect(ASTToCodeLine(ast)).toBe(
+      "5; numberAdd 0 1; listConcat [0] (listAppend [] 2)"
+    );
+    const back = CodeLineToAST("5; add @0 1; [@0, @1]") as TypeAST.NetworkCards;
+    expect(back.type).toBe("NetworkCards");
+  });
+
+  it("testMixedListSingleDerivedNormalizes", () => {
+    const ast = CodeLineToAST("[1, 2, (add 5 1), 5, 6]");
+    expect(ASTToCodeLine(ast)).toBe(
+      "listConcat (listConcat [1, 2] (listAppend [] (numberAdd 5 1))) [5, 6]"
+    );
+    expect(ASTToCodeLine(CodeLineToAST(ASTToCodeLine(ast)))).toBe(
+      ASTToCodeLine(ast)
+    );
+  });
+
+  it("testMixedListMultiDerivedHoists", () => {
+    const ast = CodeLineToAST(
+      "[1, (add 5 1), (add 2 3)]"
+    ) as TypeAST.NetworkCards;
+    expect(ast.type).toBe("NetworkCards");
+    expect(ast.definitions.map((d) => d.name)).toEqual(["var0", "var1", ""]);
+    expect(ASTToCodeLine(ast)).toBe(
+      "numberAdd 5 1; numberAdd 2 3; listConcat [1] (operatorMap (NetworkReader.variableValueById) [2, 5])"
+    );
+    const out = ASTToCodeLine(ast);
+    expect(ASTToCodeLine(CodeLineToAST(out))).toBe(out);
+  });
+
+  it("testMixedListOfOnlyVarIdRefsUnchanged", () => {
+    const ast = CodeLineToAST(
+      "5; 6; map NetworkReader.variableValueById [@0, @1]"
+    );
+    expect(ASTToCodeLine(ast)).toBe(
+      "5; 6; operatorMap (NetworkReader.variableValueById) [0, 1]"
+    );
   });
 });

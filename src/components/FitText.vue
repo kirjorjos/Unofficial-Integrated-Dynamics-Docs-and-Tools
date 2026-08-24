@@ -17,6 +17,9 @@ const props = withDefaults(
     color?: string;
     typeName?: string;
     fill?: boolean;
+    /** When true, scale to exact fit instead of flooring to minScale. */
+    exactFit?: boolean;
+    endFit?: boolean;
   }>(),
   {
     minScale: 0.5,
@@ -88,6 +91,12 @@ const updateScale = () => {
     neededScale = Math.min(widthRatio, heightRatio);
   }
 
+  if (props.endFit) {
+    applySize(Math.min(1, availableHeight / baseHeight));
+    endFitOverflows.value = content.scrollWidth > availableWidth;
+    return;
+  }
+
   const minScale = props.minScale ?? 0.5;
 
   if (neededScale >= 1) {
@@ -99,18 +108,32 @@ const updateScale = () => {
     return;
   }
 
-  // Text needs to shrink - check if minScale would work
-  const fitsAtMinScale =
-    baseWidth * minScale <= availableWidth &&
-    baseHeight * minScale <= availableHeight;
-
-  if (fitsAtMinScale) {
-    applySize(minScale);
+  if (props.exactFit) {
+    const targetPx = snapToPixelGrid(neededScale * parentPx);
+    content.style.fontSize = `${targetPx}px`;
+    if (
+      content.scrollWidth > availableWidth ||
+      content.scrollHeight > availableHeight
+    ) {
+      let px = targetPx - 1;
+      while (px >= 1) {
+        content.style.fontSize = `${px}px`;
+        if (
+          content.scrollWidth <= availableWidth &&
+          content.scrollHeight <= availableHeight
+        ) {
+          break;
+        }
+        px -= 1;
+      }
+    }
     return;
+  } else {
+    const fitsAtMinScale =
+      baseWidth * minScale <= availableWidth &&
+      baseHeight * minScale <= availableHeight;
+    applySize(fitsAtMinScale ? minScale : neededScale);
   }
-
-  // Need to scale down more than minScale allows
-  applySize(neededScale);
 };
 
 const scheduleUpdate = () => {
@@ -123,7 +146,23 @@ const scheduleUpdate = () => {
   });
 };
 
+const endFitOverflows = ref(false);
+
 const innerStyle = computed(() => {
+  if (props.endFit) {
+    if (endFitOverflows.value) {
+      return {
+        right: "0",
+        top: "50%",
+        transform: "translateY(-50%)",
+      };
+    }
+    return {
+      left: "0",
+      top: "50%",
+      transform: "translateY(-50%)",
+    };
+  }
   const isCenter = props.align === "center";
   const isTop = props.align === "top";
   return {
@@ -147,7 +186,7 @@ const lineStyle = computed(() => {
 });
 
 watch(
-  () => [props.text, props.align, props.minScale, props.color],
+  () => [props.text, props.align, props.minScale, props.color, props.endFit],
   scheduleUpdate
 );
 

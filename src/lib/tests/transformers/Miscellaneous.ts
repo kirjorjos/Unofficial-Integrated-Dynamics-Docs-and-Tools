@@ -115,6 +115,13 @@ describe("MiscellaneousTests", () => {
       }
     });
 
+    it("testNicknameRegexRejectsAtAndSemicolon", () => {
+      expect(getNicknameRegex().test("a@b")).toBe(false);
+      expect(getNicknameRegex().test("a;b")).toBe(false);
+      expect(getNicknameRegex().test("@0")).toBe(false);
+      expect(getNicknameRegex().test("normalName")).toBe(true);
+    });
+
     it("testNicknameCountLimit", () => {
       for (const opClass of operatorClasses) {
         const uniqueName = opClass.internalName;

@@ -1,4 +1,13 @@
 import { operatorRegistry } from "lib";
+import {
+  getReaderAspectDefaultValue,
+  getReaderAspectOperatorDisplayText,
+  getReaderClassByTypeName,
+} from "lib/IntegratedDynamicsClasses/readers/readerRegistry";
+import {
+  isResolvedReaderSimulatedValueError,
+  resolveReaderSimulatedValue,
+} from "lib/IntegratedDynamicsClasses/readers/readerSimulatedValueResolver";
 import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 import { ASTtoOperator } from "lib/transformers/Operator";
@@ -17,6 +26,7 @@ import {
   getValueTypeMetaForAst,
   getOperatorOutputType,
   getStepActualOutputType,
+  getReaderOutputType,
   getTypeColor,
   LOGIC_PROGRAMMER_DATA_TYPE_TABS,
 } from "pages-lib/visualTransformer";
@@ -68,6 +78,7 @@ export type VisualCardRef = {
 export type VisibleListEntry = {
   symbol: string;
   matchString?: string;
+  registryKey?: string;
   active: boolean;
   tabKind: "type" | "operator";
   color: string;
@@ -236,6 +247,7 @@ export const getValueTypeDisplayEntries = () =>
   LOGIC_PROGRAMMER_DATA_TYPE_TABS.map((tab) => ({
     symbol: tab,
     matchString: tab.toLowerCase(),
+    registryKey: undefined as string | undefined,
     tabKind: "type" as const,
     color: getTypeColor(tab),
   }));
@@ -363,6 +375,27 @@ export const getCompactValueTextForAst = (ast: TypeAST.AST): string => {
             inputReuseable: ast.value.inputReuseable,
           },
         };
+      case "Reader":
+        return {
+          type: "Reader",
+          value: {
+            reader: ast.value.reader,
+            partId: ast.value.partId,
+            aspect: ast.value.aspect,
+            settings: ast.value.settings,
+            simulatedOutput: ast.value.simulatedOutput
+              ? cloneAstWithoutVarNames(ast.value.simulatedOutput)
+              : undefined,
+          },
+        };
+      case "NetworkCards":
+        return {
+          type: "NetworkCards",
+          definitions: ast.definitions.map((def) => ({
+            name: def.name,
+            node: cloneAstWithoutVarNames(def.node),
+          })),
+        };
     }
   };
 
@@ -392,6 +425,20 @@ export const getCompactValueTextForAst = (ast: TypeAST.AST): string => {
         return value.getName().valueOf();
       }
       break;
+    }
+    case "Reader": {
+      const readerClass = getReaderClassByTypeName(ast.value.reader);
+      if (ast.value.simulatedOutput && readerClass) {
+        const resolved = resolveReaderSimulatedValue(
+          readerClass,
+          ast.value.aspect,
+          ast.value.simulatedOutput
+        );
+        if (resolved.ok) return getCompactValueTextForAst(resolved.value);
+      }
+      return readerClass
+        ? getReaderAspectDefaultValue(readerClass, ast.value.aspect)
+        : "";
     }
   }
 
@@ -464,12 +511,50 @@ const VALUE_NODE_TYPES = new Set<string>([
   "Entity",
   "Ingredients",
   "Recipe",
+  "Reader",
 ]);
+
+const DIRECT_LIST_ELEMENT_TYPES = new Set<string>([
+  "Integer",
+  "Long",
+  "Double",
+  "String",
+  "Boolean",
+  "Null",
+  "NBT",
+  "Block",
+  "Item",
+  "Fluid",
+  "Entity",
+  "Ingredients",
+  "Recipe",
+  "Operator",
+  "Variable",
+]);
+
+export const isDirectListValue = (node: TypeAST.AST): boolean => {
+  if (node.type !== "List") return false;
+  const elements = (node as TypeAST.List).value;
+  if (elements.length === 0) return false;
+  const firstType = elements[0]!.type;
+  if (!DIRECT_LIST_ELEMENT_TYPES.has(firstType)) return false;
+  return elements.every((element) => element.type === firstType);
+};
 
 export const getDisplayPanelText = (
   step: Pick<VisualStep, "output" | "node">
 ): string => {
   if (step.node) {
+    if (step.node.type === "Reader") {
+      const readerClass = getReaderClassByTypeName(step.node.value.reader);
+      if (readerClass) {
+        const operatorText = getReaderAspectOperatorDisplayText(
+          readerClass,
+          step.node.value.aspect
+        );
+        if (operatorText) return operatorText;
+      }
+    }
     if (VALUE_NODE_TYPES.has(step.node.type)) {
       return getCompactValueTextForAst(step.node);
     }
@@ -983,10 +1068,10 @@ export const getPatternBox = (step: VisualStep): PatternBox => {
   };
 };
 
-const operatorListEntries = Object.values(operatorRegistry).filter(
-  (value): value is OperatorClassLike =>
+const operatorListEntries = Object.entries(operatorRegistry).filter(
+  ([, value]) =>
     typeof value === "function" && value.prototype instanceof BaseOperator
-);
+) as [string, OperatorClassLike][];
 
 export const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
   const search = step.searchLabel.trim().toLowerCase();
@@ -995,7 +1080,7 @@ export const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
   );
 
   const operatorEntries = operatorListEntries
-    .filter((operatorClass) => {
+    .filter(([, operatorClass]) => {
       const fullName = new operatorClass(false)
         .getFullDisplayName()
         .toLowerCase();
@@ -1007,10 +1092,11 @@ export const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
         operatorName.includes(search)
       );
     })
-    .map((operatorClass) => ({
+    .map(([registryKey, operatorClass]) => ({
       symbol: operatorClass.symbol ?? "",
       tabKind: "operator" as const,
-      matchString: new operatorClass(false).getFullDisplayName().toLowerCase(),
+      matchString: (operatorClass.operatorName ?? "").toLowerCase(),
+      registryKey,
       color: getTypeColor(getOperatorOutputType(operatorClass)),
     }));
 
@@ -1026,6 +1112,7 @@ export const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
       symbol: entry.symbol,
       tabKind: entry.tabKind,
       color: entry.color,
+      registryKey: entry.registryKey,
       active:
         entry.tabKind === "type"
           ? !step.forceOperatorTabActive &&
@@ -1033,8 +1120,9 @@ export const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
               (step.sourceType === "Operator"
                 ? "Operator"
                 : getValueTypeSearchLabel(step.sourceType))
-          : (step.forceOperatorTabActive || step.sourceType !== "Operator") &&
-            (entry.symbol === step.symbol || entry.matchString === search),
+          : entry.tabKind === "operator" &&
+            !!step.detail &&
+            entry.registryKey === step.detail,
     }));
 
   if (filtered.some((entry) => entry.active)) {
@@ -1135,6 +1223,10 @@ const astContentKey = (ast: TypeAST.AST): string => {
     case "Ingredients":
     case "Recipe":
       return `${ast.type}:${JSON.stringify(ast.value)}`;
+    case "Reader":
+      return `Reader:${ast.value.reader}:${ast.value.aspect}:${ast.value.partId ?? ""}:${
+        ast.value.settings ? JSON.stringify(ast.value.settings) : ""
+      }:${ast.value.simulatedOutput ? astContentKey(ast.value.simulatedOutput) : ""}`;
     default:
       return (ast as TypeAST.AST).type;
   }
@@ -1259,14 +1351,14 @@ export const generateVisualSteps = (
 
   const result: VisualStep[] = [];
   const seen = new Map<TypeAST.AST, VisualCardRef>();
-  const contentSeen = new Map<string, VisualCardRef>();
+  let contentSeen = new Map<string, VisualCardRef>();
 
-  const visit = (ast: TypeAST.AST): VisualCardRef => {
+  const visit = (ast: TypeAST.AST, forceNew = false): VisualCardRef => {
     if (seen.has(ast)) return seen.get(ast)!;
 
     const contentKey = astContentKey(ast);
     const existing = contentSeen.get(contentKey);
-    if (existing) {
+    if (existing && !forceNew) {
       seen.set(ast, existing);
       return existing;
     }
@@ -1288,11 +1380,14 @@ export const generateVisualSteps = (
         type:
           step.sourceType === "Operator"
             ? "Operator"
-            : step.sourceType === "Curry" && step.node
-              ? flattenAnonymousBaseOperatorApplication(step.node)?.fullyApplied
-                ? (getStepActualOutputType(fullStep) as TypeAST.AST["type"])
-                : "Operator"
-              : (getStepActualOutputType(fullStep) as TypeAST.AST["type"]),
+            : step.sourceType === "Reader" && step.node?.type === "Reader"
+              ? (getReaderOutputType(step.node) as TypeAST.AST["type"])
+              : step.sourceType === "Curry" && step.node
+                ? flattenAnonymousBaseOperatorApplication(step.node)
+                    ?.fullyApplied
+                  ? (getStepActualOutputType(fullStep) as TypeAST.AST["type"])
+                  : "Operator"
+                : (getStepActualOutputType(fullStep) as TypeAST.AST["type"]),
         variableId,
         tooltip,
       };
@@ -1302,6 +1397,16 @@ export const generateVisualSteps = (
     };
 
     switch (ast.type) {
+      case "NetworkCards": {
+        let lastCard: VisualCardRef | undefined;
+        for (const def of ast.definitions) {
+          const savedContentSeen = contentSeen;
+          contentSeen = new Map();
+          lastCard = visit(def.node, true);
+          contentSeen = savedContentSeen;
+        }
+        return lastCard!;
+      }
       case "Operator": {
         const operator = getOperatorDisplay(ast.opName);
         return register({
@@ -1327,7 +1432,7 @@ export const generateVisualSteps = (
         const flattened = flattenAnonymousBaseOperatorApplication(ast);
 
         if (flattened?.fullyApplied && flattened.operator.type === "Operator") {
-          const argOutputs = flattened.args.map(visit);
+          const argOutputs = flattened.args.map((a) => visit(a));
           const finalVarName = ast.varName || getExpandedVarName(ast);
 
           // Validate input types against operator's expected types
@@ -1417,6 +1522,7 @@ export const generateVisualSteps = (
               .renderPattern,
             inputs: argOutputs,
             output: finalVarName,
+            detail: flattened.operator.opName,
             node: ast,
             tooltipOperatorKey: getCurryTooltipKey(flattened.args.length),
             typeError,
@@ -1433,7 +1539,7 @@ export const generateVisualSteps = (
 
         for (const chunk of chunks) {
           const stepBase = chunk.node.base;
-          const argOutputs = chunk.args.map(visit);
+          const argOutputs = chunk.args.map((a) => visit(a));
           const step = {
             id: `step-${result.length + 1}`,
             title:
@@ -1517,10 +1623,38 @@ export const generateVisualSteps = (
           symbol: "[]",
           kind: "value",
           sourceType: ast.type,
-          inputs: ast.value.map(visit),
+          inputs: ast.value.map((a) => visit(a)),
           output: nextName,
           node: ast,
         });
+      case "Reader": {
+        const readerClass = getReaderClassByTypeName(ast.value.reader);
+        let typeError: string | undefined;
+        if (ast.value.simulatedOutput && readerClass) {
+          const resolved = resolveReaderSimulatedValue(
+            readerClass,
+            ast.value.aspect,
+            ast.value.simulatedOutput
+          );
+          if (isResolvedReaderSimulatedValueError(resolved)) {
+            typeError = resolved.error;
+          }
+        }
+        return register({
+          id: `step-${result.length + 1}`,
+          title: readerClass?.shortName ?? ast.value.reader,
+          searchLabel: getValueTypeSearchLabel(ast.type),
+          panelLabel: readerClass?.typeName ?? ast.value.reader,
+          symbol: readerClass?.shortName ?? "R",
+          kind: "value",
+          sourceType: ast.type,
+          inputs: [],
+          output: nextName,
+          detail: ast.value.aspect,
+          node: ast,
+          typeError,
+        });
+      }
       default:
         return register({
           id: `step-${result.length + 1}`,

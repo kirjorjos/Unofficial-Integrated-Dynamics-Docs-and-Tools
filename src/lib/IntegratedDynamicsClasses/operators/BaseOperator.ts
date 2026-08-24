@@ -59,6 +59,8 @@ export class BaseOperator<
     "\\\\",
     '"',
     "\\s",
+    "@",
+    ";",
   ];
   flipTarget?: TypeOperatorKey;
 

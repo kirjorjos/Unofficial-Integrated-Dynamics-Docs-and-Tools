@@ -1,4 +1,5 @@
 import { operatorRegistry } from "lib/IntegratedDynamicsClasses/registries/operatorRegistry";
+import { getReaderClassByTypeName } from "lib/IntegratedDynamicsClasses/readers/readerRegistry";
 import { ASTToCodeLine, CodeLineToAST } from "lib/transformers/CodeLine";
 import { ASTToCondensed, CondensedToAST } from "lib/transformers/Condensed";
 import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
@@ -8,6 +9,8 @@ import {
   getOperatorSourceName,
   flattenAnonymousBaseOperatorApplication,
 } from "lib/transformers/helpers";
+import { buildNetworkCards } from "lib/transformers/NetworkCards";
+import { normalizeSegments } from "lib/transformers/MixedLists";
 
 const getLabel = (index: number): string => {
   let label = "";
@@ -167,11 +170,74 @@ const computeSignature = (
       signature = wrapInOperator(innerSignature.flip().rewrite());
       break;
     }
+    case "Reader": {
+      const readerClass = getReaderClassByTypeName(node.value.reader);
+      const outputType =
+        readerClass?.aspects[node.value.aspect]?.outputType ?? "Any";
+      switch (outputType) {
+        case "Any":
+          signature = new ParsedSignature(
+            { type: "Any", typeID: ParsedSignature.getNewTypeID() },
+            false
+          );
+          break;
+        case "List":
+          signature = new ParsedSignature(
+            {
+              type: "List",
+              listType: {
+                type: "Any",
+                typeID: ParsedSignature.getNewTypeID(),
+              },
+            },
+            false
+          );
+          break;
+        case "Operator":
+          signature = new ParsedSignature(
+            {
+              type: "Operator",
+              obscured: {
+                type: "Function",
+                from: {
+                  type: "Any",
+                  typeID: ParsedSignature.getNewTypeID(),
+                },
+                to: {
+                  type: "Any",
+                  typeID: ParsedSignature.getNewTypeID(),
+                },
+              },
+            },
+            false
+          );
+          break;
+        default:
+          signature = new ParsedSignature(
+            {
+              type: outputType as Exclude<
+                TypeRawSignatureAST.RawSignatureDefiniteValue["type"],
+                "List" | "Operator" | "Function"
+              >,
+            },
+            false
+          );
+          break;
+      }
+      break;
+    }
     case "Variable": {
       signature = new ParsedSignature(
         { type: "Any", typeID: ParsedSignature.getNewTypeID() },
         false
       );
+      break;
+    }
+    case "NetworkCards": {
+      const root = node.definitions[node.definitions.length - 1]?.node;
+      if (!root)
+        throw new Error("NetworkCards must contain at least one definition");
+      signature = computeSignature(root, scope);
       break;
     }
   }
@@ -207,6 +273,11 @@ const collectVariables = (
       break;
     case "List":
       for (const value of node.value) collectVariables(value, collected, seen);
+      break;
+    case "NetworkCards":
+      for (const def of node.definitions) {
+        collectVariables(def.node, collected, seen);
+      }
       break;
   }
 
@@ -379,6 +450,26 @@ const getVarName = (node: TypeAST.AST): string => {
       return `flip${capitalize(getVarName(node.arg))}`;
     case "List":
       return "list";
+    case "Reader": {
+      const readerClass = getReaderClassByTypeName(node.value.reader);
+      const shortName = readerClass?.shortName ?? "reader";
+      const displayName = readerClass?.aspects[node.value.aspect]?.displayName;
+      let readable = displayName ?? "";
+      if (
+        readable &&
+        readable.toLowerCase().startsWith(shortName.toLowerCase())
+      ) {
+        readable = readable.slice(shortName.length);
+      }
+      if (!readable) {
+        readable = node.value.aspect
+          .toLowerCase()
+          .split("_")
+          .map(capitalize)
+          .join("");
+      }
+      return `${shortName}${capitalize(readable)}`;
+    }
   }
 
   return `v${++varCounter}`;
@@ -486,9 +577,14 @@ export const ASTToExpanded = (
 ): string => {
   resetExpandedVarCounter();
 
+  const roots: TypeAST.AST[] =
+    ast.type === "NetworkCards" ? ast.definitions.map((d) => d.node) : [ast];
+
   const initialVars = new Set<TypeAST.AST>();
-  collectVariables(ast, initialVars, new Set());
-  initialVars.add(ast);
+  for (const root of roots) {
+    collectVariables(root, initialVars, new Set());
+    initialVars.add(root);
+  }
 
   const finalVars = new Set<TypeAST.AST>();
   const finalSeen = new Set<TypeAST.AST>();
@@ -539,7 +635,10 @@ export const ASTToExpanded = (
   return output.join("\n");
 };
 
-export const ExpandedToAST = (expanded: string): TypeAST.AST => {
+export const ExpandedToAST = (
+  expanded: string,
+  startVariableId = 0
+): TypeAST.AST => {
   const rawLines = expanded.split("\n");
   const processedLines: string[] = [];
 
@@ -587,6 +686,7 @@ export const ExpandedToAST = (expanded: string): TypeAST.AST => {
   if (processedLines.length === 0) throw new Error("Empty expanded input");
 
   const scope = new Map<string, TypeAST.AST>();
+  const definitions: { name: string; node: TypeAST.AST }[] = [];
   let finalAST: TypeAST.AST | null = null;
 
   for (let i = 0; i < processedLines.length; i++) {
@@ -633,10 +733,10 @@ export const ExpandedToAST = (expanded: string): TypeAST.AST => {
 
     let lineAST: TypeAST.AST;
     try {
-      lineAST = CondensedToAST(exprStr, scope);
+      lineAST = CondensedToAST(exprStr, scope, 0, true, false);
     } catch (e) {
       try {
-        lineAST = CodeLineToAST(exprStr, scope);
+        lineAST = CodeLineToAST(exprStr, scope, 0, true, false);
       } catch (e2) {
         throw new Error(
           `Failed to parse line ${
@@ -644,6 +744,12 @@ export const ExpandedToAST = (expanded: string): TypeAST.AST => {
           }: "${exprStr}"\nCondensed error: ${e}\nCodeLine error: ${e2}`
         );
       }
+    }
+
+    if (lineAST.type === "NetworkCards") {
+      throw new Error(
+        `Line ${i + 1} contains semicolon-separated statements, which are only valid at the top level`
+      );
     }
 
     if (
@@ -659,10 +765,20 @@ export const ExpandedToAST = (expanded: string): TypeAST.AST => {
     if (varName) {
       lineAST.varName = varName;
       scope.set(varName, lineAST);
+      definitions.push({ name: varName, node: lineAST });
     }
     finalAST = lineAST;
   }
 
   if (!finalAST) throw new Error("Could not determine final AST");
-  return finalAST;
+
+  const names = definitions.map((d) => d.name);
+  return buildNetworkCards(
+    normalizeSegments(
+      definitions.map((d) => d.node),
+      names
+    ),
+    startVariableId,
+    names
+  );
 };

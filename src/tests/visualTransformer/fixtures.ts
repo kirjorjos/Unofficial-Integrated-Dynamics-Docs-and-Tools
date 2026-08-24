@@ -30,6 +30,38 @@ export const makeAst = {
   numVal: (): TypeAST.AST => CodeLineToAST("42"),
   doubleVal: (): TypeAST.AST => CodeLineToAST("1.5"),
   operatorNode: (): TypeAST.AST => CodeLineToAST("numberIncrement"),
+  reader: (): TypeAST.AST =>
+    CodeLineToAST('InventoryReader(0).slotItem({"slot": 1})'),
+  readerWithSimulatedOutput: (): TypeAST.AST =>
+    CodeLineToAST("readers.redstone.redstoneLow(true)"),
+  readerWithBadSimulatedOutput: (): TypeAST.AST => ({
+    type: "Reader",
+    value: {
+      reader: "InventoryReader",
+      partId: "0",
+      aspect: "OBJECT_ITEM_STACK_SLOT",
+      simulatedOutput: { type: "String", value: "notanitem" },
+    },
+  }),
+  readerVarById: (): TypeAST.AST => ({
+    type: "Reader",
+    value: {
+      reader: "NetworkReader",
+      partId: "0",
+      aspect: "OPERATOR_GETVARIABLEBYID",
+      settings: {},
+    },
+  }),
+  readerVarByIdWithSimulatedOutput: (): TypeAST.AST => ({
+    type: "Reader",
+    value: {
+      reader: "NetworkReader",
+      partId: "0",
+      aspect: "OPERATOR_GETVARIABLEBYID",
+      settings: {},
+      simulatedOutput: { type: "Integer", value: "5" },
+    },
+  }),
 };
 
 export const steps = (

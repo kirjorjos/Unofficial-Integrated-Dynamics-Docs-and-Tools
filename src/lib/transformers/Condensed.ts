@@ -1,5 +1,13 @@
 import { operatorRegistry } from "lib/IntegratedDynamicsClasses/registries/operatorRegistry";
 import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
+import { assertReaderSimulatedOutputType } from "lib/IntegratedDynamicsClasses/readers/readerSimulatedValueResolver";
+import {
+  getReaderAspectDisplayName,
+  getReaderAspectKey,
+  getReaderClassByName,
+  getReaderClassByTypeName,
+  getReaderConstructorClass,
+} from "lib/IntegratedDynamicsClasses/readers/readerRegistry";
 import {
   getOpName,
   getArity,
@@ -10,6 +18,12 @@ import {
   setOperatorSourceName,
   flattenAnonymousBaseOperatorApplication,
 } from "lib/transformers/helpers";
+import {
+  assertNoVarRefs,
+  buildNetworkCards,
+  getNetworkDefLastCardIds,
+} from "lib/transformers/NetworkCards";
+import { normalizeSegments } from "lib/transformers/MixedLists";
 
 type char = string;
 interface State {
@@ -32,7 +46,8 @@ const charTokenCheckers: Record<string, (c: char, state: State) => boolean> = {
   null: (c, state) =>
     !state.inString && state.inJSON === 0 && /^[nul]$/i.test(c),
   identifier: (c, state) =>
-    !state.inString && (getNicknameCharacterRegex().test(c) || c === "="),
+    !state.inString &&
+    (getNicknameCharacterRegex().test(c) || c === "=" || c === "@"),
 };
 
 const resolveType = (value: string, possible: string[]): string => {
@@ -108,7 +123,7 @@ export const tokenize = (condensed: string) => {
     }
 
     const isStructural =
-      !state.inString && state.inJSON === 0 && /^[()[\],\\]$/.test(char);
+      !state.inString && state.inJSON === 0 && /^[()[\],;\\]$/.test(char);
     const isWhitespace =
       !state.inString && state.inJSON === 0 && /^\s$/.test(char);
 
@@ -190,7 +205,10 @@ export const tokenize = (condensed: string) => {
 
 export const CondensedToAST = (
   condensed: string,
-  externalScope: Map<string, TypeAST.AST> = new Map()
+  externalScope: Map<string, TypeAST.AST> = new Map(),
+  startVariableId = 0,
+  allowVarRefs = false,
+  normalizeMixedLists = true
 ): TypeAST.AST => {
   const tokens = tokenize(condensed);
   let pos = 0;
@@ -231,7 +249,12 @@ export const CondensedToAST = (
         varName?: string;
       }
     | { type: "Variable"; name: string }
-    | { type: "Identifier"; value: string };
+    | { type: "Identifier"; value: string }
+    | {
+        type: "Reader";
+        value: TypeAST.Reader["value"];
+        varName?: string;
+      };
 
   function tryParseParams(): string[] | null {
     const startPos = pos;
@@ -340,6 +363,9 @@ export const CondensedToAST = (
       }
     }
 
+    const readerExpr = tryParseReaderExpression(scope);
+    if (readerExpr !== undefined) return readerExpr;
+
     const token = tokens[pos++];
     if (!token) throw new Error("Unexpected end of input");
 
@@ -355,7 +381,8 @@ export const CondensedToAST = (
         const values: InternalAST[] = [];
         while (
           tokens[pos] &&
-          !(tokens[pos]!.type === "structural" && tokens[pos]!.value === "]")
+          !(tokens[pos]!.type === "structural" && tokens[pos]!.value === "]") &&
+          !(tokens[pos]!.type === "structural" && tokens[pos]!.value === ";")
         ) {
           values.push(parseExpression(scope));
           if (
@@ -375,6 +402,9 @@ export const CondensedToAST = (
         pos++;
         return { type: "List", value: values };
       }
+      if (token.value === ";") {
+        throw new Error("Unexpected ';' inside expression");
+      }
       throw new Error(`Unexpected structural token: ${token.value}`);
     }
 
@@ -387,7 +417,8 @@ export const CondensedToAST = (
       const args: InternalAST[] = [];
       while (
         tokens[pos] &&
-        !(tokens[pos]!.type === "structural" && tokens[pos]!.value === ")")
+        !(tokens[pos]!.type === "structural" && tokens[pos]!.value === ")") &&
+        !(tokens[pos]!.type === "structural" && tokens[pos]!.value === ";")
       ) {
         const arg = parseExpression(scope);
         args.push(arg);
@@ -434,6 +465,321 @@ export const CondensedToAST = (
 
     return handleCallInternal(base, args);
   }
+
+  const parseReaderExtraArgs = (
+    args: InternalAST[]
+  ): {
+    settings?: Record<string, number | boolean | string>;
+    simulatedOutput?: InternalAST;
+  } => {
+    let settings: Record<string, number | boolean | string> | undefined;
+    let simulatedOutput: InternalAST | undefined;
+    for (const arg of args) {
+      if (arg.type === "NBT") {
+        if (settings !== undefined) {
+          throw new Error(
+            "Reader call may only contain one settings json object"
+          );
+        }
+        const value = arg.value;
+        if (
+          typeof value !== "object" ||
+          value === null ||
+          Array.isArray(value)
+        ) {
+          throw new Error("Reader settings must be a json object");
+        }
+        settings = value as Record<string, number | boolean | string>;
+      } else {
+        if (simulatedOutput !== undefined) {
+          throw new Error("Reader call may only contain one simulated output");
+        }
+        simulatedOutput = arg;
+      }
+    }
+    return { settings, simulatedOutput };
+  };
+
+  const parseReaderCallArgs = (
+    scope: Set<string>
+  ): {
+    settings?: Record<string, number | boolean | string>;
+    simulatedOutput?: InternalAST;
+  } => {
+    const next = tokens[pos];
+    if (!next || !(next.type === "structural" && next.value === "(")) {
+      return {};
+    }
+    pos++; // consume (
+    const args: InternalAST[] = [];
+    while (
+      tokens[pos] &&
+      !(tokens[pos]!.type === "structural" && tokens[pos]!.value === ")")
+    ) {
+      args.push(parseExpression(scope));
+      if (
+        tokens[pos] &&
+        tokens[pos]!.type === "structural" &&
+        tokens[pos]!.value === ","
+      ) {
+        pos++;
+      }
+    }
+    if (!tokens[pos]) {
+      throw new Error("Expected ')' after reader aspect args");
+    }
+    pos++; // consume )
+    return parseReaderExtraArgs(args);
+  };
+
+  const peekDotAspectName = (): string | undefined => {
+    const next = tokens[pos];
+    if (!next || next.type !== "identifier") return undefined;
+    if (next.value === ".") {
+      const after = tokens[pos + 1];
+      if (
+        after &&
+        after.type === "identifier" &&
+        !after.value.startsWith(".")
+      ) {
+        return after.value;
+      }
+      return undefined;
+    }
+    if (next.value.startsWith(".")) return next.value.slice(1);
+    return undefined;
+  };
+
+  const consumeDotAspectName = (): string => {
+    const next = tokens[pos];
+    if (!next || next.type !== "identifier") {
+      throw new Error("Expected '.' before aspect name");
+    }
+    if (next.value === ".") {
+      pos++;
+      const after = tokens[pos];
+      if (!after || after.type !== "identifier") {
+        throw new Error("Expected aspect name after '.'");
+      }
+      pos++;
+      return after.value;
+    }
+    if (next.value.startsWith(".")) {
+      pos++;
+      return next.value.slice(1);
+    }
+    throw new Error("Expected '.' before aspect name");
+  };
+
+  const tryParseReaderExpression = (
+    scope: Set<string>
+  ): InternalAST | undefined => {
+    const token = tokens[pos];
+    if (!token || token.type !== "identifier") return undefined;
+    const raw = token.value;
+    if (scope.has(raw) || externalScope.has(raw)) return undefined;
+
+    const lower = raw.toLowerCase();
+
+    if (lower === "reader") {
+      if (
+        !tokens[pos + 1] ||
+        !(
+          tokens[pos + 1]!.type === "structural" &&
+          tokens[pos + 1]!.value === "("
+        )
+      ) {
+        return undefined;
+      }
+      pos++; // consume reader
+      pos++; // consume (
+      const args: InternalAST[] = [];
+      while (
+        tokens[pos] &&
+        !(tokens[pos]!.type === "structural" && tokens[pos]!.value === ")")
+      ) {
+        args.push(parseExpression(scope));
+        if (
+          tokens[pos] &&
+          tokens[pos]!.type === "structural" &&
+          tokens[pos]!.value === ","
+        ) {
+          pos++;
+        }
+      }
+      if (!tokens[pos]) throw new Error("Expected ')' in reader(...)");
+      pos++; // consume )
+      if (args.length < 2) {
+        throw new Error("reader(...) requires a reader name and an aspect");
+      }
+      const readerNameArg = args[0]!;
+      const aspectArg = args[1]!;
+      if (readerNameArg.type !== "String" || aspectArg.type !== "String") {
+        throw new Error(
+          "reader(...) expects reader name and aspect as strings"
+        );
+      }
+      const readerClass = getReaderClassByName(readerNameArg.value);
+      if (!readerClass) {
+        throw new Error(`Unknown reader: ${readerNameArg.value}`);
+      }
+      const aspectKey = getReaderAspectKey(readerClass, aspectArg.value);
+      if (!aspectKey) {
+        throw new Error(
+          `Unknown aspect "${aspectArg.value}" for ${readerClass.typeName}`
+        );
+      }
+      const { settings, simulatedOutput } = parseReaderExtraArgs(args.slice(2));
+      assertReaderSimulatedOutputType(readerClass, aspectKey, simulatedOutput);
+      return {
+        type: "Reader",
+        value: {
+          reader: readerClass.typeName,
+          aspect: aspectKey,
+          settings,
+          simulatedOutput: simulatedOutput as TypeAST.AST,
+        },
+      };
+    }
+
+    let constructorToken = raw;
+    let gluedAspect: string | undefined;
+    const readersPrefix = "readers.";
+    if (lower.startsWith(readersPrefix)) {
+      const rest = lower.slice(readersPrefix.length);
+      const dotIdx = rest.indexOf(".");
+      if (dotIdx !== -1) {
+        constructorToken = raw.slice(0, readersPrefix.length + dotIdx);
+        gluedAspect = raw.slice(readersPrefix.length + dotIdx + 1);
+      }
+    } else {
+      const dotIdx = raw.indexOf(".");
+      if (dotIdx !== -1) {
+        constructorToken = raw.slice(0, dotIdx);
+        gluedAspect = raw.slice(dotIdx + 1);
+      }
+    }
+    const readerClass = getReaderConstructorClass(constructorToken);
+    if (!readerClass) return undefined;
+
+    if (
+      gluedAspect === undefined &&
+      tokens[pos + 1] &&
+      tokens[pos + 1]!.type === "structural" &&
+      tokens[pos + 1]!.value === "("
+    ) {
+      pos += 2; // consume name + (
+      const args: InternalAST[] = [];
+      while (
+        tokens[pos] &&
+        !(tokens[pos]!.type === "structural" && tokens[pos]!.value === ")")
+      ) {
+        args.push(parseExpression(scope));
+        if (
+          tokens[pos] &&
+          tokens[pos]!.type === "structural" &&
+          tokens[pos]!.value === ","
+        ) {
+          pos++;
+        }
+      }
+      if (!tokens[pos]) throw new Error("Expected ')' after reader name");
+      pos++; // consume )
+
+      if (peekDotAspectName() !== undefined) {
+        if (args.length > 1) {
+          throw new Error("Reader constructor takes at most one part id");
+        }
+        let partId: string | undefined;
+        if (args.length === 1) {
+          const a = args[0]!;
+          if (
+            a.type !== "Integer" &&
+            a.type !== "Long" &&
+            a.type !== "Double" &&
+            a.type !== "String"
+          ) {
+            throw new Error("Reader part id must be a literal value");
+          }
+          partId = (a as { value: string }).value;
+        }
+        const aspectName = consumeDotAspectName();
+        const aspectKey = getReaderAspectKey(readerClass, aspectName);
+        if (!aspectKey) {
+          throw new Error(
+            `Unknown aspect "${aspectName}" for ${readerClass.typeName}`
+          );
+        }
+        const { settings, simulatedOutput } = parseReaderCallArgs(scope);
+        assertReaderSimulatedOutputType(
+          readerClass,
+          aspectKey,
+          simulatedOutput
+        );
+        return {
+          type: "Reader",
+          value: {
+            reader: readerClass.typeName,
+            partId,
+            aspect: aspectKey,
+            settings,
+            simulatedOutput: simulatedOutput as TypeAST.AST,
+          },
+        };
+      }
+
+      if (args.length < 1) {
+        throw new Error("Reader constructor requires an aspect");
+      }
+      const aspectArg = args[0]!;
+      if (aspectArg.type !== "String") {
+        throw new Error("Reader aspect must be a string");
+      }
+      const aspectKey = getReaderAspectKey(readerClass, aspectArg.value);
+      if (!aspectKey) {
+        throw new Error(
+          `Unknown aspect "${aspectArg.value}" for ${readerClass.typeName}`
+        );
+      }
+      const { settings, simulatedOutput } = parseReaderExtraArgs(args.slice(1));
+      assertReaderSimulatedOutputType(readerClass, aspectKey, simulatedOutput);
+      return {
+        type: "Reader",
+        value: {
+          reader: readerClass.typeName,
+          aspect: aspectKey,
+          settings,
+          simulatedOutput: simulatedOutput as TypeAST.AST,
+        },
+      };
+    }
+
+    let aspectName = gluedAspect;
+    if (aspectName === undefined) aspectName = peekDotAspectName();
+    if (aspectName === undefined) return undefined;
+    if (gluedAspect !== undefined) {
+      pos++; // consume the glued constructor.aspect token
+    } else {
+      consumeDotAspectName();
+    }
+    const aspectKey = getReaderAspectKey(readerClass, aspectName);
+    if (!aspectKey) {
+      throw new Error(
+        `Unknown aspect "${aspectName}" for ${readerClass.typeName}`
+      );
+    }
+    const { settings, simulatedOutput } = parseReaderCallArgs(scope);
+    assertReaderSimulatedOutputType(readerClass, aspectKey, simulatedOutput);
+    return {
+      type: "Reader",
+      value: {
+        reader: readerClass.typeName,
+        aspect: aspectKey,
+        settings,
+        simulatedOutput: simulatedOutput as TypeAST.AST,
+      },
+    };
+  };
 
   function handleCallInternal(
     base: InternalAST,
@@ -573,28 +919,28 @@ export const CondensedToAST = (
       if (name === "OPERATOR_PIPE" && args.length === 2) {
         return {
           type: "Pipe",
-          op1: args[0] as TypeAST.AST,
-          op2: args[1] as TypeAST.AST,
+          op1: args[0] as InternalAST,
+          op2: args[1] as InternalAST,
         };
       }
       if (name === "OPERATOR_PIPE2" && args.length === 3) {
         return {
           type: "Pipe2",
-          op1: args[0] as TypeAST.AST,
-          op2: args[1] as TypeAST.AST,
-          op3: args[2] as TypeAST.AST,
+          op1: args[0] as InternalAST,
+          op2: args[1] as InternalAST,
+          op3: args[2] as InternalAST,
         };
       }
       if (name === "OPERATOR_FLIP" && args.length === 1) {
-        return { type: "Flip", arg: args[0] as TypeAST.AST };
+        return { type: "Flip", arg: args[0] as InternalAST };
       }
     }
 
     if (args.length === 0) return base;
     return {
       type: "Curry",
-      base: base as TypeAST.AST,
-      args: args as TypeAST.AST[],
+      base: base as InternalAST,
+      args: args as InternalAST[],
     };
   }
 
@@ -614,6 +960,9 @@ export const CondensedToAST = (
         containsVar(name, ast.op3)
       );
     if (ast.type === "Flip") return containsVar(name, ast.arg);
+    if (ast.type === "Reader" && ast.value.simulatedOutput) {
+      return containsVar(name, ast.value.simulatedOutput as InternalAST);
+    }
     return false;
   }
 
@@ -751,9 +1100,9 @@ export const CondensedToAST = (
       if (xInOp1 && xInOp2) {
         return condense({
           type: "Pipe2",
-          op1: abstract(param, body.op1) as TypeAST.AST,
-          op2: abstract(param, body.op2) as TypeAST.AST,
-          op3: ID_OP("OPERATOR_PIPE") as TypeAST.AST,
+          op1: abstract(param, body.op1) as InternalAST,
+          op2: abstract(param, body.op2) as InternalAST,
+          op3: ID_OP("OPERATOR_PIPE") as InternalAST,
         });
       } else if (xInOp2) {
         return condense({
@@ -762,7 +1111,7 @@ export const CondensedToAST = (
           op2: {
             type: "Curry",
             base: ID_OP("OPERATOR_PIPE"),
-            args: [body.op1 as TypeAST.AST],
+            args: [body.op1 as InternalAST],
           },
         });
       } else {
@@ -775,7 +1124,7 @@ export const CondensedToAST = (
               type: "Flip",
               arg: ID_OP("OPERATOR_PIPE"),
             },
-            args: [body.op2 as TypeAST.AST],
+            args: [body.op2 as InternalAST],
           },
         });
       }
@@ -1035,6 +1384,8 @@ export const CondensedToAST = (
       case "nbt":
         return { type: "NBT", value: JSON.parse(token.value) };
       case "identifier":
+        if (token.value.startsWith("@"))
+          return { type: "Variable", name: token.value } as InternalAST;
         if (scope.has(token.value))
           return { type: "Variable", name: token.value };
         if (externalScope.has(token.value))
@@ -1053,7 +1404,7 @@ export const CondensedToAST = (
           return { type: "Identifier", value: token.value };
         }
         const implicitFlip = resolveImplicitFlipOperator(token.value);
-        if (implicitFlip) return implicitFlip;
+        if (implicitFlip) return implicitFlip as InternalAST;
         const internalName = operatorRegistry.operatorByNickname(token.value);
         if (internalName) {
           return setOperatorSourceName(
@@ -1067,7 +1418,19 @@ export const CondensedToAST = (
     }
   }
 
-  const result = parseExpression(new Set());
+  const segments: InternalAST[] = [];
+  while (pos < tokens.length) {
+    segments.push(parseExpression(new Set()));
+    if (
+      pos < tokens.length &&
+      tokens[pos]!.type === "structural" &&
+      tokens[pos]!.value === ";"
+    ) {
+      pos++;
+      continue;
+    }
+    break;
+  }
   if (pos < tokens.length) {
     throw new Error(
       `Unexpected trailing tokens in Condensed: ${tokens
@@ -1076,11 +1439,33 @@ export const CondensedToAST = (
         .join(" ")}`
     );
   }
-  return result as TypeAST.AST;
+  const normalized = normalizeMixedLists
+    ? normalizeSegments(segments as TypeAST.AST[])
+    : (segments as TypeAST.AST[]).map((segment) => ({
+        hoisted: [],
+        node: segment,
+      }));
+
+  if (normalized.length === 1 && normalized[0]!.hoisted.length === 0) {
+    if (!allowVarRefs) assertNoVarRefs(normalized[0]!.node);
+    return normalized[0]!.node;
+  }
+  return buildNetworkCards(normalized, startVariableId);
 };
 
-export const ASTToCondensed = (ast: TypeAST.AST, isTopLevel = true): string => {
+export const ASTToCondensed = (
+  ast: TypeAST.AST,
+  isTopLevel = true,
+  startVariableId = 0
+): string => {
+  const defLastCardIds = getNetworkDefLastCardIds(ast, startVariableId);
+
   const stringify = (node: TypeAST.AST, topLevel = false): string => {
+    const lastCardId = defLastCardIds.get(node);
+    if (lastCardId !== undefined && !topLevel) {
+      return String(lastCardId);
+    }
+
     if (node.varName && !topLevel) {
       return node.varName;
     }
@@ -1147,6 +1532,32 @@ export const ASTToCondensed = (ast: TypeAST.AST, isTopLevel = true): string => {
         result = `Recipe(${JSON.stringify(node.value)})`;
         break;
 
+      case "Reader": {
+        const val = node.value;
+        const partIdStr =
+          val.partId !== undefined
+            ? /^-?\d+(\.\d+)?$/.test(val.partId)
+              ? val.partId
+              : JSON.stringify(val.partId)
+            : "";
+        const constructor = `${val.reader}${partIdStr ? `(${partIdStr})` : ""}`;
+        const args: string[] = [];
+        if (val.settings !== undefined) {
+          args.push(JSON.stringify(val.settings));
+        }
+        if (val.simulatedOutput !== undefined) {
+          args.push(stringify(val.simulatedOutput, false));
+        }
+        const readerClass = getReaderClassByTypeName(val.reader);
+        const aspectName = readerClass
+          ? getReaderAspectDisplayName(readerClass, val.aspect)
+          : val.aspect;
+        result = `${constructor}.${aspectName}${
+          args.length > 0 ? `(${args.join(", ")})` : ""
+        }`;
+        break;
+      }
+
       case "Operator": {
         result = getOpName(node.opName);
         break;
@@ -1200,6 +1611,17 @@ export const ASTToCondensed = (ast: TypeAST.AST, isTopLevel = true): string => {
       case "Flip":
         result = `${getOpName("OPERATOR_FLIP")}(${stringify(node.arg, false)})`;
         break;
+
+      case "NetworkCards":
+        return node.definitions
+          .map((def) => {
+            const oldVarName = def.node.varName;
+            delete def.node.varName;
+            const statement = stringify(def.node, true);
+            if (oldVarName) def.node.varName = oldVarName;
+            return statement;
+          })
+          .join("; ");
     }
 
     if (node.varName && topLevel) {

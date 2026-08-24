@@ -2,8 +2,15 @@
 import { computed } from "vue";
 import FitText from "./FitText.vue";
 import HoverMinecraftTooltip from "./HoverMinecraftTooltip.vue";
-import DisplayPanelView from "./DisplayPanelView.vue";
-import DisplayPanelViewHolder from "./DisplayPanelViewHolder.vue";
+import VisualTransformerStep from "./VisualTransformerStep.vue";
+import ReaderGuiView from "./ReaderGuiView.vue";
+import {
+  getReaderAspectDefaultValue,
+  getReaderAspectOperatorDisplayText,
+  getReaderClassByTypeName,
+} from "lib/IntegratedDynamicsClasses/readers/readerRegistry";
+import { resolveReaderSimulatedValue } from "lib/IntegratedDynamicsClasses/readers/readerSimulatedValueResolver";
+import type { ReaderStatic } from "lib/IntegratedDynamicsClasses/readers/ReaderBase";
 import {
   ASTToCondensed,
   getExpandedVarName,
@@ -12,6 +19,11 @@ import {
   getCurryTooltipKey,
   isTypeAssignable,
   evaluateFullyAppliedCurry,
+  evaluateFullyAppliedCurryWithSteps,
+  buildVariableValueByIdOperator,
+  isVariableValueByIdReader,
+  astContainsVariableValueByIdReader,
+  type StepLikeWithNode,
 } from "lib";
 import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 import { ASTtoOperator } from "lib/transformers/Operator";
@@ -68,6 +80,7 @@ type VisualCardRef = {
 
 type VisibleListEntry = {
   symbol: string;
+  registryKey?: string;
   active: boolean;
   tabKind: "type" | "operator";
   color: string;
@@ -438,6 +451,27 @@ const cloneAstWithoutVarNames = (ast: TypeAST.AST): TypeAST.AST => {
           inputReuseable: ast.value.inputReuseable,
         },
       };
+    case "Reader":
+      return {
+        type: "Reader",
+        value: {
+          reader: ast.value.reader,
+          partId: ast.value.partId,
+          aspect: ast.value.aspect,
+          settings: ast.value.settings,
+          simulatedOutput: ast.value.simulatedOutput
+            ? cloneAstWithoutVarNames(ast.value.simulatedOutput)
+            : undefined,
+        },
+      };
+    case "NetworkCards":
+      return {
+        type: "NetworkCards",
+        definitions: ast.definitions.map((def) => ({
+          name: def.name,
+          node: cloneAstWithoutVarNames(def.node),
+        })),
+      };
   }
 };
 
@@ -468,6 +502,20 @@ const getCompactValueTextForAst = (ast: TypeAST.AST): string => {
         return value.getName().valueOf();
       }
       break;
+    }
+    case "Reader": {
+      const readerClass = getReaderClassByTypeName(ast.value.reader);
+      if (ast.value.simulatedOutput && readerClass) {
+        const resolved = resolveReaderSimulatedValue(
+          readerClass,
+          ast.value.aspect,
+          ast.value.simulatedOutput
+        );
+        if (resolved.ok) return getCompactValueTextForAst(resolved.value);
+      }
+      return readerClass
+        ? getReaderAspectDefaultValue(readerClass, ast.value.aspect)
+        : "";
     }
   }
 
@@ -569,6 +617,7 @@ const getValueTypeDisplayEntries = () =>
   LOGIC_PROGRAMMER_DATA_TYPE_TABS.map((tab) => ({
     symbol: tab,
     matchString: tab.toLowerCase(),
+    registryKey: undefined as string | undefined,
     tabKind: "type" as const,
     color: getTypeColor(tab),
   }));
@@ -923,13 +972,43 @@ const VALUE_NODE_TYPES = new Set<string>([
   "Entity",
   "Ingredients",
   "Recipe",
+  "Reader",
 ]);
+
+const DIRECT_LIST_ELEMENT_TYPES = new Set<string>([
+  "Integer",
+  "Long",
+  "Double",
+  "String",
+  "Boolean",
+  "Null",
+  "NBT",
+  "Block",
+  "Item",
+  "Fluid",
+  "Entity",
+  "Ingredients",
+  "Recipe",
+  "Operator",
+  "Variable",
+]);
+
+const isDirectListStep = (step: VisualStep): boolean => {
+  const node = step.node;
+  if (!node || node.type !== "List") return false;
+  const elements = (node as TypeAST.List).value;
+  if (elements.length === 0) return false;
+  const firstType = elements[0]!.type;
+  if (!DIRECT_LIST_ELEMENT_TYPES.has(firstType)) return false;
+  return elements.every((element) => element.type === firstType);
+};
 
 const getDisplayPanelText = (
   step: Pick<
     VisualStep,
     "output" | "node" | "tooltipOperatorKey" | "sourceType" | "detail"
-  >
+  >,
+  allSteps: StepLikeWithNode[]
 ): string => {
   // For string types without custom name, show the value
   if (
@@ -949,6 +1028,17 @@ const getDisplayPanelText = (
   }
   if (step.node) {
     const nodeType = step.node.type;
+
+    if (nodeType === "Reader") {
+      const readerClass = getReaderClassByTypeName(step.node.value.reader);
+      if (readerClass) {
+        const operatorText = getReaderAspectOperatorDisplayText(
+          readerClass,
+          step.node.value.aspect
+        );
+        if (operatorText) return operatorText;
+      }
+    }
 
     // Plain value nodes (numbers, booleans, named values, ...) have no
     // operator instance — show the value directly instead of an empty panel.
@@ -1012,8 +1102,10 @@ const getDisplayPanelText = (
           return "";
         }
         const sig = (op as any).getParsedSignature();
-        // If fully applied (not a function signature), try to show the value
-        if (sig.getRootType() !== "Function") {
+        const hasVarById = astContainsVariableValueByIdReader(
+          step.node as TypeAST.AST
+        );
+        if (sig.getRootType() !== "Function" || hasVarById) {
           // Helper: try to resolve an AST/operator to a concrete value
           const resolveArg = (arg: any): any => {
             try {
@@ -1051,12 +1143,24 @@ const getDisplayPanelText = (
               step.node as TypeAST.AST
             );
             if (flat && flat.operator.type === "Operator") {
-              // Resolve each arg AST to a concrete value
+              const resolveArgAst = (argAst: TypeAST.AST): any => {
+                if (isVariableValueByIdReader(argAst)) {
+                  return buildVariableValueByIdOperator(allSteps);
+                }
+                if (argAst.type === "Curry") {
+                  const nested = evaluateFullyAppliedCurryWithSteps(
+                    argAst,
+                    allSteps
+                  );
+                  if (nested !== undefined) return nested;
+                }
+                const argOp = ASTtoOperator(argAst);
+                return resolveArg(argOp);
+              };
               const argValues: any[] = [];
               for (const argAst of flat.args) {
                 try {
-                  const argOp = ASTtoOperator(argAst);
-                  argValues.push(resolveArg(argOp));
+                  argValues.push(resolveArgAst(argAst));
                 } catch {
                   // Argument AST could not be converted to an operator
                   // (e.g. a Flip wrapping an arity-1 operator). Skip it.
@@ -1328,6 +1432,10 @@ const getStepActualOutputType = (
     node?: TypeAST.AST;
   }
 ): string => {
+  if (step.sourceType === "Reader" && step.node?.type === "Reader") {
+    const readerClass = getReaderClassByTypeName(step.node.value.reader);
+    return readerClass?.aspects[step.node.value.aspect]?.outputType ?? "Any";
+  }
   // For fully-applied Curry types, resolve the actual output type by
   // evaluating the node — it's a direct base-operator call producing a
   // concrete value (e.g. `apply add 1 2` → Integer), not a generic "apply".
@@ -1352,7 +1460,7 @@ const getStepActualOutputType = (
       if (typeof op?.getParsedSignature === "function") {
         const sig = op.getParsedSignature();
         if (sig.getRootType() === "Function") {
-          return sig.getOutput(-1).getRootType();
+          return "Operator";
         }
         return sig.getRootType();
       }
@@ -1679,14 +1787,14 @@ const steps = computed<VisualStep[]>(() => {
 
   const result: VisualStep[] = [];
   const seen = new Map<TypeAST.AST, VisualCardRef>();
-  const contentSeen = new Map<string, VisualCardRef>();
+  let contentSeen = new Map<string, VisualCardRef>();
 
-  const visit = (ast: TypeAST.AST): VisualCardRef => {
+  const visit = (ast: TypeAST.AST, forceNew = false): VisualCardRef => {
     if (seen.has(ast)) return seen.get(ast)!;
 
     const contentKey = astContentKey(ast);
     const existing = contentSeen.get(contentKey);
-    if (existing) {
+    if (existing && !forceNew) {
       seen.set(ast, existing);
       return existing;
     }
@@ -1708,11 +1816,14 @@ const steps = computed<VisualStep[]>(() => {
         type:
           step.sourceType === "Operator"
             ? "Operator"
-            : step.sourceType === "Curry" && step.node
-              ? flattenAnonymousBaseOperatorApplication(step.node)?.fullyApplied
-                ? (getStepActualOutputType(fullStep) as TypeAST.AST["type"])
-                : "Operator"
-              : (getStepActualOutputType(fullStep) as TypeAST.AST["type"]),
+            : step.sourceType === "Reader" && step.node?.type === "Reader"
+              ? (getStepActualOutputType(fullStep) as TypeAST.AST["type"])
+              : step.sourceType === "Curry" && step.node
+                ? flattenAnonymousBaseOperatorApplication(step.node)
+                    ?.fullyApplied
+                  ? (getStepActualOutputType(fullStep) as TypeAST.AST["type"])
+                  : "Operator"
+                : (getStepActualOutputType(fullStep) as TypeAST.AST["type"]),
         variableId,
         tooltip,
       };
@@ -1722,6 +1833,22 @@ const steps = computed<VisualStep[]>(() => {
     };
 
     switch (ast.type) {
+      case "NetworkCards": {
+        // Each explicit definition is its own card (even if unused or
+        // duplicate-valued). The last definition is the root expression, so
+        // its card is the final card of the network. Content-dedup is scoped
+        // per definition (a `5; add 5 1` input makes two separate 5 cards),
+        // while identity-based dedup stays shared so expanded name references
+        // (e.g. `b = add a 1` reusing a's card) keep working.
+        let lastCard: VisualCardRef | undefined;
+        for (const def of ast.definitions) {
+          const savedContentSeen = contentSeen;
+          contentSeen = new Map();
+          lastCard = visit(def.node, true);
+          contentSeen = savedContentSeen;
+        }
+        return lastCard!;
+      }
       case "Operator": {
         const operator = getOperatorDisplay(ast.opName);
         return register({
@@ -1747,7 +1874,7 @@ const steps = computed<VisualStep[]>(() => {
         const flattened = flattenAnonymousBaseOperatorApplication(ast);
 
         if (flattened?.fullyApplied && flattened.operator.type === "Operator") {
-          const argOutputs = flattened.args.map(visit);
+          const argOutputs = flattened.args.map((a) => visit(a));
           const finalVarName = ast.varName || getExpandedVarName(ast);
 
           // Validate input types against operator's expected types
@@ -1837,6 +1964,7 @@ const steps = computed<VisualStep[]>(() => {
               .renderPattern,
             inputs: argOutputs,
             output: finalVarName,
+            detail: flattened.operator.opName,
             node: ast,
             tooltipOperatorKey: getCurryTooltipKey(flattened.args.length),
             typeError,
@@ -1853,7 +1981,7 @@ const steps = computed<VisualStep[]>(() => {
 
         for (const chunk of chunks) {
           const stepBase = chunk.node.base;
-          const argOutputs = chunk.args.map(visit);
+          const argOutputs = chunk.args.map((a) => visit(a));
           const step = {
             id: `step-${result.length + 1}`,
             title:
@@ -1937,10 +2065,40 @@ const steps = computed<VisualStep[]>(() => {
           symbol: "[]",
           kind: "value",
           sourceType: ast.type,
-          inputs: ast.value.map(visit),
+          inputs: ast.value.map((a) => visit(a)),
           output: nextName,
           node: ast,
         });
+      case "Reader": {
+        const readerClass = getReaderClassByTypeName(ast.value.reader);
+        let typeError: string | undefined;
+        if (ast.value.simulatedOutput) {
+          const aspect = readerClass?.aspects[ast.value.aspect];
+          if (aspect?.signature && aspect.signature.length > 0) {
+            typeError = `${aspect.fullDisplayName} does not support an overridden simulatedValue.`;
+          } else {
+            const expected = aspect?.outputType ?? "Any";
+            const actual = ast.value.simulatedOutput.type;
+            if (!isTypeAssignable(actual, expected)) {
+              typeError = `Expected output type ${expected}, got simulatedOutput type ${actual}`;
+            }
+          }
+        }
+        return register({
+          id: `step-${result.length + 1}`,
+          title: readerClass?.shortName ?? ast.value.reader,
+          searchLabel: getValueTypeSearchLabel(ast.type),
+          panelLabel: readerClass?.typeName ?? ast.value.reader,
+          symbol: readerClass?.shortName ?? "R",
+          kind: "value",
+          sourceType: ast.type,
+          inputs: [],
+          output: nextName,
+          detail: ast.value.aspect,
+          node: ast,
+          typeError,
+        });
+      }
       default:
         return register({
           id: `step-${result.length + 1}`,
@@ -2191,10 +2349,10 @@ const getValueBoxLeft = (step: VisualStep) => getValueBox(step)?.left ?? 0;
 const getValueBoxTop = (step: VisualStep) => getValueBox(step)?.top ?? 0;
 const getValueBoxWidth = (step: VisualStep) => getValueBox(step)?.width ?? 0;
 
-const operatorListEntries = Object.values(operatorRegistry).filter(
-  (value): value is OperatorClassLike =>
+const operatorListEntries = Object.entries(operatorRegistry).filter(
+  ([, value]) =>
     typeof value === "function" && value.prototype instanceof BaseOperator
-);
+) as [string, OperatorClassLike][];
 
 const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
   const search = step.searchLabel.trim().toLowerCase();
@@ -2203,7 +2361,7 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
   );
 
   const operatorEntries = operatorListEntries
-    .filter((operatorClass) => {
+    .filter(([, operatorClass]) => {
       const fullName = new operatorClass(false)
         .getFullDisplayName()
         .toLowerCase();
@@ -2215,10 +2373,11 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
         operatorName.includes(search)
       );
     })
-    .map((operatorClass) => ({
+    .map(([registryKey, operatorClass]) => ({
       symbol: operatorClass.symbol ?? "",
       tabKind: "operator" as const,
-      matchString: new operatorClass(false).getFullDisplayName().toLowerCase(),
+      matchString: (operatorClass.operatorName ?? "").toLowerCase(),
+      registryKey,
       color: getTypeColor(getOperatorOutputType(operatorClass)),
     }));
 
@@ -2234,6 +2393,7 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
       symbol: entry.symbol,
       tabKind: entry.tabKind,
       color: entry.color,
+      registryKey: entry.registryKey,
       active:
         entry.tabKind === "type"
           ? !step.forceOperatorTabActive &&
@@ -2241,8 +2401,9 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
               (step.sourceType === "Operator"
                 ? "Operator"
                 : getValueTypeSearchLabel(step.sourceType))
-          : (step.forceOperatorTabActive || step.sourceType !== "Operator") &&
-            (entry.symbol === step.symbol || entry.matchString === search),
+          : entry.tabKind === "operator" &&
+            !!step.detail &&
+            entry.registryKey === step.detail,
     }));
 
   if (filtered.some((entry) => entry.active)) {
@@ -2255,334 +2416,214 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
 
   return filtered;
 };
+
+const getReaderViewReader = (step: VisualStep): ReaderStatic | undefined => {
+  if (step.node?.type === "Reader") {
+    return getReaderClassByTypeName(step.node.value.reader);
+  }
+  return undefined;
+};
+
+const getReaderViewFocusedAspect = (step: VisualStep): string | undefined => {
+  if (step.node?.type === "Reader") return step.node.value.aspect;
+  return undefined;
+};
+
+const getReaderViewValues = (
+  step: VisualStep
+): Record<string, string> | undefined => {
+  if (step.node?.type === "Reader") {
+    return {
+      [step.node.value.aspect]: getCompactValueTextForAst(step.node),
+    };
+  }
+  return undefined;
+};
 </script>
 
 <template>
   <section class="logic-programmer-sequence">
-    <article
+    <VisualTransformerStep
       v-for="(step, index) in steps"
       :key="step.id"
-      class="logic-programmer-shot"
+      :step="step"
+      :index="index"
+      :all-steps="steps"
+      :show-step-numbers="props.showStepNumbers"
+      :show-step-titles="props.showStepTitles"
+      :force-show-output-card="props.forceShowOutputCard"
+      :display-panel-text="getDisplayPanelText(step, steps)"
+      :display-panel-color="getDisplayPanelColor(step)"
+      :display-panel-align="getDisplayPanelAlign(step)"
+      :display-panel-error="getStepDisplayError(step)"
     >
-      <div
-        v-if="props.showStepNumbers !== false || props.showStepTitles !== false"
-        class="logic-programmer-meta"
-      >
-        <div
-          v-if="props.showStepNumbers !== false"
-          class="logic-programmer-step"
-        >
-          Step {{ index + 1 }}
-        </div>
-        <div
-          v-if="props.showStepTitles !== false"
-          class="logic-programmer-step-title"
-        >
-          {{ step.output }}
-        </div>
-      </div>
+      <ReaderGuiView
+        v-if="step.sourceType === 'Reader'"
+        :reader="getReaderViewReader(step)!"
+        :focused-aspect="getReaderViewFocusedAspect(step)"
+        :values="getReaderViewValues(step)"
+        :type-error="step.typeError"
+      />
+      <div v-else class="logic-programmer-frame">
+        <div class="logic-programmer-overlay">
+          <div class="logic-search-overlay">
+            <FitText :text="step.searchLabel" />
+          </div>
 
-      <div class="logic-programmer-frame-shell">
-        <div class="logic-programmer-frame">
-          <div class="logic-programmer-overlay">
-            <div class="logic-search-overlay">
-              <FitText :text="step.searchLabel" />
-            </div>
-
-            <div
-              v-for="(entry, entryIndex) in getVisibleListEntries(step)"
-              :key="`${step.id}-entry-${entryIndex}`"
-              class="logic-element-tab"
-              :class="[
-                `logic-element-tab-${entry.tabKind}`,
-                { 'logic-element-tab-active': entry.active },
-              ]"
-              :style="{
-                top: `${18 + entryIndex * 18}px`,
-                ...getEntryStyle(entry),
-              }"
+          <div
+            v-for="(entry, entryIndex) in getVisibleListEntries(step)"
+            :key="`${step.id}-entry-${entryIndex}`"
+            class="logic-element-tab"
+            :class="[
+              `logic-element-tab-${entry.tabKind}`,
+              { 'logic-element-tab-active': entry.active },
+            ]"
+            :style="{
+              top: `${18 + entryIndex * 18}px`,
+              ...getEntryStyle(entry),
+            }"
+          >
+            <span
+              v-if="entry.active"
+              class="logic-element-tab-arrow"
+              aria-hidden="true"
             >
-              <span
-                v-if="entry.active"
-                class="logic-element-tab-arrow"
-                aria-hidden="true"
+              ▶
+            </span>
+            <FitText
+              class="logic-element-tab-symbol"
+              :text="entry.symbol"
+              align="center"
+              exact-fit
+            />
+          </div>
+
+          <div class="logic-clear-button-overlay">Clear</div>
+
+          <template v-if="isDirectListStep(step)">
+            <div class="logic-list-nav-btn logic-list-nav-prev">◀</div>
+            <div class="logic-list-search">
+              <FitText
+                :text="step.inputs.length > 0 ? step.inputs[0]!.type : 'Any'"
+                align="left"
+              />
+            </div>
+            <div class="logic-list-nav-btn logic-list-nav-next">▶</div>
+            <div class="logic-list-add-btn">+</div>
+
+            <div v-if="step.inputs.length > 0" class="logic-list-editor">
+              <div
+                class="logic-list-editor-prev"
+                :class="{
+                  'logic-list-editor-btn-disabled': step.inputs.length <= 1,
+                }"
+              >
+                ◀
+              </div>
+              <div class="logic-list-editor-pos">
+                1 / {{ step.inputs.length }}
+              </div>
+              <div
+                class="logic-list-editor-next"
+                :class="{
+                  'logic-list-editor-btn-disabled': step.inputs.length <= 1,
+                }"
               >
                 ▶
-              </span>
-              <FitText
-                class="logic-element-tab-symbol"
-                :text="entry.symbol"
-                align="center"
-                :min-scale="0.35"
-              />
-            </div>
-
-            <div class="logic-clear-button-overlay">Clear</div>
-
-            <template v-if="step.sourceType === 'List'">
-              <div class="logic-list-nav-btn logic-list-nav-prev">◀</div>
-              <div class="logic-list-search">
-                <FitText
-                  :text="step.inputs.length > 0 ? step.inputs[0]!.type : 'Any'"
-                  align="left"
-                />
               </div>
-              <div class="logic-list-nav-btn logic-list-nav-next">▶</div>
-              <div class="logic-list-add-btn">+</div>
 
-              <div v-if="step.inputs.length > 0" class="logic-list-editor">
-                <div
-                  class="logic-list-editor-prev"
-                  :class="{
-                    'logic-list-editor-btn-disabled': step.inputs.length <= 1,
-                  }"
-                >
-                  ◀
-                </div>
-                <div class="logic-list-editor-pos">
-                  1 / {{ step.inputs.length }}
-                </div>
-                <div
-                  class="logic-list-editor-next"
-                  :class="{
-                    'logic-list-editor-btn-disabled': step.inputs.length <= 1,
-                  }"
-                >
-                  ▶
-                </div>
-
-                <!-- Operator type: show operator dropdown + signature -->
-                <template
-                  v-if="(step.node as any).value[0]?.type === 'Operator'"
-                >
-                  <div class="logic-list-editor-op-canvas" />
-                  <div class="logic-list-editor-op-field">
-                    <FitText
-                      :text="
-                        getOperatorDisplay((step.node as any).value[0].opName)
-                          .title
-                      "
-                      align="left"
-                      :min-scale="0.6"
-                    />
-                  </div>
-                  <div
-                    v-for="(line, lineIndex) in getOperatorValueSignatureLines(
-                      (step.node as any).value[0].opName
-                    )"
-                    :key="`list-op-sig-${lineIndex}`"
-                    class="logic-list-editor-sig-line"
-                    :style="{
-                      top: `${44 + lineIndex * 9}px`,
-                    }"
-                  >
-                    <span style="color: #000">{{ line.prefix }}</span>
-                    <span :style="{ color: line.color }">
-                      {{ line.label }}
-                    </span>
-                  </div>
-                </template>
-
-                <!-- Item/Block/Fluid: show slot + placeholder -->
-                <template
-                  v-else-if="isItemStackBackedValueType(step.inputs[0]!.type)"
-                >
-                  <div class="logic-list-editor-item-label">
-                    {{ getItemStackPlaceholder(step.inputs[0]!.type) }}
-                  </div>
-                  <div class="logic-list-editor-item-arrow" />
-                  <div
-                    class="logic-slot-overlay"
-                    :style="{
-                      left: `${80}px`,
-                      top: `${50}px`,
-                    }"
-                  >
-                    <div
-                      class="logic-slot-card-composite"
-                      :style="{
-                        backgroundImage: `url('${publicAsset(`valuetype/${getValueTypeTextureName(step.inputs[0]!.type)}.png`)}'), url('${publicAsset('item/variable.png')}')`,
-                      }"
-                    />
-                  </div>
-                </template>
-
-                <!-- Primitive value types: show value box -->
-                <template v-else>
-                  <div class="logic-list-editor-value-box">
-                    <FitText
-                      :text="
-                        getCompactValueTextForAst((step.node as any).value[0])
-                      "
-                      align="left"
-                      :min-scale="0.5"
-                    />
-                  </div>
-                </template>
-
-                <div class="logic-list-editor-minus">−</div>
-              </div>
-            </template>
-
-            <template
-              v-else-if="
-                step.workspaceMode === 'operatorValue' ||
-                step.workspaceMode === 'pattern'
-              "
-            >
-              <div
-                class="logic-operator-canvas"
-                :style="{
-                  left: `${getCanvasBox(step).left}px`,
-                  top: `${getCanvasBox(step).top}px`,
-                  width: `${getCanvasBox(step).width}px`,
-                  height: `${getCanvasBox(step).height}px`,
-                }"
-              />
-
-              <!-- When operator has a render pattern, show its slots and symbol -->
-              <template v-if="getPatternBox(step).slots.length > 0">
-                <div
-                  v-for="(slot, inputIndex) in getPatternBox(step).slots"
-                  :key="`${step.id}-op-slot-${inputIndex}`"
-                  class="logic-slot-overlay"
-                  :class="{
-                    'logic-card-overlay-has-tooltip': !!getInputSlotTooltip(
-                      step,
-                      inputIndex
-                    ),
-                  }"
-                  :style="{ left: `${slot.left}px`, top: `${slot.top}px` }"
-                >
-                  <HoverMinecraftTooltip
-                    v-if="getInputSlotTooltip(step, inputIndex)"
-                    :title="getInputSlotTooltip(step, inputIndex)!.title"
-                    :lines="getInputSlotTooltip(step, inputIndex)!.lines"
-                  >
-                    <div
-                      v-if="step.inputs[inputIndex]"
-                      class="logic-slot-card-composite"
-                      :style="{
-                        backgroundImage: `url('${publicAsset(`valuetype/${getValueTypeTextureName(step.inputs[inputIndex]?.type ?? 'Null')}.png`)}'), url('${publicAsset('item/variable.png')}')`,
-                      }"
-                    />
-                  </HoverMinecraftTooltip>
-                </div>
-
-                <div
-                  v-if="getPatternBox(step).symbol"
-                  class="logic-symbol-overlay"
-                  :class="{
-                    'logic-symbol-overlay-text': step.symbol.length > 2,
-                  }"
-                  :style="{
-                    left: `${getSymbolPos(step).left}px`,
-                    top: `${getSymbolPos(step).top}px`,
-                  }"
-                >
-                  {{ step.symbol }}
-                </div>
-              </template>
-
-              <!-- No render pattern: show generic dropdown + signature -->
-              <template v-else>
-                <div
-                  class="logic-operator-dropdown-field"
-                  :style="{
-                    left: `${getCanvasBox(step).left + 14}px`,
-                    top: `${getCanvasBox(step).top + 6}px`,
-                    width: `${getCanvasBox(step).width - 28}px`,
-                  }"
-                >
+              <!-- Operator type: show operator dropdown + signature -->
+              <template v-if="(step.node as any).value[0]?.type === 'Operator'">
+                <div class="logic-list-editor-op-canvas" />
+                <div class="logic-list-editor-op-field">
                   <FitText
-                    :text="step.panelLabel ?? step.title"
-                    :min-scale="0.7"
+                    :text="
+                      getOperatorDisplay((step.node as any).value[0].opName)
+                        .title
+                    "
+                    align="left"
+                    end-fit
                   />
                 </div>
-
                 <div
                   v-for="(line, lineIndex) in getOperatorValueSignatureLines(
-                    step.detail as TypeOperatorKey
+                    (step.node as any).value[0].opName
                   )"
-                  :key="`${step.id}-signature-${lineIndex}`"
-                  class="logic-operator-signature-line"
+                  :key="`list-op-sig-${lineIndex}`"
+                  class="logic-list-editor-sig-line"
                   :style="{
-                    left: `${getCanvasBox(step).left + 10}px`,
-                    top: `${getCanvasBox(step).top + 25 + lineIndex * 9}px`,
+                    top: `${44 + lineIndex * 9}px`,
                   }"
                 >
-                  <span
-                    class="logic-operator-signature-prefix"
-                    :style="{ color: '#000000' }"
-                  >
-                    {{ line.prefix }}
-                  </span>
+                  <span style="color: #000">{{ line.prefix }}</span>
                   <span :style="{ color: line.color }">
                     {{ line.label }}
                   </span>
                 </div>
               </template>
-            </template>
 
-            <template v-else-if="getValueBox(step)">
-              <div
-                v-if="getPatternBox(step).canvas"
-                class="logic-operator-canvas"
-                :style="{
-                  left: `${getCanvasBox(step).left}px`,
-                  top: `${getCanvasBox(step).top}px`,
-                  width: `${getCanvasBox(step).width}px`,
-                  height: `${getCanvasBox(step).height}px`,
-                }"
-              />
-              <div
-                class="logic-value-box"
-                :style="{
-                  left: `${getValueBoxLeft(step)}px`,
-                  top: `${getValueBoxTop(step)}px`,
-                  width: `${getValueBoxWidth(step)}px`,
-                }"
+              <!-- Item/Block/Fluid: show slot + placeholder -->
+              <template
+                v-else-if="isItemStackBackedValueType(step.inputs[0]!.type)"
               >
-                <FitText
-                  :text="step.detail ?? step.title"
-                  align="left"
-                  :min-scale="0.4"
-                />
-              </div>
-            </template>
-
-            <template v-else>
-              <div
-                v-if="getPatternBox(step).canvas"
-                class="logic-operator-canvas"
-                :style="{
-                  left: `${getCanvasBox(step).left}px`,
-                  top: `${getCanvasBox(step).top}px`,
-                  width: `${getCanvasBox(step).width}px`,
-                  height: `${getCanvasBox(step).height}px`,
-                }"
-              />
-              <template v-if="isItemStackBackedValueType(step.sourceType)">
+                <div class="logic-list-editor-item-label">
+                  {{ getItemStackPlaceholder(step.inputs[0]!.type) }}
+                </div>
+                <div class="logic-list-editor-item-arrow" />
                 <div
-                  class="logic-item-placeholder-label"
+                  class="logic-slot-overlay"
                   :style="{
-                    left: `${getCanvasBox(step).left - 64}px`,
-                    top: `${getCanvasBox(step).top + 3}px`,
+                    left: `${80}px`,
+                    top: `${50}px`,
                   }"
                 >
-                  {{ getItemStackPlaceholder(step.sourceType) }}
+                  <div
+                    class="logic-slot-card-composite"
+                    :style="{
+                      backgroundImage: `url('${publicAsset(`valuetype/${getValueTypeTextureName(step.inputs[0]!.type)}.png`)}'), url('${publicAsset('item/variable.png')}')`,
+                    }"
+                  />
                 </div>
-                <div
-                  class="logic-item-placeholder-arrow"
-                  :style="{
-                    left: `${getCanvasBox(step).left - 15}px`,
-                    top: `${getCanvasBox(step).top + 6}px`,
-                  }"
-                />
               </template>
+
+              <!-- Primitive value types: show value box -->
+              <template v-else>
+                <div class="logic-list-editor-value-box">
+                  <FitText
+                    :text="
+                      getCompactValueTextForAst((step.node as any).value[0])
+                    "
+                    align="left"
+                    end-fit
+                  />
+                </div>
+              </template>
+
+              <div class="logic-list-editor-minus">−</div>
+            </div>
+          </template>
+
+          <template
+            v-else-if="
+              step.workspaceMode === 'operatorValue' ||
+              step.workspaceMode === 'pattern'
+            "
+          >
+            <div
+              class="logic-operator-canvas"
+              :style="{
+                left: `${getCanvasBox(step).left}px`,
+                top: `${getCanvasBox(step).top}px`,
+                width: `${getCanvasBox(step).width}px`,
+                height: `${getCanvasBox(step).height}px`,
+              }"
+            />
+
+            <!-- When operator has a render pattern, show its slots and symbol -->
+            <template v-if="getPatternBox(step).slots.length > 0">
               <div
                 v-for="(slot, inputIndex) in getPatternBox(step).slots"
-                :key="`${step.id}-slot-${inputIndex}`"
+                :key="`${step.id}-op-slot-${inputIndex}`"
                 class="logic-slot-overlay"
                 :class="{
                   'logic-card-overlay-has-tooltip': !!getInputSlotTooltip(
@@ -2606,10 +2647,13 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
                   />
                 </HoverMinecraftTooltip>
               </div>
+
               <div
                 v-if="getPatternBox(step).symbol"
                 class="logic-symbol-overlay"
-                :class="{ 'logic-symbol-overlay-text': step.symbol.length > 2 }"
+                :class="{
+                  'logic-symbol-overlay-text': step.symbol.length > 2,
+                }"
                 :style="{
                   left: `${getSymbolPos(step).left}px`,
                   top: `${getSymbolPos(step).top}px`,
@@ -2619,62 +2663,175 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
               </div>
             </template>
 
-            <div class="logic-write-arrow" />
+            <!-- No render pattern: show generic dropdown + signature -->
+            <template v-else>
+              <div
+                class="logic-operator-dropdown-field"
+                :style="{
+                  left: `${getCanvasBox(step).left + 14}px`,
+                  top: `${getCanvasBox(step).top + 6}px`,
+                  width: `${getCanvasBox(step).width - 28}px`,
+                }"
+              >
+                <FitText :text="step.panelLabel ?? step.title" end-fit />
+              </div>
 
-            <div class="logic-label-field">
-              <FitText :text="step.output" />
-            </div>
+              <div
+                v-for="(line, lineIndex) in getOperatorValueSignatureLines(
+                  step.detail as TypeOperatorKey
+                )"
+                :key="`${step.id}-signature-${lineIndex}`"
+                class="logic-operator-signature-line"
+                :style="{
+                  left: `${getCanvasBox(step).left + 10}px`,
+                  top: `${getCanvasBox(step).top + 25 + lineIndex * 9}px`,
+                }"
+              >
+                <span
+                  class="logic-operator-signature-prefix"
+                  :style="{ color: '#000000' }"
+                >
+                  {{ line.prefix }}
+                </span>
+                <span :style="{ color: line.color }">
+                  {{ line.label }}
+                </span>
+              </div>
+            </template>
+          </template>
 
+          <template v-else-if="getValueBox(step)">
             <div
-              v-if="!step.typeError"
-              class="logic-label-ok-icon"
-              aria-hidden="true"
+              v-if="getPatternBox(step).canvas"
+              class="logic-operator-canvas"
+              :style="{
+                left: `${getCanvasBox(step).left}px`,
+                top: `${getCanvasBox(step).top}px`,
+                width: `${getCanvasBox(step).width}px`,
+                height: `${getCanvasBox(step).height}px`,
+              }"
             />
-            <div v-else class="logic-label-error-icon" aria-hidden="true" />
+            <div
+              class="logic-value-box"
+              :style="{
+                left: `${getValueBoxLeft(step)}px`,
+                top: `${getValueBoxTop(step)}px`,
+                width: `${getValueBoxWidth(step)}px`,
+              }"
+            >
+              <FitText
+                :text="step.detail ?? step.title"
+                align="left"
+                :min-scale="0.4"
+              />
+            </div>
+          </template>
 
-            <div class="logic-labeller-badge">E</div>
-
-            <div class="logic-write-card logic-card-overlay-has-tooltip">
+          <template v-else>
+            <div
+              v-if="getPatternBox(step).canvas"
+              class="logic-operator-canvas"
+              :style="{
+                left: `${getCanvasBox(step).left}px`,
+                top: `${getCanvasBox(step).top}px`,
+                width: `${getCanvasBox(step).width}px`,
+                height: `${getCanvasBox(step).height}px`,
+              }"
+            />
+            <template v-if="isItemStackBackedValueType(step.sourceType)">
+              <div
+                class="logic-item-placeholder-label"
+                :style="{
+                  left: `${getCanvasBox(step).left - 64}px`,
+                  top: `${getCanvasBox(step).top + 3}px`,
+                }"
+              >
+                {{ getItemStackPlaceholder(step.sourceType) }}
+              </div>
+              <div
+                class="logic-item-placeholder-arrow"
+                :style="{
+                  left: `${getCanvasBox(step).left - 15}px`,
+                  top: `${getCanvasBox(step).top + 6}px`,
+                }"
+              />
+            </template>
+            <div
+              v-for="(slot, inputIndex) in getPatternBox(step).slots"
+              :key="`${step.id}-slot-${inputIndex}`"
+              class="logic-slot-overlay"
+              :class="{
+                'logic-card-overlay-has-tooltip': !!getInputSlotTooltip(
+                  step,
+                  inputIndex
+                ),
+              }"
+              :style="{ left: `${slot.left}px`, top: `${slot.top}px` }"
+            >
               <HoverMinecraftTooltip
-                :title="getOutputSlotTooltip(step).title"
-                :lines="getOutputSlotTooltip(step).lines"
+                v-if="getInputSlotTooltip(step, inputIndex)"
+                :title="getInputSlotTooltip(step, inputIndex)!.title"
+                :lines="getInputSlotTooltip(step, inputIndex)!.lines"
               >
                 <div
-                  v-if="
-                    props.forceShowOutputCard ||
-                    step.workspaceMode !== 'pattern'
-                  "
-                  class="logic-write-card-composite"
+                  v-if="step.inputs[inputIndex]"
+                  class="logic-slot-card-composite"
                   :style="{
-                    // Type-mismatched steps produce a blank (untyped) var card
-                    // rather than a card typed by the (wrong) output type.
-                    backgroundImage: step.typeError
-                      ? `url('${publicAsset('item/variable.png')}')`
-                      : `url('${publicAsset(`valuetype/${getValueTypeTextureName(getOutputTextureName(step))}.png`)}'), url('${publicAsset('item/variable.png')}')`,
+                    backgroundImage: `url('${publicAsset(`valuetype/${getValueTypeTextureName(step.inputs[inputIndex]?.type ?? 'Null')}.png`)}'), url('${publicAsset('item/variable.png')}')`,
                   }"
                 />
               </HoverMinecraftTooltip>
             </div>
+            <div
+              v-if="getPatternBox(step).symbol"
+              class="logic-symbol-overlay"
+              :class="{ 'logic-symbol-overlay-text': step.symbol.length > 2 }"
+              :style="{
+                left: `${getSymbolPos(step).left}px`,
+                top: `${getSymbolPos(step).top}px`,
+              }"
+            >
+              {{ step.symbol }}
+            </div>
+          </template>
+
+          <div class="logic-write-arrow" />
+
+          <div class="logic-label-field">
+            <FitText :text="step.output" end-fit />
+          </div>
+
+          <div
+            v-if="!step.typeError"
+            class="logic-label-ok-icon"
+            aria-hidden="true"
+          />
+          <div v-else class="logic-label-error-icon" aria-hidden="true" />
+
+          <div class="logic-labeller-badge">E</div>
+
+          <div class="logic-write-card logic-card-overlay-has-tooltip">
+            <HoverMinecraftTooltip
+              :title="getOutputSlotTooltip(step).title"
+              :lines="getOutputSlotTooltip(step).lines"
+            >
+              <div
+                v-if="
+                  props.forceShowOutputCard || step.workspaceMode !== 'pattern'
+                "
+                class="logic-write-card-composite"
+                :style="{
+                  // Type-mismatched steps produce a blank (untyped) var card
+                  // rather than a card typed by the (wrong) output type.
+                  backgroundImage: step.typeError
+                    ? `url('${publicAsset('item/variable.png')}')`
+                    : `url('${publicAsset(`valuetype/${getValueTypeTextureName(getOutputTextureName(step))}.png`)}'), url('${publicAsset('item/variable.png')}')`,
+                }"
+              />
+            </HoverMinecraftTooltip>
           </div>
         </div>
       </div>
-
-      <DisplayPanelViewHolder>
-        <DisplayPanelView
-          :text="getDisplayPanelText(step)"
-          :text-color="getDisplayPanelColor(step)"
-          :align="getDisplayPanelAlign(step)"
-          :type-name="step.sourceType"
-          :type-error="getStepDisplayError(step)"
-        />
-        <DisplayPanelView
-          :text="getDisplayPanelText(step)"
-          :text-color="getDisplayPanelColor(step)"
-          :align="getDisplayPanelAlign(step)"
-          :type-name="step.sourceType"
-          :type-error="getStepDisplayError(step)"
-        />
-      </DisplayPanelViewHolder>
-    </article>
+    </VisualTransformerStep>
   </section>
 </template>

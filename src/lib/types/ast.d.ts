@@ -42,6 +42,18 @@ namespace TypeAST {
   type Nbt = { type: "NBT"; value: jsonData; varName?: string };
   type List = { type: "List"; value: AST[]; varName?: string };
 
+  type Reader = {
+    type: "Reader";
+    value: {
+      reader: string;
+      partId?: string;
+      aspect: string;
+      settings?: Record<string, number | boolean | string>;
+      simulatedOutput?: AST;
+    };
+    varName?: string;
+  };
+
   type BaseOperator = {
     type: "Operator";
     opName: TypeOperatorKey;
@@ -76,9 +88,23 @@ namespace TypeAST {
     varName?: string;
   };
 
-  type Identifier = Block | Item | Fluid | Entity | Ingredients | Recipe | Nbt;
+  type Identifier =
+    | Block
+    | Item
+    | Fluid
+    | Entity
+    | Ingredients
+    | Recipe
+    | Nbt
+    | Reader;
 
   type Variable = { type: "Variable"; name: string; varName?: string };
+
+  type NetworkCards = {
+    type: "NetworkCards";
+    definitions: { name: string; node: AST }[];
+    varName?: string;
+  };
 
   type Constant =
     | Integer
@@ -93,5 +119,5 @@ namespace TypeAST {
 
   type Operator = BaseOperator | Flip | Pipe | Pipe2 | Curried;
 
-  type AST = Constant | Operator;
+  type AST = Constant | Operator | NetworkCards;
 }

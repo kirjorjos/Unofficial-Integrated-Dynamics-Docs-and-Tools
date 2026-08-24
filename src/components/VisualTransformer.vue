@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import DisplayPanelView from "./DisplayPanelView.vue";
-import DisplayPanelViewHolder from "./DisplayPanelViewHolder.vue";
+import VisualTransformerStep from "./VisualTransformerStep.vue";
+import LogicProgrammerView from "./LogicProgrammerView.vue";
+import ReaderGuiView from "./ReaderGuiView.vue";
 import {
   generateVisualSteps,
-  getDisplayPanelText,
-  getDisplayPanelAlignment,
+  getCompactValueTextForAst,
   getCumulativeStepError,
 } from "pages-lib/visualTransformerLogic";
-import { getDisplayPanelColor } from "pages-lib/visualTransformer";
+import { getReaderClassByTypeName } from "lib/IntegratedDynamicsClasses/readers/readerRegistry";
 
 const props = defineProps<{
   ast: globalThis.TypeAST.AST;
@@ -16,6 +16,7 @@ const props = defineProps<{
   showStepNumbers?: boolean;
   showStepTitles?: boolean;
   operatorPreviewMode?: "value" | "pattern";
+  forceShowOutputCard?: boolean;
 }>();
 
 const startId = props.startVariableId ?? 0;
@@ -23,53 +24,55 @@ const startId = props.startVariableId ?? 0;
 const steps = computed(() =>
   generateVisualSteps(props.ast, startId, props.operatorPreviewMode)
 );
+
+const getReaderViewReader = (step: (typeof steps.value)[number]) => {
+  if (step.node?.type === "Reader") {
+    return getReaderClassByTypeName(step.node.value.reader);
+  }
+  return undefined;
+};
+
+const getReaderViewValues = (
+  step: (typeof steps.value)[number]
+): Record<string, string> | undefined => {
+  if (step.node?.type === "Reader") {
+    return {
+      [step.node.value.aspect]: getCompactValueTextForAst(step.node),
+    };
+  }
+  return undefined;
+};
 </script>
 
 <template>
   <section class="logic-programmer-sequence">
-    <article
+    <VisualTransformerStep
       v-for="(step, index) in steps"
       :key="step.id"
-      class="logic-programmer-shot"
+      :step="step"
+      :index="index"
+      :all-steps="steps"
+      :show-step-numbers="props.showStepNumbers"
+      :show-step-titles="props.showStepTitles"
+      :force-show-output-card="props.forceShowOutputCard"
+      :display-panel-error="
+        step.typeError ?? getCumulativeStepError(steps, step.variableId)
+      "
     >
-      <div
-        v-if="props.showStepNumbers !== false || props.showStepTitles !== false"
-        class="logic-programmer-meta"
-      >
-        <div
-          v-if="props.showStepNumbers !== false"
-          class="logic-programmer-step"
-        >
-          Step {{ index + 1 }}
-        </div>
-        <div
-          v-if="props.showStepTitles !== false"
-          class="logic-programmer-step-title"
-        >
-          {{ step.output }}
-        </div>
-      </div>
-
-      <div class="logic-programmer-frame-shell">
-        <!-- LogicProgrammerView will go here -->
-      </div>
-
-      <DisplayPanelViewHolder>
-        <DisplayPanelView
-          :text="getDisplayPanelText(step)"
-          :text-color="getDisplayPanelColor(step)"
-          :align="getDisplayPanelAlignment(step.sourceType)"
-          :type-name="step.sourceType"
-          :type-error="getCumulativeStepError(steps, step.variableId)"
-        />
-        <DisplayPanelView
-          :text="getDisplayPanelText(step)"
-          :text-color="getDisplayPanelColor(step)"
-          :align="getDisplayPanelAlignment(step.sourceType)"
-          :type-name="step.sourceType"
-          :type-error="getCumulativeStepError(steps, step.variableId)"
-        />
-      </DisplayPanelViewHolder>
-    </article>
+      <ReaderGuiView
+        v-if="step.sourceType === 'Reader'"
+        :reader="getReaderViewReader(step)!"
+        :focused-aspect="
+          step.node?.type === 'Reader' ? step.node.value.aspect : undefined
+        "
+        :values="getReaderViewValues(step)"
+        :type-error="step.typeError"
+      />
+      <LogicProgrammerView
+        v-else
+        :step="step"
+        :force-show-output-card="props.forceShowOutputCard"
+      />
+    </VisualTransformerStep>
   </section>
 </template>

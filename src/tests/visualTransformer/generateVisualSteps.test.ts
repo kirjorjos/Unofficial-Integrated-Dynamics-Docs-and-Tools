@@ -1,3 +1,4 @@
+import { CodeLineToAST } from "lib/transformers/CodeLine";
 import {
   getOperatorDisplay,
   getVirtualOperatorDisplay,
@@ -175,6 +176,62 @@ describe("generateVisualSteps", () => {
     expect(step.inputs).toEqual([]);
   });
 
+  it("testReaderValueStepExposesReaderMetadata", () => {
+    const result = steps(makeAst.reader());
+    expect(result).toHaveLength(1);
+    const step = result[0]!;
+    expect(step.kind).toBe("value");
+    expect(step.sourceType).toBe("Reader");
+    expect(step.title).toBe("inventory");
+    expect(step.symbol).toBe("inventory");
+    expect(step.detail).toBe("OBJECT_ITEM_STACK_SLOT");
+    expect(step.inputs).toEqual([]);
+  });
+
+  it("testReaderStepOutputTypeResolvesFromAspect", () => {
+    const result = steps(makeAst.reader());
+    expect(getOutputTextureName(result[0]!)).toBe("Item");
+  });
+
+  it("testReaderStepWithSimulatedOutputResolvesOutputType", () => {
+    const result = steps(makeAst.readerWithSimulatedOutput());
+    expect(result).toHaveLength(1);
+    expect(result[0]!.sourceType).toBe("Reader");
+    expect(getOutputTextureName(result[0]!)).toBe("Boolean");
+    expect(result[0]!.typeError).toBeUndefined();
+  });
+
+  it("testReaderStepMismatchedSimulatedOutputSetsTypeError", () => {
+    const result = steps(makeAst.readerWithBadSimulatedOutput());
+    expect(result).toHaveLength(1);
+    expect(result[0]!.sourceType).toBe("Reader");
+    expect(result[0]!.typeError).toBe(
+      "Expected output type Item, got simulatedOutput type String"
+    );
+  });
+
+  it("testReaderStepAnyAspectNeverTypeErrors", () => {
+    const result = steps(CodeLineToAST('readers.network.value("anything")'));
+    expect(result).toHaveLength(1);
+    expect(result[0]!.typeError).toBeUndefined();
+  });
+
+  it("testReaderVarByIdStepHasNoTypeErrorWithoutSimulatedOutput", () => {
+    const result = steps(makeAst.readerVarById());
+    expect(result).toHaveLength(1);
+    expect(result[0]!.sourceType).toBe("Reader");
+    expect(result[0]!.detail).toBe("OPERATOR_GETVARIABLEBYID");
+    expect(result[0]!.typeError).toBeUndefined();
+  });
+
+  it("testReaderVarByIdStepRejectsAnySimulatedOutput", () => {
+    const result = steps(makeAst.readerVarByIdWithSimulatedOutput());
+    expect(result).toHaveLength(1);
+    expect(result[0]!.typeError).toBe(
+      "Variable Value By ID does not support an overridden simulatedValue."
+    );
+  });
+
   it("testValueStepsExposePrimitiveDetails", () => {
     const result = steps(makeAst.stringVal());
     expect(result).toHaveLength(1);
@@ -197,5 +254,58 @@ describe("generateVisualSteps", () => {
     for (const line of lines) {
       expect(line.color).toBe(getTypeColor(line.label));
     }
+  });
+
+  it("testDuplicateValuesAcrossNetworkDefinitionsGetOwnCards", () => {
+    const ast = CodeLineToAST("5; add 5 1") as TypeAST.NetworkCards;
+    const result = steps(ast);
+    expect(result.map((s) => s.variableId)).toEqual([0, 1, 2, 3]);
+    expect(result[0]!.output).toBe("5");
+    expect(result[1]!.output).toBe("5");
+    expect(result[2]!.output).toBe("1");
+    expect(result[3]!.sourceType).toBe("Curry");
+    expect(result[3]!.inputs.map((i) => i.variableId)).toEqual([1, 2]);
+  });
+
+  it("testNetworkCardsDefinitionsRenderInOrderWithAtRefsResolved", () => {
+    const ast = CodeLineToAST(
+      "319; 236; map NetworkReader.variableValueById [@0, @1]"
+    ) as TypeAST.NetworkCards;
+    const result = steps(ast);
+    expect(result).toHaveLength(7);
+    expect(result[0]!.output).toBe("319");
+    expect(result[1]!.output).toBe("236");
+    expect(result[6]!.kind).toBe("operator");
+    expect(result[5]!.inputs.map((i) => i.variableId)).toEqual([3, 4]);
+    expect(result[6]!.inputs.map((i) => i.variableId)).toEqual([2, 5]);
+  });
+
+  it("testMixedListSingleDerivedRendersViaAppendConcat", () => {
+    const ast = CodeLineToAST("[1, 2, (add 5 1), 5, 6]");
+    const result = steps(ast);
+    expect(
+      result.map((s) => s.title).filter((t) => t === "listConcat")
+    ).toHaveLength(2);
+    const appendIdx = result.findIndex((s) => s.title === "listAppend");
+    expect(result[appendIdx]!.inputs.map((i) => i.variableId)).toEqual([3, 5]);
+  });
+
+  it("testMixedListMultiDerivedHoistsAndMapsById", () => {
+    const ast = CodeLineToAST(
+      "[1, (add 5 1), (add 2 3)]"
+    ) as TypeAST.NetworkCards;
+    const result = steps(ast);
+    expect(result).toHaveLength(14);
+    expect(result[2]!.output).toBe("var0");
+    expect(result[5]!.output).toBe("var1");
+    expect(result[2]!.inputs.map((i) => i.variableId)).toEqual([0, 1]);
+    expect(result[5]!.inputs.map((i) => i.variableId)).toEqual([3, 4]);
+    expect(result[9]!.output).toBe("2");
+    expect(result[10]!.output).toBe("5");
+    const mapIdx = result.findIndex((s) => s.title === "operatorMap");
+    expect(mapIdx).toBe(12);
+    expect(result[mapIdx]!.inputs.map((i) => i.variableId)).toEqual([8, 11]);
+    const concatIdx = result.findIndex((s) => s.title === "listConcat");
+    expect(result[concatIdx]!.inputs.map((i) => i.variableId)).toEqual([7, 12]);
   });
 });

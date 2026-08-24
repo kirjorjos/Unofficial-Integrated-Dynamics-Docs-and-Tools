@@ -44,18 +44,18 @@ const formatters: Record<
 > = {
   condensed: {
     label: "Condensed",
-    toAST: (value) => CondensedToAST(value),
-    fromAST: (ast) => ASTToCondensed(ast),
+    toAST: (value) => CondensedToAST(value, undefined, initialVariableId.value),
+    fromAST: (ast) => ASTToCondensed(ast, true, initialVariableId.value),
   },
   expanded: {
     label: "Expanded",
-    toAST: (value) => ExpandedToAST(value),
+    toAST: (value) => ExpandedToAST(value, initialVariableId.value),
     fromAST: (ast) => ASTToExpanded(ast),
   },
   codeline: {
     label: "Code Line",
-    toAST: (value) => CodeLineToAST(value),
-    fromAST: (ast) => ASTToCodeLine(ast),
+    toAST: (value) => CodeLineToAST(value, undefined, initialVariableId.value),
+    fromAST: (ast) => ASTToCodeLine(ast, true, initialVariableId.value),
   },
   compressed: {
     label: "Compressed",
@@ -82,7 +82,10 @@ const outputFormatters: Record<
   json: formatters.json,
   visual: {
     label: "Visual",
-    fromAST: (ast) => ASTToCondensed(ast),
+    fromAST: (ast) =>
+      ast.type === "NetworkCards"
+        ? ASTToExpanded(ast)
+        : ASTToCondensed(ast, true, initialVariableId.value),
   },
 };
 
@@ -214,6 +217,10 @@ watch(initialVariableId, (value) => {
     return;
   }
 
+  if (currentAst.value && inputText.value.trim()) {
+    transform();
+    return;
+  }
   updateUrlState(
     currentAst.value ? ASTToCompressed(currentAst.value) : null,
     outputFormat.value,
@@ -276,7 +283,9 @@ const copyOutput = async (): Promise<void> => {
     outputFormat.value === "expanded"
       ? (expandedOutputViewer.value?.getCopyText() ?? outputText.value)
       : outputFormat.value === "visual" && currentAst.value
-        ? ASTToCondensed(currentAst.value)
+        ? currentAst.value.type === "NetworkCards"
+          ? ASTToExpanded(currentAst.value)
+          : ASTToCondensed(currentAst.value, true, initialVariableId.value)
         : outputText.value;
 
   await navigator.clipboard.writeText(textToCopy);

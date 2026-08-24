@@ -124,6 +124,11 @@ export async function compileFixtures<const T extends readonly Fixture[]>(
   return Object.fromEntries(entries) as Record<T[number]["name"], string>;
 }
 
+export async function compileAst(ast: unknown): Promise<string> {
+  const parsers = await loadParsers();
+  return parsers.ASTToCompressed(ast);
+}
+
 const waitForFontsAndNetworkIdle = async (page: Page) => {
   await page.evaluate(async (families) => {
     await Promise.all(
@@ -146,6 +151,12 @@ const waitForFontsAndNetworkIdle = async (page: Page) => {
 export const openVisual = async (page: Page, code: string, varId = 0) => {
   await page.goto(`/?code=${code}&output=visual&varId=${varId}`);
   await page.locator(".logic-programmer-shot").first().waitFor();
+  await waitForFontsAndNetworkIdle(page);
+};
+
+export const openReaderAspect = async (page: Page, pageId: string) => {
+  await page.goto(`/#${pageId}`);
+  await page.locator(".reader-aspect-doc-page").waitFor();
   await waitForFontsAndNetworkIdle(page);
 };
 

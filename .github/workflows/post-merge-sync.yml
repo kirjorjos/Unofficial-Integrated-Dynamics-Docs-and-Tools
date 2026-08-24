@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
   pull-requests: read
   issues: read
 
@@ -90,6 +90,15 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Generate GitHub App installation token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.GH_APP_ID }}
+          private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ github.event.repository.name }}
+
       - name: Regenerate baselines on the pinned runner
         run: |
           SPECS="${{ needs.resolve.outputs.specs }}"
@@ -101,7 +110,7 @@ jobs:
       - name: Commit and push regenerated baselines
         id: commit
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          PUSH_TOKEN: ${{ steps.app-token.outputs.token }}
           PR_NUMBER: ${{ needs.resolve.outputs.pr_number }}
         run: |
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
@@ -113,9 +122,13 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git remote set-url origin "https://x-access-token:${PUSH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
           git commit -m "chore: re-normalize visual baselines${PR_NUMBER:+ (PR #${PR_NUMBER})}"
-          git push origin HEAD:main
+          git push origin HEAD:main || {
+            echo "push to main failed — is branch protection blocking it?" >&2
+            echo "Check the GitHub App install + bypass-list setup (see comment above)." >&2
+            exit 1
+          }
           echo "committed=true" >> "$GITHUB_OUTPUT"
 
       - name: Upload Playwright report on failure
