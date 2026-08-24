@@ -1,14 +1,11 @@
-import { OUTPUT_TYPE_TO_AST_TYPE } from "lib/IntegratedDynamicsClasses/readers/readerOutputTypes";
+import type {
+  AspectSettings,
+  AspectStatic,
+} from "lib/IntegratedDynamicsClasses/readers/AspectBase";
 
-export type AspectSettings = Record<string, number | boolean | string>;
+export type { AspectSettings };
 
-export type AspectDefinition = {
-  settings: AspectSettings;
-  icon?: string;
-  displayName?: string;
-};
-
-export type ReaderAspects = Record<string, AspectDefinition>;
+export type ReaderAspects = Record<string, AspectStatic>;
 
 /**
  * Base class for all reader pseudo-operators.
@@ -17,8 +14,8 @@ export type ReaderAspects = Record<string, AspectDefinition>;
  * as a type anchor for the reader registry.
  *
  * Subclasses define their own static metadata properties (typeName,
- * shortName, numericID, aspects, aspectOutputType) and inherit
- * getAspectBitWidth() and getOutputTypeForAspect().
+ * shortName, numericID, aspects) and inherit getAspectBitWidth() and
+ * getOutputTypeForAspect().
  *
  * Note: Static property declarations are intentionally omitted here
  * to avoid requiring `override` on every subclass when
@@ -38,25 +35,14 @@ export abstract class ReaderBase {
   }
 
   /**
-   * Returns the output type entry for an aspect name.
-   * Looks up the aspect's output_type from aspects.json and resolves it
-   * to a canonical AST type name and position ID.
+   * Returns the AST type name the given aspect produces (e.g. "Integer").
+   * Looks up the aspect class and reads its outputType static.
    */
-  static getOutputTypeForAspect(
-    aspectName: string
-  ):
-    | (typeof OUTPUT_TYPE_TO_AST_TYPE)[keyof typeof OUTPUT_TYPE_TO_AST_TYPE]
-    | undefined {
+  static getOutputTypeForAspect(aspectName: string): string | undefined {
     // `this` in a static method resolves to the concrete subclass at runtime,
-    // which always has aspectOutputType defined.
-    const self = this as unknown as {
-      aspectOutputType: Record<string, string>;
-    };
-    const astTypeName = self.aspectOutputType[aspectName];
-    if (!astTypeName) return undefined;
-    return Object.values(OUTPUT_TYPE_TO_AST_TYPE).find(
-      (entry) => entry.astType === astTypeName
-    );
+    // which always has `aspects` defined.
+    const self = this as unknown as { aspects: ReaderAspects };
+    return self.aspects[aspectName]?.outputType;
   }
 }
 
@@ -69,11 +55,6 @@ export interface ReaderStatic {
   shortName: string;
   numericID: number;
   aspects: ReaderAspects;
-  aspectOutputType: Record<string, string>;
   getAspectBitWidth(): number;
-  getOutputTypeForAspect(
-    aspectName: string
-  ):
-    | (typeof OUTPUT_TYPE_TO_AST_TYPE)[keyof typeof OUTPUT_TYPE_TO_AST_TYPE]
-    | undefined;
+  getOutputTypeForAspect(aspectName: string): string | undefined;
 }

@@ -124,6 +124,11 @@ export async function compileFixtures<const T extends readonly Fixture[]>(
   return Object.fromEntries(entries) as Record<T[number]["name"], string>;
 }
 
+export async function compileAst(ast: unknown): Promise<string> {
+  const parsers = await loadParsers();
+  return parsers.ASTToCompressed(ast);
+}
+
 const waitForFontsAndNetworkIdle = async (page: Page) => {
   await page.evaluate(async (families) => {
     await Promise.all(

@@ -1,4 +1,8 @@
 import { operatorRegistry } from "lib";
+import {
+  getReaderAspectDefaultValue,
+  getReaderClassByTypeName,
+} from "lib/IntegratedDynamicsClasses/readers/readerRegistry";
 import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 import { ASTtoOperator } from "lib/transformers/Operator";
@@ -17,6 +21,7 @@ import {
   getValueTypeMetaForAst,
   getOperatorOutputType,
   getStepActualOutputType,
+  getReaderOutputType,
   getTypeColor,
   LOGIC_PROGRAMMER_DATA_TYPE_TABS,
 } from "pages-lib/visualTransformer";
@@ -365,6 +370,19 @@ export const getCompactValueTextForAst = (ast: TypeAST.AST): string => {
             inputReuseable: ast.value.inputReuseable,
           },
         };
+      case "Reader":
+        return {
+          type: "Reader",
+          value: {
+            reader: ast.value.reader,
+            partId: ast.value.partId,
+            aspect: ast.value.aspect,
+            settings: ast.value.settings,
+            simulatedOutput: ast.value.simulatedOutput
+              ? cloneAstWithoutVarNames(ast.value.simulatedOutput)
+              : undefined,
+          },
+        };
     }
   };
 
@@ -394,6 +412,15 @@ export const getCompactValueTextForAst = (ast: TypeAST.AST): string => {
         return value.getName().valueOf();
       }
       break;
+    }
+    case "Reader": {
+      if (ast.value.simulatedOutput) {
+        return getCompactValueTextForAst(ast.value.simulatedOutput);
+      }
+      const readerClass = getReaderClassByTypeName(ast.value.reader);
+      return readerClass
+        ? getReaderAspectDefaultValue(readerClass, ast.value.aspect)
+        : "";
     }
   }
 
@@ -466,6 +493,7 @@ const VALUE_NODE_TYPES = new Set<string>([
   "Entity",
   "Ingredients",
   "Recipe",
+  "Reader",
 ]);
 
 export const getDisplayPanelText = (
@@ -1140,6 +1168,10 @@ const astContentKey = (ast: TypeAST.AST): string => {
     case "Ingredients":
     case "Recipe":
       return `${ast.type}:${JSON.stringify(ast.value)}`;
+    case "Reader":
+      return `Reader:${ast.value.reader}:${ast.value.aspect}:${ast.value.partId ?? ""}:${
+        ast.value.settings ? JSON.stringify(ast.value.settings) : ""
+      }:${ast.value.simulatedOutput ? astContentKey(ast.value.simulatedOutput) : ""}`;
     default:
       return (ast as TypeAST.AST).type;
   }
@@ -1293,11 +1325,14 @@ export const generateVisualSteps = (
         type:
           step.sourceType === "Operator"
             ? "Operator"
-            : step.sourceType === "Curry" && step.node
-              ? flattenAnonymousBaseOperatorApplication(step.node)?.fullyApplied
-                ? (getStepActualOutputType(fullStep) as TypeAST.AST["type"])
-                : "Operator"
-              : (getStepActualOutputType(fullStep) as TypeAST.AST["type"]),
+            : step.sourceType === "Reader" && step.node?.type === "Reader"
+              ? (getReaderOutputType(step.node) as TypeAST.AST["type"])
+              : step.sourceType === "Curry" && step.node
+                ? flattenAnonymousBaseOperatorApplication(step.node)
+                    ?.fullyApplied
+                  ? (getStepActualOutputType(fullStep) as TypeAST.AST["type"])
+                  : "Operator"
+                : (getStepActualOutputType(fullStep) as TypeAST.AST["type"]),
         variableId,
         tooltip,
       };
@@ -1527,6 +1562,32 @@ export const generateVisualSteps = (
           output: nextName,
           node: ast,
         });
+      case "Reader": {
+        const readerClass = getReaderClassByTypeName(ast.value.reader);
+        let typeError: string | undefined;
+        if (ast.value.simulatedOutput) {
+          const expected =
+            readerClass?.aspects[ast.value.aspect]?.outputType ?? "Any";
+          const actual = ast.value.simulatedOutput.type;
+          if (!isTypeAssignable(actual, expected)) {
+            typeError = `Expected output type ${expected}, got simulatedOutput type ${actual}`;
+          }
+        }
+        return register({
+          id: `step-${result.length + 1}`,
+          title: readerClass?.shortName ?? ast.value.reader,
+          searchLabel: getValueTypeSearchLabel(ast.type),
+          panelLabel: readerClass?.typeName ?? ast.value.reader,
+          symbol: readerClass?.shortName ?? "R",
+          kind: "value",
+          sourceType: ast.type,
+          inputs: [],
+          output: nextName,
+          detail: ast.value.aspect,
+          node: ast,
+          typeError,
+        });
+      }
       default:
         return register({
           id: `step-${result.length + 1}`,

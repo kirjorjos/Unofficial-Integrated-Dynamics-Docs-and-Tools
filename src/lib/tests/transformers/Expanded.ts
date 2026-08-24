@@ -337,6 +337,50 @@ result = apply(numberAdd, {numberAddBy5}by10)`;
     expect(ast).toEqual({ type: "NBT", value: {}, varName: "emptyTag" });
   });
 
+  it("testExpandedReaderAutoName", () => {
+    const ast: TypeAST.Reader = {
+      type: "Reader",
+      value: { reader: "RedstoneReader", aspect: "BOOLEAN_LOW" },
+    };
+    const expanded = ASTToExpanded(ast);
+    expect(expanded).toContain("redstoneLow ::");
+    expect(expanded).toContain("redstoneLow = RedstoneReader.redstoneLow");
+  });
+  it("testExpandedReaderRoundTrip", () => {
+    const input =
+      'final = InventoryReader(0).slotItem({"slot":1}, Item("minecraft:stone", 1))';
+    const ast = ExpandedToAST(input);
+    expect(ast.type).toBe("Reader");
+    const reader = ast as TypeAST.Reader;
+    expect(reader.value.reader).toBe("InventoryReader");
+    expect(reader.value.partId).toBe("0");
+    expect(reader.value.aspect).toBe("OBJECT_ITEM_STACK_SLOT");
+    expect(reader.value.settings).toEqual({ slot: 1 });
+
+    const expanded = ASTToExpanded(ast);
+    expect(expanded).toContain("final ::");
+    expect(expanded).toContain(
+      'final = InventoryReader(0).slotItem({"slot":1}, Item("minecraft:stone", 1))'
+    );
+
+    const back = ExpandedToAST(expanded);
+    deleteNestedVars(back);
+    deleteNestedVars(ast);
+    expect(JSON.parse(JSON.stringify(back))).toEqual(
+      JSON.parse(JSON.stringify(ast))
+    );
+  });
+
+  it("testExpandedReaderSignatureType", () => {
+    const ast: TypeAST.Reader = {
+      type: "Reader",
+      value: { reader: "WorldReader", aspect: "LONG_TIME" },
+    };
+    const expanded = ASTToExpanded(ast);
+    expect(expanded).toContain("worldTime ::");
+    expect(expanded).toContain("a<Long>");
+  });
+
   it("testIndexOfListFullyDecomposesAndRoundTrips", () => {
     const input =
       "indexOfList = (l) => (el) => head(filter((idx) => equals(el, listGet(l, idx)), slice(lazybuilt(0, increment), 0, listLength(l))))";

@@ -163,6 +163,31 @@ describe("Operator Transformer Tests", () => {
       expect(flip).toBeInstanceOf(FlipOperator);
     });
 
+    it("testReaderASTToOperatorUsesDefaultValue", () => {
+      const reader = ASTtoOperator({
+        type: "Reader",
+        value: {
+          reader: "RedstoneReader",
+          aspect: "INTEGER_VALUE",
+        },
+      });
+      expect(reader).toBeInstanceOf(Integer);
+      expect((reader as Integer).toJSNumber()).toBe(0);
+    });
+
+    it("testReaderASTToOperatorUsesSimulatedOutput", () => {
+      const reader = ASTtoOperator({
+        type: "Reader",
+        value: {
+          reader: "RedstoneReader",
+          aspect: "BOOLEAN_LOW",
+          simulatedOutput: { type: "Boolean", value: true },
+        },
+      });
+      expect(reader).toBeInstanceOf(iBoolean);
+      expect(reader.valueOf()).toBe(true);
+    });
+
     it("testInvalidASTToOperator", () => {
       const unknownType = { type: "Unknown", value: null };
       expect(() => ASTtoOperator(unknownType as any)).toThrow();

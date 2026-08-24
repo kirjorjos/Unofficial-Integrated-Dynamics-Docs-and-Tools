@@ -1,4 +1,5 @@
 import { operatorRegistry } from "lib";
+import { getReaderClassByTypeName } from "lib/IntegratedDynamicsClasses/readers/readerRegistry";
 import {
   evaluateFullyAppliedCurry,
   flattenAnonymousBaseOperatorApplication,
@@ -239,12 +240,20 @@ export function getOperatorValueSignatureLines(
   });
 }
 
+export const getReaderOutputType = (readerNode: TypeAST.Reader): string => {
+  const readerClass = getReaderClassByTypeName(readerNode.value.reader);
+  return readerClass?.aspects[readerNode.value.aspect]?.outputType ?? "Any";
+};
+
 export function getStepActualOutputType(step: {
   sourceType: string;
   detail?: string;
   tooltipOperatorKey?: string;
   node?: TypeAST.AST;
 }): string {
+  if (step.sourceType === "Reader" && step.node?.type === "Reader") {
+    return getReaderOutputType(step.node);
+  }
   if (step.sourceType === "Curry" && step.node) {
     const evaluated = evaluateFullyAppliedCurry(step.node);
     if (evaluated != null && typeof evaluated.getSignatureNode === "function") {

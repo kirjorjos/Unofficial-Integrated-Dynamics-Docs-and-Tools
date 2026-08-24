@@ -1,4 +1,5 @@
 import { operatorRegistry } from "lib/IntegratedDynamicsClasses/registries/operatorRegistry";
+import { getReaderClassByTypeName } from "lib/IntegratedDynamicsClasses/readers/readerRegistry";
 import { ASTToCodeLine, CodeLineToAST } from "lib/transformers/CodeLine";
 import { ASTToCondensed, CondensedToAST } from "lib/transformers/Condensed";
 import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
@@ -165,6 +166,62 @@ const computeSignature = (
     case "Flip": {
       const innerSignature = unwrapOperator(computeSignature(node.arg, scope));
       signature = wrapInOperator(innerSignature.flip().rewrite());
+      break;
+    }
+    case "Reader": {
+      const readerClass = getReaderClassByTypeName(node.value.reader);
+      const outputType =
+        readerClass?.aspects[node.value.aspect]?.outputType ?? "Any";
+      switch (outputType) {
+        case "Any":
+          signature = new ParsedSignature(
+            { type: "Any", typeID: ParsedSignature.getNewTypeID() },
+            false
+          );
+          break;
+        case "List":
+          signature = new ParsedSignature(
+            {
+              type: "List",
+              listType: {
+                type: "Any",
+                typeID: ParsedSignature.getNewTypeID(),
+              },
+            },
+            false
+          );
+          break;
+        case "Operator":
+          signature = new ParsedSignature(
+            {
+              type: "Operator",
+              obscured: {
+                type: "Function",
+                from: {
+                  type: "Any",
+                  typeID: ParsedSignature.getNewTypeID(),
+                },
+                to: {
+                  type: "Any",
+                  typeID: ParsedSignature.getNewTypeID(),
+                },
+              },
+            },
+            false
+          );
+          break;
+        default:
+          signature = new ParsedSignature(
+            {
+              type: outputType as Exclude<
+                TypeRawSignatureAST.RawSignatureDefiniteValue["type"],
+                "List" | "Operator" | "Function"
+              >,
+            },
+            false
+          );
+          break;
+      }
       break;
     }
     case "Variable": {
@@ -379,6 +436,26 @@ const getVarName = (node: TypeAST.AST): string => {
       return `flip${capitalize(getVarName(node.arg))}`;
     case "List":
       return "list";
+    case "Reader": {
+      const readerClass = getReaderClassByTypeName(node.value.reader);
+      const shortName = readerClass?.shortName ?? "reader";
+      const displayName = readerClass?.aspects[node.value.aspect]?.displayName;
+      let readable = displayName ?? "";
+      if (
+        readable &&
+        readable.toLowerCase().startsWith(shortName.toLowerCase())
+      ) {
+        readable = readable.slice(shortName.length);
+      }
+      if (!readable) {
+        readable = node.value.aspect
+          .toLowerCase()
+          .split("_")
+          .map(capitalize)
+          .join("");
+      }
+      return `${shortName}${capitalize(readable)}`;
+    }
   }
 
   return `v${++varCounter}`;

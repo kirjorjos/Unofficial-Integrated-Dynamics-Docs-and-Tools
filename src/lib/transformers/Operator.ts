@@ -14,6 +14,7 @@ import { PipeOperator } from "lib/IntegratedDynamicsClasses/operators/PipeOperat
 import { Properties } from "lib/IntegratedDynamicsClasses/Properties";
 import { Recipe } from "lib/IntegratedDynamicsClasses/Recipe";
 import { operatorRegistry } from "lib/IntegratedDynamicsClasses/registries/operatorRegistry";
+import { getReaderClassByTypeName } from "lib/IntegratedDynamicsClasses/readers/readerRegistry";
 import { iArrayEager } from "lib/IntegratedDynamicsClasses/typeWrappers/iArrayEager";
 import { iBoolean } from "lib/IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { iNull } from "lib/IntegratedDynamicsClasses/typeWrappers/iNull";
@@ -155,6 +156,27 @@ export const ASTtoOperator = (ast: TypeAST.AST): IntegratedValue => {
 
     case "List":
       return new iArrayEager(ast.value.map(ASTtoOperator));
+
+    case "Reader": {
+      if (ast.value.simulatedOutput) {
+        return ASTtoOperator(ast.value.simulatedOutput);
+      }
+      const readerClass = getReaderClassByTypeName(ast.value.reader);
+      switch (readerClass?.aspects[ast.value.aspect]?.outputType) {
+        case "Boolean":
+          return new iBoolean(false);
+        case "Integer":
+          return new Integer(0);
+        case "Long":
+          return new Long(0);
+        case "Double":
+          return new Double(0);
+        case "String":
+          return new iString("");
+        default:
+          return new iNull();
+      }
+    }
 
     default:
       throw new Error(`Unsupported AST type: ${(ast as any).type}`);

@@ -2,6 +2,10 @@ import { getArity } from "lib/transformers/helpers";
 import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
 import { operatorRegistry } from "lib/IntegratedDynamicsClasses/registries/operatorRegistry";
 import {
+  getReaderClassByNumericID,
+  getReaderClassByTypeName,
+} from "lib/IntegratedDynamicsClasses/readers/readerRegistry";
+import {
   getExpandedVarName,
   resetExpandedVarCounter,
 } from "lib/transformers/Expanded";
@@ -518,7 +522,7 @@ const operatorMaps = getOperatorMaps();
 
 const getOperatorClassByOpName = (
   opName: TypeOperatorKey
-): (typeof BaseOperator) | undefined => {
+): typeof BaseOperator | undefined => {
   const opClass = operatorRegistry[opName];
   if (
     opClass &&
@@ -867,6 +871,48 @@ const writeNode = (
       writeNodeMetadata(writer, node);
       return;
 
+    case "Reader": {
+      writer.writeBits(NodeKind.Literal, 2);
+      const readerClass = getReaderClassByTypeName(node.value.reader);
+      if (!readerClass) {
+        throw new Error(`Unknown reader type: ${node.value.reader}`);
+      }
+      if (readerClass.numericID > 31) {
+        throw new Error(
+          `Reader ${readerClass.typeName} exceeds the 5-bit LiteralKind range`
+        );
+      }
+      writeLiteralKind(writer, readerClass.numericID as LiteralKind);
+
+      const aspectKeys = Object.keys(readerClass.aspects);
+      const aspectIndex = aspectKeys.indexOf(node.value.aspect);
+      if (aspectIndex === -1) {
+        throw new Error(
+          `Unknown aspect ${node.value.aspect} for ${readerClass.typeName}`
+        );
+      }
+      writer.writeBits(aspectIndex, readerClass.getAspectBitWidth());
+
+      const hasPartId = node.value.partId !== undefined;
+      writer.writeBit(hasPartId);
+      if (hasPartId) writeString(writer, node.value.partId!);
+
+      const hasSettings = node.value.settings !== undefined;
+      writer.writeBit(hasSettings);
+      if (hasSettings) {
+        writeJSONValue(writer, node.value.settings as jsonData);
+      }
+
+      const hasSimulatedOutput = node.value.simulatedOutput !== undefined;
+      writer.writeBit(hasSimulatedOutput);
+      if (hasSimulatedOutput) {
+        writeNode(writer, node.value.simulatedOutput as ASTNode, seen);
+      }
+
+      writeNodeMetadata(writer, node);
+      return;
+    }
+
     case "List":
       writer.writeBits(NodeKind.Literal, 2);
       writeLiteralKind(writer, LiteralKind.List);
@@ -1085,8 +1131,43 @@ const readNode = (
         case LiteralKind.ExtraDimensionalReader:
         case LiteralKind.MachineReader:
         case LiteralKind.AudioReader: {
-          // TODO: Implement reader decoding — placeholder throws for now
-          throw new Error("Reader literal kind not yet implemented");
+          const readerClass = getReaderClassByNumericID(literalKind);
+          if (!readerClass) {
+            throw new Error(`Unknown reader literal kind ${literalKind}`);
+          }
+          const aspectKeys = Object.keys(readerClass.aspects);
+          const aspectIndex = reader.readNumber(
+            readerClass.getAspectBitWidth()
+          );
+          if (aspectIndex >= aspectKeys.length) {
+            throw new Error(
+              `Invalid aspect index ${aspectIndex} for ${readerClass.typeName}`
+            );
+          }
+          const aspect = aspectKeys[aspectIndex]!;
+
+          const partId = reader.readBit() ? readString(reader) : undefined;
+          const settings = reader.readBit()
+            ? (readJSONValue(reader) as Record<
+                string,
+                number | boolean | string
+              >)
+            : undefined;
+          const simulatedOutput = reader.readBit()
+            ? readNode(reader, decoded)
+            : undefined;
+
+          node = {
+            type: "Reader",
+            value: {
+              reader: readerClass.typeName,
+              partId,
+              aspect,
+              settings,
+              simulatedOutput,
+            },
+          };
+          break;
         }
         default:
           throw new Error(`Unknown compressed literal kind ${literalKind}`);

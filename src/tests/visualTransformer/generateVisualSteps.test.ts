@@ -1,3 +1,4 @@
+import { CodeLineToAST } from "lib/transformers/CodeLine";
 import {
   getOperatorDisplay,
   getVirtualOperatorDisplay,
@@ -173,6 +174,46 @@ describe("generateVisualSteps", () => {
     expect(step.expectedInputTypes).toEqual(["Number"]);
     expect(step.expectedOutputType).toBe("Number");
     expect(step.inputs).toEqual([]);
+  });
+
+  it("testReaderValueStepExposesReaderMetadata", () => {
+    const result = steps(makeAst.reader());
+    expect(result).toHaveLength(1);
+    const step = result[0]!;
+    expect(step.kind).toBe("value");
+    expect(step.sourceType).toBe("Reader");
+    expect(step.title).toBe("inventory");
+    expect(step.symbol).toBe("inventory");
+    expect(step.detail).toBe("OBJECT_ITEM_STACK_SLOT");
+    expect(step.inputs).toEqual([]);
+  });
+
+  it("testReaderStepOutputTypeResolvesFromAspect", () => {
+    const result = steps(makeAst.reader());
+    expect(getOutputTextureName(result[0]!)).toBe("Item");
+  });
+
+  it("testReaderStepWithSimulatedOutputResolvesOutputType", () => {
+    const result = steps(makeAst.readerWithSimulatedOutput());
+    expect(result).toHaveLength(1);
+    expect(result[0]!.sourceType).toBe("Reader");
+    expect(getOutputTextureName(result[0]!)).toBe("Boolean");
+    expect(result[0]!.typeError).toBeUndefined();
+  });
+
+  it("testReaderStepMismatchedSimulatedOutputSetsTypeError", () => {
+    const result = steps(makeAst.readerWithBadSimulatedOutput());
+    expect(result).toHaveLength(1);
+    expect(result[0]!.sourceType).toBe("Reader");
+    expect(result[0]!.typeError).toBe(
+      "Expected output type Item, got simulatedOutput type String"
+    );
+  });
+
+  it("testReaderStepAnyAspectNeverTypeErrors", () => {
+    const result = steps(CodeLineToAST('readers.network.value("anything")'));
+    expect(result).toHaveLength(1);
+    expect(result[0]!.typeError).toBeUndefined();
   });
 
   it("testValueStepsExposePrimitiveDetails", () => {

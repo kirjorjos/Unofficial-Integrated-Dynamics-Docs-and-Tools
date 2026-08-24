@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import ReaderGuiView from "../../components/ReaderGuiView.vue";
-import { RedstoneReader } from "lib/IntegratedDynamicsClasses/readers/RedstoneReader";
-import { InventoryReader } from "lib/IntegratedDynamicsClasses/readers/InventoryReader";
-import { WorldReader } from "lib/IntegratedDynamicsClasses/readers/WorldReader";
-import { FluidReader } from "lib/IntegratedDynamicsClasses/readers/FluidReader";
-import { NetworkReader } from "lib/IntegratedDynamicsClasses/readers/NetworkReader";
-import { BlockReader } from "lib/IntegratedDynamicsClasses/readers/BlockReader";
-import { EntityReader } from "lib/IntegratedDynamicsClasses/readers/EntityReader";
-import { ExtradimensionalReader } from "lib/IntegratedDynamicsClasses/readers/ExtradimensionalReader";
-import { MachineReader } from "lib/IntegratedDynamicsClasses/readers/MachineReader";
-import { AudioReader } from "lib/IntegratedDynamicsClasses/readers/AudioReader";
+import { AudioReader } from "lib/IntegratedDynamicsClasses/readers/AudioReader/AudioReader";
+import { BlockReader } from "lib/IntegratedDynamicsClasses/readers/BlockReader/BlockReader";
+import { EntityReader } from "lib/IntegratedDynamicsClasses/readers/EntityReader/EntityReader";
+import { ExtradimensionalReader } from "lib/IntegratedDynamicsClasses/readers/ExtradimensionalReader/ExtradimensionalReader";
+import { FluidReader } from "lib/IntegratedDynamicsClasses/readers/FluidReader/FluidReader";
+import { InventoryReader } from "lib/IntegratedDynamicsClasses/readers/InventoryReader/InventoryReader";
+import { MachineReader } from "lib/IntegratedDynamicsClasses/readers/MachineReader/MachineReader";
+import { NetworkReader } from "lib/IntegratedDynamicsClasses/readers/NetworkReader/NetworkReader";
+import { RedstoneReader } from "lib/IntegratedDynamicsClasses/readers/RedstoneReader/RedstoneReader";
+import { WorldReader } from "lib/IntegratedDynamicsClasses/readers/WorldReader/WorldReader";
 
 const readers = [
   RedstoneReader,

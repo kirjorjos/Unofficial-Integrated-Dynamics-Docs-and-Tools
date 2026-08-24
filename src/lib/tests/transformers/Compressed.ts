@@ -1,15 +1,16 @@
 import { ASTToCompressed, CompressedToAST } from "lib/transformers/Compressed";
+import { getNicknameRegex } from "lib/transformers/helpers";
 import { operatorRegistry } from "lib/IntegratedDynamicsClasses/registries/operatorRegistry";
-import { RedstoneReader } from "lib/IntegratedDynamicsClasses/readers/RedstoneReader";
-import { FluidReader } from "lib/IntegratedDynamicsClasses/readers/FluidReader";
-import { InventoryReader } from "lib/IntegratedDynamicsClasses/readers/InventoryReader";
-import { WorldReader } from "lib/IntegratedDynamicsClasses/readers/WorldReader";
-import { NetworkReader } from "lib/IntegratedDynamicsClasses/readers/NetworkReader";
-import { BlockReader } from "lib/IntegratedDynamicsClasses/readers/BlockReader";
-import { EntityReader } from "lib/IntegratedDynamicsClasses/readers/EntityReader";
-import { ExtradimensionalReader } from "lib/IntegratedDynamicsClasses/readers/ExtradimensionalReader";
-import { MachineReader } from "lib/IntegratedDynamicsClasses/readers/MachineReader";
-import { AudioReader } from "lib/IntegratedDynamicsClasses/readers/AudioReader";
+import { AudioReader } from "lib/IntegratedDynamicsClasses/readers/AudioReader/AudioReader";
+import { BlockReader } from "lib/IntegratedDynamicsClasses/readers/BlockReader/BlockReader";
+import { EntityReader } from "lib/IntegratedDynamicsClasses/readers/EntityReader/EntityReader";
+import { ExtradimensionalReader } from "lib/IntegratedDynamicsClasses/readers/ExtradimensionalReader/ExtradimensionalReader";
+import { FluidReader } from "lib/IntegratedDynamicsClasses/readers/FluidReader/FluidReader";
+import { InventoryReader } from "lib/IntegratedDynamicsClasses/readers/InventoryReader/InventoryReader";
+import { MachineReader } from "lib/IntegratedDynamicsClasses/readers/MachineReader/MachineReader";
+import { NetworkReader } from "lib/IntegratedDynamicsClasses/readers/NetworkReader/NetworkReader";
+import { RedstoneReader } from "lib/IntegratedDynamicsClasses/readers/RedstoneReader/RedstoneReader";
+import { WorldReader } from "lib/IntegratedDynamicsClasses/readers/WorldReader/WorldReader";
 
 type OperatorStatic = {
   numericID: number;
@@ -180,7 +181,7 @@ describe("TestCompressedTransformer", () => {
 
     // Verify exact expected IDs
     for (let i = 0; i < readerClasses.length; i++) {
-      expect(readerClasses[i].numericID).toBe(expectedIDs[i]);
+      expect(readerClasses[i]!.numericID).toBe(expectedIDs[i]!);
     }
 
     // Verify getAspectBitWidth is inherited from ReaderBase
@@ -192,23 +193,115 @@ describe("TestCompressedTransformer", () => {
     }
   });
 
+  it("testReaderAspectNicknameRules", () => {
+    const nicknameRegex = getNicknameRegex();
+    const readers = [
+      RedstoneReader,
+      InventoryReader,
+      WorldReader,
+      FluidReader,
+      NetworkReader,
+      BlockReader,
+      EntityReader,
+      ExtradimensionalReader,
+      MachineReader,
+      AudioReader,
+    ] as const;
+
+    for (const reader of readers) {
+      const seenDisplayNames = new Set<string>();
+      for (const [key, aspect] of Object.entries(reader.aspects)) {
+        expect(aspect.displayName).toBeTruthy();
+        expect(nicknameRegex.test(aspect.displayName)).toBe(true);
+        expect(aspect.fullDisplayName).toBeTruthy();
+        expect(aspect.outputType).toBeTruthy();
+        expect(aspect.nicknames).toContain(aspect.displayName);
+        for (const nickname of aspect.nicknames) {
+          expect(nicknameRegex.test(nickname)).toBe(true);
+        }
+        expect(seenDisplayNames.has(aspect.displayName)).toBe(false);
+        seenDisplayNames.add(aspect.displayName);
+        expect(reader.aspects[key]!.displayName).toBe(aspect.displayName);
+      }
+    }
+  });
+
   it("testReaderOutputTypeMapping", () => {
-    // Spot-check that reader aspects resolve to the correct output types
-    expect(RedstoneReader.aspectOutputType["BOOLEAN_LOW"]).toBe("Boolean");
-    expect(RedstoneReader.aspectOutputType["INTEGER_VALUE"]).toBe("Integer");
-    expect(FluidReader.aspectOutputType["FLUIDSTACK"]).toBe("Fluid");
-    expect(FluidReader.aspectOutputType["DOUBLE_FILLRATIO"]).toBe("Double");
-    expect(InventoryReader.aspectOutputType["OBJECT_ITEM_STACK_SLOT"]).toBe("Item");
-    expect(WorldReader.aspectOutputType["LONG_TIME"]).toBe("Long");
-    expect(WorldReader.aspectOutputType["LIST_PLAYERS"]).toBe("List");
-    expect(NetworkReader.aspectOutputType["BOOLEAN_APPLICABLE"]).toBe("Boolean");
-    expect(NetworkReader.aspectOutputType["OPERATOR_GETVARIABLEBYID"]).toBe("Operator");
-    expect(NetworkReader.aspectOutputType["ANY_VALUE"]).toBe("Any");
-    expect(BlockReader.aspectOutputType["BLOCK"]).toBe("Block");
-    expect(BlockReader.aspectOutputType["NBT"]).toBe("NBT");
-    expect(EntityReader.aspectOutputType["ENTITY"]).toBe("Entity");
-    expect(MachineReader.aspectOutputType["LIST_GETRECIPES"]).toBe("List");
-    expect(AudioReader.aspectOutputType["INTEGER_HARP_NOTE"]).toBe("Integer");
+    expect(RedstoneReader.aspects["BOOLEAN_LOW"]!.outputType).toBe("Boolean");
+    expect(RedstoneReader.aspects["INTEGER_VALUE"]!.outputType).toBe("Integer");
+    expect(FluidReader.aspects["FLUIDSTACK"]!.outputType).toBe("Fluid");
+    expect(FluidReader.aspects["DOUBLE_FILLRATIO"]!.outputType).toBe("Double");
+    expect(InventoryReader.aspects["OBJECT_ITEM_STACK_SLOT"]!.outputType).toBe(
+      "Item"
+    );
+    expect(WorldReader.aspects["LONG_TIME"]!.outputType).toBe("Long");
+    expect(WorldReader.aspects["LIST_PLAYERS"]!.outputType).toBe("List");
+    expect(NetworkReader.aspects["BOOLEAN_APPLICABLE"]!.outputType).toBe(
+      "Boolean"
+    );
+    expect(NetworkReader.aspects["OPERATOR_GETVARIABLEBYID"]!.outputType).toBe(
+      "Operator"
+    );
+    expect(NetworkReader.aspects["ANY_VALUE"]!.outputType).toBe("Any");
+    expect(BlockReader.aspects["BLOCK"]!.outputType).toBe("Block");
+    expect(BlockReader.aspects["NBT"]!.outputType).toBe("NBT");
+    expect(EntityReader.aspects["ENTITY"]!.outputType).toBe("Entity");
+    expect(MachineReader.aspects["LIST_GETRECIPES"]!.outputType).toBe("List");
+    expect(AudioReader.aspects["INTEGER_HARP_NOTE"]!.outputType).toBe(
+      "Integer"
+    );
+  });
+
+  it("testReaderRoundTrip", () => {
+    const cases: TypeAST.Reader[] = [
+      {
+        type: "Reader",
+        value: { reader: "RedstoneReader", aspect: "BOOLEAN_LOW" },
+      },
+      {
+        type: "Reader",
+        value: {
+          reader: "InventoryReader",
+          partId: "0",
+          aspect: "OBJECT_ITEM_STACK_SLOT",
+          settings: { slot: 1 },
+        },
+      },
+      {
+        type: "Reader",
+        value: {
+          reader: "InventoryReader",
+          aspect: "OBJECT_ITEM_STACK_SLOT",
+          simulatedOutput: {
+            type: "Item",
+            value: { id: "minecraft:stone", size: "1" },
+          },
+        },
+      },
+      {
+        type: "Reader",
+        value: {
+          reader: "MachineReader",
+          partId: "7",
+          aspect: "DOUBLE_TEMPERATURE",
+          settings: {},
+          simulatedOutput: { type: "Double", value: "21.5" },
+        },
+        varName: "machineTemp",
+      },
+    ];
+
+    for (const ast of cases) {
+      expect(CompressedToAST(ASTToCompressed(ast))).toEqual(ast);
+    }
+  });
+
+  it("testReaderRejectsUnknownAspect", () => {
+    const ast: TypeAST.Reader = {
+      type: "Reader",
+      value: { reader: "RedstoneReader", aspect: "DOES_NOT_EXIST" },
+    };
+    expect(() => ASTToCompressed(ast)).toThrow();
   });
 
   it("testRejectUnknownOperatorID", () => {

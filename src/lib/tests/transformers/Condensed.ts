@@ -283,4 +283,135 @@ describe("TestCondensedTransformer", () => {
     const ast = CondensedToAST("\\var.with.dot.numberAdd(var.with.dot, 1)");
     expect(ASTToCondensed(ast)).toBe("apply(numberAdd, 1)");
   });
+  it("testReaderDottedForm", () => {
+    const code =
+      'InventoryReader(0).slotItem({"slot":1}, Item("minecraft:stone", 1))';
+    const ast = CondensedToAST(code) as TypeAST.Reader;
+    expect(ast.type).toBe("Reader");
+    expect(ast.value.reader).toBe("InventoryReader");
+    expect(ast.value.partId).toBe("0");
+    expect(ast.value.aspect).toBe("OBJECT_ITEM_STACK_SLOT");
+    expect(ast.value.settings).toEqual({ slot: 1 });
+    expect(ast.value.simulatedOutput).toEqual({
+      type: "Item",
+      value: { id: "minecraft:stone", size: "1" },
+    });
+    expect(ASTToCondensed(ast)).toBe(code);
+  });
+
+  it("testReaderSimulatedOutputTypeMismatchThrows", () => {
+    expect(() => CondensedToAST('InventoryReader(0).slotItem("test")')).toThrow(
+      "Expected output type Item, got simulatedOutput type String"
+    );
+  });
+
+  it("testReaderEnumKeyStillParses", () => {
+    const ast = CondensedToAST(
+      'InventoryReader(0).OBJECT_ITEM_STACK_SLOT({"slot":1})'
+    ) as TypeAST.Reader;
+    expect(ast.value.aspect).toBe("OBJECT_ITEM_STACK_SLOT");
+    expect(ASTToCondensed(ast)).toBe('InventoryReader(0).slotItem({"slot":1})');
+  });
+
+  it("testReaderNicknameParses", () => {
+    const ast = CondensedToAST(
+      "readers.inventory.itemStackSlot"
+    ) as TypeAST.Reader;
+    expect(ast.value.aspect).toBe("OBJECT_ITEM_STACK_SLOT");
+    expect(ASTToCondensed(ast)).toBe("InventoryReader.slotItem");
+  });
+
+  it("testReaderReadersDotForm", () => {
+    const ast = CondensedToAST("readers.inventory.slotItem") as TypeAST.Reader;
+    expect(ast.value.reader).toBe("InventoryReader");
+    expect(ast.value.partId).toBeUndefined();
+    expect(ast.value.aspect).toBe("OBJECT_ITEM_STACK_SLOT");
+    expect(ASTToCondensed(ast)).toBe("InventoryReader.slotItem");
+  });
+
+  it("testReaderEmptyPartIdParens", () => {
+    const ast = CondensedToAST("InventoryReader().slotItem") as TypeAST.Reader;
+    expect(ast.value.partId).toBeUndefined();
+    expect(ASTToCondensed(ast)).toBe("InventoryReader.slotItem");
+  });
+
+  it("testReaderSplitDotTokens", () => {
+    const ast = CondensedToAST(
+      "InventoryReader(0) . slotItem"
+    ) as TypeAST.Reader;
+    expect(ast.value.partId).toBe("0");
+    expect(ast.value.aspect).toBe("OBJECT_ITEM_STACK_SLOT");
+  });
+
+  it("testReaderFunctionalForm", () => {
+    const ast = CondensedToAST(
+      'inventoryReader("Slot Item", {"slot":0})'
+    ) as TypeAST.Reader;
+    expect(ast.value.reader).toBe("InventoryReader");
+    expect(ast.value.aspect).toBe("OBJECT_ITEM_STACK_SLOT");
+    expect(ast.value.settings).toEqual({ slot: 0 });
+    expect(ASTToCondensed(ast)).toBe('InventoryReader.slotItem({"slot":0})');
+  });
+
+  it("testReaderGenericForm", () => {
+    const ast = CondensedToAST(
+      'reader("inventory", "slot_item")'
+    ) as TypeAST.Reader;
+    expect(ast.value.reader).toBe("InventoryReader");
+    expect(ast.value.aspect).toBe("OBJECT_ITEM_STACK_SLOT");
+    expect(ASTToCondensed(ast)).toBe("InventoryReader.slotItem");
+  });
+
+  it("testReaderSimulatedOutputOnly", () => {
+    const code = 'InventoryReader().slotItem(Item("minecraft:stone", 1))';
+    const ast = CondensedToAST(code) as TypeAST.Reader;
+    expect(ast.value.simulatedOutput).toEqual({
+      type: "Item",
+      value: { id: "minecraft:stone", size: "1" },
+    });
+    expect(ASTToCondensed(ast)).toBe(
+      'InventoryReader.slotItem(Item("minecraft:stone", 1))'
+    );
+  });
+
+  it("testReaderArgsEitherOrder", () => {
+    const code =
+      'InventoryReader().slotItem(Item("minecraft:stone", 1), {"slot":1})';
+    const ast = CondensedToAST(code) as TypeAST.Reader;
+    expect(ast.value.settings).toEqual({ slot: 1 });
+    expect(ast.value.simulatedOutput).toEqual({
+      type: "Item",
+      value: { id: "minecraft:stone", size: "1" },
+    });
+    expect(ASTToCondensed(ast)).toBe(
+      'InventoryReader.slotItem({"slot":1}, Item("minecraft:stone", 1))'
+    );
+  });
+
+  it("testReaderCaseInsensitiveConstructor", () => {
+    const ast = CondensedToAST("inventoryreader.slotItem") as TypeAST.Reader;
+    expect(ast.value.reader).toBe("InventoryReader");
+  });
+
+  it("testReaderUnknownAspect", () => {
+    expect(() => CondensedToAST("InventoryReader.slotItemNope")).toThrow();
+  });
+
+  it("testReaderUnknownReader", () => {
+    expect(() => CondensedToAST('reader("notareader", "X")')).toThrow();
+  });
+
+  it("testReaderRoundTrip", () => {
+    const cases = [
+      "InventoryReader.slotItem",
+      'InventoryReader(0).slotItem({"slot":1})',
+      'InventoryReader().slotItem(Item("minecraft:stone", 1))',
+      'readers.redstone.redstoneLow({"interval":10}, true)',
+    ];
+    for (const c of cases) {
+      const ast = CondensedToAST(c);
+      const back = ASTToCondensed(ast);
+      expect(ASTToCondensed(CondensedToAST(back))).toBe(back);
+    }
+  });
 });

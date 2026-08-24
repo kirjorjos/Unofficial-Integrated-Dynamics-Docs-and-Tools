@@ -1,6 +1,14 @@
 import { operatorRegistry } from "lib/IntegratedDynamicsClasses/registries/operatorRegistry";
 import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
 import {
+  assertReaderSimulatedOutputType,
+  getReaderAspectDisplayName,
+  getReaderAspectKey,
+  getReaderClassByName,
+  getReaderClassByTypeName,
+  getReaderConstructorClass,
+} from "lib/IntegratedDynamicsClasses/readers/readerRegistry";
+import {
   getOpName,
   resolveImplicitFlipOperator,
   setOperatorSourceName,
@@ -136,6 +144,32 @@ export const ASTToCodeLine = (ast: TypeAST.AST, isTopLevel = true): string => {
       case "Recipe":
         result = `${node.type}(${JSON.stringify(node.value)})`;
         break;
+
+      case "Reader": {
+        const val = node.value;
+        const partIdStr =
+          val.partId !== undefined
+            ? /^-?\d+(\.\d+)?$/.test(val.partId)
+              ? val.partId
+              : JSON.stringify(val.partId)
+            : "";
+        const constructor = `${val.reader}${partIdStr ? `(${partIdStr})` : ""}`;
+        const args: string[] = [];
+        if (val.settings !== undefined) {
+          args.push(JSON.stringify(val.settings));
+        }
+        if (val.simulatedOutput !== undefined) {
+          args.push(stringify(val.simulatedOutput, false));
+        }
+        const readerClass = getReaderClassByTypeName(val.reader);
+        const aspectName = readerClass
+          ? getReaderAspectDisplayName(readerClass, val.aspect)
+          : val.aspect;
+        result = `${constructor}.${aspectName}${
+          args.length > 0 ? `(${args.join(", ")})` : ""
+        }`;
+        break;
+      }
     }
 
     if (node.varName && topLevel) {
@@ -251,7 +285,12 @@ export const CodeLineToAST = (
         varName?: string;
       }
     | { type: "Variable"; name: string }
-    | { type: "Identifier"; value: string };
+    | { type: "Identifier"; value: string }
+    | {
+        type: "Reader";
+        value: TypeAST.Reader["value"];
+        varName?: string;
+      };
 
   function tryParseParams(): string[] | null {
     const startPos = pos;
@@ -320,6 +359,9 @@ export const CodeLineToAST = (
         return result;
       }
     }
+
+    const readerExpr = tryParseReaderExpression(scope);
+    if (readerExpr !== undefined) return readerExpr;
 
     const token = tokens[pos++];
     if (!token) throw new Error("Unexpected end of input");
@@ -419,6 +461,278 @@ export const CodeLineToAST = (
     if (result === undefined) throw new Error("Empty sequence");
     return result;
   }
+
+  const parseReaderExtraArgs = (
+    args: InternalAST[]
+  ): {
+    settings?: Record<string, number | boolean | string>;
+    simulatedOutput?: InternalAST;
+  } => {
+    let settings: Record<string, number | boolean | string> | undefined;
+    let simulatedOutput: InternalAST | undefined;
+    for (const arg of args) {
+      if (arg.type === "NBT") {
+        if (settings !== undefined) {
+          throw new Error(
+            "Reader call may only contain one settings json object"
+          );
+        }
+        const value = arg.value;
+        if (
+          typeof value !== "object" ||
+          value === null ||
+          Array.isArray(value)
+        ) {
+          throw new Error("Reader settings must be a json object");
+        }
+        settings = value as Record<string, number | boolean | string>;
+      } else {
+        if (simulatedOutput !== undefined) {
+          throw new Error("Reader call may only contain one simulated output");
+        }
+        simulatedOutput = arg;
+      }
+    }
+    return { settings, simulatedOutput };
+  };
+
+  const parseReaderArg = (scope: Set<string>): InternalAST => {
+    let arg = parseExpression(scope);
+    while (tokens[pos] && tokens[pos] !== "," && tokens[pos] !== ")") {
+      arg = handleCallInternal(arg, [parseExpression(scope)]);
+    }
+    return arg;
+  };
+
+  const parseReaderCallArgs = (
+    scope: Set<string>
+  ): {
+    settings?: Record<string, number | boolean | string>;
+    simulatedOutput?: InternalAST;
+  } => {
+    if (tokens[pos] !== "(") {
+      return {};
+    }
+    pos++; // consume (
+    const args: InternalAST[] = [];
+    while (tokens[pos] && tokens[pos] !== ")") {
+      args.push(parseReaderArg(scope));
+      if (tokens[pos] === ",") pos++;
+    }
+    if (!tokens[pos]) throw new Error("Expected ')' after reader aspect args");
+    pos++; // consume )
+    return parseReaderExtraArgs(args);
+  };
+
+  const peekDotAspectName = (): string | undefined => {
+    const next = tokens[pos];
+    if (next === undefined) return undefined;
+    if (next === ".") {
+      const after = tokens[pos + 1];
+      if (after !== undefined && !after.startsWith(".")) return after;
+      return undefined;
+    }
+    if (next.startsWith(".")) return next.slice(1);
+    return undefined;
+  };
+
+  const consumeDotAspectName = (): string => {
+    const next = tokens[pos];
+    if (next === undefined) {
+      throw new Error("Expected '.' before aspect name");
+    }
+    if (next === ".") {
+      pos++;
+      const after = tokens[pos];
+      if (after === undefined) {
+        throw new Error("Expected aspect name after '.'");
+      }
+      pos++;
+      return after;
+    }
+    if (next.startsWith(".")) {
+      pos++;
+      return next.slice(1);
+    }
+    throw new Error("Expected '.' before aspect name");
+  };
+
+  const tryParseReaderExpression = (
+    scope: Set<string>
+  ): InternalAST | undefined => {
+    const token = tokens[pos];
+    if (token === undefined) return undefined;
+    if (scope.has(token) || externalScope.has(token)) return undefined;
+
+    const lower = token.toLowerCase();
+
+    if (lower === "reader") {
+      if (tokens[pos + 1] !== "(") return undefined;
+      pos += 2; // consume reader + (
+      const args: InternalAST[] = [];
+      while (tokens[pos] && tokens[pos] !== ")") {
+        args.push(parseReaderArg(scope));
+        if (tokens[pos] === ",") pos++;
+      }
+      if (!tokens[pos]) throw new Error("Expected ')' in reader(...)");
+      pos++; // consume )
+      if (args.length < 2) {
+        throw new Error("reader(...) requires a reader name and an aspect");
+      }
+      const readerNameArg = args[0]!;
+      const aspectArg = args[1]!;
+      if (readerNameArg.type !== "String" || aspectArg.type !== "String") {
+        throw new Error(
+          "reader(...) expects reader name and aspect as strings"
+        );
+      }
+      const readerClass = getReaderClassByName(readerNameArg.value);
+      if (!readerClass) {
+        throw new Error(`Unknown reader: ${readerNameArg.value}`);
+      }
+      const aspectKey = getReaderAspectKey(readerClass, aspectArg.value);
+      if (!aspectKey) {
+        throw new Error(
+          `Unknown aspect "${aspectArg.value}" for ${readerClass.typeName}`
+        );
+      }
+      const { settings, simulatedOutput } = parseReaderExtraArgs(args.slice(2));
+      assertReaderSimulatedOutputType(readerClass, aspectKey, simulatedOutput);
+      return {
+        type: "Reader",
+        value: {
+          reader: readerClass.typeName,
+          aspect: aspectKey,
+          settings,
+          simulatedOutput: simulatedOutput as TypeAST.AST,
+        },
+      };
+    }
+
+    let constructorToken = token;
+    let gluedAspect: string | undefined;
+    const readersPrefix = "readers.";
+    if (lower.startsWith(readersPrefix)) {
+      const rest = lower.slice(readersPrefix.length);
+      const dotIdx = rest.indexOf(".");
+      if (dotIdx !== -1) {
+        constructorToken = token.slice(0, readersPrefix.length + dotIdx);
+        gluedAspect = token.slice(readersPrefix.length + dotIdx + 1);
+      }
+    } else {
+      const dotIdx = token.indexOf(".");
+      if (dotIdx !== -1) {
+        constructorToken = token.slice(0, dotIdx);
+        gluedAspect = token.slice(dotIdx + 1);
+      }
+    }
+    const readerClass = getReaderConstructorClass(constructorToken);
+    if (!readerClass) return undefined;
+
+    if (gluedAspect === undefined && tokens[pos + 1] === "(") {
+      pos += 2; // consume name + (
+      const args: InternalAST[] = [];
+      while (tokens[pos] && tokens[pos] !== ")") {
+        args.push(parseReaderArg(scope));
+        if (tokens[pos] === ",") pos++;
+      }
+      if (!tokens[pos]) throw new Error("Expected ')' after reader name");
+      pos++; // consume )
+
+      if (peekDotAspectName() !== undefined) {
+        if (args.length > 1) {
+          throw new Error("Reader constructor takes at most one part id");
+        }
+        let partId: string | undefined;
+        if (args.length === 1) {
+          const a = args[0]!;
+          if (
+            a.type !== "Integer" &&
+            a.type !== "Long" &&
+            a.type !== "Double" &&
+            a.type !== "String"
+          ) {
+            throw new Error("Reader part id must be a literal value");
+          }
+          partId = (a as { value: string }).value;
+        }
+        const aspectName = consumeDotAspectName();
+        const aspectKey = getReaderAspectKey(readerClass, aspectName);
+        if (!aspectKey) {
+          throw new Error(
+            `Unknown aspect "${aspectName}" for ${readerClass.typeName}`
+          );
+        }
+        const { settings, simulatedOutput } = parseReaderCallArgs(scope);
+        assertReaderSimulatedOutputType(
+          readerClass,
+          aspectKey,
+          simulatedOutput
+        );
+        return {
+          type: "Reader",
+          value: {
+            reader: readerClass.typeName,
+            partId,
+            aspect: aspectKey,
+            settings,
+            simulatedOutput: simulatedOutput as TypeAST.AST,
+          },
+        };
+      }
+
+      if (args.length < 1) {
+        throw new Error("Reader constructor requires an aspect");
+      }
+      const aspectArg = args[0]!;
+      if (aspectArg.type !== "String") {
+        throw new Error("Reader aspect must be a string");
+      }
+      const aspectKey = getReaderAspectKey(readerClass, aspectArg.value);
+      if (!aspectKey) {
+        throw new Error(
+          `Unknown aspect "${aspectArg.value}" for ${readerClass.typeName}`
+        );
+      }
+      const { settings, simulatedOutput } = parseReaderExtraArgs(args.slice(1));
+      assertReaderSimulatedOutputType(readerClass, aspectKey, simulatedOutput);
+      return {
+        type: "Reader",
+        value: {
+          reader: readerClass.typeName,
+          aspect: aspectKey,
+          settings,
+          simulatedOutput: simulatedOutput as TypeAST.AST,
+        },
+      };
+    }
+
+    let aspectName = gluedAspect;
+    if (aspectName === undefined) aspectName = peekDotAspectName();
+    if (aspectName === undefined) return undefined;
+    if (gluedAspect !== undefined) {
+      pos++; // consume the glued constructor.aspect token
+    } else {
+      consumeDotAspectName();
+    }
+    const aspectKey = getReaderAspectKey(readerClass, aspectName);
+    if (!aspectKey) {
+      throw new Error(
+        `Unknown aspect "${aspectName}" for ${readerClass.typeName}`
+      );
+    }
+    const { settings, simulatedOutput } = parseReaderCallArgs(scope);
+    assertReaderSimulatedOutputType(readerClass, aspectKey, simulatedOutput);
+    return {
+      type: "Reader",
+      value: {
+        reader: readerClass.typeName,
+        aspect: aspectKey,
+        settings,
+        simulatedOutput: simulatedOutput as TypeAST.AST,
+      },
+    };
+  };
 
   function handleCallInternal(
     base: InternalAST,
@@ -571,6 +885,9 @@ export const CodeLineToAST = (
         containsVar(name, ast.op3 as InternalAST)
       );
     if (ast.type === "Flip") return containsVar(name, ast.arg as InternalAST);
+    if (ast.type === "Reader" && ast.value.simulatedOutput) {
+      return containsVar(name, ast.value.simulatedOutput as InternalAST);
+    }
     return false;
   }
 

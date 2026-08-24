@@ -3,6 +3,12 @@ import { computed } from "vue";
 import FitText from "./FitText.vue";
 import HoverMinecraftTooltip from "./HoverMinecraftTooltip.vue";
 import VisualTransformerStep from "./VisualTransformerStep.vue";
+import ReaderGuiView from "./ReaderGuiView.vue";
+import {
+  getReaderAspectDefaultValue,
+  getReaderClassByTypeName,
+} from "lib/IntegratedDynamicsClasses/readers/readerRegistry";
+import type { ReaderStatic } from "lib/IntegratedDynamicsClasses/readers/ReaderBase";
 import {
   ASTToCondensed,
   getExpandedVarName,
@@ -438,6 +444,19 @@ const cloneAstWithoutVarNames = (ast: TypeAST.AST): TypeAST.AST => {
           inputReuseable: ast.value.inputReuseable,
         },
       };
+    case "Reader":
+      return {
+        type: "Reader",
+        value: {
+          reader: ast.value.reader,
+          partId: ast.value.partId,
+          aspect: ast.value.aspect,
+          settings: ast.value.settings,
+          simulatedOutput: ast.value.simulatedOutput
+            ? cloneAstWithoutVarNames(ast.value.simulatedOutput)
+            : undefined,
+        },
+      };
   }
 };
 
@@ -468,6 +487,15 @@ const getCompactValueTextForAst = (ast: TypeAST.AST): string => {
         return value.getName().valueOf();
       }
       break;
+    }
+    case "Reader": {
+      if (ast.value.simulatedOutput) {
+        return getCompactValueTextForAst(ast.value.simulatedOutput);
+      }
+      const readerClass = getReaderClassByTypeName(ast.value.reader);
+      return readerClass
+        ? getReaderAspectDefaultValue(readerClass, ast.value.aspect)
+        : "";
     }
   }
 
@@ -924,6 +952,7 @@ const VALUE_NODE_TYPES = new Set<string>([
   "Entity",
   "Ingredients",
   "Recipe",
+  "Reader",
 ]);
 
 const getDisplayPanelText = (
@@ -1329,6 +1358,10 @@ const getStepActualOutputType = (
     node?: TypeAST.AST;
   }
 ): string => {
+  if (step.sourceType === "Reader" && step.node?.type === "Reader") {
+    const readerClass = getReaderClassByTypeName(step.node.value.reader);
+    return readerClass?.aspects[step.node.value.aspect]?.outputType ?? "Any";
+  }
   // For fully-applied Curry types, resolve the actual output type by
   // evaluating the node — it's a direct base-operator call producing a
   // concrete value (e.g. `apply add 1 2` → Integer), not a generic "apply".
@@ -1709,11 +1742,14 @@ const steps = computed<VisualStep[]>(() => {
         type:
           step.sourceType === "Operator"
             ? "Operator"
-            : step.sourceType === "Curry" && step.node
-              ? flattenAnonymousBaseOperatorApplication(step.node)?.fullyApplied
-                ? (getStepActualOutputType(fullStep) as TypeAST.AST["type"])
-                : "Operator"
-              : (getStepActualOutputType(fullStep) as TypeAST.AST["type"]),
+            : step.sourceType === "Reader" && step.node?.type === "Reader"
+              ? (getStepActualOutputType(fullStep) as TypeAST.AST["type"])
+              : step.sourceType === "Curry" && step.node
+                ? flattenAnonymousBaseOperatorApplication(step.node)
+                    ?.fullyApplied
+                  ? (getStepActualOutputType(fullStep) as TypeAST.AST["type"])
+                  : "Operator"
+                : (getStepActualOutputType(fullStep) as TypeAST.AST["type"]),
         variableId,
         tooltip,
       };
@@ -1943,6 +1979,32 @@ const steps = computed<VisualStep[]>(() => {
           output: nextName,
           node: ast,
         });
+      case "Reader": {
+        const readerClass = getReaderClassByTypeName(ast.value.reader);
+        let typeError: string | undefined;
+        if (ast.value.simulatedOutput) {
+          const expected =
+            readerClass?.aspects[ast.value.aspect]?.outputType ?? "Any";
+          const actual = ast.value.simulatedOutput.type;
+          if (!isTypeAssignable(actual, expected)) {
+            typeError = `Expected output type ${expected}, got simulatedOutput type ${actual}`;
+          }
+        }
+        return register({
+          id: `step-${result.length + 1}`,
+          title: readerClass?.shortName ?? ast.value.reader,
+          searchLabel: getValueTypeSearchLabel(ast.type),
+          panelLabel: readerClass?.typeName ?? ast.value.reader,
+          symbol: readerClass?.shortName ?? "R",
+          kind: "value",
+          sourceType: ast.type,
+          inputs: [],
+          output: nextName,
+          detail: ast.value.aspect,
+          node: ast,
+          typeError,
+        });
+      }
       default:
         return register({
           id: `step-${result.length + 1}`,
@@ -2260,6 +2322,31 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
 
   return filtered;
 };
+
+const getReaderViewReader = (step: VisualStep): ReaderStatic | undefined => {
+  if (step.node?.type === "Reader") {
+    return getReaderClassByTypeName(step.node.value.reader);
+  }
+  return undefined;
+};
+
+const getReaderViewFocusedAspect = (step: VisualStep): string | undefined => {
+  if (step.node?.type === "Reader") return step.node.value.aspect;
+  return undefined;
+};
+
+const getReaderViewValues = (
+  step: VisualStep
+): Record<string, string> | undefined => {
+  if (step.node?.type === "Reader" && step.node.value.simulatedOutput) {
+    return {
+      [step.node.value.aspect]: getCompactValueTextForAst(
+        step.node.value.simulatedOutput
+      ),
+    };
+  }
+  return undefined;
+};
 </script>
 
 <template>
@@ -2278,7 +2365,14 @@ const getVisibleListEntries = (step: VisualStep): VisibleListEntry[] => {
       :display-panel-align="getDisplayPanelAlign(step)"
       :display-panel-error="getStepDisplayError(step)"
     >
-      <div class="logic-programmer-frame">
+      <ReaderGuiView
+        v-if="step.sourceType === 'Reader'"
+        :reader="getReaderViewReader(step)!"
+        :focused-aspect="getReaderViewFocusedAspect(step)"
+        :values="getReaderViewValues(step)"
+        :type-error="step.typeError"
+      />
+      <div v-else class="logic-programmer-frame">
         <div class="logic-programmer-overlay">
           <div class="logic-search-overlay">
             <FitText :text="step.searchLabel" />

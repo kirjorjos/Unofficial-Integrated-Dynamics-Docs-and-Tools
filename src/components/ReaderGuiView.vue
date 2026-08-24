@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import FitText from "./FitText.vue";
+import HoverMinecraftTooltip from "./HoverMinecraftTooltip.vue";
 import { publicAsset } from "pages-lib/visualTransformerHelpers";
 import { LOGIC_PROGRAMMER_TYPE_COLORS } from "pages-lib/visualTransformer";
 import type { ReaderStatic } from "lib/IntegratedDynamicsClasses/readers/ReaderBase";
+import { getReaderAspectDefaultValue } from "lib/IntegratedDynamicsClasses/readers/readerRegistry";
 
 const props = withDefaults(
   defineProps<{
@@ -12,6 +14,7 @@ const props = withDefaults(
     focusedAspect?: string;
     /** Per-aspect display values (aspectKey -> text shown in the value box). */
     values?: Record<string, string>;
+    typeError?: string;
   }>(),
   {}
 );
@@ -33,13 +36,16 @@ const READER_TITLES: Record<string, string> = {
 };
 
 const getTypeName = (aspectKey: string): string =>
-  props.reader.aspectOutputType[aspectKey] ?? "Any";
+  props.reader.aspects[aspectKey]?.outputType ?? "Any";
 
 const getAspectName = (aspectKey: string): string =>
-  props.reader.aspects[aspectKey]?.displayName ?? aspectKey;
+  props.reader.aspects[aspectKey]?.fullDisplayName ?? aspectKey;
 
 const getTypeColor = (aspectKey: string): string =>
   LOGIC_PROGRAMMER_TYPE_COLORS[getTypeName(aspectKey)]?.primary ?? "#f3f3f3";
+
+const getAspectDefaultValue = (aspectKey: string): string =>
+  getReaderAspectDefaultValue(props.reader, aspectKey);
 
 const getSmoothenedColor = (hex: string): string => {
   const value = hex.replace("#", "");
@@ -50,21 +56,8 @@ const getSmoothenedColor = (hex: string): string => {
   return `rgb(${channels.join(", ")})`;
 };
 
-const defaultValue = (aspectKey: string): string => {
-  switch (getTypeName(aspectKey)) {
-    case "Boolean":
-      return "false";
-    case "Integer":
-    case "Double":
-    case "Long":
-      return "0";
-    default:
-      return "";
-  }
-};
-
 const getAspectValue = (aspectKey: string): string =>
-  props.values?.[aspectKey] ?? defaultValue(aspectKey);
+  props.values?.[aspectKey] ?? getAspectDefaultValue(aspectKey);
 
 const getAspectHasSettings = (aspectKey: string): boolean => {
   const settings = props.reader.aspects[aspectKey]?.settings;
@@ -192,10 +185,19 @@ const thumbTop = computed(() => {
             <div class="reader-slot-input-diamond" />
           </div>
 
-          <!-- Output slot: card shown only for the focused aspect -->
+          <!-- Output slot: card shown only for the focused aspect; an error
+               X (with the type-error tooltip) replaces it on simulated-output
+               type mismatches -->
           <div class="reader-slot-output">
+            <HoverMinecraftTooltip
+              v-if="aspectKey === focusedAspect && props.typeError"
+              :title="props.typeError"
+              :lines="[]"
+            >
+              <span class="logic-type-error-icon reader-output-error-icon" />
+            </HoverMinecraftTooltip>
             <div
-              v-if="aspectKey === focusedAspect"
+              v-else-if="aspectKey === focusedAspect"
               class="reader-slot-output-card"
               :style="cardStyle(aspectKey)"
             />
@@ -371,6 +373,11 @@ const thumbTop = computed(() => {
   background-repeat: no-repeat;
   background-position: center;
   image-rendering: pixelated;
+}
+
+.reader-output-error-icon {
+  width: 14px;
+  height: 14px;
 }
 
 .reader-plus {
