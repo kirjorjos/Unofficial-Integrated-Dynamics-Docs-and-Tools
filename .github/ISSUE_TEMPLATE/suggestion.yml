@@ -1,0 +1,45 @@
+name: Suggestion
+description: Propose an improvement, new page, or feature
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: >
+        Thanks for the idea! Tell us what you would like to see and why it
+        would help.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected area
+      description: What part of the project does this touch?
+      options:
+        - Logic Programmer / visual tools
+        - Reader documentation pages
+        - Documentation content
+        - Site / build
+        - Other / unsure
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Describe the suggestion
+      description: What should change or be added?
+    validations:
+      required: true
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Why is this needed?
+      description: The problem this solves or the workflow it improves.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues for a duplicate
+          required: true
