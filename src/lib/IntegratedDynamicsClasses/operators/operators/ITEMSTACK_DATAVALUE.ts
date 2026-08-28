@@ -28,7 +28,10 @@ export class OPERATOR_ITEMSTACK_DATAVALUE extends BaseOperator<Item, iBoolean> {
   static override operatorName = "itemstack_datavalue" as const;
   static override displayName = "Item Data Value" as const;
   static override fullDisplayName = "Item Item Data Value" as const;
-  static override stringDisplayNames = ["Item Item Data Value"];
+  static override stringDisplayNames = [
+    "Item Item Data Value",
+    "Item Data Value",
+  ];
   static override kind = "itemstack" as const;
   static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {

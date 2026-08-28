@@ -25,7 +25,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_MAXSIZE extends BaseOperator<
   static override operatorName = "maxsize" as const;
   static override displayName = "Max size" as const;
   static override fullDisplayName = "Item Max size" as const;
-  static override stringDisplayNames = ["Item Max size"];
+  static override stringDisplayNames = ["Item Max size", "Max size"];
   static override tooltipInfo = "The maximum stack size" as const;
 
   static override kind = "itemstack" as const;

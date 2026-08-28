@@ -30,7 +30,10 @@ export class OPERATOR_ITEMSTACK_WITHDATA extends BaseOperator<
   static override operatorName = "itemstack_withdata" as const;
   static override displayName = "Item With Data" as const;
   static override fullDisplayName = "Item Item With Data" as const;
-  static override stringDisplayNames = ["Item Item With Data"];
+  static override stringDisplayNames = [
+    "Item Item With Data",
+    "Item With Data",
+  ];
   static override kind = "itemstack" as const;
   static override renderPattern = "INFIX_2_LONG" as const;
   constructor(normalizeSignature = true) {

@@ -20,7 +20,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_DAMAGE extends BaseOperator<
   static override operatorName = "damage" as const;
   static override displayName = "Damage" as const;
   static override fullDisplayName = "Item Damage" as const;
-  static override stringDisplayNames = ["Item Damage"];
+  static override stringDisplayNames = ["Item Damage", "Damage"];
   static override tooltipInfo = "The current item damage" as const;
 
   static override kind = "itemstack" as const;
