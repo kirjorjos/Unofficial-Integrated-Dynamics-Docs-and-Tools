@@ -16,7 +16,10 @@ export class OPERATOR_OBJECT_BLOCK_ISPLANTABLE extends BaseOperator<
   static override operatorName = "isplantable" as const;
   static override displayName = "Block Is Plant" as const;
   static override fullDisplayName = "Block Block Is Plant" as const;
-  static override stringDisplayNames = ["Block Block Is Plant"];
+  static override stringDisplayNames = [
+    "Block Block Is Plant",
+    "Block Is Plant",
+  ];
   static override tooltipInfo = "If the given block is a plant" as const;
 
   static override kind = "block" as const;

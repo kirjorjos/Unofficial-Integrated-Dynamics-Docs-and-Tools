@@ -85,6 +85,14 @@ describe("TestCodeLineTransformer", () => {
       type: "Operator",
       opName: "LONG_TO_DOUBLE",
     });
+    expect(CodeLineToAST('Operator("Block Plant")')).toEqual({
+      type: "Operator",
+      opName: "OBJECT_BLOCK_PLANT",
+    });
+    expect(CodeLineToAST('Operator("Item Frame Contents")')).toEqual({
+      type: "Operator",
+      opName: "OBJECT_ITEMFRAME_CONTENTS",
+    });
     expect(() => CodeLineToAST('Operator("Cast Number to Double")')).toThrow(
       "Unknown operator: Cast Number to Double"
     );

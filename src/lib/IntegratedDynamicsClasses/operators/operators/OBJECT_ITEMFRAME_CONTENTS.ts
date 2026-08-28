@@ -28,7 +28,10 @@ export class OPERATOR_OBJECT_ITEMFRAME_CONTENTS extends BaseOperator<
   static override operatorName = "itemframecontents" as const;
   static override displayName = "Item Frame Contents" as const;
   static override fullDisplayName = "Entity Item Frame Contents" as const;
-  static override stringDisplayNames = ["Entity Item Frame Contents"];
+  static override stringDisplayNames = [
+    "Entity Item Frame Contents",
+    "Item Frame Contents",
+  ];
   static override tooltipInfo =
     "The contents from the given Item Frame." as const;
 

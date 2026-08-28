@@ -11,7 +11,7 @@ export class OPERATOR_OBJECT_BLOCK_PLANT extends BaseOperator<Block, Block> {
   static override operatorName = "plant" as const;
   static override displayName = "Block Plant" as const;
   static override fullDisplayName = "Block Block Plant" as const;
-  static override stringDisplayNames = ["Block Block Plant"];
+  static override stringDisplayNames = ["Block Block Plant", "Block Plant"];
   static override tooltipInfo =
     "The resulting block when this block is planted" as const;
 
