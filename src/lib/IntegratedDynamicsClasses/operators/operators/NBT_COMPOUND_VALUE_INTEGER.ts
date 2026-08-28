@@ -30,6 +30,10 @@ export class OPERATOR_NBT_COMPOUND_VALUE_INTEGER extends BaseOperator<
   static override operatorName = "compound_value_integer" as const;
   static override displayName = "NBT Compound Value Integer" as const;
   static override fullDisplayName = "NBT NBT Compound Value Integer" as const;
+  static override stringDisplayNames = [
+    "NBT Compound Value Integer",
+    "NBT NBT Compound Value Integer",
+  ];
   static override tooltipInfo =
     "The Integer value in the given NBT compound tag with the given key" as const;
 

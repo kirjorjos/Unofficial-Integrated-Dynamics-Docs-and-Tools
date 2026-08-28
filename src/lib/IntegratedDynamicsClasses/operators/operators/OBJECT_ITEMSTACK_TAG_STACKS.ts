@@ -27,6 +27,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_TAG_STACKS extends BaseOperator<
   static override operatorName = "tag" as const;
   static override displayName = "Item Tag Values" as const;
   static override fullDisplayName = "String Item Tag Values" as const;
+  static override stringDisplayNames = ["String Item Tag Values"];
   static override tooltipInfo =
     "The Tag values (items) of the given name" as const;
 

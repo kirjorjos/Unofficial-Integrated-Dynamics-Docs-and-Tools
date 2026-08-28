@@ -28,6 +28,10 @@ export class OPERATOR_NBT_COMPOUND_WITH_LONG extends BaseOperator<
   static override operatorName = "compound_with_long" as const;
   static override displayName = "NBT Compound With Long" as const;
   static override fullDisplayName = "NBT NBT Compound With Long" as const;
+  static override stringDisplayNames = [
+    "NBT Compound With Long",
+    "NBT NBT Compound With Long",
+  ];
   static override tooltipInfo =
     "Get a copy of the given NBT compound tag with the given Long entry" as const;
 

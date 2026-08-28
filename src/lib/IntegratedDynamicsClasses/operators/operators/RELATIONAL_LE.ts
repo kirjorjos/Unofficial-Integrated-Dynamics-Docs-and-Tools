@@ -24,6 +24,10 @@ export class OPERATOR_RELATIONAL_LE extends BaseOperator<
   static override operatorName = "le" as const;
   static override displayName = "Less Than or Equal" as const;
   static override fullDisplayName = "Relational Less Than or Equal" as const;
+  static override stringDisplayNames = [
+    "Less Than or Equal",
+    "Relational Less Than or Equal",
+  ];
   static override kind = "relational" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

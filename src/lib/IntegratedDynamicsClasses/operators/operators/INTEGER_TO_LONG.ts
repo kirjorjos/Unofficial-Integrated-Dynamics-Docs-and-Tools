@@ -20,7 +20,7 @@ export class OPERATOR_INTEGER_TO_LONG extends BaseOperator<Integer, Long> {
   static override operatorName = "cast_long" as const;
   static override displayName = "Cast Number to Long" as const;
   static override fullDisplayName = "Number Cast Number to Long" as const;
-  static override stringDisplayName = "Number Cast Integer to Long" as const;
+  static override stringDisplayNames = ["Number Cast Integer to Long"];
   static override kind = "number" as const;
   static override renderPattern = "PREFIX_1" as const;
   constructor(normalizeSignature = true) {

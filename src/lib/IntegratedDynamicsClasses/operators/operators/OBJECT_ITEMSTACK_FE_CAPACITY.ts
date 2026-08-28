@@ -27,6 +27,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_FE_CAPACITY extends BaseOperator<
   static override operatorName = "fecapacity" as const;
   static override displayName = "FE Capacity" as const;
   static override fullDisplayName = "Item FE Capacity" as const;
+  static override stringDisplayNames = ["Item FE Capacity"];
   static override tooltipInfo =
     "The maximum amount of FE that can be stored in this item" as const;
 

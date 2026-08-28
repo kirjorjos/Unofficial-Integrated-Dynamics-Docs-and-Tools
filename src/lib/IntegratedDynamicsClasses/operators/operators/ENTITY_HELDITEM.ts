@@ -23,6 +23,10 @@ export class OPERATOR_ENTITY_HELDITEM extends BaseOperator<Entity, Item> {
   static override operatorName = "helditem" as const;
   static override displayName = "Held Item Mainhand" as const;
   static override fullDisplayName = "Entity Held Item Mainhand" as const;
+  static override stringDisplayNames = [
+    "Held Item Mainhand",
+    "Entity Held Item Mainhand",
+  ];
   static override tooltipInfo =
     "The item the given entity is currently holding in its main hand." as const;
 

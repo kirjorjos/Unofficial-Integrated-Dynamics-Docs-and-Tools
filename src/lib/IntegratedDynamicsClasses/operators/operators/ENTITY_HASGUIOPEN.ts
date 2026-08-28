@@ -24,6 +24,7 @@ export class OPERATOR_ENTITY_HASGUIOPEN extends BaseOperator<Entity, iBoolean> {
   static override operatorName = "hasguiopen" as const;
   static override displayName = "Has Gui Open" as const;
   static override fullDisplayName = "Entity Has Gui Open" as const;
+  static override stringDisplayNames = ["Has Gui Open", "Entity Has Gui Open"];
   static override tooltipInfo =
     "If the given player has an external gui open." as const;
 

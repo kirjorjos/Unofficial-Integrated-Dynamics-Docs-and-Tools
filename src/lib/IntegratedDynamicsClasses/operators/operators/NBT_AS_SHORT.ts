@@ -19,6 +19,10 @@ export class OPERATOR_NBT_AS_SHORT extends BaseOperator<ShortTag, Integer> {
   static override operatorName = "as_short" as const;
   static override displayName = "NBT Short as Integer" as const;
   static override fullDisplayName = "NBT NBT Short as Integer" as const;
+  static override stringDisplayNames = [
+    "NBT Short as Integer",
+    "NBT NBT Short as Integer",
+  ];
   static override tooltipInfo =
     "Get the Integer value of the given NBT Short tag" as const;
 

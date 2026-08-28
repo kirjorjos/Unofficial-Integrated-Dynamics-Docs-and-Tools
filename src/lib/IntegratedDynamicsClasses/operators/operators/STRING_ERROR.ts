@@ -22,6 +22,7 @@ export class OPERATOR_STRING_ERROR extends BaseOperator<
   static override operatorName = "string_error" as const;
   static override displayName = "Error" as const;
   static override fullDisplayName = "String Error" as const;
+  static override stringDisplayNames = ["Error", "String Error"];
   static override kind = "string" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

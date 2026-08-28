@@ -26,6 +26,7 @@ export class OPERATOR_RELATIONAL_EQUALS extends BaseOperator<
   static override operatorName = "equals" as const;
   static override displayName = "Equals" as const;
   static override fullDisplayName = "Relational Equals" as const;
+  static override stringDisplayNames = ["Equals", "Relational Equals"];
   static override tooltipInfo = "Type one and two must be equal." as const;
 
   static override kind = "relational" as const;

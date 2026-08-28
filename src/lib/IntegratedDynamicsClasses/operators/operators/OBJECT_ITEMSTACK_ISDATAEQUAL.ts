@@ -27,6 +27,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISDATAEQUAL extends BaseOperator<
   static override operatorName = "isnbtequal" as const;
   static override displayName = "NBT equals" as const;
   static override fullDisplayName = "Item NBT equals" as const;
+  static override stringDisplayNames = ["Item NBT equals"];
   static override tooltipInfo =
     "If the NBT tags of the given items are equal" as const;
 

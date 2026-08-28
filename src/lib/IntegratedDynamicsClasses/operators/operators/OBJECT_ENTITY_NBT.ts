@@ -21,6 +21,7 @@ export class OPERATOR_OBJECT_ENTITY_NBT extends BaseOperator<
   static override operatorName = "nbt" as const;
   static override displayName = "Entity NBT" as const;
   static override fullDisplayName = "Entity Entity NBT" as const;
+  static override stringDisplayNames = ["Entity NBT", "Entity Entity NBT"];
   static override tooltipInfo = "Get the given entity as NBT." as const;
 
   static override kind = "entity" as const;

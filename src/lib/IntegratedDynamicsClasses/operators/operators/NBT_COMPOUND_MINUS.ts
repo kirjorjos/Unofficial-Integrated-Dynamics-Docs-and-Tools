@@ -24,6 +24,10 @@ export class OPERATOR_NBT_COMPOUND_MINUS extends BaseOperator<
   static override operatorName = "compound_minus" as const;
   static override displayName = "NBT Compound Minus" as const;
   static override fullDisplayName = "NBT NBT Compound Minus" as const;
+  static override stringDisplayNames = [
+    "NBT Compound Minus",
+    "NBT NBT Compound Minus",
+  ];
   static override tooltipInfo =
     "The difference of the given NBT compound tags. Nested tags will be subtracted recusively." as const;
 

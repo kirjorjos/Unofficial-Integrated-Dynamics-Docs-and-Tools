@@ -23,7 +23,7 @@ export class OPERATOR_PARSE_DOUBLE extends BaseOperator<iString, Double> {
   static override operatorName = "parse_double" as const;
   static override displayName = "Parse Double" as const;
   static override fullDisplayName = "Parse" as const;
-  static override stringDisplayName = "Parse Double" as const;
+  static override stringDisplayNames = ["Parse Double"];
   static override kind = "parse" as const;
   static override renderPattern = "PREFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

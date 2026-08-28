@@ -18,6 +18,7 @@ export class OPERATOR_LIST_SLICE extends BaseOperator<
   static override operatorName = "slice" as const;
   static override displayName = "Slice" as const;
   static override fullDisplayName = "List Slice" as const;
+  static override stringDisplayNames = ["Slice", "List Slice"];
   static override tooltipInfo =
     "Take a subset of the given list from the given index (inclusive) to the given index (exclusive)." as const;
 

@@ -26,6 +26,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISDAMAGEABLE extends BaseOperator<
   static override operatorName = "damageable" as const;
   static override displayName = "Damageable" as const;
   static override fullDisplayName = "Item Damageable" as const;
+  static override stringDisplayNames = ["Item Damageable"];
   static override tooltipInfo = "If the item can take damage." as const;
 
   static override kind = "itemstack" as const;

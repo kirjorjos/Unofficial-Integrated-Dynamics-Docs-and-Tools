@@ -28,6 +28,10 @@ export class OPERATOR_NBT_PATH_MATCH_FIRST extends BaseOperator<
   static override operatorName = "path_match_first" as const;
   static override displayName = "NBT Path Match First" as const;
   static override fullDisplayName = "NBT NBT Path Match First" as const;
+  static override stringDisplayNames = [
+    "NBT Path Match First",
+    "NBT NBT Path Match First",
+  ];
   static override tooltipInfo =
     "Apply the given NBT Path expression on the given NBT value, and return the first match" as const;
 

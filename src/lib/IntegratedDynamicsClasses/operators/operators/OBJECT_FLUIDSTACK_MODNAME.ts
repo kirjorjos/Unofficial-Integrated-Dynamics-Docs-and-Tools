@@ -25,6 +25,7 @@ export class OPERATOR_OBJECT_FLUIDSTACK_MODNAME extends BaseOperator<
   static override operatorName = "mod" as const;
   static override displayName = "Mod" as const;
   static override fullDisplayName = "Fluid Mod" as const;
+  static override stringDisplayNames = ["Fluid Mod"];
   static override tooltipInfo =
     "The name of the mod owning the given fluid" as const;
 

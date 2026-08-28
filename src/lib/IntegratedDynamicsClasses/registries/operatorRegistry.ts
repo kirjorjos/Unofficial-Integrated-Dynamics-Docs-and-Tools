@@ -329,9 +329,7 @@ const operatorRegistryClass = class operatorRegistryClass {
         if (staticOp.nicknames.includes(nickname))
           return key as TypeOperatorKey;
 
-        if (
-          (staticOp.stringDisplayName ?? staticOp.fullDisplayName) === nickname
-        )
+        if (staticOp.stringDisplayNames.includes(nickname))
           return key as TypeOperatorKey;
       }
     }

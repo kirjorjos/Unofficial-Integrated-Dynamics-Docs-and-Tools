@@ -26,6 +26,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_HASINVENTORY extends BaseOperator<
   static override operatorName = "hasinventory" as const;
   static override displayName = "Item Has Inventory" as const;
   static override fullDisplayName = "Item Item Has Inventory" as const;
+  static override stringDisplayNames = ["Item Item Has Inventory"];
   static override tooltipInfo = "If the given item has an inventory" as const;
 
   static override kind = "itemstack" as const;

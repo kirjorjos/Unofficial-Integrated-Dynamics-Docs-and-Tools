@@ -23,6 +23,7 @@ export class OPERATOR_BINARY_LSHIFT extends BaseOperator<
   static override operatorName = "lshift" as const;
   static override displayName = "Left Shift" as const;
   static override fullDisplayName = "Binary Left Shift" as const;
+  static override stringDisplayNames = ["Left Shift", "Binary Left Shift"];
   static override kind = "binary" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

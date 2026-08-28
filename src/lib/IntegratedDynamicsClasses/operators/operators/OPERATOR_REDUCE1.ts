@@ -16,6 +16,7 @@ export class OPERATOR_OPERATOR_REDUCE1 extends BaseOperator<any, any> {
   static override operatorName = "reduce1" as const;
   static override displayName = "Reduce 1" as const;
   static override fullDisplayName = "Operator Reduce 1" as const;
+  static override stringDisplayNames = ["Reduce 1", "Operator Reduce 1"];
   static override tooltipInfo =
     "Apply the given operator on all elements of a list to reduce the list to one value. reduce1(op, list) is equivalent to reduce(op, tail(list), head(list))." as const;
 

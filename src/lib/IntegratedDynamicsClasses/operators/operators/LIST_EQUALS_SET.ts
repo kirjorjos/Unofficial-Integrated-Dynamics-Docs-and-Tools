@@ -25,6 +25,10 @@ export class OPERATOR_LIST_EQUALS_SET extends BaseOperator<
   static override operatorName = "equals_set" as const;
   static override displayName = "List Equals (Set)" as const;
   static override fullDisplayName = "List List Equals (Set)" as const;
+  static override stringDisplayNames = [
+    "List Equals (Set)",
+    "List List Equals (Set)",
+  ];
   static override kind = "list" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

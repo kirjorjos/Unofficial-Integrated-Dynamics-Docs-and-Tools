@@ -29,6 +29,10 @@ export class OPERATOR_NBT_COMPOUND_WITH_LIST_TAG extends BaseOperator<
   static override operatorName = "compound_with_list_tag" as const;
   static override displayName = "NBT Compound With NBT List" as const;
   static override fullDisplayName = "NBT NBT Compound With NBT List" as const;
+  static override stringDisplayNames = [
+    "NBT Compound With NBT List",
+    "NBT NBT Compound With NBT List",
+  ];
   static override tooltipInfo =
     "Get a copy of the given NBT compound tag with the given NBT List entry" as const;
 

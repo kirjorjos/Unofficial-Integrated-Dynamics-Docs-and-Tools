@@ -24,6 +24,7 @@ export class OPERATOR_OBJECT_ENTITY_ISITEM extends BaseOperator<
   static override operatorName = "isitem" as const;
   static override displayName = "Is Item" as const;
   static override fullDisplayName = "Entity Is Item" as const;
+  static override stringDisplayNames = ["Is Item", "Entity Is Item"];
   static override tooltipInfo = "If the entity is an item" as const;
 
   static override kind = "entity" as const;

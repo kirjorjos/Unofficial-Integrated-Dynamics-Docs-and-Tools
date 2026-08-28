@@ -26,6 +26,7 @@ export class OPERATOR_STRING_REGEX_SCAN extends BaseOperator<
   static override operatorName = "regex_scan" as const;
   static override displayName = "Regex Scan" as const;
   static override fullDisplayName = "String Regex Scan" as const;
+  static override stringDisplayNames = ["Regex Scan", "String Regex Scan"];
   static override tooltipInfo =
     "Search for all matches of the given regular expression and return the group at the given index, in the given string." as const;
 

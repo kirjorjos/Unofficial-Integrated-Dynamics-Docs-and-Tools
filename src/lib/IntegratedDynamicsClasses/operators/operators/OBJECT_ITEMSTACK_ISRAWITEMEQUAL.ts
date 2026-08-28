@@ -28,6 +28,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISRAWITEMEQUAL extends BaseOperator<
   static override operatorName = "israwitemequal" as const;
   static override displayName = "Raw item equals" as const;
   static override fullDisplayName = "Item Raw item equals" as const;
+  static override stringDisplayNames = ["Item Raw item equals"];
   static override tooltipInfo =
     "If the raw items of the given items are equal, ignoring NBT and damage value." as const;
 

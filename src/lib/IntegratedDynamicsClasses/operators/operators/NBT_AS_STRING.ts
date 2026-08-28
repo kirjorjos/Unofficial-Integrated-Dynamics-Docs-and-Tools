@@ -18,6 +18,10 @@ export class OPERATOR_NBT_AS_STRING extends BaseOperator<StringTag, iString> {
   static override operatorName = "as_string" as const;
   static override displayName = "NBT String As String" as const;
   static override fullDisplayName = "NBT NBT String As String" as const;
+  static override stringDisplayNames = [
+    "NBT String As String",
+    "NBT NBT String As String",
+  ];
   static override tooltipInfo =
     "Get the String value of the given NBT String tag" as const;
 

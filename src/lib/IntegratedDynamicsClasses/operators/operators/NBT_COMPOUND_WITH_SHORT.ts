@@ -28,6 +28,10 @@ export class OPERATOR_NBT_COMPOUND_WITH_SHORT extends BaseOperator<
   static override operatorName = "compound_with_short" as const;
   static override displayName = "NBT Compound With Short" as const;
   static override fullDisplayName = "NBT NBT Compound With Short" as const;
+  static override stringDisplayNames = [
+    "NBT Compound With Short",
+    "NBT NBT Compound With Short",
+  ];
   static override tooltipInfo =
     "Get a copy of the given NBT compound tag with the given Integer as a short entry" as const;
 

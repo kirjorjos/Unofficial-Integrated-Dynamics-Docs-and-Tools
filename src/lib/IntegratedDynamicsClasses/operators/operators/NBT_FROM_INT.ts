@@ -19,6 +19,10 @@ export class OPERATOR_NBT_FROM_INT extends BaseOperator<Integer, IntTag> {
   static override operatorName = "from_int" as const;
   static override displayName = "NBT Integer From Integer" as const;
   static override fullDisplayName = "NBT NBT Integer From Integer" as const;
+  static override stringDisplayNames = [
+    "NBT Integer From Integer",
+    "NBT NBT Integer From Integer",
+  ];
   static override tooltipInfo =
     "Create an NBT Integer tag from the given Integer value" as const;
 

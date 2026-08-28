@@ -29,6 +29,10 @@ export class OPERATOR_NBT_COMPOUND_WITH_LIST_LONG extends BaseOperator<
   static override operatorName = "compound_with_list_long" as const;
   static override displayName = "NBT Compound With Long List" as const;
   static override fullDisplayName = "NBT NBT Compound With Long List" as const;
+  static override stringDisplayNames = [
+    "NBT Compound With Long List",
+    "NBT NBT Compound With Long List",
+  ];
   static override tooltipInfo =
     "Get a copy of the given NBT compound tag with the given NBT Long Array entry" as const;
 

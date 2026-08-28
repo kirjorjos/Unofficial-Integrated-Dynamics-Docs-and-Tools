@@ -24,6 +24,10 @@ export class OPERATOR_OBJECT_ENTITY_ISINLOVE extends BaseOperator<
   static override operatorName = "isinlove" as const;
   static override displayName = "Entity Is In Love" as const;
   static override fullDisplayName = "Entity Entity Is In Love" as const;
+  static override stringDisplayNames = [
+    "Entity Is In Love",
+    "Entity Entity Is In Love",
+  ];
   static override tooltipInfo =
     "If the given entity is in love and is ready to breed." as const;
 

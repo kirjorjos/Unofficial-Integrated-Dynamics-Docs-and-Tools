@@ -27,6 +27,10 @@ export class OPERATOR_STRING_REPLACE_REGEX extends BaseOperator<
   static override operatorName = "replace_regex" as const;
   static override displayName = "Replace Regex" as const;
   static override fullDisplayName = "String Replace Regex" as const;
+  static override stringDisplayNames = [
+    "Replace Regex",
+    "String Replace Regex",
+  ];
   static override tooltipInfo =
     "Find all matches of the search pattern and replace them with the given string, in the given string." as const;
 

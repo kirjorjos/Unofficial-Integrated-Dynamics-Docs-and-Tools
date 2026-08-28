@@ -17,6 +17,7 @@ export class OPERATOR_DOUBLE_SQRT extends BaseOperator<Double, Double> {
   static override operatorName = "sqrt" as const;
   static override displayName = "Square Root" as const;
   static override fullDisplayName = "Double Square Root" as const;
+  static override stringDisplayNames = ["Square Root", "Double Square Root"];
   static override kind = "double" as const;
   static override renderPattern = "PREFIX_1" as const;
   constructor(normalizeSignature = true) {

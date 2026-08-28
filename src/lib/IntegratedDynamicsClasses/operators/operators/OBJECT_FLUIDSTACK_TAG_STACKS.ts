@@ -29,6 +29,10 @@ export class OPERATOR_OBJECT_FLUIDSTACK_TAG_STACKS extends BaseOperator<
   static override operatorName = "fluidtag" as const;
   static override displayName = "Fluid Tag Values" as const;
   static override fullDisplayName = "String Fluid Tag Values" as const;
+  static override stringDisplayNames = [
+    "Fluid Tag Values",
+    "String Fluid Tag Values",
+  ];
   static override kind = "string" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

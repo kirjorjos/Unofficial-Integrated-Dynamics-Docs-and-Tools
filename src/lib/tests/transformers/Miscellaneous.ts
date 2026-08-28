@@ -99,6 +99,40 @@ describe("MiscellaneousTests", () => {
         });
       }
     }
+
+    it("testResolvableNameCrossOperatorUniqueness", () => {
+      const fullOwners = new Map<string, number>();
+      operatorClasses.forEach((c, i) => {
+        if (c.fullDisplayName) {
+          if (!fullOwners.has(c.fullDisplayName))
+            fullOwners.set(c.fullDisplayName, i);
+          else fullOwners.set(c.fullDisplayName, -1);
+        }
+      });
+
+      const owner = new Map<string, string>();
+      const dupes: string[] = [];
+      operatorClasses.forEach((c, i) => {
+        const names = new Set<string>([
+          ...c.nicknames,
+          ...c.stringDisplayNames,
+        ]);
+        if (c.fullDisplayName && fullOwners.get(c.fullDisplayName) === i) {
+          names.add(c.fullDisplayName);
+        }
+        for (const n of names) {
+          if (!n) continue;
+          const existing = owner.get(n);
+          if (existing !== undefined) {
+            dupes.push(`"${n}" used by both ${existing} and ${c.internalName}`);
+          } else {
+            owner.set(n, c.internalName);
+          }
+        }
+      });
+
+      expect(dupes).toEqual([]);
+    });
   });
 
   describe("ValidationTests", () => {

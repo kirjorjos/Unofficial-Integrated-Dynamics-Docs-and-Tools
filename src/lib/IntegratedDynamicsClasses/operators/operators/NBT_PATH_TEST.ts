@@ -27,6 +27,7 @@ export class OPERATOR_NBT_PATH_TEST extends BaseOperator<
   static override operatorName = "path_test" as const;
   static override displayName = "NBT Path Test" as const;
   static override fullDisplayName = "NBT NBT Path Test" as const;
+  static override stringDisplayNames = ["NBT Path Test", "NBT NBT Path Test"];
   static override tooltipInfo =
     "Test if the given NBT Path expression matches with the given NBT value" as const;
 

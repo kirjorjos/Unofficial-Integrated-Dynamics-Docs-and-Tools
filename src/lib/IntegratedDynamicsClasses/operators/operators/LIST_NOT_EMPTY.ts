@@ -22,6 +22,7 @@ export class OPERATOR_LIST_NOT_EMPTY extends BaseOperator<
   static override operatorName = "notempty" as const;
   static override displayName = "Not Empty" as const;
   static override fullDisplayName = "List Not Empty" as const;
+  static override stringDisplayNames = ["Not Empty", "List Not Empty"];
   static override tooltipInfo = "If the list is not empty" as const;
 
   static override kind = "list" as const;
