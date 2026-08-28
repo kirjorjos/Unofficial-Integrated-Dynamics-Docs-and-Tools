@@ -26,27 +26,84 @@ import {
 import { normalizeSegments } from "lib/transformers/MixedLists";
 
 type char = string;
+export type QuoteDelimiter = '"' | "'" | '"""';
+
 interface State {
-  inString: boolean;
+  quote: QuoteDelimiter | null;
   isEscaped: boolean;
   inJSON: number;
 }
 
+const unescapeDelimited = (s: string, escapeQuote: "'" | '"'): string => {
+  let out = "";
+  for (let i = 0; i < s.length; i++) {
+    const ch = s[i]!;
+    if (ch !== "\\") {
+      out += ch;
+      continue;
+    }
+    const next = s[i + 1];
+    if (next === undefined) {
+      out += "\\";
+      break;
+    }
+    if (next === escapeQuote) {
+      out += escapeQuote;
+      i++;
+    } else if (next === "\\") {
+      out += "\\";
+      i++;
+    } else if (next === "n") {
+      out += "\n";
+      i++;
+    } else if (next === "t") {
+      out += "\t";
+      i++;
+    } else if (next === "r") {
+      out += "\r";
+      i++;
+    } else if (next === "b") {
+      out += "\b";
+      i++;
+    } else if (next === "f") {
+      out += "\f";
+      i++;
+    } else if (next === "/") {
+      out += "/";
+      i++;
+    } else {
+      out += "\\" + next;
+      i++;
+    }
+  }
+  return out;
+};
+
+export const unquoteString = (raw: string): string => {
+  if (raw.startsWith('"""') && raw.endsWith('"""') && raw.length >= 6) {
+    return unescapeDelimited(raw.slice(3, -3), '"');
+  }
+  if (raw.startsWith("'") && raw.endsWith("'") && raw.length >= 2) {
+    return unescapeDelimited(raw.slice(1, -1), "'");
+  }
+  return JSON.parse(raw);
+};
+
 const charTokenCheckers: Record<string, (c: char, state: State) => boolean> = {
   integer: (c, state) =>
-    !state.inString && state.inJSON === 0 && /^-|\d$/.test(c),
+    state.quote === null && state.inJSON === 0 && /^-|\d$/.test(c),
   long: (c, state) =>
-    !state.inString && state.inJSON === 0 && /^[-\dlL]$/.test(c),
+    state.quote === null && state.inJSON === 0 && /^[-\dlL]$/.test(c),
   double: (c, state) =>
-    !state.inString && state.inJSON === 0 && /^[-\d\.dD]$/.test(c),
-  string: (c, state) => state.inString || c === '"',
+    state.quote === null && state.inJSON === 0 && /^[-\d\.dD]$/.test(c),
+  string: (c, state) => state.quote !== null || c === '"' || c === "'",
   nbt: (c, state) => state.inJSON > 0 || c === "{",
   boolean: (c, state) =>
-    !state.inString && state.inJSON === 0 && /^[truefalse]$/i.test(c),
+    state.quote === null && state.inJSON === 0 && /^[truefalse]$/i.test(c),
   null: (c, state) =>
-    !state.inString && state.inJSON === 0 && /^[nul]$/i.test(c),
+    state.quote === null && state.inJSON === 0 && /^[nul]$/i.test(c),
   identifier: (c, state) =>
-    !state.inString &&
+    state.quote === null &&
     (getNicknameCharacterRegex().test(c) || c === "=" || c === "@"),
 };
 
@@ -65,7 +122,8 @@ const resolveType = (value: string, possible: string[]): string => {
   if (possible.includes("double")) {
     if (/^-?(?:\d+\.\d+[dD]?|\d+\.|\d+[dD])$/.test(value)) return "double";
   }
-  if (value.startsWith('"')) return "string";
+  if (value.startsWith('"') || value.startsWith("'") || value.startsWith('"""'))
+    return "string";
   if (value.startsWith("{")) {
     const isBraceVarName = value !== "{}" && getNicknameRegex().test(value);
     if (!isBraceVarName) return "nbt";
@@ -76,14 +134,14 @@ const resolveType = (value: string, possible: string[]): string => {
 export const tokenize = (condensed: string) => {
   const tokens: { type: string; value: string }[] = [];
   let currentToken = "";
-  let state: State = { inString: false, isEscaped: false, inJSON: 0 };
+  let state: State = { quote: null, isEscaped: false, inJSON: 0 };
   let possibleTypes = Object.keys(charTokenCheckers);
 
   for (let i = 0; i < condensed.length; i++) {
     const char = condensed[i]!;
 
     if (
-      !state.inString &&
+      state.quote === null &&
       state.inJSON === 0 &&
       char === "=" &&
       condensed[i + 1] === ">"
@@ -103,7 +161,7 @@ export const tokenize = (condensed: string) => {
     }
 
     if (
-      !state.inString &&
+      state.quote === null &&
       state.inJSON === 0 &&
       char === "-" &&
       condensed[i + 1] === ">"
@@ -123,9 +181,9 @@ export const tokenize = (condensed: string) => {
     }
 
     const isStructural =
-      !state.inString && state.inJSON === 0 && /^[()[\],;\\]$/.test(char);
+      state.quote === null && state.inJSON === 0 && /^[()[\],;\\]$/.test(char);
     const isWhitespace =
-      !state.inString && state.inJSON === 0 && /^\s$/.test(char);
+      state.quote === null && state.inJSON === 0 && /^\s$/.test(char);
 
     if (isStructural || isWhitespace) {
       if (currentToken) {
@@ -143,9 +201,9 @@ export const tokenize = (condensed: string) => {
       continue;
     }
 
-    if (state.inString) {
+    if (state.quote !== null) {
       if (state.isEscaped) {
-        if (!/^[nrtbf"\\\/]$/.test(char)) {
+        if (!/^[nrtbf"'\\\/]$/.test(char)) {
           throw new Error(
             `Invalid escape sequence "\\${char}" at position ${i}`
           );
@@ -153,12 +211,39 @@ export const tokenize = (condensed: string) => {
         state.isEscaped = false;
       } else if (char === "\\") {
         state.isEscaped = true;
-      } else if (char === '"') {
-        state.inString = false;
+      } else if (state.quote === '"' && char === '"') {
+        state.quote = null;
+      } else if (state.quote === "'" && char === "'") {
+        state.quote = null;
+      } else if (
+        state.quote === '"""' &&
+        char === '"' &&
+        condensed[i + 1] === '"' &&
+        condensed[i + 2] === '"'
+      ) {
+        currentToken += '\"\"\"';
+        i += 2; // Skip the other two closing quotes
+        state.quote = null;
+        possibleTypes = Object.keys(charTokenCheckers);
+        continue;
       }
     } else {
-      if (char === '"') {
-        state.inString = true;
+      if (
+        char === '"""' ||
+        (char === '"' && condensed[i + 1] === '"' && condensed[i + 2] === '"')
+      ) {
+        // Open triple-quoted string; consume all three quotes (without the extra chars).
+        state.quote = '"""';
+        state.isEscaped = false;
+        currentToken += '\"\"\"';
+        i += 2; // Skip the other two opening quotes
+        possibleTypes = ["string"];
+        continue;
+      } else if (char === '"') {
+        state.quote = '"';
+        state.isEscaped = false;
+      } else if (char === "'") {
+        state.quote = "'";
         state.isEscaped = false;
       } else if (char === "{") {
         state.inJSON++;
@@ -185,7 +270,7 @@ export const tokenize = (condensed: string) => {
       }
     }
 
-    if (!state.inString && char === "}") {
+    if (state.quote === null && char === "}") {
       state.inJSON--;
     }
 
@@ -1376,7 +1461,7 @@ export const CondensedToAST = (
           value: token.value.replace(/[dD]$/, "") as TypeNumericString,
         };
       case "string":
-        return { type: "String", value: token.value.slice(1, -1) };
+        return { type: "String", value: unquoteString(token.value) };
       case "boolean":
         return { type: "Boolean", value: token.value.toLowerCase() === "true" };
       case "null":

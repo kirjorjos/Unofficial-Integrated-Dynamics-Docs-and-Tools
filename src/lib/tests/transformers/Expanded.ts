@@ -206,6 +206,18 @@ final = apply(numberAdd, var2)
     expect(expanded).toContain('test = stringConcat "te" "st"');
   });
 
+  it("testExpandedSingleAndTripleQuoteInput", () => {
+    const singleValue = `hello "world"`;
+    const single = `greeting = 'hello "world"'`;
+    const singleAst = ExpandedToAST(single);
+    expect(ASTToCondensed(singleAst)).toContain(JSON.stringify(singleValue));
+
+    const tripleValue = `say "hi" to the world`;
+    const triple = `msg = """say "hi" to the world"""`;
+    const tripleAst = ExpandedToAST(triple);
+    expect(ASTToCondensed(tripleAst)).toContain(JSON.stringify(tripleValue));
+  });
+
   it("testExpandedNamedBoundaryStaysExplicit", () => {
     const ast: TypeAST.Curried = {
       type: "Curry",

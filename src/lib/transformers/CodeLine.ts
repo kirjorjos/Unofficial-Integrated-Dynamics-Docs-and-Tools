@@ -20,6 +20,7 @@ import {
   getNetworkDefLastCardIds,
 } from "lib/transformers/NetworkCards";
 import { normalizeSegments } from "lib/transformers/MixedLists";
+import { QuoteDelimiter, unquoteString } from "lib/transformers/Condensed";
 
 export const ASTToCodeLine = (
   ast: TypeAST.AST,
@@ -218,20 +219,46 @@ export const CodeLineToAST = (
 ): TypeAST.AST => {
   const tokens: string[] = [];
   let current = "";
-  let inString = false;
+  let quote: QuoteDelimiter | null = null;
   let inNBT = 0;
 
   for (let i = 0; i < codeLine.length; i++) {
     const char = codeLine[i]!;
-    if (inString) {
+    if (quote !== null) {
       current += char;
-      if (char === '"' && codeLine[i - 1] !== "\\") inString = false;
+      if (quote === '"') {
+        if (char === '"' && codeLine[i - 1] !== "\\") quote = null;
+      } else if (quote === "'") {
+        if (char === "'" && codeLine[i - 1] !== "\\") quote = null;
+      } else {
+        if (
+          char === '"' &&
+          codeLine[i + 1] === '"' &&
+          codeLine[i + 2] === '"' &&
+          codeLine[i - 1] !== "\\"
+        ) {
+          quote = null;
+          current += '""';
+          i += 2;
+        }
+      }
     } else if (inNBT > 0) {
       current += char;
       if (char === "{") inNBT++;
       else if (char === "}") inNBT--;
+    } else if (
+      char === '"' &&
+      codeLine[i + 1] === '"' &&
+      codeLine[i + 2] === '"'
+    ) {
+      quote = '"""';
+      current += '"""';
+      i += 2;
     } else if (char === '"') {
-      inString = true;
+      quote = '"';
+      current += char;
+    } else if (char === "'") {
+      quote = "'";
       current += char;
     } else if (char === "{") {
       inNBT = 1;
@@ -420,8 +447,12 @@ export const CodeLineToAST = (
       return parseExpression(scope);
     }
 
-    if (token.startsWith('"'))
-      return { type: "String", value: JSON.parse(token) };
+    if (
+      token.startsWith('"') ||
+      token.startsWith("'") ||
+      token.startsWith('"""')
+    )
+      return { type: "String", value: unquoteString(token) };
     if (token.startsWith("{")) return { type: "NBT", value: JSON.parse(token) };
     if (token.startsWith("@"))
       return { type: "Variable", name: token } as InternalAST;

@@ -37,6 +37,44 @@ describe("TestCondensedTransformer", () => {
     expect(() => tokenize('"\\z"')).toThrow();
   });
 
+  it("testTokenizeSingleQuoteString", () => {
+    const tokens = tokenize("'has a \" quote inside'");
+    expect(tokens).toEqual([
+      { type: "string", value: "'has a \" quote inside'" },
+    ]);
+  });
+
+  it("testTokenizeTripleQuoteString", () => {
+    const tokens = tokenize('"""has a \" double quote"""');
+    expect(tokens).toEqual([
+      { type: "string", value: '"""has a \" double quote"""' },
+    ]);
+  });
+
+  it("testSingleQuoteStringRoundTrip", () => {
+    const input = `'it\\'s "quoted"'`;
+    const ast = CondensedToAST(input);
+    const expected = `it's "quoted"`;
+    expect(ast).toEqual({ type: "String", value: expected });
+    expect(ASTToCondensed(ast)).toBe(JSON.stringify(expected));
+  });
+
+  it("testTripleQuoteStringRoundTrip", () => {
+    const input = `"""say "hi" to the world"""`;
+    const ast = CondensedToAST(input);
+    const expected = `say "hi" to the world`;
+    expect(ast).toEqual({ type: "String", value: expected });
+    expect(ASTToCondensed(ast)).toBe(JSON.stringify(expected));
+  });
+
+  it("testEscapedTripleQuoteStaysLiteral", () => {
+    const input = `"""left \\""" right"""`;
+    const ast = CondensedToAST(input);
+    const expected = `left """ right`;
+    expect(ast).toEqual({ type: "String", value: expected });
+    expect(ASTToCondensed(ast)).toBe(JSON.stringify(expected));
+  });
+
   it("testFlattening", () => {
     const nested = "apply(apply(numberAdd, 1), 2)";
     const ast = CondensedToAST(nested);

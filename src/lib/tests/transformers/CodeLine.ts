@@ -11,6 +11,19 @@ describe("TestCodeLineTransformer", () => {
     expect(ASTToCodeLine(ast)).toBe(code);
   });
 
+  it("testSingleAndTripleQuoteStrings", () => {
+    const single = "'it\\'s \"quoted\"'";
+    expect(CodeLineToAST(single)).toEqual({
+      type: "String",
+      value: 'it\'s "quoted"',
+    });
+    const triple = '"""say "hi" to the world"""';
+    expect(CodeLineToAST(triple)).toEqual({
+      type: "String",
+      value: 'say "hi" to the world',
+    });
+  });
+
   it("testListLiteral", () => {
     const code = '["c:armor", "c:tools"]';
     const ast = CodeLineToAST(code);
