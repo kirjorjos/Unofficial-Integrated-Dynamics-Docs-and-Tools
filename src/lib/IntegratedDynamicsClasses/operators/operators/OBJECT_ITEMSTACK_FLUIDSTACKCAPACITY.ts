@@ -31,7 +31,10 @@ export class OPERATOR_OBJECT_ITEMSTACK_FLUIDSTACKCAPACITY extends BaseOperator<
   static override operatorName = "fluidstackcapacity" as const;
   static override displayName = "Fluid Capacity" as const;
   static override fullDisplayName = "Item Fluid Capacity" as const;
-  static override stringDisplayNames = ["Item Fluid Capacity"];
+  static override stringDisplayNames = [
+    "Item Fluid Capacity",
+    "Fluid Capacity",
+  ];
   static override tooltipInfo =
     "The fluid capacity of the given item in mB" as const;
 

@@ -29,7 +29,10 @@ export class OPERATOR_OBJECT_FLUIDSTACK_SOUND_FLUID_VAPORIZE extends BaseOperato
   static override operatorName = "sound_fluid_vaporize" as const;
   static override displayName = "Fluid vaporize sound" as const;
   static override fullDisplayName = "Fluid Fluid vaporize sound" as const;
-  static override stringDisplayNames = ["Fluid Fluid vaporize sound"];
+  static override stringDisplayNames = [
+    "Fluid Fluid vaporize sound",
+    "Fluid vaporize sound",
+  ];
   static override kind = "fluidstack" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

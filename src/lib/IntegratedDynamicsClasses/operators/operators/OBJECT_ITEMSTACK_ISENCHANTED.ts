@@ -26,7 +26,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISENCHANTED extends BaseOperator<
   static override operatorName = "enchanted" as const;
   static override displayName = "Enchanted" as const;
   static override fullDisplayName = "Item Enchanted" as const;
-  static override stringDisplayNames = ["Item Enchanted"];
+  static override stringDisplayNames = ["Item Enchanted", "Enchanted"];
   static override tooltipInfo = "If the item is enchanted" as const;
 
   static override kind = "itemstack" as const;

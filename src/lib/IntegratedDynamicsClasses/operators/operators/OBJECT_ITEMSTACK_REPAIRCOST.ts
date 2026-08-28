@@ -25,7 +25,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_REPAIRCOST extends BaseOperator<
   static override operatorName = "repaircost" as const;
   static override displayName = "Repair Cost" as const;
   static override fullDisplayName = "Item Repair Cost" as const;
-  static override stringDisplayNames = ["Item Repair Cost"];
+  static override stringDisplayNames = ["Item Repair Cost", "Repair Cost"];
   static override tooltipInfo = "The repair cost of the item" as const;
 
   static override kind = "itemstack" as const;

@@ -39,7 +39,10 @@ export class OPERATOR_OBJECT_FLUIDSTACK_DATA_VALUE extends BaseOperator<
   static override operatorName = "fluidstack_datavalue" as const;
   static override displayName = "Fluid Data Value" as const;
   static override fullDisplayName = "Fluid Fluid Data Value" as const;
-  static override stringDisplayNames = ["Fluid Fluid Data Value"];
+  static override stringDisplayNames = [
+    "Fluid Fluid Data Value",
+    "Fluid Data Value",
+  ];
   static override kind = "fluidstack" as const;
   static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {

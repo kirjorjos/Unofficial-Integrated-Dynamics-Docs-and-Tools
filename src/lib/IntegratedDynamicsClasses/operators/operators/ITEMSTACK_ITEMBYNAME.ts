@@ -27,7 +27,7 @@ export class OPERATOR_ITEMSTACK_ITEMBYNAME extends BaseOperator<iString, Item> {
   static override operatorName = "itembyname" as const;
   static override displayName = "Item By Name" as const;
   static override fullDisplayName = "Item Item By Name" as const;
-  static override stringDisplayNames = ["Item Item By Name"];
+  static override stringDisplayNames = ["Item Item By Name", "Item By Name"];
   static override tooltipInfo =
     "Get the item corresponding to the given unique name, add space+number for indicating the metadata." as const;
 

@@ -22,7 +22,10 @@ export class OPERATOR_OBJECT_ITEMSTACK_INVENTORY extends BaseOperator<
   static override operatorName = "inventory" as const;
   static override displayName = "Item Inventory" as const;
   static override fullDisplayName = "Item Item Inventory" as const;
-  static override stringDisplayNames = ["Item Item Inventory"];
+  static override stringDisplayNames = [
+    "Item Item Inventory",
+    "Item Inventory",
+  ];
   static override tooltipInfo =
     "Retrieve the inventory of the given item handler contents" as const;
 

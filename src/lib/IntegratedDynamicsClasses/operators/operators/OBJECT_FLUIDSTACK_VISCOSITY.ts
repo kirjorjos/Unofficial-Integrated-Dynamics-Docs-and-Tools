@@ -25,7 +25,7 @@ export class OPERATOR_OBJECT_FLUIDSTACK_VISCOSITY extends BaseOperator<
   static override operatorName = "viscosity" as const;
   static override displayName = "Viscosity" as const;
   static override fullDisplayName = "Fluid Viscosity" as const;
-  static override stringDisplayNames = ["Fluid Viscosity"];
+  static override stringDisplayNames = ["Fluid Viscosity", "Viscosity"];
   static override tooltipInfo = "The fluid viscosity" as const;
 
   static override kind = "fluidstack" as const;
