@@ -47,6 +47,7 @@ export class BaseOperator<
   static interactName: string = "";
   static displayName: string = "";
   static fullDisplayName: string = "";
+  static stringDisplayName?: string;
   static tooltipInfo?: string;
   static kind: string = "";
   static numericID: number = -1;
@@ -103,6 +104,10 @@ export class BaseOperator<
 
   get fullDisplayName(): string {
     return (this.constructor as typeof BaseOperator).fullDisplayName;
+  }
+
+  get stringDisplayName(): string | undefined {
+    return (this.constructor as typeof BaseOperator).stringDisplayName;
   }
 
   get tooltipInfo(): string | undefined {

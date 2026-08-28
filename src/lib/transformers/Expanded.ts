@@ -1,7 +1,11 @@
 import { operatorRegistry } from "lib/IntegratedDynamicsClasses/registries/operatorRegistry";
 import { getReaderClassByTypeName } from "lib/IntegratedDynamicsClasses/readers/readerRegistry";
 import { ASTToCodeLine, CodeLineToAST } from "lib/transformers/CodeLine";
-import { ASTToCondensed, CondensedToAST } from "lib/transformers/Condensed";
+import {
+  ASTToCondensed,
+  CondensedToAST,
+  QuoteDelimiter,
+} from "lib/transformers/Condensed";
 import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 import {
   getOpName,
@@ -635,19 +639,52 @@ export const ASTToExpanded = (
   return output.join("\n");
 };
 
+const computeStringRegions = (line: string): boolean[] => {
+  const inside = new Array<boolean>(line.length).fill(false);
+  let quote: QuoteDelimiter | null = null;
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i]!;
+    if (quote !== null) {
+      inside[i] = true;
+      if (quote === '"') {
+        if (char === '"' && line[i - 1] !== "\\") quote = null;
+      } else if (quote === "'") {
+        if (char === "'" && line[i - 1] !== "\\") quote = null;
+      } else if (
+        char === '"' &&
+        line[i + 1] === '"' &&
+        line[i + 2] === '"' &&
+        line[i - 1] !== "\\"
+      ) {
+        quote = null;
+        inside[i + 1] = true;
+        inside[i + 2] = true;
+        i += 2;
+      }
+    } else if (char === '"' && line[i + 1] === '"' && line[i + 2] === '"') {
+      quote = '"""';
+      inside[i] = true;
+      inside[i + 1] = true;
+      inside[i + 2] = true;
+      i += 2;
+    } else if (char === '"') {
+      quote = '"';
+    } else if (char === "'") {
+      quote = "'";
+    }
+  }
+  return inside;
+};
+
 const findTopLevelOccurrence = (
   line: string,
   matches: (char: string, next: string | undefined) => boolean
 ): number => {
-  let inString = false;
+  const inside = computeStringRegions(line);
   let inNBT = 0;
   for (let j = 0; j < line.length; j++) {
+    if (inside[j]) continue;
     const char = line[j]!;
-    if (char === '"') {
-      inString = !inString;
-      continue;
-    }
-    if (inString) continue;
     if (char === "{") inNBT++;
     if (char === "}") inNBT--;
     if (inNBT === 0 && matches(char, line[j + 1])) return j;
@@ -714,30 +751,14 @@ export const ExpandedToAST = (
 
   for (const line of rawLines) {
     const lineHasAssignment = hasTopLevelAssignment(line);
-    let inString = false;
-    let escaped = false;
+    const inside = computeStringRegions(line);
     let cleanLine = "";
     let isSig = false;
 
     for (let i = 0; i < line.length; i++) {
       const char = line[i]!;
-      if (escaped) {
-        cleanLine += char;
-        escaped = false;
-        continue;
-      }
-      if (char === "\\") {
-        cleanLine += char;
-        escaped = true;
-        continue;
-      }
-      if (char === '"') {
-        inString = !inString;
-        cleanLine += char;
-        continue;
-      }
 
-      if (!inString) {
+      if (!inside[i]) {
         if (char === "-" && line[i + 1] === "-") {
           break; // Ignore comment
         }
@@ -769,18 +790,16 @@ export const ExpandedToAST = (
     const line = processedLines[i]!;
 
     let eqIdx = -1;
-    let inString = false;
+    const inside = computeStringRegions(line);
     let inNBT = 0;
     for (let j = 0; j < line.length; j++) {
-      if (line[j] === '"') inString = !inString;
-      if (!inString) {
-        if (line[j] === "{") inNBT++;
-        if (line[j] === "}") inNBT--;
-        if (inNBT === 0 && line[j] === "=" && line[j + 1] !== ">") {
-          if (j === 0 || line[j - 1] !== "=") {
-            eqIdx = j;
-            break;
-          }
+      if (inside[j]) continue;
+      if (line[j] === "{") inNBT++;
+      if (line[j] === "}") inNBT--;
+      if (inNBT === 0 && line[j] === "=" && line[j + 1] !== ">") {
+        if (j === 0 || line[j - 1] !== "=") {
+          eqIdx = j;
+          break;
         }
       }
     }

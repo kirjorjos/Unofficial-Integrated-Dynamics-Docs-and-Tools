@@ -20,6 +20,7 @@ import {
   getNetworkDefLastCardIds,
 } from "lib/transformers/NetworkCards";
 import { normalizeSegments } from "lib/transformers/MixedLists";
+import { QuoteDelimiter, unquoteString } from "lib/transformers/Condensed";
 
 export const ASTToCodeLine = (
   ast: TypeAST.AST,
@@ -218,20 +219,46 @@ export const CodeLineToAST = (
 ): TypeAST.AST => {
   const tokens: string[] = [];
   let current = "";
-  let inString = false;
+  let quote: QuoteDelimiter | null = null;
   let inNBT = 0;
 
   for (let i = 0; i < codeLine.length; i++) {
     const char = codeLine[i]!;
-    if (inString) {
+    if (quote !== null) {
       current += char;
-      if (char === '"' && codeLine[i - 1] !== "\\") inString = false;
+      if (quote === '"') {
+        if (char === '"' && codeLine[i - 1] !== "\\") quote = null;
+      } else if (quote === "'") {
+        if (char === "'" && codeLine[i - 1] !== "\\") quote = null;
+      } else {
+        if (
+          char === '"' &&
+          codeLine[i + 1] === '"' &&
+          codeLine[i + 2] === '"' &&
+          codeLine[i - 1] !== "\\"
+        ) {
+          quote = null;
+          current += '""';
+          i += 2;
+        }
+      }
     } else if (inNBT > 0) {
       current += char;
       if (char === "{") inNBT++;
       else if (char === "}") inNBT--;
+    } else if (
+      char === '"' &&
+      codeLine[i + 1] === '"' &&
+      codeLine[i + 2] === '"'
+    ) {
+      quote = '"""';
+      current += '"""';
+      i += 2;
     } else if (char === '"') {
-      inString = true;
+      quote = '"';
+      current += char;
+    } else if (char === "'") {
+      quote = "'";
       current += char;
     } else if (char === "{") {
       inNBT = 1;
@@ -420,8 +447,12 @@ export const CodeLineToAST = (
       return parseExpression(scope);
     }
 
-    if (token.startsWith('"'))
-      return { type: "String", value: JSON.parse(token) };
+    if (
+      token.startsWith('"') ||
+      token.startsWith("'") ||
+      token.startsWith('"""')
+    )
+      return { type: "String", value: unquoteString(token) };
     if (token.startsWith("{")) return { type: "NBT", value: JSON.parse(token) };
     if (token.startsWith("@"))
       return { type: "Variable", name: token } as InternalAST;
@@ -441,9 +472,15 @@ export const CodeLineToAST = (
 
     const lowerToken = token.toLowerCase();
     if (
-      ["block", "item", "fluid", "entity", "ingredients", "recipe"].includes(
-        lowerToken
-      )
+      [
+        "block",
+        "item",
+        "fluid",
+        "entity",
+        "ingredients",
+        "recipe",
+        "operator",
+      ].includes(lowerToken)
     ) {
       if (tokens[pos] === "(") {
         pos++; // consume (
@@ -809,6 +846,17 @@ export const CodeLineToAST = (
     if (base.type === "Identifier") {
       const name = base.value;
       const lowerName = name.toLowerCase();
+      if (lowerName === "operator") {
+        const opName = (args[0] as { value: string }).value;
+        const internalKey = operatorRegistry.operatorByNickname(opName);
+        if (!internalKey) {
+          throw new Error(`Unknown operator: ${opName}`);
+        }
+        return setOperatorSourceName(
+          { type: "Operator", opName: internalKey as TypeOperatorKey },
+          opName
+        );
+      }
       if (
         ["block", "item", "fluid", "entity", "ingredients"].includes(lowerName)
       ) {

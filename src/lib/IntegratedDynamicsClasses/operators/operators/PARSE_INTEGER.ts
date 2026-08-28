@@ -23,6 +23,7 @@ export class OPERATOR_PARSE_INTEGER extends BaseOperator<iString, Integer> {
   static override operatorName = "parse_integer" as const;
   static override displayName = "Parse Integer" as const;
   static override fullDisplayName = "Parse" as const;
+  static override stringDisplayName = "Parse Integer" as const;
   static override kind = "parse" as const;
   static override renderPattern = "PREFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

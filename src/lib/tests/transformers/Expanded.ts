@@ -206,6 +206,40 @@ final = apply(numberAdd, var2)
     expect(expanded).toContain('test = stringConcat "te" "st"');
   });
 
+  it("testExpandedSingleAndTripleQuoteInput", () => {
+    const singleValue = `hello "world"`;
+    const single = `greeting = 'hello "world"'`;
+    const singleAst = ExpandedToAST(single);
+    expect(ASTToCondensed(singleAst)).toContain(JSON.stringify(singleValue));
+
+    const tripleValue = `say "hi" to the world`;
+    const triple = `msg = """say "hi" to the world"""`;
+    const tripleAst = ExpandedToAST(triple);
+    expect(ASTToCondensed(tripleAst)).toContain(JSON.stringify(tripleValue));
+  });
+
+  it("testExpandedOperatorPseudoConstructor", () => {
+    const double = ExpandedToAST(
+      `a = Operator("integrateddynamics:logical_or")`
+    );
+    expect(ASTToCondensed(double)).toContain("booleanOr");
+
+    const single = ExpandedToAST(`b = Operator('logical_or')`);
+    expect(ASTToCondensed(single)).toContain("booleanOr");
+
+    const triple = ExpandedToAST(`c = Operator("""Logical Or""")`);
+    expect(ASTToCondensed(triple)).toContain("booleanOr");
+
+    const parseBoolean = ExpandedToAST(`d = Operator("Parse Boolean")`);
+    expect(ASTToCondensed(parseBoolean)).toContain("stringParseAsBoolean");
+  });
+
+  it("testExpandedOperatorPseudoConstructorUnknownThrows", () => {
+    expect(() => ExpandedToAST(`e = Operator("not_a_real_operator")`)).toThrow(
+      "Unknown operator: not_a_real_operator"
+    );
+  });
+
   it("testExpandedNamedBoundaryStaysExplicit", () => {
     const ast: TypeAST.Curried = {
       type: "Curry",
