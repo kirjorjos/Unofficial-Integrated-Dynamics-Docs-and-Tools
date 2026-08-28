@@ -218,6 +218,28 @@ final = apply(numberAdd, var2)
     expect(ASTToCondensed(tripleAst)).toContain(JSON.stringify(tripleValue));
   });
 
+  it("testExpandedOperatorPseudoConstructor", () => {
+    const double = ExpandedToAST(
+      `a = Operator("integrateddynamics:logical_or")`
+    );
+    expect(ASTToCondensed(double)).toContain("booleanOr");
+
+    const single = ExpandedToAST(`b = Operator('logical_or')`);
+    expect(ASTToCondensed(single)).toContain("booleanOr");
+
+    const triple = ExpandedToAST(`c = Operator("""Logical Or""")`);
+    expect(ASTToCondensed(triple)).toContain("booleanOr");
+
+    const parseBoolean = ExpandedToAST(`d = Operator("Parse Boolean")`);
+    expect(ASTToCondensed(parseBoolean)).toContain("stringParseAsBoolean");
+  });
+
+  it("testExpandedOperatorPseudoConstructorUnknownThrows", () => {
+    expect(() => ExpandedToAST(`e = Operator("not_a_real_operator")`)).toThrow(
+      "Unknown operator: not_a_real_operator"
+    );
+  });
+
   it("testExpandedNamedBoundaryStaysExplicit", () => {
     const ast: TypeAST.Curried = {
       type: "Curry",

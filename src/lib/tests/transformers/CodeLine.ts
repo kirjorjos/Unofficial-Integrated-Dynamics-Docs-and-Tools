@@ -24,6 +24,46 @@ describe("TestCodeLineTransformer", () => {
     });
   });
 
+  it("testOperatorPseudoConstructor", () => {
+    expect(CodeLineToAST('Operator("integrateddynamics:logical_or")')).toEqual({
+      type: "Operator",
+      opName: "LOGICAL_OR",
+    });
+    expect(CodeLineToAST(`Operator('logical_or')`)).toEqual({
+      type: "Operator",
+      opName: "LOGICAL_OR",
+    });
+    expect(CodeLineToAST('Operator("""Logical Or""")')).toEqual({
+      type: "Operator",
+      opName: "LOGICAL_OR",
+    });
+  });
+
+  it("testOperatorPseudoConstructorStringDisplayName", () => {
+    expect(CodeLineToAST('Operator("Parse Boolean")')).toEqual({
+      type: "Operator",
+      opName: "PARSE_BOOLEAN",
+    });
+    expect(CodeLineToAST('Operator("Parse Integer")')).toEqual({
+      type: "Operator",
+      opName: "PARSE_INTEGER",
+    });
+    expect(CodeLineToAST('Operator("Block Block Properties")')).toEqual({
+      type: "Operator",
+      opName: "OBJECT_BLOCK_PROPERTIES",
+    });
+    expect(CodeLineToAST('Operator("Block Block With Properties")')).toEqual({
+      type: "Operator",
+      opName: "OBJECT_BLOCK_WITH_PROPERTIES",
+    });
+  });
+
+  it("testOperatorPseudoConstructorUnknownThrows", () => {
+    expect(() => CodeLineToAST('Operator("not_a_real_operator")')).toThrow(
+      "Unknown operator: not_a_real_operator"
+    );
+  });
+
   it("testListLiteral", () => {
     const code = '["c:armor", "c:tools"]';
     const ast = CodeLineToAST(code);

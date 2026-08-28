@@ -18,6 +18,7 @@ export class OPERATOR_INTEGER_TO_DOUBLE extends BaseOperator<Integer, Double> {
   static override operatorName = "cast_double" as const;
   static override displayName = "Cast Number to Double" as const;
   static override fullDisplayName = "Number Cast Number to Double" as const;
+  static override stringDisplayName = "Number Cast Integer to Double" as const;
   static override kind = "number" as const;
   static override renderPattern = "PREFIX_1" as const;
   constructor(normalizeSignature = true) {

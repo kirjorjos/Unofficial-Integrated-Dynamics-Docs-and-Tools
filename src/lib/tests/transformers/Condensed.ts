@@ -75,6 +75,51 @@ describe("TestCondensedTransformer", () => {
     expect(ASTToCondensed(ast)).toBe(JSON.stringify(expected));
   });
 
+  it("testOperatorPseudoConstructor", () => {
+    expect(CondensedToAST('Operator("integrateddynamics:logical_or")')).toEqual(
+      { type: "Operator", opName: "LOGICAL_OR" }
+    );
+    expect(CondensedToAST(`Operator('logical_or')`)).toEqual({
+      type: "Operator",
+      opName: "LOGICAL_OR",
+    });
+    expect(CondensedToAST('Operator("""Logical Or""")')).toEqual({
+      type: "Operator",
+      opName: "LOGICAL_OR",
+    });
+  });
+
+  it("testOperatorPseudoConstructorStringDisplayName", () => {
+    expect(CondensedToAST('Operator("Parse Boolean")')).toEqual({
+      type: "Operator",
+      opName: "PARSE_BOOLEAN",
+    });
+    expect(CondensedToAST('Operator("Parse Integer")')).toEqual({
+      type: "Operator",
+      opName: "PARSE_INTEGER",
+    });
+    expect(CondensedToAST('Operator("Block Block Properties")')).toEqual({
+      type: "Operator",
+      opName: "OBJECT_BLOCK_PROPERTIES",
+    });
+    expect(CondensedToAST('Operator("Block Block With Properties")')).toEqual({
+      type: "Operator",
+      opName: "OBJECT_BLOCK_WITH_PROPERTIES",
+    });
+  });
+
+  it("testOperatorPseudoConstructorUnknownThrows", () => {
+    expect(() => CondensedToAST('Operator("not_a_real_operator")')).toThrow(
+      "Unknown operator: not_a_real_operator"
+    );
+  });
+
+  it("testOperatorPseudoConstructorRoundTrip", () => {
+    const ast = CondensedToAST('Operator("Logical Or")');
+    expect(ast).toEqual({ type: "Operator", opName: "LOGICAL_OR" });
+    expect(ASTToCondensed(ast)).toBe("booleanOr");
+  });
+
   it("testFlattening", () => {
     const nested = "apply(apply(numberAdd, 1), 2)";
     const ast = CondensedToAST(nested);

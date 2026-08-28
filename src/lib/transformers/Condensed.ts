@@ -544,6 +544,7 @@ export const CondensedToAST = (
               "entity",
               "ingredients",
               "recipe",
+              "operator",
             ].includes(name.toLowerCase())
           ? { type: "Identifier", value: name }
           : handleLiteral({ type: "identifier", value: name }, scope);
@@ -930,6 +931,17 @@ export const CondensedToAST = (
     if (base.type === "Identifier") {
       const name = base.value;
       const lowerName = name.toLowerCase();
+      if (lowerName === "operator") {
+        const opName = (args[0] as { value: string }).value;
+        const internalKey = operatorRegistry.operatorByNickname(opName);
+        if (!internalKey) {
+          throw new Error(`Unknown operator: ${opName}`);
+        }
+        return setOperatorSourceName(
+          { type: "Operator", opName: internalKey },
+          opName
+        );
+      }
       if (
         ["block", "item", "fluid", "entity", "ingredients"].includes(lowerName)
       ) {
@@ -1484,6 +1496,7 @@ export const CondensedToAST = (
             "entity",
             "ingredients",
             "recipe",
+            "operator",
           ].includes(lower)
         ) {
           return { type: "Identifier", value: token.value };

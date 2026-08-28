@@ -472,9 +472,15 @@ export const CodeLineToAST = (
 
     const lowerToken = token.toLowerCase();
     if (
-      ["block", "item", "fluid", "entity", "ingredients", "recipe"].includes(
-        lowerToken
-      )
+      [
+        "block",
+        "item",
+        "fluid",
+        "entity",
+        "ingredients",
+        "recipe",
+        "operator",
+      ].includes(lowerToken)
     ) {
       if (tokens[pos] === "(") {
         pos++; // consume (
@@ -840,6 +846,17 @@ export const CodeLineToAST = (
     if (base.type === "Identifier") {
       const name = base.value;
       const lowerName = name.toLowerCase();
+      if (lowerName === "operator") {
+        const opName = (args[0] as { value: string }).value;
+        const internalKey = operatorRegistry.operatorByNickname(opName);
+        if (!internalKey) {
+          throw new Error(`Unknown operator: ${opName}`);
+        }
+        return setOperatorSourceName(
+          { type: "Operator", opName: internalKey as TypeOperatorKey },
+          opName
+        );
+      }
       if (
         ["block", "item", "fluid", "entity", "ingredients"].includes(lowerName)
       ) {
