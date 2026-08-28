@@ -24,6 +24,10 @@ export class OPERATOR_ARITHMETIC_SUBTRACTION extends BaseOperator<
   static override operatorName = "subtraction" as const;
   static override displayName = "Subtraction" as const;
   static override fullDisplayName = "Arithmetic Subtraction" as const;
+  static override stringDisplayNames = [
+    "Subtraction",
+    "Arithmetic Subtraction",
+  ];
   static override kind = "arithmetic" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

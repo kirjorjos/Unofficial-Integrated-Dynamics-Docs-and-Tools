@@ -25,6 +25,10 @@ export class OPERATOR_NBT_COMPOUND_KEYS extends BaseOperator<
   static override operatorName = "compound_keys" as const;
   static override displayName = "NBT Compound Keys" as const;
   static override fullDisplayName = "NBT NBT Compound Keys" as const;
+  static override stringDisplayNames = [
+    "NBT Compound Keys",
+    "NBT NBT Compound Keys",
+  ];
   static override tooltipInfo =
     "The list of keys inside the given NBT compound tag" as const;
 

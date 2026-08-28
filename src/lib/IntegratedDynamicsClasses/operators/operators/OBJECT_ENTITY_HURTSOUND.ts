@@ -22,6 +22,10 @@ export class OPERATOR_OBJECT_ENTITY_HURTSOUND extends BaseOperator<
   static override operatorName = "hurtsound" as const;
   static override displayName = "Entity Hurt Sound" as const;
   static override fullDisplayName = "Entity Entity Hurt Sound" as const;
+  static override stringDisplayNames = [
+    "Entity Hurt Sound",
+    "Entity Entity Hurt Sound",
+  ];
   static override tooltipInfo = "The hurt sound of the given entity." as const;
 
   static override kind = "entity" as const;

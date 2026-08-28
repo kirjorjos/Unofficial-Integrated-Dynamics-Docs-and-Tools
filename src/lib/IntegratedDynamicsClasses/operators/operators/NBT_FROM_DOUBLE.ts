@@ -19,6 +19,10 @@ export class OPERATOR_NBT_FROM_DOUBLE extends BaseOperator<Double, DoubleTag> {
   static override operatorName = "from_double" as const;
   static override displayName = "NBT Double From Double" as const;
   static override fullDisplayName = "NBT NBT Double From Double" as const;
+  static override stringDisplayNames = [
+    "NBT Double From Double",
+    "NBT NBT Double From Double",
+  ];
   static override tooltipInfo =
     "Create an NBT Double tag from the given Double value" as const;
 

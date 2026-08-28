@@ -29,6 +29,7 @@ export class OPERATOR_ITEMSTACK_WITH_NBT extends BaseOperator<
   static override operatorName = "itemwithtag" as const;
   static override displayName = "Item With Tag" as const;
   static override fullDisplayName = "Item Item With Tag" as const;
+  static override stringDisplayNames = ["Item Item With Tag"];
   static override kind = "itemstack" as const;
   static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {

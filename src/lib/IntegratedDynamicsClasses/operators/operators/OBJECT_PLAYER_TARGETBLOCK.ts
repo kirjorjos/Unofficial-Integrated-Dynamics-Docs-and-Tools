@@ -26,6 +26,7 @@ export class OPERATOR_OBJECT_PLAYER_TARGETBLOCK extends BaseOperator<
   static override operatorName = "targetblock" as const;
   static override displayName = "Target Block" as const;
   static override fullDisplayName = "Entity Target Block" as const;
+  static override stringDisplayNames = ["Target Block", "Entity Target Block"];
   static override tooltipInfo =
     "The block the given entity is currently looking at." as const;
 

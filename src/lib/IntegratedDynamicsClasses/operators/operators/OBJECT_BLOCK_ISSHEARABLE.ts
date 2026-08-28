@@ -20,6 +20,7 @@ export class OPERATOR_OBJECT_BLOCK_ISSHEARABLE extends BaseOperator<
   static override operatorName = "isshearable" as const;
   static override displayName = "Block Is Shearable" as const;
   static override fullDisplayName = "Block Block Is Shearable" as const;
+  static override stringDisplayNames = ["Block Block Is Shearable"];
   static override tooltipInfo = "If the given block is shearable" as const;
 
   static override kind = "block" as const;

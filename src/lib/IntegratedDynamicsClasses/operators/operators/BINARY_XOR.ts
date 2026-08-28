@@ -21,6 +21,7 @@ export class OPERATOR_BINARY_XOR extends BaseOperator<
   static override operatorName = "xor" as const;
   static override displayName = "Xor" as const;
   static override fullDisplayName = "Binary Xor" as const;
+  static override stringDisplayNames = ["Xor", "Binary Xor"];
   static override kind = "binary" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

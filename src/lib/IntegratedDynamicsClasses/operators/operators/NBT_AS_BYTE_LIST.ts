@@ -24,6 +24,10 @@ export class OPERATOR_NBT_AS_BYTE_LIST extends BaseOperator<
   static override operatorName = "as_byte_list" as const;
   static override displayName = "NBT Byte Array As Byte List" as const;
   static override fullDisplayName = "NBT NBT Byte Array As Byte List" as const;
+  static override stringDisplayNames = [
+    "NBT Byte Array As Byte List",
+    "NBT NBT Byte Array As Byte List",
+  ];
   static override tooltipInfo =
     "Get the Byte List value of the given NBT Byte Array tag" as const;
 

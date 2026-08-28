@@ -23,6 +23,10 @@ export class OPERATOR_OBJECT_ENTITY_MOUNTED extends BaseOperator<
   static override operatorName = "mounted" as const;
   static override displayName = "Mounted Entities" as const;
   static override fullDisplayName = "Entity Mounted Entities" as const;
+  static override stringDisplayNames = [
+    "Mounted Entities",
+    "Entity Mounted Entities",
+  ];
   static override tooltipInfo =
     "The entities that are currently mounted on the given entity." as const;
 

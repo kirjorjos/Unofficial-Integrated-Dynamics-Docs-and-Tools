@@ -18,6 +18,7 @@ export class OPERATOR_ENTITY_HEALTH extends BaseOperator<Entity, Double> {
   static override operatorName = "health" as const;
   static override displayName = "Health" as const;
   static override fullDisplayName = "Entity Health" as const;
+  static override stringDisplayNames = ["Health", "Entity Health"];
   static override tooltipInfo = "The entity health" as const;
 
   static override kind = "entity" as const;

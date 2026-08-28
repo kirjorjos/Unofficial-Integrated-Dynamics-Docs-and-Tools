@@ -19,6 +19,10 @@ export class OPERATOR_NBT_FROM_STRING extends BaseOperator<iString, StringTag> {
   static override operatorName = "from_string" as const;
   static override displayName = "NBT String From String" as const;
   static override fullDisplayName = "NBT NBT String From String" as const;
+  static override stringDisplayNames = [
+    "NBT String From String",
+    "NBT NBT String From String",
+  ];
   static override tooltipInfo =
     "Create an NBT String tag from the given String value" as const;
 

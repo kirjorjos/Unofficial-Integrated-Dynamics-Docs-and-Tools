@@ -12,6 +12,10 @@ export class OPERATOR_RECIPE_INPUT extends BaseOperator<Recipe, Ingredients> {
   static override operatorName = "input" as const;
   static override displayName = "Recipe Input Ingredients" as const;
   static override fullDisplayName = "Recipe Recipe Input Ingredients" as const;
+  static override stringDisplayNames = [
+    "Recipe Input Ingredients",
+    "Recipe Recipe Input Ingredients",
+  ];
   static override tooltipInfo =
     "The input ingredients of the given recipe" as const;
 

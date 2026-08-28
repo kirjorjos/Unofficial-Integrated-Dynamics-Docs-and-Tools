@@ -16,6 +16,7 @@ export class OPERATOR_LIST_HEAD extends BaseOperator<
   static override operatorName = "head" as const;
   static override displayName = "Head" as const;
   static override fullDisplayName = "List Head" as const;
+  static override stringDisplayNames = ["Head", "List Head"];
   static override tooltipInfo =
     "Get the first element of the given list." as const;
 

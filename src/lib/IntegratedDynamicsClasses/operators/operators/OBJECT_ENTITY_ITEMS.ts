@@ -27,6 +27,7 @@ export class OPERATOR_OBJECT_ENTITY_ITEMS extends BaseOperator<
   static override operatorName = "entityitems" as const;
   static override displayName = "Entity Items" as const;
   static override fullDisplayName = "Entity Entity Items" as const;
+  static override stringDisplayNames = ["Entity Items", "Entity Entity Items"];
   static override tooltipInfo =
     "The items that are contained within this entity." as const;
 

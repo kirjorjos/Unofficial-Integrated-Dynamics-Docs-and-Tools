@@ -21,6 +21,10 @@ export class OPERATOR_INGREDIENTS_ITEMS extends BaseOperator<
   static override operatorName = "items" as const;
   static override displayName = "Ingredient items" as const;
   static override fullDisplayName = "Ingredients Ingredient items" as const;
+  static override stringDisplayNames = [
+    "Ingredient items",
+    "Ingredients Ingredient items",
+  ];
   static override tooltipInfo = "The list of items" as const;
 
   static override kind = "ingredients" as const;

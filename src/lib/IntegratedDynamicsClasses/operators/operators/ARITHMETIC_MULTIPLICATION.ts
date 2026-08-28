@@ -23,6 +23,10 @@ export class OPERATOR_ARITHMETIC_MULTIPLICATION extends BaseOperator<
   static override operatorName = "multiplication" as const;
   static override displayName = "Multiplication" as const;
   static override fullDisplayName = "Arithmetic Multiplication" as const;
+  static override stringDisplayNames = [
+    "Multiplication",
+    "Arithmetic Multiplication",
+  ];
   static override kind = "arithmetic" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

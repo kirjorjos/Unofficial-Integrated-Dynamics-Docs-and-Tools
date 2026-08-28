@@ -21,6 +21,7 @@ export class OPERATOR_ARITHMETIC_DECREMENT extends BaseOperator<
   static override operatorName = "decrement" as const;
   static override displayName = "Decrement" as const;
   static override fullDisplayName = "Arithmetic Decrement" as const;
+  static override stringDisplayNames = ["Decrement", "Arithmetic Decrement"];
   static override kind = "arithmetic" as const;
   static override renderPattern = "SUFFIX_1" as const;
   constructor(normalizeSignature = true) {

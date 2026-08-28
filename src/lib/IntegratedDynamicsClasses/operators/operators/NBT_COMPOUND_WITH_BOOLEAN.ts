@@ -29,6 +29,10 @@ export class OPERATOR_NBT_COMPOUND_WITH_BOOLEAN extends BaseOperator<
   static override operatorName = "compound_with_boolean" as const;
   static override displayName = "NBT Compound With Boolean" as const;
   static override fullDisplayName = "NBT NBT Compound With Boolean" as const;
+  static override stringDisplayNames = [
+    "NBT Compound With Boolean",
+    "NBT NBT Compound With Boolean",
+  ];
   static override tooltipInfo =
     "Get a copy of the given NBT compound tag with the given Boolean entry" as const;
 

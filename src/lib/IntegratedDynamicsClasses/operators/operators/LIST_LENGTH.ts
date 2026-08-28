@@ -14,6 +14,7 @@ export class OPERATOR_LIST_LENGTH extends BaseOperator<
   static override operatorName = "length" as const;
   static override displayName = "Length" as const;
   static override fullDisplayName = "List Length" as const;
+  static override stringDisplayNames = ["List Length"];
   static override tooltipInfo = "The length of the given list" as const;
 
   static override kind = "list" as const;

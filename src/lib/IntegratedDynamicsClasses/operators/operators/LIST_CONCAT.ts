@@ -20,6 +20,7 @@ export class OPERATOR_LIST_CONCAT extends BaseOperator<
   static override operatorName = "concat" as const;
   static override displayName = "Concat" as const;
   static override fullDisplayName = "List Concat" as const;
+  static override stringDisplayNames = ["List Concat"];
   static override tooltipInfo =
     "Concatenate the two list to each other." as const;
 

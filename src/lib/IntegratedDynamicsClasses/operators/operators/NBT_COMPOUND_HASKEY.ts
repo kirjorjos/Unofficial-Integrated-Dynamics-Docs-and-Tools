@@ -27,6 +27,10 @@ export class OPERATOR_NBT_COMPOUND_HASKEY extends BaseOperator<
   static override operatorName = "compound_haskey" as const;
   static override displayName = "NBT Compound Has Key" as const;
   static override fullDisplayName = "NBT NBT Compound Has Key" as const;
+  static override stringDisplayNames = [
+    "NBT Compound Has Key",
+    "NBT NBT Compound Has Key",
+  ];
   static override tooltipInfo =
     "If the given NBT compound tag contains the given key" as const;
 

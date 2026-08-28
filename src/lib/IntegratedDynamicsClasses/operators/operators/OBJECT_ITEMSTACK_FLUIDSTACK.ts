@@ -29,6 +29,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_FLUIDSTACK extends BaseOperator<
   static override operatorName = "fluidstack" as const;
   static override displayName = "Fluid" as const;
   static override fullDisplayName = "Item Fluid" as const;
+  static override stringDisplayNames = ["Item Fluid"];
   static override tooltipInfo = "The fluid from the given item" as const;
 
   static override kind = "itemstack" as const;

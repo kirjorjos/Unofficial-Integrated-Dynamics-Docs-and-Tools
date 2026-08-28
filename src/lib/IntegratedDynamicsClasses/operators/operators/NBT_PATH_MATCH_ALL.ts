@@ -29,6 +29,10 @@ export class OPERATOR_NBT_PATH_MATCH_ALL extends BaseOperator<
   static override operatorName = "path_match_all" as const;
   static override displayName = "NBT Path Match All" as const;
   static override fullDisplayName = "NBT NBT Path Match All" as const;
+  static override stringDisplayNames = [
+    "NBT Path Match All",
+    "NBT NBT Path Match All",
+  ];
   static override tooltipInfo =
     "Apply the given NBT Path expression on the given NBT value, and return all matches as a list" as const;
 

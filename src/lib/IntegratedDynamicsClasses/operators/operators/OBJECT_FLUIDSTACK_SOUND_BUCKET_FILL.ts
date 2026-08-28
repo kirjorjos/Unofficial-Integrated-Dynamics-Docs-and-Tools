@@ -29,6 +29,7 @@ export class OPERATOR_OBJECT_FLUIDSTACK_SOUND_BUCKET_FILL extends BaseOperator<
   static override operatorName = "sound_bucket_fill" as const;
   static override displayName = "Bucket fill sound" as const;
   static override fullDisplayName = "Fluid Bucket fill sound" as const;
+  static override stringDisplayNames = ["Fluid Bucket fill sound"];
   static override kind = "fluidstack" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

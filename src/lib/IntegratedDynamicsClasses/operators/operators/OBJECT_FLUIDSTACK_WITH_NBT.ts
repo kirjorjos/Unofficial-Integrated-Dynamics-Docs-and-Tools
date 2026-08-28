@@ -29,6 +29,7 @@ export class OPERATOR_OBJECT_FLUIDSTACK_WITH_NBT extends BaseOperator<
   static override operatorName = "fluidwithtag" as const;
   static override displayName = "Fluid With Tag" as const;
   static override fullDisplayName = "Fluid Fluid With Tag" as const;
+  static override stringDisplayNames = ["Fluid Fluid With Tag"];
   static override kind = "fluidstack" as const;
   static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {

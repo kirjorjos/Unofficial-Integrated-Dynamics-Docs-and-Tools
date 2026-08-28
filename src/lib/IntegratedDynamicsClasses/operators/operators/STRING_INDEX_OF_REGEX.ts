@@ -24,6 +24,10 @@ export class OPERATOR_STRING_INDEX_OF_REGEX extends BaseOperator<
   static override operatorName = "index_of_regex" as const;
   static override displayName = "Index Of Regex" as const;
   static override fullDisplayName = "String Index Of Regex" as const;
+  static override stringDisplayNames = [
+    "Index Of Regex",
+    "String Index Of Regex",
+  ];
   static override tooltipInfo =
     "Get the index of the first occurrence of a substring matching the pattern in the given string." as const;
 

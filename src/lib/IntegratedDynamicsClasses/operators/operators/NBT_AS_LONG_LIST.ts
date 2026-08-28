@@ -24,6 +24,10 @@ export class OPERATOR_NBT_AS_LONG_LIST extends BaseOperator<
   static override operatorName = "as_long_list" as const;
   static override displayName = "NBT Long Array As Long List" as const;
   static override fullDisplayName = "NBT NBT Long Array As Long List" as const;
+  static override stringDisplayNames = [
+    "NBT Long Array As Long List",
+    "NBT NBT Long Array As Long List",
+  ];
   static override tooltipInfo =
     "Get the Long List value of the given NBT Long Array tag" as const;
 

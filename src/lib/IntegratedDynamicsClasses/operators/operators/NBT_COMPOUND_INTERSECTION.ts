@@ -24,6 +24,10 @@ export class OPERATOR_NBT_COMPOUND_INTERSECTION extends BaseOperator<
   static override operatorName = "compound_intersection" as const;
   static override displayName = "NBT Compound Intersection" as const;
   static override fullDisplayName = "NBT NBT Compound Intersection" as const;
+  static override stringDisplayNames = [
+    "NBT Compound Intersection",
+    "NBT NBT Compound Intersection",
+  ];
   static override tooltipInfo =
     "The intersection of the given NBT compound tags. Nested tags will be intersected recusively." as const;
 

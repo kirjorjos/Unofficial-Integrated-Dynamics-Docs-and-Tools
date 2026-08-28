@@ -102,10 +102,44 @@ describe("TestCondensedTransformer", () => {
       type: "Operator",
       opName: "OBJECT_BLOCK_PROPERTIES",
     });
+    expect(CondensedToAST('Operator("Block Properties")')).toEqual({
+      type: "Operator",
+      opName: "OBJECT_BLOCK_PROPERTIES",
+    });
+    expect(
+      CondensedToAST('Operator("Block Block Possible Properties")')
+    ).toEqual({
+      type: "Operator",
+      opName: "OBJECT_BLOCK_POSSIBLE_PROPERTIES",
+    });
     expect(CondensedToAST('Operator("Block Block With Properties")')).toEqual({
       type: "Operator",
       opName: "OBJECT_BLOCK_WITH_PROPERTIES",
     });
+  });
+
+  it("testOperatorPseudoConstructorStrippedDisplayName", () => {
+    expect(CondensedToAST('Operator("Addition")')).toEqual({
+      type: "Operator",
+      opName: "ARITHMETIC_ADDITION",
+    });
+    expect(CondensedToAST('Operator("Index Of Regex")')).toEqual({
+      type: "Operator",
+      opName: "STRING_INDEX_OF_REGEX",
+    });
+    // full display name resolves via the array for non-colliding operators
+    expect(CondensedToAST('Operator("Arithmetic Addition")')).toEqual({
+      type: "Operator",
+      opName: "ARITHMETIC_ADDITION",
+    });
+    // disambiguated number casts use their unique names (not the colliding stripped form)
+    expect(CondensedToAST('Operator("Number Cast Long to Double")')).toEqual({
+      type: "Operator",
+      opName: "LONG_TO_DOUBLE",
+    });
+    expect(() => CondensedToAST('Operator("Cast Number to Double")')).toThrow(
+      "Unknown operator: Cast Number to Double"
+    );
   });
 
   it("testOperatorPseudoConstructorUnknownThrows", () => {

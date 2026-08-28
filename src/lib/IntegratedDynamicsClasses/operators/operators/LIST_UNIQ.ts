@@ -21,6 +21,7 @@ export class OPERATOR_LIST_UNIQ extends BaseOperator<
   static override operatorName = "uniq" as const;
   static override displayName = "Uniq" as const;
   static override fullDisplayName = "List Uniq" as const;
+  static override stringDisplayNames = ["Uniq", "List Uniq"];
   static override tooltipInfo =
     "Deduplicate all elements in the list." as const;
 

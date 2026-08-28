@@ -20,6 +20,7 @@ export class OPERATOR_BINARY_OR extends BaseOperator<
   static override operatorName = "or" as const;
   static override displayName = "Or" as const;
   static override fullDisplayName = "Binary Or" as const;
+  static override stringDisplayNames = ["Binary Or"];
   static override kind = "binary" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

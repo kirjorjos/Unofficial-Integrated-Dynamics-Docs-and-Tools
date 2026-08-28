@@ -23,6 +23,10 @@ export class OPERATOR_OBJECT_BLOCK_PROPERTIES extends BaseOperator<
   static override operatorName = "blockproperties" as const;
   static override displayName = "Block Properties" as const;
   static override fullDisplayName = "Block Block Properties" as const;
+  static override stringDisplayNames = [
+    "Block Block Properties",
+    "Block Properties",
+  ];
   static override tooltipInfo =
     "Get the block properties as NBT compound tag." as const;
 

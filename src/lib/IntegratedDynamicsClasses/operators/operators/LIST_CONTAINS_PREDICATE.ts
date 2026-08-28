@@ -26,6 +26,10 @@ export class OPERATOR_LIST_CONTAINS_PREDICATE extends BaseOperator<
   static override operatorName = "contains_p" as const;
   static override displayName = "Contains Predicate" as const;
   static override fullDisplayName = "List Contains Predicate" as const;
+  static override stringDisplayNames = [
+    "Contains Predicate",
+    "List Contains Predicate",
+  ];
   static override tooltipInfo =
     "If at least one of the elements of the list returns true for the given predicate." as const;
 

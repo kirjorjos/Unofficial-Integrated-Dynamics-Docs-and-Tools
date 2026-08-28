@@ -16,6 +16,7 @@ export class OPERATOR_OPERATOR_FILTER extends BaseOperator<
   static override operatorName = "filter" as const;
   static override displayName = "Filter" as const;
   static override fullDisplayName = "Operator Filter" as const;
+  static override stringDisplayNames = ["Filter", "Operator Filter"];
   static override tooltipInfo =
     "Filter a list of elements by matching them all with the given predicate." as const;
 

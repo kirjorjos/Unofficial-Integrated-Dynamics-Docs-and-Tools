@@ -25,6 +25,10 @@ export class OPERATOR_STRING_MATCHES_REGEX extends BaseOperator<
   static override operatorName = "matches_regex" as const;
   static override displayName = "Matches Regex" as const;
   static override fullDisplayName = "String Matches Regex" as const;
+  static override stringDisplayNames = [
+    "Matches Regex",
+    "String Matches Regex",
+  ];
   static override tooltipInfo =
     "If the regular expression given matches the given string." as const;
 

@@ -52,10 +52,42 @@ describe("TestCodeLineTransformer", () => {
       type: "Operator",
       opName: "OBJECT_BLOCK_PROPERTIES",
     });
+    expect(CodeLineToAST('Operator("Block Properties")')).toEqual({
+      type: "Operator",
+      opName: "OBJECT_BLOCK_PROPERTIES",
+    });
+    expect(
+      CodeLineToAST('Operator("Block Block Possible Properties")')
+    ).toEqual({
+      type: "Operator",
+      opName: "OBJECT_BLOCK_POSSIBLE_PROPERTIES",
+    });
     expect(CodeLineToAST('Operator("Block Block With Properties")')).toEqual({
       type: "Operator",
       opName: "OBJECT_BLOCK_WITH_PROPERTIES",
     });
+  });
+
+  it("testOperatorPseudoConstructorStrippedDisplayName", () => {
+    expect(CodeLineToAST('Operator("Addition")')).toEqual({
+      type: "Operator",
+      opName: "ARITHMETIC_ADDITION",
+    });
+    expect(CodeLineToAST('Operator("Index Of Regex")')).toEqual({
+      type: "Operator",
+      opName: "STRING_INDEX_OF_REGEX",
+    });
+    expect(CodeLineToAST('Operator("Arithmetic Addition")')).toEqual({
+      type: "Operator",
+      opName: "ARITHMETIC_ADDITION",
+    });
+    expect(CodeLineToAST('Operator("Number Cast Long to Double")')).toEqual({
+      type: "Operator",
+      opName: "LONG_TO_DOUBLE",
+    });
+    expect(() => CodeLineToAST('Operator("Cast Number to Double")')).toThrow(
+      "Unknown operator: Cast Number to Double"
+    );
   });
 
   it("testOperatorPseudoConstructorUnknownThrows", () => {

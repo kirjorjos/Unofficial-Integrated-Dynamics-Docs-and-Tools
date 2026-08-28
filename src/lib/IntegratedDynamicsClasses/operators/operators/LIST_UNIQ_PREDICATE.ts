@@ -30,6 +30,10 @@ export class OPERATOR_LIST_UNIQ_PREDICATE extends BaseOperator<
   static override operatorName = "uniq_p" as const;
   static override displayName = "Unique Predicate" as const;
   static override fullDisplayName = "List Unique Predicate" as const;
+  static override stringDisplayNames = [
+    "Unique Predicate",
+    "List Unique Predicate",
+  ];
   static override tooltipInfo =
     "Deduplicate all elements in the list based on the given comparator predicate." as const;
 

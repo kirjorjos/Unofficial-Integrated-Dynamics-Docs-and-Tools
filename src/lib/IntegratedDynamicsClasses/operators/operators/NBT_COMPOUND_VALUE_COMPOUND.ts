@@ -26,6 +26,10 @@ export class OPERATOR_NBT_COMPOUND_VALUE_COMPOUND extends BaseOperator<
   static override operatorName = "compound_value_compound" as const;
   static override displayName = "NBT Compound Value Compound" as const;
   static override fullDisplayName = "NBT NBT Compound Value Compound" as const;
+  static override stringDisplayNames = [
+    "NBT Compound Value Compound",
+    "NBT NBT Compound Value Compound",
+  ];
   static override tooltipInfo =
     "The Compound value in the given NBT compound tag with the given key" as const;
 

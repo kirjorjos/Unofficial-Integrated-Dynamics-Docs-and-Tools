@@ -20,6 +20,7 @@ export class OPERATOR_OBJECT_ENTITY_TYPE extends BaseOperator<Entity, iString> {
   static override operatorName = "entitytype" as const;
   static override displayName = "Entity Type" as const;
   static override fullDisplayName = "Entity Entity Type" as const;
+  static override stringDisplayNames = ["Entity Type", "Entity Entity Type"];
   static override tooltipInfo = "The entity type name." as const;
 
   static override kind = "entity" as const;

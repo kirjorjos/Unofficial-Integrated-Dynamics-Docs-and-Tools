@@ -23,6 +23,10 @@ export class OPERATOR_OBJECT_ENTITY_DEATHSOUND extends BaseOperator<
   static override operatorName = "deathsound" as const;
   static override displayName = "Entity Death Sound" as const;
   static override fullDisplayName = "Entity Entity Death Sound" as const;
+  static override stringDisplayNames = [
+    "Entity Death Sound",
+    "Entity Entity Death Sound",
+  ];
   static override tooltipInfo = "The death sound of the given entity." as const;
 
   static override kind = "entity" as const;

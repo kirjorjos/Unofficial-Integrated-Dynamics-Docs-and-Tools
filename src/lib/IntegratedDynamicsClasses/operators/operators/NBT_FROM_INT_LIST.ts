@@ -25,6 +25,10 @@ export class OPERATOR_NBT_FROM_INT_LIST extends BaseOperator<
   static override displayName = "NBT Integer Array From Integer List" as const;
   static override fullDisplayName =
     "NBT NBT Integer Array From Integer List" as const;
+  static override stringDisplayNames = [
+    "NBT Integer Array From Integer List",
+    "NBT NBT Integer Array From Integer List",
+  ];
   static override tooltipInfo =
     "Create an NBT Integer Array tag from the given Integer List value" as const;
 

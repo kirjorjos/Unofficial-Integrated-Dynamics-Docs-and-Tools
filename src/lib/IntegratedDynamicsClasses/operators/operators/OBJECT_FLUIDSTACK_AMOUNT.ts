@@ -25,6 +25,7 @@ export class OPERATOR_OBJECT_FLUIDSTACK_AMOUNT extends BaseOperator<
   static override operatorName = "amount" as const;
   static override displayName = "Amount" as const;
   static override fullDisplayName = "Fluid Amount" as const;
+  static override stringDisplayNames = ["Fluid Amount"];
   static override tooltipInfo = "The amount of mB" as const;
 
   static override kind = "fluidstack" as const;

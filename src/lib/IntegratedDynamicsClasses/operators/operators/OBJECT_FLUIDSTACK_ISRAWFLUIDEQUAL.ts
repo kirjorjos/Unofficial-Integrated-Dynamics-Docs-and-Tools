@@ -32,6 +32,7 @@ export class OPERATOR_OBJECT_FLUIDSTACK_ISRAWFLUIDEQUAL extends BaseOperator<
   static override operatorName = "israwfluidequal" as const;
   static override displayName = "Raw fluid equals" as const;
   static override fullDisplayName = "Fluid Raw fluid equals" as const;
+  static override stringDisplayNames = ["Fluid Raw fluid equals"];
   static override tooltipInfo = "If the raw fluids are equal" as const;
 
   static override kind = "fluidstack" as const;

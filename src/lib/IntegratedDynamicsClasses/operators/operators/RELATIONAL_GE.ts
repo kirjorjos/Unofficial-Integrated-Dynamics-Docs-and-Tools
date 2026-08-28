@@ -24,6 +24,10 @@ export class OPERATOR_RELATIONAL_GE extends BaseOperator<
   static override operatorName = "ge" as const;
   static override displayName = "Greater Than or Equal" as const;
   static override fullDisplayName = "Relational Greater Than or Equal" as const;
+  static override stringDisplayNames = [
+    "Greater Than or Equal",
+    "Relational Greater Than or Equal",
+  ];
   static override kind = "relational" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

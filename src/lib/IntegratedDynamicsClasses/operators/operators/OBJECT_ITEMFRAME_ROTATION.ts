@@ -28,6 +28,7 @@ export class OPERATOR_OBJECT_ITEMFRAME_ROTATION extends BaseOperator<
   static override operatorName = "itemframerotation" as const;
   static override displayName = "Item Frame Rotation" as const;
   static override fullDisplayName = "Entity Item Frame Rotation" as const;
+  static override stringDisplayNames = ["Entity Item Frame Rotation"];
   static override tooltipInfo =
     "The rotation from the given Item Frame." as const;
 

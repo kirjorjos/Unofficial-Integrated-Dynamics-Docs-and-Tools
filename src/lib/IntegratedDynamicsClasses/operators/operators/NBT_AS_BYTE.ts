@@ -13,6 +13,10 @@ export class OPERATOR_NBT_AS_BYTE extends BaseOperator<ByteTag, Integer> {
   static override operatorName = "as_byte" as const;
   static override displayName = "NBT Byte As Integer" as const;
   static override fullDisplayName = "NBT NBT Byte As Integer" as const;
+  static override stringDisplayNames = [
+    "NBT Byte As Integer",
+    "NBT NBT Byte As Integer",
+  ];
   static override tooltipInfo =
     "Get the Integer value of the given NBT Byte tag" as const;
 

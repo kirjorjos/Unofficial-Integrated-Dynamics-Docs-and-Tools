@@ -25,6 +25,10 @@ export class OPERATOR_OBJECT_ENTITY_FLUIDS extends BaseOperator<
   static override operatorName = "entityfluids" as const;
   static override displayName = "Entity Fluids" as const;
   static override fullDisplayName = "Entity Entity Fluids" as const;
+  static override stringDisplayNames = [
+    "Entity Fluids",
+    "Entity Entity Fluids",
+  ];
   static override tooltipInfo =
     "The fluids that are contained within this entity." as const;
 

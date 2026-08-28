@@ -25,6 +25,10 @@ export class OPERATOR_INGREDIENTS_WITH_ITEM extends BaseOperator<
   static override displayName = "Ingredients With Item" as const;
   static override fullDisplayName =
     "Ingredients Ingredients With Item" as const;
+  static override stringDisplayNames = [
+    "Ingredients With Item",
+    "Ingredients Ingredients With Item",
+  ];
   static override tooltipInfo =
     "Get a copy of the given ingredients with the given item at the given ingredient position" as const;
 
