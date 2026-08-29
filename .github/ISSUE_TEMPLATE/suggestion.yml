@@ -8,27 +8,26 @@ body:
         Thanks for the idea! Tell us what you would like to see and why it
         would help.
 
-  - type: dropdown
+  - type: checkboxes
     id: area
     attributes:
       label: Affected area
       description: What part of the project does this touch?
-      multiple: true
       options:
-        - Logic Programmer View
-        - Display Panel View
-        - Reader View
-        - Visual Transformer
-        - JSON Transformer
-        - Code Line Transformer
-        - Expanded Transformer
-        - Condensed Transformer
-        - Multiple Transformers (Please select problematic ones)
-        - Operator Documentation
-        - Reader Documentation
-        - Other
-    validations:
-      required: true
+        - label: Logic Programmer View
+        - label: Display Panel View
+        - label: Reader View
+        - label: Visual Transformer
+        - label: JSON Transformer
+        - label: Code Line Transformer
+        - label: Expanded Transformer
+        - label: Condensed Transformer
+        - label: Multiple Transformers (Please select problematic ones)
+        - label: Operator Documentation
+        - label: Reader Documentation
+        - label: GitHub Actions / CI
+        - label: Local workflows
+        - label: Other
 
   - type: textarea
     id: suggestion

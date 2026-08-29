@@ -1,72 +1,59 @@
 bug:
   - '/### What''s wrong\?/'
-  - "/Logic Programmer View/"
-  - "/Display Panel View/"
-  - "/Reader View/"
-  - "/Visual Transformer/"
-  - "/JSON Transformer/"
-  - "/Code Line Transformer/"
-  - "/Expanded Transformer/"
-  - "/Condensed Transformer/"
-  - "/Multiple Transformers/"
-  - "/Operator Documentation/"
-  - "/Reader Documentation/"
-  - "/^- Other$/"
+
 enhancement:
   - "/### Describe the suggestion/"
-  - "/Logic Programmer View/"
-  - "/Display Panel View/"
-  - "/Reader View/"
-  - "/Visual Transformer/"
-  - "/JSON Transformer/"
-  - "/Code Line Transformer/"
-  - "/Expanded Transformer/"
-  - "/Condensed Transformer/"
-  - "/Multiple Transformers/"
-  - "/Operator Documentation/"
-  - "/Reader Documentation/"
-  - "/^- Other$/"
+
 bug/logic-programmer-view:
-  - "/Logic Programmer View/"
+  - '/### What''s wrong\?[\s\S]*-\s*\[[xX]\]\s*Logic Programmer View|-\s*\[[xX]\]\s*Logic Programmer View[\s\S]*### What''s wrong\?/'
 bug/display-panel-view:
-  - "/Display Panel View/"
+  - '/### What''s wrong\?[\s\S]*-\s*\[[xX]\]\s*Display Panel View|-\s*\[[xX]\]\s*Display Panel View[\s\S]*### What''s wrong\?/'
 bug/reader-view:
-  - "/Reader View/"
+  - '/### What''s wrong\?[\s\S]*-\s*\[[xX]\]\s*Reader View|-\s*\[[xX]\]\s*Reader View[\s\S]*### What''s wrong\?/'
 bug/visual-transformer:
-  - "/Visual Transformer/"
+  - '/### What''s wrong\?[\s\S]*-\s*\[[xX]\]\s*Visual Transformer|-\s*\[[xX]\]\s*Visual Transformer[\s\S]*### What''s wrong\?/'
 bug/json-transformer:
-  - "/JSON Transformer/"
+  - '/### What''s wrong\?[\s\S]*-\s*\[[xX]\]\s*JSON Transformer|-\s*\[[xX]\]\s*JSON Transformer[\s\S]*### What''s wrong\?/'
 bug/code-line-transformer:
-  - "/Code Line Transformer/"
+  - '/### What''s wrong\?[\s\S]*-\s*\[[xX]\]\s*Code Line Transformer|-\s*\[[xX]\]\s*Code Line Transformer[\s\S]*### What''s wrong\?/'
 bug/expanded-transformer:
-  - "/Expanded Transformer/"
+  - '/### What''s wrong\?[\s\S]*-\s*\[[xX]\]\s*Expanded Transformer|-\s*\[[xX]\]\s*Expanded Transformer[\s\S]*### What''s wrong\?/'
 bug/condensed-transformer:
-  - "/Condensed Transformer/"
+  - '/### What''s wrong\?[\s\S]*-\s*\[[xX]\]\s*Condensed Transformer|-\s*\[[xX]\]\s*Condensed Transformer[\s\S]*### What''s wrong\?/'
 bug/multiple-transformers:
-  - "/Multiple Transformers/"
+  - '/### What''s wrong\?[\s\S]*-\s*\[[xX]\]\s*Multiple Transformers|-\s*\[[xX]\]\s*Multiple Transformers[\s\S]*### What''s wrong\?/'
 bug/operator-documentation:
-  - "/Operator Documentation/"
+  - '/### What''s wrong\?[\s\S]*-\s*\[[xX]\]\s*Operator Documentation|-\s*\[[xX]\]\s*Operator Documentation[\s\S]*### What''s wrong\?/'
 bug/reader-documentation:
-  - "/Reader Documentation/"
+  - '/### What''s wrong\?[\s\S]*-\s*\[[xX]\]\s*Reader Documentation|-\s*\[[xX]\]\s*Reader Documentation[\s\S]*### What''s wrong\?/'
+bug/github-actions-ci:
+  - '/### What''s wrong\?[\s\S]*-\s*\[[xX]\]\s*GitHub Actions|-\s*\[[xX]\]\s*GitHub Actions[\s\S]*### What''s wrong\?/'
+bug/local-workflows:
+  - '/### What''s wrong\?[\s\S]*-\s*\[[xX]\]\s*Local workflows|-\s*\[[xX]\]\s*Local workflows[\s\S]*### What''s wrong\?/'
+
 enhancement/logic-programmer-view:
-  - "/Logic Programmer View/"
+  - '/### Describe the suggestion[\s\S]*-\s*\[[xX]\]\s*Logic Programmer View|-\s*\[[xX]\]\s*Logic Programmer View[\s\S]*### Describe the suggestion/'
 enhancement/display-panel-view:
-  - "/Display Panel View/"
+  - '/### Describe the suggestion[\s\S]*-\s*\[[xX]\]\s*Display Panel View|-\s*\[[xX]\]\s*Display Panel View[\s\S]*### Describe the suggestion/'
 enhancement/reader-view:
-  - "/Reader View/"
+  - '/### Describe the suggestion[\s\S]*-\s*\[[xX]\]\s*Reader View|-\s*\[[xX]\]\s*Reader View[\s\S]*### Describe the suggestion/'
 enhancement/visual-transformer:
-  - "/Visual Transformer/"
+  - '/### Describe the suggestion[\s\S]*-\s*\[[xX]\]\s*Visual Transformer|-\s*\[[xX]\]\s*Visual Transformer[\s\S]*### Describe the suggestion/'
 enhancement/json-transformer:
-  - "/JSON Transformer/"
+  - '/### Describe the suggestion[\s\S]*-\s*\[[xX]\]\s*JSON Transformer|-\s*\[[xX]\]\s*JSON Transformer[\s\S]*### Describe the suggestion/'
 enhancement/code-line-transformer:
-  - "/Code Line Transformer/"
+  - '/### Describe the suggestion[\s\S]*-\s*\[[xX]\]\s*Code Line Transformer|-\s*\[[xX]\]\s*Code Line Transformer[\s\S]*### Describe the suggestion/'
 enhancement/expanded-transformer:
-  - "/Expanded Transformer/"
+  - '/### Describe the suggestion[\s\S]*-\s*\[[xX]\]\s*Expanded Transformer|-\s*\[[xX]\]\s*Expanded Transformer[\s\S]*### Describe the suggestion/'
 enhancement/condensed-transformer:
-  - "/Condensed Transformer/"
+  - '/### Describe the suggestion[\s\S]*-\s*\[[xX]\]\s*Condensed Transformer|-\s*\[[xX]\]\s*Condensed Transformer[\s\S]*### Describe the suggestion/'
 enhancement/multiple-transformers:
-  - "/Multiple Transformers/"
+  - '/### Describe the suggestion[\s\S]*-\s*\[[xX]\]\s*Multiple Transformers|-\s*\[[xX]\]\s*Multiple Transformers[\s\S]*### Describe the suggestion/'
 enhancement/operator-documentation:
-  - "/Operator Documentation/"
+  - '/### Describe the suggestion[\s\S]*-\s*\[[xX]\]\s*Operator Documentation|-\s*\[[xX]\]\s*Operator Documentation[\s\S]*### Describe the suggestion/'
 enhancement/reader-documentation:
-  - "/Reader Documentation/"
+  - '/### Describe the suggestion[\s\S]*-\s*\[[xX]\]\s*Reader Documentation|-\s*\[[xX]\]\s*Reader Documentation[\s\S]*### Describe the suggestion/'
+enhancement/github-actions-ci:
+  - '/### Describe the suggestion[\s\S]*-\s*\[[xX]\]\s*GitHub Actions|-\s*\[[xX]\]\s*GitHub Actions[\s\S]*### Describe the suggestion/'
+enhancement/local-workflows:
+  - '/### Describe the suggestion[\s\S]*-\s*\[[xX]\]\s*Local workflows|-\s*\[[xX]\]\s*Local workflows[\s\S]*### Describe the suggestion/'
