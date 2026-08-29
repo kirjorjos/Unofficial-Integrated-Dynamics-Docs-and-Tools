@@ -14,6 +14,7 @@ import {
   expectsOperatorArgument,
   getNicknameCharacterRegex,
   getNicknameRegex,
+  formatVarName,
   resolveImplicitFlipOperator,
   setOperatorSourceName,
   flattenAnonymousBaseOperatorApplication,
@@ -529,6 +530,15 @@ export const CondensedToAST = (
     args: InternalAST[],
     scope: Set<string>
   ): InternalAST {
+    if (name.startsWith("@") && name.slice(1).toLowerCase() === "variable") {
+      if (args.length !== 1 || args[0]!.type !== "String") {
+        throw new Error("Variable(...) expects exactly one string argument");
+      }
+      return {
+        type: "Variable",
+        name: `@${(args[0] as { value: string }).value}`,
+      };
+    }
     const internalKey = operatorRegistry.operatorByNickname(name);
     if (scope.has(name)) {
       throw new Error(`Non-base operator not directly callable, use apply`);
@@ -941,6 +951,16 @@ export const CondensedToAST = (
           { type: "Operator", opName: internalKey },
           opName
         );
+      }
+      if (lowerName === "variable") {
+        if (args.length !== 1 || args[0]!.type !== "String") {
+          throw new Error("Variable(...) expects exactly one string argument");
+        }
+        const varName = (args[0] as { value: string }).value;
+        if (externalScope.has(varName)) {
+          return externalScope.get(varName)! as InternalAST;
+        }
+        return { type: "Variable", name: `@${varName}` };
       }
       if (
         ["block", "item", "fluid", "entity", "ingredients"].includes(lowerName)
@@ -1497,6 +1517,7 @@ export const CondensedToAST = (
             "ingredients",
             "recipe",
             "operator",
+            "variable",
           ].includes(lower)
         ) {
           return { type: "Identifier", value: token.value };
@@ -1565,7 +1586,7 @@ export const ASTToCondensed = (
     }
 
     if (node.varName && !topLevel) {
-      return node.varName;
+      return formatVarName(node.varName);
     }
 
     let result = "UNKNOWN";
@@ -1594,6 +1615,17 @@ export const ASTToCondensed = (
       case "Null":
         result = "null";
         break;
+      case "Variable": {
+        if (node.name.startsWith("@")) {
+          const name = node.name.slice(1);
+          result = getNicknameRegex().test(name)
+            ? node.name
+            : `Variable(${JSON.stringify(name)})`;
+        } else {
+          result = node.name;
+        }
+        break;
+      }
       case "List":
         result = `[${node.value.map((entry) => stringify(entry, false)).join(", ")}]`;
         break;
@@ -1723,7 +1755,7 @@ export const ASTToCondensed = (
     }
 
     if (node.varName && topLevel) {
-      return `${node.varName} = ${result}`;
+      return `${formatVarName(node.varName)} = ${result}`;
     }
     return result;
   };

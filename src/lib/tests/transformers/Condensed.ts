@@ -160,6 +160,106 @@ describe("TestCondensedTransformer", () => {
     expect(ASTToCondensed(ast)).toBe("booleanOr");
   });
 
+  it("testVariablePseudoConstructor", () => {
+    expect(CondensedToAST('Variable("my var")', undefined, 0, true)).toEqual({
+      type: "Variable",
+      name: "@my var",
+    });
+    expect(CondensedToAST('Variable("x")', undefined, 0, true)).toEqual({
+      type: "Variable",
+      name: "@x",
+    });
+    expect(CondensedToAST('Variable("0")', undefined, 0, true)).toEqual({
+      type: "Variable",
+      name: "@0",
+    });
+  });
+
+  it("testVariablePseudoConstructorRequiresString", () => {
+    expect(() => CondensedToAST("Variable(1)", undefined, 0, true)).toThrow(
+      "Variable(...) expects exactly one string argument"
+    );
+    expect(() => CondensedToAST("Variable()", undefined, 0, true)).toThrow(
+      "Variable(...) expects exactly one string argument"
+    );
+    expect(() =>
+      CondensedToAST('Variable("a", "b")', undefined, 0, true)
+    ).toThrow("Variable(...) expects exactly one string argument");
+  });
+
+  it("testVariablePseudoConstructorNetworkRef", () => {
+    const ast = CondensedToAST('5; Variable("0")');
+    expect(ast).toEqual({
+      type: "NetworkCards",
+      definitions: [
+        { name: "", node: { type: "Integer", value: "5" } },
+        { name: "", node: { type: "Integer", value: "0" } },
+      ],
+    });
+    expect(ASTToCondensed(ast)).toBe("5; 0");
+  });
+
+  it("testVariablePseudoConstructorStandaloneRejected", () => {
+    expect(() => CondensedToAST('Variable("my var")')).toThrow(
+      /@-references are only valid inside a multi-statement/
+    );
+  });
+
+  it("testAtVariablePseudoConstructorParsesToRef", () => {
+    expect(CondensedToAST('@Variable("my var")', undefined, 0, true)).toEqual({
+      type: "Variable",
+      name: "@my var",
+    });
+    expect(CondensedToAST('@variable("x")', undefined, 0, true)).toEqual({
+      type: "Variable",
+      name: "@x",
+    });
+    expect(() => CondensedToAST("@Variable(1)", undefined, 0, true)).toThrow(
+      "Variable(...) expects exactly one string argument"
+    );
+  });
+
+  it("testAtVariablePseudoConstructorResolvesToCardId", () => {
+    const ast = CondensedToAST('5; @Variable("0")');
+    expect(ast).toEqual({
+      type: "NetworkCards",
+      definitions: [
+        { name: "", node: { type: "Integer", value: "5" } },
+        { name: "", node: { type: "Integer", value: "0" } },
+      ],
+    });
+    expect(ASTToCondensed(ast)).toBe("5; 0");
+  });
+
+  it("testVariablePseudoConstructorRoundTrip", () => {
+    expect(ASTToCondensed({ type: "Variable", name: "@my var" })).toBe(
+      'Variable("my var")'
+    );
+    expect(ASTToCondensed({ type: "Variable", name: "@x" })).toBe("@x");
+    const ast = CondensedToAST('Variable("my var")', undefined, 0, true);
+    const out = ASTToCondensed(ast as TypeAST.AST);
+    expect(
+      ASTToCondensed(CondensedToAST(out, undefined, 0, true) as TypeAST.AST)
+    ).toBe(out);
+  });
+
+  it("testVariablePseudoConstructorAtInStringStaysString", () => {
+    const afterSpace = CondensedToAST(
+      'Variable("my @var")',
+      undefined,
+      0,
+      true
+    );
+    expect(afterSpace).toEqual({ type: "Variable", name: "@my @var" });
+    expect(ASTToCondensed(afterSpace as TypeAST.AST)).toBe(
+      'Variable("my @var")'
+    );
+
+    const atStart = CondensedToAST('Variable("@my var")', undefined, 0, true);
+    expect(atStart).toEqual({ type: "Variable", name: "@@my var" });
+    expect(ASTToCondensed(atStart as TypeAST.AST)).toBe('Variable("@my var")');
+  });
+
   it("testFlattening", () => {
     const nested = "apply(apply(numberAdd, 1), 2)";
     const ast = CondensedToAST(nested);
@@ -557,6 +657,24 @@ describe("TestCondensedTransformer", () => {
     expect(mapNode).toContain('"value":"0"');
     expect(mapNode).toContain('"value":"1"');
     expect(mapNode).not.toContain("@");
+  });
+
+  it("testAtRefsResolveToLastCardOfCalculation", () => {
+    const ast = CondensedToAST(
+      "numberAdd(5, 1); numberAdd(2, 3); apply(apply(map, NetworkReader.variableValueById), [@0, @1])"
+    );
+    expect(ast.type).toBe("NetworkCards");
+    const mapNode = JSON.stringify(
+      (ast as TypeAST.NetworkCards).definitions[2]!.node
+    );
+    expect(mapNode).toContain('"value":"2"');
+    expect(mapNode).toContain('"value":"5"');
+    expect(mapNode).not.toContain("@");
+    const out = ASTToCondensed(ast);
+    expect(out).toBe(
+      "numberAdd(5, 1); numberAdd(2, 3); operatorMap(NetworkReader.variableValueById, [2, 5])"
+    );
+    expect(ASTToCondensed(CondensedToAST(out))).toBe(out);
   });
 
   it("testSingleSegmentReturnsPlainAst", () => {

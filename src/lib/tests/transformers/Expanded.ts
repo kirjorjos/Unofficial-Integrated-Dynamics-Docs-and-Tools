@@ -587,6 +587,107 @@ final = [step0, step1]`;
     );
   });
 
+  it("testQuotedVarNameDefinitionAndReference", () => {
+    const network = ExpandedToAST(
+      'Variable("my cool variable") = 5\nfinal = Variable("my cool variable")'
+    ) as TypeAST.NetworkCards;
+    expect(network.definitions.map((d) => d.name)).toEqual([
+      "my cool variable",
+      "final",
+    ]);
+    expect(network.definitions[1]!.node).toEqual({
+      type: "Integer",
+      value: "5",
+      varName: "final",
+    });
+    const expanded = ASTToExpanded(network);
+    expect(expanded).toContain('Variable("my cool variable") ::');
+    expect(expanded).toContain('Variable("my cool variable") = 5');
+    expect(expanded).toContain("final = 5");
+    const back = ExpandedToAST(expanded);
+    expect(JSON.stringify(back)).toBe(JSON.stringify(network));
+  });
+
+  it("testQuotedVarNameTypedDefinition", () => {
+    const network = ExpandedToAST(
+      'Variable("my cool variable") :: Integer = 5\nfinal = Variable("my cool variable")'
+    ) as TypeAST.NetworkCards;
+    expect(network.definitions[0]!.name).toBe("my cool variable");
+    const back = ExpandedToAST(ASTToExpanded(network));
+    expect(JSON.stringify(back)).toBe(JSON.stringify(network));
+  });
+
+  it("testQuotedVarNameReferenceInArgument", () => {
+    const network = ExpandedToAST(
+      'Variable("my cool variable") = 5\nfinal = numberAdd(Variable("my cool variable"), 1)'
+    ) as TypeAST.NetworkCards;
+    const finalNode = network.definitions[1]!.node as TypeAST.Curried;
+    expect(finalNode.args[0]).toEqual({
+      type: "Integer",
+      value: "5",
+      varName: "my cool variable",
+    });
+    const expanded = ASTToExpanded(network);
+    expect(expanded).toContain(
+      'final = numberAdd(Variable("my cool variable"), 1)'
+    );
+    const back = ExpandedToAST(expanded);
+    expect(JSON.stringify(back)).toBe(JSON.stringify(network));
+  });
+
+  it("testQuotedVarNameWrapperRequired", () => {
+    expect(() => ExpandedToAST("my cool variable = 5")).toThrow(
+      /Invalid variable name/
+    );
+    expect(() => ExpandedToAST('"my cool variable" = 5')).toThrow(
+      /Invalid variable name/
+    );
+    expect(() => ExpandedToAST("a = 5\nfinal = my cool variable")).toThrow();
+  });
+
+  it("testQuotedVarNameStillRejectsNicknameShadow", () => {
+    expect(() => ExpandedToAST('Variable("add") = 5')).toThrow(
+      /overshadows an operator nickname/
+    );
+  });
+
+  it("testAtVariablePseudoConstructorResolvesToCardId", () => {
+    const network = ExpandedToAST(
+      'Variable("my var") = 5\nfinal = @Variable("my var")'
+    ) as TypeAST.NetworkCards;
+    const finalNode = network.definitions[1]!.node;
+    expect(finalNode).toEqual({
+      type: "Integer",
+      value: "0",
+      varName: "final",
+    });
+    expect(ASTToCondensed(network)).toBe("5; 0");
+  });
+
+  it("testVariablePseudoConstructorResolvesScope", () => {
+    const network = ExpandedToAST(
+      'a = 5\nfinal = numberAdd(Variable("a"), 1)'
+    ) as TypeAST.NetworkCards;
+    const finalNode = network.definitions[1]!.node as TypeAST.Curried;
+    expect(finalNode.type).toBe("Curry");
+    expect(finalNode.args[0]).toEqual({
+      type: "Integer",
+      value: "5",
+      varName: "a",
+    });
+  });
+
+  it("testBareVarRefKeepsDefinitionName", () => {
+    const network = ExpandedToAST("a = 5\nfinal = a") as TypeAST.NetworkCards;
+    expect(network.definitions[0]!.node.varName).toBe("a");
+    expect(network.definitions[1]!.node.varName).toBe("final");
+    const expanded = ASTToExpanded(network);
+    expect(expanded).toContain("a = 5");
+    expect(expanded).toContain("final = 5");
+    const back = ExpandedToAST(expanded);
+    expect(JSON.stringify(back)).toBe(JSON.stringify(network));
+  });
+
   it("testMixedListNormalizesInExpanded", () => {
     const ast = ExpandedToAST(
       "a = [1, numberAdd(5, 1), numberAdd(2, 3)]"
@@ -603,7 +704,6 @@ final = [step0, step1]`;
       "operatorMap(NetworkReader.variableValueById, [2, 5])"
     );
 
-    // re-parsing the emitted expanded keeps the card layout (same var ids)
     const back = ExpandedToAST(expanded) as TypeAST.NetworkCards;
     const backJson = JSON.stringify(back);
     expect(backJson).toContain('"value":"2"');

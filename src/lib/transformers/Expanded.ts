@@ -5,11 +5,13 @@ import {
   ASTToCondensed,
   CondensedToAST,
   QuoteDelimiter,
+  unquoteString,
 } from "lib/transformers/Condensed";
 import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 import {
   getOpName,
   getNicknameRegex,
+  formatVarName,
   getOperatorSourceName,
   flattenAnonymousBaseOperatorApplication,
 } from "lib/transformers/helpers";
@@ -27,6 +29,24 @@ const getLabel = (index: number): string => {
 };
 
 const SIGNATURE_ARROW = "→";
+
+const parseDefinitionVarName = (
+  raw: string
+): { name: string; quoted: boolean } => {
+  const trimmed = raw.trim();
+  const wrapper = trimmed.match(/^Variable\s*\(\s*(.*?)\s*\)$/i);
+  if (wrapper) {
+    const inner = wrapper[1]!.trim();
+    if (
+      inner.length >= 2 &&
+      ((inner.startsWith('"') && inner.endsWith('"')) ||
+        (inner.startsWith("'") && inner.endsWith("'")))
+    ) {
+      return { name: unquoteString(inner), quoted: true };
+    }
+  }
+  return { name: trimmed, quoted: false };
+};
 
 class SignatureFormatter {
   private typeIDToLabel = new Map<number, string>();
@@ -611,13 +631,14 @@ export const ASTToExpanded = (
 
   for (let i = 0; i < finalVarsArray.length; i++) {
     const v = finalVarsArray[i]!;
+    const name = v.varName || getVarName(v);
+    const displayName = formatVarName(name);
     if (
       v.varName &&
-      output.some((line) => line.startsWith(`${v.varName} = `))
+      output.some((line) => line.startsWith(`${displayName} = `))
     ) {
       continue;
     }
-    const name = v.varName || getVarName(v);
     const sig = computeSignature(v, signatureCache);
     const sigStr = formatter.format(sig);
 
@@ -626,10 +647,10 @@ export const ASTToExpanded = (
     const exprStr = style === "CodeLine" ? ASTToCodeLine(v) : ASTToCondensed(v);
     if (oldVarName) v.varName = oldVarName;
 
-    const assignment = `${name} = ${exprStr}`;
+    const assignment = `${displayName} = ${exprStr}`;
     if (output.includes(assignment)) continue;
 
-    output.push(`${name} :: ${sigStr}`);
+    output.push(`${displayName} :: ${sigStr}`);
     output.push(assignment);
     if (i < finalVarsArray.length - 1) {
       output.push("");
@@ -810,6 +831,7 @@ export const ExpandedToAST = (
     );
 
     let varName: string | null = null;
+    let varNameQuoted = false;
     let exprStr: string;
     let declaredType: string | null = null;
 
@@ -823,14 +845,18 @@ export const ExpandedToAST = (
       if (!lhs || restEqIdx === -1) {
         throw new Error(`Invalid typed definition on line ${i + 1}: "${line}"`);
       }
-      if (!getNicknameRegex().test(lhs)) {
+      const parsedLhs = parseDefinitionVarName(lhs);
+      if (!parsedLhs.quoted && !getNicknameRegex().test(parsedLhs.name)) {
         throw new Error(`Invalid variable name: "${lhs}"`);
       }
       declaredType = rest.substring(0, restEqIdx).trim();
       exprStr = rest.substring(restEqIdx + 1).trim();
-      varName = lhs;
+      varName = parsedLhs.name;
+      varNameQuoted = parsedLhs.quoted;
     } else if (eqIdx !== -1) {
-      varName = line.substring(0, eqIdx).trim();
+      const parsedVarName = parseDefinitionVarName(line.substring(0, eqIdx));
+      varName = parsedVarName.name;
+      varNameQuoted = parsedVarName.quoted;
 
       let rhs = line.substring(eqIdx + 1).trim();
       // Typed definition: `varName = expression :: Type`
@@ -843,7 +869,7 @@ export const ExpandedToAST = (
         rhs = rhs.substring(0, rhsColonIdx).trim();
       }
 
-      if (!getNicknameRegex().test(varName)) {
+      if (!varNameQuoted && !getNicknameRegex().test(varName)) {
         throw new Error(`Invalid variable name: "${varName}"`);
       }
       exprStr = rhs;
@@ -901,6 +927,9 @@ export const ExpandedToAST = (
     }
 
     if (varName) {
+      if (definitions.some((def) => def.node === lineAST)) {
+        lineAST = structuredClone(lineAST);
+      }
       lineAST.varName = varName;
       scope.set(varName, lineAST);
       definitions.push({ name: varName, node: lineAST });

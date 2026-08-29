@@ -10,6 +10,8 @@ import {
 } from "lib/IntegratedDynamicsClasses/readers/readerRegistry";
 import {
   getOpName,
+  getNicknameRegex,
+  formatVarName,
   resolveImplicitFlipOperator,
   setOperatorSourceName,
   flattenAnonymousBaseOperatorApplication,
@@ -36,7 +38,7 @@ export const ASTToCodeLine = (
     }
 
     if (node.varName && !topLevel) {
-      return node.varName;
+      return formatVarName(node.varName);
     }
 
     const isAtomic = (node: TypeAST.AST) =>
@@ -55,7 +57,8 @@ export const ASTToCodeLine = (
       node.type === "Fluid" ||
       node.type === "Entity" ||
       node.type === "Ingredients" ||
-      node.type === "Recipe";
+      node.type === "Recipe" ||
+      node.type === "Variable";
 
     const wrap = (node: TypeAST.AST) => {
       if (isAtomic(node)) {
@@ -85,6 +88,17 @@ export const ASTToCodeLine = (
       case "Null":
         result = "null";
         break;
+      case "Variable": {
+        if (node.name.startsWith("@")) {
+          const name = node.name.slice(1);
+          result = getNicknameRegex().test(name)
+            ? node.name
+            : `Variable(${JSON.stringify(name)})`;
+        } else {
+          result = node.name;
+        }
+        break;
+      }
       case "List":
         result = `[${node.value.map((entry) => stringify(entry)).join(", ")}]`;
         break;
@@ -202,7 +216,7 @@ export const ASTToCodeLine = (
     }
 
     if (node.varName && topLevel) {
-      return `${node.varName} = ${result}`;
+      return `${formatVarName(node.varName)} = ${result}`;
     }
     return result;
   };
@@ -454,8 +468,26 @@ export const CodeLineToAST = (
     )
       return { type: "String", value: unquoteString(token) };
     if (token.startsWith("{")) return { type: "NBT", value: JSON.parse(token) };
-    if (token.startsWith("@"))
+    if (token.startsWith("@")) {
+      if (token.slice(1).toLowerCase() === "variable" && tokens[pos] === "(") {
+        pos++; // consume (
+        const args: InternalAST[] = [];
+        while (pos < tokens.length && tokens[pos] !== ")") {
+          args.push(parseExpression(scope));
+          if (tokens[pos] === ",") pos++;
+        }
+        if (tokens[pos] !== ")") throw new Error("Expected ')'");
+        pos++; // consume )
+        if (args.length !== 1 || args[0]!.type !== "String") {
+          throw new Error("Variable(...) expects exactly one string argument");
+        }
+        return {
+          type: "Variable",
+          name: `@${(args[0] as { value: string }).value}`,
+        } as InternalAST;
+      }
       return { type: "Variable", name: token } as InternalAST;
+    }
     if (/^-?\d+$/.test(token))
       return { type: "Integer", value: token as TypeNumericString };
     if (/^-?\d+l$/i.test(token))
@@ -480,6 +512,7 @@ export const CodeLineToAST = (
         "ingredients",
         "recipe",
         "operator",
+        "variable",
       ].includes(lowerToken)
     ) {
       if (tokens[pos] === "(") {
@@ -856,6 +889,16 @@ export const CodeLineToAST = (
           { type: "Operator", opName: internalKey as TypeOperatorKey },
           opName
         );
+      }
+      if (lowerName === "variable") {
+        if (args.length !== 1 || args[0]!.type !== "String") {
+          throw new Error("Variable(...) expects exactly one string argument");
+        }
+        const varName = (args[0] as { value: string }).value;
+        if (externalScope.has(varName)) {
+          return externalScope.get(varName)! as InternalAST;
+        }
+        return { type: "Variable", name: `@${varName}` };
       }
       if (
         ["block", "item", "fluid", "entity", "ingredients"].includes(lowerName)
