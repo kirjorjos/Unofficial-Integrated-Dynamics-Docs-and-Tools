@@ -37,7 +37,7 @@
     "build": "npm run format && npm run test && vite build",
     "build:ci": "npm run format && npx jest && npm run typecheck && npx playwright test --output=test-results && vite build",
     "preview": "vite preview",
-    "commit": "((git diff --quiet && npm test) || (git stash push -u -k && (npm test && git stash apply && git stash drop) || (git stash apply && git stash drop; exit 1))) && npm run format:staged && git commit"
+    "commit": "node scripts/commit.mjs"
   },
   "prettier": {
     "tabWidth": 2,
