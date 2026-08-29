@@ -265,8 +265,34 @@ export const getNicknameRegex = (): RegExp =>
     `^(?!.*--)(?!.*::)(?!.*=>)(?!.*->)[^${BaseOperator.nicknameRegexDisallowedChars.join("")}]+$`
   );
 
+const hasUnbalancedBraces = (name: string): boolean => {
+  let depth = 0;
+  for (const char of name) {
+    if (char === "{") depth++;
+    else if (char === "}") depth--;
+  }
+  return depth !== 0;
+};
+
+const isLiteralLikeName = (name: string): boolean => {
+  const lower = name.toLowerCase();
+  if (lower === "null" || lower === "true" || lower === "false") return true;
+  if (/^-?\d+$/.test(name)) return true;
+  if (/^-?\d+[lL]$/.test(name)) return true;
+  if (/^-?(?:\d+\.\d+[dD]?|\d+\.|\d+[dD])$/.test(name)) return true;
+  return false;
+};
+
+export const isVarNameExpandedSafe = (name: string): boolean =>
+  getNicknameRegex().test(name) &&
+  !name.includes("=") &&
+  !name.includes("'") &&
+  name !== "{}" &&
+  !hasUnbalancedBraces(name) &&
+  !isLiteralLikeName(name);
+
 export const formatVarName = (name: string): string =>
-  getNicknameRegex().test(name) ? name : `Variable(${JSON.stringify(name)})`;
+  isVarNameExpandedSafe(name) ? name : `Variable(${JSON.stringify(name)})`;
 
 export const getNicknameCharacterRegex = (): RegExp =>
   new RegExp(`^[^${BaseOperator.nicknameRegexDisallowedChars.join("")}]$`);

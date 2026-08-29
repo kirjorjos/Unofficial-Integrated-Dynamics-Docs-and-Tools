@@ -16,9 +16,10 @@ import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 import { globalMap } from "lib/HelperClasses/TypeMap";
 import FoldableExpandedOutput from "../components/FoldableExpandedOutput.vue";
 import LogicProgrammerVisualOutput from "../components/LogicProgrammerVisualOutput.vue";
-import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
+import { detectInputFormat } from "lib/transformers/detectFormat";
+import type { TransformerFormatKey } from "lib/transformers/detectFormat";
 
-type FormatKey = "condensed" | "expanded" | "codeline" | "compressed" | "json";
+type FormatKey = TransformerFormatKey;
 type OutputFormatKey = Exclude<FormatKey, "compressed"> | "visual";
 
 const inputText = ref("");
@@ -100,21 +101,6 @@ const inputLineNumbers = computed(() => {
   const lineCount = Math.max(1, inputText.value.split("\n").length);
   return Array.from({ length: lineCount }, (_, index) => index + 1).join("\n");
 });
-
-const nicknamePrefixRegex = new RegExp(
-  `^[^${BaseOperator.nicknameRegexDisallowedChars.join("")}]+\\s*=`
-);
-const condensedCallRegex = new RegExp(
-  `^[^${BaseOperator.nicknameRegexDisallowedChars.join("")}]+\\(`
-);
-
-const detectInputFormat = (value: string): FormatKey => {
-  if (value.includes("\n")) return "expanded";
-  if (nicknamePrefixRegex.test(value)) return "expanded";
-  if (value[0] === "{") return "json";
-  if (condensedCallRegex.test(value)) return "condensed";
-  return "codeline";
-};
 
 const detectedInputFormat = computed<FormatKey | null>(() => {
   const trimmed = inputText.value.trim();

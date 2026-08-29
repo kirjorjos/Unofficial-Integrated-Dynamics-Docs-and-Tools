@@ -802,6 +802,96 @@ matchesFilter = (f) => (i) => == (beeGenome f) (beeGenome i)
     expect(expanded).toContain("apply(operatorPipe, beeGenome)");
   });
 
+  it.each(["Condensed", "CodeLine"] as const)(
+    "testEqPrefixedVarNamesRoundTrip (%s style)",
+    (style) => {
+      const input = `
+genomePath = ""
+beeGenome = pipe itemNBT (nbtPathMatchFirst genomePath)
+matchesFilter = (f) => (i) => == (beeGenome f) (beeGenome i)
+`;
+      const ast = rootOf(ExpandedToAST(input.trim()));
+      const expanded = ASTToExpanded(ast, style);
+
+      expect(expanded).toContain('Variable("==WithBeeGenome")');
+      expect(expanded).not.toMatch(/\n==\S+ =/);
+
+      const backAst = rootOf(ExpandedToAST(expanded));
+      deleteNestedVars(backAst);
+      deleteNestedVars(ast);
+      expect(JSON.parse(JSON.stringify(backAst))).toEqual(
+        JSON.parse(JSON.stringify(ast))
+      );
+    }
+  );
+
+  it.each([
+    ["it's", 'Variable("it\'s") = 5'],
+    ["x{y", 'Variable("x{y") = 5'],
+    ["}y", 'Variable("}y") = 5'],
+    ["{}", 'Variable("{}") = 5'],
+    ["5", 'Variable("5") = 5'],
+    ["-5", 'Variable("-5") = 5'],
+    ["5l", 'Variable("5l") = 5'],
+    ["5.0", 'Variable("5.0") = 5'],
+    ["true", 'Variable("true") = 5'],
+    ["false", 'Variable("false") = 5'],
+  ] as const)(
+    "testInvalidCharVarNamesWrapAndRoundTrip (%s)",
+    (name, expectedLine) => {
+      const ast: TypeAST.NetworkCards = {
+        type: "NetworkCards",
+        definitions: [
+          { name, node: { type: "Integer", value: "5", varName: name } },
+          { name: "final", node: { type: "Variable", name, varName: "final" } },
+        ],
+      };
+      const expanded = ASTToExpanded(ast);
+
+      expect(expanded).toContain(expectedLine);
+      expect(expanded.split("\n")).not.toContain(`${name} = 5`);
+
+      const back = ExpandedToAST(expanded) as TypeAST.NetworkCards;
+      expect(back.definitions.map((d) => d.name)).toEqual([name, "final"]);
+      expect(back.definitions[0]!.node).toEqual({
+        type: "Integer",
+        value: "5",
+        varName: name,
+      });
+      expect(back.definitions[1]!.node).toEqual({
+        type: "Integer",
+        value: "5",
+        varName: "final",
+      });
+    }
+  );
+
+  it.each(["{}", "5", "-5", "5l", "5.0", "true", "false"])(
+    "testLiteralLikeVarNameRoundTripThroughVariableWrapper (%s)",
+    (name) => {
+      const input = `Variable(${JSON.stringify(name)}) = 5\nfinal = Variable(${JSON.stringify(name)})`;
+      const network = ExpandedToAST(input) as TypeAST.NetworkCards;
+      expect(network.definitions.map((d) => d.name)).toEqual([name, "final"]);
+      expect(network.definitions[0]!.node).toEqual({
+        type: "Integer",
+        value: "5",
+        varName: name,
+      });
+      expect(network.definitions[1]!.node).toEqual({
+        type: "Integer",
+        value: "5",
+        varName: "final",
+      });
+
+      const expanded = ASTToExpanded(network);
+      expect(expanded).toContain(`Variable(${JSON.stringify(name)}) = 5`);
+      expect(expanded.split("\n")).not.toContain(`${name} = 5`);
+
+      const back = ExpandedToAST(expanded) as TypeAST.NetworkCards;
+      expect(JSON.stringify(back)).toBe(JSON.stringify(network));
+    }
+  );
+
   it("testSignatureLinesStillSkipped", () => {
     const input = `
 var1 :: A -> B
