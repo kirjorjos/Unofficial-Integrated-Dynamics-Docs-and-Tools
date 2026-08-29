@@ -10,8 +10,8 @@ import {
 } from "lib/IntegratedDynamicsClasses/readers/readerRegistry";
 import {
   getOpName,
-  getNicknameRegex,
   formatVarName,
+  isVarNameExpandedSafe,
   resolveImplicitFlipOperator,
   setOperatorSourceName,
   flattenAnonymousBaseOperatorApplication,
@@ -91,11 +91,13 @@ export const ASTToCodeLine = (
       case "Variable": {
         if (node.name.startsWith("@")) {
           const name = node.name.slice(1);
-          result = getNicknameRegex().test(name)
+          result = isVarNameExpandedSafe(name)
             ? node.name
             : `Variable(${JSON.stringify(name)})`;
         } else {
-          result = node.name;
+          result = isVarNameExpandedSafe(node.name)
+            ? node.name
+            : `Variable(${JSON.stringify(node.name)})`;
         }
         break;
       }

@@ -15,6 +15,7 @@ import {
   getNicknameCharacterRegex,
   getNicknameRegex,
   formatVarName,
+  isVarNameExpandedSafe,
   resolveImplicitFlipOperator,
   setOperatorSourceName,
   flattenAnonymousBaseOperatorApplication,
@@ -1623,11 +1624,13 @@ export const ASTToCondensed = (
       case "Variable": {
         if (node.name.startsWith("@")) {
           const name = node.name.slice(1);
-          result = getNicknameRegex().test(name)
+          result = isVarNameExpandedSafe(name)
             ? node.name
             : `Variable(${JSON.stringify(name)})`;
         } else {
-          result = node.name;
+          result = isVarNameExpandedSafe(node.name)
+            ? node.name
+            : `Variable(${JSON.stringify(node.name)})`;
         }
         break;
       }
