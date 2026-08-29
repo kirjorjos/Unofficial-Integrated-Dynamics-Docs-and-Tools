@@ -15,6 +15,31 @@ const FIXTURES = [
 
 const CODE = compileFixtures(FIXTURES);
 
+const VARIABLE_WRAPPER_FIXTURES = [
+  {
+    name: "at-after-space",
+    format: "expanded",
+    input: 'Variable("my @var") = 5\nfinal = Variable("my @var")',
+  },
+  {
+    name: "at-at-start",
+    format: "expanded",
+    input: 'Variable("@my var") = 5\nfinal = Variable("@my var")',
+  },
+  {
+    name: "spaces-only",
+    format: "expanded",
+    input: 'Variable("my var") = 5\nfinal = Variable("my var")',
+  },
+  {
+    name: "at-variable-wrapper",
+    format: "expanded",
+    input: 'Variable("my var") = 5\nfinal = @Variable("my var")',
+  },
+] as const;
+
+const VARIABLE_WRAPPER_CODE = compileFixtures(VARIABLE_WRAPPER_FIXTURES);
+
 test.describe("transformersPageVisualOutputDom", () => {
   test("testRendersOneShotPerStep", async ({ page }) => {
     await openVisual(page, (await CODE).clean);
@@ -159,6 +184,64 @@ test.describe("transformersPageVisualOutputDom", () => {
   test("testListValueRendersElementStepsPlusListStep", async ({ page }) => {
     await openVisual(page, (await CODE).list);
     await expect(page.locator(".logic-programmer-shot")).toHaveCount(4);
+  });
+
+  test("testAtAfterSpaceInsideVarNameUsingVariableWrapper", async ({
+    page,
+  }) => {
+    await openVisual(page, (await VARIABLE_WRAPPER_CODE)["at-after-space"]);
+    await expect(page.locator(".logic-programmer-shot")).toHaveCount(2);
+    await expect(page.locator(".display-panel-error-overlay")).toHaveCount(0);
+    await expect(
+      page
+        .locator(".logic-programmer-shot")
+        .first()
+        .locator(".display-panel .fit-text-inner")
+        .first()
+    ).toContainText("5");
+  });
+
+  test("testAtAtStartOfVarNameUsingVariableWrapper", async ({ page }) => {
+    await openVisual(page, (await VARIABLE_WRAPPER_CODE)["at-at-start"]);
+    await expect(page.locator(".logic-programmer-shot")).toHaveCount(2);
+    await expect(page.locator(".display-panel-error-overlay")).toHaveCount(0);
+    await expect(
+      page
+        .locator(".logic-programmer-shot")
+        .first()
+        .locator(".display-panel .fit-text-inner")
+        .first()
+    ).toContainText("5");
+  });
+
+  test("testVariableWrapperWithSpacesOnly", async ({ page }) => {
+    await openVisual(page, (await VARIABLE_WRAPPER_CODE)["spaces-only"]);
+    await expect(page.locator(".logic-programmer-shot")).toHaveCount(2);
+    await expect(page.locator(".display-panel-error-overlay")).toHaveCount(0);
+    await expect(
+      page
+        .locator(".logic-programmer-shot")
+        .first()
+        .locator(".display-panel .fit-text-inner")
+        .first()
+    ).toContainText("5");
+  });
+
+  test("testAtVariableWrapperResolvesToCardId", async ({ page }) => {
+    await openVisual(
+      page,
+      (await VARIABLE_WRAPPER_CODE)["at-variable-wrapper"]
+    );
+    await expect(page.locator(".logic-programmer-shot")).toHaveCount(2);
+    await expect(page.locator(".display-panel-error-overlay")).toHaveCount(0);
+    // @Variable("my var") resolves to the card id of the "my var" definition (0)
+    await expect(
+      page
+        .locator(".logic-programmer-shot")
+        .nth(1)
+        .locator(".display-panel .fit-text-inner")
+        .first()
+    ).toContainText("0");
   });
 
   test("testFitTextRendersAtIntegerPixelSizes", async ({ page }) => {

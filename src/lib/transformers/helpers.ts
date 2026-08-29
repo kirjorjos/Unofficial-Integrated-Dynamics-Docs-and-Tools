@@ -265,6 +265,9 @@ export const getNicknameRegex = (): RegExp =>
     `^(?!.*--)(?!.*::)(?!.*=>)(?!.*->)[^${BaseOperator.nicknameRegexDisallowedChars.join("")}]+$`
   );
 
+export const formatVarName = (name: string): string =>
+  getNicknameRegex().test(name) ? name : `Variable(${JSON.stringify(name)})`;
+
 export const getNicknameCharacterRegex = (): RegExp =>
   new RegExp(`^[^${BaseOperator.nicknameRegexDisallowedChars.join("")}]$`);
 

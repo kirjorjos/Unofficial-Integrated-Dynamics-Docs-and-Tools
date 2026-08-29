@@ -39,6 +39,42 @@ describe("TestCodeLineTransformer", () => {
     });
   });
 
+  it("testVariablePseudoConstructor", () => {
+    expect(CodeLineToAST('Variable("my var")', undefined, 0, true)).toEqual({
+      type: "Variable",
+      name: "@my var",
+    });
+    expect(CodeLineToAST('Variable("x")', undefined, 0, true)).toEqual({
+      type: "Variable",
+      name: "@x",
+    });
+    expect(() => CodeLineToAST("Variable(1)", undefined, 0, true)).toThrow(
+      "Variable(...) expects exactly one string argument"
+    );
+  });
+
+  it("testAtVariablePseudoConstructorParsesToRef", () => {
+    expect(CodeLineToAST('@Variable("my var")', undefined, 0, true)).toEqual({
+      type: "Variable",
+      name: "@my var",
+    });
+    expect(() => CodeLineToAST("@Variable(1)", undefined, 0, true)).toThrow(
+      "Variable(...) expects exactly one string argument"
+    );
+  });
+
+  it("testVariablePseudoConstructorRoundTrip", () => {
+    expect(ASTToCodeLine({ type: "Variable", name: "@my var" })).toBe(
+      'Variable("my var")'
+    );
+    expect(ASTToCodeLine({ type: "Variable", name: "@x" })).toBe("@x");
+    const ast = CodeLineToAST('Variable("my var")', undefined, 0, true);
+    const out = ASTToCodeLine(ast as TypeAST.AST);
+    expect(
+      ASTToCodeLine(CodeLineToAST(out, undefined, 0, true) as TypeAST.AST)
+    ).toBe(out);
+  });
+
   it("testOperatorPseudoConstructorStringDisplayName", () => {
     expect(CodeLineToAST('Operator("Parse Boolean")')).toEqual({
       type: "Operator",
@@ -447,6 +483,24 @@ describe("TestCodeLineTransformer", () => {
     expect(mapNode).toContain('"value":"0"');
     expect(mapNode).toContain('"value":"1"');
     expect(mapNode).not.toContain("@");
+  });
+
+  it("testAtRefsResolveToLastCardOfCalculation", () => {
+    const ast = CodeLineToAST(
+      "numberAdd 5 1; numberAdd 2 3; operatorMap NetworkReader.variableValueById [@0, @1]"
+    );
+    expect(ast.type).toBe("NetworkCards");
+    const mapNode = JSON.stringify(
+      (ast as TypeAST.NetworkCards).definitions[2]!.node
+    );
+    expect(mapNode).toContain('"value":"2"');
+    expect(mapNode).toContain('"value":"5"');
+    expect(mapNode).not.toContain("@");
+    const out = ASTToCodeLine(ast);
+    expect(out).toBe(
+      "numberAdd 5 1; numberAdd 2 3; operatorMap (NetworkReader.variableValueById) [2, 5]"
+    );
+    expect(ASTToCodeLine(CodeLineToAST(out))).toBe(out);
   });
 
   it("testSingleSegmentReturnsPlainAst", () => {
