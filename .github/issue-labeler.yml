@@ -1,4 +1,72 @@
 bug:
-  - '/### What happened\?/'
+  - '/### What''s wrong\?/'
+  - "/Logic Programmer View/"
+  - "/Display Panel View/"
+  - "/Reader View/"
+  - "/Visual Transformer/"
+  - "/JSON Transformer/"
+  - "/Code Line Transformer/"
+  - "/Expanded Transformer/"
+  - "/Condensed Transformer/"
+  - "/Multiple Transformers/"
+  - "/Operator Documentation/"
+  - "/Reader Documentation/"
+  - "/^- Other$/"
 enhancement:
-  - '/### Describe the suggestion/'
+  - "/### Describe the suggestion/"
+  - "/Logic Programmer View/"
+  - "/Display Panel View/"
+  - "/Reader View/"
+  - "/Visual Transformer/"
+  - "/JSON Transformer/"
+  - "/Code Line Transformer/"
+  - "/Expanded Transformer/"
+  - "/Condensed Transformer/"
+  - "/Multiple Transformers/"
+  - "/Operator Documentation/"
+  - "/Reader Documentation/"
+  - "/^- Other$/"
+bug/logic-programmer-view:
+  - "/Logic Programmer View/"
+bug/display-panel-view:
+  - "/Display Panel View/"
+bug/reader-view:
+  - "/Reader View/"
+bug/visual-transformer:
+  - "/Visual Transformer/"
+bug/json-transformer:
+  - "/JSON Transformer/"
+bug/code-line-transformer:
+  - "/Code Line Transformer/"
+bug/expanded-transformer:
+  - "/Expanded Transformer/"
+bug/condensed-transformer:
+  - "/Condensed Transformer/"
+bug/multiple-transformers:
+  - "/Multiple Transformers/"
+bug/operator-documentation:
+  - "/Operator Documentation/"
+bug/reader-documentation:
+  - "/Reader Documentation/"
+enhancement/logic-programmer-view:
+  - "/Logic Programmer View/"
+enhancement/display-panel-view:
+  - "/Display Panel View/"
+enhancement/reader-view:
+  - "/Reader View/"
+enhancement/visual-transformer:
+  - "/Visual Transformer/"
+enhancement/json-transformer:
+  - "/JSON Transformer/"
+enhancement/code-line-transformer:
+  - "/Code Line Transformer/"
+enhancement/expanded-transformer:
+  - "/Expanded Transformer/"
+enhancement/condensed-transformer:
+  - "/Condensed Transformer/"
+enhancement/multiple-transformers:
+  - "/Multiple Transformers/"
+enhancement/operator-documentation:
+  - "/Operator Documentation/"
+enhancement/reader-documentation:
+  - "/Reader Documentation/"

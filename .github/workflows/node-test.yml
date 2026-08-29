@@ -1,13 +1,13 @@
 name: Node.js test
 
-on: [pull_request]
+on: [pull_request_target]
 
 permissions:
   contents: read
   pull-requests: write
 
 jobs:
-  build:
+  test:
     container: mcr.microsoft.com/playwright:v1.62.1-noble
     runs-on: ubuntu-24.04
 

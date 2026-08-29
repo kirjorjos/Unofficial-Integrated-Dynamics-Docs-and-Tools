@@ -13,12 +13,20 @@ body:
     attributes:
       label: Affected area
       description: What part of the project does this touch?
+      multiple: true
       options:
-        - Logic Programmer / visual tools
-        - Reader documentation pages
-        - Documentation content
-        - Site / build
-        - Other / unsure
+        - Logic Programmer View
+        - Display Panel View
+        - Reader View
+        - Visual Transformer
+        - JSON Transformer
+        - Code Line Transformer
+        - Expanded Transformer
+        - Condensed Transformer
+        - Multiple Transformers (Please select problematic ones)
+        - Operator Documentation
+        - Reader Documentation
+        - Other
     validations:
       required: true
 
@@ -31,15 +39,7 @@ body:
       required: true
 
   - type: textarea
-    id: motivation
+    id: anything-else
     attributes:
-      label: Why is this needed?
-      description: The problem this solves or the workflow it improves.
-
-  - type: checkboxes
-    id: checks
-    attributes:
-      label: Before submitting
-      options:
-        - label: I searched existing issues for a duplicate
-          required: true
+      label: Anything else you think should be known?
+      description: Additional context that could be useful when implementing this.
