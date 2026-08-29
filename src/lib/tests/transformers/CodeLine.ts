@@ -242,6 +242,42 @@ describe("TestCodeLineTransformer", () => {
     );
   });
 
+  it("testLambdaPreservesReferencedNamedVarVarName", () => {
+    const a = CodeLineToAST(
+      "operatorPipe numberIncrement numberIncrement"
+    ) as TypeAST.Pipe;
+    a.varName = "a";
+    const scope = new Map<string, TypeAST.AST>([["a", a]]);
+    const ast = CodeLineToAST("(f) => (i) => == (a f) (a i)", scope, 0, true);
+
+    const varNames: string[] = [];
+    const walk = (n: TypeAST.AST) => {
+      if (n.varName) varNames.push(n.varName);
+      switch (n.type) {
+        case "Curry":
+          walk(n.base);
+          n.args.forEach(walk);
+          break;
+        case "Pipe":
+          walk(n.op1);
+          walk(n.op2);
+          break;
+        case "Pipe2":
+          walk(n.op1);
+          walk(n.op2);
+          walk(n.op3);
+          break;
+        case "Flip":
+          walk(n.arg);
+          break;
+        default:
+          break;
+      }
+    };
+    walk(ast);
+    expect(varNames).toContain("a");
+  });
+
   it("testLambdaDisjunction", () => {
     const code =
       "x => (logicalOr (itemstackIsStackable x) (itemstackIsDamageable x))";
