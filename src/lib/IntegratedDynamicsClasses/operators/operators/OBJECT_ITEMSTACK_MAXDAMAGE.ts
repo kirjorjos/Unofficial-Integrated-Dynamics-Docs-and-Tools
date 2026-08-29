@@ -25,7 +25,36 @@ export class OPERATOR_OBJECT_ITEMSTACK_MAXDAMAGE extends BaseOperator<
   static override operatorName = "maxdamage" as const;
   static override displayName = "Max Damage" as const;
   static override fullDisplayName = "Item Max Damage" as const;
-  static override stringDisplayNames = ["Item Max Damage", "Max Damage"];
+  static override stringDisplayNames = [
+    "item max damage",
+    "item max Damage",
+    "item Max damage",
+    "item Max Damage",
+    "Item max damage",
+    "Item max Damage",
+    "Item Max damage",
+    "Item Max Damage",
+    "itemstack max damage",
+    "itemstack max Damage",
+    "itemstack Max damage",
+    "itemstack Max Damage",
+    "Itemstack max damage",
+    "Itemstack max Damage",
+    "Itemstack Max damage",
+    "Itemstack Max Damage",
+    "itemStack max damage",
+    "itemStack max Damage",
+    "itemStack Max damage",
+    "itemStack Max Damage",
+    "ItemStack max damage",
+    "ItemStack max Damage",
+    "ItemStack Max damage",
+    "ItemStack Max Damage",
+    "max damage",
+    "max Damage",
+    "Max damage",
+    "Max Damage",
+  ];
   static override tooltipInfo = "The maximum item damage" as const;
 
   static override kind = "itemstack" as const;

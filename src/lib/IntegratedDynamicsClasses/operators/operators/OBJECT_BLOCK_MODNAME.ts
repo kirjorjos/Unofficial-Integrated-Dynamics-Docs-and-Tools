@@ -14,7 +14,12 @@ export class OPERATOR_OBJECT_BLOCK_MODNAME extends BaseOperator<
   static override operatorName = "mod" as const;
   static override displayName = "Mod" as const;
   static override fullDisplayName = "Block Mod" as const;
-  static override stringDisplayNames = ["Block Mod"];
+  static override stringDisplayNames = [
+    "block mod",
+    "block Mod",
+    "Block mod",
+    "Block Mod",
+  ];
   static override tooltipInfo =
     "The name of the mod owning the given block" as const;
 

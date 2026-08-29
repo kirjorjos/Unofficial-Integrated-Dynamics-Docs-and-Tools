@@ -21,7 +21,29 @@ export class OPERATOR_OBJECT_BLOCK_ISSHEARABLE extends BaseOperator<
   static override displayName = "Block Is Shearable" as const;
   static override fullDisplayName = "Block Block Is Shearable" as const;
   static override stringDisplayNames = [
+    "block block is shearable",
+    "block block is Shearable",
+    "block block Is shearable",
+    "block block Is Shearable",
+    "block Block is shearable",
+    "block Block is Shearable",
+    "block Block Is shearable",
+    "block Block Is Shearable",
+    "Block block is shearable",
+    "Block block is Shearable",
+    "Block block Is shearable",
+    "Block block Is Shearable",
+    "Block Block is shearable",
+    "Block Block is Shearable",
+    "Block Block Is shearable",
     "Block Block Is Shearable",
+    "block is shearable",
+    "block is Shearable",
+    "block Is shearable",
+    "block Is Shearable",
+    "Block is shearable",
+    "Block is Shearable",
+    "Block Is shearable",
     "Block Is Shearable",
   ];
   static override tooltipInfo = "If the given block is shearable" as const;

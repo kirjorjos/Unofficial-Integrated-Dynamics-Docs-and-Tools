@@ -24,7 +24,20 @@ export class OPERATOR_OBJECT_ENTITY_ISANIMAL extends BaseOperator<
   static override operatorName = "isanimal" as const;
   static override displayName = "Is Animal" as const;
   static override fullDisplayName = "Entity Is Animal" as const;
-  static override stringDisplayNames = ["Is Animal", "Entity Is Animal"];
+  static override stringDisplayNames = [
+    "is animal",
+    "is Animal",
+    "Is animal",
+    "Is Animal",
+    "entity is animal",
+    "entity is Animal",
+    "entity Is animal",
+    "entity Is Animal",
+    "Entity is animal",
+    "Entity is Animal",
+    "Entity Is animal",
+    "Entity Is Animal",
+  ];
   static override tooltipInfo = "If the entity is an animal" as const;
 
   static override kind = "entity" as const;

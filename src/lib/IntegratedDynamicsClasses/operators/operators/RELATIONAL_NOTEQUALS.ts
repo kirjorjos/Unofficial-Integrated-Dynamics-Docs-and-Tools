@@ -29,7 +29,20 @@ export class OPERATOR_RELATIONAL_NOTEQUALS extends BaseOperator<
   static override operatorName = "notequals" as const;
   static override displayName = "Not Equals" as const;
   static override fullDisplayName = "Relational Not Equals" as const;
-  static override stringDisplayNames = ["Not Equals", "Relational Not Equals"];
+  static override stringDisplayNames = [
+    "not equals",
+    "not Equals",
+    "Not equals",
+    "Not Equals",
+    "relational not equals",
+    "relational not Equals",
+    "relational Not equals",
+    "relational Not Equals",
+    "Relational not equals",
+    "Relational not Equals",
+    "Relational Not equals",
+    "Relational Not Equals",
+  ];
   static override tooltipInfo = "Type one and two must be equal." as const;
 
   static override kind = "relational" as const;

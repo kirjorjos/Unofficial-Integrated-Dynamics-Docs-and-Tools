@@ -24,7 +24,29 @@ export class OPERATOR_OBJECT_ENTITY_ENERGY_CAPACITY extends BaseOperator<
   static override displayName = "Entity Energy Capacity" as const;
   static override fullDisplayName = "Entity Entity Energy Capacity" as const;
   static override stringDisplayNames = [
+    "entity energy capacity",
+    "entity energy Capacity",
+    "entity Energy capacity",
+    "entity Energy Capacity",
+    "Entity energy capacity",
+    "Entity energy Capacity",
+    "Entity Energy capacity",
     "Entity Energy Capacity",
+    "entity entity energy capacity",
+    "entity entity energy Capacity",
+    "entity entity Energy capacity",
+    "entity entity Energy Capacity",
+    "entity Entity energy capacity",
+    "entity Entity energy Capacity",
+    "entity Entity Energy capacity",
+    "entity Entity Energy Capacity",
+    "Entity entity energy capacity",
+    "Entity entity energy Capacity",
+    "Entity entity Energy capacity",
+    "Entity entity Energy Capacity",
+    "Entity Entity energy capacity",
+    "Entity Entity energy Capacity",
+    "Entity Entity Energy capacity",
     "Entity Entity Energy Capacity",
   ];
   static override tooltipInfo = "The energy capacity of this entity." as const;

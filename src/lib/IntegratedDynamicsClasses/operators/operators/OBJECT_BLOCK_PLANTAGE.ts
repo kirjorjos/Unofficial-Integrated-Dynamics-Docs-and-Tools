@@ -25,7 +25,29 @@ export class OPERATOR_OBJECT_BLOCK_PLANTAGE extends BaseOperator<
   static override displayName = "Block Plant Age" as const;
   static override fullDisplayName = "Block Block Plant Age" as const;
   static override stringDisplayNames = [
+    "block block plant age",
+    "block block plant Age",
+    "block block Plant age",
+    "block block Plant Age",
+    "block Block plant age",
+    "block Block plant Age",
+    "block Block Plant age",
+    "block Block Plant Age",
+    "Block block plant age",
+    "Block block plant Age",
+    "Block block Plant age",
+    "Block block Plant Age",
+    "Block Block plant age",
+    "Block Block plant Age",
+    "Block Block Plant age",
     "Block Block Plant Age",
+    "block plant age",
+    "block plant Age",
+    "block Plant age",
+    "block Plant Age",
+    "Block plant age",
+    "Block plant Age",
+    "Block Plant age",
     "Block Plant Age",
   ];
   static override tooltipInfo = "The age of the given plant block" as const;

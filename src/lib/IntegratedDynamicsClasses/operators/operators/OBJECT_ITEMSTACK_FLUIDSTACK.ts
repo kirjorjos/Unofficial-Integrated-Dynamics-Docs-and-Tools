@@ -29,7 +29,50 @@ export class OPERATOR_OBJECT_ITEMSTACK_FLUIDSTACK extends BaseOperator<
   static override operatorName = "fluidstack" as const;
   static override displayName = "Fluid" as const;
   static override fullDisplayName = "Item Fluid" as const;
-  static override stringDisplayNames = ["Item Fluid", "Fluid"];
+  static override stringDisplayNames = [
+    "item fluid",
+    "item Fluid",
+    "Item fluid",
+    "Item Fluid",
+    "item fluidstack",
+    "item Fluidstack",
+    "item fluidStack",
+    "item FluidStack",
+    "Item fluidstack",
+    "Item Fluidstack",
+    "Item fluidStack",
+    "Item FluidStack",
+    "itemstack fluid",
+    "itemstack Fluid",
+    "Itemstack fluid",
+    "Itemstack Fluid",
+    "itemStack fluid",
+    "itemStack Fluid",
+    "ItemStack fluid",
+    "ItemStack Fluid",
+    "itemstack fluidstack",
+    "itemstack Fluidstack",
+    "itemstack fluidStack",
+    "itemstack FluidStack",
+    "Itemstack fluidstack",
+    "Itemstack Fluidstack",
+    "Itemstack fluidStack",
+    "Itemstack FluidStack",
+    "itemStack fluidstack",
+    "itemStack Fluidstack",
+    "itemStack fluidStack",
+    "itemStack FluidStack",
+    "ItemStack fluidstack",
+    "ItemStack Fluidstack",
+    "ItemStack fluidStack",
+    "ItemStack FluidStack",
+    "fluid",
+    "Fluid",
+    "fluidstack",
+    "Fluidstack",
+    "fluidStack",
+    "FluidStack",
+  ];
   static override tooltipInfo = "The fluid from the given item" as const;
 
   static override kind = "itemstack" as const;

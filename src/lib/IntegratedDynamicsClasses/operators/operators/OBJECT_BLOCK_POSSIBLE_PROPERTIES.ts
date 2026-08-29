@@ -23,7 +23,24 @@ export class OPERATOR_OBJECT_BLOCK_POSSIBLE_PROPERTIES extends BaseOperator<
   static override operatorName = "blockpossibleproperties" as const;
   static override displayName = "Block Properties" as const;
   static override fullDisplayName = "Block Block Properties" as const;
-  static override stringDisplayNames = ["Block Block Possible Properties"];
+  static override stringDisplayNames = [
+    "block block possible properties",
+    "block block possible Properties",
+    "block block Possible properties",
+    "block block Possible Properties",
+    "block Block possible properties",
+    "block Block possible Properties",
+    "block Block Possible properties",
+    "block Block Possible Properties",
+    "Block block possible properties",
+    "Block block possible Properties",
+    "Block block Possible properties",
+    "Block block Possible Properties",
+    "Block Block possible properties",
+    "Block Block possible Properties",
+    "Block Block Possible properties",
+    "Block Block Possible Properties",
+  ];
   static override tooltipInfo =
     "Get all possible block properties as NBT compound tag with list values." as const;
 

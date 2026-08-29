@@ -25,7 +25,22 @@ export class OPERATOR_OBJECT_FLUIDSTACK_TEMPERATURE extends BaseOperator<
   static override operatorName = "temperature" as const;
   static override displayName = "Temperature" as const;
   static override fullDisplayName = "Fluid Temperature" as const;
-  static override stringDisplayNames = ["Fluid Temperature", "Temperature"];
+  static override stringDisplayNames = [
+    "fluid temperature",
+    "fluid Temperature",
+    "Fluid temperature",
+    "Fluid Temperature",
+    "fluidstack temperature",
+    "fluidstack Temperature",
+    "Fluidstack temperature",
+    "Fluidstack Temperature",
+    "fluidStack temperature",
+    "fluidStack Temperature",
+    "FluidStack temperature",
+    "FluidStack Temperature",
+    "temperature",
+    "Temperature",
+  ];
   static override kind = "fluidstack" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

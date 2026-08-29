@@ -27,7 +27,29 @@ export class OPERATOR_INGREDIENTS_WITH_ITEMS extends BaseOperator<
   static override fullDisplayName =
     "Ingredients Ingredients With Items" as const;
   static override stringDisplayNames = [
+    "ingredients with items",
+    "ingredients with Items",
+    "ingredients With items",
+    "ingredients With Items",
+    "Ingredients with items",
+    "Ingredients with Items",
+    "Ingredients With items",
     "Ingredients With Items",
+    "ingredients ingredients with items",
+    "ingredients ingredients with Items",
+    "ingredients ingredients With items",
+    "ingredients ingredients With Items",
+    "ingredients Ingredients with items",
+    "ingredients Ingredients with Items",
+    "ingredients Ingredients With items",
+    "ingredients Ingredients With Items",
+    "Ingredients ingredients with items",
+    "Ingredients ingredients with Items",
+    "Ingredients ingredients With items",
+    "Ingredients ingredients With Items",
+    "Ingredients Ingredients with items",
+    "Ingredients Ingredients with Items",
+    "Ingredients Ingredients With items",
     "Ingredients Ingredients With Items",
   ];
   static override tooltipInfo =

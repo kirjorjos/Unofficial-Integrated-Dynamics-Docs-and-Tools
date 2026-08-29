@@ -24,7 +24,29 @@ export class OPERATOR_OBJECT_BLOCK_BREAKSOUND extends BaseOperator<
   static override displayName = "Block Break Sound" as const;
   static override fullDisplayName = "Block Block Break Sound" as const;
   static override stringDisplayNames = [
+    "block block break sound",
+    "block block break Sound",
+    "block block Break sound",
+    "block block Break Sound",
+    "block Block break sound",
+    "block Block break Sound",
+    "block Block Break sound",
+    "block Block Break Sound",
+    "Block block break sound",
+    "Block block break Sound",
+    "Block block Break sound",
+    "Block block Break Sound",
+    "Block Block break sound",
+    "Block Block break Sound",
+    "Block Block Break sound",
     "Block Block Break Sound",
+    "block break sound",
+    "block break Sound",
+    "block Break sound",
+    "block Break Sound",
+    "Block break sound",
+    "Block break Sound",
+    "Block Break sound",
     "Block Break Sound",
   ];
   static override tooltipInfo = "The break sound of the given block" as const;

@@ -26,7 +26,17 @@ export class OPERATOR_LIST_COUNT_PREDICATE extends BaseOperator<
   static override displayName = "Count Predicate" as const;
   static override fullDisplayName = "List Count Predicate" as const;
   static override stringDisplayNames = [
+    "count predicate",
+    "count Predicate",
+    "Count predicate",
     "Count Predicate",
+    "list count predicate",
+    "list count Predicate",
+    "list Count predicate",
+    "list Count Predicate",
+    "List count predicate",
+    "List count Predicate",
+    "List Count predicate",
     "List Count Predicate",
   ];
   static override tooltipInfo =

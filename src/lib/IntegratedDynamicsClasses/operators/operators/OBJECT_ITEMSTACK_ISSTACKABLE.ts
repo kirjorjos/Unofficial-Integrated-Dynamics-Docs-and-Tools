@@ -26,7 +26,22 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISSTACKABLE extends BaseOperator<
   static override operatorName = "stackable" as const;
   static override displayName = "Stackable" as const;
   static override fullDisplayName = "Item Stackable" as const;
-  static override stringDisplayNames = ["Item Stackable", "Stackable"];
+  static override stringDisplayNames = [
+    "item stackable",
+    "item Stackable",
+    "Item stackable",
+    "Item Stackable",
+    "itemstack stackable",
+    "itemstack Stackable",
+    "Itemstack stackable",
+    "Itemstack Stackable",
+    "itemStack stackable",
+    "itemStack Stackable",
+    "ItemStack stackable",
+    "ItemStack Stackable",
+    "stackable",
+    "Stackable",
+  ];
   static override tooltipInfo =
     "If the item stack can hold at least two items." as const;
 

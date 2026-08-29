@@ -25,7 +25,20 @@ export class OPERATOR_UNIQUELY_NAMED_UNIQUE_NAME extends BaseOperator<
   static override operatorName = "unique_name" as const;
   static override displayName = "Unique Name" as const;
   static override fullDisplayName = "String Unique Name" as const;
-  static override stringDisplayNames = ["Unique Name", "String Unique Name"];
+  static override stringDisplayNames = [
+    "unique name",
+    "unique Name",
+    "Unique name",
+    "Unique Name",
+    "string unique name",
+    "string unique Name",
+    "string Unique name",
+    "string Unique Name",
+    "String unique name",
+    "String unique Name",
+    "String Unique name",
+    "String Unique Name",
+  ];
   static override tooltipInfo = "Get the unique name of an object" as const;
 
   static override kind = "string" as const;

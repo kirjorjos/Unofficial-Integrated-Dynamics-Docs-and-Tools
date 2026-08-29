@@ -27,7 +27,17 @@ export class OPERATOR_ENTITY_ARMORINVENTORY extends BaseOperator<
   static override displayName = "Armor Inventory" as const;
   static override fullDisplayName = "Entity Armor Inventory" as const;
   static override stringDisplayNames = [
+    "armor inventory",
+    "armor Inventory",
+    "Armor inventory",
     "Armor Inventory",
+    "entity armor inventory",
+    "entity armor Inventory",
+    "entity Armor inventory",
+    "entity Armor Inventory",
+    "Entity armor inventory",
+    "Entity armor Inventory",
+    "Entity Armor inventory",
     "Entity Armor Inventory",
   ];
   static override tooltipInfo =

@@ -25,7 +25,17 @@ export class OPERATOR_OBJECT_PLAYER_TARGETENTITY extends BaseOperator<
   static override displayName = "Target Entity" as const;
   static override fullDisplayName = "Entity Target Entity" as const;
   static override stringDisplayNames = [
+    "target entity",
+    "target Entity",
+    "Target entity",
     "Target Entity",
+    "entity target entity",
+    "entity target Entity",
+    "entity Target entity",
+    "entity Target Entity",
+    "Entity target entity",
+    "Entity target Entity",
+    "Entity Target entity",
     "Entity Target Entity",
   ];
   static override tooltipInfo =

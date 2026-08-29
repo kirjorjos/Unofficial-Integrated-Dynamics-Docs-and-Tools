@@ -15,7 +15,14 @@ export class OPERATOR_OPERATOR_MAP extends BaseOperator<
   static override operatorName = "map" as const;
   static override displayName = "Map" as const;
   static override fullDisplayName = "Operator Map" as const;
-  static override stringDisplayNames = ["Map", "Operator Map"];
+  static override stringDisplayNames = [
+    "map",
+    "Map",
+    "operator map",
+    "operator Map",
+    "Operator map",
+    "Operator Map",
+  ];
   static override tooltipInfo =
     "Apply the given operator on all elements of a list, resulting in a new list of mapped values." as const;
 

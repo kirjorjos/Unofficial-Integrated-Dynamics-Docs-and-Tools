@@ -22,7 +22,14 @@ export class OPERATOR_GENERAL_CONSTANT extends BaseOperator<
   static override operatorName = "constant" as const;
   static override displayName = "Constant" as const;
   static override fullDisplayName = "General Constant" as const;
-  static override stringDisplayNames = ["Constant", "General Constant"];
+  static override stringDisplayNames = [
+    "constant",
+    "Constant",
+    "general constant",
+    "general Constant",
+    "General constant",
+    "General Constant",
+  ];
   static override tooltipInfo = "A copy of the first input value." as const;
 
   static override kind = "general" as const;

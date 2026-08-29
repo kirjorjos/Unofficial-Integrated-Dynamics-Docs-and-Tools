@@ -25,7 +25,22 @@ export class OPERATOR_OBJECT_FLUIDSTACK_BUCKET extends BaseOperator<
   static override operatorName = "bucket" as const;
   static override displayName = "Bucket" as const;
   static override fullDisplayName = "Fluid Bucket" as const;
-  static override stringDisplayNames = ["Fluid Bucket", "Bucket"];
+  static override stringDisplayNames = [
+    "fluid bucket",
+    "fluid Bucket",
+    "Fluid bucket",
+    "Fluid Bucket",
+    "fluidstack bucket",
+    "fluidstack Bucket",
+    "Fluidstack bucket",
+    "Fluidstack Bucket",
+    "fluidStack bucket",
+    "fluidStack Bucket",
+    "FluidStack bucket",
+    "FluidStack Bucket",
+    "bucket",
+    "Bucket",
+  ];
   static override kind = "fluidstack" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

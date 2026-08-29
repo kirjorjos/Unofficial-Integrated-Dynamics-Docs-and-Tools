@@ -22,7 +22,14 @@ export class OPERATOR_LOGICAL_NAND extends BaseOperator<
   static override operatorName = "nand" as const;
   static override displayName = "Nand" as const;
   static override fullDisplayName = "Logical Nand" as const;
-  static override stringDisplayNames = ["Nand", "Logical Nand"];
+  static override stringDisplayNames = [
+    "nand",
+    "Nand",
+    "logical nand",
+    "logical Nand",
+    "Logical nand",
+    "Logical Nand",
+  ];
   static override kind = "logical" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

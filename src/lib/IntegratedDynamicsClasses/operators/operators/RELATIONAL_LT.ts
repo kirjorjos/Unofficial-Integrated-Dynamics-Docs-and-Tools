@@ -25,7 +25,20 @@ export class OPERATOR_RELATIONAL_LT extends BaseOperator<
   static override operatorName = "lt" as const;
   static override displayName = "Less Than" as const;
   static override fullDisplayName = "Relational Less Than" as const;
-  static override stringDisplayNames = ["Less Than", "Relational Less Than"];
+  static override stringDisplayNames = [
+    "less than",
+    "less Than",
+    "Less than",
+    "Less Than",
+    "relational less than",
+    "relational less Than",
+    "relational Less than",
+    "relational Less Than",
+    "Relational less than",
+    "Relational less Than",
+    "Relational Less than",
+    "Relational Less Than",
+  ];
   static override kind = "relational" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

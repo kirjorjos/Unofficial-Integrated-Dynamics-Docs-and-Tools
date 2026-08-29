@@ -23,7 +23,20 @@ export class OPERATOR_OBJECT_FLUIDSTACK_BLOCK extends BaseOperator<
   static override operatorName = "block" as const;
   static override displayName = "Block" as const;
   static override fullDisplayName = "Fluid Block" as const;
-  static override stringDisplayNames = ["Fluid Block"];
+  static override stringDisplayNames = [
+    "fluid block",
+    "fluid Block",
+    "Fluid block",
+    "Fluid Block",
+    "fluidstack block",
+    "fluidstack Block",
+    "Fluidstack block",
+    "Fluidstack Block",
+    "fluidStack block",
+    "fluidStack Block",
+    "FluidStack block",
+    "FluidStack Block",
+  ];
   static override tooltipInfo = "The block of the fluid" as const;
 
   static override kind = "fluidstack" as const;

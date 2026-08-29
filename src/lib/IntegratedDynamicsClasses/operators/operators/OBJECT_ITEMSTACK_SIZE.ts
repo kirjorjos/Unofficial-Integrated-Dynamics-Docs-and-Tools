@@ -20,7 +20,22 @@ export class OPERATOR_OBJECT_ITEMSTACK_SIZE extends BaseOperator<
   static override operatorName = "size" as const;
   static override displayName = "Size" as const;
   static override fullDisplayName = "Item Size" as const;
-  static override stringDisplayNames = ["Item Size", "Size"];
+  static override stringDisplayNames = [
+    "item size",
+    "item Size",
+    "Item size",
+    "Item Size",
+    "itemstack size",
+    "itemstack Size",
+    "Itemstack size",
+    "Itemstack Size",
+    "itemStack size",
+    "itemStack Size",
+    "ItemStack size",
+    "ItemStack Size",
+    "size",
+    "Size",
+  ];
   static override tooltipInfo = "The current stack size" as const;
 
   static override kind = "itemstack" as const;

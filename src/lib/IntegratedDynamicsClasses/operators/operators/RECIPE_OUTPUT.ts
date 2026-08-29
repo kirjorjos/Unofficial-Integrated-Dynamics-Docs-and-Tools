@@ -13,7 +13,29 @@ export class OPERATOR_RECIPE_OUTPUT extends BaseOperator<Recipe, Ingredients> {
   static override displayName = "Recipe Output Ingredients" as const;
   static override fullDisplayName = "Recipe Recipe Output Ingredients" as const;
   static override stringDisplayNames = [
+    "recipe output ingredients",
+    "recipe output Ingredients",
+    "recipe Output ingredients",
+    "recipe Output Ingredients",
+    "Recipe output ingredients",
+    "Recipe output Ingredients",
+    "Recipe Output ingredients",
     "Recipe Output Ingredients",
+    "recipe recipe output ingredients",
+    "recipe recipe output Ingredients",
+    "recipe recipe Output ingredients",
+    "recipe recipe Output Ingredients",
+    "recipe Recipe output ingredients",
+    "recipe Recipe output Ingredients",
+    "recipe Recipe Output ingredients",
+    "recipe Recipe Output Ingredients",
+    "Recipe recipe output ingredients",
+    "Recipe recipe output Ingredients",
+    "Recipe recipe Output ingredients",
+    "Recipe recipe Output Ingredients",
+    "Recipe Recipe output ingredients",
+    "Recipe Recipe output Ingredients",
+    "Recipe Recipe Output ingredients",
     "Recipe Recipe Output Ingredients",
   ];
   static override tooltipInfo =

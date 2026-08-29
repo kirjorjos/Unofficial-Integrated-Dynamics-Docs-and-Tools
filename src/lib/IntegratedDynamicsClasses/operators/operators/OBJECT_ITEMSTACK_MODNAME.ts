@@ -24,7 +24,20 @@ export class OPERATOR_OBJECT_ITEMSTACK_MODNAME extends BaseOperator<
   static override operatorName = "mod" as const;
   static override displayName = "Mod" as const;
   static override fullDisplayName = "Item Mod" as const;
-  static override stringDisplayNames = ["Item Mod"];
+  static override stringDisplayNames = [
+    "item mod",
+    "item Mod",
+    "Item mod",
+    "Item Mod",
+    "itemstack mod",
+    "itemstack Mod",
+    "Itemstack mod",
+    "Itemstack Mod",
+    "itemStack mod",
+    "itemStack Mod",
+    "ItemStack mod",
+    "ItemStack Mod",
+  ];
   static override tooltipInfo =
     "The name of the mod owning the given item" as const;
 

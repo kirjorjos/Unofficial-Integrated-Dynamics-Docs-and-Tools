@@ -25,7 +25,29 @@ export class OPERATOR_STRING_INDEX_OF_REGEX extends BaseOperator<
   static override displayName = "Index Of Regex" as const;
   static override fullDisplayName = "String Index Of Regex" as const;
   static override stringDisplayNames = [
+    "index of regex",
+    "index of Regex",
+    "index Of regex",
+    "index Of Regex",
+    "Index of regex",
+    "Index of Regex",
+    "Index Of regex",
     "Index Of Regex",
+    "string index of regex",
+    "string index of Regex",
+    "string index Of regex",
+    "string index Of Regex",
+    "string Index of regex",
+    "string Index of Regex",
+    "string Index Of regex",
+    "string Index Of Regex",
+    "String index of regex",
+    "String index of Regex",
+    "String index Of regex",
+    "String index Of Regex",
+    "String Index of regex",
+    "String Index of Regex",
+    "String Index Of regex",
     "String Index Of Regex",
   ];
   static override tooltipInfo =

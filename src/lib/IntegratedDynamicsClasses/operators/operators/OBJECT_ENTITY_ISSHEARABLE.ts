@@ -23,7 +23,29 @@ export class OPERATOR_OBJECT_ENTITY_ISSHEARABLE extends BaseOperator<
   static override displayName = "Entity Is Shearable" as const;
   static override fullDisplayName = "Entity Entity Is Shearable" as const;
   static override stringDisplayNames = [
+    "entity is shearable",
+    "entity is Shearable",
+    "entity Is shearable",
+    "entity Is Shearable",
+    "Entity is shearable",
+    "Entity is Shearable",
+    "Entity Is shearable",
     "Entity Is Shearable",
+    "entity entity is shearable",
+    "entity entity is Shearable",
+    "entity entity Is shearable",
+    "entity entity Is Shearable",
+    "entity Entity is shearable",
+    "entity Entity is Shearable",
+    "entity Entity Is shearable",
+    "entity Entity Is Shearable",
+    "Entity entity is shearable",
+    "Entity entity is Shearable",
+    "Entity entity Is shearable",
+    "Entity entity Is Shearable",
+    "Entity Entity is shearable",
+    "Entity Entity is Shearable",
+    "Entity Entity Is shearable",
     "Entity Entity Is Shearable",
   ];
   static override tooltipInfo = "If the given entity is shearable" as const;

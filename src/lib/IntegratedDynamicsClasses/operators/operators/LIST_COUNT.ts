@@ -16,7 +16,14 @@ export class OPERATOR_LIST_COUNT extends BaseOperator<
   static override operatorName = "count" as const;
   static override displayName = "Count" as const;
   static override fullDisplayName = "List Count" as const;
-  static override stringDisplayNames = ["Count", "List Count"];
+  static override stringDisplayNames = [
+    "count",
+    "Count",
+    "list count",
+    "list Count",
+    "List count",
+    "List Count",
+  ];
   static override tooltipInfo =
     "The number of times the given element is found in the list." as const;
 

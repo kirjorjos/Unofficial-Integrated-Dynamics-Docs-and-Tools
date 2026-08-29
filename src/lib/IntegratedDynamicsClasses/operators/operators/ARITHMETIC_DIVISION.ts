@@ -24,7 +24,14 @@ export class OPERATOR_ARITHMETIC_DIVISION extends BaseOperator<
   static override operatorName = "division" as const;
   static override displayName = "Division" as const;
   static override fullDisplayName = "Arithmetic Division" as const;
-  static override stringDisplayNames = ["Division", "Arithmetic Division"];
+  static override stringDisplayNames = [
+    "division",
+    "Division",
+    "arithmetic division",
+    "arithmetic Division",
+    "Arithmetic division",
+    "Arithmetic Division",
+  ];
   static override kind = "arithmetic" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

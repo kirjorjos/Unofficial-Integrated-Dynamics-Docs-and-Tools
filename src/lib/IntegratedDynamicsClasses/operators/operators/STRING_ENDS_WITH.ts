@@ -21,7 +21,20 @@ export class OPERATOR_STRING_ENDS_WITH extends BaseOperator<
   static override operatorName = "ends_with" as const;
   static override displayName = "Ends With" as const;
   static override fullDisplayName = "String Ends With" as const;
-  static override stringDisplayNames = ["Ends With", "String Ends With"];
+  static override stringDisplayNames = [
+    "ends with",
+    "ends With",
+    "Ends with",
+    "Ends With",
+    "string ends with",
+    "string ends With",
+    "string Ends with",
+    "string Ends With",
+    "String ends with",
+    "String ends With",
+    "String Ends with",
+    "String Ends With",
+  ];
   static override tooltipInfo =
     "If the string given matches the end of the given string." as const;
 

@@ -14,7 +14,14 @@ export class OPERATOR_OPERATOR_APPLY extends BaseOperator<
   static override operatorName = "apply" as const;
   static override displayName = "Apply" as const;
   static override fullDisplayName = "Operator Apply" as const;
-  static override stringDisplayNames = ["Apply", "Operator Apply"];
+  static override stringDisplayNames = [
+    "apply",
+    "Apply",
+    "operator apply",
+    "operator Apply",
+    "Operator apply",
+    "Operator Apply",
+  ];
   static override tooltipInfo =
     "Apply for a given operator a given value." as const;
 

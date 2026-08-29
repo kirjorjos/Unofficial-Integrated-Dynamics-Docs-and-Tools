@@ -14,7 +14,14 @@ export class OPERATOR_DOUBLE_POW extends BaseOperator<
   static override operatorName = "pow" as const;
   static override displayName = "Power" as const;
   static override fullDisplayName = "Double Power" as const;
-  static override stringDisplayNames = ["Power", "Double Power"];
+  static override stringDisplayNames = [
+    "power",
+    "Power",
+    "double power",
+    "double Power",
+    "Double power",
+    "Double Power",
+  ];
   static override kind = "double" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

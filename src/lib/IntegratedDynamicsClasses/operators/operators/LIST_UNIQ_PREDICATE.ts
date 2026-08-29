@@ -31,7 +31,17 @@ export class OPERATOR_LIST_UNIQ_PREDICATE extends BaseOperator<
   static override displayName = "Unique Predicate" as const;
   static override fullDisplayName = "List Unique Predicate" as const;
   static override stringDisplayNames = [
+    "unique predicate",
+    "unique Predicate",
+    "Unique predicate",
     "Unique Predicate",
+    "list unique predicate",
+    "list unique Predicate",
+    "list Unique predicate",
+    "list Unique Predicate",
+    "List unique predicate",
+    "List unique Predicate",
+    "List Unique predicate",
     "List Unique Predicate",
   ];
   static override tooltipInfo =

@@ -24,7 +24,20 @@ export class OPERATOR_OBJECT_ENTITY_ISMOB extends BaseOperator<
   static override operatorName = "ismob" as const;
   static override displayName = "Is Mob" as const;
   static override fullDisplayName = "Entity Is Mob" as const;
-  static override stringDisplayNames = ["Is Mob", "Entity Is Mob"];
+  static override stringDisplayNames = [
+    "is mob",
+    "is Mob",
+    "Is mob",
+    "Is Mob",
+    "entity is mob",
+    "entity is Mob",
+    "entity Is mob",
+    "entity Is Mob",
+    "Entity is mob",
+    "Entity is Mob",
+    "Entity Is mob",
+    "Entity Is Mob",
+  ];
   static override tooltipInfo = "If the entity is a mob" as const;
 
   static override kind = "entity" as const;

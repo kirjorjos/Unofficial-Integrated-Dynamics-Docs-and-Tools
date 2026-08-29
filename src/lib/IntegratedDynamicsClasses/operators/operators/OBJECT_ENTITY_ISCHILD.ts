@@ -25,7 +25,29 @@ export class OPERATOR_OBJECT_ENTITY_ISCHILD extends BaseOperator<
   static override displayName = "Entity Is Child" as const;
   static override fullDisplayName = "Entity Entity Is Child" as const;
   static override stringDisplayNames = [
+    "entity is child",
+    "entity is Child",
+    "entity Is child",
+    "entity Is Child",
+    "Entity is child",
+    "Entity is Child",
+    "Entity Is child",
     "Entity Is Child",
+    "entity entity is child",
+    "entity entity is Child",
+    "entity entity Is child",
+    "entity entity Is Child",
+    "entity Entity is child",
+    "entity Entity is Child",
+    "entity Entity Is child",
+    "entity Entity Is Child",
+    "Entity entity is child",
+    "Entity entity is Child",
+    "Entity entity Is child",
+    "Entity entity Is Child",
+    "Entity Entity is child",
+    "Entity Entity is Child",
+    "Entity Entity Is child",
     "Entity Entity Is Child",
   ];
   static override tooltipInfo = "If the given entity is a child." as const;

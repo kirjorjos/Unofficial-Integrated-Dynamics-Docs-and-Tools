@@ -26,7 +26,29 @@ export class OPERATOR_LIST_LAZYBUILT extends BaseOperator<
   static override displayName = "Lazy List Builder" as const;
   static override fullDisplayName = "List Lazy List Builder" as const;
   static override stringDisplayNames = [
+    "lazy list builder",
+    "lazy list Builder",
+    "lazy List builder",
+    "lazy List Builder",
+    "Lazy list builder",
+    "Lazy list Builder",
+    "Lazy List builder",
     "Lazy List Builder",
+    "list lazy list builder",
+    "list lazy list Builder",
+    "list lazy List builder",
+    "list lazy List Builder",
+    "list Lazy list builder",
+    "list Lazy list Builder",
+    "list Lazy List builder",
+    "list Lazy List Builder",
+    "List lazy list builder",
+    "List lazy list Builder",
+    "List lazy List builder",
+    "List lazy List Builder",
+    "List Lazy list builder",
+    "List Lazy list Builder",
+    "List Lazy List builder",
     "List Lazy List Builder",
   ];
   static override tooltipInfo =

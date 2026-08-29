@@ -31,7 +31,17 @@ export class OPERATOR_OBJECT_ENTITY_ENTITYITEMTOOLTIP extends BaseOperator<
   static override displayName = "Entity Tooltip" as const;
   static override fullDisplayName = "Entity Entity Tooltip" as const;
   static override stringDisplayNames = [
+    "entity tooltip",
+    "entity Tooltip",
+    "Entity tooltip",
     "Entity Tooltip",
+    "entity entity tooltip",
+    "entity entity Tooltip",
+    "entity Entity tooltip",
+    "entity Entity Tooltip",
+    "Entity entity tooltip",
+    "Entity entity Tooltip",
+    "Entity Entity tooltip",
     "Entity Entity Tooltip",
   ];
   static override kind = "entity" as const;

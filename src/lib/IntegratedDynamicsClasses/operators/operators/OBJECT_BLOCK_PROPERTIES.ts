@@ -24,7 +24,17 @@ export class OPERATOR_OBJECT_BLOCK_PROPERTIES extends BaseOperator<
   static override displayName = "Block Properties" as const;
   static override fullDisplayName = "Block Block Properties" as const;
   static override stringDisplayNames = [
+    "block block properties",
+    "block block Properties",
+    "block Block properties",
+    "block Block Properties",
+    "Block block properties",
+    "Block block Properties",
+    "Block Block properties",
     "Block Block Properties",
+    "block properties",
+    "block Properties",
+    "Block properties",
     "Block Properties",
   ];
   static override tooltipInfo =

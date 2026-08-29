@@ -29,7 +29,36 @@ export class OPERATOR_OBJECT_ITEMSTACK_CANHARVESTBLOCK extends BaseOperator<
   static override operatorName = "canharvest" as const;
   static override displayName = "Can Harvest" as const;
   static override fullDisplayName = "Item Can Harvest" as const;
-  static override stringDisplayNames = ["Item Can Harvest", "Can Harvest"];
+  static override stringDisplayNames = [
+    "item can harvest",
+    "item can Harvest",
+    "item Can harvest",
+    "item Can Harvest",
+    "Item can harvest",
+    "Item can Harvest",
+    "Item Can harvest",
+    "Item Can Harvest",
+    "itemstack can harvest",
+    "itemstack can Harvest",
+    "itemstack Can harvest",
+    "itemstack Can Harvest",
+    "Itemstack can harvest",
+    "Itemstack can Harvest",
+    "Itemstack Can harvest",
+    "Itemstack Can Harvest",
+    "itemStack can harvest",
+    "itemStack can Harvest",
+    "itemStack Can harvest",
+    "itemStack Can Harvest",
+    "ItemStack can harvest",
+    "ItemStack can Harvest",
+    "ItemStack Can harvest",
+    "ItemStack Can Harvest",
+    "can harvest",
+    "can Harvest",
+    "Can harvest",
+    "Can Harvest",
+  ];
   static override tooltipInfo =
     "If the item can harvest the given block" as const;
 

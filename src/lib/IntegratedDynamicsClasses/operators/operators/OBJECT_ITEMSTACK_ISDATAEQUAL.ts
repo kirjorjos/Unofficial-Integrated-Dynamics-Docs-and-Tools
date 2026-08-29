@@ -27,7 +27,50 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISDATAEQUAL extends BaseOperator<
   static override operatorName = "isnbtequal" as const;
   static override displayName = "NBT equals" as const;
   static override fullDisplayName = "Item NBT equals" as const;
-  static override stringDisplayNames = ["Item NBT equals", "NBT equals"];
+  static override stringDisplayNames = [
+    "item nbt equals",
+    "item nbt Equals",
+    "item Nbt equals",
+    "item Nbt Equals",
+    "Item nbt equals",
+    "Item nbt Equals",
+    "Item Nbt equals",
+    "Item Nbt Equals",
+    "item NBT equals",
+    "item NBT Equals",
+    "Item NBT equals",
+    "Item NBT Equals",
+    "itemstack nbt equals",
+    "itemstack nbt Equals",
+    "itemstack Nbt equals",
+    "itemstack Nbt Equals",
+    "Itemstack nbt equals",
+    "Itemstack nbt Equals",
+    "Itemstack Nbt equals",
+    "Itemstack Nbt Equals",
+    "itemStack nbt equals",
+    "itemStack nbt Equals",
+    "itemStack Nbt equals",
+    "itemStack Nbt Equals",
+    "ItemStack nbt equals",
+    "ItemStack nbt Equals",
+    "ItemStack Nbt equals",
+    "ItemStack Nbt Equals",
+    "itemstack NBT equals",
+    "itemstack NBT Equals",
+    "Itemstack NBT equals",
+    "Itemstack NBT Equals",
+    "itemStack NBT equals",
+    "itemStack NBT Equals",
+    "ItemStack NBT equals",
+    "ItemStack NBT Equals",
+    "nbt equals",
+    "nbt Equals",
+    "Nbt equals",
+    "Nbt Equals",
+    "NBT equals",
+    "NBT Equals",
+  ];
   static override tooltipInfo =
     "If the NBT tags of the given items are equal" as const;
 
