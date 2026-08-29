@@ -22,8 +22,18 @@ export class OPERATOR_INGREDIENTS_FLUIDS extends BaseOperator<
   static override displayName = "Ingredient fluids" as const;
   static override fullDisplayName = "Ingredients Ingredient fluids" as const;
   static override stringDisplayNames = [
+    "ingredient fluids",
+    "ingredient Fluids",
     "Ingredient fluids",
+    "Ingredient Fluids",
+    "ingredients ingredient fluids",
+    "ingredients ingredient Fluids",
+    "ingredients Ingredient fluids",
+    "ingredients Ingredient Fluids",
+    "Ingredients ingredient fluids",
+    "Ingredients ingredient Fluids",
     "Ingredients Ingredient fluids",
+    "Ingredients Ingredient Fluids",
   ];
   static override tooltipInfo = "The list of fluids" as const;
 

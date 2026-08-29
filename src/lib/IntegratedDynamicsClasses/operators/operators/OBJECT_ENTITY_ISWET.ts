@@ -24,7 +24,20 @@ export class OPERATOR_OBJECT_ENTITY_ISWET extends BaseOperator<
   static override operatorName = "iswet" as const;
   static override displayName = "Is Wet" as const;
   static override fullDisplayName = "Entity Is Wet" as const;
-  static override stringDisplayNames = ["Is Wet", "Entity Is Wet"];
+  static override stringDisplayNames = [
+    "is wet",
+    "is Wet",
+    "Is wet",
+    "Is Wet",
+    "entity is wet",
+    "entity is Wet",
+    "entity Is wet",
+    "entity Is Wet",
+    "Entity is wet",
+    "Entity is Wet",
+    "Entity Is wet",
+    "Entity Is Wet",
+  ];
   static override tooltipInfo = "If the entity is wet" as const;
 
   static override kind = "entity" as const;

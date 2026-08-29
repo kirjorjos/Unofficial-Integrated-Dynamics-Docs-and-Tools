@@ -17,7 +17,29 @@ export class OPERATOR_OBJECT_BLOCK_ISPLANTABLE extends BaseOperator<
   static override displayName = "Block Is Plant" as const;
   static override fullDisplayName = "Block Block Is Plant" as const;
   static override stringDisplayNames = [
+    "block block is plant",
+    "block block is Plant",
+    "block block Is plant",
+    "block block Is Plant",
+    "block Block is plant",
+    "block Block is Plant",
+    "block Block Is plant",
+    "block Block Is Plant",
+    "Block block is plant",
+    "Block block is Plant",
+    "Block block Is plant",
+    "Block block Is Plant",
+    "Block Block is plant",
+    "Block Block is Plant",
+    "Block Block Is plant",
     "Block Block Is Plant",
+    "block is plant",
+    "block is Plant",
+    "block Is plant",
+    "block Is Plant",
+    "Block is plant",
+    "Block is Plant",
+    "Block Is plant",
     "Block Is Plant",
   ];
   static override tooltipInfo = "If the given block is a plant" as const;

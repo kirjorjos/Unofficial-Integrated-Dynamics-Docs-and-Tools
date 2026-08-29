@@ -26,7 +26,29 @@ export class OPERATOR_STRING_SPLIT_ON_REGEX extends BaseOperator<
   static override displayName = "Split On Regex" as const;
   static override fullDisplayName = "String Split On Regex" as const;
   static override stringDisplayNames = [
+    "split on regex",
+    "split on Regex",
+    "split On regex",
+    "split On Regex",
+    "Split on regex",
+    "Split on Regex",
+    "Split On regex",
     "Split On Regex",
+    "string split on regex",
+    "string split on Regex",
+    "string split On regex",
+    "string split On Regex",
+    "string Split on regex",
+    "string Split on Regex",
+    "string Split On regex",
+    "string Split On Regex",
+    "String split on regex",
+    "String split on Regex",
+    "String split On regex",
+    "String split On Regex",
+    "String Split on regex",
+    "String Split on Regex",
+    "String Split On regex",
     "String Split On Regex",
   ];
   static override tooltipInfo =

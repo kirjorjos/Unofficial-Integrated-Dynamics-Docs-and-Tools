@@ -21,7 +21,29 @@ export class OPERATOR_OBJECT_BLOCK_PLANTTYPE extends BaseOperator<
   static override displayName = "Block Plant Type" as const;
   static override fullDisplayName = "Block Block Plant Type" as const;
   static override stringDisplayNames = [
+    "block block plant type",
+    "block block plant Type",
+    "block block Plant type",
+    "block block Plant Type",
+    "block Block plant type",
+    "block Block plant Type",
+    "block Block Plant type",
+    "block Block Plant Type",
+    "Block block plant type",
+    "Block block plant Type",
+    "Block block Plant type",
+    "Block block Plant Type",
+    "Block Block plant type",
+    "Block Block plant Type",
+    "Block Block Plant type",
     "Block Block Plant Type",
+    "block plant type",
+    "block plant Type",
+    "block Plant type",
+    "block Plant Type",
+    "Block plant type",
+    "Block plant Type",
+    "Block Plant type",
     "Block Plant Type",
   ];
   static override tooltipInfo = "The plant type of the given block" as const;

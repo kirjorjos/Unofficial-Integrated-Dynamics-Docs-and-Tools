@@ -27,7 +27,29 @@ export class OPERATOR_LIST_EQUALS_MULTISET extends BaseOperator<
   static override displayName = "List Equals (Multiset)" as const;
   static override fullDisplayName = "List List Equals (Multiset)" as const;
   static override stringDisplayNames = [
+    "list equals (multiset)",
+    "list Equals (multiset)",
+    "List equals (multiset)",
+    "List Equals (multiset)",
+    "list equals (Multiset)",
+    "list Equals (Multiset)",
+    "List equals (Multiset)",
     "List Equals (Multiset)",
+    "list list equals (multiset)",
+    "list list Equals (multiset)",
+    "list List equals (multiset)",
+    "list List Equals (multiset)",
+    "List list equals (multiset)",
+    "List list Equals (multiset)",
+    "List List equals (multiset)",
+    "List List Equals (multiset)",
+    "list list equals (Multiset)",
+    "list list Equals (Multiset)",
+    "list List equals (Multiset)",
+    "list List Equals (Multiset)",
+    "List list equals (Multiset)",
+    "List list Equals (Multiset)",
+    "List List equals (Multiset)",
     "List List Equals (Multiset)",
   ];
   static override kind = "list" as const;

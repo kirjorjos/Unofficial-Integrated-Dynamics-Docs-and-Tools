@@ -26,7 +26,29 @@ export class OPERATOR_LIST_ELEMENT_DEFAULT extends BaseOperator<
   static override displayName = "Get Or Default" as const;
   static override fullDisplayName = "List Get Or Default" as const;
   static override stringDisplayNames = [
+    "get or default",
+    "get or Default",
+    "get Or default",
+    "get Or Default",
+    "Get or default",
+    "Get or Default",
+    "Get Or default",
     "Get Or Default",
+    "list get or default",
+    "list get or Default",
+    "list get Or default",
+    "list get Or Default",
+    "list Get or default",
+    "list Get or Default",
+    "list Get Or default",
+    "list Get Or Default",
+    "List get or default",
+    "List get or Default",
+    "List get Or default",
+    "List get Or Default",
+    "List Get or default",
+    "List Get or Default",
+    "List Get Or default",
     "List Get Or Default",
   ];
   static override tooltipInfo =

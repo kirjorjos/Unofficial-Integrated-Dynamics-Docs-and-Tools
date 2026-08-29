@@ -21,7 +21,17 @@ export class OPERATOR_STRING_CONTAINS extends BaseOperator<
   static override displayName = "String Contains" as const;
   static override fullDisplayName = "String String Contains" as const;
   static override stringDisplayNames = [
+    "string contains",
+    "string Contains",
+    "String contains",
     "String Contains",
+    "string string contains",
+    "string string Contains",
+    "string String contains",
+    "string String Contains",
+    "String string contains",
+    "String string Contains",
+    "String String contains",
     "String String Contains",
   ];
   static override tooltipInfo =

@@ -12,7 +12,12 @@ export class OPERATOR_STRING_LENGTH extends BaseOperator<iString, Integer> {
   static override operatorName = "length" as const;
   static override displayName = "Length" as const;
   static override fullDisplayName = "String Length" as const;
-  static override stringDisplayNames = ["String Length"];
+  static override stringDisplayNames = [
+    "string length",
+    "string Length",
+    "String length",
+    "String Length",
+  ];
   static override tooltipInfo = "The length of the given String" as const;
 
   static override kind = "string" as const;

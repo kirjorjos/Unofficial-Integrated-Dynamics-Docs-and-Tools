@@ -27,7 +27,32 @@ export class OPERATOR_NULLABLE_ISNOTNULL extends BaseOperator<
   static override operatorName = "isnotnull" as const;
   static override displayName = "Is Not Null" as const;
   static override fullDisplayName = "General Is Not Null" as const;
-  static override stringDisplayNames = ["Is Not Null", "General Is Not Null"];
+  static override stringDisplayNames = [
+    "is not null",
+    "is not Null",
+    "is Not null",
+    "is Not Null",
+    "Is not null",
+    "Is not Null",
+    "Is Not null",
+    "Is Not Null",
+    "general is not null",
+    "general is not Null",
+    "general is Not null",
+    "general is Not Null",
+    "general Is not null",
+    "general Is not Null",
+    "general Is Not null",
+    "general Is Not Null",
+    "General is not null",
+    "General is not Null",
+    "General is Not null",
+    "General is Not Null",
+    "General Is not null",
+    "General Is not Null",
+    "General Is Not null",
+    "General Is Not Null",
+  ];
   static override tooltipInfo = "If the given value is not null" as const;
 
   static override kind = "general" as const;

@@ -23,7 +23,14 @@ export class OPERATOR_ARITHMETIC_MODULUS extends BaseOperator<
   static override operatorName = "modulus" as const;
   static override displayName = "Modulus" as const;
   static override fullDisplayName = "Arithmetic Modulus" as const;
-  static override stringDisplayNames = ["Modulus", "Arithmetic Modulus"];
+  static override stringDisplayNames = [
+    "modulus",
+    "Modulus",
+    "arithmetic modulus",
+    "arithmetic Modulus",
+    "Arithmetic modulus",
+    "Arithmetic Modulus",
+  ];
   static override kind = "arithmetic" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

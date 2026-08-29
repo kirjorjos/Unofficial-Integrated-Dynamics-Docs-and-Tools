@@ -11,7 +11,14 @@ export class OPERATOR_NUMBER_COMPACT extends BaseOperator<TypeNumber, iString> {
   static override operatorName = "compact" as const;
   static override displayName = "Compact" as const;
   static override fullDisplayName = "Number Compact" as const;
-  static override stringDisplayNames = ["Compact", "Number Compact"];
+  static override stringDisplayNames = [
+    "compact",
+    "Compact",
+    "number compact",
+    "number Compact",
+    "Number compact",
+    "Number Compact",
+  ];
   static override kind = "number" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

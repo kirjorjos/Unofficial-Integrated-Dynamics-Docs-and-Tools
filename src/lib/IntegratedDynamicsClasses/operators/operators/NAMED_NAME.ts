@@ -22,7 +22,20 @@ export class OPERATOR_NAMED_NAME extends BaseOperator<
   static override operatorName = "name" as const;
   static override displayName = "To String" as const;
   static override fullDisplayName = "String To String" as const;
-  static override stringDisplayNames = ["To String", "String To String"];
+  static override stringDisplayNames = [
+    "to string",
+    "to String",
+    "To string",
+    "To String",
+    "string to string",
+    "string to String",
+    "string To string",
+    "string To String",
+    "String to string",
+    "String to String",
+    "String To string",
+    "String To String",
+  ];
   static override tooltipInfo =
     "Get the string or name of a named object or converts it to a string" as const;
 

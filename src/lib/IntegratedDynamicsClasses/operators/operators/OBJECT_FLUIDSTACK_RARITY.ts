@@ -24,7 +24,20 @@ export class OPERATOR_OBJECT_FLUIDSTACK_RARITY extends BaseOperator<
   static override operatorName = "rarity" as const;
   static override displayName = "Rarity" as const;
   static override fullDisplayName = "Fluid Rarity" as const;
-  static override stringDisplayNames = ["Fluid Rarity"];
+  static override stringDisplayNames = [
+    "fluid rarity",
+    "fluid Rarity",
+    "Fluid rarity",
+    "Fluid Rarity",
+    "fluidstack rarity",
+    "fluidstack Rarity",
+    "Fluidstack rarity",
+    "Fluidstack Rarity",
+    "fluidStack rarity",
+    "fluidStack Rarity",
+    "FluidStack rarity",
+    "FluidStack Rarity",
+  ];
   static override tooltipInfo = "The fluid rarity" as const;
 
   static override kind = "fluidstack" as const;

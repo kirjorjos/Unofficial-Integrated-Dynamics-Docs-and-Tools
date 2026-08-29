@@ -27,7 +27,36 @@ export class OPERATOR_ITEMSTACK_CANBURN extends BaseOperator<Item, iBoolean> {
   static override operatorName = "canburn" as const;
   static override displayName = "Is Fuel" as const;
   static override fullDisplayName = "Item Is Fuel" as const;
-  static override stringDisplayNames = ["Item Is Fuel", "Is Fuel"];
+  static override stringDisplayNames = [
+    "item is fuel",
+    "item is Fuel",
+    "item Is fuel",
+    "item Is Fuel",
+    "Item is fuel",
+    "Item is Fuel",
+    "Item Is fuel",
+    "Item Is Fuel",
+    "itemstack is fuel",
+    "itemstack is Fuel",
+    "itemstack Is fuel",
+    "itemstack Is Fuel",
+    "Itemstack is fuel",
+    "Itemstack is Fuel",
+    "Itemstack Is fuel",
+    "Itemstack Is Fuel",
+    "itemStack is fuel",
+    "itemStack is Fuel",
+    "itemStack Is fuel",
+    "itemStack Is Fuel",
+    "ItemStack is fuel",
+    "ItemStack is Fuel",
+    "ItemStack Is fuel",
+    "ItemStack Is Fuel",
+    "is fuel",
+    "is Fuel",
+    "Is fuel",
+    "Is Fuel",
+  ];
   static override tooltipInfo =
     "If the given item can be used as fuel" as const;
 

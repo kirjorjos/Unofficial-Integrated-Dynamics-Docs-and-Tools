@@ -18,7 +18,14 @@ export class OPERATOR_OBJECT_ENTITY_WIDTH extends BaseOperator<Entity, Double> {
   static override operatorName = "width" as const;
   static override displayName = "Width" as const;
   static override fullDisplayName = "Entity Width" as const;
-  static override stringDisplayNames = ["Width", "Entity Width"];
+  static override stringDisplayNames = [
+    "width",
+    "Width",
+    "entity width",
+    "entity Width",
+    "Entity width",
+    "Entity Width",
+  ];
   static override tooltipInfo = "The entity width" as const;
 
   static override kind = "entity" as const;

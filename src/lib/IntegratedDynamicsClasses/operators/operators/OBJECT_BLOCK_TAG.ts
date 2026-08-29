@@ -23,7 +23,29 @@ export class OPERATOR_OBJECT_BLOCK_TAG extends BaseOperator<
   static override displayName = "Block Tag Names" as const;
   static override fullDisplayName = "Block Block Tag Names" as const;
   static override stringDisplayNames = [
+    "block block tag names",
+    "block block tag Names",
+    "block block Tag names",
+    "block block Tag Names",
+    "block Block tag names",
+    "block Block tag Names",
+    "block Block Tag names",
+    "block Block Tag Names",
+    "Block block tag names",
+    "Block block tag Names",
+    "Block block Tag names",
+    "Block block Tag Names",
+    "Block Block tag names",
+    "Block Block tag Names",
+    "Block Block Tag names",
     "Block Block Tag Names",
+    "block tag names",
+    "block tag Names",
+    "block Tag names",
+    "block Tag Names",
+    "Block tag names",
+    "Block tag Names",
+    "Block Tag names",
     "Block Tag Names",
   ];
   static override kind = "block" as const;

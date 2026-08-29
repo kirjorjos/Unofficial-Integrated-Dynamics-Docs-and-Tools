@@ -26,7 +26,17 @@ export class OPERATOR_STRING_MATCHES_REGEX extends BaseOperator<
   static override displayName = "Matches Regex" as const;
   static override fullDisplayName = "String Matches Regex" as const;
   static override stringDisplayNames = [
+    "matches regex",
+    "matches Regex",
+    "Matches regex",
     "Matches Regex",
+    "string matches regex",
+    "string matches Regex",
+    "string Matches regex",
+    "string Matches Regex",
+    "String matches regex",
+    "String matches Regex",
+    "String Matches regex",
     "String Matches Regex",
   ];
   static override tooltipInfo =

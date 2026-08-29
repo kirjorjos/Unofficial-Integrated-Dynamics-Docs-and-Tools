@@ -28,7 +28,17 @@ export class OPERATOR_STRING_REPLACE_REGEX extends BaseOperator<
   static override displayName = "Replace Regex" as const;
   static override fullDisplayName = "String Replace Regex" as const;
   static override stringDisplayNames = [
+    "replace regex",
+    "replace Regex",
+    "Replace regex",
     "Replace Regex",
+    "string replace regex",
+    "string replace Regex",
+    "string Replace regex",
+    "string Replace Regex",
+    "String replace regex",
+    "String replace Regex",
+    "String Replace regex",
     "String Replace Regex",
   ];
   static override tooltipInfo =

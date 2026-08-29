@@ -22,7 +22,20 @@ export class OPERATOR_STRING_STARTS_WITH extends BaseOperator<
   static override operatorName = "starts_with" as const;
   static override displayName = "Starts With" as const;
   static override fullDisplayName = "String Starts With" as const;
-  static override stringDisplayNames = ["Starts With", "String Starts With"];
+  static override stringDisplayNames = [
+    "starts with",
+    "starts With",
+    "Starts with",
+    "Starts With",
+    "string starts with",
+    "string starts With",
+    "string Starts with",
+    "string Starts With",
+    "String starts with",
+    "String starts With",
+    "String Starts with",
+    "String Starts With",
+  ];
   static override tooltipInfo =
     "If the given substring matches the start of the given string." as const;
 

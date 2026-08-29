@@ -25,7 +25,17 @@ export class OPERATOR_RELATIONAL_GT extends BaseOperator<
   static override displayName = "Greater Than" as const;
   static override fullDisplayName = "Relational Greater Than" as const;
   static override stringDisplayNames = [
+    "greater than",
+    "greater Than",
+    "Greater than",
     "Greater Than",
+    "relational greater than",
+    "relational greater Than",
+    "relational Greater than",
+    "relational Greater Than",
+    "Relational greater than",
+    "Relational greater Than",
+    "Relational Greater than",
     "Relational Greater Than",
   ];
   static override kind = "relational" as const;

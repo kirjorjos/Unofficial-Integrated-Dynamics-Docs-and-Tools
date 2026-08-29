@@ -26,7 +26,17 @@ export class OPERATOR_STRING_CONTAINS_REGEX extends BaseOperator<
   static override displayName = "Contains Regex" as const;
   static override fullDisplayName = "String Contains Regex" as const;
   static override stringDisplayNames = [
+    "contains regex",
+    "contains Regex",
+    "Contains regex",
     "Contains Regex",
+    "string contains regex",
+    "string contains Regex",
+    "string Contains regex",
+    "string Contains Regex",
+    "String contains regex",
+    "String contains Regex",
+    "String Contains regex",
     "String Contains Regex",
   ];
   static override tooltipInfo =

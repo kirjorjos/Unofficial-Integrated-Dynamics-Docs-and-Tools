@@ -22,7 +22,14 @@ export class OPERATOR_LOGICAL_NOR extends BaseOperator<
   static override operatorName = "nor" as const;
   static override displayName = "Nor" as const;
   static override fullDisplayName = "Logical Nor" as const;
-  static override stringDisplayNames = ["Nor", "Logical Nor"];
+  static override stringDisplayNames = [
+    "nor",
+    "Nor",
+    "logical nor",
+    "logical Nor",
+    "Logical nor",
+    "Logical Nor",
+  ];
   static override kind = "logical" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

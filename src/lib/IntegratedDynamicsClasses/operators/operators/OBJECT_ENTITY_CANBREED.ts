@@ -25,7 +25,29 @@ export class OPERATOR_OBJECT_ENTITY_CANBREED extends BaseOperator<
   static override displayName = "Entity Can Breed" as const;
   static override fullDisplayName = "Entity Entity Can Breed" as const;
   static override stringDisplayNames = [
+    "entity can breed",
+    "entity can Breed",
+    "entity Can breed",
+    "entity Can Breed",
+    "Entity can breed",
+    "Entity can Breed",
+    "Entity Can breed",
     "Entity Can Breed",
+    "entity entity can breed",
+    "entity entity can Breed",
+    "entity entity Can breed",
+    "entity entity Can Breed",
+    "entity Entity can breed",
+    "entity Entity can Breed",
+    "entity Entity Can breed",
+    "entity Entity Can Breed",
+    "Entity entity can breed",
+    "Entity entity can Breed",
+    "Entity entity Can breed",
+    "Entity entity Can Breed",
+    "Entity Entity can breed",
+    "Entity Entity can Breed",
+    "Entity Entity Can breed",
     "Entity Entity Can Breed",
   ];
   static override tooltipInfo =

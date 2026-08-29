@@ -18,7 +18,14 @@ export class OPERATOR_LOGICAL_NOT extends BaseOperator<iBoolean, iBoolean> {
   static override operatorName = "not" as const;
   static override displayName = "Not" as const;
   static override fullDisplayName = "Logical Not" as const;
-  static override stringDisplayNames = ["Not", "Logical Not"];
+  static override stringDisplayNames = [
+    "not",
+    "Not",
+    "logical not",
+    "logical Not",
+    "Logical not",
+    "Logical Not",
+  ];
   static override kind = "logical" as const;
   static override renderPattern = "PREFIX_1" as const;
   constructor(normalizeSignature = true) {

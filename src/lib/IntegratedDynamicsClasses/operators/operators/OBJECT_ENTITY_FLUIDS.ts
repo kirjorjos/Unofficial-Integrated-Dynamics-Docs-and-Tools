@@ -26,7 +26,17 @@ export class OPERATOR_OBJECT_ENTITY_FLUIDS extends BaseOperator<
   static override displayName = "Entity Fluids" as const;
   static override fullDisplayName = "Entity Entity Fluids" as const;
   static override stringDisplayNames = [
+    "entity fluids",
+    "entity Fluids",
+    "Entity fluids",
     "Entity Fluids",
+    "entity entity fluids",
+    "entity entity Fluids",
+    "entity Entity fluids",
+    "entity Entity Fluids",
+    "Entity entity fluids",
+    "Entity entity Fluids",
+    "Entity Entity fluids",
     "Entity Entity Fluids",
   ];
   static override tooltipInfo =

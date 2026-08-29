@@ -23,7 +23,14 @@ export class OPERATOR_STRING_JOIN extends BaseOperator<
   static override operatorName = "join" as const;
   static override displayName = "Join" as const;
   static override fullDisplayName = "General Join" as const;
-  static override stringDisplayNames = ["Join", "General Join"];
+  static override stringDisplayNames = [
+    "join",
+    "Join",
+    "general join",
+    "general Join",
+    "General join",
+    "General Join",
+  ];
   static override kind = "general" as const;
   static override renderPattern = "PREFIX_2" as const;
   constructor(normalizeSignature = true) {

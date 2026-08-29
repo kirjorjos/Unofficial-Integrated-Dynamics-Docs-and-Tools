@@ -22,7 +22,14 @@ export class OPERATOR_ARITHMETIC_INCREMENT extends BaseOperator<
   static override operatorName = "increment" as const;
   static override displayName = "Increment" as const;
   static override fullDisplayName = "Arithmetic Increment" as const;
-  static override stringDisplayNames = ["Increment", "Arithmetic Increment"];
+  static override stringDisplayNames = [
+    "increment",
+    "Increment",
+    "arithmetic increment",
+    "arithmetic Increment",
+    "Arithmetic increment",
+    "Arithmetic Increment",
+  ];
   static override kind = "arithmetic" as const;
   static override renderPattern = "SUFFIX_1" as const;
   constructor(normalizeSignature = true) {

@@ -16,7 +16,14 @@ export class OPERATOR_LIST_CONTAINS extends BaseOperator<
   static override operatorName = "contains" as const;
   static override displayName = "Contains" as const;
   static override fullDisplayName = "List Contains" as const;
-  static override stringDisplayNames = ["Contains", "List Contains"];
+  static override stringDisplayNames = [
+    "contains",
+    "Contains",
+    "list contains",
+    "list Contains",
+    "List contains",
+    "List Contains",
+  ];
   static override tooltipInfo =
     "If the list contains the given element." as const;
 

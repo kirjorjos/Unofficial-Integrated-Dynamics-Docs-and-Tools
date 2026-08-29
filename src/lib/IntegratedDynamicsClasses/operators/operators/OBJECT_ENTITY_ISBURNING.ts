@@ -24,7 +24,20 @@ export class OPERATOR_OBJECT_ENTITY_ISBURNING extends BaseOperator<
   static override operatorName = "isburning" as const;
   static override displayName = "Is Burning" as const;
   static override fullDisplayName = "Entity Is Burning" as const;
-  static override stringDisplayNames = ["Is Burning", "Entity Is Burning"];
+  static override stringDisplayNames = [
+    "is burning",
+    "is Burning",
+    "Is burning",
+    "Is Burning",
+    "entity is burning",
+    "entity is Burning",
+    "entity Is burning",
+    "entity Is Burning",
+    "Entity is burning",
+    "Entity is Burning",
+    "Entity Is burning",
+    "Entity Is Burning",
+  ];
   static override tooltipInfo = "If the entity is burning" as const;
 
   static override kind = "entity" as const;

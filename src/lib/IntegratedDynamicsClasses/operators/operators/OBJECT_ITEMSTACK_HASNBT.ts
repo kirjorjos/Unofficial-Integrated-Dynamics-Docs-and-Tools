@@ -29,7 +29,50 @@ export class OPERATOR_OBJECT_ITEMSTACK_HASNBT extends BaseOperator<
   static override operatorName = "hasnbt" as const;
   static override displayName = "Has NBT" as const;
   static override fullDisplayName = "Item Has NBT" as const;
-  static override stringDisplayNames = ["Item Has NBT", "Has NBT"];
+  static override stringDisplayNames = [
+    "item has nbt",
+    "item has Nbt",
+    "item Has nbt",
+    "item Has Nbt",
+    "Item has nbt",
+    "Item has Nbt",
+    "Item Has nbt",
+    "Item Has Nbt",
+    "item has NBT",
+    "item Has NBT",
+    "Item has NBT",
+    "Item Has NBT",
+    "itemstack has nbt",
+    "itemstack has Nbt",
+    "itemstack Has nbt",
+    "itemstack Has Nbt",
+    "Itemstack has nbt",
+    "Itemstack has Nbt",
+    "Itemstack Has nbt",
+    "Itemstack Has Nbt",
+    "itemStack has nbt",
+    "itemStack has Nbt",
+    "itemStack Has nbt",
+    "itemStack Has Nbt",
+    "ItemStack has nbt",
+    "ItemStack has Nbt",
+    "ItemStack Has nbt",
+    "ItemStack Has Nbt",
+    "itemstack has NBT",
+    "itemstack Has NBT",
+    "Itemstack has NBT",
+    "Itemstack Has NBT",
+    "itemStack has NBT",
+    "itemStack Has NBT",
+    "ItemStack has NBT",
+    "ItemStack Has NBT",
+    "has nbt",
+    "has Nbt",
+    "Has nbt",
+    "Has Nbt",
+    "has NBT",
+    "Has NBT",
+  ];
   static override tooltipInfo = "If the item stack has an NBT tag." as const;
 
   static override kind = "itemstack" as const;

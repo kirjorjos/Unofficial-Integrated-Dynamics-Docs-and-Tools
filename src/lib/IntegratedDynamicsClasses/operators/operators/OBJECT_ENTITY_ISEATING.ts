@@ -24,7 +24,20 @@ export class OPERATOR_OBJECT_ENTITY_ISEATING extends BaseOperator<
   static override operatorName = "iseating" as const;
   static override displayName = "Is Eating" as const;
   static override fullDisplayName = "Entity Is Eating" as const;
-  static override stringDisplayNames = ["Is Eating", "Entity Is Eating"];
+  static override stringDisplayNames = [
+    "is eating",
+    "is Eating",
+    "Is eating",
+    "Is Eating",
+    "entity is eating",
+    "entity is Eating",
+    "entity Is eating",
+    "entity Is Eating",
+    "Entity is eating",
+    "Entity is Eating",
+    "Entity Is eating",
+    "Entity Is Eating",
+  ];
   static override tooltipInfo = "If the entity is eating" as const;
 
   static override kind = "entity" as const;

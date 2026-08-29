@@ -20,7 +20,12 @@ export class OPERATOR_STRING_CONCAT extends BaseOperator<
   static override operatorName = "concat" as const;
   static override displayName = "Concat" as const;
   static override fullDisplayName = "String Concat" as const;
-  static override stringDisplayNames = ["String Concat"];
+  static override stringDisplayNames = [
+    "string concat",
+    "string Concat",
+    "String concat",
+    "String Concat",
+  ];
   static override tooltipInfo =
     "Concatenate the two given Strings to one" as const;
 

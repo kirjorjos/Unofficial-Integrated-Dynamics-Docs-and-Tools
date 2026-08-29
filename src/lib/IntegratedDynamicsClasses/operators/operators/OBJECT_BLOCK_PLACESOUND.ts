@@ -25,7 +25,29 @@ export class OPERATOR_OBJECT_BLOCK_PLACESOUND extends BaseOperator<
   static override displayName = "Block Place Sound" as const;
   static override fullDisplayName = "Block Block Place Sound" as const;
   static override stringDisplayNames = [
+    "block block place sound",
+    "block block place Sound",
+    "block block Place sound",
+    "block block Place Sound",
+    "block Block place sound",
+    "block Block place Sound",
+    "block Block Place sound",
+    "block Block Place Sound",
+    "Block block place sound",
+    "Block block place Sound",
+    "Block block Place sound",
+    "Block block Place Sound",
+    "Block Block place sound",
+    "Block Block place Sound",
+    "Block Block Place sound",
     "Block Block Place Sound",
+    "block place sound",
+    "block place Sound",
+    "block Place sound",
+    "block Place Sound",
+    "Block place sound",
+    "Block place Sound",
+    "Block Place sound",
     "Block Place Sound",
   ];
   static override tooltipInfo = "The place sound of the given block" as const;

@@ -17,7 +17,14 @@ export class OPERATOR_NUMBER_CEIL extends BaseOperator<TypeNumber, Integer> {
   static override operatorName = "ceil" as const;
   static override displayName = "Ceil" as const;
   static override fullDisplayName = "Number Ceil" as const;
-  static override stringDisplayNames = ["Ceil", "Number Ceil"];
+  static override stringDisplayNames = [
+    "ceil",
+    "Ceil",
+    "number ceil",
+    "number Ceil",
+    "Number ceil",
+    "Number Ceil",
+  ];
   static override kind = "number" as const;
   static override renderPattern = "PREFIX_1" as const;
   constructor(normalizeSignature = true) {

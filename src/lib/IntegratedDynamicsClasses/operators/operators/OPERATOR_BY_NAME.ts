@@ -28,7 +28,29 @@ export class OPERATOR_OPERATOR_BY_NAME extends BaseOperator<
   static override displayName = "Operator By Name" as const;
   static override fullDisplayName = "Operator Operator By Name" as const;
   static override stringDisplayNames = [
+    "operator by name",
+    "operator by Name",
+    "operator By name",
+    "operator By Name",
+    "Operator by name",
+    "Operator by Name",
+    "Operator By name",
     "Operator By Name",
+    "operator operator by name",
+    "operator operator by Name",
+    "operator operator By name",
+    "operator operator By Name",
+    "operator Operator by name",
+    "operator Operator by Name",
+    "operator Operator By name",
+    "operator Operator By Name",
+    "Operator operator by name",
+    "Operator operator by Name",
+    "Operator operator By name",
+    "Operator operator By Name",
+    "Operator Operator by name",
+    "Operator Operator by Name",
+    "Operator Operator By name",
     "Operator Operator By Name",
   ];
   static override tooltipInfo =

@@ -12,7 +12,20 @@ export class OPERATOR_OBJECT_ENTITY_AGE extends BaseOperator<Entity, Integer> {
   static override operatorName = "age" as const;
   static override displayName = "Entity Age" as const;
   static override fullDisplayName = "Entity Entity Age" as const;
-  static override stringDisplayNames = ["Entity Age", "Entity Entity Age"];
+  static override stringDisplayNames = [
+    "entity age",
+    "entity Age",
+    "Entity age",
+    "Entity Age",
+    "entity entity age",
+    "entity entity Age",
+    "entity Entity age",
+    "entity Entity Age",
+    "Entity entity age",
+    "Entity entity Age",
+    "Entity Entity age",
+    "Entity Entity Age",
+  ];
   static override tooltipInfo = "The age of the given entity." as const;
 
   static override kind = "entity" as const;

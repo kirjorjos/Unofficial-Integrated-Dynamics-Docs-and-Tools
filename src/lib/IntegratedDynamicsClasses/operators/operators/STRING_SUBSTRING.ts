@@ -22,7 +22,14 @@ export class OPERATOR_STRING_SUBSTRING extends BaseOperator<
   static override operatorName = "substring" as const;
   static override displayName = "Substring" as const;
   static override fullDisplayName = "String Substring" as const;
-  static override stringDisplayNames = ["Substring", "String Substring"];
+  static override stringDisplayNames = [
+    "substring",
+    "Substring",
+    "string substring",
+    "string Substring",
+    "String substring",
+    "String Substring",
+  ];
   static override tooltipInfo =
     "Get a substring, from the given index (inclusive) to the given index (exclusive), of the given string." as const;
 

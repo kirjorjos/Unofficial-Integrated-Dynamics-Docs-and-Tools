@@ -29,7 +29,29 @@ export class OPERATOR_BINARY_RZSHIFT extends BaseOperator<
   static override displayName = "Right Zero Shift" as const;
   static override fullDisplayName = "Binary Right Zero Shift" as const;
   static override stringDisplayNames = [
+    "right zero shift",
+    "right zero Shift",
+    "right Zero shift",
+    "right Zero Shift",
+    "Right zero shift",
+    "Right zero Shift",
+    "Right Zero shift",
     "Right Zero Shift",
+    "binary right zero shift",
+    "binary right zero Shift",
+    "binary right Zero shift",
+    "binary right Zero Shift",
+    "binary Right zero shift",
+    "binary Right zero Shift",
+    "binary Right Zero shift",
+    "binary Right Zero Shift",
+    "Binary right zero shift",
+    "Binary right zero Shift",
+    "Binary right Zero shift",
+    "Binary right Zero Shift",
+    "Binary Right zero shift",
+    "Binary Right zero Shift",
+    "Binary Right Zero shift",
     "Binary Right Zero Shift",
   ];
   static override tooltipInfo = "Right Shift with zeros fill" as const;

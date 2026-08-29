@@ -27,7 +27,32 @@ export class OPERATOR_OBJECT_BLOCK_BY_NAME extends BaseOperator<
   static override operatorName = "blockbyname" as const;
   static override displayName = "Block By Name" as const;
   static override fullDisplayName = "Block Block By Name" as const;
-  static override stringDisplayNames = ["Block Block By Name", "Block By Name"];
+  static override stringDisplayNames = [
+    "block block by name",
+    "block block by Name",
+    "block block By name",
+    "block block By Name",
+    "block Block by name",
+    "block Block by Name",
+    "block Block By name",
+    "block Block By Name",
+    "Block block by name",
+    "Block block by Name",
+    "Block block By name",
+    "Block block By Name",
+    "Block Block by name",
+    "Block Block by Name",
+    "Block Block By name",
+    "Block Block By Name",
+    "block by name",
+    "block by Name",
+    "block By name",
+    "block By Name",
+    "Block by name",
+    "Block by Name",
+    "Block By name",
+    "Block By Name",
+  ];
   static override tooltipInfo =
     "Get the block corresponding to the given unique name, add space+number for indicating the metadata." as const;
 

@@ -14,7 +14,14 @@ export class OPERATOR_OPERATOR_FLIP extends BaseOperator<
   static override operatorName = "flip" as const;
   static override displayName = "Flip" as const;
   static override fullDisplayName = "Operator Flip" as const;
-  static override stringDisplayNames = ["Flip", "Operator Flip"];
+  static override stringDisplayNames = [
+    "flip",
+    "Flip",
+    "operator flip",
+    "operator Flip",
+    "Operator flip",
+    "Operator Flip",
+  ];
   static override tooltipInfo =
     "Flip the two first input parameters of an operator." as const;
 

@@ -22,7 +22,14 @@ export class OPERATOR_LIST_INTERSECTION extends BaseOperator<
   static override operatorName = "intersection" as const;
   static override displayName = "Intersection" as const;
   static override fullDisplayName = "List Intersection" as const;
-  static override stringDisplayNames = ["Intersection", "List Intersection"];
+  static override stringDisplayNames = [
+    "intersection",
+    "Intersection",
+    "list intersection",
+    "list Intersection",
+    "List intersection",
+    "List Intersection",
+  ];
   static override kind = "list" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

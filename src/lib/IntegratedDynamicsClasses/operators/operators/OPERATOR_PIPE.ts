@@ -24,7 +24,14 @@ export class OPERATOR_OPERATOR_PIPE extends BaseOperator<
   static override operatorName = "pipe" as const;
   static override displayName = "Pipe" as const;
   static override fullDisplayName = "Operator Pipe" as const;
-  static override stringDisplayNames = ["Pipe", "Operator Pipe"];
+  static override stringDisplayNames = [
+    "pipe",
+    "Pipe",
+    "operator pipe",
+    "operator Pipe",
+    "Operator pipe",
+    "Operator Pipe",
+  ];
   static override tooltipInfo =
     "Create a new operator that pipes the output from the first operator to the second operator." as const;
 

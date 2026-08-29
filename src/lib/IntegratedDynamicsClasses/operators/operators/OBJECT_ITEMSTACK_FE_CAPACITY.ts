@@ -27,7 +27,50 @@ export class OPERATOR_OBJECT_ITEMSTACK_FE_CAPACITY extends BaseOperator<
   static override operatorName = "fecapacity" as const;
   static override displayName = "FE Capacity" as const;
   static override fullDisplayName = "Item FE Capacity" as const;
-  static override stringDisplayNames = ["Item FE Capacity", "FE Capacity"];
+  static override stringDisplayNames = [
+    "item fe capacity",
+    "item fe Capacity",
+    "item Fe capacity",
+    "item Fe Capacity",
+    "Item fe capacity",
+    "Item fe Capacity",
+    "Item Fe capacity",
+    "Item Fe Capacity",
+    "item FE capacity",
+    "item FE Capacity",
+    "Item FE capacity",
+    "Item FE Capacity",
+    "itemstack fe capacity",
+    "itemstack fe Capacity",
+    "itemstack Fe capacity",
+    "itemstack Fe Capacity",
+    "Itemstack fe capacity",
+    "Itemstack fe Capacity",
+    "Itemstack Fe capacity",
+    "Itemstack Fe Capacity",
+    "itemStack fe capacity",
+    "itemStack fe Capacity",
+    "itemStack Fe capacity",
+    "itemStack Fe Capacity",
+    "ItemStack fe capacity",
+    "ItemStack fe Capacity",
+    "ItemStack Fe capacity",
+    "ItemStack Fe Capacity",
+    "itemstack FE capacity",
+    "itemstack FE Capacity",
+    "Itemstack FE capacity",
+    "Itemstack FE Capacity",
+    "itemStack FE capacity",
+    "itemStack FE Capacity",
+    "ItemStack FE capacity",
+    "ItemStack FE Capacity",
+    "fe capacity",
+    "fe Capacity",
+    "Fe capacity",
+    "Fe Capacity",
+    "FE capacity",
+    "FE Capacity",
+  ];
   static override tooltipInfo =
     "The maximum amount of FE that can be stored in this item" as const;
 

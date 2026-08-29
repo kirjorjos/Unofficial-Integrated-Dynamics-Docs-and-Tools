@@ -19,7 +19,20 @@ export class OPERATOR_OBJECT_ITEMSTACK_BLOCK extends BaseOperator<Item, Block> {
   static override operatorName = "block" as const;
   static override displayName = "Block" as const;
   static override fullDisplayName = "Item Block" as const;
-  static override stringDisplayNames = ["Item Block"];
+  static override stringDisplayNames = [
+    "item block",
+    "item Block",
+    "Item block",
+    "Item Block",
+    "itemstack block",
+    "itemstack Block",
+    "Itemstack block",
+    "Itemstack Block",
+    "itemStack block",
+    "itemStack Block",
+    "ItemStack block",
+    "ItemStack Block",
+  ];
   static override tooltipInfo = "The block from the given item" as const;
 
   static override kind = "itemstack" as const;

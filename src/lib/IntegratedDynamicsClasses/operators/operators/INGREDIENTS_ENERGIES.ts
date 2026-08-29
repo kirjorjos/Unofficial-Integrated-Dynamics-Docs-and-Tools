@@ -23,8 +23,30 @@ export class OPERATOR_INGREDIENTS_ENERGIES extends BaseOperator<
   static override fullDisplayName =
     "Ingredients Ingredient energy elements" as const;
   static override stringDisplayNames = [
+    "ingredient energy elements",
+    "ingredient energy Elements",
+    "ingredient Energy elements",
+    "ingredient Energy Elements",
     "Ingredient energy elements",
+    "Ingredient energy Elements",
+    "Ingredient Energy elements",
+    "Ingredient Energy Elements",
+    "ingredients ingredient energy elements",
+    "ingredients ingredient energy Elements",
+    "ingredients ingredient Energy elements",
+    "ingredients ingredient Energy Elements",
+    "ingredients Ingredient energy elements",
+    "ingredients Ingredient energy Elements",
+    "ingredients Ingredient Energy elements",
+    "ingredients Ingredient Energy Elements",
+    "Ingredients ingredient energy elements",
+    "Ingredients ingredient energy Elements",
+    "Ingredients ingredient Energy elements",
+    "Ingredients ingredient Energy Elements",
     "Ingredients Ingredient energy elements",
+    "Ingredients Ingredient energy Elements",
+    "Ingredients Ingredient Energy elements",
+    "Ingredients Ingredient Energy Elements",
   ];
   static override tooltipInfo = "The list of energy elements" as const;
 

@@ -24,7 +24,11 @@ export class OPERATOR_ARITHMETIC_MULTIPLICATION extends BaseOperator<
   static override displayName = "Multiplication" as const;
   static override fullDisplayName = "Arithmetic Multiplication" as const;
   static override stringDisplayNames = [
+    "multiplication",
     "Multiplication",
+    "arithmetic multiplication",
+    "arithmetic Multiplication",
+    "Arithmetic multiplication",
     "Arithmetic Multiplication",
   ];
   static override kind = "arithmetic" as const;

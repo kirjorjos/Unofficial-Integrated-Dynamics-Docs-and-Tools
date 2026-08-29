@@ -25,7 +25,20 @@ export class OPERATOR_STRING_REGEX_GROUP extends BaseOperator<
   static override operatorName = "regex_group" as const;
   static override displayName = "Regex Group" as const;
   static override fullDisplayName = "String Regex Group" as const;
-  static override stringDisplayNames = ["Regex Group", "String Regex Group"];
+  static override stringDisplayNames = [
+    "regex group",
+    "regex Group",
+    "Regex group",
+    "Regex Group",
+    "string regex group",
+    "string regex Group",
+    "string Regex group",
+    "string Regex Group",
+    "String regex group",
+    "String regex Group",
+    "String Regex group",
+    "String Regex Group",
+  ];
   static override tooltipInfo =
     "Search for the given regular expression and return in that match the group at the given index, in the given string." as const;
 

@@ -25,7 +25,29 @@ export class OPERATOR_OBJECT_BLOCK_STEPSOUND extends BaseOperator<
   static override displayName = "Block Step Sound" as const;
   static override fullDisplayName = "Block Block Step Sound" as const;
   static override stringDisplayNames = [
+    "block block step sound",
+    "block block step Sound",
+    "block block Step sound",
+    "block block Step Sound",
+    "block Block step sound",
+    "block Block step Sound",
+    "block Block Step sound",
+    "block Block Step Sound",
+    "Block block step sound",
+    "Block block step Sound",
+    "Block block Step sound",
+    "Block block Step Sound",
+    "Block Block step sound",
+    "Block Block step Sound",
+    "Block Block Step sound",
     "Block Block Step Sound",
+    "block step sound",
+    "block step Sound",
+    "block Step sound",
+    "block Step Sound",
+    "Block step sound",
+    "Block step Sound",
+    "Block Step sound",
     "Block Step Sound",
   ];
   static override tooltipInfo = "The step sound of the given block" as const;

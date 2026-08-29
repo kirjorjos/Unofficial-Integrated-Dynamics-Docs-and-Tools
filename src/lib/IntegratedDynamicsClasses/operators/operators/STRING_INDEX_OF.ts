@@ -21,7 +21,20 @@ export class OPERATOR_STRING_INDEX_OF extends BaseOperator<
   static override operatorName = "index_of" as const;
   static override displayName = "Index Of" as const;
   static override fullDisplayName = "String Index Of" as const;
-  static override stringDisplayNames = ["Index Of", "String Index Of"];
+  static override stringDisplayNames = [
+    "index of",
+    "index Of",
+    "Index of",
+    "Index Of",
+    "string index of",
+    "string index Of",
+    "string Index of",
+    "string Index Of",
+    "String index of",
+    "String index Of",
+    "String Index of",
+    "String Index Of",
+  ];
   static override tooltipInfo =
     "Get the index of the first occurrence of a substring matching the search term in the given string." as const;
 
