@@ -13,19 +13,27 @@ body:
     attributes:
       label: Affected area
       description: Where does the problem show up?
+      multiple: true
       options:
-        - Logic Programmer / visual tools
-        - Reader documentation pages
-        - Documentation content
-        - Site / build
-        - Other / unsure
+        - Logic Programmer View
+        - Display Panel View
+        - Reader View
+        - Visual Transformer
+        - JSON Transformer
+        - Code Line Transformer
+        - Expanded Transformer
+        - Condensed Transformer
+        - Multiple Transformers (Please select problematic ones)
+        - Operator Documentation
+        - Reader Documentation
+        - Other
     validations:
       required: true
 
   - type: textarea
-    id: what-happened
+    id: whats-wrong
     attributes:
-      label: What happened?
+      label: What's wrong?
       description: A clear description of what went wrong, including what you expected to happen.
     validations:
       required: true
@@ -39,18 +47,3 @@ body:
         1. Go to '...'
         2. Click on '...'
         3. See error
-
-  - type: input
-    id: version-info
-    attributes:
-      label: Environment
-      description: Browser/OS for site issues, or Minecraft/mod versions where relevant.
-      placeholder: e.g. Firefox 141 on Linux / Minecraft 1.21.1
-
-  - type: checkboxes
-    id: checks
-    attributes:
-      label: Before submitting
-      options:
-        - label: I searched existing issues for a duplicate
-          required: true
