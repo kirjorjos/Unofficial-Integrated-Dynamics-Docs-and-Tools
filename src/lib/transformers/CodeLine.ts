@@ -1053,6 +1053,7 @@ export const CodeLineToAST = (
       }
       return {
         type: "Pipe",
+        ...(body.varName ? { varName: body.varName } : {}),
         op1: condense(body.op1),
         op2: condense(body.op2),
       };
@@ -1061,12 +1062,14 @@ export const CodeLineToAST = (
       if (body.base.type === "Curry") {
         return condense({
           type: "Curry",
+          ...(body.varName ? { varName: body.varName } : {}),
           base: body.base.base,
           args: [...body.base.args, ...body.args],
         });
       }
       return {
         type: "Curry",
+        ...(body.varName ? { varName: body.varName } : {}),
         base: condense(body.base),
         args: body.args.map(condense),
       };
@@ -1088,6 +1091,7 @@ export const CodeLineToAST = (
       }
       return {
         type: "Pipe2",
+        ...(body.varName ? { varName: body.varName } : {}),
         op1: condense(body.op1),
         op2: condense(body.op2),
         op3: condense(body.op3),
@@ -1103,6 +1107,7 @@ export const CodeLineToAST = (
       }
       return {
         type: "Flip",
+        ...(body.varName ? { varName: body.varName } : {}),
         arg: condense(body.arg),
       };
     }

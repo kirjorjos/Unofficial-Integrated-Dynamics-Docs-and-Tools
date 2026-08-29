@@ -787,6 +787,21 @@ final = total
     );
   });
 
+  it("testNoDuplicateCardsWhenNamedVarReferencedInLambda", () => {
+    const input = `
+genomePath = ""
+beeGenome = pipe itemNBT (nbtPathMatchFirst genomePath)
+matchesFilter = (f) => (i) => == (beeGenome f) (beeGenome i)
+`;
+    const ast = ExpandedToAST(input.trim());
+    const expanded = ASTToExpanded(ast);
+
+    expect(expanded).not.toContain("nbtPathMatchFirstByGenomePathWithItemNBT");
+    expect(expanded).toContain("beeGenome = operatorPipe(itemStackNBT,");
+    expect(expanded).toContain("operatorPipe(beeGenome, anyEquals)");
+    expect(expanded).toContain("apply(operatorPipe, beeGenome)");
+  });
+
   it("testSignatureLinesStillSkipped", () => {
     const input = `
 var1 :: A -> B

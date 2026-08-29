@@ -1119,6 +1119,7 @@ export const CondensedToAST = (
       }
       return condense({
         type: "Pipe",
+        ...(body.varName ? { varName: body.varName } : {}),
         op1: condensedOp1,
         op2: condensedOp2,
       });
@@ -1127,6 +1128,7 @@ export const CondensedToAST = (
       if (body.base.type === "Curry") {
         return condense({
           type: "Curry",
+          ...(body.varName ? { varName: body.varName } : {}),
           base: body.base.base,
           args: [...body.base.args, ...body.args],
         });
@@ -1141,6 +1143,7 @@ export const CondensedToAST = (
       }
       return condense({
         type: "Curry",
+        ...(body.varName ? { varName: body.varName } : {}),
         base: condensedBase,
         args: condensedArgs,
       });
@@ -1172,6 +1175,7 @@ export const CondensedToAST = (
       }
       return condense({
         type: "Pipe2",
+        ...(body.varName ? { varName: body.varName } : {}),
         op1: condensedOp1,
         op2: condensedOp2,
         op3: condensedOp3,
@@ -1191,6 +1195,7 @@ export const CondensedToAST = (
       }
       return condense({
         type: "Flip",
+        ...(body.varName ? { varName: body.varName } : {}),
         arg: condensedArg,
       });
     }
