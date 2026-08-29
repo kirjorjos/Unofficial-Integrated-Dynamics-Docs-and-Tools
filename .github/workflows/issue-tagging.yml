@@ -5,12 +5,15 @@ on:
     types: [opened, edited]
 
 permissions:
+  contents: read
   issues: write
 
 jobs:
   label:
     runs-on: ubuntu-24.04
     steps:
+      - uses: actions/checkout@v4
+
       - name: Label issue from template
         uses: github/issue-labeler@v3.4
         with:
