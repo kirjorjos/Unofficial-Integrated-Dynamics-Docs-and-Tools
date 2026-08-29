@@ -199,6 +199,12 @@ test.describe("transformersPageVisualOutputDom", () => {
         .locator(".display-panel .fit-text-inner")
         .first()
     ).toContainText("5");
+    const atAfterSpaceShots = page.locator(".logic-programmer-shot");
+    for (let index = 0; index < 2; index += 1) {
+      await expect(atAfterSpaceShots.nth(index)).toHaveScreenshot(
+        `at-after-space-step-${index}.png`
+      );
+    }
   });
 
   test("testAtAtStartOfVarNameUsingVariableWrapper", async ({ page }) => {
@@ -212,6 +218,12 @@ test.describe("transformersPageVisualOutputDom", () => {
         .locator(".display-panel .fit-text-inner")
         .first()
     ).toContainText("5");
+    const atAtStartShots = page.locator(".logic-programmer-shot");
+    for (let index = 0; index < 2; index += 1) {
+      await expect(atAtStartShots.nth(index)).toHaveScreenshot(
+        `at-at-start-step-${index}.png`
+      );
+    }
   });
 
   test("testVariableWrapperWithSpacesOnly", async ({ page }) => {
@@ -225,6 +237,12 @@ test.describe("transformersPageVisualOutputDom", () => {
         .locator(".display-panel .fit-text-inner")
         .first()
     ).toContainText("5");
+    const spacesOnlyShots = page.locator(".logic-programmer-shot");
+    for (let index = 0; index < 2; index += 1) {
+      await expect(spacesOnlyShots.nth(index)).toHaveScreenshot(
+        `spaces-only-step-${index}.png`
+      );
+    }
   });
 
   test("testAtVariableWrapperResolvesToCardId", async ({ page }) => {
@@ -242,6 +260,12 @@ test.describe("transformersPageVisualOutputDom", () => {
         .locator(".display-panel .fit-text-inner")
         .first()
     ).toContainText("0");
+    const atVariableWrapperShots = page.locator(".logic-programmer-shot");
+    for (let index = 0; index < 2; index += 1) {
+      await expect(atVariableWrapperShots.nth(index)).toHaveScreenshot(
+        `at-variable-wrapper-step-${index}.png`
+      );
+    }
   });
 
   test("testFitTextRendersAtIntegerPixelSizes", async ({ page }) => {
