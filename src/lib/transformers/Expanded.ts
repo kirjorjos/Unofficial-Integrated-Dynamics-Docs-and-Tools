@@ -15,7 +15,10 @@ import {
   getOperatorSourceName,
   flattenAnonymousBaseOperatorApplication,
 } from "lib/transformers/helpers";
-import { buildNetworkCards } from "lib/transformers/NetworkCards";
+import {
+  astContentKey,
+  buildNetworkCards,
+} from "lib/transformers/NetworkCards";
 import { normalizeSegments } from "lib/transformers/MixedLists";
 
 const getLabel = (index: number): string => {
@@ -942,12 +945,23 @@ export const ExpandedToAST = (
     }
 
     if (varName) {
-      if (definitions.some((def) => def.node === lineAST)) {
-        lineAST = structuredClone(lineAST);
+      const existing = definitions.find((def) => def.name === varName);
+      if (existing) {
+        if (astContentKey(existing.node) !== astContentKey(lineAST)) {
+          throw new Error(
+            `Variable "${varName}" is already defined; redefinition is only allowed if the new definition resolves to the same AST`
+          );
+        }
+        lineAST = existing.node;
+        scope.set(varName, existing.node);
+      } else {
+        if (definitions.some((def) => def.node === lineAST)) {
+          lineAST = structuredClone(lineAST);
+        }
+        lineAST.varName = varName;
+        scope.set(varName, lineAST);
+        definitions.push({ name: varName, node: lineAST });
       }
-      lineAST.varName = varName;
-      scope.set(varName, lineAST);
-      definitions.push({ name: varName, node: lineAST });
     }
     finalAST = lineAST;
   }
