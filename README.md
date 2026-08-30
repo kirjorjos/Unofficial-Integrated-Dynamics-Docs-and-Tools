@@ -20,8 +20,7 @@ Current plans for this project are as follows:
   - [x] Expanded
   - [x] CodeLine
   - [x] URL Param
-  - [ ] Javascript (Anything that's valid in [InSr](https://github.com/cyclopsmc/IntegratedScripting))
-- [ ] An article explaining various things about the mod intended to help beginners learn
+  - [ ] An article explaining various things about the mod intended to help beginners learn
   - [ ] An article for each operator explaining its usage and providing a mini challenge involving it
   - [ ] Explaining operators in general
   - [ ] Explaining how to use the logic programmer & labeller
