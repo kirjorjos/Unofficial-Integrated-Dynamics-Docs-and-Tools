@@ -636,7 +636,7 @@ final = [step0, step1]`;
   });
 
   it("testQuotedVarNameWrapperRequired", () => {
-    expect(() => ExpandedToAST("my cool variable = 5")).toThrow(
+    expect(() => ExpandedToAST("my cool variable :: Integer = 5")).toThrow(
       /Invalid variable name/
     );
     expect(() => ExpandedToAST('"my cool variable" = 5')).toThrow(
@@ -785,6 +785,20 @@ final = total
     expect(() => ExpandedToAST("bad name :: Integer = 5")).toThrow(
       /Invalid variable name/
     );
+    expect(() => ExpandedToAST("bad(name) :: Integer = 5")).toThrow(
+      /Invalid variable name/
+    );
+  });
+
+  it("testTypedDefinitionSuffixWithLambdaParams", () => {
+    expect(() => ExpandedToAST("bad name = 5 :: Integer")).toThrow(
+      /declared as type "Integer"/
+    );
+
+    const ast = rootOf(ExpandedToAST("bad name = 5"));
+    expect(ast.varName).toBe("bad");
+    expect(ast.type).toBe("Curry");
+    expect(ast).toEqual(rootOf(ExpandedToAST("bad = name => 5")));
   });
 
   it("testNoDuplicateCardsWhenNamedVarReferencedInLambda", () => {
@@ -891,6 +905,70 @@ matchesFilter = (f) => (i) => == (beeGenome f) (beeGenome i)
       expect(JSON.stringify(back)).toBe(JSON.stringify(network));
     }
   );
+
+  it("testLambdaDefinitionNewFormMatchesArrowForm", () => {
+    const newForm = "getGenome path bee = nbtPathMatchAll path (itemNBT bee)";
+    const arrowForm =
+      "getGenome = path => bee => nbtPathMatchAll path (itemNBT bee)";
+
+    const newAst = rootOf(ExpandedToAST(newForm));
+    const arrowAst = rootOf(ExpandedToAST(arrowForm));
+    expect(newAst.varName).toBe("getGenome");
+    expect(arrowAst.varName).toBe("getGenome");
+    deleteNestedVars(newAst);
+    deleteNestedVars(arrowAst);
+    expect(JSON.parse(JSON.stringify(newAst))).toEqual(
+      JSON.parse(JSON.stringify(arrowAst))
+    );
+  });
+
+  it("testLambdaDefinitionNewFormSingleParam", () => {
+    const ast = rootOf(ExpandedToAST("inc x = numberAdd x 1"));
+    expect(ast.varName).toBe("inc");
+    expect(ast).toEqual(rootOf(ExpandedToAST("inc = x => numberAdd x 1")));
+  });
+
+  it("testLambdaDefinitionNewFormWithTypedRhs", () => {
+    const ast = rootOf(ExpandedToAST("add x y = numberAdd x y :: Operator"));
+    expect(ast.varName).toBe("add");
+    expect(ASTToExpanded(ast)).toContain("add ::");
+    expect(ASTToExpanded(ast)).toContain("add = numberAdd");
+  });
+
+  it("testLambdaDefinitionNewFormMultipleDefinitions", () => {
+    const input = `
+genomePath = ""
+beeGenome = pipe itemNBT (nbtPathMatchFirst genomePath)
+matches a b = logicalAnd (beeGenome a) (beeGenome b)
+final = matches "a" "b"
+`;
+    const ast = ExpandedToAST(input.trim()) as TypeAST.NetworkCards;
+    expect(ast.definitions.map((d) => d.name)).toEqual([
+      "genomePath",
+      "beeGenome",
+      "matches",
+      "final",
+    ]);
+    expect(ast.definitions[2]!.node.varName).toBe("matches");
+  });
+
+  it("testLambdaDefinitionNewFormRejectsUnknownVar", () => {
+    expect(() => ExpandedToAST("foo a = bar a")).toThrow();
+  });
+
+  it("testLambdaDefinitionNewFormRoundTrips", () => {
+    const newForm = "getGenome path bee = nbtPathMatchAll path (itemNBT bee)";
+    const ast = rootOf(ExpandedToAST(newForm));
+    const expanded = ASTToExpanded(ast);
+    expect(expanded).toContain("getGenome ::");
+    expect(expanded).toContain("getGenome = ");
+    const backAst = rootOf(ExpandedToAST(expanded));
+    deleteNestedVars(backAst);
+    deleteNestedVars(ast);
+    expect(JSON.parse(JSON.stringify(backAst))).toEqual(
+      JSON.parse(JSON.stringify(ast))
+    );
+  });
 
   it("testSignatureLinesStillSkipped", () => {
     const input = `
