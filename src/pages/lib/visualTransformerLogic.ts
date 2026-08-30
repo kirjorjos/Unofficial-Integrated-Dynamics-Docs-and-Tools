@@ -11,6 +11,7 @@ import {
 import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 import { ASTtoOperator } from "lib/transformers/Operator";
+import { INTERNAL_BUG_MESSAGE } from "lib/transformers/parseErrors";
 import {
   BaseOperator,
   type LogicProgrammerRenderPatternKey,
@@ -638,7 +639,7 @@ export const getCumulativeStepError = (
     for (const err of nativeErrors) {
       console.error("[iError] Internal error:", err.message);
     }
-    return "This is an internal bug, please report to the github";
+    return INTERNAL_BUG_MESSAGE;
   }
 
   return undefined;

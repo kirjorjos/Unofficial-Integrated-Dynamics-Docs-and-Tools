@@ -20,6 +20,7 @@ import {
   buildNetworkCards,
 } from "lib/transformers/NetworkCards";
 import { normalizeSegments } from "lib/transformers/MixedLists";
+import { StructuralParseError } from "lib/transformers/parseErrors";
 
 const getLabel = (index: number): string => {
   let label = "";
@@ -907,13 +908,21 @@ export const ExpandedToAST = (
     try {
       lineAST = CondensedToAST(exprStr, scope, 0, true, false);
     } catch (e) {
+      if (!(e instanceof StructuralParseError)) {
+        throw new Error(
+          `Failed to parse line ${i + 1}: "${exprStr}"\n${
+            e instanceof Error ? e.message : String(e)
+          }`
+        );
+      }
       try {
         lineAST = CodeLineToAST(exprStr, scope, 0, true, false);
       } catch (e2) {
+        console.error(e);
         throw new Error(
-          `Failed to parse line ${
-            i + 1
-          }: "${exprStr}"\nCondensed error: ${e}\nCodeLine error: ${e2}`
+          `Failed to parse line ${i + 1}: "${exprStr}"\n${
+            e2 instanceof Error ? e2.message : String(e2)
+          }`
         );
       }
     }

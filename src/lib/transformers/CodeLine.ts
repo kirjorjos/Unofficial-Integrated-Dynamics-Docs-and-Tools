@@ -1,4 +1,10 @@
 import { operatorRegistry } from "lib/IntegratedDynamicsClasses/registries/operatorRegistry";
+import {
+  InvalidArityParseError,
+  InternalParseError,
+  StructuralParseError,
+  UnknownIdentifierParseError,
+} from "lib/transformers/parseErrors";
 import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
 import { assertReaderSimulatedOutputType } from "lib/IntegratedDynamicsClasses/readers/readerSimulatedValueResolver";
 import {
@@ -439,11 +445,11 @@ export const CodeLineToAST = (
     if (readerExpr !== undefined) return readerExpr;
 
     const token = tokens[pos++];
-    if (!token) throw new Error("Unexpected end of input");
+    if (!token) throw new StructuralParseError("Unexpected end of input");
 
     if (token === "(") {
       const result = parseSequence(scope, false);
-      if (tokens[pos] !== ")") throw new Error("Expected ')'");
+      if (tokens[pos] !== ")") throw new StructuralParseError("Expected ')'");
       pos++;
       return result;
     }
@@ -454,7 +460,7 @@ export const CodeLineToAST = (
         values.push(parseExpression(scope));
         if (tokens[pos] === ",") pos++;
       }
-      if (tokens[pos] !== "]") throw new Error("Expected ']'");
+      if (tokens[pos] !== "]") throw new StructuralParseError("Expected ']'");
       pos++;
       return { type: "List", value: values };
     }
@@ -478,10 +484,12 @@ export const CodeLineToAST = (
           args.push(parseExpression(scope));
           if (tokens[pos] === ",") pos++;
         }
-        if (tokens[pos] !== ")") throw new Error("Expected ')'");
+        if (tokens[pos] !== ")") throw new StructuralParseError("Expected ')'");
         pos++; // consume )
         if (args.length !== 1 || args[0]!.type !== "String") {
-          throw new Error("Variable(...) expects exactly one string argument");
+          throw new InvalidArityParseError(
+            "Variable(...) expects exactly one string argument"
+          );
         }
         return {
           type: "Variable",
@@ -524,7 +532,7 @@ export const CodeLineToAST = (
           args.push(parseExpression(scope));
           if (tokens[pos] === ",") pos++;
         }
-        if (tokens[pos] !== ")") throw new Error("Expected ')'");
+        if (tokens[pos] !== ")") throw new StructuralParseError("Expected ')'");
         pos++; // consume )
         return handleCallInternal({ type: "Identifier", value: token }, args);
       }
@@ -542,7 +550,7 @@ export const CodeLineToAST = (
     const implicitFlip = resolveImplicitFlipOperator(token);
     if (implicitFlip) return implicitFlip as InternalAST;
 
-    throw new Error(`Unknown identifier: ${token}`);
+    throw new UnknownIdentifierParseError(`Unknown identifier: ${token}`);
   }
 
   function parseSequence(scope: Set<string>, consumeAll: boolean): InternalAST {
@@ -568,7 +576,7 @@ export const CodeLineToAST = (
       }
     }
 
-    if (result === undefined) throw new Error("Empty sequence");
+    if (result === undefined) throw new StructuralParseError("Empty sequence");
     return result;
   }
 
@@ -583,7 +591,7 @@ export const CodeLineToAST = (
     for (const arg of args) {
       if (arg.type === "NBT") {
         if (settings !== undefined) {
-          throw new Error(
+          throw new InvalidArityParseError(
             "Reader call may only contain one settings json object"
           );
         }
@@ -593,12 +601,16 @@ export const CodeLineToAST = (
           value === null ||
           Array.isArray(value)
         ) {
-          throw new Error("Reader settings must be a json object");
+          throw new InvalidArityParseError(
+            "Reader settings must be a json object"
+          );
         }
         settings = value as Record<string, number | boolean | string>;
       } else {
         if (simulatedOutput !== undefined) {
-          throw new Error("Reader call may only contain one simulated output");
+          throw new InvalidArityParseError(
+            "Reader call may only contain one simulated output"
+          );
         }
         simulatedOutput = arg;
       }
@@ -629,7 +641,8 @@ export const CodeLineToAST = (
       args.push(parseReaderArg(scope));
       if (tokens[pos] === ",") pos++;
     }
-    if (!tokens[pos]) throw new Error("Expected ')' after reader aspect args");
+    if (!tokens[pos])
+      throw new StructuralParseError("Expected ')' after reader aspect args");
     pos++; // consume )
     return parseReaderExtraArgs(args);
   };
@@ -649,13 +662,13 @@ export const CodeLineToAST = (
   const consumeDotAspectName = (): string => {
     const next = tokens[pos];
     if (next === undefined) {
-      throw new Error("Expected '.' before aspect name");
+      throw new StructuralParseError("Expected '.' before aspect name");
     }
     if (next === ".") {
       pos++;
       const after = tokens[pos];
       if (after === undefined) {
-        throw new Error("Expected aspect name after '.'");
+        throw new StructuralParseError("Expected aspect name after '.'");
       }
       pos++;
       return after;
@@ -664,7 +677,7 @@ export const CodeLineToAST = (
       pos++;
       return next.slice(1);
     }
-    throw new Error("Expected '.' before aspect name");
+    throw new StructuralParseError("Expected '.' before aspect name");
   };
 
   const tryParseReaderExpression = (
@@ -684,25 +697,30 @@ export const CodeLineToAST = (
         args.push(parseReaderArg(scope));
         if (tokens[pos] === ",") pos++;
       }
-      if (!tokens[pos]) throw new Error("Expected ')' in reader(...)");
+      if (!tokens[pos])
+        throw new StructuralParseError("Expected ')' in reader(...)");
       pos++; // consume )
       if (args.length < 2) {
-        throw new Error("reader(...) requires a reader name and an aspect");
+        throw new InvalidArityParseError(
+          "reader(...) requires a reader name and an aspect"
+        );
       }
       const readerNameArg = args[0]!;
       const aspectArg = args[1]!;
       if (readerNameArg.type !== "String" || aspectArg.type !== "String") {
-        throw new Error(
+        throw new InvalidArityParseError(
           "reader(...) expects reader name and aspect as strings"
         );
       }
       const readerClass = getReaderClassByName(readerNameArg.value);
       if (!readerClass) {
-        throw new Error(`Unknown reader: ${readerNameArg.value}`);
+        throw new UnknownIdentifierParseError(
+          `Unknown reader: ${readerNameArg.value}`
+        );
       }
       const aspectKey = getReaderAspectKey(readerClass, aspectArg.value);
       if (!aspectKey) {
-        throw new Error(
+        throw new UnknownIdentifierParseError(
           `Unknown aspect "${aspectArg.value}" for ${readerClass.typeName}`
         );
       }
@@ -746,12 +764,15 @@ export const CodeLineToAST = (
         args.push(parseReaderArg(scope));
         if (tokens[pos] === ",") pos++;
       }
-      if (!tokens[pos]) throw new Error("Expected ')' after reader name");
+      if (!tokens[pos])
+        throw new StructuralParseError("Expected ')' after reader name");
       pos++; // consume )
 
       if (peekDotAspectName() !== undefined) {
         if (args.length > 1) {
-          throw new Error("Reader constructor takes at most one part id");
+          throw new InvalidArityParseError(
+            "Reader constructor takes at most one part id"
+          );
         }
         let partId: string | undefined;
         if (args.length === 1) {
@@ -762,14 +783,16 @@ export const CodeLineToAST = (
             a.type !== "Double" &&
             a.type !== "String"
           ) {
-            throw new Error("Reader part id must be a literal value");
+            throw new InvalidArityParseError(
+              "Reader part id must be a literal value"
+            );
           }
           partId = (a as { value: string }).value;
         }
         const aspectName = consumeDotAspectName();
         const aspectKey = getReaderAspectKey(readerClass, aspectName);
         if (!aspectKey) {
-          throw new Error(
+          throw new UnknownIdentifierParseError(
             `Unknown aspect "${aspectName}" for ${readerClass.typeName}`
           );
         }
@@ -792,15 +815,17 @@ export const CodeLineToAST = (
       }
 
       if (args.length < 1) {
-        throw new Error("Reader constructor requires an aspect");
+        throw new InvalidArityParseError(
+          "Reader constructor requires an aspect"
+        );
       }
       const aspectArg = args[0]!;
       if (aspectArg.type !== "String") {
-        throw new Error("Reader aspect must be a string");
+        throw new InvalidArityParseError("Reader aspect must be a string");
       }
       const aspectKey = getReaderAspectKey(readerClass, aspectArg.value);
       if (!aspectKey) {
-        throw new Error(
+        throw new UnknownIdentifierParseError(
           `Unknown aspect "${aspectArg.value}" for ${readerClass.typeName}`
         );
       }
@@ -827,7 +852,7 @@ export const CodeLineToAST = (
     }
     const aspectKey = getReaderAspectKey(readerClass, aspectName);
     if (!aspectKey) {
-      throw new Error(
+      throw new UnknownIdentifierParseError(
         `Unknown aspect "${aspectName}" for ${readerClass.typeName}`
       );
     }
@@ -885,7 +910,7 @@ export const CodeLineToAST = (
         const opName = (args[0] as { value: string }).value;
         const internalKey = operatorRegistry.operatorByNickname(opName);
         if (!internalKey) {
-          throw new Error(`Unknown operator: ${opName}`);
+          throw new UnknownIdentifierParseError(`Unknown operator: ${opName}`);
         }
         return setOperatorSourceName(
           { type: "Operator", opName: internalKey as TypeOperatorKey },
@@ -894,7 +919,9 @@ export const CodeLineToAST = (
       }
       if (lowerName === "variable") {
         if (args.length !== 1 || args[0]!.type !== "String") {
-          throw new Error("Variable(...) expects exactly one string argument");
+          throw new InvalidArityParseError(
+            "Variable(...) expects exactly one string argument"
+          );
         }
         const varName = (args[0] as { value: string }).value;
         if (externalScope.has(varName)) {
@@ -1269,7 +1296,9 @@ export const CodeLineToAST = (
         args: [body.op1, body.op2, body.op3],
       });
     }
-    throw new Error(`Could not abstract "${param}" from expression`);
+    throw new InternalParseError(
+      `Could not abstract "${param}" from expression`
+    );
   }
 
   const segments: InternalAST[] = [];
@@ -1282,7 +1311,7 @@ export const CodeLineToAST = (
     break;
   }
   if (pos < tokens.length) {
-    throw new Error(
+    throw new StructuralParseError(
       `Unexpected trailing tokens: ${tokens.slice(pos).join(" ")}`
     );
   }
