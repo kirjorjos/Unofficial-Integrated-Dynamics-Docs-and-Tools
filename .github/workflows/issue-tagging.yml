@@ -14,6 +14,64 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Tag sub-issue from parent
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          set -uo pipefail
+          REPO="$GITHUB_REPOSITORY"
+          N="$ISSUE_NUMBER"
+
+          if ! parent_json=$(gh api "repos/$REPO/issues/$N/parent" 2>/dev/null); then
+            echo "Not a sub-issue (no parent)."
+            gh api -X DELETE "repos/$REPO/issues/$N/labels/sub-issue" >/dev/null 2>&1 || true
+            exit 0
+          fi
+          echo "Issue #$N is a sub-issue; tagging and staging inherited markers."
+
+          gh label create sub-issue --force --color BFD4F2 --description "Linked as a sub-issue of another issue" >/dev/null 2>&1 || true
+          gh api -X POST "repos/$REPO/issues/$N/labels" -f labels[]="sub-issue" >/dev/null 2>&1 || true
+
+          args=()
+          while IFS= read -r lbl; do
+            [ -n "$lbl" ] && args+=(-f "labels[]=$lbl")
+          done <<< "$(echo "$parent_json" | jq -r '[.labels[].name][]' 2>/dev/null)"
+          if [ ${#args[@]} -gt 0 ]; then
+            gh api -X POST "repos/$REPO/issues/$N/labels" "${args[@]}" >/dev/null 2>&1 || true
+          fi
+
+          parent_body=$(echo "$parent_json" | jq -r '.body // ""' 2>/dev/null)
+          marker=""
+          if printf '%s' "$parent_body" | grep -q "What's wrong"; then
+            marker="### What's wrong?"
+          elif printf '%s' "$parent_body" | grep -q "Describe the suggestion"; then
+            marker="### Describe the suggestion"
+          fi
+          areas=$(printf '%s' "$parent_body" |
+            grep -E '^[[:space:]]*-[[:space:]]*\[[xX]\]' |
+            sed -E 's/^[[:space:]]*-[[:space:]]*\[[xX]\][[:space:]]+//')
+
+          sentinel="<!-- inherited-labels-from-parent -->"
+          if [ -z "$marker" ] || [ -z "$areas" ]; then
+            echo "Parent has no template markers/areas; inherited labels not staged (may be stripped unless parent markers match)."
+            exit 0
+          fi
+          block=""
+          while IFS= read -r area; do
+            block+="- [x] ${area}"$'\n'
+          done <<< "$areas"
+
+          current_body=$(gh api "repos/$REPO/issues/$N" --jq '.body // ""' 2>/dev/null)
+          if printf '%s' "$current_body" | grep -qF "$sentinel"; then
+            echo "inherited-labels markers already present."
+            exit 0
+          fi
+          new_body=$(printf '%s\n\n%s\n%s\n%s' "$current_body" "$sentinel" "$marker" "${block%$'\n'}")
+          gh api -X PATCH "repos/$REPO/issues/$N" -f "body=$new_body" >/dev/null 2>&1 \
+            && echo "Appended inherited-labels markers to #$N" \
+            || echo "Could not append markers to #$N"
+
       - name: Label issue from template
         uses: github/issue-labeler@v3.4
         with:
