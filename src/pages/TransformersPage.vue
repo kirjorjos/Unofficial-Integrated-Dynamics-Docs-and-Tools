@@ -331,6 +331,7 @@ onMounted(() => {
             ref="inputEditor"
             v-model="inputText"
             class="editor input-editor"
+            wrap="off"
             spellcheck="false"
             aria-label="Transformer input"
             @scroll="syncLineNumberScroll"
