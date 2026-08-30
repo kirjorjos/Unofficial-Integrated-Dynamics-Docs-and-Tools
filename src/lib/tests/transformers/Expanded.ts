@@ -978,4 +978,74 @@ var1 = 5
     const ast = rootOf(ExpandedToAST(input.trim()));
     expect((ast as TypeAST.Integer).value).toBe("5");
   });
+
+  it("testRedefinitionSameASTAllowed", () => {
+    const network = ExpandedToAST(
+      "x = 5\nx = 5\nfinal = x"
+    ) as TypeAST.NetworkCards;
+    expect(network.definitions.map((d) => d.name)).toEqual(["x", "final"]);
+    expect(network.definitions[0]!.node).toEqual({
+      type: "Integer",
+      value: "5",
+      varName: "x",
+    });
+    expect(network.definitions[1]!.node).toEqual({
+      type: "Integer",
+      value: "5",
+      varName: "final",
+    });
+    const expanded = ASTToExpanded(network);
+    expect(expanded.split("\n").filter((l) => l.includes("="))).toEqual([
+      "x = 5",
+      "final = 5",
+    ]);
+    const back = ExpandedToAST(expanded);
+    expect(JSON.stringify(back)).toBe(JSON.stringify(network));
+  });
+
+  it("testRedefinitionSameASTViaEquivalentExpression", () => {
+    const network = ExpandedToAST(
+      "x = numberAdd(2, 3)\nx = numberAdd(2, 3)\nfinal = x"
+    ) as TypeAST.NetworkCards;
+    expect(network.definitions.map((d) => d.name)).toEqual(["x", "final"]);
+    const back = ExpandedToAST(ASTToExpanded(network));
+    expect(JSON.stringify(back)).toBe(JSON.stringify(network));
+  });
+
+  it("testRedefinitionSameASTViaVariableReference", () => {
+    const network = ExpandedToAST(
+      "a = 5\nx = a\nx = 5\nfinal = x"
+    ) as TypeAST.NetworkCards;
+    expect(network.definitions.map((d) => d.name)).toEqual(["a", "x", "final"]);
+    expect(network.definitions[2]!.node).toEqual({
+      type: "Integer",
+      value: "5",
+      varName: "final",
+    });
+  });
+
+  it("testRedefinitionDifferentASTThrows", () => {
+    expect(() => ExpandedToAST("x = 5\nx = 6")).toThrow(
+      /already defined; redefinition is only allowed if the new definition resolves to the same AST/
+    );
+  });
+
+  it("testRedefinitionDifferentASTThrowsViaExpression", () => {
+    expect(() => ExpandedToAST("x = 5\nx = numberAdd(5, 1)")).toThrow(
+      /already defined/
+    );
+  });
+
+  it("testRedefinitionSameASTTypedDefinitionAllowed", () => {
+    const network = ExpandedToAST(
+      "x :: Integer = 5\nx :: Integer = 5\nfinal = x"
+    ) as TypeAST.NetworkCards;
+    expect(network.definitions.map((d) => d.name)).toEqual(["x", "final"]);
+  });
+
+  it("testRedefinitionDifferentASTTypedDefinitionThrows", () => {
+    expect(() => ExpandedToAST("x :: Integer = 5\nx :: Integer = 6")).toThrow(
+      /already defined/
+    );
+  });
 });

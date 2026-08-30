@@ -7,7 +7,7 @@ export const isVarRefNode = (
 ): node is TypeAST.Variable & { name: `@${string}` } =>
   node.type === "Variable" && node.name.startsWith("@");
 
-const astContentKey = (ast: TypeAST.AST): string => {
+export const astContentKey = (ast: TypeAST.AST): string => {
   switch (ast.type) {
     case "Operator":
       return `Operator:${ast.opName}`;
