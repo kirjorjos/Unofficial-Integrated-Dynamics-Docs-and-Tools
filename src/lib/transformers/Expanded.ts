@@ -31,8 +31,9 @@ const getLabel = (index: number): string => {
 const SIGNATURE_ARROW = "→";
 
 const parseDefinitionVarName = (
-  raw: string
-): { name: string; quoted: boolean } => {
+  raw: string,
+  splitParams: boolean
+): { name: string; quoted: boolean; params: string[] } => {
   const trimmed = raw.trim();
   const wrapper = trimmed.match(/^Variable\s*\(\s*(.*?)\s*\)$/i);
   if (wrapper) {
@@ -42,11 +43,22 @@ const parseDefinitionVarName = (
       ((inner.startsWith('"') && inner.endsWith('"')) ||
         (inner.startsWith("'") && inner.endsWith("'")))
     ) {
-      return { name: unquoteString(inner), quoted: true };
+      return { name: unquoteString(inner), quoted: true, params: [] };
     }
   }
-  return { name: trimmed, quoted: false };
+  if (!splitParams) {
+    return { name: trimmed, quoted: false, params: [] };
+  }
+  const parts = trimmed.split(/\s+/);
+  return {
+    name: parts[0]!,
+    quoted: false,
+    params: parts.slice(1),
+  };
 };
+
+const applyLambdaParams = (exprStr: string, params: string[]): string =>
+  params.length > 0 ? `${params.join(" => ")} => ${exprStr}` : exprStr;
 
 class SignatureFormatter {
   private typeIDToLabel = new Map<number, string>();
@@ -845,7 +857,7 @@ export const ExpandedToAST = (
       if (!lhs || restEqIdx === -1) {
         throw new Error(`Invalid typed definition on line ${i + 1}: "${line}"`);
       }
-      const parsedLhs = parseDefinitionVarName(lhs);
+      const parsedLhs = parseDefinitionVarName(lhs, false);
       if (!parsedLhs.quoted && !getNicknameRegex().test(parsedLhs.name)) {
         throw new Error(`Invalid variable name: "${lhs}"`);
       }
@@ -854,7 +866,10 @@ export const ExpandedToAST = (
       varName = parsedLhs.name;
       varNameQuoted = parsedLhs.quoted;
     } else if (eqIdx !== -1) {
-      const parsedVarName = parseDefinitionVarName(line.substring(0, eqIdx));
+      const parsedVarName = parseDefinitionVarName(
+        line.substring(0, eqIdx),
+        true
+      );
       varName = parsedVarName.name;
       varNameQuoted = parsedVarName.quoted;
 
@@ -872,7 +887,7 @@ export const ExpandedToAST = (
       if (!varNameQuoted && !getNicknameRegex().test(varName)) {
         throw new Error(`Invalid variable name: "${varName}"`);
       }
-      exprStr = rhs;
+      exprStr = applyLambdaParams(rhs, parsedVarName.params);
     } else {
       if (i === 0)
         throw new Error(

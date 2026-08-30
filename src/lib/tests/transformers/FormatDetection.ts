@@ -17,11 +17,27 @@ describe("TestFormatDetection", () => {
     ['Variable("==WithBeeGenome") = 5', "expanded"],
     ["apply add 1 2", "codeline"],
     ["5", "codeline"],
+    ["getGenome path bee = nbtPathMatchAll path (itemNBT bee)", "expanded"],
+    ["inc x = numberAdd x 1", "expanded"],
+    ["add a b = numberAdd a b :: Operator", "expanded"],
     ['{"a": 1}', "json"],
     ["apply(add, 1, 2)", "condensed"],
     ['stringConcat("a", "b")', "condensed"],
   ] as const)("detectInputFormat(%j) returns %s", (input, expected) => {
     expect(detectInputFormat(input)).toBe(expected);
+  });
+
+  it("detected lambda-definition inputs parse with ExpandedToAST", () => {
+    const inputs = [
+      "getGenome path bee = nbtPathMatchAll path (itemNBT bee)",
+      "inc x = numberAdd x 1",
+      "add a b = numberAdd a b :: Operator",
+    ];
+    for (const input of inputs) {
+      expect(detectInputFormat(input)).toBe("expanded");
+      const ast = ExpandedToAST(input);
+      expect(ast.type).toBe("NetworkCards");
+    }
   });
 
   it("detected expanded inputs parse with ExpandedToAST", () => {
