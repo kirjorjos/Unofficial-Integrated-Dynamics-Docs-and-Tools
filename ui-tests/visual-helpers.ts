@@ -148,16 +148,41 @@ const waitForFontsAndNetworkIdle = async (page: Page) => {
   await page.waitForLoadState("networkidle");
 };
 
+const expandShellForScreenshots = async (page: Page) => {
+  await page.evaluate(() => {
+    const shell = document.querySelector<HTMLElement>(".app-shell");
+    const sidebar = document.querySelector<HTMLElement>(".sidebar");
+    const panel = document.querySelector<HTMLElement>(".content-panel");
+    if (shell) shell.style.height = "auto";
+    if (sidebar) {
+      sidebar.style.height = "auto";
+      sidebar.style.overflowY = "visible";
+    }
+    if (panel) {
+      panel.style.height = "auto";
+      panel.style.overflowY = "visible";
+    }
+  });
+  await page.evaluate(
+    () =>
+      new Promise((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve(null)))
+      )
+  );
+};
+
 export const openVisual = async (page: Page, code: string, varId = 0) => {
   await page.goto(`/?code=${code}&output=visual&varId=${varId}`);
   await page.locator(".logic-programmer-shot").first().waitFor();
   await waitForFontsAndNetworkIdle(page);
+  await expandShellForScreenshots(page);
 };
 
 export const openReaderAspect = async (page: Page, pageId: string) => {
   await page.goto(`/#${pageId}`);
   await page.locator(".reader-aspect-doc-page").waitFor();
   await waitForFontsAndNetworkIdle(page);
+  await expandShellForScreenshots(page);
 };
 
 export const openOperatorPattern = async (page: Page, operatorKey: string) => {
@@ -168,4 +193,5 @@ export const openOperatorPattern = async (page: Page, operatorKey: string) => {
   await patternPanel.waitFor();
   await patternPanel.locator(".logic-programmer-shot").first().waitFor();
   await waitForFontsAndNetworkIdle(page);
+  await expandShellForScreenshots(page);
 };
