@@ -43,7 +43,7 @@ describe("TestFormatDetection", () => {
   it("detected expanded inputs parse with ExpandedToAST", () => {
     const expandedInputs = [
       "-- comment\nx = 5\nfinal = x",
-      "var1 :: A -> B\nvar1 = 5\nfinal = var1",
+      "var1 :: Any\nvar1 = 5\nfinal = var1",
       "x :: Integer = 5",
       'Variable("{}") = 5\nfinal = Variable("{}")',
       'Variable("a--b") = 5\nfinal = Variable("a--b")',

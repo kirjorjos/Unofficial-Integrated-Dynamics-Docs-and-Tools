@@ -34,6 +34,17 @@ const getLabel = (index: number): string => {
 
 const SIGNATURE_ARROW = "→";
 
+export interface ExpandedSignatureOptions {
+  depth: number | null;
+  labels: boolean;
+  arrow: "→" | "->";
+  hideOperatorWrappers: boolean;
+  forceUnwrapOperators?: boolean;
+  noReturnParens?: boolean;
+  resolveAnys?: boolean;
+  parenFromFns?: boolean;
+}
+
 const parseDefinitionVarName = (
   raw: string,
   splitParams: boolean
@@ -76,43 +87,124 @@ class SignatureFormatter {
   }
 
   format(sig: ParsedSignature, isReturnType = false): string {
-    const node = sig.getAst() as TypeRawSignatureAST.RawSignatureNode;
-
-    if (node.type === "Operator") {
-      const inner = this.format(new ParsedSignature(node.obscured, false));
-      return `Operator<${inner}>`;
-    }
-
-    const label = this.getLabelForID(
-      (node as TypeRawSignatureAST.RawSignatureAny).typeID
+    return this.formatDepth(
+      sig,
+      {
+        depth: null,
+        labels: false,
+        arrow: SIGNATURE_ARROW,
+        hideOperatorWrappers: false,
+      },
+      isReturnType
     );
+  }
 
-    if (node.type === "Function") {
-      const from = sig.getInput();
-      const to = sig.getOutput();
-      const fromStr = this.format(from);
-      const toStr = this.format(to, true);
-      const res = `${label}<${fromStr} ${SIGNATURE_ARROW} ${toStr}>`;
-      return isReturnType ? `(${res})` : res;
-    }
+  formatDepth(
+    sig: ParsedSignature,
+    opts: ExpandedSignatureOptions,
+    isReturnType = false
+  ): string {
+    const dec = (d: number | null): number | null =>
+      d === null ? null : d - 1;
 
-    if (node.type === "Any") {
-      return `${label}<Any<typeID${node.typeID}>>`;
-    }
+    const tainted = sig.applyTainted;
+    const obscuredArity = (
+      fn: TypeRawSignatureAST.RawSignatureFunction
+    ): number => {
+      let count = 0;
+      let current: TypeRawSignatureAST.RawSignatureNode = fn;
+      while (current.type === "Function") {
+        count++;
+        current = (current as TypeRawSignatureAST.RawSignatureFunction).to;
+      }
+      return count;
+    };
 
-    if (node.type === "List") {
-      const inner = this.format(new ParsedSignature(node.listType, false));
-      return `${label}<List<${inner}>>`;
-    }
+    const render = (
+      node: TypeRawSignatureAST.RawSignatureNode,
+      depth: number | null,
+      isReturn: boolean,
+      isRoot: boolean
+    ): string => {
+      if (node.type === "Operator") {
+        const inner = node.obscured;
+        if (
+          opts.hideOperatorWrappers &&
+          (isRoot ||
+            opts.forceUnwrapOperators ||
+            !(tainted || obscuredArity(inner) >= 2))
+        ) {
+          const innerRendered = render(inner, dec(depth), false, false);
+          return isRoot ? innerRendered : `(${innerRendered})`;
+        }
+        if (depth === 0) {
+          return isRoot ? render(inner, 0, false, false) : "Operator";
+        }
+        return `Operator<${render(inner, dec(depth), false, false)}>`;
+      }
 
-    return `${label}<${node.type}>`;
+      if (node.type === "Function") {
+        const fromRendered = render(node.from, dec(depth), false, false);
+        const from =
+          opts.parenFromFns && node.from.type === "Function"
+            ? `(${fromRendered})`
+            : fromRendered;
+        const to = render(node.to, dec(depth), true, false);
+        const body = `${from} ${opts.arrow} ${to}`;
+        return isReturn && !opts.noReturnParens ? `(${body})` : body;
+      }
+
+      if (depth === 0) {
+        return node.type;
+      }
+
+      if (node.type === "List") {
+        const inner = render(node.listType, dec(depth), false, false);
+        if (opts.labels) {
+          const label = this.getLabelForID(
+            (node as unknown as { typeID: number }).typeID
+          );
+          return `${label}<List<${inner}>>`;
+        }
+        return `List<${inner}>`;
+      }
+
+      if (node.type === "Any") {
+        if (opts.labels) {
+          const label = this.getLabelForID(
+            (node as TypeRawSignatureAST.RawSignatureAny).typeID
+          );
+          return `${label}<Any<typeID${node.typeID}>>`;
+        }
+        return "Any";
+      }
+
+      if (opts.labels) {
+        const label = this.getLabelForID(
+          (node as unknown as { typeID: number }).typeID
+        );
+        return `${label}<${node.type}>`;
+      }
+      return node.type;
+    };
+
+    const node = sig.getAst() as TypeRawSignatureAST.RawSignatureNode;
+    return render(node, opts.depth, isReturnType, true);
   }
 }
 
-const wrapInOperator = (sig: ParsedSignature): ParsedSignature => {
+const wrapInOperator = (
+  sig: ParsedSignature,
+  resolve: boolean
+): ParsedSignature => {
   const ast = sig.getAst();
   if (ast.type === "Function") {
-    return new ParsedSignature({ type: "Operator", obscured: ast }, true);
+    const wrapped = new ParsedSignature(
+      { type: "Operator", obscured: ast },
+      !resolve
+    );
+    wrapped.applyTainted = sig.applyTainted;
+    return wrapped;
   }
   return sig;
 };
@@ -120,14 +212,29 @@ const wrapInOperator = (sig: ParsedSignature): ParsedSignature => {
 const unwrapOperator = (sig: ParsedSignature): ParsedSignature => {
   const ast = sig.getAst();
   if (ast.type === "Operator") {
-    return new ParsedSignature(ast.obscured, false);
+    const unwrapped = new ParsedSignature(ast.obscured, false);
+    unwrapped.applyTainted = sig.applyTainted;
+    return unwrapped;
   }
   return sig;
 };
 
+const isOperatorValue = (node: TypeAST.AST): boolean =>
+  node.type === "Operator" ||
+  node.type === "Flip" ||
+  node.type === "Pipe" ||
+  node.type === "Pipe2";
+
+const isApplyVariantNode = (node: TypeAST.AST): boolean =>
+  node.type === "Curry" &&
+  !node.varName &&
+  isOperatorValue(node.base) &&
+  (node.args[0] ? isOperatorValue(node.args[0]) : false);
+
 const computeSignature = (
   node: TypeAST.AST,
-  scope?: Map<TypeAST.AST, ParsedSignature>
+  scope?: Map<TypeAST.AST, ParsedSignature>,
+  resolve = false
 ): ParsedSignature => {
   if (scope && scope.has(node)) return scope.get(node)!;
 
@@ -161,7 +268,11 @@ const computeSignature = (
         break;
       }
 
-      const elementSignature = computeSignature(node.value[0]!, scope).getAst();
+      const elementSignature = computeSignature(
+        node.value[0]!,
+        scope,
+        resolve
+      ).getAst();
       signature = new ParsedSignature(
         {
           type: "List",
@@ -176,38 +287,48 @@ const computeSignature = (
       if (!internalKey) throw new Error(`Unknown operator: ${node.opName}`);
       const opClass = operatorRegistry[internalKey];
       const op = new opClass();
-      signature = wrapInOperator(op.getSignatureNode());
+      signature = wrapInOperator(op.getSignatureNode(), resolve);
+      signature.applyTainted = isApplyVariantNode(node);
       break;
     }
     case "Curry": {
-      let currentSig = computeSignature(node.base, scope);
+      let currentSig = computeSignature(node.base, scope, resolve);
       for (const arg of node.args) {
         currentSig = unwrapOperator(currentSig)
-          .apply(computeSignature(arg, scope))
+          .apply(computeSignature(arg, scope, resolve))
           .rewrite();
       }
       signature =
         currentSig.getRootType() === "Function"
-          ? wrapInOperator(currentSig)
+          ? wrapInOperator(currentSig, resolve)
           : currentSig;
+      signature.applyTainted =
+        isOperatorValue(node.base) &&
+        (node.args[0] ? isOperatorValue(node.args[0]) : false);
       break;
     }
     case "Pipe": {
-      const sig1 = unwrapOperator(computeSignature(node.op1, scope));
-      const sig2 = unwrapOperator(computeSignature(node.op2, scope));
-      signature = wrapInOperator(sig1.pipe(sig2).rewrite());
+      const sig1 = unwrapOperator(computeSignature(node.op1, scope, resolve));
+      const sig2 = unwrapOperator(computeSignature(node.op2, scope, resolve));
+      signature = wrapInOperator(sig1.pipe(sig2).rewrite(), resolve);
+      // Piping INTO an apply-variant curry keeps the distinction relevant.
+      signature.applyTainted = isApplyVariantNode(node.op2);
       break;
     }
     case "Pipe2": {
-      const sig1 = unwrapOperator(computeSignature(node.op1, scope));
-      const sig2 = unwrapOperator(computeSignature(node.op2, scope));
-      const sig3 = unwrapOperator(computeSignature(node.op3, scope));
-      signature = wrapInOperator(sig1.pipe2(sig2, sig3).rewrite());
+      const sig1 = unwrapOperator(computeSignature(node.op1, scope, resolve));
+      const sig2 = unwrapOperator(computeSignature(node.op2, scope, resolve));
+      const sig3 = unwrapOperator(computeSignature(node.op3, scope, resolve));
+      signature = wrapInOperator(sig1.pipe2(sig2, sig3).rewrite(), resolve);
+      signature.applyTainted = isApplyVariantNode(node.op3);
       break;
     }
     case "Flip": {
-      const innerSignature = unwrapOperator(computeSignature(node.arg, scope));
-      signature = wrapInOperator(innerSignature.flip().rewrite());
+      const innerSignature = unwrapOperator(
+        computeSignature(node.arg, scope, resolve)
+      );
+      signature = wrapInOperator(innerSignature.flip().rewrite(), resolve);
+      signature.applyTainted = isApplyVariantNode(node.arg);
       break;
     }
     case "Reader": {
@@ -277,7 +398,7 @@ const computeSignature = (
       const root = node.definitions[node.definitions.length - 1]?.node;
       if (!root)
         throw new Error("NetworkCards must contain at least one definition");
-      signature = computeSignature(root, scope);
+      signature = computeSignature(root, scope, resolve);
       break;
     }
   }
@@ -330,6 +451,7 @@ let varCounter = 0;
 
 export const resetExpandedVarCounter = (): void => {
   varCounter = 0;
+  unamedStrings = 0;
 };
 
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
@@ -614,6 +736,14 @@ export const decomposeASTForExpanded = (node: TypeAST.AST): TypeAST.AST => {
 export const ASTToExpanded = (
   ast: TypeAST.AST,
   style: "CodeLine" | "Condensed" = "Condensed"
+): string => ASTToExpandedWithSignatureOptions(ast, style, null);
+
+export const ASTToExpandedWithSignatureOptions = (
+  ast: TypeAST.AST,
+  style: "CodeLine" | "Condensed" = "Condensed",
+  sigOpts: ExpandedSignatureOptions | null,
+  preferSourceNames = false,
+  sigOverrides?: ReadonlyMap<string, ExpandedSignatureOptions>
 ): string => {
   resetExpandedVarCounter();
 
@@ -655,12 +785,21 @@ export const ASTToExpanded = (
     ) {
       continue;
     }
-    const sig = computeSignature(v, signatureCache);
-    const sigStr = formatter.format(sig);
+    const overrideOpts = v.varName ? sigOverrides?.get(v.varName) : undefined;
+    const effOpts = overrideOpts ?? sigOpts;
+    const sig = overrideOpts?.resolveAnys
+      ? computeSignature(v, undefined, true)
+      : computeSignature(v, signatureCache);
+    const sigStr = effOpts
+      ? formatter.formatDepth(sig, effOpts)
+      : formatter.format(sig);
 
     const oldVarName = v.varName;
     delete v.varName;
-    const exprStr = style === "CodeLine" ? ASTToCodeLine(v) : ASTToCondensed(v);
+    const exprStr =
+      style === "CodeLine"
+        ? ASTToCodeLine(v)
+        : ASTToCondensed(v, false, 0, preferSourceNames);
     if (oldVarName) v.varName = oldVarName;
 
     const assignment = `${displayName} = ${exprStr}`;
@@ -734,6 +873,7 @@ const DECLARED_TYPE_NAMES = [
   "Integer",
   "Long",
   "Double",
+  "Number",
   "String",
   "Boolean",
   "Null",
@@ -773,6 +913,201 @@ const typeMatchesDeclaration = (
   return actualType.toLowerCase() === declared.toLowerCase();
 };
 
+type DeclaredTypeNode =
+  | { kind: "atom"; name: string } // whitelist type, incl. bare `Any` and `List`
+  | { kind: "anyVar"; name: string } // `Any<X>` where X is a variable/type name
+  | { kind: "param"; name: string; args: DeclaredTypeNode[] } // `List<…>`
+  | { kind: "fn"; left: DeclaredTypeNode; right: DeclaredTypeNode };
+
+type DeclaredTypeToken =
+  | { type: "id"; value: string }
+  | { type: "arrow" }
+  | { type: "punctuation"; value: string }; // < > ( ) ,
+
+const tokenizeDeclaredType = (input: string): DeclaredTypeToken[] => {
+  const tokens: DeclaredTypeToken[] = [];
+  let i = 0;
+  while (i < input.length) {
+    const char = input[i]!;
+    if (/\s/.test(char)) {
+      i++;
+      continue;
+    }
+    if (/[A-Za-z0-9_.]/.test(char)) {
+      let j = i;
+      while (j < input.length && /[A-Za-z0-9_.]/.test(input[j]!)) j++;
+      tokens.push({ type: "id", value: input.slice(i, j) });
+      i = j;
+      continue;
+    }
+    if (/\(|\)|<|>|,/.test(char)) {
+      tokens.push({ type: "punctuation", value: char });
+      i++;
+      continue;
+    }
+    if (char === "→" || (char === "-" && input[i + 1] === ">")) {
+      tokens.push({ type: "arrow" });
+      i += char === "→" ? 1 : 2;
+      continue;
+    }
+    throw new Error(`Unexpected character "${char}" in declared type`);
+  }
+  return tokens;
+};
+
+const isWhitelistType = (name: string): boolean =>
+  DECLARED_TYPE_NAMES.some(
+    (candidate) => candidate.toLowerCase() === name.toLowerCase()
+  );
+
+const parseDeclaredType = (input: string): DeclaredTypeNode => {
+  const tokens = tokenizeDeclaredType(input);
+  let pos = 0;
+  const peek = (): DeclaredTypeToken | undefined => tokens[pos];
+  const next = (): DeclaredTypeToken | undefined => tokens[pos++];
+
+  const parseArrow = (): DeclaredTypeNode => {
+    const left = parseParam();
+    if (peek()?.type === "arrow") {
+      next();
+      return { kind: "fn", left, right: parseArrow() };
+    }
+    return left;
+  };
+
+  const parseParam = (): DeclaredTypeNode => {
+    const open = peek();
+    if (open?.type === "punctuation" && open.value === "(") {
+      next();
+      const inner = parseArrow();
+      const close = peek();
+      if (!close || close.type !== "punctuation" || close.value !== ")") {
+        throw new Error("Expected ')' in declared type");
+      }
+      next();
+      return inner;
+    }
+    return parseAtom();
+  };
+
+  const parseAtom = (): DeclaredTypeNode => {
+    const nameToken = next();
+    if (!nameToken || nameToken.type !== "id") {
+      throw new Error("Expected a type name in declared type");
+    }
+    const name = nameToken.value;
+
+    if (name === "Any" || name.toUpperCase() === "ANY") {
+      const lt = peek();
+      if (lt?.type === "punctuation" && lt.value === "<") {
+        next();
+        const inner = next();
+        if (!inner || inner.type !== "id") {
+          throw new Error("Expected a type name inside Any<...>");
+        }
+        const close = peek();
+        if (!close || close.type !== "punctuation" || close.value !== ">") {
+          throw new Error("Expected '>' in declared type");
+        }
+        next();
+        return { kind: "anyVar", name: inner.value };
+      }
+      return { kind: "atom", name: "Any" };
+    }
+
+    if (!isWhitelistType(name)) {
+      const lt = peek();
+      if (lt?.type === "punctuation" && lt.value === "<") {
+        throw new Error(
+          `Type "${name}" is not a declared type; generic types must be written as Any<...>`
+        );
+      }
+      return { kind: "anyVar", name };
+    }
+
+    const lt = peek();
+    if (lt?.type === "punctuation" && lt.value === "<") {
+      next();
+      const args: DeclaredTypeNode[] = [parseArrow()];
+      while (true) {
+        const comma = peek();
+        if (comma?.type !== "punctuation" || comma.value !== ",") break;
+        next();
+        args.push(parseArrow());
+      }
+      const close = peek();
+      if (!close || close.type !== "punctuation" || close.value !== ">") {
+        throw new Error("Expected '>' in declared type");
+      }
+      next();
+      return { kind: "param", name, args };
+    }
+    return { kind: "atom", name };
+  };
+
+  const result = parseArrow();
+  if (pos !== tokens.length) {
+    throw new Error("Unexpected trailing characters in declared type");
+  }
+  return result;
+};
+
+const unwrapFunctionNode = (
+  node: TypeRawSignatureAST.RawSignatureNode
+): TypeRawSignatureAST.RawSignatureFunction | null => {
+  if (node.type === "Function") return node;
+  if (node.type === "Operator") return node.obscured;
+  return null;
+};
+
+const typeNameMatches = (a: string, b: string): boolean =>
+  a.toLowerCase() === b.toLowerCase() ||
+  (["Integer", "Long", "Double", "Number"].includes(a) &&
+    ["Integer", "Long", "Double", "Number"].includes(b));
+
+const declaredMatchesComputed = (
+  declared: DeclaredTypeNode,
+  sig: ParsedSignature
+): boolean => {
+  const node = sig.getAst() as TypeRawSignatureAST.RawSignatureNode;
+
+  if (declared.kind === "fn") {
+    const fn = unwrapFunctionNode(node);
+    if (!fn) return false;
+    return (
+      declaredMatchesComputed(
+        declared.left,
+        new ParsedSignature(fn.from, false)
+      ) &&
+      declaredMatchesComputed(declared.right, new ParsedSignature(fn.to, false))
+    );
+  }
+
+  if (declared.kind === "anyVar") {
+    // `Any<X>` must land on a generic `Any` slot.
+    return node.type === "Any";
+  }
+
+  if (declared.kind === "param") {
+    if (declared.name === "List") {
+      return (
+        node.type === "List" &&
+        declaredMatchesComputed(
+          declared.args[0]!,
+          new ParsedSignature(node.listType, false)
+        )
+      );
+    }
+    return typeNameMatches(node.type, declared.name);
+  }
+
+  if (declared.name === "Any") return true; // bare `Any` matches anything
+  if (declared.name === "Operator")
+    return node.type === "Operator" || node.type === "Function";
+  if (declared.name === "List") return node.type === "List";
+  return typeNameMatches(node.type, declared.name);
+};
+
 export const ExpandedToAST = (
   expanded: string,
   startVariableId = 0
@@ -786,7 +1121,14 @@ export const ExpandedToAST = (
       (char, next) => char === "=" && next !== ">"
     ) !== -1;
 
-  for (const line of rawLines) {
+  const standaloneSignatures: {
+    name: string;
+    declared: string;
+    lineNum: number;
+  }[] = [];
+
+  for (let lineIdx = 0; lineIdx < rawLines.length; lineIdx++) {
+    const line = rawLines[lineIdx]!;
     const lineHasAssignment = hasTopLevelAssignment(line);
     const inside = computeStringRegions(line);
     let cleanLine = "";
@@ -802,7 +1144,21 @@ export const ExpandedToAST = (
         if (char === ":" && line[i + 1] === ":") {
           if (!lineHasAssignment) {
             isSig = true;
-            break; // Ignore signature line
+            const declaredRaw = line.slice(i + 2);
+            const commentIdx = declaredRaw.indexOf("--");
+            const declared = (
+              commentIdx === -1 ? declaredRaw : declaredRaw.slice(0, commentIdx)
+            ).trim();
+            if (declared) {
+              const nameText = line.slice(0, i).trim();
+              const parsedName = parseDefinitionVarName(nameText, false);
+              standaloneSignatures.push({
+                name: parsedName.name,
+                declared,
+                lineNum: lineIdx + 1,
+              });
+            }
+            break; // Signature line dropped from the AST, but validated below
           }
           cleanLine += "::";
           i++;
@@ -973,6 +1329,27 @@ export const ExpandedToAST = (
       }
     }
     finalAST = lineAST;
+  }
+
+  for (const sig of standaloneSignatures) {
+    const def = definitions.find((d) => d.name === sig.name);
+    if (!def) {
+      throw new Error(
+        `Signature line ${sig.lineNum}: variable "${sig.name}" is not defined`
+      );
+    }
+
+    const declared = parseDeclaredType(sig.declared);
+    if (
+      !declaredMatchesComputed(
+        declared,
+        computeSignature(def.node, undefined, true)
+      )
+    ) {
+      throw new Error(
+        `Signature line ${sig.lineNum}: variable "${sig.name}" is declared as type "${sig.declared}" but the expression has a different signature`
+      );
+    }
   }
 
   if (!finalAST) throw new Error("Could not determine final AST");

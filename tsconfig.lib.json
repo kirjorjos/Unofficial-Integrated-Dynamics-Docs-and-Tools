@@ -14,7 +14,7 @@
     "module": "es2022",
     "lib": ["es2022", "dom"],
     "typeRoots": ["./src/lib/types", "./node_modules/@types"],
-    "types": ["jest"],
+    "types": ["jest", "node"],
     "disableSizeLimit": true,
     "incremental": false,
     "assumeChangesOnlyAffectDirectDependencies": false,

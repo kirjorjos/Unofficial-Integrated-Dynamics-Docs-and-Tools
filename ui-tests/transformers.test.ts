@@ -1,5 +1,9 @@
 import { test, expect } from "@playwright/test";
-import { compileFixtures, openVisual } from "./visual-helpers";
+import {
+  compileFixtures,
+  decodeStoredInputState,
+  openVisual,
+} from "./visual-helpers";
 
 const CLEAN_INPUT = 'apply stringConcat "a" "b"';
 
@@ -297,5 +301,157 @@ test.describe("transformersPageVisualOutputDom", () => {
     expect(scaledCount).toBeGreaterThan(0);
 
     expect(pageErrors).toEqual([]);
+  });
+});
+
+test.describe("transformersPageInputStateRestore", () => {
+  const runTransform = async (
+    page: import("@playwright/test").Page,
+    input: string,
+    format: string
+  ): Promise<string> => {
+    const inputBox = page.locator('textarea[aria-label="Transformer input"]');
+    const outputSelect = page.locator('select[aria-label="Output format"]');
+    const transformButton = page.getByRole("button", {
+      name: "Transform",
+      exact: true,
+    });
+    await page.goto("/");
+    await inputBox.fill(input);
+    await outputSelect.selectOption(format);
+    await transformButton.click();
+    const code = new URL(page.url()).searchParams.get("code");
+    const output = new URL(page.url()).searchParams.get("output");
+    expect(output).toBe(format);
+    expect(code).toBeTruthy();
+    return code!;
+  };
+
+  const runTransformReload = async (
+    page: import("@playwright/test").Page,
+    input: string,
+    format: string
+  ): Promise<void> => {
+    await runTransform(page, input, format);
+    await page.reload();
+  };
+
+  test("testReloadRestoresNonCanonicalCondensedInput", async ({ page }) => {
+    const input = "add(1, 2)";
+    await runTransformReload(page, input, "condensed");
+    await expect(
+      page.locator('textarea[aria-label="Transformer input"]')
+    ).toHaveValue(input);
+    await expect(page.locator('textarea[aria-label="Condensed"]')).toHaveValue(
+      "numberAdd(1, 2)"
+    );
+  });
+
+  test("testReloadRestoresOuterWhitespaceByteForByte", async ({ page }) => {
+    const input = "\n\n  add(1, 2) \t\n";
+    await runTransformReload(page, input, "condensed");
+    await expect(
+      page.locator('textarea[aria-label="Transformer input"]')
+    ).toHaveValue(input);
+  });
+
+  test("testReloadRestoresCodeLineInputWithOuterWhitespace", async ({
+    page,
+  }) => {
+    const input = "\n  add 1 2 \t";
+    await runTransformReload(page, input, "codeline");
+    await expect(
+      page.locator('textarea[aria-label="Transformer input"]')
+    ).toHaveValue(input);
+    await expect(page.locator('textarea[aria-label="Code Line"]')).toHaveValue(
+      "numberAdd 1 2"
+    );
+  });
+
+  test("testReloadRestoresExpandedInputByteForByte", async ({ page }) => {
+    const input = "\n-- note\nx = add(1, 2) -- inline\nfinal = x\n\n";
+    await runTransformReload(page, input, "expanded");
+    await expect(
+      page.locator('textarea[aria-label="Transformer input"]')
+    ).toHaveValue(input);
+  });
+
+  test("testReloadRestoresExpandedSparseRhs", async ({ page }) => {
+    const input =
+      'result = stringConcat("a very long first string value", "a very long second string value") -- computed';
+    await runTransformReload(page, input, "expanded");
+    await expect(
+      page.locator('textarea[aria-label="Transformer input"]')
+    ).toHaveValue(input);
+  });
+
+  test("testStoredExpandedSectionIsSparseRhsOverlay", async ({ page }) => {
+    const input =
+      'result = stringConcat("a very long first string value", "a very long second string value") -- computed';
+    const code = await runTransform(page, input, "expanded");
+
+    const decoded = await decodeStoredInputState(code, "expanded");
+    expect(decoded).not.toBeNull();
+    if (!decoded) return;
+    expect(decoded.format).toBe("expanded");
+    expect(decoded.mode).toBe("overlay");
+    if (decoded.format !== "expanded" || decoded.mode !== "overlay") return;
+    expect(decoded.overlay.items).toHaveLength(1);
+    const item = decoded.overlay.items[0]!;
+    expect(item).toMatchObject({
+      kind: 0,
+      nameRef: 0, // ordinal into the canonical def order; resolves to `result`
+      tailMode: 0,
+      head: null, // has-head=0: canonical default head elided
+      suffix: " -- computed",
+    });
+    if (item.kind !== 0 || item.tailMode !== 0) return;
+    expect(item.rhsOverlay.mode).toBe(0);
+    expect(item.rhsOverlay.spellingOverrides).toEqual([]);
+    expect(item.rhsOverlay.hasTrailingGap).toBe(false);
+
+    await page.reload();
+    await expect(
+      page.locator('textarea[aria-label="Transformer input"]')
+    ).toHaveValue(input);
+  });
+
+  test("testReloadCanonicalCurryStoresNoSection", async ({ page }) => {
+    const input = "numberAdd(1, 2)";
+    await runTransformReload(page, input, "condensed");
+    await expect(
+      page.locator('textarea[aria-label="Transformer input"]')
+    ).toHaveValue("");
+    await expect(page.locator('textarea[aria-label="Condensed"]')).toHaveValue(
+      "numberAdd(1, 2)"
+    );
+  });
+
+  test("testReloadRestoresJsonInputWithSpellingAndWhitespace", async ({
+    page,
+  }) => {
+    const input =
+      '\n  {"curry":{"values":[{"valueType":"integrateddynamics:integer","value":1.0}],"baseOperator":{"operatorName":"integrateddynamics:arithmetic_addition"}}} \t';
+    await runTransformReload(page, input, "json");
+    await expect(
+      page.locator('textarea[aria-label="Transformer input"]')
+    ).toHaveValue(input);
+    await expect(page.locator('textarea[aria-label="JSON"]')).toHaveValue(
+      [
+        "{",
+        '  "curry": {',
+        '    "values": [',
+        "      {",
+        '        "valueType": "integrateddynamics:integer",',
+        '        "value": 1',
+        "      }",
+        "    ],",
+        '    "baseOperator": {',
+        '      "operatorName": "integrateddynamics:arithmetic_addition"',
+        "    }",
+        "  }",
+        "}",
+      ].join("\n")
+    );
   });
 });

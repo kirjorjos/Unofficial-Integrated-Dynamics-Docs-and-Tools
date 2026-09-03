@@ -76,7 +76,7 @@ var2 = pipe var3 operatorPipe2
   it("testCommentsAndSignatures", () => {
     const input = `
 -- Comment
-var1 :: A -> B
+var1 :: Any
 var1 = 5 -- Inline comment
 -- Solo line comment
 final = operatorFlip apply var1 numberIncrement
@@ -307,7 +307,7 @@ final = apply(numberAdd, var2)
     const ast = CodeLineToAST("operatorApply3");
     const expanded = ASTToExpanded(ast);
     const expected =
-      "operatorApply3 :: Operator<a<Operator<b<c<Any<typeID14>> → (d<e<Any<typeID15>> → (f<g<Any<typeID16>> → h<Any<typeID17>>>)>)>> → (i<j<Any<typeID22>> → (k<e<Any<typeID15>> → (l<g<Any<typeID16>> → h<Any<typeID17>>>)>)>)>>\noperatorApply3 = operatorApply3";
+      "operatorApply3 :: Operator<Operator<Any → (Any → (Any → Any))> → (Any → (Any → (Any → Any)))>\noperatorApply3 = operatorApply3";
     expect(expanded).toBe(expected);
   });
 
@@ -430,8 +430,7 @@ result = apply(numberAdd, {numberAddBy5}by10)`;
       value: { reader: "WorldReader", aspect: "LONG_TIME" },
     };
     const expanded = ASTToExpanded(ast);
-    expect(expanded).toContain("worldTime ::");
-    expect(expanded).toContain("a<Long>");
+    expect(expanded).toContain("worldTime :: Long");
   });
 
   it("testIndexOfListFullyDecomposesAndRoundTrips", () => {
@@ -970,13 +969,40 @@ final = matches "a" "b"
     );
   });
 
-  it("testSignatureLinesStillSkipped", () => {
-    const input = `
-var1 :: A -> B
-var1 = 5
-`;
-    const ast = rootOf(ExpandedToAST(input.trim()));
+  it("bare signature tokens are Any<X> sugar and must land on generic slots", () => {
+    expect(() => ExpandedToAST("var1 :: A -> B\nvar1 = 5")).toThrow(
+      /but the expression has a different signature/
+    );
+  });
+
+  it("validates a matching single-name standalone signature", () => {
+    const ast = rootOf(ExpandedToAST("x :: Integer\nx = 5"));
     expect((ast as TypeAST.Integer).value).toBe("5");
+  });
+
+  it("rejects a mismatched single-name standalone signature", () => {
+    expect(() => ExpandedToAST("x :: Boolean\nx = 5")).toThrow(
+      /but the expression has a different signature/
+    );
+  });
+
+  it("accepts Any-wrapped and bare variable tokens on generic slots", () => {
+    expect(() => ExpandedToAST("x :: List<A>\nx = 5")).toThrow(
+      /but the expression has a different signature/
+    );
+    expect(() => ExpandedToAST("x :: Any\nx = 5")).not.toThrow();
+    expect(() => ExpandedToAST("x :: Any<A>\nx = 5")).toThrow(
+      /but the expression has a different signature/
+    );
+    expect(() =>
+      ExpandedToAST('getByPipe :: List<Any>\ngetByPipe = [Item("")]')
+    ).not.toThrow();
+  });
+
+  it("rejects a standalone signature for an undefined variable", () => {
+    expect(() => ExpandedToAST("missing :: Integer\nx = 5")).toThrow(
+      /variable "missing" is not defined/
+    );
   });
 
   it("testRedefinitionSameASTAllowed", () => {

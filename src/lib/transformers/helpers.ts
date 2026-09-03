@@ -230,10 +230,10 @@ export const evaluateFullyAppliedCurryWithSteps = (
 
 const operatorSourceNameMap = new WeakMap<TypeAST.BaseOperator, string>();
 
-export const setOperatorSourceName = (
-  node: TypeAST.BaseOperator,
+export const setOperatorSourceName = <T extends TypeAST.BaseOperator>(
+  node: T,
   sourceName: string
-): TypeAST.BaseOperator => {
+): T => {
   operatorSourceNameMap.set(node, sourceName);
   return node;
 };
