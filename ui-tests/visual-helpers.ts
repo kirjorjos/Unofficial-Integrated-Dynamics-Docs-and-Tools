@@ -4,6 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { Page } from "@playwright/test";
+import type { InputStateSection } from "lib/transformers/Compressed";
 
 export const FONT_FAMILIES = [
   '"Minecraft"',
@@ -18,6 +19,10 @@ type Parsers = {
   CondensedToAST: (input: string) => unknown;
   ExpandedToAST: (input: string) => unknown;
   ASTToCompressed: (ast: unknown) => string;
+  decodeInputStateFromCompressed: (
+    code: string,
+    outputFormat: string
+  ) => InputStateSection | null;
 };
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -30,13 +35,13 @@ const ENTRY_SOURCE = `
 import { CodeLineToAST } from "lib/transformers/CodeLine";
 import { CondensedToAST } from "lib/transformers/Condensed";
 import { ExpandedToAST } from "lib/transformers/Expanded";
-import { ASTToCompressed } from "lib/transformers/Compressed";
-export const api = { CodeLineToAST, CondensedToAST, ExpandedToAST, ASTToCompressed };
+import { ASTToCompressed, decodeInputStateFromCompressed } from "lib/transformers/Compressed";
+export const api = { CodeLineToAST, CondensedToAST, ExpandedToAST, ASTToCompressed, decodeInputStateFromCompressed };
 `;
 
 const PARSER_BY_FORMAT: Record<
   FixtureFormat,
-  Exclude<keyof Parsers, "ASTToCompressed">
+  Exclude<keyof Parsers, "ASTToCompressed" | "decodeInputStateFromCompressed">
 > = {
   codeline: "CodeLineToAST",
   condensed: "CondensedToAST",
@@ -127,6 +132,14 @@ export async function compileFixtures<const T extends readonly Fixture[]>(
 export async function compileAst(ast: unknown): Promise<string> {
   const parsers = await loadParsers();
   return parsers.ASTToCompressed(ast);
+}
+
+export async function decodeStoredInputState(
+  code: string,
+  outputFormat: string
+): Promise<InputStateSection | null> {
+  const parsers = await loadParsers();
+  return parsers.decodeInputStateFromCompressed(code, outputFormat);
 }
 
 const waitForFontsAndNetworkIdle = async (page: Page) => {

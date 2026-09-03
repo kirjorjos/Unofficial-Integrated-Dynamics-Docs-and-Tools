@@ -26,6 +26,7 @@ export class ParsedSignature {
 
   private ast: TypeRawSignatureAST.RawSignatureNode;
   public errorInfo: ErrorInfo | null = null;
+  public applyTainted = false;
   private _cachedRewrite: ParsedSignature | null = null;
   private _cachedAtVersion: number = -1;
   private inputCache = [] as ParsedSignature[];
@@ -82,7 +83,9 @@ export class ParsedSignature {
         result = { ...node };
       }
 
-      if (!(result as TypeRawSignatureAST.RawSignatureAny).typeID) {
+      if (
+        (result as TypeRawSignatureAST.RawSignatureAny).typeID === undefined
+      ) {
         const newID = ParsedSignature.getNewTypeID();
         if (result.type === "Any") {
           (result as TypeRawSignatureAST.RawSignatureAny).typeID = newID;

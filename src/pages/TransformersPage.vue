@@ -18,6 +18,28 @@ import FoldableExpandedOutput from "../components/FoldableExpandedOutput.vue";
 import LogicProgrammerVisualOutput from "../components/LogicProgrammerVisualOutput.vue";
 import { detectInputFormat } from "lib/transformers/detectFormat";
 import type { TransformerFormatKey } from "lib/transformers/detectFormat";
+import {
+  ASTToExpandedWithSignatureOptions,
+  type ExpandedSignatureOptions,
+} from "lib/transformers/Expanded";
+import type { InputStateSection } from "lib/transformers/Compressed";
+import {
+  applyCodeLineOverlay,
+  applyCondensedOverlay,
+  applyExpandedOverlay,
+  applyJsonOverlay,
+  computeCodeLineOverlay,
+  computeCondensedOverlay,
+  computeExpandedOverlay,
+  computeJsonOverlay,
+  discoverSignatureRestoreModes,
+  resolveExpandedOverlayNames,
+  stripAutoCurryVarNames,
+} from "lib/transformers/inputState";
+import {
+  compressWithInputState,
+  decodeInputStateFromCompressed,
+} from "lib/transformers/Compressed";
 
 type FormatKey = TransformerFormatKey;
 type OutputFormatKey = Exclude<FormatKey, "compressed"> | "visual";
@@ -34,6 +56,7 @@ const expandedOutputViewer = ref<InstanceType<
 > | null>(null);
 const currentAst = ref<any>(null);
 const initialVariableId = ref(0);
+let restoringState = false;
 
 const formatters: Record<
   FormatKey,
@@ -103,9 +126,10 @@ const inputLineNumbers = computed(() => {
 });
 
 const detectedInputFormat = computed<FormatKey | null>(() => {
-  const trimmed = inputText.value.trim();
-  if (!trimmed) return null;
-  return detectInputFormat(trimmed);
+  const raw = inputText.value;
+  if (!raw.trim()) return null;
+  // detectInputFormat normalizes whitespace internally (spec §5.2), so pass raw.
+  return detectInputFormat(raw);
 });
 
 const canTransform = computed(() => inputText.value.trim().length > 0);
@@ -162,6 +186,190 @@ const updateUrlState = (
   window.history.replaceState({}, "", url);
 };
 
+const SIGNATURE_ARROW_VALUES: ExpandedSignatureOptions["arrow"][] = ["->", "→"];
+
+const signatureCandidateOpts = (): (ExpandedSignatureOptions | null)[] => {
+  const depths: ExpandedSignatureOptions["depth"][] = [null, 0, 1, 2, 3];
+  const opts: (ExpandedSignatureOptions | null)[] = [null]; // baseline: full canonical
+  for (const labels of [false, true]) {
+    for (const arrow of SIGNATURE_ARROW_VALUES) {
+      for (const depth of depths) {
+        for (const hideOperatorWrappers of [false, true]) {
+          opts.push({ depth, labels, arrow, hideOperatorWrappers });
+        }
+      }
+    }
+  }
+  return opts;
+};
+
+const signatureCandidates = signatureCandidateOpts();
+
+const pickExpandedSignatureRender = (
+  rawInput: string,
+  strippedAst: TypeAST.AST,
+  ast: TypeAST.AST
+): {
+  canonicalInput: string;
+  sigOpts: ExpandedSignatureOptions | undefined;
+  modes: { name: string; opts: ExpandedSignatureOptions }[] | undefined;
+} => {
+  let bestCanonical = ASTToExpandedWithSignatureOptions(
+    strippedAst,
+    "Condensed",
+    null,
+    true
+  );
+  let bestSigOpts: ExpandedSignatureOptions | undefined;
+  let bestLen = Infinity;
+
+  for (const sigOpts of signatureCandidates) {
+    const canonicalInput = ASTToExpandedWithSignatureOptions(
+      strippedAst,
+      "Condensed",
+      sigOpts,
+      true
+    );
+    const result = computeExpandedOverlay(
+      rawInput,
+      canonicalInput,
+      sigOpts ?? undefined
+    );
+    if (result.mode !== 0) continue;
+    const len = compressWithInputState(ast, "expanded", {
+      format: "expanded",
+      mode: "overlay",
+      overlay: result.overlay,
+    }).length;
+    if (len < bestLen) {
+      bestLen = len;
+      bestCanonical = canonicalInput;
+      bestSigOpts = sigOpts ?? undefined;
+    }
+  }
+
+  const winOpts = bestSigOpts ?? {
+    depth: null,
+    labels: false,
+    arrow: "→",
+    hideOperatorWrappers: false,
+  };
+  const modes = discoverSignatureRestoreModes(rawInput, strippedAst, winOpts);
+  let adoptedModes: typeof modes | undefined;
+  if (modes.length > 0) {
+    const modesMap = new Map(modes.map((m) => [m.name, m.opts]));
+    const canonicalInput = ASTToExpandedWithSignatureOptions(
+      strippedAst,
+      "Condensed",
+      winOpts,
+      true,
+      modesMap
+    );
+    const result = computeExpandedOverlay(rawInput, canonicalInput, winOpts);
+    if (result.mode === 0) {
+      const overlay = { ...result.overlay, modes };
+      const len = compressWithInputState(ast, "expanded", {
+        format: "expanded",
+        mode: "overlay",
+        overlay,
+      }).length;
+      if (len < bestLen) {
+        bestLen = len;
+        bestCanonical = canonicalInput;
+        bestSigOpts = winOpts;
+        adoptedModes = modes;
+      }
+    }
+  }
+  return {
+    canonicalInput: bestCanonical,
+    sigOpts: bestSigOpts,
+    modes: adoptedModes,
+  };
+};
+
+const buildInputStateSection = (
+  rawInput: string,
+  sourceFormat: FormatKey,
+  ast: TypeAST.AST,
+  outputKey: OutputFormatKey
+): InputStateSection | null => {
+  if (!rawInput.trim()) return null;
+  if (sourceFormat === "compressed") return null;
+
+  const canonicalInput = formatters[sourceFormat].fromAST(
+    stripAutoCurryVarNames(CompressedToAST(ASTToCompressed(ast)))
+  );
+  if (canonicalInput === rawInput && sourceFormat === outputKey) {
+    return null;
+  }
+
+  if (sourceFormat === "condensed") {
+    const overlay = computeCondensedOverlay(rawInput, canonicalInput);
+    if (overlay.mode === 0) {
+      return { format: "condensed", mode: "overlay", overlay };
+    }
+    return { format: "condensed", mode: "raw", rawText: rawInput };
+  }
+
+  if (sourceFormat === "codeline") {
+    const overlay = computeCodeLineOverlay(rawInput, canonicalInput);
+    if (overlay.mode === 0) {
+      return { format: "codeline", mode: "overlay", overlay };
+    }
+    return { format: "codeline", mode: "raw", rawText: rawInput };
+  }
+
+  if (sourceFormat === "expanded") {
+    const strippedAst = stripAutoCurryVarNames(
+      CompressedToAST(ASTToCompressed(ast))
+    );
+    const {
+      canonicalInput: tunedCanonical,
+      sigOpts,
+      modes,
+    } = pickExpandedSignatureRender(rawInput, strippedAst, ast);
+    const overlay = computeExpandedOverlay(rawInput, tunedCanonical, sigOpts);
+    if (overlay.mode === 0) {
+      const withModes =
+        modes && modes.length > 0
+          ? { ...overlay.overlay, modes }
+          : overlay.overlay;
+      return { format: "expanded", mode: "overlay", overlay: withModes };
+    }
+    return { format: "expanded", mode: "raw", rawText: rawInput };
+  }
+
+  if (sourceFormat === "json") {
+    const overlay = computeJsonOverlay(rawInput, canonicalInput);
+    if (overlay.mode === 0) {
+      return { format: "json", mode: "overlay", overlay };
+    }
+    return { format: "json", mode: "raw", rawText: rawInput };
+  }
+
+  return null;
+};
+
+const buildUrlCode = (): string | null => {
+  if (!currentAst.value) return null;
+  const rawInput = inputText.value;
+  const sourceFormat = detectInputFormat(rawInput);
+  const inputState = buildInputStateSection(
+    rawInput,
+    sourceFormat,
+    currentAst.value as TypeAST.AST,
+    outputFormat.value
+  );
+  return inputState
+    ? compressWithInputState(
+        currentAst.value as TypeAST.AST,
+        outputFormat.value,
+        inputState
+      )
+    : ASTToCompressed(currentAst.value as TypeAST.AST);
+};
+
 const updateOutputFromAst = (
   ast: TypeAST.AST,
   format: OutputFormatKey = outputFormat.value
@@ -179,17 +387,14 @@ const updateOutputFromAst = (
 };
 
 watch(inputText, async () => {
+  if (restoringState) return;
   currentAst.value = null;
   await nextTick();
   syncLineNumberOffsetFromTextarea();
 });
 
 watch(outputFormat, () => {
-  updateUrlState(
-    currentAst.value ? ASTToCompressed(currentAst.value) : null,
-    outputFormat.value,
-    initialVariableId.value
-  );
+  updateUrlState(buildUrlCode(), outputFormat.value, initialVariableId.value);
   if (!currentAst.value || outputError.value) return;
   updateOutputFromAst(currentAst.value, outputFormat.value);
 });
@@ -207,41 +412,44 @@ watch(initialVariableId, (value) => {
     transform();
     return;
   }
-  updateUrlState(
-    currentAst.value ? ASTToCompressed(currentAst.value) : null,
-    outputFormat.value,
-    normalized
-  );
+  updateUrlState(buildUrlCode(), outputFormat.value, normalized);
 });
 
-const transform = (): void => {
+const transform = (skipUrlUpdate: boolean = false): void => {
   try {
-    const trimmedInput = inputText.value.trim();
-    const sourceFormat = detectInputFormat(trimmedInput);
-    const ast = formatters[sourceFormat].toAST(trimmedInput);
-    const compressedOutput = ASTToCompressed(ast);
+    const rawInput = inputText.value; // untrimmed (no-trim rule)
+    const sourceFormat = detectInputFormat(rawInput);
+    const ast = formatters[sourceFormat].toAST(rawInput);
     currentAst.value = ast;
     if (!updateOutputFromAst(ast, outputFormat.value)) return;
     status.value = `Detected ${formatters[sourceFormat].label}. Output as ${outputFormatters[outputFormat.value].label}.`;
-    updateUrlState(
-      compressedOutput,
-      outputFormat.value,
-      initialVariableId.value
+    if (skipUrlUpdate) return;
+    const inputState = buildInputStateSection(
+      rawInput,
+      sourceFormat,
+      ast,
+      outputFormat.value
     );
+    const code = inputState
+      ? compressWithInputState(ast, outputFormat.value, inputState)
+      : ASTToCompressed(ast);
+    updateUrlState(code, outputFormat.value, initialVariableId.value);
   } catch (error) {
     outputText.value = "";
     outputError.value = error instanceof Error ? error.message : String(error);
     status.value = "";
-    updateUrlState(null, outputFormat.value, initialVariableId.value);
+    if (!skipUrlUpdate) {
+      updateUrlState(null, outputFormat.value, initialVariableId.value);
+    }
   }
 };
 
 const getCurrentAst = (): TypeAST.AST => {
   if (currentAst.value) return currentAst.value;
 
-  const trimmedInput = inputText.value.trim();
-  const sourceFormat = detectInputFormat(trimmedInput);
-  return formatters[sourceFormat].toAST(trimmedInput);
+  const rawInput = inputText.value; // untrimmed
+  const sourceFormat = detectInputFormat(rawInput);
+  return formatters[sourceFormat].toAST(rawInput);
 };
 
 const processTypes = (): void => {
@@ -249,12 +457,23 @@ const processTypes = (): void => {
     const ast = getCurrentAst();
     globalMap.clear();
     ParsedSignature.resetTypeIDCounter();
-    const compressedOutput = ASTToCompressed(ast);
     currentAst.value = ast;
     outputFormat.value = "expanded";
     if (!updateOutputFromAst(ast, "expanded")) return;
     status.value = "Processed types and regenerated expanded output.";
-    updateUrlState(compressedOutput, "expanded", initialVariableId.value);
+    const rawInput = inputText.value; // untrimmed
+    const inputState = rawInput.trim()
+      ? buildInputStateSection(
+          rawInput,
+          detectInputFormat(rawInput),
+          ast,
+          "expanded"
+        )
+      : null;
+    const code = inputState
+      ? compressWithInputState(ast, "expanded", inputState)
+      : ASTToCompressed(ast);
+    updateUrlState(code, "expanded", initialVariableId.value);
   } catch (error) {
     outputText.value = "";
     outputError.value = error instanceof Error ? error.message : String(error);
@@ -278,7 +497,7 @@ const copyOutput = async (): Promise<void> => {
   status.value = "Copied output.";
 };
 
-onMounted(() => {
+onMounted(async () => {
   const url = new URL(window.location.href);
   const code = url.searchParams.get("code");
   const output = url.searchParams.get("output");
@@ -300,8 +519,60 @@ onMounted(() => {
 
   if (!code) return;
 
-  const ast = CompressedToAST(code);
+  const ast = stripAutoCurryVarNames(CompressedToAST(code));
   currentAst.value = ast;
+
+  const inputState = decodeInputStateFromCompressed(code, outputFormat.value);
+  if (inputState) {
+    let rawInput: string;
+    if (inputState.mode === "raw") {
+      rawInput = inputState.rawText;
+    } else {
+      const strippedAst = stripAutoCurryVarNames(ast);
+      if (inputState.format === "expanded") {
+        const canonicalBase = ASTToExpandedWithSignatureOptions(
+          strippedAst,
+          "Condensed",
+          inputState.overlay.sig ?? null,
+          true
+        );
+        const overlay = resolveExpandedOverlayNames(
+          inputState.overlay,
+          canonicalBase
+        );
+        const modesMap = overlay.modes
+          ? new Map(overlay.modes.map((m) => [m.name, m.opts]))
+          : undefined;
+        const canonicalInput = ASTToExpandedWithSignatureOptions(
+          strippedAst,
+          "Condensed",
+          overlay.sig ?? null,
+          true,
+          modesMap
+        );
+        rawInput = applyExpandedOverlay(canonicalInput, overlay);
+      } else {
+        const canonicalInput =
+          formatters[inputState.format].fromAST(strippedAst);
+        if (inputState.format === "codeline") {
+          rawInput = applyCodeLineOverlay(canonicalInput, inputState.overlay);
+        } else if (inputState.format === "json") {
+          rawInput = applyJsonOverlay(canonicalInput, inputState.overlay);
+        } else {
+          rawInput = applyCondensedOverlay(canonicalInput, inputState.overlay);
+        }
+      }
+    }
+
+    restoringState = true;
+    inputText.value = rawInput;
+    await nextTick(); // let the (guarded) inputText watcher flush while restoring
+    restoringState = false;
+    transform(true);
+    status.value = "Loaded state from URL.";
+    return;
+  }
+
   if (updateOutputFromAst(ast, outputFormat.value)) {
     status.value = "Loaded output from URL.";
   }
@@ -369,7 +640,7 @@ onMounted(() => {
           </select>
         </label>
 
-        <button :disabled="!canTransform" type="button" @click="transform">
+        <button :disabled="!canTransform" type="button" @click="transform()">
           Transform
         </button>
         <button

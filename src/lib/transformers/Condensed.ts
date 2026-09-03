@@ -18,6 +18,7 @@ import {
   isVarNameExpandedSafe,
   resolveImplicitFlipOperator,
   setOperatorSourceName,
+  getOperatorSourceName,
   flattenAnonymousBaseOperatorApplication,
 } from "lib/transformers/helpers";
 import {
@@ -1620,7 +1621,8 @@ export const CondensedToAST = (
 export const ASTToCondensed = (
   ast: TypeAST.AST,
   isTopLevel = true,
-  startVariableId = 0
+  startVariableId = 0,
+  preferSourceNames = false
 ): string => {
   const defLastCardIds = getNetworkDefLastCardIds(ast, startVariableId);
 
@@ -1736,7 +1738,10 @@ export const ASTToCondensed = (
       }
 
       case "Operator": {
-        result = getOpName(node.opName);
+        const sourceName = preferSourceNames
+          ? getOperatorSourceName(node)
+          : undefined;
+        result = sourceName ?? getOpName(node.opName);
         break;
       }
 

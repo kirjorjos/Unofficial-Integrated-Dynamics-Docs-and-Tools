@@ -7,5 +7,5 @@
     "isolatedModules": true,
     "noEmit": true
   },
-  "include": ["ui-tests/**/*.ts"]
+  "include": ["ui-tests/**/*.ts", "src/lib/types/**/*.d.ts"]
 }

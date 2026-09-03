@@ -1,4 +1,9 @@
-import { getArity } from "lib/transformers/helpers";
+import {
+  getArity,
+  getOpName,
+  getOperatorSourceName,
+  setOperatorSourceName,
+} from "lib/transformers/helpers";
 import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
 import { operatorRegistry } from "lib/IntegratedDynamicsClasses/registries/operatorRegistry";
 import {
@@ -8,7 +13,12 @@ import {
 import {
   getExpandedVarName,
   resetExpandedVarCounter,
+  type ExpandedSignatureOptions,
 } from "lib/transformers/Expanded";
+import type {
+  CondensedOverlay,
+  ExpandedOverlay,
+} from "lib/transformers/inputState";
 
 const textEncoder = new TextEncoder();
 const textDecoder = new TextDecoder();
@@ -228,6 +238,10 @@ const readVarUint = (reader: BitReader): number => {
 };
 
 const writeString = (writer: BitWriter, value: string) => {
+  const sink = (globalThis as Record<string, unknown>)["__STRING_SINK__"] as
+    | string[]
+    | undefined;
+  if (sink) sink.push(value);
   const asciiOnly = [...value].every((c) => c.charCodeAt(0) <= 127);
   writer.writeBit(asciiOnly);
   if (asciiOnly) {
@@ -242,6 +256,132 @@ const writeString = (writer: BitWriter, value: string) => {
   }
 };
 
+const CLUSTERED_SYMBOLS = [
+  " ",
+  "(",
+  ")",
+  "[",
+  "]",
+  "{",
+  "}",
+  ",",
+  ".",
+  ":",
+  ";",
+  "-",
+  "_",
+  "<",
+  ">",
+  "=",
+] as const;
+
+const writeClusteredString = (writer: BitWriter, value: string) => {
+  const asciiOnly = [...value].every((c) => c.charCodeAt(0) <= 127);
+  if (!asciiOnly) {
+    writer.writeBit(false); // legacy format
+    writeString(writer, value);
+    return;
+  }
+  writer.writeBit(true); // clustered format
+  writeClusteredChars(writer, value);
+};
+
+const writeClusteredChars = (writer: BitWriter, value: string) => {
+  writeVarUint(writer, value.length);
+  for (const c of value) {
+    const code = c.charCodeAt(0);
+    if (code >= 97 && code <= 122) {
+      writer.writeBit(false);
+      writer.writeBits(code - 97, 5);
+    } else if (code >= 65 && code <= 90) {
+      writer.writeBits(0b10, 2);
+      writer.writeBits(code - 65, 5);
+    } else if (code >= 48 && code <= 57) {
+      writer.writeBits(0b110, 3);
+      writer.writeBits(code - 48, 4);
+    } else {
+      const idx = CLUSTERED_SYMBOLS.indexOf(
+        c as (typeof CLUSTERED_SYMBOLS)[number]
+      );
+      if (idx !== -1) {
+        writer.writeBits(0b1110, 4);
+        writer.writeBits(idx, 4);
+      } else {
+        writer.writeBits(0b1111, 4);
+        writer.writeBits(code, 7);
+      }
+    }
+  }
+};
+
+const readClusteredString = (reader: BitReader): string => {
+  if (!reader.readBit()) return readString(reader); // legacy format
+  return readClusteredChars(reader);
+};
+
+const readClusteredChar = (reader: BitReader): string => {
+  if (!reader.readBit()) return String.fromCharCode(97 + reader.readNumber(5));
+  if (!reader.readBit()) return String.fromCharCode(65 + reader.readNumber(5));
+  if (!reader.readBit()) return String.fromCharCode(48 + reader.readNumber(4));
+  if (!reader.readBit()) return CLUSTERED_SYMBOLS[reader.readNumber(4)]!;
+  return String.fromCharCode(reader.readNumber(7));
+};
+
+const readClusteredChars = (reader: BitReader): string => {
+  const length = readVarUint(reader);
+  let result = "";
+  for (let i = 0; i < length; i++) result += readClusteredChar(reader);
+  return result;
+};
+
+const writeDefName = (writer: BitWriter, name: string) => {
+  const chars = [...name];
+  const asciiOnly = chars.every((c) => c.charCodeAt(0) <= 127);
+  if (asciiOnly && name.length < 128) {
+    let clusteredBits = 0;
+    for (const c of chars) {
+      const code = c.charCodeAt(0);
+      if (code >= 97 && code <= 122) clusteredBits += 6;
+      else if (code >= 65 && code <= 90) clusteredBits += 7;
+      else if (code >= 48 && code <= 57) clusteredBits += 7;
+      else if (
+        CLUSTERED_SYMBOLS.includes(c as (typeof CLUSTERED_SYMBOLS)[number])
+      )
+        clusteredBits += 8;
+      else clusteredBits += 11;
+    }
+    if (clusteredBits < 7 * chars.length - 1) {
+      writer.writeBit(true); // 11: clustered
+      writer.writeBit(true);
+      writeClusteredChars(writer, name);
+      return;
+    }
+    writer.writeBit(true); // 10: legacy ASCII (identical to old writeString)
+    writeVarUint(writer, name.length);
+    for (let i = 0; i < name.length; i++) {
+      writer.writeBits(name.charCodeAt(i), 7);
+    }
+    return;
+  }
+  writer.writeBit(false);
+  const bytes = textEncoder.encode(name);
+  writeVarUint(writer, bytes.length);
+  writer.writeBytes(bytes);
+};
+
+const readDefName = (reader: BitReader): string => {
+  if (!reader.readBit()) {
+    return textDecoder.decode(reader.readBytes(readVarUint(reader)));
+  }
+  if (reader.readBit()) return readClusteredChars(reader);
+  const length = reader.readNumber(7);
+  let result = "";
+  for (let i = 0; i < length; i++) {
+    result += String.fromCharCode(reader.readNumber(7));
+  }
+  return result;
+};
+
 const readString = (reader: BitReader): string => {
   const isAscii = reader.readBit();
   const length = readVarUint(reader);
@@ -253,6 +393,376 @@ const readString = (reader: BitReader): string => {
     return result;
   }
   return textDecoder.decode(reader.readBytes(length));
+};
+
+export type InputFormatKey = "condensed" | "expanded" | "codeline" | "json";
+
+export type InputStateSection =
+  | {
+      format: "condensed" | "codeline" | "json";
+      mode: "overlay";
+      overlay: CondensedOverlay;
+    }
+  | { format: "expanded"; mode: "overlay"; overlay: ExpandedOverlay }
+  | { format: InputFormatKey; mode: "raw"; rawText: string };
+
+const FORMAT_IDS: Record<InputFormatKey, number> = {
+  condensed: 0,
+  expanded: 1,
+  codeline: 2,
+  json: 3,
+};
+
+const FORMATS_BY_ID: InputFormatKey[] = [
+  "condensed",
+  "expanded",
+  "codeline",
+  "json",
+];
+
+const writeCondensedOverlay = (
+  writer: BitWriter,
+  overlay: Extract<CondensedOverlay, { mode: 0 }>
+) => {
+  writeVarUint(writer, overlay.gapOverrides.length);
+  for (const [index, gap] of overlay.gapOverrides) {
+    writeVarUint(writer, index);
+    writeClusteredString(writer, gap);
+  }
+  writer.writeBit(overlay.hasTrailingGap);
+  if (overlay.hasTrailingGap) {
+    writeClusteredString(writer, overlay.trailingGap);
+  }
+  writeVarUint(writer, overlay.spellingOverrides.length);
+  for (const [index, value] of overlay.spellingOverrides) {
+    writeVarUint(writer, index);
+    writeClusteredString(writer, value);
+  }
+};
+
+const readCondensedOverlay = (
+  reader: BitReader
+): Extract<CondensedOverlay, { mode: 0 }> => {
+  const gapCount = readVarUint(reader);
+  const gapOverrides: Array<[number, string]> = [];
+  for (let i = 0; i < gapCount; i++) {
+    gapOverrides.push([readVarUint(reader), readClusteredString(reader)]);
+  }
+  const hasTrailingGap = reader.readBit();
+  const trailingGap = hasTrailingGap ? readClusteredString(reader) : "";
+  const spellingCount = readVarUint(reader);
+  const spellingOverrides: Array<[number, string]> = [];
+  for (let i = 0; i < spellingCount; i++) {
+    spellingOverrides.push([readVarUint(reader), readClusteredString(reader)]);
+  }
+  return {
+    mode: 0,
+    gapOverrides,
+    hasTrailingGap,
+    trailingGap,
+    spellingOverrides,
+  };
+};
+
+const writeExpandedSignatureOptions = (
+  writer: BitWriter,
+  sig: ExpandedSignatureOptions
+) => {
+  const depth = sig.depth;
+  writer.writeBit(depth === null);
+  if (depth !== null) writeVarUint(writer, depth);
+  writer.writeBit(sig.labels);
+  writer.writeBit(sig.arrow === "->");
+  writer.writeBit(sig.hideOperatorWrappers);
+};
+
+const writeExpandedItemName = (
+  writer: BitWriter,
+  item: { name: string; nameRef?: number }
+) => {
+  if (item.nameRef !== undefined) {
+    writer.writeBit(true);
+    writeVarUint(writer, item.nameRef);
+  } else {
+    writer.writeBit(false);
+    writeClusteredString(writer, item.name);
+  }
+};
+
+const writeExpandedOverlay = (writer: BitWriter, overlay: ExpandedOverlay) => {
+  if (overlay.sig) {
+    writer.writeBit(true); // sig-marker
+    writeExpandedSignatureOptions(writer, overlay.sig);
+  } else {
+    writer.writeBit(false);
+  }
+  writeVarUint(writer, overlay.items.length);
+  for (const item of overlay.items) {
+    writer.writeBits(item.kind, 3);
+    if (item.kind === 0 || item.kind === 7) {
+      writeExpandedItemName(writer, item);
+      writer.writeBit(item.head !== null);
+      if (item.head !== null) writeClusteredString(writer, item.head);
+      writer.writeBit(item.tailMode === 1); // tail-mode: 1 = verbatim, 0 = sparse RHS
+      if (item.tailMode === 1) {
+        writeClusteredString(writer, item.tail);
+      } else {
+        writeCondensedOverlay(writer, item.rhsOverlay);
+        writer.writeBit(item.suffix !== "");
+        if (item.suffix !== "") writeClusteredString(writer, item.suffix);
+      }
+    } else if (item.kind === 5) {
+      writeExpandedItemName(writer, item);
+    } else if (item.kind === 6) {
+      writeExpandedItemName(writer, item);
+      writeCondensedOverlay(writer, item.sigOverlay);
+    } else {
+      writeClusteredString(writer, item.text);
+    }
+  }
+  const modeCount = overlay.modes?.length ?? 0;
+  const suffixCount = overlay.sigSuffixes?.size ?? 0;
+  if (modeCount > 0 || suffixCount > 0) {
+    writeVarUint(writer, modeCount);
+    for (const m of overlay.modes ?? []) {
+      if (m.nameRef !== undefined) {
+        writer.writeBits(0b11, 2);
+        writeVarUint(writer, m.nameRef);
+      } else {
+        writeClusteredString(writer, m.name);
+      }
+      writeExpandedSignatureOptions(writer, m.opts);
+      writer.writeBit(Boolean(m.opts.forceUnwrapOperators));
+      writer.writeBit(Boolean(m.opts.noReturnParens));
+      writer.writeBit(Boolean(m.opts.resolveAnys));
+      writer.writeBit(Boolean(m.opts.parenFromFns));
+    }
+    if (suffixCount > 0) {
+      writeVarUint(writer, suffixCount);
+      for (const [name, suffix] of overlay.sigSuffixes!) {
+        writeClusteredString(writer, name);
+        writeClusteredString(writer, suffix);
+      }
+    }
+  }
+};
+
+const readExpandedSignatureOptions = (
+  reader: BitReader
+): ExpandedSignatureOptions => {
+  const unlimited = reader.readBit();
+  const depth = unlimited ? null : readVarUint(reader);
+  const labels = reader.readBit();
+  const arrow = reader.readBit() ? "->" : "→";
+  const hideOperatorWrappers = reader.readBit();
+  return { depth, labels, arrow, hideOperatorWrappers };
+};
+
+/** Read a named item's name: a nameRef ordinal when indexed, else the string. */
+const readExpandedItemName = (
+  reader: BitReader
+): { name: string; nameRef?: number } => {
+  if (reader.readBit()) {
+    return { name: "", nameRef: readVarUint(reader) };
+  }
+  return { name: readClusteredString(reader) };
+};
+
+const readModeName = (reader: BitReader): { name?: string; ref?: number } => {
+  if (!reader.readBit()) return { name: readString(reader) }; // 0: legacy
+  if (reader.readBit()) return { ref: readVarUint(reader) }; // 11: nameRef
+  const length = reader.readNumber(7);
+  let name = "";
+  for (let i = 0; i < length; i++) name += readClusteredChar(reader);
+  return { name };
+};
+
+const readExpandedOverlay = (reader: BitReader): ExpandedOverlay => {
+  const hasSig = reader.readBit();
+  const sig = hasSig ? readExpandedSignatureOptions(reader) : undefined;
+  const itemCount = readVarUint(reader);
+  const items: ExpandedOverlay["items"] = [];
+  for (let i = 0; i < itemCount; i++) {
+    const kind = reader.readNumber(3);
+    if (kind === 0 || kind === 7) {
+      const { name, nameRef } = readExpandedItemName(reader);
+      const hasHead = reader.readBit();
+      const head = hasHead ? readClusteredString(reader) : null;
+      const tailMode = reader.readBit() ? 1 : 0;
+      if (tailMode === 1) {
+        const tail = readClusteredString(reader);
+        items.push({
+          kind,
+          name,
+          ...(nameRef !== undefined ? { nameRef } : {}),
+          head,
+          tailMode: 1,
+          tail,
+        });
+      } else {
+        const rhsOverlay = readCondensedOverlay(reader);
+        const hasSuffix = reader.readBit();
+        const suffix = hasSuffix ? readClusteredString(reader) : "";
+        items.push({
+          kind,
+          name,
+          ...(nameRef !== undefined ? { nameRef } : {}),
+          head,
+          tailMode: 0,
+          rhsOverlay,
+          suffix,
+        });
+      }
+    } else if (kind === 5) {
+      const { name, nameRef } = readExpandedItemName(reader);
+      items.push({
+        kind: 5,
+        name,
+        ...(nameRef !== undefined ? { nameRef } : {}),
+      });
+    } else if (kind === 6) {
+      const { name, nameRef } = readExpandedItemName(reader);
+      items.push({
+        kind: 6,
+        name,
+        ...(nameRef !== undefined ? { nameRef } : {}),
+        sigOverlay: readCondensedOverlay(reader),
+      });
+    } else if (kind === 3) {
+      items.push({ kind: 3, text: readClusteredString(reader) });
+    } else if (kind >= 1 && kind <= 4) {
+      const text = readClusteredString(reader);
+      if (kind === 1) items.push({ kind: 1, text });
+      else if (kind === 2) items.push({ kind: 2, text });
+      else items.push({ kind: 4, text });
+    } else {
+      throw new Error(`Unknown expanded item kind ${kind}`);
+    }
+  }
+  const modes: {
+    name: string;
+    nameRef?: number;
+    opts: ExpandedSignatureOptions;
+  }[] = [];
+  const sigSuffixes = new Map<string, string>();
+  if (!reader.isExhausted()) {
+    const modeCount = readVarUint(reader);
+    for (let i = 0; i < modeCount; i++) {
+      const nameInfo = readModeName(reader);
+      const name = nameInfo.name ?? "";
+      const opts = readExpandedSignatureOptions(reader);
+      const forceUnwrapOperators = reader.readBit();
+      const noReturnParens = reader.readBit();
+      const resolveAnys = reader.readBit();
+      const parenFromFns = reader.readBit();
+      modes.push({
+        name,
+        ...(nameInfo.ref !== undefined ? { nameRef: nameInfo.ref } : {}),
+        opts: {
+          ...opts,
+          forceUnwrapOperators,
+          noReturnParens,
+          resolveAnys,
+          parenFromFns,
+        },
+      });
+    }
+    if (!reader.isExhausted()) {
+      const suffixCount = readVarUint(reader);
+      for (let i = 0; i < suffixCount; i++) {
+        sigSuffixes.set(
+          readClusteredString(reader),
+          readClusteredString(reader)
+        );
+      }
+    }
+  }
+  return {
+    items,
+    ...(sig ? { sig } : {}),
+    ...(modes.length > 0 ? { modes } : {}),
+    ...(sigSuffixes.size > 0 ? { sigSuffixes } : {}),
+  };
+};
+
+const writeInputStateSection = (
+  writer: BitWriter,
+  outputFormat: InputFormatKey | "visual",
+  inputState: InputStateSection
+) => {
+  writer.writeBit(true);
+  const formatStored = inputState.format !== outputFormat;
+  writer.writeBit(formatStored);
+  if (formatStored) {
+    writer.writeBits(FORMAT_IDS[inputState.format], 2);
+  }
+  if (inputState.mode === "overlay") {
+    writer.writeBit(false); // overlay-vs-raw: 0 = token overlay
+    if (inputState.format === "expanded") {
+      writeExpandedOverlay(writer, inputState.overlay);
+    } else {
+      if (inputState.overlay.mode !== 0) {
+        throw new Error("Non-sparse overlay cannot be encoded as mode 0");
+      }
+      writeCondensedOverlay(writer, inputState.overlay);
+    }
+  } else {
+    writer.writeBit(true); // overlay-vs-raw: 1 = raw text
+    writeClusteredString(writer, inputState.rawText);
+  }
+};
+
+export const compressWithInputState = (
+  ast: TypeAST.AST,
+  outputFormat: InputFormatKey | "visual",
+  inputState: InputStateSection
+): string => {
+  const writer = new BitWriter();
+  writeNode(writer, ast, new Map());
+  writeInputStateSection(writer, outputFormat, inputState);
+  return writer.toBase64URL();
+};
+
+export const decodeInputStateFromCompressed = (
+  compressed: string,
+  outputFormat: InputFormatKey | "visual"
+): InputStateSection | null => {
+  const reader = new BitReader(compressed);
+  readNode(reader, []);
+  if (reader.isExhausted()) return null;
+
+  const presence = reader.readBit();
+  if (!presence) {
+    throw new Error("Invalid input-state section: missing presence bit");
+  }
+
+  const formatStored = reader.readBit();
+  let format: InputFormatKey;
+  if (formatStored) {
+    const id = reader.readNumber(2);
+    const key = FORMATS_BY_ID[id];
+    if (key === undefined) throw new Error(`Unknown input format id ${id}`);
+    format = key;
+  } else {
+    if (outputFormat === "visual") {
+      throw new Error(
+        "Input-state section elided its format but output format is visual"
+      );
+    }
+    format = outputFormat;
+  }
+
+  const isRaw = reader.readBit();
+  if (isRaw) {
+    return { format, mode: "raw", rawText: readClusteredString(reader) };
+  }
+  if (format === "expanded") {
+    return { format, mode: "overlay", overlay: readExpandedOverlay(reader) };
+  }
+  if (format === "json") {
+    return { format, mode: "overlay", overlay: readCondensedOverlay(reader) };
+  }
+  return { format, mode: "overlay", overlay: readCondensedOverlay(reader) };
 };
 
 const writeNumericPayload = (
@@ -556,12 +1066,34 @@ const getNicknamesForNode = (node: ASTNode): string[] | undefined => {
   return undefined;
 };
 
+const writeSourceNameIfPresent = (writer: BitWriter, node: ASTNode) => {
+  if (node.type === "Curry") return false;
+  if (node.type === "Operator") {
+    if (node.varName) return false;
+    const sourceName = getOperatorSourceName(node);
+    if (sourceName !== undefined && sourceName !== getOpName(node.opName)) {
+      const nicknames = getNicknamesForNode(node);
+      if (nicknames) {
+        const nicknameIndex = nicknames.indexOf(sourceName);
+        if (nicknameIndex !== -1) {
+          writer.writeBit(true); // has source name
+          writer.writeBit(false); // nickname index encoding
+          writer.writeBits(nicknameIndex, 5);
+          return true;
+        }
+      }
+      writer.writeBit(true); // has source name
+      writer.writeBit(true); // full string encoding
+      writeString(writer, sourceName);
+      return true;
+    }
+  }
+  return false;
+};
+
 const writeNodeMetadata = (writer: BitWriter, node: ASTNode) => {
-  // For Curry nodes: skip saving varName if it matches the auto-generated name.
-  // The decoder can reconstruct it from the operator and arg varNames.
   if (node.varName && node.type === "Curry") {
     resetExpandedVarCounter();
-    // Temporarily strip varName so getVarName computes the auto-generated name
     const savedVarName = node.varName;
     delete (node as { varName?: string }).varName;
     const autoName = getExpandedVarName(node);
@@ -571,6 +1103,8 @@ const writeNodeMetadata = (writer: BitWriter, node: ASTNode) => {
       return;
     }
   }
+
+  if (writeSourceNameIfPresent(writer, node)) return;
 
   writer.writeBit(Boolean(node.varName));
   if (node.varName) {
@@ -591,9 +1125,10 @@ const writeNodeMetadata = (writer: BitWriter, node: ASTNode) => {
 const readNodeMetadata = (reader: BitReader, node: ASTNode) => {
   if (reader.readBit()) {
     const encodingType = reader.readBit();
+    let name: string;
     if (encodingType) {
       // Full string
-      node.varName = readString(reader);
+      name = readString(reader);
     } else {
       // Nickname index
       const nicknames = getNicknamesForNode(node);
@@ -603,7 +1138,12 @@ const readNodeMetadata = (reader: BitReader, node: ASTNode) => {
           `Invalid nickname index ${index} for node type ${node.type}`
         );
       }
-      node.varName = nicknames[index];
+      name = nicknames[index]!;
+    }
+    if (node.type === "Operator") {
+      setOperatorSourceName(node as TypeAST.BaseOperator, name);
+    } else {
+      node.varName = name;
     }
   }
 
@@ -936,8 +1476,17 @@ const writeNode = (
       writeLiteralKind(writer, LiteralKind.NetworkCards);
       writeVarUint(writer, node.definitions.length);
       for (const def of node.definitions) {
-        writeString(writer, def.name);
+        const root = def.node as { varName?: string };
+        const savedRootName = root.varName;
+        delete root.varName;
+        let storedName = def.name;
+        if (def.name !== "") {
+          resetExpandedVarCounter();
+          if (getExpandedVarName(def.node) === def.name) storedName = "";
+        }
+        writeDefName(writer, storedName);
         writeNode(writer, def.node, seen);
+        if (savedRootName !== undefined) root.varName = savedRootName;
       }
       writeNodeMetadata(writer, node);
       return;
@@ -1122,8 +1671,15 @@ const readNode = (
           const defLength = readVarUint(reader);
           const definitions: { name: string; node: ASTNode }[] = [];
           for (let i = 0; i < defLength; i++) {
-            const name = readString(reader);
-            definitions.push({ name, node: readNode(reader, decoded) });
+            const storedName = readDefName(reader);
+            const node = readNode(reader, decoded);
+            let name = storedName;
+            if (name === "") {
+              resetExpandedVarCounter();
+              name = getExpandedVarName(node);
+            }
+            (node as { varName?: string }).varName = name;
+            definitions.push({ name, node });
           }
           node = { type: "NetworkCards", definitions };
           break;
@@ -1214,8 +1770,5 @@ export const ASTToCompressed = (ast: TypeAST.AST): string => {
 export const CompressedToAST = (compressed: string): TypeAST.AST => {
   const reader = new BitReader(compressed);
   const ast = readNode(reader, []);
-  if (!reader.isExhausted()) {
-    throw new Error("Unexpected trailing bits in compressed AST");
-  }
   return ast;
 };

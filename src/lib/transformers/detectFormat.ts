@@ -24,6 +24,7 @@ const typedDefinitionRegex = new RegExp(
 );
 
 export const detectInputFormat = (value: string): TransformerFormatKey => {
+  value = value.trim();
   if (value.includes("\n")) return "expanded";
   if (nicknamePrefixRegex.test(value)) return "expanded";
   if (lambdaDefinitionRegex.test(value)) return "expanded";
