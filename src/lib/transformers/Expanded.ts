@@ -466,17 +466,6 @@ const getInternalName = (node: TypeAST.AST): string | undefined => {
   return undefined;
 };
 
-const isPipeNode = (node: TypeAST.AST): boolean => {
-  if (node.type === "Pipe") return true;
-  const internalName = getInternalName(node);
-  if (internalName === "integrateddynamics:operator_pipe") return true;
-  if (node.type === "Operator") {
-    const n = node.opName;
-    return n === "OPERATOR_PIPE";
-  }
-  return false;
-};
-
 const isApplyNode = (node: TypeAST.AST): boolean => {
   const internalName = getInternalName(node);
   if (
@@ -556,40 +545,16 @@ const getVarName = (node: TypeAST.AST): string => {
         return res;
       }
 
-      if (isPipeNode(base) && args.length === 1) {
-        return `by${capitalize(getVarName(args[0]!))}`;
-      }
-      if (base.type === "Flip" && !base.varName) {
-        if (isPipeNode(base.arg) && args.length === 1) {
-          return `on${capitalize(getVarName(args[0]!))}`;
-        }
-      }
-
-      let name: string;
-      let connector = "By";
-
-      if (base.type === "Flip" && !base.varName) {
-        name = getVarName(base.arg);
-        connector = "On";
-      } else {
-        name = getVarName(base);
-        connector =
-          name.endsWith("On") || name.startsWith("flip") ? "On" : "By";
-      }
-
+      const name = getVarName(base);
       if (args.length === 0) return name;
 
       let res: string;
       if (base.varName) {
-        res = `{${base.varName}}${connector.toLowerCase()}${capitalize(
-          getVarName(args[0]!)
-        )}`;
+        res = `{${base.varName}}by${capitalize(getVarName(args[0]!))}`;
       } else if (base.type === "Curry") {
-        res = `{${getVarName(base)}}${connector.toLowerCase()}${capitalize(
-          getVarName(args[0]!)
-        )}`;
+        res = `{${getVarName(base)}}by${capitalize(getVarName(args[0]!))}`;
       } else {
-        res = `${name}${connector}${capitalize(getVarName(args[0]!))}`;
+        res = `${name}By${capitalize(getVarName(args[0]!))}`;
       }
 
       for (let i = 1; i < args.length; i++) {
