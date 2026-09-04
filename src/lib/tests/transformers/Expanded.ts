@@ -261,11 +261,13 @@ final = apply(numberAdd, var2)
   it("testVariableNamingConventions", () => {
     const ast1 = CodeLineToAST("apply operatorPipe numberIncrement");
     const exp1 = ASTToExpanded(ast1);
-    expect(exp1).toContain("byNumberIncrement ::");
+    expect(exp1).toContain("operatorPipeByNumberIncrement ::");
 
     const ast2 = CodeLineToAST("apply (flip operatorPipe) numberIncrement");
     const exp2 = ASTToExpanded(ast2);
-    expect(exp2).toContain("onNumberIncrement ::");
+    expect(exp2).toContain("flipOperatorPipe ::");
+    expect(exp2).toContain("flipOperatorPipe = operatorFlip(operatorPipe)");
+    expect(exp2).toContain("{flipOperatorPipe}byNumberIncrement ::");
 
     const ast3 = CodeLineToAST("apply (apply numberAdd 5) 10");
     const exp3 = ASTToExpanded(ast3);
@@ -279,7 +281,9 @@ final = apply(numberAdd, var2)
 
     const ast6 = CodeLineToAST("apply (flip numberAdd) 5");
     const exp6 = ASTToExpanded(ast6);
-    expect(exp6).toContain("{flipNumberAdd}on5 ::");
+    expect(exp6).toContain("flipNumberAdd = operatorFlip(numberAdd)");
+    expect(exp6).toContain("{flipNumberAdd}by5 ::");
+    expect(exp6).not.toContain("numberAddOn5");
 
     const ast8 = CodeLineToAST("pipe numberIncrement numberMultiply");
     const exp8 = ASTToExpanded(ast8);
@@ -301,6 +305,32 @@ final = apply(numberAdd, var2)
     const ast11 = CodeLineToAST("flip numberAdd");
     const exp11 = ASTToExpanded(ast11);
     expect(exp11).toContain("flipNumberAdd ::");
+  });
+
+  it("testApplyFlipUsesGenericFByXName", () => {
+    const ast = CodeLineToAST('apply flipNbtGetCompound "State"');
+    const expanded = ASTToExpanded(ast);
+
+    expect(expanded).toContain("flipNbtGetCompound ::");
+    expect(expanded).toContain(
+      "flipNbtGetCompound = operatorFlip(nbtGetCompound)"
+    );
+    expect(expanded).toContain("{flipNbtGetCompound}byString1 ::");
+    expect(expanded).not.toContain("nbtGetCompoundOnString1");
+    expect(expanded).not.toContain("onString1");
+
+    const implicit = ASTToExpanded(CodeLineToAST('flipNbtGetCompound "State"'));
+    expect(implicit).toContain("{flipNbtGetCompound}byString1 ::");
+  });
+
+  it("testApplyNamedFlipVarUsesGenericFByXName", () => {
+    const ast = CodeLineToAST("apply (flip pipe) numberIncrement");
+    const expanded = ASTToExpanded(ast);
+
+    expect(expanded).toContain("flipPipe = operatorFlip(operatorPipe)");
+    expect(expanded).toContain("{flipPipe}byNumberIncrement ::");
+    expect(expanded).not.toContain("onNumberIncrement");
+    expect(expanded).not.toContain("flipPipeByNumberIncrement");
   });
 
   it("testSignatureFormatting", () => {
