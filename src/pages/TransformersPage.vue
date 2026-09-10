@@ -27,22 +27,15 @@ import { detectInputFormat } from "lib/transformers/detectFormat";
 import type { TransformerFormatKey } from "lib/transformers/detectFormat";
 import type { InputStateSection } from "lib/transformers/Compressed";
 import {
-  applyCodeLineOverlay,
-  applyCondensedOverlay,
-  applyExpandedOverlay,
-  applyJsonOverlay,
   computeCodeLineOverlay,
   computeCondensedOverlay,
   computeExpandedOverlay,
   computeJsonOverlay,
   discoverSignatureRestoreModes,
-  resolveExpandedOverlayNames,
   stripAutoCurryVarNames,
 } from "lib/transformers/inputState";
-import {
-  compressWithInputState,
-  decodeInputStateFromCompressed,
-} from "lib/transformers/Compressed";
+import { compressWithInputState } from "lib/transformers/Compressed";
+import { decodeTransformerUrlCode } from "lib/transformers/decodeUrlState";
 
 type FormatKey = TransformerFormatKey;
 type OutputFormatKey = Exclude<FormatKey, "compressed"> | "visual";
@@ -226,10 +219,10 @@ const renderOutput = (format: OutputFormatKey, ast: TypeAST.AST): string => {
   return outputFormatters[format].fromAST(ast);
 };
 
-const updateUrlState = (
+const buildStateUrl = (
   code: string | null,
   format: OutputFormatKey | null = outputFormat.value
-): void => {
+): string => {
   const url = new URL(window.location.href);
 
   if (code) {
@@ -257,7 +250,14 @@ const updateUrlState = (
     url.searchParams.delete("varId");
   }
 
-  window.history.replaceState({}, "", url);
+  return url.toString();
+};
+
+const updateUrlState = (
+  code: string | null,
+  format: OutputFormatKey | null = outputFormat.value
+): void => {
+  window.history.replaceState({}, "", buildStateUrl(code, format));
 };
 
 const SIGNATURE_ARROW_VALUES: ExpandedSignatureOptions["arrow"][] = ["->", "→"];
@@ -444,6 +444,17 @@ const buildUrlCode = (): string | null => {
     : ASTToCompressed(currentAst.value as TypeAST.AST);
 };
 
+const reproUrl = computed<string | undefined>(() => {
+  if (!currentAst.value || !inputText.value.trim()) return undefined;
+  try {
+    const code = buildUrlCode();
+    if (!code) return undefined;
+    return buildStateUrl(code);
+  } catch {
+    return undefined;
+  }
+});
+
 const updateOutputFromAst = (
   ast: TypeAST.AST,
   format: OutputFormatKey = outputFormat.value
@@ -608,54 +619,14 @@ onMounted(async () => {
 
   if (!code) return;
 
-  const ast = stripAutoCurryVarNames(CompressedToAST(code));
+  const { ast, input } = decodeTransformerUrlCode(code, outputFormat.value, {
+    initialVariableId: initialVariableId.value,
+  });
   currentAst.value = ast;
 
-  const inputState = decodeInputStateFromCompressed(code, outputFormat.value);
-  if (inputState) {
-    let rawInput: string;
-    if (inputState.mode === "raw") {
-      rawInput = inputState.rawText;
-    } else {
-      const strippedAst = stripAutoCurryVarNames(ast);
-      if (inputState.format === "expanded") {
-        const decodedSigOpts = inputState.overlay.sig ?? null;
-        const canonicalBase = ASTToExpandedWithSignatureOptions(
-          strippedAst,
-          "Condensed",
-          decodedSigOpts,
-          true
-        );
-        const overlay = resolveExpandedOverlayNames(
-          inputState.overlay,
-          canonicalBase
-        );
-        const modesMap = overlay.modes
-          ? new Map(overlay.modes.map((m) => [m.name, m.opts]))
-          : undefined;
-        const canonicalInput = ASTToExpandedWithSignatureOptions(
-          strippedAst,
-          "Condensed",
-          overlay.sig ?? null,
-          true,
-          modesMap
-        );
-        rawInput = applyExpandedOverlay(canonicalInput, overlay);
-      } else {
-        const canonicalInput =
-          canonicalFormatters[inputState.format].fromAST(strippedAst);
-        if (inputState.format === "codeline") {
-          rawInput = applyCodeLineOverlay(canonicalInput, inputState.overlay);
-        } else if (inputState.format === "json") {
-          rawInput = applyJsonOverlay(canonicalInput, inputState.overlay);
-        } else {
-          rawInput = applyCondensedOverlay(canonicalInput, inputState.overlay);
-        }
-      }
-    }
-
+  if (input !== null) {
     restoringState = true;
-    inputText.value = rawInput;
+    inputText.value = input;
     await nextTick(); // let the (guarded) inputText watcher flush while restoring
     restoringState = false;
     transform(true);
@@ -1077,6 +1048,7 @@ onMounted(async () => {
           :show-step-titles="true"
           operator-preview-mode="pattern"
           force-show-output-card
+          :repro-url="reproUrl"
         />
         <textarea
           v-else

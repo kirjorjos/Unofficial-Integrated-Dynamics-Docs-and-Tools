@@ -3,6 +3,11 @@ import { computed, ref, onMounted, onUnmounted } from "vue";
 import DisplayPanel from "./DisplayPanel.vue";
 import HoverMinecraftTooltip from "./HoverMinecraftTooltip.vue";
 import { getTypeColor } from "pages-lib/visualTransformer";
+import {
+  buildInternalBugIssueUrl,
+  INTERNAL_BUG_REPORT_HINT,
+  isInternalBugMessage,
+} from "lib/issueReporter";
 
 const props = defineProps<{
   text: string;
@@ -10,6 +15,8 @@ const props = defineProps<{
   align?: string;
   typeName?: string;
   typeError?: string;
+  /** URL of the transformers page with this input's compressed state. */
+  reproUrl?: string;
 }>();
 
 const textColor = computed(() => {
@@ -29,6 +36,17 @@ const align = computed(() => {
   }
   return "center";
 });
+
+const errorHref = computed(() => {
+  if (!props.typeError || !isInternalBugMessage(props.typeError)) {
+    return undefined;
+  }
+  return buildInternalBugIssueUrl({ reproUrl: props.reproUrl });
+});
+
+const errorLines = computed(() =>
+  errorHref.value ? [INTERNAL_BUG_REPORT_HINT] : []
+);
 
 const isFullscreen = ref(false);
 
@@ -74,11 +92,12 @@ onUnmounted(() => {
           :align="align"
           :type-name="props.typeName"
         />
-        <div
-          v-if="props.typeError"
-          class="display-panel-error-overlay"
-        >
-          <HoverMinecraftTooltip :title="props.typeError" :lines="[]">
+        <div v-if="props.typeError" class="display-panel-error-overlay">
+          <HoverMinecraftTooltip
+            :title="props.typeError"
+            :lines="errorLines"
+            :href="errorHref"
+          >
             <span class="logic-type-error-icon" />
           </HoverMinecraftTooltip>
         </div>
@@ -98,11 +117,12 @@ onUnmounted(() => {
             :type-name="props.typeName"
             :is-fullscreen="true"
           />
-          <div
-            v-if="props.typeError"
-            class="display-panel-error-overlay"
-          >
-            <HoverMinecraftTooltip :title="props.typeError" :lines="[]">
+          <div v-if="props.typeError" class="display-panel-error-overlay">
+            <HoverMinecraftTooltip
+              :title="props.typeError"
+              :lines="errorLines"
+              :href="errorHref"
+            >
               <span class="logic-type-error-icon" />
             </HoverMinecraftTooltip>
           </div>

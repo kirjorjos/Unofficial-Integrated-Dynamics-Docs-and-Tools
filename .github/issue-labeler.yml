@@ -1,5 +1,9 @@
 bug:
   - '/### What''s wrong\?/'
+  - "/### Please don't modify the auto-filled parts, only the extra info section/"
+
+bug/internal-error:
+  - "/### Please don't modify the auto-filled parts, only the extra info section/"
 
 enhancement:
   - "/### Describe the suggestion/"

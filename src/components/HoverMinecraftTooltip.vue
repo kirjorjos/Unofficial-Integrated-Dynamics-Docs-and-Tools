@@ -5,6 +5,8 @@ import MinecraftTooltip from "./MinecraftTooltip.vue";
 const props = defineProps<{
   title: string;
   lines: string[];
+  /** When set, the tooltip content becomes a link opening this URL in a new tab. */
+  href?: string;
 }>();
 
 const anchor = ref<HTMLElement | null>(null);
@@ -75,7 +77,21 @@ const handleEnter = async () => {
   updatePosition();
 };
 
-const handleLeave = () => {
+const isInsideAnchor = (target: EventTarget | null): boolean =>
+  target instanceof Node && !!anchor.value && anchor.value.contains(target);
+
+const isInsideTooltip = (target: EventTarget | null): boolean =>
+  target instanceof Node && !!tooltip.value && tooltip.value.contains(target);
+
+const handleLeave = (event: MouseEvent) => {
+  if (props.href && isInsideTooltip(event.relatedTarget)) return;
+  visible.value = false;
+  cancelScheduledUpdate();
+  removeViewportListeners();
+};
+
+const handleTooltipLeave = (event: MouseEvent) => {
+  if (isInsideAnchor(event.relatedTarget)) return;
   visible.value = false;
   cancelScheduledUpdate();
   removeViewportListeners();
@@ -113,9 +129,20 @@ onBeforeUnmount(() => {
       v-if="visible"
       ref="tooltip"
       class="logic-card-tooltip logic-card-tooltip-floating"
+      :class="{ 'logic-card-tooltip-interactive': !!props.href }"
       :style="tooltipStyle"
+      @mouseleave="handleTooltipLeave"
     >
-      <MinecraftTooltip :title="props.title" :lines="props.lines" />
+      <a
+        v-if="props.href"
+        class="logic-tooltip-link"
+        :href="props.href"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <MinecraftTooltip :title="props.title" :lines="props.lines" />
+      </a>
+      <MinecraftTooltip v-else :title="props.title" :lines="props.lines" />
     </div>
   </Teleport>
 </template>

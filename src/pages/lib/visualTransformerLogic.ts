@@ -13,6 +13,10 @@ import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 import { ASTtoOperator } from "lib/transformers/Operator";
 import { INTERNAL_BUG_MESSAGE } from "lib/transformers/parseErrors";
 import {
+  setLastInternalBugDetail,
+  setLastInternalBugStep,
+} from "lib/issueReporter";
+import {
   BaseOperator,
   type LogicProgrammerRenderPatternKey,
 } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
@@ -631,6 +635,10 @@ export const getCumulativeStepError = (
     for (const err of nativeErrors) {
       console.error("[iError] Internal error:", err.message);
     }
+    setLastInternalBugDetail(nativeErrors.map((err) => err.message).join("\n"));
+    setLastInternalBugStep(
+      nativeErrors[0]!.variableId - (steps[0]?.variableId ?? 0) + 1
+    );
     return INTERNAL_BUG_MESSAGE;
   }
 
