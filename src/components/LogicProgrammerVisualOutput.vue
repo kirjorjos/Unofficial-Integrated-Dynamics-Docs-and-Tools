@@ -32,6 +32,11 @@ import {
   type LogicProgrammerRenderPatternKey,
 } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
 import { flattenAnonymousBaseOperatorApplication } from "lib/transformers/helpers";
+import { INTERNAL_BUG_MESSAGE } from "lib/transformers/parseErrors";
+import {
+  setLastInternalBugDetail,
+  setLastInternalBugStep,
+} from "lib/issueReporter";
 import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 import tooltipInfo from "lib/generated/integratedDynamicsTooltipInfo.json";
 import { LOGIC_PROGRAMMER_RENDER_PATTERNS } from "./logicProgrammerRenderPatterns";
@@ -153,6 +158,8 @@ const props = defineProps<{
   showStepTitles?: boolean;
   operatorPreviewMode?: "value" | "pattern";
   forceShowOutputCard?: boolean;
+  /** URL of the transformers page with this input's compressed state. */
+  reproUrl?: string;
 }>();
 
 const SHIFT_HELD_TOOLTIP_INFO = tooltipInfo as Record<string, string>;
@@ -1341,7 +1348,11 @@ const getStepDisplayError = (step: VisualStep): string | undefined => {
     for (const err of nativeErrors) {
       console.error("[iError] Internal error:", err.message);
     }
-    return "This is an internal bug, please report to the github";
+    setLastInternalBugDetail(nativeErrors.map((err) => err.message).join("\n"));
+    setLastInternalBugStep(
+      nativeErrors[0]!.variableId - props.startVariableId + 1
+    );
+    return INTERNAL_BUG_MESSAGE;
   }
 
   return undefined;
@@ -2457,6 +2468,7 @@ const getReaderViewValues = (
       :display-panel-color="getDisplayPanelColor(step)"
       :display-panel-align="getDisplayPanelAlign(step)"
       :display-panel-error="getStepDisplayError(step)"
+      :repro-url="props.reproUrl"
     >
       <ReaderGuiView
         v-if="step.sourceType === 'Reader'"

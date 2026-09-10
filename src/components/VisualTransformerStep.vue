@@ -28,6 +28,8 @@ const props = withDefaults(
     displayPanelAlign?: string;
     /** Override display panel error (bypasses shared getCumulativeStepError) */
     displayPanelError?: string;
+    /** URL of the transformers page with this input's compressed state. */
+    reproUrl?: string;
   }>(),
   {}
 );
@@ -89,6 +91,7 @@ const panelError = computed(
         :align="panelAlign"
         :type-name="step.sourceType"
         :type-error="panelError"
+        :repro-url="props.reproUrl"
       />
       <DisplayPanelView
         :text="panelHardenedText"
@@ -96,6 +99,7 @@ const panelError = computed(
         :align="panelAlign"
         :type-name="step.sourceType"
         :type-error="panelError"
+        :repro-url="props.reproUrl"
       />
     </DisplayPanelViewHolder>
   </article>

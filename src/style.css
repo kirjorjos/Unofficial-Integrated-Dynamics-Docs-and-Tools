@@ -827,6 +827,36 @@ button {
   transform-origin: top left;
 }
 
+/* Link tooltips (internal-bug report links) need to receive pointer events
+   and stay open while the pointer travels into them. */
+.logic-card-tooltip-floating.logic-card-tooltip-interactive {
+  pointer-events: auto;
+}
+
+/* Invisible bridge from the tooltip's bottom edge down to its anchor so the
+   pointer can move from the error icon into the clickable tooltip without
+   triggering mouseleave on the anchor. */
+.logic-card-tooltip-interactive::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -10px;
+  height: 10px;
+}
+
+.logic-tooltip-link {
+  display: block;
+  cursor: pointer;
+  color: inherit;
+  text-decoration: none;
+}
+
+.logic-tooltip-link .mc-tooltip-line:last-child {
+  font-style: italic;
+  text-decoration: underline;
+}
+
 .mc-tooltip {
   min-width: max-content;
   max-width: 240px;
