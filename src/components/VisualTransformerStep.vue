@@ -77,6 +77,12 @@ const panelError = computed(
       </div>
     </div>
 
+    <div
+      v-if="step.comment"
+      class="logic-programmer-step-comment"
+      v-text="step.comment"
+    />
+
     <!-- Reader steps render the reader GUI (its own frame shell) in place of
          the logic programmer, with the display panel holder alongside below -->
     <slot v-if="props.step.sourceType === 'Reader'" />

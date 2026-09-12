@@ -716,11 +716,13 @@ export interface ExpandedDisplayOptions {
   refStyle?: "varId" | "refs";
 }
 
-const defComments = (ast: TypeAST.AST): Map<string, string> | null => {
+const defComments = (ast: TypeAST.AST): Map<string, string[]> | null => {
   if (ast.type !== "NetworkCards") return null;
-  const map = new Map<string, string>();
+  const map = new Map<string, string[]>();
   for (const def of ast.definitions) {
-    if (def.comment && def.name) map.set(def.name, def.comment);
+    if (def.comment && def.comment.length > 0 && def.name) {
+      map.set(def.name, def.comment);
+    }
   }
   return map.size > 0 ? map : null;
 };
@@ -846,10 +848,10 @@ export const ASTToExpandedWithSignatureOptions = (
     }
     if (output.includes(assignment)) continue;
 
-    const comment =
+    const commentLines =
       displayOpts.comments && v.varName ? comments?.get(v.varName) : undefined;
-    if (comment && isSingleBlockDefinition(v)) {
-      output.push(comment);
+    if (commentLines && isSingleBlockDefinition(v)) {
+      output.push(...commentLines);
     }
 
     if (displayOpts.signatureLayout === "inline") {
@@ -1178,8 +1180,8 @@ export const ExpandedToAST = (
   const processedLineOrigins: number[] = [];
   const warnings = opts.warnings ?? [];
 
-  let pendingStandaloneComment: string | null = null;
-  const lineComments = new Map<number, string>();
+  let pendingStandaloneComments: string[] = [];
+  const lineComments = new Map<number, string[]>();
 
   const hasTopLevelAssignment = (line: string): boolean =>
     findTopLevelOccurrence(
@@ -1199,6 +1201,7 @@ export const ExpandedToAST = (
     const inside = computeStringRegions(line);
     let cleanLine = "";
     let isSig = false;
+    let trailingComment: string | null = null;
 
     for (let i = 0; i < line.length; i++) {
       const char = line[i]!;
@@ -1208,9 +1211,9 @@ export const ExpandedToAST = (
           const commentText = line.slice(i).trim();
           const trimmed = line.trim();
           if (trimmed.startsWith("--")) {
-            pendingStandaloneComment = commentText;
-          } else if (!isSig && !pendingStandaloneComment) {
-            pendingStandaloneComment = commentText;
+            pendingStandaloneComments.push(commentText);
+          } else if (!isSig) {
+            trailingComment = commentText;
           }
           break; // Ignore comment in the AST
         }
@@ -1245,10 +1248,14 @@ export const ExpandedToAST = (
       const origin = processedLines.length;
       processedLines.push(cleanLine.trim());
       processedLineOrigins.push(lineIdx);
-      if (pendingStandaloneComment !== null) {
-        lineComments.set(origin, pendingStandaloneComment);
+      const correlated =
+        trailingComment === null
+          ? pendingStandaloneComments
+          : [...pendingStandaloneComments, trailingComment];
+      if (correlated.length > 0) {
+        lineComments.set(origin, correlated);
       }
-      pendingStandaloneComment = null;
+      pendingStandaloneComments = [];
     }
   }
 
@@ -1258,7 +1265,7 @@ export const ExpandedToAST = (
   const definitions: {
     name: string;
     node: TypeAST.AST;
-    comment?: string;
+    comment?: string[];
   }[] = [];
   let finalAST: TypeAST.AST | null = null;
 
@@ -1508,9 +1515,11 @@ export const ExpandedToAST = (
     startVariableId,
     names
   );
-  const commentByName = new Map<string, string>();
+  const commentByName = new Map<string, string[]>();
   for (const def of definitions) {
-    if (def.comment) commentByName.set(def.name, def.comment);
+    if (def.comment && def.comment.length > 0) {
+      commentByName.set(def.name, def.comment);
+    }
   }
   for (const def of network.definitions) {
     const comment = commentByName.get(def.name);

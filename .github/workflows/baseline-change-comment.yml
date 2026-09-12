@@ -1,0 +1,143 @@
+name: Comment baseline changes
+
+# Trusted half of the visual-baseline flow. Triggered by the untrusted
+# "Node.js test" run and only reads its artifact — it must never check out or
+# execute pull-request code, since it runs with a write token on the base repo.
+on:
+  workflow_run:
+    workflows: ["Node.js test"]
+    types: [completed]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: baseline-change-comment-${{ github.event.workflow_run.id }}
+  cancel-in-progress: false
+
+jobs:
+  comment:
+    if: >-
+      github.event.workflow_run.event == 'pull_request' &&
+      (github.event.workflow_run.conclusion == 'success' ||
+      github.event.workflow_run.conclusion == 'failure')
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Download baseline-change payload
+        continue-on-error: true
+        uses: actions/download-artifact@v4
+        with:
+          name: baseline-changes
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: payload
+
+      - name: Comment baseline changes on the PR
+        uses: actions/github-script@v7
+        env:
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+          PAYLOAD_FILE: payload/changes.json
+        with:
+          script: |
+            const fs = require("node:fs");
+
+            if (!fs.existsSync(process.env.PAYLOAD_FILE)) {
+              core.notice("No baseline-changes artifact on this run — skipping.");
+              return;
+            }
+
+            let payload;
+            try {
+              payload = JSON.parse(fs.readFileSync(process.env.PAYLOAD_FILE, "utf8"));
+            } catch (err) {
+              core.setFailed(`Unreadable baseline-changes payload: ${err.message}`);
+              return;
+            }
+
+            // Resolve the PR from GitHub's own commit association (base-repo data),
+            // never from anything the fork supplied.
+            const runHeadSha = process.env.HEAD_SHA;
+            const { data: associated } =
+              await github.rest.repos.listPullRequestsAssociatedWithCommit({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                commit_sha: runHeadSha,
+              });
+            const pr =
+              associated.find((item) => item.state === "open") ??
+              associated[0] ??
+              context.payload.workflow_run.pull_requests?.[0] ??
+              null;
+            if (!pr?.number) {
+              core.notice(`No pull request resolved for ${runHeadSha} — skipping.`);
+              return;
+            }
+
+            // The payload came from a run of fork code: keep it as data only, and only
+            // after binding it to the exact PR head commit GitHub reports for this run.
+            if (payload.headSha !== pr.head.sha) {
+              core.notice(
+                `Payload head sha ${payload.headSha} is not PR #${pr.number}'s head ${pr.head.sha} — skipping.`
+              );
+              return;
+            }
+
+            const SAFE_PATH =
+              /^src\/assets\/visual-snapshots\/[A-Za-z0-9._@+-]+\/[A-Za-z0-9._@+-]+\.png$/;
+            const changed = [
+              ...new Set(
+                (Array.isArray(payload.changed) ? payload.changed : []).filter(
+                  (file) => typeof file === "string" && SAFE_PATH.test(file)
+                )
+              ),
+            ].sort();
+
+            if (changed.length === 0) {
+              console.log("No sanitized baseline changes — nothing to comment.");
+              return;
+            }
+
+            const prNumber = pr.number;
+            const marker = "<!-- visual-baselines:changed -->";
+            const body = [
+              marker,
+              "",
+              `Screenshot baselines differ from the base branch at commit \`${runHeadSha.slice(0, 7)}\` (${changed.length} snapshot${changed.length === 1 ? "" : "s"}):`,
+              "",
+              ...changed.map((file) => `- \`${file}\``),
+              "",
+              "The above screenshots differ and will be regenerated and committed via CI on PR merge",
+            ].join("\n");
+
+            const existing = await github.paginate(github.rest.issues.listComments, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              per_page: 100,
+            });
+            const previous = existing
+              .filter(
+                (comment) =>
+                  comment.body?.includes(marker) &&
+                  comment.user?.login === "github-actions[bot]"
+              )
+              .at(-1);
+
+            if (previous) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: previous.id,
+                body,
+              });
+              console.log(`Updated ${marker} comment on PR #${prNumber}.`);
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                body,
+              });
+              console.log(`Created ${marker} comment on PR #${prNumber}.`);
+            }
