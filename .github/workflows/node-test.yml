@@ -9,6 +9,9 @@ jobs:
   test:
     container: mcr.microsoft.com/playwright:v1.62.1-noble
     runs-on: ubuntu-24.04
+    defaults:
+      run:
+        shell: bash
 
     steps:
       - uses: actions/checkout@v5
@@ -39,9 +42,12 @@ jobs:
         continue-on-error: true
         run: npx playwright test --output=test-results --last-failed --update-snapshots
 
+      # Runs even if an earlier step failed: the marker is what tells the
+      # comment workflow (and post-merge sync) which baselines moved, so it must
+      # be produced whatever else goes wrong in this job.
       - name: Detect changed baselines vs base branch
         id: changed
-        if: steps.compare.outcome != 'skipped'
+        if: always()
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: |
@@ -68,7 +74,7 @@ jobs:
         run: exit 1
 
       - name: Upload the changed baseline list for the comment workflow
-        if: steps.changed.outputs.changed == 'true'
+        if: always() && steps.changed.outputs.changed == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: changed-baselines
