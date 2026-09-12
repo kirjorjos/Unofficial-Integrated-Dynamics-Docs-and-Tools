@@ -224,6 +224,29 @@ describe("TestTransformerExpandedDisplayOptions", () => {
     const commented = ExpandedToAST("-- note\nx = 5\nfinal = x");
     expect(ASTToExpanded(commented)).not.toContain("-- note");
   });
+
+  it("testRendersEveryCorrelatedCommentLineWhenEnabled", () => {
+    const commented = ExpandedToAST(
+      "-- defines one\none = 1 -- int1\nfinal = one"
+    );
+    const out = ASTToExpandedWithSignatureOptions(
+      commented,
+      "Condensed",
+      null,
+      false,
+      undefined,
+      { comments: true }
+    );
+    expect(out).toContain("-- defines one");
+    expect(out).toContain("-- int1");
+    expect(out.indexOf("-- defines one")).toBeLessThan(out.indexOf("-- int1"));
+    expect(out.indexOf("-- int1")).toBeLessThan(out.indexOf("one = 1"));
+
+    const reparsed = ExpandedToAST(out) as TypeAST.NetworkCards;
+    expect(reparsed.definitions.find((d) => d.name === "one")!.comment).toEqual(
+      ["-- defines one", "-- int1"]
+    );
+  });
 });
 
 describe("TestTransformerHardeningLogic", () => {
