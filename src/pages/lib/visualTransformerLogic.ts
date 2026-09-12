@@ -71,6 +71,8 @@ export type VisualStep = {
   forceOperatorTabActive?: boolean;
   workspaceMode?: "operatorValue" | "pattern";
   typeError?: string;
+  /** Expanded-form source comment correlated with this step's definition */
+  comment?: string;
 };
 
 export type VisualCardRef = {
@@ -1356,6 +1358,15 @@ export const generateVisualSteps = (
   const seen = new Map<TypeAST.AST, VisualCardRef>();
   let contentSeen = new Map<string, VisualCardRef>();
 
+  const attachDefinitionComment = (
+    card: VisualCardRef,
+    comment: string | undefined
+  ): void => {
+    if (!comment) return;
+    const step = result.find((s) => s.variableId === card.variableId);
+    if (step && step.comment === undefined) step.comment = comment;
+  };
+
   const visit = (ast: TypeAST.AST, forceNew = false): VisualCardRef => {
     if (seen.has(ast)) return seen.get(ast)!;
 
@@ -1407,6 +1418,7 @@ export const generateVisualSteps = (
           contentSeen = new Map();
           lastCard = visit(def.node, true);
           contentSeen = savedContentSeen;
+          attachDefinitionComment(lastCard, def.comment);
         }
         return lastCard!;
       }
