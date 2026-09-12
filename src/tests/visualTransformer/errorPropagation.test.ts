@@ -8,7 +8,7 @@ describe("typeMismatchDetection", () => {
     const result = steps(makeAst.typeMismatch());
     const addStep = result[2]!;
     expect(addStep.typeError).toBe(
-      "Type mismatch: expected Number, got Boolean"
+      "Type mismatch: expected Number, got Booleans"
     );
   });
 
