@@ -539,6 +539,26 @@ describe("TestCodeLineTransformer", () => {
     expect(ASTToCodeLine(CodeLineToAST(out))).toBe(out);
   });
 
+  it("testRefsStylePrefixesRefsParsedFromCodeLine", () => {
+    const ast = CodeLineToAST("numberAdd 5 1; numberAdd 2 3; numberAdd @0 @1");
+    expect(ASTToCodeLine(ast)).toBe(
+      "numberAdd 5 1; numberAdd 2 3; numberAdd 2 5"
+    );
+    const refs = ASTToCodeLine(ast, true, 0, { refStyle: "refs" });
+    expect(refs).toBe("numberAdd 5 1; numberAdd 2 3; numberAdd @0 @1");
+    expect(
+      ASTToCodeLine(CodeLineToAST(refs), true, 0, { refStyle: "refs" })
+    ).toBe(refs);
+  });
+
+  it("testRefsStylePrefixesRefsFromExpandedInput", () => {
+    const ast = ExpandedToAST("one = 1\ntwo = add(one, 1)");
+    expect(ASTToCodeLine(ast)).toBe("1; numberAdd 0 1");
+    expect(ASTToCodeLine(ast, true, 0, { refStyle: "refs" })).toBe(
+      "1; numberAdd @0 1"
+    );
+  });
+
   it("testSingleSegmentReturnsPlainAst", () => {
     expect(CodeLineToAST("add 5 1").type).toBe("Curry");
   });

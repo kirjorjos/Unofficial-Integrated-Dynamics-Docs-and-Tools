@@ -257,14 +257,30 @@ describe("generateVisualSteps", () => {
   });
 
   it("testDuplicateValuesAcrossNetworkDefinitionsGetOwnCards", () => {
+    const duplicateDefs = CodeLineToAST("5; 5") as TypeAST.NetworkCards;
+    const dupResult = steps(duplicateDefs);
+    expect(dupResult.map((s) => s.variableId)).toEqual([0, 1]);
+    expect(dupResult[0]!.output).toBe("5");
+    expect(dupResult[1]!.output).toBe("5");
+  });
+
+  it("testValueInsideDefinitionReusesEqualCard", () => {
     const ast = CodeLineToAST("5; add 5 1") as TypeAST.NetworkCards;
     const result = steps(ast);
-    expect(result.map((s) => s.variableId)).toEqual([0, 1, 2, 3]);
+    expect(result.map((s) => s.variableId)).toEqual([0, 1, 2]);
     expect(result[0]!.output).toBe("5");
-    expect(result[1]!.output).toBe("5");
-    expect(result[2]!.output).toBe("1");
-    expect(result[3]!.sourceType).toBe("Curry");
-    expect(result[3]!.inputs.map((i) => i.variableId)).toEqual([1, 2]);
+    expect(result[1]!.output).toBe("1");
+    expect(result[2]!.sourceType).toBe("Curry");
+    expect(result[2]!.inputs.map((i) => i.variableId)).toEqual([0, 1]);
+  });
+
+  it("testConstantEqualToVariableValueSharesOneCard", () => {
+    const result = steps(makeAst.variableAndEqualConstant());
+    expect(result).toHaveLength(2);
+    expect(result[0]!.output).toBe("one");
+    expect(result[0]!.detail).toBe("1");
+    expect(result[1]!.output).toBe("two");
+    expect(result[1]!.inputs.map((i) => i.variableId)).toEqual([0, 0]);
   });
 
   it("testNetworkCardsDefinitionsRenderInOrderWithAtRefsResolved", () => {
@@ -295,17 +311,18 @@ describe("generateVisualSteps", () => {
       "[1, (add 5 1), (add 2 3)]"
     ) as TypeAST.NetworkCards;
     const result = steps(ast);
-    expect(result).toHaveLength(14);
+    expect(result).toHaveLength(11);
     expect(result[2]!.output).toBe("var0");
     expect(result[5]!.output).toBe("var1");
     expect(result[2]!.inputs.map((i) => i.variableId)).toEqual([0, 1]);
     expect(result[5]!.inputs.map((i) => i.variableId)).toEqual([3, 4]);
-    expect(result[9]!.output).toBe("2");
-    expect(result[10]!.output).toBe("5");
+    expect(result[8]!.output).toBe("list");
+    expect(result[8]!.inputs.map((i) => i.variableId)).toEqual([3, 0]);
     const mapIdx = result.findIndex((s) => s.title === "operatorMap");
-    expect(mapIdx).toBe(12);
-    expect(result[mapIdx]!.inputs.map((i) => i.variableId)).toEqual([8, 11]);
+    expect(mapIdx).toBe(9);
+    expect(result[mapIdx]!.inputs.map((i) => i.variableId)).toEqual([7, 8]);
     const concatIdx = result.findIndex((s) => s.title === "listConcat");
-    expect(result[concatIdx]!.inputs.map((i) => i.variableId)).toEqual([7, 12]);
+    expect(concatIdx).toBe(10);
+    expect(result[concatIdx]!.inputs.map((i) => i.variableId)).toEqual([6, 9]);
   });
 });

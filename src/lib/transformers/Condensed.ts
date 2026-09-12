@@ -26,6 +26,7 @@ import {
   buildNetworkCards,
   getNetworkDefLastCardIds,
   getNetworkSegmentRefs,
+  getRefInfo,
 } from "lib/transformers/NetworkCards";
 import { normalizeSegments } from "lib/transformers/MixedLists";
 import {
@@ -1637,16 +1638,27 @@ export const ASTToCondensed = (
 
   const refString = (node: TypeAST.AST): string | null => {
     const lastCardId = defLastCardIds.get(node);
-    if (lastCardId === undefined) return null;
-    if (outputOpts.refStyle === "refs" && segmentRefs) {
-      const seg = segmentRefs.get(node);
+    const refInfo = getRefInfo(node);
+    if (lastCardId === undefined && refInfo === undefined) return null;
+    const cardId =
+      lastCardId !== undefined
+        ? String(lastCardId)
+        : (node as unknown as { value: string }).value;
+
+    if (outputOpts.refStyle === "refs") {
+      const seg = segmentRefs?.get(node);
       if (seg) {
         return seg.segmentIndex === seg.totalSegments - 1
           ? "@calculation"
           : `@${seg.segmentIndex}`;
       }
+      if (refInfo) {
+        if (refInfo.isFinalCalculation) return "@calculation";
+        if (refInfo.segmentIndex !== undefined)
+          return `@${refInfo.segmentIndex}`;
+      }
     }
-    return String(lastCardId);
+    return cardId;
   };
 
   const stringify = (node: TypeAST.AST, topLevel = false): string => {
