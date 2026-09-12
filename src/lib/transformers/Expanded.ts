@@ -100,13 +100,27 @@ class SignatureFormatter {
     );
   }
 
+  /**
+   * Renders a signature with a nesting budget (`opts.depth`).
+   *
+   * The budget is spent only on `<...>` generic levels - descending into a
+   * `List<X>` element or an `Operator<...>` body. Arrow chains (`a -> b`) are
+   * part of the signature's shape and never consume depth, so a primitive-only
+   * signature renders the same at every depth (there is nothing to collapse).
+   * At budget 0 a root `Operator<...>` unwraps to its bare arrow, nested
+   * `Operator<...>`/`List<X>`/`Any` collapse to their bare names, and
+   * `depth: null` means unlimited (full resolution).
+   */
   formatDepth(
     sig: ParsedSignature,
     opts: ExpandedSignatureOptions,
     isReturnType = false
   ): string {
+    // Clamp at 0: past the budget every node stays collapsed instead of
+    // going negative, which used to render at full resolution again.
     const dec = (d: number | null): number | null =>
-      d === null ? null : d - 1;
+      d === null ? null : Math.max(0, d - 1);
+    const exhausted = (d: number | null): boolean => d !== null && d <= 0;
 
     const tainted = sig.applyTainted;
     const obscuredArity = (
@@ -138,24 +152,24 @@ class SignatureFormatter {
           const innerRendered = render(inner, dec(depth), false, false);
           return isRoot ? innerRendered : `(${innerRendered})`;
         }
-        if (depth === 0) {
+        if (exhausted(depth)) {
           return isRoot ? render(inner, 0, false, false) : "Operator";
         }
         return `Operator<${render(inner, dec(depth), false, false)}>`;
       }
 
       if (node.type === "Function") {
-        const fromRendered = render(node.from, dec(depth), false, false);
+        const fromRendered = render(node.from, depth, false, false);
         const from =
           opts.parenFromFns && node.from.type === "Function"
             ? `(${fromRendered})`
             : fromRendered;
-        const to = render(node.to, dec(depth), true, false);
+        const to = render(node.to, depth, true, false);
         const body = `${from} ${opts.arrow} ${to}`;
         return isReturn && !opts.noReturnParens ? `(${body})` : body;
       }
 
-      if (depth === 0) {
+      if (exhausted(depth)) {
         return node.type;
       }
 

@@ -54,6 +54,81 @@ describe("ExpandedSignatureKnobs", () => {
     }
   });
 
+  const withDepth = (depth: number | null): ExpandedSignatureOptions => ({
+    depth,
+    labels: false,
+    arrow: "->",
+    hideOperatorWrappers: false,
+  });
+
+  const canonSigLine = (
+    raw: string,
+    name: string,
+    opts: ExpandedSignatureOptions
+  ): string => {
+    const ast = ExpandedToAST(raw);
+    const stripped = stripAutoCurryVarNames(
+      CompressedToAST(ASTToCompressed(ast))
+    );
+    const canon = ASTToExpandedWithSignatureOptions(
+      stripped,
+      "Condensed",
+      opts
+    );
+    const line = canon.split("\n").find((l) => l.startsWith(`${name} :: `));
+    expect(line).toBeDefined();
+    return line!.slice(name.length + 4);
+  };
+
+  it("depthSpendsOnlyOnGenericLevelsAndNeverReExpands (issue #94)", () => {
+    const raw = "flipFilter = flip(filter)\nend = flipFilter";
+    expect(canonSigLine(raw, "flipFilter", withDepth(null))).toBe(
+      "Operator<List<Any> -> (Operator<Any -> Boolean> -> List<Any>)>"
+    );
+    // The budget is spent on `<...>` levels only: the root operator's one
+    // generic level at depth 1, then fully collapsed at depth 0.
+    expect(canonSigLine(raw, "flipFilter", withDepth(1))).toBe(
+      "Operator<List -> (Operator -> List)>"
+    );
+    expect(canonSigLine(raw, "flipFilter", withDepth(0))).toBe(
+      "List -> (Operator -> List)"
+    );
+
+    // The exhausted budget used to go negative, which re-expanded the tree: at
+    // depth 1 the signature rendered in full again and depth 3 collapsed more
+    // than depth 2. Raising the depth must never lose detail.
+    let previous = -1;
+    for (const depth of [0, 1, 2, 3, 4, 5, 6, null]) {
+      const rendered = canonSigLine(raw, "flipFilter", withDepth(depth));
+      expect(rendered.length).toBeGreaterThanOrEqual(previous);
+      previous = rendered.length;
+    }
+  });
+
+  it("depthZeroRendersBareNamesAndLeavesPrimitiveSignaturesAlone (issue #94)", () => {
+    const raw = [
+      "getByPipe = pipe(listGet, pipe)",
+      'itemList = [Item("")]',
+      "primitive = numberAdd(1, 2)",
+      "end = primitive",
+    ].join("\n");
+
+    // Depth 0 is bare names: no generic slot survives, including nested ones
+    // inside an arrow chain (the case that used to render `List<Any>`).
+    for (const name of ["getByPipe", "itemList"]) {
+      expect(canonSigLine(raw, name, withDepth(0))).not.toContain("<");
+      expect(canonSigLine(raw, name, withDepth(null))).toContain("<");
+    }
+
+    // A signature with nothing generic to collapse is depth-invariant, so the
+    // knob cannot appear to "do nothing" on an input that has no `<...>`.
+    const primitive = canonSigLine(raw, "primitive", withDepth(null));
+    expect(primitive).toBe("Number");
+    for (const depth of [0, 1, 2, 3, 6]) {
+      expect(canonSigLine(raw, "primitive", withDepth(depth))).toBe(primitive);
+    }
+  });
+
   it("byteMatchingSignatureLinesAreElidedIntoKind5Items", () => {
     const raw = 'itemList :: List\nitemList = [Item("")]';
     const ast = ExpandedToAST(raw);
@@ -182,6 +257,18 @@ describe("ExpandedSignatureKnobs", () => {
     expect(expanded).not.toContain("byAnyEquals");
   });
 
+  // A full `Any`-form signature keeps its generic levels, so it needs the
+  // hide-wrappers + full-resolution combo to byte-match. (Before issue #94's
+  // depth fix, DEPTH0's root unwrap happened to render this line verbatim
+  // because the exhausted depth counter went negative and re-expanded the
+  // nested operators - see the depth ladder test in Expanded.test.ts.)
+  const HIDE_WRAPPERS_FULL: ExpandedSignatureOptions = {
+    depth: null,
+    labels: false,
+    arrow: "->",
+    hideOperatorWrappers: true,
+  };
+
   it("aNicknameBasedCurryDefByteMatchesItsTunedCanonicalSigLine", () => {
     const raw =
       "byEquals :: Operator<Any -> Boolean -> Any> -> Operator<Any -> Any>\nbyEquals = apply(pipe, equals)\nx = byEquals";
@@ -192,12 +279,14 @@ describe("ExpandedSignatureKnobs", () => {
     const canon = ASTToExpandedWithSignatureOptions(
       stripped,
       "Condensed",
-      DEPTH0
+      HIDE_WRAPPERS_FULL
     );
-    expect(canon).toContain("byEquals :: ");
+    expect(canon).toContain(
+      "byEquals :: Operator<Any -> Boolean -> Any> -> Operator<Any -> Any>"
+    );
     expect(canon).not.toContain("byAnyEquals");
 
-    const result = computeExpandedOverlay(raw, canon, DEPTH0);
+    const result = computeExpandedOverlay(raw, canon, HIDE_WRAPPERS_FULL);
     expect(result.mode).toBe(0);
     if (result.mode !== 0) return;
     expect(result.overlay.items.some((it) => it.kind === 7)).toBe(true);

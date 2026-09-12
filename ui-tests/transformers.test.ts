@@ -510,4 +510,38 @@ test.describe("transformersPageInputStateRestore", () => {
       ].join("\n")
     );
   });
+
+  test("testSignatureDepthSettingCollapsesGenericLevels", async ({ page }) => {
+    // Issue #94: the depth control used to leave the output untouched (the
+    // exhausted counter went negative and re-expanded at full resolution).
+    const input = "flipFilter = flip(filter)\nend = flipFilter";
+    await runTransform(page, input, "expanded");
+    await page.locator("summary.settings-summary").click();
+
+    const viewer = page.locator(".expanded-output-viewer");
+    const depth = page.locator('input[aria-label="Signature depth"]');
+    const generics = viewer.locator(".angle-group");
+
+    // Full resolution: root operator wrapper plus every nested generic slot.
+    await expect(viewer).toContainText(
+      "Operator<List<Any> → (Operator<Any → Boolean> → List<Any>)>"
+    );
+    const fullCount = await generics.count();
+    expect(fullCount).toBeGreaterThan(0);
+
+    // One generic level: only the root operator's own `<...>` survives.
+    await depth.fill("1");
+    await expect(viewer).toContainText("Operator<List → (Operator → List)>");
+    await expect(generics).toHaveCount(2);
+
+    // Depth 0 is bare names: the root operator unwraps to its bare arrow and
+    // no generic slot survives at all.
+    await depth.fill("0");
+    await expect(viewer).toContainText("List → (Operator → List)");
+    await expect(generics).toHaveCount(0);
+
+    // Back to unlimited.
+    await depth.fill("-1");
+    await expect(generics).toHaveCount(fullCount);
+  });
 });
