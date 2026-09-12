@@ -38,6 +38,7 @@ jobs:
         env:
           HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
           PAYLOAD_FILE: payload/changes.json
+          WORKFLOW_RUN_PR: ${{ github.event.workflow_run.pull_requests[0].number }}
         with:
           script: |
             const fs = require("node:fs");
@@ -58,6 +59,7 @@ jobs:
             // Resolve the PR from GitHub's own commit association (base-repo data),
             // never from anything the fork supplied.
             const runHeadSha = process.env.HEAD_SHA;
+            const workflowRunPr = process.env.WORKFLOW_RUN_PR;
             const { data: associated } =
               await github.rest.repos.listPullRequestsAssociatedWithCommit({
                 owner: context.repo.owner,
@@ -67,7 +69,7 @@ jobs:
             const pr =
               associated.find((item) => item.state === "open") ??
               associated[0] ??
-              context.payload.workflow_run.pull_requests?.[0] ??
+              (workflowRunPr ? associated.find((item) => item.number === parseInt(workflowRunPr)) : null) ??
               null;
             if (!pr?.number) {
               core.notice(`No pull request resolved for ${runHeadSha} — skipping.`);
