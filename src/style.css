@@ -526,6 +526,14 @@ button {
   overflow-wrap: anywhere;
 }
 
+.logic-programmer-step-comment {
+  font-size: 0.84rem;
+  font-style: italic;
+  color: #5b7a86;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
 .logic-programmer-frame-shell {
   width: calc(256px * 2);
   height: calc(240px * 2);
