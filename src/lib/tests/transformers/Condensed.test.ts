@@ -8,6 +8,7 @@ import {
   CondensedToAST,
   tokenize,
 } from "lib/transformers/Condensed";
+import { ExpandedToAST } from "lib/transformers/Expanded";
 
 describe("TestCondensedTransformer", () => {
   it("testTokenizePrimitives", () => {
@@ -675,6 +676,28 @@ describe("TestCondensedTransformer", () => {
       "numberAdd(5, 1); numberAdd(2, 3); operatorMap(NetworkReader.variableValueById, [2, 5])"
     );
     expect(ASTToCondensed(CondensedToAST(out))).toBe(out);
+  });
+
+  it("testRefsStylePrefixesRefsParsedFromCondensed", () => {
+    const ast = CondensedToAST(
+      "numberAdd(5, 1); numberAdd(2, 3); numberAdd(@0, @1)"
+    );
+    expect(ASTToCondensed(ast)).toBe(
+      "numberAdd(5, 1); numberAdd(2, 3); numberAdd(2, 5)"
+    );
+    const refs = ASTToCondensed(ast, true, 0, false, { refStyle: "refs" });
+    expect(refs).toBe("numberAdd(5, 1); numberAdd(2, 3); numberAdd(@0, @1)");
+    expect(
+      ASTToCondensed(CondensedToAST(refs), true, 0, false, { refStyle: "refs" })
+    ).toBe(refs);
+  });
+
+  it("testRefsStylePrefixesRefsFromExpandedInput", () => {
+    const ast = ExpandedToAST("one = 1\ntwo = add(one, 1)");
+    expect(ASTToCondensed(ast)).toBe("1; numberAdd(0, 1)");
+    expect(ASTToCondensed(ast, true, 0, false, { refStyle: "refs" })).toBe(
+      "1; numberAdd(@0, 1)"
+    );
   });
 
   it("testSingleSegmentReturnsPlainAst", () => {

@@ -151,16 +151,31 @@ export const countCards = (
   }
 };
 
+export interface ResolvedRefInfo {
+  segmentIndex?: number;
+  isFinalCalculation: boolean;
+}
+
+const REF_INFO = "__resolvedRef";
+
+export const getRefInfo = (node: TypeAST.AST): ResolvedRefInfo | undefined =>
+  (node as unknown as Record<string, ResolvedRefInfo | undefined>)[REF_INFO];
+
 const resolveVarRefs = (
   node: TypeAST.AST,
-  resolve: (refName: string) => string
+  resolve: (refName: string) => { id: string; info: ResolvedRefInfo }
 ): void => {
   if (isVarRefNode(node)) {
-    const id = resolve(node.name);
+    const { id, info } = resolve(node.name);
     (node as unknown as { type: string; value?: string; name?: string }).type =
       "Integer";
     (node as unknown as { value?: string }).value = id;
     delete (node as unknown as { name?: string }).name;
+    Object.defineProperty(node, REF_INFO, {
+      value: info,
+      enumerable: false,
+      configurable: true,
+    });
     return;
   }
 
@@ -252,13 +267,20 @@ export const buildNetworkCards = (
   const seen = new Set<TypeAST.AST>();
   const prefixSums: number[] = [];
   let cumulative = 0;
+  const finalSegmentDefIndex = segmentFlatIndex[segments.length - 1];
 
   for (let i = 0; i < definitions.length; i++) {
     const definition = definitions[i]!;
     resolveVarRefs(definition.node, (refName) => {
       const index = resolveRefIndex(refName, i);
       const id = startVariableId + prefixSums[index]! - 1;
-      return String(id);
+      return {
+        id: String(id),
+        info: {
+          segmentIndex: definitions[index]!.segmentIndex,
+          isFinalCalculation: index === finalSegmentDefIndex,
+        },
+      };
     });
     const count = countCards(definition.node, seen, new Set());
     cumulative += count;

@@ -1,5 +1,8 @@
 import { CodeLineToAST } from "lib/transformers/CodeLine";
-import { resetExpandedVarCounter } from "lib/transformers/Expanded";
+import {
+  ExpandedToAST,
+  resetExpandedVarCounter,
+} from "lib/transformers/Expanded";
 import { globalMap } from "lib/HelperClasses/TypeMap";
 import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 import { generateVisualSteps } from "pages-lib/visualTransformerLogic";
@@ -28,6 +31,8 @@ export const makeAst = {
   stringVal: (): TypeAST.AST => CodeLineToAST('"hello"'),
   boolVal: (): TypeAST.AST => CodeLineToAST("true"),
   numVal: (): TypeAST.AST => CodeLineToAST("42"),
+  variableAndEqualConstant: (): TypeAST.AST =>
+    ExpandedToAST("one = 1\ntwo = add(one, 1)"),
   doubleVal: (): TypeAST.AST => CodeLineToAST("1.5"),
   operatorNode: (): TypeAST.AST => CodeLineToAST("numberIncrement"),
   reader: (): TypeAST.AST =>

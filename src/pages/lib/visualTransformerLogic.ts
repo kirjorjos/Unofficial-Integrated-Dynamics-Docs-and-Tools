@@ -1354,7 +1354,7 @@ export const generateVisualSteps = (
 
   const result: VisualStep[] = [];
   const seen = new Map<TypeAST.AST, VisualCardRef>();
-  let contentSeen = new Map<string, VisualCardRef>();
+  const contentSeen = new Map<string, VisualCardRef>();
 
   const visit = (ast: TypeAST.AST, forceNew = false): VisualCardRef => {
     if (seen.has(ast)) return seen.get(ast)!;
@@ -1403,10 +1403,7 @@ export const generateVisualSteps = (
       case "NetworkCards": {
         let lastCard: VisualCardRef | undefined;
         for (const def of ast.definitions) {
-          const savedContentSeen = contentSeen;
-          contentSeen = new Map();
           lastCard = visit(def.node, true);
-          contentSeen = savedContentSeen;
         }
         return lastCard!;
       }
