@@ -389,6 +389,28 @@ test.describe("transformersPageInputStateRestore", () => {
     ).toHaveValue(input);
   });
 
+  test("testReloadRestoresMultilineCondensedInput", async ({ page }) => {
+    const input = "numberAdd(\n  numberAdd(1, 2),\n  3\n)";
+    await runTransformReload(page, input, "condensed");
+    await expect(
+      page.locator('textarea[aria-label="Transformer input"]')
+    ).toHaveValue(input);
+    await expect(page.locator('textarea[aria-label="Condensed"]')).toHaveValue(
+      "numberAdd(numberAdd(1, 2), 3)"
+    );
+  });
+
+  test("testReloadRestoresMultilineCodeLineInput", async ({ page }) => {
+    const input = "numberAdd\n  (numberAdd 1 2)\n  3";
+    await runTransformReload(page, input, "codeline");
+    await expect(
+      page.locator('textarea[aria-label="Transformer input"]')
+    ).toHaveValue(input);
+    await expect(page.locator('textarea[aria-label="Code Line"]')).toHaveValue(
+      "numberAdd (numberAdd 1 2) 3"
+    );
+  });
+
   test("testReloadRestoresCodeLineInputWithOuterWhitespace", async ({
     page,
   }) => {
