@@ -1800,10 +1800,22 @@ const steps = computed<VisualStep[]>(() => {
   const seen = new Map<TypeAST.AST, VisualCardRef>();
   let contentSeen = new Map<string, VisualCardRef>();
 
+  const toStepComment = (
+    comments: string[] | undefined
+  ): string | undefined => {
+    if (!comments) return undefined;
+    const text = comments
+      .map((line) => line.replace(/^--\s*/, "").trim())
+      .filter((line) => line !== "")
+      .join("\n");
+    return text === "" ? undefined : text;
+  };
+
   const attachDefinitionComment = (
     card: VisualCardRef,
-    comment: string | undefined
+    comments: string[] | undefined
   ): void => {
+    const comment = toStepComment(comments);
     if (!comment) return;
     const step = result.find((s) => s.variableId === card.variableId);
     if (step && step.comment === undefined) step.comment = comment;
