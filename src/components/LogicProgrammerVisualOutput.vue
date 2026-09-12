@@ -74,6 +74,8 @@ type VisualStep = {
   forceOperatorTabActive?: boolean;
   workspaceMode?: "operatorValue" | "pattern";
   typeError?: string;
+  /** Expanded-form source comment correlated with this step's definition */
+  comment?: string;
 };
 
 type VisualCardRef = {
@@ -138,13 +140,13 @@ const LOGIC_PROGRAMMER_TYPE_COLORS: Record<string, ValueTypeColor> = {
   List: { primary: "#af0301" },
   Operator: { primary: "#2be72f" },
   NBT: { primary: "#00aaaa" },
-  Block: { primary: "#f3f3f3" },
-  Item: { primary: "#f3f3f3" },
-  Entity: { primary: "#f3f3f3" },
-  Fluid: { primary: "#f3f3f3" },
-  Ingredients: { primary: "#f3f3f3" },
-  Recipe: { primary: "#f3f3f3" },
-  Null: { primary: "#f0f0f0" },
+  Block: { primary: "#aaaaaa" },
+  Item: { primary: "#aaaaaa" },
+  Entity: { primary: "#aaaaaa" },
+  Fluid: { primary: "#aaaaaa" },
+  Ingredients: { primary: "#aaaaaa" },
+  Recipe: { primary: "#aaaaaa" },
+  Null: { primary: "#ff55ff" },
 };
 
 const getTypeColor = (typeName: string): string => {
@@ -1798,6 +1800,15 @@ const steps = computed<VisualStep[]>(() => {
   const seen = new Map<TypeAST.AST, VisualCardRef>();
   let contentSeen = new Map<string, VisualCardRef>();
 
+  const attachDefinitionComment = (
+    card: VisualCardRef,
+    comment: string | undefined
+  ): void => {
+    if (!comment) return;
+    const step = result.find((s) => s.variableId === card.variableId);
+    if (step && step.comment === undefined) step.comment = comment;
+  };
+
   const visit = (ast: TypeAST.AST, forceNew = false): VisualCardRef => {
     if (seen.has(ast)) return seen.get(ast)!;
 
@@ -1855,6 +1866,7 @@ const steps = computed<VisualStep[]>(() => {
           contentSeen = new Map();
           lastCard = visit(def.node, true);
           contentSeen = savedContentSeen;
+          attachDefinitionComment(lastCard, def.comment);
         }
         return lastCard!;
       }
