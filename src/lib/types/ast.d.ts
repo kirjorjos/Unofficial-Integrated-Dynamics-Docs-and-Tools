@@ -106,7 +106,8 @@ namespace TypeAST {
       name: string;
       node: AST;
       segmentIndex?: number;
-      comment?: string;
+      /** Source comment lines correlated with this definition, `--` marker included */
+      comment?: string[];
     }[];
     varName?: string;
   };
