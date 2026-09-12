@@ -17,7 +17,7 @@ describe("typeMismatchDetection", () => {
     expect(result.every((s) => s.typeError === undefined)).toBe(true);
   });
 
-  it("testDoesNotFlagSerializerStepsWithoutTypeCheck", () => {
+  it("testDoesNotFlagSerializerStepsWithoutTypeChecks", () => {
     const result = steps(makeAst.flip());
     expect(result.every((s) => s.typeError === undefined)).toBe(true);
   });
