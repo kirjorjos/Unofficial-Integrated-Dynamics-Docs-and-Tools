@@ -23,6 +23,14 @@ describe("TestFormatDetection", () => {
     ['{"a": 1}', "json"],
     ["apply(add, 1, 2)", "condensed"],
     ['stringConcat("a", "b")', "condensed"],
+    ["numberAdd(\n  numberAdd(1, 2),\n  3\n)", "condensed"],
+    ["\n\n  numberAdd(\n  1,\n  2\n)\n", "condensed"],
+    ["numberAdd\n  (numberAdd 1 2)\n  3", "codeline"],
+    ["apply add 1 2\n", "codeline"],
+    ["x = 5\ny = numberAdd(x, 1)", "expanded"],
+    ["-- comment\n\nx = 5\n", "expanded"],
+    ["var1 :: A -> B\nvar1 = 5", "expanded"],
+    ['stringConcat(\n  "a=b",\n  "c"\n)', "condensed"],
   ] as const)("detectInputFormat%jReturns%s", (input, expected) => {
     expect(detectInputFormat(input)).toBe(expected);
   });
@@ -59,5 +67,27 @@ describe("TestFormatDetection", () => {
   it("detectedCodelineCondensedInputsStillParseInTheirOwnFormats", () => {
     expect(CondensedToAST("apply(add, 1, 2)")).toBeTruthy();
     expect(CodeLineToAST("apply add 1 2")).toBeTruthy();
+  });
+
+  it("detectedMultilineInputsParseLikeTheirSingleLineForm", () => {
+    const condensed = "numberAdd(\n  numberAdd(1, 2),\n  3\n)";
+    expect(detectInputFormat(condensed)).toBe("condensed");
+    expect(CondensedToAST(condensed)).toEqual(
+      CondensedToAST("numberAdd(numberAdd(1, 2), 3)")
+    );
+
+    const codeline = "numberAdd\n  (numberAdd 1 2)\n  3";
+    expect(detectInputFormat(codeline)).toBe("codeline");
+    expect(CodeLineToAST(codeline)).toEqual(
+      CodeLineToAST("numberAdd (numberAdd 1 2) 3")
+    );
+  });
+
+  it("detectedMultilineExpressionKeepsEqualsInsideStringsFromLookingExpanded", () => {
+    const input = 'stringConcat(\n  "a=b",\n  "c"\n)';
+    expect(detectInputFormat(input)).toBe("condensed");
+    expect(CondensedToAST(input)).toEqual(
+      CondensedToAST('stringConcat("a=b", "c")')
+    );
   });
 });

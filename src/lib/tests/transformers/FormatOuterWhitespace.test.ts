@@ -10,6 +10,11 @@ describe("TestFormatOuterWhitespaceTolerance", () => {
       ["\n\n\tnumberAdd(1, 2)\n\n", "numberAdd(1, 2)"],
       ["  \n  apply(add, 1, 2)  \t\n  ", "apply(add, 1, 2)"],
       ['   "hello" \t ', '"hello"'],
+      [
+        "numberAdd(\n  numberAdd(1, 2),\n  3\n)",
+        "numberAdd(numberAdd(1, 2), 3)",
+      ],
+      ['stringConcat(\n  "a=b",\n  "c"\n)', 'stringConcat("a=b", "c")'],
     ];
 
     it.each(cases)("parsesUntrimmed%jLikeTrimmed%j", (wrapped, clean) => {
@@ -34,6 +39,7 @@ describe("TestFormatOuterWhitespaceTolerance", () => {
       ["   apply add 1 2  ", "apply add 1 2"],
       ["\n\n\tapply add 1 2\n\n", "apply add 1 2"],
       ['  \n  stringConcat "a" "b"  \n  ', 'stringConcat "a" "b"'],
+      ["numberAdd\n  (numberAdd 1 2)\n  3", "numberAdd (numberAdd 1 2) 3"],
     ];
 
     it.each(cases)("parsesUntrimmed%jLikeTrimmed%j", (wrapped, clean) => {
