@@ -510,4 +510,31 @@ test.describe("transformersPageInputStateRestore", () => {
       ].join("\n")
     );
   });
+
+  test("testSignatureDepthSettingCollapsesGenericLevels", async ({ page }) => {
+    const input = "flipFilter = flip(filter)\nend = flipFilter";
+    await runTransform(page, input, "expanded");
+    await page.locator("summary.settings-summary").click();
+
+    const viewer = page.locator(".expanded-output-viewer");
+    const depth = page.locator('input[aria-label="Signature depth"]');
+    const generics = viewer.locator(".angle-group");
+
+    await expect(viewer).toContainText(
+      "Operator<List<Any> → (Operator<Any → Boolean> → List<Any>)>"
+    );
+    const fullCount = await generics.count();
+    expect(fullCount).toBeGreaterThan(0);
+
+    await depth.fill("1");
+    await expect(viewer).toContainText("Operator<List → (Operator → List)>");
+    await expect(generics).toHaveCount(2);
+
+    await depth.fill("0");
+    await expect(viewer).toContainText("List → (Operator → List)");
+    await expect(generics).toHaveCount(0);
+
+    await depth.fill("-1");
+    await expect(generics).toHaveCount(fullCount);
+  });
 });

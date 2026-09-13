@@ -106,7 +106,7 @@ namespace TypeAST {
       name: string;
       node: AST;
       segmentIndex?: number;
-      comment?: string;
+      comment?: string[];
     }[];
     varName?: string;
   };
