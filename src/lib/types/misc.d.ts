@@ -5,6 +5,7 @@ import type { Fluid as FluidType } from "lib/IntegratedDynamicsClasses/Fluid";
 import type { Entity as EntityType } from "lib/IntegratedDynamicsClasses/Entity";
 import type { iOperatorRegistry } from "lib/IntegratedDynamicsClasses/operators/iOperatorRegistry";
 import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
+import type { ReaderAspects } from "lib/IntegratedDynamicsClasses/readers/ReaderBase";
 
 declare global {
   type TypeTypeMap = {
@@ -28,4 +29,6 @@ declare global {
   type jsonData = string | number | boolean | null | jsonObject | jsonArray;
   type jsonObject = { [key: string]: jsonData };
   type jsonArray = jsonData[];
+
+  type AspectKey = keyof ReaderAspects;
 }

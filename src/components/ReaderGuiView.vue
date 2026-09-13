@@ -35,25 +35,25 @@ const READER_TITLES: Record<string, string> = {
   audio: "Audio Reader",
 };
 
-const getTypeName = (aspectKey: string): string =>
-  props.reader.aspects[aspectKey]?.outputType ?? "Any";
+const getTypeName = (aspectKey: AspectKey): string =>
+  props.reader.aspects[aspectKey]!!.outputType;
 
-const getAspectName = (aspectKey: string): string =>
-  props.reader.aspects[aspectKey]?.fullDisplayName ?? aspectKey;
+const getAspectName = (aspectKey: AspectKey): string =>
+  props.reader.aspects[aspectKey]!!.fullDisplayName;
 
 const STRING_RED = LOGIC_PROGRAMMER_TYPE_COLORS["String"]?.primary ?? "#fa0a0d";
 
-const hasTypeError = (aspectKey: string): boolean =>
+const hasTypeError = (aspectKey: AspectKey): boolean =>
   aspectKey === props.focusedAspect && !!props.typeError;
 
-const getTypeColor = (aspectKey: string): string => {
+const getTypeColor = (aspectKey: AspectKey): string => {
   if (hasTypeError(aspectKey)) return STRING_RED;
   return (
     LOGIC_PROGRAMMER_TYPE_COLORS[getTypeName(aspectKey)]?.primary ?? "#f3f3f3"
   );
 };
 
-const getAspectDefaultValue = (aspectKey: string): string =>
+const getAspectDefaultValue = (aspectKey: AspectKey): string =>
   getReaderAspectDefaultValue(props.reader, aspectKey);
 
 const getSmoothenedColor = (hex: string): string => {
@@ -65,14 +65,14 @@ const getSmoothenedColor = (hex: string): string => {
   return `rgb(${channels.join(", ")})`;
 };
 
-const getAspectValue = (aspectKey: string): string => {
+const getAspectValue = (aspectKey: AspectKey): string => {
   if (hasTypeError(aspectKey)) return "ERROR";
   return props.values?.[aspectKey] ?? getAspectDefaultValue(aspectKey);
 };
 
-const getAspectHasSettings = (aspectKey: string): boolean => {
-  const settings = props.reader.aspects[aspectKey]?.settings;
-  return !!settings && Object.keys(settings).length > 0;
+const getAspectHasSettings = (aspectKey: AspectKey): boolean => {
+  const settings = props.reader.aspects[aspectKey]!!.settings;
+  return Object.keys(settings).length > 0;
 };
 
 const allAspectKeys = computed(() => Object.keys(props.reader.aspects));
@@ -82,8 +82,6 @@ const visibleAspects = computed(() => {
     const idx = allAspectKeys.value.indexOf(props.focusedAspect);
     if (idx >= 0) return [props.focusedAspect];
   }
-  // Show up to PAGE_SIZE aspects from the scroll position
-  // For simplicity in static rendering, show first PAGE_SIZE when unfocused
   return allAspectKeys.value.slice(0, PAGE_SIZE);
 });
 
@@ -91,15 +89,38 @@ const totalRows = computed(() =>
   props.focusedAspect ? 1 : allAspectKeys.value.length
 );
 
-const getAspectIconPath = (aspectKey: string): string | null => {
-  const icon = props.reader.aspects[aspectKey]?.icon;
+const getAspectIconPath = (aspectKey: AspectKey): string | null => {
+  const icon = props.reader.aspects[aspectKey]!!.icon;
   return icon ? `aspect/read/${icon}.png` : null;
+};
+
+const getOutputTypeIconPath = (aspectKey: AspectKey): string => {
+  const typeName = props.reader.aspects[aspectKey]!!.outputType;
+  const definedType = [
+    "Any",
+    "Boolean",
+    "Double",
+    "Integer",
+    "List",
+    "Long",
+    "Named",
+    "NBT",
+    "Nullable",
+    "Number",
+    "Object",
+    "Operator",
+    "String",
+  ].includes(typeName ?? "");
+  return typeName && definedType
+    ? `valuetype/${typeName.toLowerCase()}.png`
+    : "valuetype/object.png";
 };
 
 const cardStyle = (aspectKey: string): Record<string, string> => {
   const iconPath = getAspectIconPath(aspectKey);
   const layers = [
-    iconPath ? publicAsset(iconPath) : publicAsset("valuetype/any.png"),
+    publicAsset(getOutputTypeIconPath(aspectKey)),
+    publicAsset(iconPath!!),
     publicAsset("item/variable.png"),
   ];
   return { backgroundImage: layers.map((u) => `url('${u}')`).join(", ") };
