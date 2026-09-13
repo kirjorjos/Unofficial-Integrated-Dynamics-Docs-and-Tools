@@ -106,7 +106,8 @@ class SignatureFormatter {
     isReturnType = false
   ): string {
     const dec = (d: number | null): number | null =>
-      d === null ? null : d - 1;
+      d === null ? null : Math.max(0, d - 1);
+    const exhausted = (d: number | null): boolean => d !== null && d <= 0;
 
     const tainted = sig.applyTainted;
     const obscuredArity = (
@@ -138,24 +139,24 @@ class SignatureFormatter {
           const innerRendered = render(inner, dec(depth), false, false);
           return isRoot ? innerRendered : `(${innerRendered})`;
         }
-        if (depth === 0) {
+        if (exhausted(depth)) {
           return isRoot ? render(inner, 0, false, false) : "Operator";
         }
         return `Operator<${render(inner, dec(depth), false, false)}>`;
       }
 
       if (node.type === "Function") {
-        const fromRendered = render(node.from, dec(depth), false, false);
+        const fromRendered = render(node.from, depth, false, false);
         const from =
           opts.parenFromFns && node.from.type === "Function"
             ? `(${fromRendered})`
             : fromRendered;
-        const to = render(node.to, dec(depth), true, false);
+        const to = render(node.to, depth, true, false);
         const body = `${from} ${opts.arrow} ${to}`;
         return isReturn && !opts.noReturnParens ? `(${body})` : body;
       }
 
-      if (depth === 0) {
+      if (exhausted(depth)) {
         return node.type;
       }
 
