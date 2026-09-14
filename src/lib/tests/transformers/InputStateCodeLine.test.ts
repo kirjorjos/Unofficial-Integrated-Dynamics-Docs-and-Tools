@@ -45,6 +45,8 @@ describe("TestCodeLineOverlay", () => {
       "add 1  2",
       "1",
       "[1, 2, 3]",
+      "add 1 2 -- note", // comment falls back to verbatim raw text
+      'add 1 2 -- "open string',
     ];
 
     it.each(cases)("roundTrips%j", (raw) => {

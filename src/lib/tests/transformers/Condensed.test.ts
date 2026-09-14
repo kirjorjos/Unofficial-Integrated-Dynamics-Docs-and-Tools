@@ -786,4 +786,39 @@ describe("TestCondensedTransformer", () => {
     expect(ast.type).toBe("List");
     expect(ASTToCondensed(ast)).toBe('[1, "a"]');
   });
+
+  it("testLineCommentIsIgnored", () => {
+    expect(CondensedToAST("numberAdd(1, 2) -- note")).toEqual(
+      CondensedToAST("numberAdd(1, 2)")
+    );
+  });
+
+  it("testUnterminatedStringInCommentIsIgnored", () => {
+    expect(CondensedToAST('numberAdd(1, 2) -- "open string')).toEqual(
+      CondensedToAST("numberAdd(1, 2)")
+    );
+    expect(CondensedToAST("numberAdd(1, 2) -- 'open string")).toEqual(
+      CondensedToAST("numberAdd(1, 2)")
+    );
+  });
+
+  it("testCommentRunsToEndOfLineOnly", () => {
+    expect(CondensedToAST("numberAdd(1, -- note\n2)")).toEqual(
+      CondensedToAST("numberAdd(1, 2)")
+    );
+    expect(CondensedToAST("numberAdd(\n-- whole line comment\n1, 2)")).toEqual(
+      CondensedToAST("numberAdd(1, 2)")
+    );
+  });
+
+  it("testDoubleDashInsideStringIsNotAComment", () => {
+    expect(tokenize('stringConcat("a--b", "c")')).toEqual([
+      { type: "identifier", value: "stringConcat" },
+      { type: "structural", value: "(" },
+      { type: "string", value: '"a--b"' },
+      { type: "structural", value: "," },
+      { type: "string", value: '"c"' },
+      { type: "structural", value: ")" },
+    ]);
+  });
 });

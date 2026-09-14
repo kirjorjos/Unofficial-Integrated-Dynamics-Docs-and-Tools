@@ -334,6 +334,10 @@ export const CodeLineToAST = (
       tokens.push("->");
       current = "";
       i++;
+    } else if (char === "-" && codeLine[i + 1] === "-") {
+      if (current.trim()) tokens.push(current.trim());
+      current = "";
+      while (i < codeLine.length && codeLine[i] !== "\n") i++;
     } else if (
       char === "(" ||
       char === ")" ||

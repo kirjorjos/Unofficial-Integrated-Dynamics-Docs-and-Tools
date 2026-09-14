@@ -653,4 +653,38 @@ describe("TestCodeLineTransformer", () => {
       "5; 6; operatorMap (NetworkReader.variableValueById) [0, 1]"
     );
   });
+
+  it("testLineCommentIsIgnored", () => {
+    expect(CodeLineToAST("add 1 2 -- note")).toEqual(CodeLineToAST("add 1 2"));
+  });
+
+  it("testUnterminatedStringInCommentIsIgnored", () => {
+    expect(CodeLineToAST('add 1 2 -- "open string')).toEqual(
+      CodeLineToAST("add 1 2")
+    );
+    expect(CodeLineToAST("add 1 2 -- 'open string")).toEqual(
+      CodeLineToAST("add 1 2")
+    );
+    expect(CodeLineToAST('add 1 2 -- """open string')).toEqual(
+      CodeLineToAST("add 1 2")
+    );
+  });
+
+  it("testCommentRunsToEndOfLineOnly", () => {
+    expect(CodeLineToAST("add 1 -- note\n2")).toEqual(CodeLineToAST("add 1 2"));
+    expect(CodeLineToAST("add\n-- whole line comment\n1 2")).toEqual(
+      CodeLineToAST("add 1 2")
+    );
+  });
+
+  it("testDoubleDashInsideStringIsNotAComment", () => {
+    expect(CodeLineToAST('stringConcat "a--b" "c"')).toEqual({
+      type: "Curry",
+      base: { type: "Operator", opName: "STRING_CONCAT" },
+      args: [
+        { type: "String", value: "a--b" },
+        { type: "String", value: "c" },
+      ],
+    });
+  });
 });

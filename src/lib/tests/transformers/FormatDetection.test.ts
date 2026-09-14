@@ -29,6 +29,13 @@ describe("TestFormatDetection", () => {
     ["apply add 1 2\n", "codeline"],
     ["x = 5\ny = numberAdd(x, 1)", "expanded"],
     ["-- comment\n\nx = 5\n", "expanded"],
+    ["-- don't forget\nx = 5", "expanded"],
+    ['-- "unclosed note\nx = 5', "expanded"],
+    ["-- don't (really)\nx = 5", "expanded"],
+    ['x = 5 -- "unclosed note', "expanded"],
+    ['add(1, 2) -- "note"', "condensed"],
+    ["apply add 1 2 -- note", "codeline"],
+    ['"a -- b"', "codeline"],
     ["var1 :: A -> B\nvar1 = 5", "expanded"],
     ['stringConcat(\n  "a=b",\n  "c"\n)', "condensed"],
   ] as const)("detectInputFormat%jReturns%s", (input, expected) => {
@@ -51,6 +58,8 @@ describe("TestFormatDetection", () => {
   it("detectedExpandedInputsParseWithExpandedToAST", () => {
     const expandedInputs = [
       "-- comment\nx = 5\nfinal = x",
+      "-- don't forget\nx = 5\nfinal = x",
+      '-- "unclosed note\nx = 5\nfinal = x',
       "var1 :: Any\nvar1 = 5\nfinal = var1",
       "x :: Integer = 5",
       'Variable("{}") = 5\nfinal = Variable("{}")',

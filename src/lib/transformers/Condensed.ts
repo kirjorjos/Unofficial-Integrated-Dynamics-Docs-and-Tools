@@ -192,6 +192,25 @@ export const tokenize = (condensed: string) => {
       continue;
     }
 
+    if (
+      state.quote === null &&
+      state.inJSON === 0 &&
+      char === "-" &&
+      condensed[i + 1] === "-"
+    ) {
+      if (currentToken) {
+        tokens.push({
+          type: resolveType(currentToken, possibleTypes),
+          value: currentToken,
+        });
+        currentToken = "";
+        state.isEscaped = false;
+        possibleTypes = Object.keys(charTokenCheckers);
+      }
+      while (i < condensed.length && condensed[i] !== "\n") i++;
+      continue;
+    }
+
     const isStructural =
       state.quote === null && state.inJSON === 0 && /^[()[\],;\\]$/.test(char);
     const isWhitespace =
