@@ -13,6 +13,7 @@ import {
   getNicknameRegex,
   formatVarName,
   getOperatorSourceName,
+  setOperatorSourceName,
   flattenAnonymousBaseOperatorApplication,
   getArity,
 } from "lib/transformers/helpers";
@@ -1169,6 +1170,7 @@ const declaredMatchesComputed = (
 export interface ExpandedToASTOptions {
   allowDuplicateNames?: boolean;
   warnings?: string[];
+  declarationCards?: "ignore" | "add";
 }
 
 export const ExpandedToAST = (
@@ -1260,15 +1262,19 @@ export const ExpandedToAST = (
     }
   }
 
-  if (processedLines.length === 0) throw new Error("Empty expanded input");
+  if (processedLines.length === 0 && standaloneSignatures.length === 0)
+    throw new Error("Empty expanded input");
 
-  const scope = new Map<string, TypeAST.AST>();
-  const definitions: {
+  type ExpandedEntry = {
     name: string;
     node: TypeAST.AST;
     comment?: string[];
-  }[] = [];
-  let finalAST: TypeAST.AST | null = null;
+    origin: number;
+  };
+
+  const scope = new Map<string, TypeAST.AST>();
+  const definitions: ExpandedEntry[] = [];
+  const declarations: ExpandedEntry[] = [];
 
   for (let i = 0; i < processedLines.length; i++) {
     const line = processedLines[i]!;
@@ -1340,10 +1346,6 @@ export const ExpandedToAST = (
       }
       exprStr = applyLambdaParams(rhs, parsedVarName.params);
     } else {
-      if (i === 0)
-        throw new Error(
-          "Line 1 of Expanded format must be an assignment (varName = expression)"
-        );
       exprStr = line;
     }
 
@@ -1425,21 +1427,51 @@ export const ExpandedToAST = (
           name: varName,
           node: lineAST,
           comment: lineComments.get(i),
+          origin: processedLineOrigins[i]!,
         });
       }
+    } else {
+      declarations.push({
+        name: "",
+        node: lineAST,
+        comment: lineComments.get(i),
+        origin: processedLineOrigins[i]!,
+      });
     }
-    finalAST = lineAST;
   }
 
   for (const sig of standaloneSignatures) {
+    const declared = parseDeclaredType(sig.declared);
     const def = definitions.find((d) => d.name === sig.name);
     if (!def) {
-      throw new Error(
-        `Signature line ${sig.lineNum}: variable "${sig.name}" is not defined`
+      const nicknameKey = operatorRegistry.operatorByNickname(sig.name);
+      if (!nicknameKey) {
+        throw new Error(
+          `Signature line ${sig.lineNum}: variable "${sig.name}" is not defined`
+        );
+      }
+      const opNode: TypeAST.AST = setOperatorSourceName(
+        { type: "Operator", opName: nicknameKey },
+        sig.name
       );
+      if (
+        !declaredMatchesComputed(
+          declared,
+          computeSignature(opNode, undefined, true)
+        )
+      ) {
+        throw new Error(
+          `Signature line ${sig.lineNum}: variable "${sig.name}" is declared as type "${sig.declared}" but the expression has a different signature`
+        );
+      }
+      declarations.push({
+        name: "",
+        node: opNode,
+        origin: sig.lineNum - 1,
+      });
+      continue;
     }
 
-    const declared = parseDeclaredType(sig.declared);
     if (
       !declaredMatchesComputed(
         declared,
@@ -1452,7 +1484,18 @@ export const ExpandedToAST = (
     }
   }
 
-  if (!finalAST) throw new Error("Could not determine final AST");
+  const entries = [
+    ...definitions.map((entry) => ({ ...entry, declaration: false })),
+    ...declarations.map((entry) => ({ ...entry, declaration: true })),
+  ].sort((a, b) => a.origin - b.origin);
+
+  const keepDeclarations =
+    definitions.length === 0 || opts.declarationCards === "add";
+  const kept = entries.filter(
+    (entry) => !entry.declaration || keepDeclarations
+  );
+
+  if (kept.length === 0) throw new Error("Could not determine final AST");
 
   if (opts.allowDuplicateNames) {
     const counts = new Map<string, number>();
@@ -1507,23 +1550,27 @@ export const ExpandedToAST = (
     }
   }
 
-  const names = definitions.map((d) => d.name);
+  const names = kept.map((entry) => entry.name);
   const network = buildNetworkCards(
     normalizeSegments(
-      definitions.map((d) => d.node),
+      kept.map((entry) => entry.node),
       names
     ),
     startVariableId,
     names
   );
-  const commentByName = new Map<string, string[]>();
-  for (const def of definitions) {
-    if (def.comment && def.comment.length > 0) {
-      commentByName.set(def.name, def.comment);
+  const commentBySegment = new Map<number, string[]>();
+  kept.forEach((entry, index) => {
+    if (entry.comment && entry.comment.length > 0) {
+      commentBySegment.set(index, entry.comment);
     }
-  }
+  });
   for (const def of network.definitions) {
-    const comment = commentByName.get(def.name);
+    const segmentIndex = (def as { segmentIndex?: number }).segmentIndex;
+    const comment =
+      segmentIndex === undefined
+        ? undefined
+        : commentBySegment.get(segmentIndex);
     if (comment) {
       Object.defineProperty(def, "comment", {
         value: comment,

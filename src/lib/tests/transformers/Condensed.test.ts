@@ -9,6 +9,7 @@ import {
   tokenize,
 } from "lib/transformers/Condensed";
 import { ExpandedToAST } from "lib/transformers/Expanded";
+import { getNodeComment } from "lib/transformers/helpers";
 
 describe("TestCondensedTransformer", () => {
   it("testTokenizePrimitives", () => {
@@ -785,5 +786,62 @@ describe("TestCondensedTransformer", () => {
     const ast = CondensedToAST('[1, "a"]');
     expect(ast.type).toBe("List");
     expect(ASTToCondensed(ast)).toBe('[1, "a"]');
+  });
+
+  it("testLineCommentIsIgnored", () => {
+    expect(CondensedToAST("numberAdd(1, 2) -- note")).toEqual(
+      CondensedToAST("numberAdd(1, 2)")
+    );
+  });
+
+  it("testUnterminatedStringInCommentIsIgnored", () => {
+    expect(CondensedToAST('numberAdd(1, 2) -- "open string')).toEqual(
+      CondensedToAST("numberAdd(1, 2)")
+    );
+    expect(CondensedToAST("numberAdd(1, 2) -- 'open string")).toEqual(
+      CondensedToAST("numberAdd(1, 2)")
+    );
+  });
+
+  it("testCommentRunsToEndOfLineOnly", () => {
+    expect(CondensedToAST("numberAdd(1, -- note\n2)")).toEqual(
+      CondensedToAST("numberAdd(1, 2)")
+    );
+    expect(CondensedToAST("numberAdd(\n-- whole line comment\n1, 2)")).toEqual(
+      CondensedToAST("numberAdd(1, 2)")
+    );
+  });
+
+  it("testDoubleDashInsideStringIsNotAComment", () => {
+    expect(tokenize('stringConcat("a--b", "c")')).toEqual([
+      { type: "identifier", value: "stringConcat" },
+      { type: "structural", value: "(" },
+      { type: "string", value: '"a--b"' },
+      { type: "structural", value: "," },
+      { type: "string", value: '"c"' },
+      { type: "structural", value: ")" },
+    ]);
+  });
+
+  it("testTrailingCommentAttachesToTheWholeCall", () => {
+    const ast = CondensedToAST("numberAdd(1, 2) -- note") as TypeAST.Curried;
+    expect(getNodeComment(ast)).toEqual(["-- note"]);
+    expect(getNodeComment(ast.args[0]!)).toBeUndefined();
+  });
+
+  it("testCommentInsideACallAttachesToThePrecedingArgument", () => {
+    const ast = CondensedToAST("numberAdd(1, -- note\n2)") as TypeAST.Curried;
+    expect(getNodeComment(ast.args[0]!)).toEqual(["-- note"]);
+    expect(getNodeComment(ast.args[1]!)).toBeUndefined();
+    expect(getNodeComment(ast)).toBeUndefined();
+  });
+
+  it("testLeadingCommentHasNothingToAttachTo", () => {
+    const ast = CondensedToAST(
+      "-- leading\nnumberAdd(1, 2)"
+    ) as TypeAST.Curried;
+    expect(getNodeComment(ast)).toBeUndefined();
+    expect(getNodeComment(ast.args[0]!)).toBeUndefined();
+    expect(getNodeComment(ast.args[1]!)).toBeUndefined();
   });
 });

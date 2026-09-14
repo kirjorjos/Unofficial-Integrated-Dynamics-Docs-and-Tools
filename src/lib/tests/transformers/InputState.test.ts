@@ -56,6 +56,8 @@ describe("TestCondensedOverlay", () => {
       "\n\n\tnumberAdd(1, 2)\n\n", // outer newlines
       'stringConcat("te", "st")',
       "add('a', 'b')", // single-quoted strings
+      "add(1, 2) -- note", // comment falls back to verbatim raw text
+      'add(1, 2) -- "open string',
     ];
 
     it.each(cases)("roundTrips%j", (raw) => {

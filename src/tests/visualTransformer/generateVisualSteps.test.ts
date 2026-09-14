@@ -325,4 +325,22 @@ describe("generateVisualSteps", () => {
     expect(concatIdx).toBe(10);
     expect(result[concatIdx]!.inputs.map((i) => i.variableId)).toEqual([6, 9]);
   });
+
+  it("testCodeLineCommentShowsOnTheStepOfTheExpressionItFollows", () => {
+    const afterThree = steps(CodeLineToAST("add 2 3 -- note"));
+    expect(afterThree.map((s) => s.comment)).toEqual([
+      undefined,
+      "note",
+      undefined,
+    ]);
+    expect(afterThree[1]!.detail).toBe("3");
+
+    const afterTwo = steps(CodeLineToAST("add 2 -- note\n3"));
+    expect(afterTwo.map((s) => s.comment)).toEqual([
+      "note",
+      undefined,
+      undefined,
+    ]);
+    expect(afterTwo[0]!.detail).toBe("2");
+  });
 });

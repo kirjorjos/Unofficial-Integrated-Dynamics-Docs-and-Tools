@@ -53,6 +53,21 @@ test.describe("transformersPageSettingsPanel", () => {
     );
   });
 
+  test("testDeclarationOnlyOperatorsKnobDecidesWhetherACardIsAdded", async ({
+    page,
+  }) => {
+    await runTransform(page, "pipe\nx = 1", "codeline");
+    await expect(page.locator('textarea[aria-label="Code Line"]')).toHaveValue(
+      "1"
+    );
+
+    await page.locator(".settings-summary").click();
+    await page.locator("#setting-declaration-cards").selectOption("add");
+    await expect(page.locator('textarea[aria-label="Code Line"]')).toHaveValue(
+      /operatorPipe/
+    );
+  });
+
   test("testWrapToggleFlipsInputTextareaWrapAttr", async ({ page }) => {
     await page.goto("/#transformers");
     const input = page.locator('textarea[aria-label="Transformer input"]');

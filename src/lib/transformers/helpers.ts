@@ -238,6 +238,59 @@ export const setOperatorSourceName = <T extends TypeAST.BaseOperator>(
   return node;
 };
 
+const NODE_COMMENT = Symbol("nodeComment");
+
+type NodeWithComment = TypeAST.AST & { [NODE_COMMENT]?: string[] };
+
+export const setNodeComment = (node: TypeAST.AST, comment: string): void => {
+  const target = node as NodeWithComment;
+  const existing = target[NODE_COMMENT];
+  if (existing) {
+    existing.push(comment);
+    return;
+  }
+  Object.defineProperty(target, NODE_COMMENT, {
+    value: [comment],
+    enumerable: false,
+    configurable: true,
+    writable: true,
+  });
+};
+
+export const getNodeComment = (node: TypeAST.AST): string[] | undefined =>
+  (node as NodeWithComment)[NODE_COMMENT];
+
+export interface CommentSpan {
+  start: number;
+  end: number;
+  node: TypeAST.AST;
+}
+
+export interface TokenComment {
+  afterToken: number;
+  text: string;
+}
+
+export const attachNodeComments = (
+  spans: CommentSpan[],
+  comments: TokenComment[]
+): void => {
+  for (const comment of comments) {
+    let best: CommentSpan | undefined;
+    for (const span of spans) {
+      if (span.end > comment.afterToken) continue;
+      if (
+        !best ||
+        span.end > best.end ||
+        (span.end === best.end && span.start > best.start)
+      ) {
+        best = span;
+      }
+    }
+    if (best) setNodeComment(best.node, comment.text);
+  }
+};
+
 export const getOperatorSourceName = (
   node: TypeAST.BaseOperator
 ): string | undefined => {

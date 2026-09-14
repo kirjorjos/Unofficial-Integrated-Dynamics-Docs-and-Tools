@@ -31,7 +31,10 @@ import {
   BaseOperator,
   type LogicProgrammerRenderPatternKey,
 } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
-import { flattenAnonymousBaseOperatorApplication } from "lib/transformers/helpers";
+import {
+  flattenAnonymousBaseOperatorApplication,
+  getNodeComment,
+} from "lib/transformers/helpers";
 import { INTERNAL_BUG_MESSAGE } from "lib/transformers/parseErrors";
 import {
   setLastInternalBugDetail,
@@ -1757,6 +1760,17 @@ const buildStepTooltip = (
 const steps = computed<VisualStep[]>(() => {
   resetExpandedVarCounter();
 
+  const toStepComment = (
+    comments: string[] | undefined
+  ): string | undefined => {
+    if (!comments) return undefined;
+    const text = comments
+      .map((line) => line.replace(/^--\s*/, "").trim())
+      .filter((line) => line !== "")
+      .join("\n");
+    return text === "" ? undefined : text;
+  };
+
   const isPatternMode = props.operatorPreviewMode === "pattern";
 
   if (isPatternMode && props.ast.type === "Operator") {
@@ -1787,29 +1801,19 @@ const steps = computed<VisualStep[]>(() => {
       workspaceMode: "pattern",
     };
 
-    return [
-      {
-        ...step,
-        variableId,
-        tooltip: buildStepTooltip(step, variableId),
-      },
-    ];
+    const fullStep = {
+      ...step,
+      variableId,
+      tooltip: buildStepTooltip(step, variableId),
+    };
+    const nodeComment = toStepComment(getNodeComment(props.ast));
+    if (nodeComment) fullStep.comment = nodeComment;
+    return [fullStep];
   }
 
   const result: VisualStep[] = [];
   const seen = new Map<TypeAST.AST, VisualCardRef>();
   const contentSeen = new Map<string, VisualCardRef>();
-
-  const toStepComment = (
-    comments: string[] | undefined
-  ): string | undefined => {
-    if (!comments) return undefined;
-    const text = comments
-      .map((line) => line.replace(/^--\s*/, "").trim())
-      .filter((line) => line !== "")
-      .join("\n");
-    return text === "" ? undefined : text;
-  };
 
   const attachDefinitionComment = (
     card: VisualCardRef,
@@ -1843,6 +1847,10 @@ const steps = computed<VisualStep[]>(() => {
         tooltip,
       };
       result.push(fullStep);
+      const nodeComment = toStepComment(getNodeComment(step.node));
+      if (nodeComment && fullStep.comment === undefined) {
+        fullStep.comment = nodeComment;
+      }
       const card = {
         name: fullStep.output,
         type:

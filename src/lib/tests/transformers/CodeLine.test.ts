@@ -1,5 +1,6 @@
 import { ASTToCodeLine, CodeLineToAST } from "lib/transformers/CodeLine";
 import { ExpandedToAST } from "lib/transformers/Expanded";
+import { getNodeComment } from "lib/transformers/helpers";
 
 describe("TestCodeLineTransformer", () => {
   it("testBlock", () => {
@@ -652,5 +653,67 @@ describe("TestCodeLineTransformer", () => {
     expect(ASTToCodeLine(ast)).toBe(
       "5; 6; operatorMap (NetworkReader.variableValueById) [0, 1]"
     );
+  });
+
+  it("testLineCommentIsIgnored", () => {
+    expect(CodeLineToAST("add 1 2 -- note")).toEqual(CodeLineToAST("add 1 2"));
+  });
+
+  it("testUnterminatedStringInCommentIsIgnored", () => {
+    expect(CodeLineToAST('add 1 2 -- "open string')).toEqual(
+      CodeLineToAST("add 1 2")
+    );
+    expect(CodeLineToAST("add 1 2 -- 'open string")).toEqual(
+      CodeLineToAST("add 1 2")
+    );
+    expect(CodeLineToAST('add 1 2 -- """open string')).toEqual(
+      CodeLineToAST("add 1 2")
+    );
+  });
+
+  it("testCommentRunsToEndOfLineOnly", () => {
+    expect(CodeLineToAST("add 1 -- note\n2")).toEqual(CodeLineToAST("add 1 2"));
+    expect(CodeLineToAST("add\n-- whole line comment\n1 2")).toEqual(
+      CodeLineToAST("add 1 2")
+    );
+  });
+
+  it("testDoubleDashInsideStringIsNotAComment", () => {
+    expect(CodeLineToAST('stringConcat "a--b" "c"')).toEqual({
+      type: "Curry",
+      base: { type: "Operator", opName: "STRING_CONCAT" },
+      args: [
+        { type: "String", value: "a--b" },
+        { type: "String", value: "c" },
+      ],
+    });
+  });
+
+  it("testCommentAttachesToTheExpressionItFollows", () => {
+    const afterThree = CodeLineToAST("add 2 3 -- note") as TypeAST.Curried;
+    expect(getNodeComment(afterThree.args[1]!)).toEqual(["-- note"]);
+    expect(getNodeComment(afterThree.args[0]!)).toBeUndefined();
+
+    const afterTwo = CodeLineToAST("add 2 -- note\n3") as TypeAST.Curried;
+    expect(getNodeComment(afterTwo.args[0]!)).toEqual(["-- note"]);
+    expect(getNodeComment(afterTwo.args[1]!)).toBeUndefined();
+  });
+
+  it("testCommentAfterAnOperatorTokenAttachesToTheOperator", () => {
+    const ast = CodeLineToAST('add -- test"\nid') as TypeAST.Curried;
+    expect(getNodeComment(ast.base)).toEqual(['-- test"']);
+  });
+
+  it("testGroupedCommentAttachesToTheGroup", () => {
+    const ast = CodeLineToAST("(add 2 3) -- note") as TypeAST.Curried;
+    expect(getNodeComment(ast)).toEqual(["-- note"]);
+    expect(getNodeComment(ast.args[1]!)).toBeUndefined();
+  });
+
+  it("testLeadingCommentHasNothingToAttachTo", () => {
+    const ast = CodeLineToAST("-- leading\nadd 2 3") as TypeAST.Curried;
+    expect(getNodeComment(ast)).toBeUndefined();
+    expect(getNodeComment(ast.args[0]!)).toBeUndefined();
+    expect(getNodeComment(ast.args[1]!)).toBeUndefined();
   });
 });
