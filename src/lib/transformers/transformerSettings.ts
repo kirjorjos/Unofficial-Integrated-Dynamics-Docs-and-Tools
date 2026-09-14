@@ -24,6 +24,7 @@ export interface TransformerSettings {
   hideOperatorWrappers: boolean;
   resolve: boolean;
   preferSourceNames: boolean;
+  declarationCards: "ignore" | "add";
 }
 
 export const DEFAULT_TRANSFORMER_SETTINGS: TransformerSettings = {
@@ -45,6 +46,7 @@ export const DEFAULT_TRANSFORMER_SETTINGS: TransformerSettings = {
   hideOperatorWrappers: false,
   resolve: false,
   preferSourceNames: false,
+  declarationCards: "ignore",
 };
 
 export const isDefaultSettings = (settings: TransformerSettings): boolean => {
@@ -83,6 +85,7 @@ const FLAG_ORDER: {
   { bit: (s) => s.hideOperatorWrappers }, // row 16
   { bit: (s) => s.resolve }, // row 17
   { bit: (s) => s.preferSourceNames }, // row 18
+  { bit: (s) => s.declarationCards === "add" }, // row 19
 ];
 
 const encodeDepth = (depth: number): number => (depth === -1 ? 0 : depth + 1);
@@ -160,6 +163,9 @@ export const decodeSettingsOpts = (
         break;
       case 15:
         settings.preferSourceNames = enabled;
+        break;
+      case 16:
+        settings.declarationCards = enabled ? "add" : "ignore";
         break;
       default:
         break;

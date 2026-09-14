@@ -17,7 +17,10 @@ import {
   DEFAULT_TRANSFORMER_SETTINGS,
   type TransformerSettings,
 } from "lib";
-import type { ExpandedSignatureOptions } from "lib/transformers/Expanded";
+import type {
+  ExpandedSignatureOptions,
+  ExpandedToASTOptions,
+} from "lib/transformers/Expanded";
 import type { ExpandedDisplayOptions } from "lib/transformers/Expanded";
 import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 import { globalMap } from "lib/HelperClasses/TypeMap";
@@ -64,10 +67,7 @@ const initialVariableId = computed(() => settings.value.initialVariableId);
 
 type FormatFormatter = {
   label: string;
-  toAST: (
-    value: string,
-    opts?: { allowDuplicateNames?: boolean; warnings?: string[] }
-  ) => TypeAST.AST;
+  toAST: (value: string, opts?: ExpandedToASTOptions) => TypeAST.AST;
   fromAST: (ast: TypeAST.AST) => string;
 };
 
@@ -518,6 +518,7 @@ const transform = (skipUrlUpdate: boolean = false): void => {
     const ast = canonicalFormatters[sourceFormat].toAST(rawInput, {
       allowDuplicateNames: settings.value.duplicateNames === "allow",
       warnings: dupWarnings,
+      declarationCards: settings.value.declarationCards,
     });
     currentAst.value = ast;
     if (!updateOutputFromAst(ast, outputFormat.value)) return;
@@ -568,6 +569,7 @@ const settingEnabled = (setting: string): boolean => {
     case "varId":
     case "wrap":
     case "duplicateNames":
+    case "declarationCards":
       return true;
     case "statementLayout":
       return fmt === "codeline" || fmt === "condensed";
@@ -885,6 +887,25 @@ onMounted(async () => {
                 :disabled="!settingEnabled('comments')"
                 aria-label="Preserve comments"
               />
+            </div>
+
+            <div
+              class="settings-row"
+              :class="{ disabled: !settingEnabled('declarationCards') }"
+            >
+              <label class="settings-label" for="setting-declaration-cards">
+                Declaration-only operators
+              </label>
+              <select
+                id="setting-declaration-cards"
+                v-model="settings.declarationCards"
+                class="select"
+                :disabled="!settingEnabled('declarationCards')"
+                aria-label="Declaration-only operators"
+              >
+                <option value="ignore">Accept and ignore</option>
+                <option value="add">Accept and add card</option>
+              </select>
             </div>
 
             <div

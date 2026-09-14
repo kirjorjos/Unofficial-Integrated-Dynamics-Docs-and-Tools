@@ -94,7 +94,10 @@ const stripComments = (value: string): string =>
     })
     .join("\n");
 
-const hasTopLevelAssignment = (value: string): boolean => {
+const findTopLevel = (
+  value: string,
+  matches: (index: number) => boolean
+): number => {
   let depth = 0;
   let quote: '"' | "'" | '"""' | null = null;
   let escaped = false;
@@ -145,24 +148,31 @@ const hasTopLevelAssignment = (value: string): boolean => {
       continue;
     }
 
-    if (char === "=" && depth === 0) {
-      const previous = value[i - 1];
-      const next = value[i + 1];
-      if (next === ">") continue;
-      if (
-        previous === "=" ||
-        previous === "!" ||
-        previous === "<" ||
-        previous === ">"
-      ) {
-        continue;
-      }
-      return true;
-    }
+    if (depth === 0 && matches(i)) return i;
   }
 
-  return false;
+  return -1;
 };
+
+const hasTopLevelAssignment = (value: string): boolean =>
+  findTopLevel(value, (i) => {
+    if (value[i] !== "=") return false;
+    const previous = value[i - 1];
+    const next = value[i + 1];
+    if (next === ">") return false;
+    if (
+      previous === "=" ||
+      previous === "!" ||
+      previous === "<" ||
+      previous === ">"
+    ) {
+      return false;
+    }
+    return true;
+  }) !== -1;
+
+const hasTopLevelDoubleColon = (value: string): boolean =>
+  findTopLevel(value, (i) => value[i] === ":" && value[i + 1] === ":") !== -1;
 
 const firstMeaningfulLine = (value: string): string =>
   (value.split("\n").find((line) => line.trim() !== "") ?? value).trim();
@@ -174,6 +184,7 @@ export const detectInputFormat = (value: string): TransformerFormatKey => {
   if (value.includes("\n")) {
     if (value[0] === "{") return "json";
     if (!hasTopLevelAssignment(code)) {
+      if (hasTopLevelDoubleColon(code)) return "expanded";
       return condensedCallRegex.test(firstMeaningfulLine(code))
         ? "condensed"
         : "codeline";
@@ -185,6 +196,7 @@ export const detectInputFormat = (value: string): TransformerFormatKey => {
   if (lambdaDefinitionRegex.test(code)) return "expanded";
   if (variableWrapperDefinitionRegex.test(code)) return "expanded";
   if (typedDefinitionRegex.test(code)) return "expanded";
+  if (hasTopLevelDoubleColon(code)) return "expanded";
   if (value[0] === "{") return "json";
   if (condensedCallRegex.test(code)) return "condensed";
   return "codeline";

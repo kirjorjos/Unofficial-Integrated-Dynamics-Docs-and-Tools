@@ -39,6 +39,7 @@ describe("TestTransformerSettingsOpts", () => {
       hideOperatorWrappers: true,
       resolve: true,
       preferSourceNames: true,
+      declarationCards: "add",
     };
     const encoded = encodeSettingsOpts(settings);
     expect(encoded).not.toBeNull();

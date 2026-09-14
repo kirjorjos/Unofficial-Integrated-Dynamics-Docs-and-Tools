@@ -36,6 +36,8 @@ describe("TestFormatDetection", () => {
     ['add(1, 2) -- "note"', "condensed"],
     ["apply add 1 2 -- note", "codeline"],
     ['"a -- b"', "codeline"],
+    ['add -- test"\nid', "codeline"],
+    ["pipe :: Operator -> (operator -> Operator)", "expanded"],
     ["var1 :: A -> B\nvar1 = 5", "expanded"],
     ['stringConcat(\n  "a=b",\n  "c"\n)', "condensed"],
   ] as const)("detectInputFormat%jReturns%s", (input, expected) => {
@@ -60,6 +62,7 @@ describe("TestFormatDetection", () => {
       "-- comment\nx = 5\nfinal = x",
       "-- don't forget\nx = 5\nfinal = x",
       '-- "unclosed note\nx = 5\nfinal = x',
+      "pipe :: Operator -> (operator -> Operator)",
       "var1 :: Any\nvar1 = 5\nfinal = var1",
       "x :: Integer = 5",
       'Variable("{}") = 5\nfinal = Variable("{}")',

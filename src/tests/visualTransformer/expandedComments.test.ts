@@ -141,6 +141,16 @@ describe("expanded step comments", () => {
     expect(commentOf(result, "b")).toBeUndefined();
   });
 
+  it("testDeclarationOnlyOperatorCommentsAttachToTheirStep", () => {
+    const leading = steps(expanded("-- the pipe operator\npipe"));
+    expect(leading).toHaveLength(1);
+    expect(leading[0]!.comment).toBe("the pipe operator");
+
+    const trailing = steps(expanded("pipe -- trailing note"));
+    expect(trailing).toHaveLength(1);
+    expect(trailing[0]!.comment).toBe("trailing note");
+  });
+
   it("testNonExpandedInputCarriesNoComments", () => {
     const result = steps(CodeLineToAST("5; add 5 1"));
     expect(result.every((s) => s.comment === undefined)).toBe(true);

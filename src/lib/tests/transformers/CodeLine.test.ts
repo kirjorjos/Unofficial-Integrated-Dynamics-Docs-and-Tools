@@ -1,5 +1,6 @@
 import { ASTToCodeLine, CodeLineToAST } from "lib/transformers/CodeLine";
 import { ExpandedToAST } from "lib/transformers/Expanded";
+import { getNodeComment } from "lib/transformers/helpers";
 
 describe("TestCodeLineTransformer", () => {
   it("testBlock", () => {
@@ -686,5 +687,33 @@ describe("TestCodeLineTransformer", () => {
         { type: "String", value: "c" },
       ],
     });
+  });
+
+  it("testCommentAttachesToTheExpressionItFollows", () => {
+    const afterThree = CodeLineToAST("add 2 3 -- note") as TypeAST.Curried;
+    expect(getNodeComment(afterThree.args[1]!)).toEqual(["-- note"]);
+    expect(getNodeComment(afterThree.args[0]!)).toBeUndefined();
+
+    const afterTwo = CodeLineToAST("add 2 -- note\n3") as TypeAST.Curried;
+    expect(getNodeComment(afterTwo.args[0]!)).toEqual(["-- note"]);
+    expect(getNodeComment(afterTwo.args[1]!)).toBeUndefined();
+  });
+
+  it("testCommentAfterAnOperatorTokenAttachesToTheOperator", () => {
+    const ast = CodeLineToAST('add -- test"\nid') as TypeAST.Curried;
+    expect(getNodeComment(ast.base)).toEqual(['-- test"']);
+  });
+
+  it("testGroupedCommentAttachesToTheGroup", () => {
+    const ast = CodeLineToAST("(add 2 3) -- note") as TypeAST.Curried;
+    expect(getNodeComment(ast)).toEqual(["-- note"]);
+    expect(getNodeComment(ast.args[1]!)).toBeUndefined();
+  });
+
+  it("testLeadingCommentHasNothingToAttachTo", () => {
+    const ast = CodeLineToAST("-- leading\nadd 2 3") as TypeAST.Curried;
+    expect(getNodeComment(ast)).toBeUndefined();
+    expect(getNodeComment(ast.args[0]!)).toBeUndefined();
+    expect(getNodeComment(ast.args[1]!)).toBeUndefined();
   });
 });

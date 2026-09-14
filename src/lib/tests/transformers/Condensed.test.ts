@@ -9,6 +9,7 @@ import {
   tokenize,
 } from "lib/transformers/Condensed";
 import { ExpandedToAST } from "lib/transformers/Expanded";
+import { getNodeComment } from "lib/transformers/helpers";
 
 describe("TestCondensedTransformer", () => {
   it("testTokenizePrimitives", () => {
@@ -820,5 +821,27 @@ describe("TestCondensedTransformer", () => {
       { type: "string", value: '"c"' },
       { type: "structural", value: ")" },
     ]);
+  });
+
+  it("testTrailingCommentAttachesToTheWholeCall", () => {
+    const ast = CondensedToAST("numberAdd(1, 2) -- note") as TypeAST.Curried;
+    expect(getNodeComment(ast)).toEqual(["-- note"]);
+    expect(getNodeComment(ast.args[0]!)).toBeUndefined();
+  });
+
+  it("testCommentInsideACallAttachesToThePrecedingArgument", () => {
+    const ast = CondensedToAST("numberAdd(1, -- note\n2)") as TypeAST.Curried;
+    expect(getNodeComment(ast.args[0]!)).toEqual(["-- note"]);
+    expect(getNodeComment(ast.args[1]!)).toBeUndefined();
+    expect(getNodeComment(ast)).toBeUndefined();
+  });
+
+  it("testLeadingCommentHasNothingToAttachTo", () => {
+    const ast = CondensedToAST(
+      "-- leading\nnumberAdd(1, 2)"
+    ) as TypeAST.Curried;
+    expect(getNodeComment(ast)).toBeUndefined();
+    expect(getNodeComment(ast.args[0]!)).toBeUndefined();
+    expect(getNodeComment(ast.args[1]!)).toBeUndefined();
   });
 });

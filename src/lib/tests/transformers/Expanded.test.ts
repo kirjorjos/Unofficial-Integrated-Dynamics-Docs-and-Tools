@@ -128,9 +128,17 @@ invalid(name) = 5
     expect(() => ExpandedToAST(input.trim())).toThrow();
   });
 
-  it("testNoAssignmentOnFirstLineThrows", () => {
-    const input = "operatorPipe";
-    expect(() => ExpandedToAST(input)).toThrow();
+  it("testBareOperatorNicknameOnFirstLineIsADeclaration", () => {
+    expect(ExpandedToAST("operatorPipe")).toEqual({
+      type: "NetworkCards",
+      definitions: [
+        { name: "", node: { type: "Operator", opName: "OPERATOR_PIPE" } },
+      ],
+    });
+  });
+
+  it("testBareUnknownIdentifierOnFirstLineStillThrows", () => {
+    expect(() => ExpandedToAST("definitelyNotAnOperatorName")).toThrow();
   });
 
   it("testExample3FromInput", () => {
@@ -1142,5 +1150,80 @@ final = matches "a" "b"
     expect(() => ExpandedToAST("x :: Integer = 5\nx :: Integer = 6")).toThrow(
       /already defined/
     );
+  });
+
+  it("keepsADeclarationOnlyOperatorNicknameAsItsOwnCard", () => {
+    for (const input of [
+      "pipe",
+      "pipe -- a note about pipe",
+      "pipe :: Operator -> (operator -> Operator)",
+    ]) {
+      const network = ExpandedToAST(input) as TypeAST.NetworkCards;
+      expect(network.type).toBe("NetworkCards");
+      expect(network.definitions).toHaveLength(1);
+      expect(network.definitions[0]!.node.type).toBe("Operator");
+      expect(
+        (network.definitions[0]!.node as TypeAST.BaseOperator).opName
+      ).toBe("OPERATOR_PIPE");
+    }
+  });
+
+  it("acceptsDeclarationOnlyLinesAsTheFirstLine", () => {
+    expect(() => ExpandedToAST("pipe\nx = 1")).not.toThrow();
+    expect(() => ExpandedToAST("pipe -- note\nx = 1")).not.toThrow();
+  });
+
+  it("ignoresDeclarationOnlyLinesWhenDefinitionsExistByDefault", () => {
+    const network = ExpandedToAST("pipe\nx = 1") as TypeAST.NetworkCards;
+    expect(network.definitions.map((d) => d.name)).toEqual(["x"]);
+  });
+
+  it("addsDeclarationCardsWhenTheKnobIsOn", () => {
+    const network = ExpandedToAST("pipe\nx = 1", 0, {
+      declarationCards: "add",
+    }) as TypeAST.NetworkCards;
+    expect(network.definitions.map((d) => d.name)).toEqual(["", "x"]);
+    expect(network.definitions[0]!.node.type).toBe("Operator");
+  });
+
+  it("addsDeclarationCardsInSourceOrder", () => {
+    const before = ExpandedToAST(
+      "pipe :: Operator -> (operator -> Operator)\nx = 1",
+      0,
+      { declarationCards: "add" }
+    ) as TypeAST.NetworkCards;
+    expect(before.definitions.map((d) => d.name)).toEqual(["", "x"]);
+
+    const after = ExpandedToAST("x = 1\npipe", 0, {
+      declarationCards: "add",
+    }) as TypeAST.NetworkCards;
+    expect(after.definitions.map((d) => d.name)).toEqual(["x", ""]);
+  });
+
+  it("acceptsAnyRhsExpressionAsADeclarationOnlyLine", () => {
+    const network = ExpandedToAST("numberAdd(1, 2)") as TypeAST.NetworkCards;
+    expect(network.definitions).toHaveLength(1);
+    expect(network.definitions[0]!.node.type).toBe("Curry");
+  });
+
+  it("rejectsAMismatchedDeclarationOnlyOperatorSignature", () => {
+    expect(() => ExpandedToAST("pipe :: Integer\nx = 1")).toThrow(
+      /but the expression has a different signature/
+    );
+  });
+
+  it("stillRejectsAStandaloneSignatureForAnUnknownName", () => {
+    expect(() => ExpandedToAST("missing :: Integer\nx = 1")).toThrow(
+      /variable "missing" is not defined/
+    );
+  });
+
+  it("roundTripsADeclarationOnlyOperatorProgram", () => {
+    const network = ExpandedToAST("pipe");
+    const rendered = ASTToExpanded(network);
+    expect(rendered).toContain("::");
+    const back = ExpandedToAST(rendered) as TypeAST.NetworkCards;
+    expect(back.definitions).toHaveLength(1);
+    expect(back.definitions[0]!.node.type).toBe("Operator");
   });
 });

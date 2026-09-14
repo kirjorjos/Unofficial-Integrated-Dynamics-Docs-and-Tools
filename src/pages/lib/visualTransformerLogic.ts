@@ -24,7 +24,10 @@ import {
   getExpandedVarName,
   resetExpandedVarCounter,
 } from "lib/transformers/Expanded";
-import { flattenAnonymousBaseOperatorApplication } from "lib/transformers/helpers";
+import {
+  flattenAnonymousBaseOperatorApplication,
+  getNodeComment,
+} from "lib/transformers/helpers";
 import { LOGIC_PROGRAMMER_RENDER_PATTERNS } from "pages-lib/logicProgrammerRenderPatterns";
 import {
   getValueTypeMeta,
@@ -1400,6 +1403,10 @@ export const generateVisualSteps = (
         tooltip,
       };
       result.push(fullStep);
+      const nodeComment = toStepComment(getNodeComment(step.node));
+      if (nodeComment && fullStep.comment === undefined) {
+        fullStep.comment = nodeComment;
+      }
       const card = {
         name: fullStep.output,
         type:

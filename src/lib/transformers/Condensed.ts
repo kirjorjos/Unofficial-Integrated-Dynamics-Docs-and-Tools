@@ -9,6 +9,7 @@ import {
   getReaderConstructorClass,
 } from "lib/IntegratedDynamicsClasses/readers/readerRegistry";
 import {
+  attachNodeComments,
   getOpName,
   getArity,
   expectsOperatorArgument,
@@ -20,6 +21,8 @@ import {
   setOperatorSourceName,
   getOperatorSourceName,
   flattenAnonymousBaseOperatorApplication,
+  type CommentSpan,
+  type TokenComment,
 } from "lib/transformers/helpers";
 import {
   assertNoVarRefs,
@@ -143,8 +146,16 @@ const resolveType = (value: string, possible: string[]): string => {
   return "identifier";
 };
 
-export const tokenize = (condensed: string) => {
+export interface CondensedTokenStream {
+  tokens: { type: string; value: string }[];
+  comments: TokenComment[];
+}
+
+export const tokenizeWithComments = (
+  condensed: string
+): CondensedTokenStream => {
   const tokens: { type: string; value: string }[] = [];
+  const comments: TokenComment[] = [];
   let currentToken = "";
   let state: State = { quote: null, isEscaped: false, inJSON: 0 };
   let possibleTypes = Object.keys(charTokenCheckers);
@@ -207,7 +218,12 @@ export const tokenize = (condensed: string) => {
         state.isEscaped = false;
         possibleTypes = Object.keys(charTokenCheckers);
       }
+      const commentStart = i;
       while (i < condensed.length && condensed[i] !== "\n") i++;
+      comments.push({
+        afterToken: tokens.length,
+        text: condensed.slice(commentStart, i).trim(),
+      });
       continue;
     }
 
@@ -318,8 +334,11 @@ export const tokenize = (condensed: string) => {
     });
   }
 
-  return tokens;
+  return { tokens, comments };
 };
+
+export const tokenize = (condensed: string) =>
+  tokenizeWithComments(condensed).tokens;
 
 export const CondensedToAST = (
   condensed: string,
@@ -328,8 +347,9 @@ export const CondensedToAST = (
   allowVarRefs = false,
   normalizeMixedLists = true
 ): TypeAST.AST => {
-  const tokens = tokenize(condensed);
+  const { tokens, comments } = tokenizeWithComments(condensed);
   let pos = 0;
+  const spans: CommentSpan[] = [];
 
   type InternalAST =
     | { type: "Integer"; value: TypeNumericString; varName?: string }
@@ -464,6 +484,13 @@ export const CondensedToAST = (
   }
 
   function parseExpression(scope: Set<string>): InternalAST {
+    const start = pos;
+    const node = parseExpressionInner(scope);
+    if (pos > start) spans.push({ start, end: pos, node: node as TypeAST.AST });
+    return node;
+  }
+
+  function parseExpressionInner(scope: Set<string>): InternalAST {
     const params = tryParseParams();
     if (params !== null) {
       const sep = tokens[pos];
@@ -1625,6 +1652,9 @@ export const CondensedToAST = (
         .join(" ")}`
     );
   }
+
+  attachNodeComments(spans, comments);
+
   const normalized = normalizeMixedLists
     ? normalizeSegments(segments as TypeAST.AST[])
     : (segments as TypeAST.AST[]).map((segment) => ({

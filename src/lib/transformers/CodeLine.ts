@@ -15,12 +15,15 @@ import {
   getReaderConstructorClass,
 } from "lib/IntegratedDynamicsClasses/readers/readerRegistry";
 import {
+  attachNodeComments,
   getOpName,
   formatVarName,
   isVarNameExpandedSafe,
   resolveImplicitFlipOperator,
   setOperatorSourceName,
   flattenAnonymousBaseOperatorApplication,
+  type CommentSpan,
+  type TokenComment,
 } from "lib/transformers/helpers";
 import {
   assertNoVarRefs,
@@ -279,6 +282,7 @@ export const CodeLineToAST = (
   normalizeMixedLists = true
 ): TypeAST.AST => {
   const tokens: string[] = [];
+  const comments: TokenComment[] = [];
   let current = "";
   let quote: QuoteDelimiter | null = null;
   let inNBT = 0;
@@ -337,7 +341,12 @@ export const CodeLineToAST = (
     } else if (char === "-" && codeLine[i + 1] === "-") {
       if (current.trim()) tokens.push(current.trim());
       current = "";
+      const commentStart = i;
       while (i < codeLine.length && codeLine[i] !== "\n") i++;
+      comments.push({
+        afterToken: tokens.length,
+        text: codeLine.slice(commentStart, i).trim(),
+      });
     } else if (
       char === "(" ||
       char === ")" ||
@@ -468,7 +477,16 @@ export const CodeLineToAST = (
     return null;
   }
 
+  const spans: CommentSpan[] = [];
+
   function parseExpression(scope: Set<string>): InternalAST {
+    const start = pos;
+    const node = parseExpressionInner(scope);
+    if (pos > start) spans.push({ start, end: pos, node: node as TypeAST.AST });
+    return node;
+  }
+
+  function parseExpressionInner(scope: Set<string>): InternalAST {
     const params = tryParseParams();
     if (params !== null) {
       const sep = tokens[pos];
@@ -1358,6 +1376,9 @@ export const CodeLineToAST = (
       `Unexpected trailing tokens: ${tokens.slice(pos).join(" ")}`
     );
   }
+
+  attachNodeComments(spans, comments);
+
   const normalized = normalizeMixedLists
     ? normalizeSegments(segments as TypeAST.AST[])
     : (segments as TypeAST.AST[]).map((segment) => ({
