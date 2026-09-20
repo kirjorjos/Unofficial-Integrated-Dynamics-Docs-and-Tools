@@ -142,7 +142,7 @@ export async function decodeStoredInputState(
   return parsers.decodeInputStateFromCompressed(code, outputFormat);
 }
 
-const waitForFontsAndNetworkIdle = async (page: Page) => {
+export const waitForFontsAndNetworkIdle = async (page: Page) => {
   await page.evaluate(async (families) => {
     await Promise.all(
       families.flatMap((family) => [
@@ -161,7 +161,7 @@ const waitForFontsAndNetworkIdle = async (page: Page) => {
   await page.waitForLoadState("networkidle");
 };
 
-const expandShellForScreenshots = async (page: Page) => {
+export const expandShellForScreenshots = async (page: Page) => {
   await page.evaluate(() => {
     const shell = document.querySelector<HTMLElement>(".app-shell");
     const sidebar = document.querySelector<HTMLElement>(".sidebar");

@@ -9,10 +9,10 @@ export type TransformerFormatKey =
 
 const disallowedChars = BaseOperator.nicknameRegexDisallowedChars.join("");
 
-const nicknamePrefixRegex = new RegExp(`^[^${disallowedChars}]+\\s*=`);
+const nicknamePrefixRegex = new RegExp(`^[^${disallowedChars}]+\\s*=(?!>)`);
 
 const lambdaDefinitionRegex = new RegExp(
-  `^[^${disallowedChars}=>]+(?:\\s+[^${disallowedChars}=>]+)+\\s*=`
+  `^[^${disallowedChars}=>]+(?:\\s+[^${disallowedChars}=>]+)+\\s*=(?!>)`
 );
 
 const condensedCallRegex = new RegExp(`^[^${disallowedChars}]+\\(`);

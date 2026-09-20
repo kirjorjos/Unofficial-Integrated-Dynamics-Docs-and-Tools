@@ -26,6 +26,12 @@ import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 import { globalMap } from "lib/HelperClasses/TypeMap";
 import FoldableExpandedOutput from "../components/FoldableExpandedOutput.vue";
 import LogicProgrammerVisualOutput from "../components/LogicProgrammerVisualOutput.vue";
+import TransformerInputDocs from "../components/TransformerInputDocs.vue";
+import { settingHelpText } from "lib/transformers/settingHelp";
+import {
+  inputDocExampleInput,
+  type InputDocExample,
+} from "lib/transformers/inputDocs";
 import { detectInputFormat } from "lib/transformers/detectFormat";
 import type { TransformerFormatKey } from "lib/transformers/detectFormat";
 import type { InputStateSection } from "lib/transformers/Compressed";
@@ -48,6 +54,7 @@ const outputText = ref("");
 const outputFormat = ref<OutputFormatKey>("condensed");
 const displayedOutputFormat = ref<OutputFormatKey>("condensed");
 const inputDirty = ref(false);
+const safeToOverwriteInput = ref(true);
 const status = ref("");
 const outputError = ref("");
 const lineNumberOffset = ref(0);
@@ -58,6 +65,7 @@ const expandedOutputViewer = ref<InstanceType<
 const currentAst = ref<any>(null);
 const settingsPanelOpen = ref(false);
 let restoringState = false;
+let loadingExample = false;
 
 const settings = ref<TransformerSettings>({
   ...DEFAULT_TRANSFORMER_SETTINGS,
@@ -473,6 +481,8 @@ const updateOutputFromAst = (
 
 watch(inputText, async () => {
   if (restoringState) return;
+  safeToOverwriteInput.value = loadingExample;
+  loadingExample = false;
   inputDirty.value = true;
   await nextTick();
   syncLineNumberOffsetFromTextarea();
@@ -594,6 +604,21 @@ const settingEnabled = (setting: string): boolean => {
   }
 };
 
+const loadExample = (example: InputDocExample): void => {
+  if (!safeToOverwriteInput.value) {
+    const confirmed = window.confirm(
+      "Replace the current input with this example?"
+    );
+    if (!confirmed) return;
+  }
+  loadingExample = true;
+  if (example.output) {
+    outputFormat.value = example.output;
+  }
+  inputText.value = inputDocExampleInput(example);
+  transform();
+};
+
 onMounted(async () => {
   const url = new URL(window.location.href);
   const code = url.searchParams.get("code");
@@ -650,6 +675,8 @@ onMounted(async () => {
     <p>Transform from auto-detected input form to selected output form.</p>
 
     <div class="transformer-layout">
+      <TransformerInputDocs @load-example="loadExample" />
+
       <label class="field">
         <span>Input</span>
         <span v-if="detectedInputFormat" class="format-hint">
@@ -685,8 +712,16 @@ onMounted(async () => {
           </summary>
           <div class="settings-body">
             <div class="settings-row">
-              <label class="settings-label" for="setting-varid">
-                Initial variable ID
+              <label
+                class="settings-label"
+                for="setting-varid"
+                :data-help="settingHelpText('initialVariableId')"
+              >
+                Initial variable ID<sup
+                  class="settings-help-mark"
+                  aria-hidden="true"
+                  >?</sup
+                >
               </label>
               <input
                 id="setting-varid"
@@ -703,8 +738,16 @@ onMounted(async () => {
               class="settings-row"
               :class="{ disabled: !settingEnabled('signatureDepth') }"
             >
-              <label class="settings-label" for="setting-depth">
-                Signature depth (-1 = unlimited)
+              <label
+                class="settings-label"
+                for="setting-depth"
+                :data-help="settingHelpText('signatureDepth')"
+              >
+                Signature depth (-1 = unlimited)<sup
+                  class="settings-help-mark"
+                  aria-hidden="true"
+                  >?</sup
+                >
               </label>
               <input
                 id="setting-depth"
@@ -722,8 +765,16 @@ onMounted(async () => {
               class="settings-row"
               :class="{ disabled: !settingEnabled('depthLabels') }"
             >
-              <label class="settings-label" for="setting-labels">
-                Operator depth labels
+              <label
+                class="settings-label"
+                for="setting-labels"
+                :data-help="settingHelpText('depthLabels')"
+              >
+                Operator depth labels<sup
+                  class="settings-help-mark"
+                  aria-hidden="true"
+                  >?</sup
+                >
               </label>
               <input
                 id="setting-labels"
@@ -738,8 +789,14 @@ onMounted(async () => {
               class="settings-row"
               :class="{ disabled: !settingEnabled('arrowGlyph') }"
             >
-              <label class="settings-label" for="setting-arrow">
-                Arrow glyph
+              <label
+                class="settings-label"
+                for="setting-arrow"
+                :data-help="settingHelpText('arrowGlyph')"
+              >
+                Arrow glyph<sup class="settings-help-mark" aria-hidden="true"
+                  >?</sup
+                >
               </label>
               <select
                 id="setting-arrow"
@@ -757,8 +814,16 @@ onMounted(async () => {
               class="settings-row"
               :class="{ disabled: !settingEnabled('signatureLayout') }"
             >
-              <label class="settings-label" for="setting-siglayout">
-                Signature lines
+              <label
+                class="settings-label"
+                for="setting-siglayout"
+                :data-help="settingHelpText('signatureLayout')"
+              >
+                Signature lines<sup
+                  class="settings-help-mark"
+                  aria-hidden="true"
+                  >?</sup
+                >
               </label>
               <select
                 id="setting-siglayout"
@@ -780,8 +845,16 @@ onMounted(async () => {
                   settings.signatureLayout !== 'inline',
               }"
             >
-              <label class="settings-label" for="setting-inline-placement">
-                Inline signature placement
+              <label
+                class="settings-label"
+                for="setting-inline-placement"
+                :data-help="settingHelpText('inlinePlacement')"
+              >
+                Inline signature placement<sup
+                  class="settings-help-mark"
+                  aria-hidden="true"
+                  >?</sup
+                >
               </label>
               <select
                 id="setting-inline-placement"
@@ -802,8 +875,16 @@ onMounted(async () => {
               class="settings-row"
               :class="{ disabled: !settingEnabled('statementLayout') }"
             >
-              <label class="settings-label" for="setting-statement-layout">
-                Statement layout
+              <label
+                class="settings-label"
+                for="setting-statement-layout"
+                :data-help="settingHelpText('statementLayout')"
+              >
+                Statement layout<sup
+                  class="settings-help-mark"
+                  aria-hidden="true"
+                  >?</sup
+                >
               </label>
               <select
                 id="setting-statement-layout"
@@ -821,8 +902,16 @@ onMounted(async () => {
               class="settings-row"
               :class="{ disabled: !settingEnabled('referenceStyle') }"
             >
-              <label class="settings-label" for="setting-ref-style">
-                Reference style
+              <label
+                class="settings-label"
+                for="setting-ref-style"
+                :data-help="settingHelpText('referenceStyle')"
+              >
+                Reference style<sup
+                  class="settings-help-mark"
+                  aria-hidden="true"
+                  >?</sup
+                >
               </label>
               <select
                 id="setting-ref-style"
@@ -840,8 +929,16 @@ onMounted(async () => {
               class="settings-row"
               :class="{ disabled: !settingEnabled('expandedRefForm') }"
             >
-              <label class="settings-label" for="setting-expanded-ref-form">
-                Expanded ref form
+              <label
+                class="settings-label"
+                for="setting-expanded-ref-form"
+                :data-help="settingHelpText('expandedRefForm')"
+              >
+                Expanded ref form<sup
+                  class="settings-help-mark"
+                  aria-hidden="true"
+                  >?</sup
+                >
               </label>
               <select
                 id="setting-expanded-ref-form"
@@ -859,8 +956,14 @@ onMounted(async () => {
               class="settings-row"
               :class="{ disabled: !settingEnabled('wrap') }"
             >
-              <label class="settings-label" for="setting-wrap">
-                Wrap vs scroll
+              <label
+                class="settings-label"
+                for="setting-wrap"
+                :data-help="settingHelpText('wrap')"
+              >
+                Wrap vs scroll<sup class="settings-help-mark" aria-hidden="true"
+                  >?</sup
+                >
               </label>
               <select
                 id="setting-wrap"
@@ -877,8 +980,16 @@ onMounted(async () => {
               class="settings-row"
               :class="{ disabled: !settingEnabled('comments') }"
             >
-              <label class="settings-label" for="setting-comments">
-                Preserve comments
+              <label
+                class="settings-label"
+                for="setting-comments"
+                :data-help="settingHelpText('comments')"
+              >
+                Preserve comments<sup
+                  class="settings-help-mark"
+                  aria-hidden="true"
+                  >?</sup
+                >
               </label>
               <input
                 id="setting-comments"
@@ -893,8 +1004,16 @@ onMounted(async () => {
               class="settings-row"
               :class="{ disabled: !settingEnabled('declarationCards') }"
             >
-              <label class="settings-label" for="setting-declaration-cards">
-                Declaration-only operators
+              <label
+                class="settings-label"
+                for="setting-declaration-cards"
+                :data-help="settingHelpText('declarationCards')"
+              >
+                Declaration-only operators<sup
+                  class="settings-help-mark"
+                  aria-hidden="true"
+                  >?</sup
+                >
               </label>
               <select
                 id="setting-declaration-cards"
@@ -912,8 +1031,16 @@ onMounted(async () => {
               class="settings-row"
               :class="{ disabled: !settingEnabled('variableWrapper') }"
             >
-              <label class="settings-label" for="setting-variable-wrapper">
-                Variable("name") wrapper
+              <label
+                class="settings-label"
+                for="setting-variable-wrapper"
+                :data-help="settingHelpText('variableWrapper')"
+              >
+                Variable("name") wrapper<sup
+                  class="settings-help-mark"
+                  aria-hidden="true"
+                  >?</sup
+                >
               </label>
               <input
                 id="setting-variable-wrapper"
@@ -928,8 +1055,16 @@ onMounted(async () => {
               class="settings-row"
               :class="{ disabled: !settingEnabled('lambdaParamSugar') }"
             >
-              <label class="settings-label" for="setting-lambda-sugar">
-                Lambda-param sugar
+              <label
+                class="settings-label"
+                for="setting-lambda-sugar"
+                :data-help="settingHelpText('lambdaParamSugar')"
+              >
+                Lambda-param sugar<sup
+                  class="settings-help-mark"
+                  aria-hidden="true"
+                  >?</sup
+                >
               </label>
               <input
                 id="setting-lambda-sugar"
@@ -944,8 +1079,16 @@ onMounted(async () => {
               class="settings-row"
               :class="{ disabled: !settingEnabled('duplicateNames') }"
             >
-              <label class="settings-label" for="setting-dup-names">
-                Duplicate names
+              <label
+                class="settings-label"
+                for="setting-dup-names"
+                :data-help="settingHelpText('duplicateNames')"
+              >
+                Duplicate names<sup
+                  class="settings-help-mark"
+                  aria-hidden="true"
+                  >?</sup
+                >
               </label>
               <select
                 id="setting-dup-names"
@@ -962,8 +1105,16 @@ onMounted(async () => {
               class="settings-row"
               :class="{ disabled: !settingEnabled('hardening') }"
             >
-              <label class="settings-label" for="setting-hardening">
-                Hardening logic
+              <label
+                class="settings-label"
+                for="setting-hardening"
+                :data-help="settingHelpText('hardening')"
+              >
+                Hardening logic<sup
+                  class="settings-help-mark"
+                  aria-hidden="true"
+                  >?</sup
+                >
               </label>
               <select
                 id="setting-hardening"
@@ -981,8 +1132,16 @@ onMounted(async () => {
               class="settings-row"
               :class="{ disabled: !settingEnabled('hideOperatorWrappers') }"
             >
-              <label class="settings-label" for="setting-hide-op-wrappers">
-                Hide operator wrappers
+              <label
+                class="settings-label"
+                for="setting-hide-op-wrappers"
+                :data-help="settingHelpText('hideOperatorWrappers')"
+              >
+                Hide operator wrappers<sup
+                  class="settings-help-mark"
+                  aria-hidden="true"
+                  >?</sup
+                >
               </label>
               <input
                 id="setting-hide-op-wrappers"
@@ -997,8 +1156,16 @@ onMounted(async () => {
               class="settings-row"
               :class="{ disabled: !settingEnabled('resolve') }"
             >
-              <label class="settings-label" for="setting-resolve">
-                Resolve (display face)
+              <label
+                class="settings-label"
+                for="setting-resolve"
+                :data-help="settingHelpText('resolve')"
+              >
+                Resolve (display face)<sup
+                  class="settings-help-mark"
+                  aria-hidden="true"
+                  >?</sup
+                >
               </label>
               <input
                 id="setting-resolve"
@@ -1013,8 +1180,16 @@ onMounted(async () => {
               class="settings-row"
               :class="{ disabled: !settingEnabled('preferSourceNames') }"
             >
-              <label class="settings-label" for="setting-source-names">
-                Source-name preference
+              <label
+                class="settings-label"
+                for="setting-source-names"
+                :data-help="settingHelpText('preferSourceNames')"
+              >
+                Source-name preference<sup
+                  class="settings-help-mark"
+                  aria-hidden="true"
+                  >?</sup
+                >
               </label>
               <input
                 id="setting-source-names"
