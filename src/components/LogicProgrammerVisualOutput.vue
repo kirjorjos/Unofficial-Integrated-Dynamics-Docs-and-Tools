@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, watch } from "vue";
 import FitText from "./FitText.vue";
 import HoverMinecraftTooltip from "./HoverMinecraftTooltip.vue";
 import VisualTransformerStep from "./VisualTransformerStep.vue";
@@ -77,7 +77,6 @@ type VisualStep = {
   forceOperatorTabActive?: boolean;
   workspaceMode?: "operatorValue" | "pattern";
   typeError?: string;
-  /** Expanded-form source comment correlated with this step's definition */
   comment?: string;
 };
 
@@ -156,15 +155,24 @@ const getTypeColor = (typeName: string): string => {
   return LOGIC_PROGRAMMER_TYPE_COLORS[typeName]?.primary ?? "#f0f0f0";
 };
 
-const props = defineProps<{
-  ast: TypeAST.AST;
-  startVariableId: number;
-  showStepNumbers?: boolean;
-  showStepTitles?: boolean;
-  operatorPreviewMode?: "value" | "pattern";
-  forceShowOutputCard?: boolean;
-  /** URL of the transformers page with this input's compressed state. */
-  reproUrl?: string;
+const props = withDefaults(
+  defineProps<{
+    ast: TypeAST.AST;
+    startVariableId: number;
+    showStepNumbers?: boolean;
+    showStepTitles?: boolean;
+    operatorPreviewMode?: "value" | "pattern";
+    forceShowOutputCard?: boolean;
+    reproUrl?: string;
+    renderStepId?: string;
+    discoveryOnly?: boolean;
+    showDisplayPanels?: boolean;
+  }>(),
+  { showDisplayPanels: true }
+);
+
+const emit = defineEmits<{
+  (event: "steps", ids: string[]): void;
 }>();
 
 const SHIFT_HELD_TOOLTIP_INFO = tooltipInfo as Record<string, string>;
@@ -2473,12 +2481,31 @@ const getReaderViewValues = (
   }
   return undefined;
 };
+
+const displaySteps = computed<{ step: VisualStep; index: number }[]>(() => {
+  const all = steps.value;
+  if (!props.renderStepId) return all.map((step, index) => ({ step, index }));
+  const index = all.findIndex((step) => step.id === props.renderStepId);
+  return index < 0 ? [] : [{ step: all[index]!, index }];
+});
+
+watch(
+  () => steps.value.map((step) => step.id).join("|"),
+  () =>
+    emit(
+      "steps",
+      steps.value.map((step) => step.id)
+    ),
+  { immediate: true }
+);
+
+defineExpose({ steps, displaySteps });
 </script>
 
 <template>
-  <section class="logic-programmer-sequence">
+  <section v-if="!props.discoveryOnly" class="logic-programmer-sequence">
     <VisualTransformerStep
-      v-for="(step, index) in steps"
+      v-for="{ step, index } in displaySteps"
       :key="step.id"
       :step="step"
       :index="index"
@@ -2486,6 +2513,7 @@ const getReaderViewValues = (
       :show-step-numbers="props.showStepNumbers"
       :show-step-titles="props.showStepTitles"
       :force-show-output-card="props.forceShowOutputCard"
+      :show-display-panels="props.showDisplayPanels"
       :display-panel-text="getDisplayPanelText(step, steps)"
       :display-panel-hardened-text="getDisplayPanelText(step, steps, true)"
       :display-panel-color="getDisplayPanelColor(step)"

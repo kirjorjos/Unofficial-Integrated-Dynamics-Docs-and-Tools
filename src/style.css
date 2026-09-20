@@ -423,7 +423,8 @@ button {
 
 .editor,
 .select,
-.transformer-actions button {
+.transformer-actions button,
+.tile-actions button {
   font: inherit;
 }
 
@@ -1674,7 +1675,8 @@ button {
   white-space: pre;
 }
 
-.transformer-actions button {
+.transformer-actions button,
+.tile-actions button {
   border: 1px solid #8ebec8;
   border-radius: 0.5rem;
   padding: 0.6rem 1rem;
@@ -1684,14 +1686,92 @@ button {
   box-shadow: 0 6px 18px rgba(49, 105, 117, 0.08);
 }
 
-.transformer-actions button:hover:not(:disabled) {
+.transformer-actions button:hover:not(:disabled),
+.tile-actions button:hover:not(:disabled) {
   border-color: #4baec0;
   background: linear-gradient(180deg, #f2fdff 0%, #c4e5ed 100%);
 }
 
-.transformer-actions button:disabled {
+.transformer-actions button:disabled,
+.tile-actions button:disabled {
   cursor: default;
   opacity: 0.6;
+}
+
+.tile-grid {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  grid-template-columns: repeat(var(--tile-cols, 1), minmax(0, 1fr));
+  align-items: start;
+}
+
+.tile {
+  position: relative;
+  min-width: 0;
+  padding-top: 14px;
+}
+
+.tile-drag-bar {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 14px;
+  cursor: grab;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  border-radius: 0.5rem 0.5rem 0 0;
+  background-image:
+    radial-gradient(circle, rgba(43, 80, 93, 0.5) 1px, transparent 1.4px),
+    linear-gradient(
+      180deg,
+      rgba(140, 190, 200, 0.85) 0%,
+      rgba(140, 190, 200, 0) 100%
+    );
+  background-size:
+    6px 6px,
+    100% 100%;
+}
+
+.tile:hover .tile-drag-bar,
+.tile:focus-within .tile-drag-bar {
+  opacity: 1;
+}
+
+.tile-drag-bar:active {
+  cursor: grabbing;
+}
+
+.tile-dragging {
+  opacity: 0.6;
+}
+
+.tile-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.tile-title-block {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.tile-title-text {
+  min-width: 0;
+}
+
+.tile-title-block .tile-actions {
+  flex: 0 0 auto;
+  margin-top: 0;
+}
+
+.tile-reset {
+  font-size: 0.65rem;
+  padding: 0.15rem 0.42rem;
+  border-radius: 0.35rem;
 }
 
 .status {

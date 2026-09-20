@@ -3,6 +3,9 @@ import { computed, ref, watch } from "vue";
 import DisplayPanelView from "../../components/DisplayPanelView.vue";
 import DisplayPanelViewHolder from "../../components/DisplayPanelViewHolder.vue";
 import ReaderGuiView from "../../components/ReaderGuiView.vue";
+import Tile from "../../components/Tile.vue";
+import TileGrid from "../../components/TileGrid.vue";
+import { FULL_TILE_SPAN } from "pages-lib/tileLayout";
 import { getTypeColor } from "pages-lib/visualTransformer";
 import { getCompactValueTextForAst } from "pages-lib/visualTransformerLogic";
 import type { ReaderClass } from "lib/IntegratedDynamicsClasses/readers/readerRegistry";
@@ -137,99 +140,118 @@ const hasSettings = computed(() => settingsEntries.value.length > 0);
 
 <template>
   <article class="doc-page reader-aspect-doc-page">
-    <h2>{{ aspect?.fullDisplayName ?? aspectKey }}</h2>
-    <p v-if="readerClass" class="reader-aspect-subtitle">
-      {{ readerTitle }} · {{ aspect?.displayName ?? aspectKey }}
-    </p>
-
-    <!-- Info box -->
-    <section class="reader-aspect-info-box">
-      <div class="reader-aspect-info-top">
-        <div class="reader-aspect-info-line">
-          <span class="reader-aspect-info-label">Display name</span>
-          <span>{{ aspect?.fullDisplayName ?? aspectKey }}</span>
-        </div>
-        <div class="reader-aspect-info-line">
-          <span class="reader-aspect-info-label">Output type</span>
-          <span :style="{ color: typeColor }">{{ outputType }}</span>
-        </div>
-        <div class="reader-aspect-info-line">
-          <span class="reader-aspect-info-label">Default value</span>
-          <span>{{ defaultText || "—" }}</span>
-        </div>
-        <p v-if="aspect?.tooltipInfo" class="reader-aspect-description">
-          {{ aspect.tooltipInfo }}
-        </p>
-      </div>
-
-      <div v-if="hasSettings" class="reader-aspect-settings-box">
-        <h3>Settings</h3>
-        <div
-          v-for="entry in settingsEntries"
-          :key="entry.key"
-          class="reader-aspect-setting"
-        >
-          <div class="reader-aspect-setting-name">{{ entry.displayName }}</div>
-          <div class="reader-aspect-setting-value">
-            {{ SETTING_INDENT }}{{ entry.value }}
+    <TileGrid v-slot="{ resetLayout }">
+      <Tile id="title" :span="FULL_TILE_SPAN" :default-col="0" :default-row="0">
+        <div class="tile-title-block">
+          <div class="tile-title-text">
+            <h2>{{ aspect?.fullDisplayName ?? aspectKey }}</h2>
+            <p v-if="readerClass" class="reader-aspect-subtitle">
+              {{ readerTitle }} · {{ aspect?.displayName ?? aspectKey }}
+            </p>
           </div>
-          <div
-            v-if="entry.description"
-            class="reader-aspect-setting-description"
-          >
-            {{ SETTING_INDENT }}{{ entry.description }}
+          <div class="tile-actions">
+            <button type="button" class="tile-reset" @click="resetLayout">
+              Reset layout
+            </button>
           </div>
         </div>
-      </div>
-    </section>
+      </Tile>
 
-    <!-- Input box -->
-    <section class="reader-aspect-input-box">
-      <template v-if="isOperatorAspect">
-        <div class="reader-aspect-input-type">Signature</div>
-        <div class="reader-aspect-operator-signature">
-          {{ operatorSignature }}
-        </div>
-        <div class="reader-aspect-operator-blob">
-          {{ aspect?.fullDisplayName }} does not support an overridden
-          simulatedValue.
-        </div>
-      </template>
-      <template v-else>
-        <div class="reader-aspect-input-type" :style="{ color: typeColor }">
-          Simulated Value
-        </div>
-        <input
-          v-model="valueText"
-          class="reader-aspect-value-input"
-          type="text"
-          :aria-label="`Simulated ${outputType} value`"
-          :placeholder="defaultText"
-        />
-      </template>
-    </section>
+      <Tile id="info" :span="FULL_TILE_SPAN" :default-col="0" :default-row="1">
+        <section class="reader-aspect-info-box">
+          <div class="reader-aspect-info-top">
+            <div class="reader-aspect-info-line">
+              <span class="reader-aspect-info-label">Display name</span>
+              <span>{{ aspect?.fullDisplayName ?? aspectKey }}</span>
+            </div>
+            <div class="reader-aspect-info-line">
+              <span class="reader-aspect-info-label">Output type</span>
+              <span :style="{ color: typeColor }">{{ outputType }}</span>
+            </div>
+            <div class="reader-aspect-info-line">
+              <span class="reader-aspect-info-label">Default value</span>
+              <span>{{ defaultText || "—" }}</span>
+            </div>
+            <p v-if="aspect?.tooltipInfo" class="reader-aspect-description">
+              {{ aspect.tooltipInfo }}
+            </p>
+          </div>
 
-    <!-- Reader view -->
-    <section class="reader-aspect-reader-view">
-      <ReaderGuiView
-        v-if="readerClass && resolvedAspectKey"
-        :reader="readerClass"
-        :focused-aspect="resolvedAspectKey"
-        :values="readerValues"
-        :type-error="typeError"
-      />
-    </section>
+          <div v-if="hasSettings" class="reader-aspect-settings-box">
+            <h3>Settings</h3>
+            <div
+              v-for="entry in settingsEntries"
+              :key="entry.key"
+              class="reader-aspect-setting"
+            >
+              <div class="reader-aspect-setting-name">
+                {{ entry.displayName }}
+              </div>
+              <div class="reader-aspect-setting-value">
+                {{ SETTING_INDENT }}{{ entry.value }}
+              </div>
+              <div
+                v-if="entry.description"
+                class="reader-aspect-setting-description"
+              >
+                {{ SETTING_INDENT }}{{ entry.description }}
+              </div>
+            </div>
+          </div>
+        </section>
+      </Tile>
 
-    <!-- Display panel holder -->
-    <section class="reader-aspect-display-panel">
-      <DisplayPanelViewHolder>
-        <DisplayPanelView
-          :text="effectiveText"
-          :type-name="outputType"
-          :type-error="typeError"
-        />
-      </DisplayPanelViewHolder>
-    </section>
+      <Tile id="input" :span="FULL_TILE_SPAN" :default-col="0" :default-row="2">
+        <section class="reader-aspect-input-box">
+          <template v-if="isOperatorAspect">
+            <div class="reader-aspect-input-type">Signature</div>
+            <div class="reader-aspect-operator-signature">
+              {{ operatorSignature }}
+            </div>
+            <div class="reader-aspect-operator-blob">
+              {{ aspect?.fullDisplayName }} does not support an overridden
+              simulatedValue.
+            </div>
+          </template>
+          <template v-else>
+            <div class="reader-aspect-input-type" :style="{ color: typeColor }">
+              Simulated Value
+            </div>
+            <input
+              v-model="valueText"
+              class="reader-aspect-value-input"
+              type="text"
+              :aria-label="`Simulated ${outputType} value`"
+              :placeholder="defaultText"
+            />
+          </template>
+        </section>
+      </Tile>
+
+      <Tile id="view" :span="FULL_TILE_SPAN" :default-col="0" :default-row="3">
+        <section class="reader-aspect-reader-view">
+          <ReaderGuiView
+            v-if="readerClass && resolvedAspectKey"
+            :reader="readerClass"
+            :focused-aspect="resolvedAspectKey"
+            :values="readerValues"
+            :type-error="typeError"
+          />
+        </section>
+      </Tile>
+
+      <Tile id="displayPanel" :span="1" :default-col="0" :default-row="4">
+        <section class="reader-aspect-display-panel">
+          <DisplayPanelViewHolder>
+            <DisplayPanelView
+              :text="effectiveText"
+              :type-name="outputType"
+              :type-error="typeError"
+            />
+          </DisplayPanelViewHolder>
+        </section>
+      </Tile>
+    </TileGrid>
   </article>
 </template>
 

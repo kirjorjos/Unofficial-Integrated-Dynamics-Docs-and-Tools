@@ -200,9 +200,7 @@ export const openReaderAspect = async (page: Page, pageId: string) => {
 
 export const openOperatorPattern = async (page: Page, operatorKey: string) => {
   await page.goto(`/#operator-${operatorKey}`);
-  const patternPanel = page.locator(
-    '.operator-preview-panel:has(h3:text-is("Operator Tab"))'
-  );
+  const patternPanel = page.locator('[data-tile-id="operatorTab"]');
   await patternPanel.waitFor();
   await patternPanel.locator(".logic-programmer-shot").first().waitFor();
   await waitForFontsAndNetworkIdle(page);

@@ -5,9 +5,7 @@ test.describe("operatorPatternPreviewOperatorPage", () => {
   test("testPatternPreviewShotForArithmeticIncrement", async ({ page }) => {
     await openOperatorPattern(page, "ARITHMETIC_INCREMENT");
 
-    const patternPanel = page.locator(
-      '.operator-preview-panel:has(h3:text-is("Operator Tab"))'
-    );
+    const patternPanel = page.locator('[data-tile-id="operatorTab"]');
     await expect(page.locator(".operator-doc-page h2")).toContainText(
       "ARITHMETIC_INCREMENT"
     );
@@ -19,7 +17,8 @@ test.describe("operatorPatternPreviewOperatorPage", () => {
     );
     await expect(shot.locator(".logic-write-card-composite")).toHaveCount(0);
 
-    await expect(shot.locator(".display-panel").first()).toContainText(
+    const displayPanel = page.locator('[data-tile-id="operatorDisplay"]');
+    await expect(displayPanel.locator(".display-panel").first()).toContainText(
       /Arithmetic Increment/
     );
 

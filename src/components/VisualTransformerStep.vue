@@ -18,20 +18,15 @@ const props = withDefaults(
     showStepNumbers?: boolean;
     showStepTitles?: boolean;
     forceShowOutputCard?: boolean;
-    /** Override display panel text (bypasses shared getDisplayPanelText) */
     displayPanelText?: string;
-    /** Override the RHS display panel text (full-hardened signature variant) */
     displayPanelHardenedText?: string;
-    /** Override display panel color (bypasses shared getDisplayPanelColor) */
     displayPanelColor?: string;
-    /** Override display panel alignment (bypasses shared getDisplayPanelAlignment) */
     displayPanelAlign?: string;
-    /** Override display panel error (bypasses shared getCumulativeStepError) */
     displayPanelError?: string;
-    /** URL of the transformers page with this input's compressed state. */
     reproUrl?: string;
+    showDisplayPanels?: boolean;
   }>(),
-  {}
+  { showDisplayPanels: true }
 );
 
 const panelText = computed(
@@ -83,14 +78,12 @@ const panelError = computed(
       v-text="step.comment"
     />
 
-    <!-- Reader steps render the reader GUI (its own frame shell) in place of
-         the logic programmer, with the display panel holder alongside below -->
     <slot v-if="props.step.sourceType === 'Reader'" />
     <div v-else class="logic-programmer-frame-shell">
       <slot />
     </div>
 
-    <DisplayPanelViewHolder>
+    <DisplayPanelViewHolder v-if="props.showDisplayPanels">
       <DisplayPanelView
         :text="panelText"
         :text-color="panelColor"
