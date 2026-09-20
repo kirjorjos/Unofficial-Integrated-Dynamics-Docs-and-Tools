@@ -283,9 +283,9 @@ test.describe("transformersPageVisualOutputDom", () => {
     await expect(
       page.locator(".display-panel .fit-text-inner").filter({ hasText: "3" })
     ).toHaveCount(2);
-    await expect(page.locator(".logic-programmer-sequence")).toHaveScreenshot(
-      "url-load-edit-retransform.png"
-    );
+    await expect(
+      page.locator(".logic-programmer-sequence").first()
+    ).toHaveScreenshot("url-load-edit-retransform.png");
   });
 
   test("testEditInputWithoutTransformKeepsVisualOutputFrozen", async ({
@@ -300,7 +300,9 @@ test.describe("transformersPageVisualOutputDom", () => {
       .fill("apply add 1 2");
 
     await expect(shots).toHaveCount(3);
-    await expect(page.locator(".logic-programmer-sequence")).toBeVisible();
+    await expect(
+      page.locator(".logic-programmer-sequence").first()
+    ).toBeVisible();
     await expect(
       page.locator(".display-panel .fit-text-inner").filter({ hasText: "3" })
     ).toHaveCount(0);

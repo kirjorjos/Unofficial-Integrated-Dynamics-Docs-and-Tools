@@ -27,6 +27,9 @@ import { globalMap } from "lib/HelperClasses/TypeMap";
 import FoldableExpandedOutput from "../components/FoldableExpandedOutput.vue";
 import LogicProgrammerVisualOutput from "../components/LogicProgrammerVisualOutput.vue";
 import TransformerInputDocs from "../components/TransformerInputDocs.vue";
+import Tile from "../components/Tile.vue";
+import TileGrid from "../components/TileGrid.vue";
+import { FULL_TILE_SPAN } from "pages-lib/tileLayout";
 import { settingHelpText } from "lib/transformers/settingHelp";
 import {
   inputDocExampleInput,
@@ -64,6 +67,7 @@ const expandedOutputViewer = ref<InstanceType<
 > | null>(null);
 const currentAst = ref<any>(null);
 const settingsPanelOpen = ref(false);
+const visualStepIds = ref<string[]>([]);
 let restoringState = false;
 let loadingExample = false;
 
@@ -215,6 +219,18 @@ const canCopyOutput = computed(
       ? currentAst.value !== null
       : outputText.value.trim().length > 0)
 );
+
+const discoverVisualSteps = computed(
+  () => displayedOutputFormat.value === "visual" && currentAst.value !== null
+);
+
+const onVisualSteps = (ids: string[]): void => {
+  visualStepIds.value = ids;
+};
+
+watch(discoverVisualSteps, (active) => {
+  if (!active) visualStepIds.value = [];
+});
 const syncLineNumberOffsetFromTextarea = (): void => {
   lineNumberOffset.value = inputEditor.value?.scrollTop ?? 0;
 };
@@ -671,38 +687,64 @@ onMounted(async () => {
 
 <template>
   <article class="doc-page">
-    <h2>Transformers</h2>
-    <p>Transform from auto-detected input form to selected output form.</p>
+    <LogicProgrammerVisualOutput
+      v-if="discoverVisualSteps"
+      :ast="currentAst"
+      :start-variable-id="initialVariableId"
+      operator-preview-mode="pattern"
+      discovery-only
+      @steps="onVisualSteps"
+    />
 
-    <div class="transformer-layout">
-      <TransformerInputDocs @load-example="loadExample" />
+    <TileGrid v-slot="{ resetLayout }">
+      <Tile id="title" :span="FULL_TILE_SPAN">
+        <div class="tile-title-block">
+          <div class="tile-title-text">
+            <h2>Transformers</h2>
+            <p>
+              Transform from auto-detected input form to selected output form.
+            </p>
+          </div>
+          <div class="tile-actions">
+            <button type="button" class="tile-reset" @click="resetLayout">
+              Reset layout
+            </button>
+          </div>
+        </div>
+      </Tile>
 
-      <label class="field">
-        <span>Input</span>
-        <span v-if="detectedInputFormat" class="format-hint">
-          Detected: {{ formatters[detectedInputFormat].label }}
-        </span>
-        <div class="editor-shell input-editor-shell">
-          <div class="line-number-column" aria-hidden="true">
-            <pre
-              class="line-numbers"
-              v-text="inputLineNumbers"
-              :style="{ transform: `translateY(-${lineNumberOffset}px)` }"
+      <Tile id="docs" :span="2">
+        <TransformerInputDocs @load-example="loadExample" />
+      </Tile>
+
+      <Tile id="input" :span="2">
+        <label class="field">
+          <span>Input</span>
+          <span v-if="detectedInputFormat" class="format-hint">
+            Detected: {{ formatters[detectedInputFormat].label }}
+          </span>
+          <div class="editor-shell input-editor-shell">
+            <div class="line-number-column" aria-hidden="true">
+              <pre
+                class="line-numbers"
+                v-text="inputLineNumbers"
+                :style="{ transform: `translateY(-${lineNumberOffset}px)` }"
+              />
+            </div>
+            <textarea
+              ref="inputEditor"
+              v-model="inputText"
+              class="editor input-editor"
+              :wrap="settings.wrap ? 'soft' : 'off'"
+              spellcheck="false"
+              aria-label="Transformer input"
+              @scroll="syncLineNumberScroll"
             />
           </div>
-          <textarea
-            ref="inputEditor"
-            v-model="inputText"
-            class="editor input-editor"
-            :wrap="settings.wrap ? 'soft' : 'off'"
-            spellcheck="false"
-            aria-label="Transformer input"
-            @scroll="syncLineNumberScroll"
-          />
-        </div>
-      </label>
+        </label>
+      </Tile>
 
-      <div class="transformer-actions">
+      <Tile id="settings" :span="1">
         <details class="settings-panel" :open="settingsPanelOpen">
           <summary
             class="settings-summary"
@@ -1201,63 +1243,81 @@ onMounted(async () => {
             </div>
           </div>
         </details>
+      </Tile>
 
-        <label class="field">
-          <span>Output format</span>
-          <select
-            v-model="outputFormat"
-            class="select"
-            aria-label="Output format"
-          >
-            <option
-              v-for="option in formatOptions"
-              :key="option.value"
-              :value="option.value"
+      <Tile id="format" :span="1">
+        <div class="transformer-actions">
+          <label class="field">
+            <span>Output format</span>
+            <select
+              v-model="outputFormat"
+              class="select"
+              aria-label="Output format"
             >
-              {{ option.label }}
-            </option>
-          </select>
+              <option
+                v-for="option in formatOptions"
+                :key="option.value"
+                :value="option.value"
+              >
+                {{ option.label }}
+              </option>
+            </select>
+          </label>
+
+          <button :disabled="!canTransform" type="button" @click="transform()">
+            Transform
+          </button>
+        </div>
+      </Tile>
+
+      <Tile id="output" :span="2">
+        <label class="field">
+          <span>{{ outputFormatters[displayedOutputFormat].label }}</span>
+          <div v-if="outputError" class="output-error" v-text="outputError" />
+          <FoldableExpandedOutput
+            v-else-if="displayedOutputFormat === 'expanded'"
+            ref="expandedOutputViewer"
+            :text="outputText"
+            :class="{ 'scroll-mode': settings.wrap }"
+          />
+          <textarea
+            v-else-if="displayedOutputFormat !== 'visual'"
+            :value="outputText"
+            class="editor"
+            :wrap="settings.wrap ? 'off' : 'soft'"
+            spellcheck="false"
+            :aria-label="outputFormatters[displayedOutputFormat].label"
+            readonly
+          />
         </label>
 
-        <button :disabled="!canTransform" type="button" @click="transform()">
-          Transform
-        </button>
-        <button :disabled="!canCopyOutput" type="button" @click="copyOutput">
-          Copy output
-        </button>
-      </div>
+        <div class="tile-actions">
+          <button :disabled="!canCopyOutput" type="button" @click="copyOutput">
+            Copy output
+          </button>
+        </div>
 
-      <label class="field">
-        <span>{{ outputFormatters[displayedOutputFormat].label }}</span>
-        <div v-if="outputError" class="output-error" v-text="outputError" />
-        <FoldableExpandedOutput
-          v-else-if="displayedOutputFormat === 'expanded'"
-          ref="expandedOutputViewer"
-          :text="outputText"
-          :class="{ 'scroll-mode': settings.wrap }"
-        />
+        <p v-if="status" class="status">{{ status }}</p>
+      </Tile>
+
+      <Tile
+        v-for="(stepId, index) in visualStepIds"
+        :key="stepId"
+        :id="`step${index}`"
+        :span="2"
+      >
         <LogicProgrammerVisualOutput
-          v-else-if="displayedOutputFormat === 'visual' && currentAst"
+          v-if="currentAst"
           :ast="currentAst"
           :start-variable-id="initialVariableId"
           :show-step-numbers="true"
           :show-step-titles="true"
+          :render-step-id="stepId"
           operator-preview-mode="pattern"
           force-show-output-card
           :repro-url="reproUrl"
         />
-        <textarea
-          v-else
-          :value="outputText"
-          class="editor"
-          :wrap="settings.wrap ? 'off' : 'soft'"
-          spellcheck="false"
-          :aria-label="outputFormatters[displayedOutputFormat].label"
-          readonly
-        />
-      </label>
-    </div>
-
-    <p v-if="status" class="status">{{ status }}</p>
+      </Tile>
+    </TileGrid>
   </article>
 </template>
