@@ -68,13 +68,36 @@ test.describe("transformersPageSettingsPanel", () => {
     );
   });
 
-  test("testWrapToggleFlipsInputTextareaWrapAttr", async ({ page }) => {
+  test("testWrapDropdownOffersScrollAndWrapLabels", async ({ page }) => {
+    await page.goto("/#transformers");
+    await page.locator(".settings-summary").click();
+
+    const options = page.locator("#setting-wrap option");
+    await expect(options).toHaveText(["Scroll", "Wrap"]);
+  });
+
+  test("testWrapDropdownSwitchesEveryTextareaBetweenScrollAndWrap", async ({
+    page,
+  }) => {
     await page.goto("/#transformers");
     const input = page.locator('textarea[aria-label="Transformer input"]');
+    const output = page.locator('textarea[aria-label="Condensed"]');
     await expect(input).toHaveAttribute("wrap", "off");
+    await expect(output).toHaveAttribute("wrap", "off");
 
     await page.locator(".settings-summary").click();
-    await page.locator("#setting-wrap").selectOption({ label: "Flipped" });
+    await page.locator("#setting-wrap").selectOption({ label: "Wrap" });
     await expect(input).toHaveAttribute("wrap", "soft");
+    await expect(output).toHaveAttribute("wrap", "soft");
+  });
+
+  test("testWrapDropdownControlsExpandedViewerScrollMode", async ({ page }) => {
+    await runTransform(page, "a = 5\nfinal = a", "expanded");
+    const viewer = page.locator(".expanded-output-viewer");
+    await expect(viewer).toHaveClass(/scroll-mode/);
+
+    await page.locator(".settings-summary").click();
+    await page.locator("#setting-wrap").selectOption({ label: "Wrap" });
+    await expect(viewer).not.toHaveClass(/scroll-mode/);
   });
 });
