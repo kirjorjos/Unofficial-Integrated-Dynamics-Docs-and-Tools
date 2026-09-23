@@ -52,7 +52,7 @@ export const SETTING_HELP: Record<SettingHelpKey, SettingHelp> = {
   },
   wrap: {
     description:
-      "Flips every text box between soft-wrapping and horizontal scrolling.",
+      "Makes every text box either soft-wrap or scroll horizontally.",
   },
   comments: {
     description: "Keeps input comments.",

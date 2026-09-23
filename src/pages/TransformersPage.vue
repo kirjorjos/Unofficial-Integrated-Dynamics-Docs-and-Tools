@@ -1013,8 +1013,8 @@ onMounted(async () => {
                 class="select"
                 aria-label="Wrap vs scroll"
               >
-                <option :value="false">Current defaults</option>
-                <option :value="true">Flipped</option>
+                <option :value="false">Scroll</option>
+                <option :value="true">Wrap</option>
               </select>
             </div>
 
@@ -1278,13 +1278,13 @@ onMounted(async () => {
             v-else-if="displayedOutputFormat === 'expanded'"
             ref="expandedOutputViewer"
             :text="outputText"
-            :class="{ 'scroll-mode': settings.wrap }"
+            :class="{ 'scroll-mode': !settings.wrap }"
           />
           <textarea
             v-else-if="displayedOutputFormat !== 'visual'"
             :value="outputText"
             class="editor"
-            :wrap="settings.wrap ? 'off' : 'soft'"
+            :wrap="settings.wrap ? 'soft' : 'off'"
             spellcheck="false"
             :aria-label="outputFormatters[displayedOutputFormat].label"
             readonly
