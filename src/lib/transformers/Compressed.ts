@@ -68,6 +68,13 @@ const enum LiteralKind {
   Variable = 28,
   Curry = 29,
   NetworkCards = 30,
+  Wrapper = 31,
+}
+
+const enum WrapperKind {
+  Materialize = 0b00,
+  Dynamic = 0b01,
+  Static = 0b10,
 }
 
 const enum JSONKind {
@@ -1454,6 +1461,23 @@ const writeNode = (
       return;
     }
 
+    case "Materialize":
+    case "Dynamic":
+    case "Static": {
+      writer.writeBits(NodeKind.Literal, 2);
+      writeLiteralKind(writer, LiteralKind.Wrapper);
+      const wrapperKind =
+        node.type === "Materialize"
+          ? WrapperKind.Materialize
+          : node.type === "Dynamic"
+            ? WrapperKind.Dynamic
+            : WrapperKind.Static;
+      writer.writeBits(wrapperKind, 2);
+      writeNode(writer, node.value, seen);
+      writeNodeMetadata(writer, node);
+      return;
+    }
+
     case "List":
       writer.writeBits(NodeKind.Literal, 2);
       writeLiteralKind(writer, LiteralKind.List);
@@ -1682,6 +1706,20 @@ const readNode = (
             definitions.push({ name, node });
           }
           node = { type: "NetworkCards", definitions };
+          break;
+        }
+        case LiteralKind.Wrapper: {
+          const wrapperKind = reader.readNumber(2);
+          const value = readNode(reader, decoded);
+          if (wrapperKind === WrapperKind.Materialize) {
+            node = { type: "Materialize", value };
+          } else if (wrapperKind === WrapperKind.Dynamic) {
+            node = { type: "Dynamic", value };
+          } else if (wrapperKind === WrapperKind.Static) {
+            node = { type: "Static", value };
+          } else {
+            throw new Error(`Unknown compressed wrapper kind ${wrapperKind}`);
+          }
           break;
         }
         case LiteralKind.Curry: {

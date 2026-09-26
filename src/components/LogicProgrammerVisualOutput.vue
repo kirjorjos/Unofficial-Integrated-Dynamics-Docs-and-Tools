@@ -3,6 +3,7 @@ import { computed, watch } from "vue";
 import FitText from "./FitText.vue";
 import HoverMinecraftTooltip from "./HoverMinecraftTooltip.vue";
 import VisualTransformerStep from "./VisualTransformerStep.vue";
+import MaterializerGuiView from "./MaterializerGuiView.vue";
 import ReaderGuiView from "./ReaderGuiView.vue";
 import {
   getReaderAspectDefaultValue,
@@ -36,6 +37,7 @@ import {
   getNodeComment,
 } from "lib/transformers/helpers";
 import { INTERNAL_BUG_MESSAGE } from "lib/transformers/parseErrors";
+import { abstractDynamicParts } from "lib/transformers/lambdaAbstraction";
 import {
   setLastInternalBugDetail,
   setLastInternalBugStep,
@@ -43,6 +45,10 @@ import {
 import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 import tooltipInfo from "lib/generated/integratedDynamicsTooltipInfo.json";
 import { LOGIC_PROGRAMMER_RENDER_PATTERNS } from "./logicProgrammerRenderPatterns";
+import {
+  getDisplayPanelSourceStep,
+  getMaterializerResultCard,
+} from "pages-lib/visualTransformerLogic";
 
 type OperatorClassLike = {
   new (normalizeSignature?: boolean): BaseOperator<any, any>;
@@ -85,6 +91,7 @@ type VisualCardRef = {
   type: TypeAST.AST["type"];
   variableId: number;
   tooltip: TooltipData;
+  node?: TypeAST.AST;
 };
 
 type VisibleListEntry = {
@@ -491,6 +498,21 @@ const cloneAstWithoutVarNames = (ast: TypeAST.AST): TypeAST.AST => {
           name: def.name,
           node: cloneAstWithoutVarNames(def.node),
         })),
+      };
+    case "Materialize":
+      return {
+        type: "Materialize",
+        value: cloneAstWithoutVarNames(ast.value),
+      };
+    case "Dynamic":
+      return {
+        type: "Dynamic",
+        value: cloneAstWithoutVarNames(ast.value),
+      };
+    case "Static":
+      return {
+        type: "Static",
+        value: cloneAstWithoutVarNames(ast.value),
       };
   }
 };
@@ -1454,6 +1476,9 @@ const getStepActualOutputType = (
     node?: TypeAST.AST;
   }
 ): string => {
+  if (step.sourceType === "Materialize") {
+    return "Operator";
+  }
   if (step.sourceType === "Reader" && step.node?.type === "Reader") {
     const readerClass = getReaderClassByTypeName(step.node.value.reader);
     return readerClass?.aspects[step.node.value.aspect]?.outputType ?? "Any";
@@ -1874,6 +1899,7 @@ const steps = computed<VisualStep[]>(() => {
                 : (getStepActualOutputType(fullStep) as TypeAST.AST["type"]),
         variableId,
         tooltip,
+        node: step.node,
       };
       seen.set(ast, card);
       contentSeen.set(contentKey, card);
@@ -2097,7 +2123,8 @@ const steps = computed<VisualStep[]>(() => {
           tooltipOperatorKey: "OPERATOR_FLIP",
         });
       }
-      case "List":
+      case "List": {
+        const elementCards = ast.value.map((a) => visit(a));
         return register({
           id: `step-${result.length + 1}`,
           title: "List",
@@ -2105,10 +2132,53 @@ const steps = computed<VisualStep[]>(() => {
           symbol: "[]",
           kind: "value",
           sourceType: ast.type,
-          inputs: ast.value.map((a) => visit(a)),
+          inputs: elementCards,
           output: nextName,
           node: ast,
         });
+      }
+      case "Dynamic":
+      case "Static":
+        return visit(ast.value);
+      case "Materialize": {
+        const abstraction = abstractDynamicParts(ast.value);
+        const lambdaCard = visit(abstraction.lambda);
+
+        let finalCard = register({
+          id: `step-${result.length + 1}`,
+          title: "Materialize",
+          searchLabel: "Materialize",
+          panelLabel: "Materializer",
+          symbol: "M",
+          kind: "value",
+          sourceType: "Materialize",
+          inputs: [lambdaCard],
+          output: nextName,
+          detail: abstraction.params.length > 0 ? "lambda" : undefined,
+          node: ast,
+        });
+
+        for (const param of abstraction.params) {
+          const leafCard = visit(param.node, true);
+          const applyDisplay = getVirtualOperatorDisplay("apply");
+          finalCard = register({
+            id: `step-${result.length + 1}`,
+            title: applyDisplay.title,
+            searchLabel: applyDisplay.searchLabel,
+            symbol: applyDisplay.symbol,
+            kind: "operator",
+            sourceType: "Curry",
+            renderPattern: applyDisplay.renderPattern,
+            inputs: [finalCard, leafCard],
+            output: getCardName(ast.value),
+            node: ast.value,
+            tooltipOperatorKey: getCurryTooltipKey(1),
+          });
+        }
+
+        seen.set(ast, finalCard);
+        return finalCard;
+      }
       case "Reader": {
         const readerClass = getReaderClassByTypeName(ast.value.reader);
         let typeError: string | undefined;
@@ -2482,6 +2552,13 @@ const getReaderViewValues = (
   return undefined;
 };
 
+const getMaterializerTopCard = (step: VisualStep) => step.inputs[0];
+
+// A materializer step shows the panel of the card it materializes, so the two
+// panels are identical.
+const panelSourceStep = (step: VisualStep): VisualStep =>
+  getDisplayPanelSourceStep(step, steps.value);
+
 const displaySteps = computed<{ step: VisualStep; index: number }[]>(() => {
   const all = steps.value;
   if (!props.renderStepId) return all.map((step, index) => ({ step, index }));
@@ -2514,10 +2591,13 @@ defineExpose({ steps, displaySteps });
       :show-step-titles="props.showStepTitles"
       :force-show-output-card="props.forceShowOutputCard"
       :show-display-panels="props.showDisplayPanels"
-      :display-panel-text="getDisplayPanelText(step, steps)"
-      :display-panel-hardened-text="getDisplayPanelText(step, steps, true)"
-      :display-panel-color="getDisplayPanelColor(step)"
-      :display-panel-align="getDisplayPanelAlign(step)"
+      :display-panel-text="getDisplayPanelText(panelSourceStep(step), steps)"
+      :display-panel-hardened-text="
+        getDisplayPanelText(panelSourceStep(step), steps, true)
+      "
+      :display-panel-color="getDisplayPanelColor(panelSourceStep(step))"
+      :display-panel-align="getDisplayPanelAlign(panelSourceStep(step))"
+      :display-panel-type-name="panelSourceStep(step).sourceType"
       :display-panel-error="getStepDisplayError(step)"
       :repro-url="props.reproUrl"
     >
@@ -2527,6 +2607,11 @@ defineExpose({ steps, displaySteps });
         :focused-aspect="getReaderViewFocusedAspect(step)"
         :values="getReaderViewValues(step)"
         :type-error="step.typeError"
+      />
+      <MaterializerGuiView
+        v-else-if="step.sourceType === 'Materialize'"
+        :top-card="getMaterializerTopCard(step)"
+        :result-card="getMaterializerResultCard(step)"
       />
       <div v-else class="logic-programmer-frame">
         <div class="logic-programmer-overlay">

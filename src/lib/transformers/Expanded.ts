@@ -404,6 +404,12 @@ const computeSignature = (
       signature = computeSignature(root, scope, resolve);
       break;
     }
+    case "Dynamic":
+    case "Static":
+    case "Materialize": {
+      signature = computeSignature(node.value, scope, resolve);
+      break;
+    }
   }
 
   if (scope) scope.set(node, signature);
@@ -442,6 +448,11 @@ const collectVariables = (
       for (const def of node.definitions) {
         collectVariables(def.node, collected, seen);
       }
+      break;
+    case "Dynamic":
+    case "Static":
+    case "Materialize":
+      collectVariables(node.value, collected, seen);
       break;
   }
 
@@ -580,6 +591,11 @@ const getVarName = (node: TypeAST.AST): string => {
       return `flip${capitalize(getVarName(node.arg))}`;
     case "List":
       return "list";
+    case "Materialize":
+      return `Materialized{${getVarName(node.value)}}`;
+    case "Dynamic":
+    case "Static":
+      return getVarName(node.value);
     case "Reader": {
       const readerClass = getReaderClassByTypeName(node.value.reader);
       const shortName = readerClass?.shortName ?? "reader";
@@ -685,6 +701,18 @@ const decomposeAST = (node: TypeAST.AST): TypeAST.AST => {
     const result = {
       ...node,
       arg: decomposeAST(node.arg) as TypeAST.Operator,
+    };
+    if (!result.varName) result.varName = getVarName(result);
+    return result;
+  }
+  if (
+    node.type === "Materialize" ||
+    node.type === "Dynamic" ||
+    node.type === "Static"
+  ) {
+    const result = {
+      ...node,
+      value: decomposeAST(node.value),
     };
     if (!result.varName) result.varName = getVarName(result);
     return result;
@@ -1537,6 +1565,13 @@ export const ExpandedToAST = (
           return node.value.simulatedOutput
             ? hasAmbiguousRef(node.value.simulatedOutput)
             : false;
+        }
+        if (
+          node.type === "Materialize" ||
+          node.type === "Dynamic" ||
+          node.type === "Static"
+        ) {
+          return hasAmbiguousRef(node.value);
         }
         return false;
       };

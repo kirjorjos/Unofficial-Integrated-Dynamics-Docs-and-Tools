@@ -5,6 +5,7 @@ import DisplayPanelViewHolder from "./DisplayPanelViewHolder.vue";
 import {
   getDisplayPanelText,
   getDisplayPanelAlignment,
+  getDisplayPanelSourceStep,
   getCumulativeStepError,
 } from "pages-lib/visualTransformerLogic";
 import { getDisplayPanelColor } from "pages-lib/visualTransformer";
@@ -22,6 +23,7 @@ const props = withDefaults(
     displayPanelHardenedText?: string;
     displayPanelColor?: string;
     displayPanelAlign?: string;
+    displayPanelTypeName?: string;
     displayPanelError?: string;
     reproUrl?: string;
     showDisplayPanels?: boolean;
@@ -29,23 +31,32 @@ const props = withDefaults(
   { showDisplayPanels: true }
 );
 
+const panelSourceStep = computed(() =>
+  getDisplayPanelSourceStep(props.step, props.allSteps)
+);
+
 const panelText = computed(
-  () => props.displayPanelText ?? getDisplayPanelText(props.step)
+  () => props.displayPanelText ?? getDisplayPanelText(panelSourceStep.value)
 );
 
 const panelHardenedText = computed(
   () =>
     props.displayPanelHardenedText ??
-    getDisplayPanelText(props.step, { harden: true })
+    getDisplayPanelText(panelSourceStep.value, { harden: true })
 );
 
 const panelColor = computed(
-  () => props.displayPanelColor ?? getDisplayPanelColor(props.step)
+  () => props.displayPanelColor ?? getDisplayPanelColor(panelSourceStep.value)
 );
 
 const panelAlign = computed(
   () =>
-    props.displayPanelAlign ?? getDisplayPanelAlignment(props.step.sourceType)
+    props.displayPanelAlign ??
+    getDisplayPanelAlignment(panelSourceStep.value.sourceType)
+);
+
+const panelTypeName = computed(
+  () => props.displayPanelTypeName ?? panelSourceStep.value.sourceType
 );
 
 const panelError = computed(
@@ -78,7 +89,12 @@ const panelError = computed(
       v-text="step.comment"
     />
 
-    <slot v-if="props.step.sourceType === 'Reader'" />
+    <slot
+      v-if="
+        props.step.sourceType === 'Reader' ||
+        props.step.sourceType === 'Materialize'
+      "
+    />
     <div v-else class="logic-programmer-frame-shell">
       <slot />
     </div>
@@ -88,7 +104,7 @@ const panelError = computed(
         :text="panelText"
         :text-color="panelColor"
         :align="panelAlign"
-        :type-name="step.sourceType"
+        :type-name="panelTypeName"
         :type-error="panelError"
         :repro-url="props.reproUrl"
       />
@@ -96,7 +112,7 @@ const panelError = computed(
         :text="panelHardenedText"
         :text-color="panelColor"
         :align="panelAlign"
-        :type-name="step.sourceType"
+        :type-name="panelTypeName"
         :type-error="panelError"
         :repro-url="props.reproUrl"
       />

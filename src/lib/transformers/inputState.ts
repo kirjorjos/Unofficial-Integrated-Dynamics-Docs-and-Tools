@@ -1523,6 +1523,11 @@ export const stripAutoCurryVarNames = (ast: TypeAST.AST): TypeAST.AST => {
           (copied as TypeAST.Recipe).value.output
         );
         break;
+      case "Materialize":
+      case "Dynamic":
+      case "Static":
+        visitPair(original.value, (copied as TypeAST.Wrapper).value);
+        break;
       default:
         break;
     }
@@ -1571,6 +1576,11 @@ export const stripAutoCurryVarNames = (ast: TypeAST.AST): TypeAST.AST => {
       case "Recipe":
         visit(node.value.input);
         visit(node.value.output);
+        break;
+      case "Materialize":
+      case "Dynamic":
+      case "Static":
+        visit(node.value);
         break;
       default:
         break; // literals and value-holding nodes have no AST children

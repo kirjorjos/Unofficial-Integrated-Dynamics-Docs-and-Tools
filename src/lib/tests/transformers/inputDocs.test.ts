@@ -2,12 +2,14 @@ import { detectInputFormat } from "lib/transformers/detectFormat";
 import { ExpandedToAST } from "lib/transformers/Expanded";
 import { CodeLineToAST } from "lib/transformers/CodeLine";
 import { CondensedToAST } from "lib/transformers/Condensed";
+import { abstractDynamicParts } from "lib/transformers/lambdaAbstraction";
 import {
   INPUT_DOC_FORMAT_TAB_IDS,
   INPUT_DOC_TABS,
   inputDocExampleInput,
   inputDocFormatExamples,
   inputDocTab,
+  type InputDocFormatTabId,
 } from "lib/transformers/inputDocs";
 
 const PARSER = {
@@ -67,6 +69,57 @@ describe("TestInputDocs", () => {
     expect(detectInputFormat(loadedInput)).toBe(tabId);
     expect(() => PARSER[tabId](loadedInput)).not.toThrow();
     expect(PARSER[tabId](loadedInput)).toBeTruthy();
+  });
+
+  it("testEveryFormatTabDocumentsTheWrapperNodesWithRunnableExamples", () => {
+    const wrappers = ["Materialize", "Dynamic", "Static"];
+
+    for (const tabId of INPUT_DOC_FORMAT_TAB_IDS) {
+      const section = inputDocTab(tabId).sections.find(
+        (candidate) => candidate.heading === "Materializing readers"
+      );
+      expect(section).toBeDefined();
+
+      const documented = JSON.stringify(section);
+      for (const wrapper of wrappers) {
+        expect(documented).toContain(wrapper);
+      }
+
+      const examples = (section!.examples ?? []).filter(
+        (example) => example.kind === "concrete"
+      );
+      expect(examples.length).toBeGreaterThan(0);
+      expect(section!.examples).toHaveLength(examples.length);
+
+      for (const example of examples) {
+        expect(example.text).toContain("Materialize");
+      }
+    }
+  });
+
+  it("testWrapperExamplesAbstractTheirReadersIntoLambdaParameters", () => {
+    const rootOf = (ast: TypeAST.AST): TypeAST.AST =>
+      ast.type === "NetworkCards"
+        ? ast.definitions[ast.definitions.length - 1]!.node
+        : ast;
+
+    const perFormat: Record<InputDocFormatTabId, TypeAST.AST> = {
+      expanded: ExpandedToAST(
+        "slot = Materialize(numberAdd(InventoryReader(0).inventoryCount, 2))"
+      ) as TypeAST.AST,
+      codeline: CodeLineToAST(
+        "Materialize (numberAdd InventoryReader(0).inventoryCount 2)"
+      ) as TypeAST.AST,
+      condensed: CondensedToAST(
+        "Materialize(numberAdd(InventoryReader(0).inventoryCount, 2))"
+      ) as TypeAST.AST,
+    };
+
+    for (const tabId of INPUT_DOC_FORMAT_TAB_IDS) {
+      const materialize = rootOf(perFormat[tabId]) as TypeAST.Materialize;
+      expect(materialize.type).toBe("Materialize");
+      expect(abstractDynamicParts(materialize.value).params).toHaveLength(1);
+    }
   });
 
   it("testLoadedExampleAddsItsCaptionAsALeadingComment", () => {

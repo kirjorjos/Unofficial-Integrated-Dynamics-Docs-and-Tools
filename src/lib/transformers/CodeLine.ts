@@ -227,6 +227,18 @@ export const ASTToCodeLine = (
         result = `${node.type}(${JSON.stringify(node.value)})`;
         break;
 
+      case "Materialize":
+        result = `Materialize(${stringify(node.value, false)})`;
+        break;
+
+      case "Dynamic":
+        result = `Dynamic(${stringify(node.value, false)})`;
+        break;
+
+      case "Static":
+        result = `Static(${stringify(node.value, false)})`;
+        break;
+
       case "Reader": {
         const val = node.value;
         const partIdStr =
@@ -423,7 +435,10 @@ export const CodeLineToAST = (
         type: "Reader";
         value: TypeAST.Reader["value"];
         varName?: string;
-      };
+      }
+    | { type: "Materialize"; value: InternalAST; varName?: string }
+    | { type: "Dynamic"; value: InternalAST; varName?: string }
+    | { type: "Static"; value: InternalAST; varName?: string };
 
   function tryParseParams(): string[] | null {
     const startPos = pos;
@@ -486,6 +501,34 @@ export const CodeLineToAST = (
     return node;
   }
 
+  function tryParseWrapperExpression(
+    scope: Set<string>
+  ): InternalAST | undefined {
+    const token = tokens[pos];
+    if (token === undefined) return undefined;
+    const lower = token.toLowerCase();
+    const canonical =
+      lower === "materialize"
+        ? "Materialize"
+        : lower === "dynamic"
+          ? "Dynamic"
+          : lower === "static"
+            ? "Static"
+            : undefined;
+    if (!canonical) return undefined;
+    if (scope.has(token) || externalScope.has(token)) return undefined;
+    if (tokens[pos + 1] !== "(") return undefined;
+    pos += 2; // consume name and '('
+    const value = parseSequence(scope, false);
+    if (tokens[pos] !== ")") {
+      throw new StructuralParseError(
+        `Expected ')' after ${canonical} argument`
+      );
+    }
+    pos++; // consume ')'
+    return { type: canonical, value } as InternalAST;
+  }
+
   function parseExpressionInner(scope: Set<string>): InternalAST {
     const params = tryParseParams();
     if (params !== null) {
@@ -501,6 +544,9 @@ export const CodeLineToAST = (
         return result;
       }
     }
+
+    const wrapperExpr = tryParseWrapperExpression(scope);
+    if (wrapperExpr !== undefined) return wrapperExpr;
 
     const readerExpr = tryParseReaderExpression(scope);
     if (readerExpr !== undefined) return readerExpr;
@@ -1104,6 +1150,13 @@ export const CodeLineToAST = (
         containsVar(name, ast.op3 as InternalAST)
       );
     if (ast.type === "Flip") return containsVar(name, ast.arg as InternalAST);
+    if (
+      ast.type === "Dynamic" ||
+      ast.type === "Static" ||
+      ast.type === "Materialize"
+    ) {
+      return containsVar(name, ast.value as InternalAST);
+    }
     if (ast.type === "Reader" && ast.value.simulatedOutput) {
       return containsVar(name, ast.value.simulatedOutput as InternalAST);
     }
@@ -1211,6 +1264,12 @@ export const CodeLineToAST = (
         base: CONST_OP,
         args: [body],
       });
+    } else if (
+      body.type === "Dynamic" ||
+      body.type === "Static" ||
+      body.type === "Materialize"
+    ) {
+      return abstract(param, body.value as InternalAST);
     } else if (body.type === "Variable") {
       return IDEN_OP;
     } else if (body.type === "Curry") {
