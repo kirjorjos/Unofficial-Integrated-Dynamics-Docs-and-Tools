@@ -48,6 +48,10 @@ export const astContentKey = (ast: TypeAST.AST): string => {
       return `Reader:${ast.value.reader}:${ast.value.aspect}:${ast.value.partId ?? ""}:${
         ast.value.settings ? JSON.stringify(ast.value.settings) : ""
       }:${ast.value.simulatedOutput ? astContentKey(ast.value.simulatedOutput) : ""}`;
+    case "Materialize":
+    case "Dynamic":
+    case "Static":
+      return `${ast.type}:${astContentKey(ast.value)}`;
     case "NetworkCards":
       return `NetworkCards[${ast.definitions
         .map((d) => `${d.name}:${astContentKey(d.node)}`)
@@ -203,6 +207,11 @@ const resolveVarRefs = (
       if (node.value.simulatedOutput) {
         resolveVarRefs(node.value.simulatedOutput, resolve);
       }
+      break;
+    case "Materialize":
+    case "Dynamic":
+    case "Static":
+      resolveVarRefs(node.value, resolve);
       break;
     default:
       break;

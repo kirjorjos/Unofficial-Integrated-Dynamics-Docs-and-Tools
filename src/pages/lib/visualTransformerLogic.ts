@@ -28,6 +28,8 @@ import {
   flattenAnonymousBaseOperatorApplication,
   getNodeComment,
 } from "lib/transformers/helpers";
+import { abstractDynamicParts } from "lib/transformers/lambdaAbstraction";
+import tooltipInfo from "lib/generated/integratedDynamicsTooltipInfo.json";
 import { LOGIC_PROGRAMMER_RENDER_PATTERNS } from "pages-lib/logicProgrammerRenderPatterns";
 import {
   getValueTypeMeta,
@@ -82,6 +84,7 @@ export type VisualCardRef = {
   type: TypeAST.AST["type"];
   variableId: number;
   tooltip: TooltipData;
+  node?: TypeAST.AST;
 };
 
 export type VisibleListEntry = {
@@ -107,6 +110,8 @@ export type PatternBox = {
 
 const VARIABLE_CARD_NAME = "Variable Card";
 const VARIABLE_CARD_ID_TEMPLATE = "§e§oVariable ID: §r§o%s";
+const VARIABLE_CARD_INFO_KEY = "item.integrateddynamics.variable.info";
+const SHIFT_HELD_TOOLTIP_INFO = tooltipInfo as Record<string, string>;
 const VALUE_TYPE_NAME_TEMPLATE = "§eType: §r%s";
 const VALUE_TEMPLATE = "§e§oValue: §r%s";
 const OPERATOR_SIGNATURE_TEMPLATE = "§eSignature: §r%s";
@@ -405,6 +410,21 @@ export const getCompactValueTextForAst = (ast: TypeAST.AST): string => {
             node: cloneAstWithoutVarNames(def.node),
           })),
         };
+      case "Materialize":
+        return {
+          type: "Materialize",
+          value: cloneAstWithoutVarNames(ast.value),
+        };
+      case "Dynamic":
+        return {
+          type: "Dynamic",
+          value: cloneAstWithoutVarNames(ast.value),
+        };
+      case "Static":
+        return {
+          type: "Static",
+          value: cloneAstWithoutVarNames(ast.value),
+        };
     }
   };
 
@@ -454,6 +474,101 @@ export const getCompactValueTextForAst = (ast: TypeAST.AST): string => {
   return JSON.stringify(ast);
 };
 
+const unwrapMaterializerMiddleTextNode = (node: TypeAST.AST): TypeAST.AST => {
+  if (
+    node.type === "Materialize" ||
+    node.type === "Dynamic" ||
+    node.type === "Static"
+  ) {
+    return unwrapMaterializerMiddleTextNode(node.value);
+  }
+  return node;
+};
+
+export const getMaterializerMiddleText = (
+  node: TypeAST.AST,
+  fallback = ""
+): string => {
+  const unwrapped = unwrapMaterializerMiddleTextNode(node);
+  switch (unwrapped.type) {
+    case "Operator":
+    case "Curry":
+    case "Pipe":
+    case "Pipe2":
+    case "Flip": {
+      const text = getDisplayPanelText({ node: unwrapped, output: fallback });
+      return text.split("\n")[0] ?? fallback;
+    }
+    case "List": {
+      const first = (unwrapped as TypeAST.List).value[0];
+      return first ? getMaterializerMiddleText(first, fallback) : "";
+    }
+    default:
+      return getCompactValueTextForAst(unwrapped);
+  }
+};
+
+const MATERIALIZER_OPERATOR_LIKE_TYPES: ReadonlySet<string> = new Set([
+  "Operator",
+  "Curry",
+  "Pipe",
+  "Pipe2",
+  "Flip",
+  "Materialize",
+  "Dynamic",
+  "Static",
+]);
+
+export const getMaterializerResultCard = (
+  step: Pick<VisualStep, "output" | "inputs" | "variableId">
+): { name: string; type: string; tooltip: TooltipData } => {
+  const topCard = step.inputs[0];
+  const node = topCard?.node
+    ? unwrapMaterializerMiddleTextNode(topCard.node)
+    : undefined;
+  const variableId = topCard ? topCard.variableId + 1 : step.variableId;
+
+  const valueType = node?.type ?? "Operator";
+  const isOperator = MATERIALIZER_OPERATOR_LIKE_TYPES.has(valueType);
+  const typeMeta = getValueTypeMetaForAst(
+    (isOperator ? "Operator" : valueType) as TypeAST.AST["type"]
+  );
+
+  const lines = [
+    formatTemplate(
+      VALUE_TYPE_NAME_TEMPLATE,
+      `${typeMeta.altColorCode ?? typeMeta.colorCode}${typeMeta.label}`
+    ),
+  ];
+
+  if (node && isOperator) {
+    const panelLines = getDisplayPanelText({
+      node,
+      output: topCard!.name,
+    }).split("\n");
+    const valueText = (panelLines[0] ?? "").replace(/\s*::\s*$/, "");
+    const signature = panelLines
+      .slice(1)
+      .map((line) => line.replace(/^\s*->\s*/, "").trim())
+      .filter((line) => line.length > 0)
+      .join(" -> ");
+    if (signature) {
+      lines.push(formatTemplate(OPERATOR_SIGNATURE_TEMPLATE, signature));
+    }
+    lines.push(formatTemplate(VALUE_TEMPLATE, valueText));
+  } else if (node) {
+    lines.push(formatTemplate(VALUE_TEMPLATE, getCompactValueTextForAst(node)));
+  }
+
+  lines.push(...getBaseTooltipLines(variableId));
+
+  return {
+    name: step.output,
+    type: typeMeta.label,
+    tooltip: { title: getCardTitle(step.output), lines },
+  };
+};
+
 export const getOperatorValueSignatureText = (
   opName: TypeOperatorKey
 ): string => {
@@ -473,11 +588,6 @@ export const getOperatorValueSignatureText = (
     .join(" §r-> ");
 };
 
-/**
- * Recursively checks whether an AST contains any Flip/Pipe/Pipe2 (serializer)
- * node, either as the Curry base, in the Curry args, or nested inside a List /
- * Recipe / Ingredients value.
- */
 const astContainsSerializerNode = (node: TypeAST.AST): boolean => {
   switch (node.type) {
     case "Flip":
@@ -678,8 +788,57 @@ const formatTemplate = (template: string, ...values: string[]): string => {
   return template.replace(/%s/g, () => values[currentIndex++] ?? "");
 };
 
+const splitTooltipInfoLines = (value: string, maxLength = 25): string[] => {
+  return value.split(/\n/g).flatMap((partial) => {
+    const lines: string[] = [];
+    let buffer = "";
+
+    for (const word of partial.split(" ")) {
+      if (!word) continue;
+      buffer = buffer ? `${buffer} ${word}` : word;
+      if (buffer.length >= maxLength) {
+        lines.push(`§5§o${buffer}`);
+        buffer = "";
+      }
+    }
+
+    if (buffer) {
+      lines.push(`§5§o${buffer}`);
+    }
+
+    return lines;
+  });
+};
+
+const getTooltipInfoLines = (infoKey?: string): string[] => {
+  if (!infoKey) return [];
+
+  const line = SHIFT_HELD_TOOLTIP_INFO[infoKey];
+  return line ? splitTooltipInfoLines(line) : [];
+};
+
 export const getBaseTooltipLines = (variableId: number): string[] => {
-  return [formatTemplate(VARIABLE_CARD_ID_TEMPLATE, `${variableId}`)];
+  return [
+    formatTemplate(VARIABLE_CARD_ID_TEMPLATE, `${variableId}`),
+    ...getTooltipInfoLines(VARIABLE_CARD_INFO_KEY),
+  ];
+};
+
+export const getDisplayPanelSourceStep = <
+  S extends Pick<VisualStep, "sourceType" | "inputs" | "variableId">,
+>(
+  step: S,
+  allSteps: S[]
+): S => {
+  if (step.sourceType !== "Materialize") return step;
+
+  const input = step.inputs[0];
+  if (!input) return step;
+
+  const next = allSteps.find((s) => s.variableId === input.variableId);
+  if (!next || next.variableId === step.variableId) return step;
+
+  return getDisplayPanelSourceStep(next, allSteps);
 };
 
 export const buildValueCardTooltip = (
@@ -1422,6 +1581,7 @@ export const generateVisualSteps = (
                 : (getStepActualOutputType(fullStep) as TypeAST.AST["type"]),
         variableId,
         tooltip,
+        node: step.node,
       };
       seen.set(ast, card);
       contentSeen.set(contentKey, card);
@@ -1645,7 +1805,8 @@ export const generateVisualSteps = (
           tooltipOperatorKey: "OPERATOR_FLIP",
         });
       }
-      case "List":
+      case "List": {
+        const elementCards = ast.value.map((a) => visit(a));
         return register({
           id: `step-${result.length + 1}`,
           title: "List",
@@ -1653,10 +1814,53 @@ export const generateVisualSteps = (
           symbol: "[]",
           kind: "value",
           sourceType: ast.type,
-          inputs: ast.value.map((a) => visit(a)),
+          inputs: elementCards,
           output: nextName,
           node: ast,
         });
+      }
+      case "Dynamic":
+      case "Static":
+        return visit(ast.value);
+      case "Materialize": {
+        const abstraction = abstractDynamicParts(ast.value);
+        const lambdaCard = visit(abstraction.lambda);
+
+        let finalCard = register({
+          id: `step-${result.length + 1}`,
+          title: "Materialize",
+          searchLabel: "Materialize",
+          panelLabel: "Materializer",
+          symbol: "M",
+          kind: "value",
+          sourceType: "Materialize",
+          inputs: [lambdaCard],
+          output: nextName,
+          detail: abstraction.params.length > 0 ? "lambda" : undefined,
+          node: ast,
+        });
+
+        for (const param of abstraction.params) {
+          const leafCard = visit(param.node, true);
+          const applyDisplay = getVirtualOperatorDisplay("apply");
+          finalCard = register({
+            id: `step-${result.length + 1}`,
+            title: applyDisplay.title,
+            searchLabel: applyDisplay.searchLabel,
+            symbol: applyDisplay.symbol,
+            kind: "operator",
+            sourceType: "Curry",
+            renderPattern: applyDisplay.renderPattern,
+            inputs: [finalCard, leafCard],
+            output: getCardName(ast.value),
+            node: ast.value,
+            tooltipOperatorKey: getCurryTooltipKey(1),
+          });
+        }
+
+        seen.set(ast, finalCard);
+        return finalCard;
+      }
       case "Reader": {
         const readerClass = getReaderClassByTypeName(ast.value.reader);
         let typeError: string | undefined;

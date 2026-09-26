@@ -17,6 +17,10 @@ const lambdaDefinitionRegex = new RegExp(
 
 const condensedCallRegex = new RegExp(`^[^${disallowedChars}]+\\(`);
 
+const wrapperCallRegex = /^(?:materialize|dynamic|static)\s*\(/i;
+
+const nestedCallRegex = new RegExp(`^[^${disallowedChars}]+\\(`);
+
 const variableWrapperDefinitionRegex = /^Variable\s*\([^)]*\)\s*=/i;
 
 const typedDefinitionRegex = new RegExp(
@@ -177,6 +181,15 @@ const hasTopLevelDoubleColon = (value: string): boolean =>
 const firstMeaningfulLine = (value: string): string =>
   (value.split("\n").find((line) => line.trim() !== "") ?? value).trim();
 
+const detectWrapperFormat = (value: string): TransformerFormatKey | null => {
+  let rest = value;
+  if (!wrapperCallRegex.test(rest)) return null;
+  do {
+    rest = rest.replace(wrapperCallRegex, "");
+  } while (wrapperCallRegex.test(rest));
+  return nestedCallRegex.test(rest) ? "condensed" : "codeline";
+};
+
 export const detectInputFormat = (value: string): TransformerFormatKey => {
   value = value.trim();
   const code = stripComments(value);
@@ -185,9 +198,10 @@ export const detectInputFormat = (value: string): TransformerFormatKey => {
     if (value[0] === "{") return "json";
     if (!hasTopLevelAssignment(code)) {
       if (hasTopLevelDoubleColon(code)) return "expanded";
-      return condensedCallRegex.test(firstMeaningfulLine(code))
-        ? "condensed"
-        : "codeline";
+      const first = firstMeaningfulLine(code);
+      const wrapperFormat = detectWrapperFormat(first);
+      if (wrapperFormat !== null) return wrapperFormat;
+      return condensedCallRegex.test(first) ? "condensed" : "codeline";
     }
     return "expanded";
   }
@@ -198,6 +212,8 @@ export const detectInputFormat = (value: string): TransformerFormatKey => {
   if (typedDefinitionRegex.test(code)) return "expanded";
   if (hasTopLevelDoubleColon(code)) return "expanded";
   if (value[0] === "{") return "json";
+  const wrapperFormat = detectWrapperFormat(code);
+  if (wrapperFormat !== null) return wrapperFormat;
   if (condensedCallRegex.test(code)) return "condensed";
   return "codeline";
 };

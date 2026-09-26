@@ -157,6 +157,11 @@ export const ASTtoOperator = (ast: TypeAST.AST): IntegratedValue => {
     case "List":
       return new iArrayEager(ast.value.map(ASTtoOperator));
 
+    case "Materialize":
+    case "Dynamic":
+    case "Static":
+      return ASTtoOperator(ast.value);
+
     case "Reader": {
       if (ast.value.simulatedOutput) {
         return ASTtoOperator(ast.value.simulatedOutput);

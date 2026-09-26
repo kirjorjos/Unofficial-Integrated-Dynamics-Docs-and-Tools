@@ -2,11 +2,13 @@
 import { computed } from "vue";
 import VisualTransformerStep from "./VisualTransformerStep.vue";
 import LogicProgrammerView from "./LogicProgrammerView.vue";
+import MaterializerGuiView from "./MaterializerGuiView.vue";
 import ReaderGuiView from "./ReaderGuiView.vue";
 import {
   generateVisualSteps,
   getCompactValueTextForAst,
   getCumulativeStepError,
+  getMaterializerResultCard,
 } from "pages-lib/visualTransformerLogic";
 import { getReaderClassByTypeName } from "lib/IntegratedDynamicsClasses/readers/readerRegistry";
 
@@ -67,6 +69,11 @@ const getReaderViewValues = (
         "
         :values="getReaderViewValues(step)"
         :type-error="step.typeError"
+      />
+      <MaterializerGuiView
+        v-else-if="step.sourceType === 'Materialize'"
+        :top-card="step.inputs[0]"
+        :result-card="getMaterializerResultCard(step)"
       />
       <LogicProgrammerView
         v-else

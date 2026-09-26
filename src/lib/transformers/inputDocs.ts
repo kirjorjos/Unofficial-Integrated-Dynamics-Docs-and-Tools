@@ -111,6 +111,7 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
           "Code Line has no definitions: at the top level it is statements separated by semicolons, and @<statement number> resolves to the variable ID of the final card from an earlier statement.",
           "Condensed has no definitions and no references at the moment.",
           'In Expanded a name that needs quoting is wrapped as Variable("name") both where it is defined and where it is used, and Operator("name") looks up an operator value by name in every form.',
+          "Materialize(expression) wraps an expression in a materializer. You may use Static(...) and Dynamic(...) to explicitly specify if something is abstracted to an expected paramater of the materalized operator if you want. By default, reader values are dynamic and everything else is static.",
         ],
       },
       {
@@ -579,6 +580,72 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
         links: [operatorLink("ARITHMETIC_ADDITION", "add / numberAdd")],
       },
       {
+        heading: "Materializing readers",
+        summary:
+          "Materialize(expression) puts a materializer around the expression. Readers inside it are abstracted into the lambda's parameters instead of being read by the card, and the materializer's result is that lambda. Dynamic(expression) makes an expression a parameter in its own right, and Static(expression) pins an expression so its readers stay inside the card. Parameters are named after the readers they came from and follow the order those readers first appear in; an identical reader used more than once shares one parameter. A Materialize inside another Materialize is consumed by the inner one, which leaves it static for the outer one.",
+        syntax: [
+          {
+            spans: [
+              required("Materialize"),
+              plain("("),
+              required("expression"),
+              plain(")"),
+            ],
+            note: "the readers in the expression become the lambda's parameters",
+          },
+          {
+            spans: [
+              required("Dynamic"),
+              plain("("),
+              required("expression"),
+              plain(")"),
+            ],
+            note: "give an expression a parameter of its own, even without a reader in it",
+          },
+          {
+            spans: [
+              required("Static"),
+              plain("("),
+              required("expression"),
+              plain(")"),
+            ],
+            note: "keep an expression fixed so its readers are not abstracted",
+          },
+        ],
+        examples: [
+          {
+            kind: "concrete",
+            text: "slotCount = Materialize(InventoryReader(0).inventoryCount)",
+            caption: "the materializer's result is a lambda over the reader",
+          },
+          {
+            kind: "concrete",
+            text: "total = Materialize(numberAdd(InventoryReader(0).inventoryCount, 2))",
+            caption:
+              "the reader becomes the parameter, the 2 is built into the card",
+          },
+          {
+            kind: "concrete",
+            text: "fixed = Materialize(Static(InventoryReader(0).inventoryCount))",
+            caption: "Static keeps the reader inside the card",
+          },
+          {
+            kind: "concrete",
+            text: "extra = Materialize(numberAdd(Dynamic(1), InventoryReader(0).inventoryCount))",
+            caption: "Dynamic adds a parameter that has no reader in it",
+          },
+        ],
+        links: [
+          readerLink("inventory", "Inventory reader"),
+          readerAspectLink(
+            "inventory",
+            "INTEGER_COUNT",
+            "Inventory Count aspect"
+          ),
+          operatorLink("ARITHMETIC_ADDITION", "add / numberAdd"),
+        ],
+      },
+      {
         heading: "Comments",
         summary: "A comment can sit on its own line or trail a definition.",
         examples: [
@@ -900,6 +967,78 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
           { kind: "concrete", text: "x -> numberAdd x 1" },
           { kind: "concrete", text: "x => numberAdd x 1" },
           { kind: "concrete", text: "\\x.numberAdd x 1" },
+        ],
+      },
+      {
+        heading: "Materializing readers",
+        summary:
+          "Materialize(expression) puts a materializer around the expression. Readers inside it are abstracted into the lambda's parameters instead of being read by the card, and the materializer's result is that lambda. Dynamic(expression) makes an expression a parameter in its own right, and Static(expression) pins an expression so its readers stay inside the card. The wrapper is written the same way as in Condensed; a Code Line expression inside the brackets keeps the line Code Line, while a parenthesized call inside them makes it Condensed, so Materialize(numberAdd 1 2) is Code Line and Materialize(numberAdd(1, 2)) is Condensed.",
+        syntax: [
+          {
+            spans: [
+              required("Materialize"),
+              plain("("),
+              required("expression"),
+              plain(")"),
+            ],
+            note: "the readers in the expression become the lambda's parameters",
+          },
+          {
+            spans: [
+              required("Dynamic"),
+              plain("("),
+              required("expression"),
+              plain(")"),
+            ],
+            note: "give an expression a parameter of its own, even without a reader in it",
+          },
+          {
+            spans: [
+              required("Static"),
+              plain("("),
+              required("expression"),
+              plain(")"),
+            ],
+            note: "keep an expression fixed so its readers are not abstracted",
+          },
+        ],
+        examples: [
+          {
+            kind: "concrete",
+            text: "apply Materialize(numberAdd InventoryReader(0).inventoryCount 2) 3",
+            caption: "apply the materialized lambda to a value",
+          },
+          {
+            kind: "concrete",
+            text: "pipe Materialize(numberAdd InventoryReader(0).inventoryCount 2) arithmeticIncrement",
+            caption: "use the materialized lambda as an argument",
+          },
+          {
+            kind: "concrete",
+            text: "Materialize(numberAdd InventoryReader(0).inventoryCount 2)",
+            caption: "on its own",
+          },
+          {
+            kind: "concrete",
+            text: "Materialize(Static(add InventoryReader(0).inventoryCount 2))",
+            caption: "Static keeps the reader inside the card",
+          },
+          {
+            kind: "concrete",
+            text: "Materialize(numberAdd Dynamic(1) InventoryReader(0).inventoryCount)",
+            caption: "Dynamic adds a parameter that has no reader in it",
+          },
+        ],
+        links: [
+          readerLink("inventory", "Inventory reader"),
+          readerAspectLink(
+            "inventory",
+            "INTEGER_COUNT",
+            "Inventory Count aspect"
+          ),
+          operatorLink("ARITHMETIC_ADDITION", "add / numberAdd"),
+          operatorLink("OPERATOR_APPLY", "apply"),
+          operatorLink("OPERATOR_PIPE", "pipe"),
         ],
       },
       {
@@ -1249,6 +1388,67 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
         ],
       },
       {
+        heading: "Materializing readers",
+        summary:
+          "Materialize(expression) puts a materializer around the expression. Readers inside it are abstracted into the lambda's parameters instead of being read by the card, and the materializer's result is that lambda. Dynamic(expression) makes an expression a parameter in its own right, and Static(expression) pins an expression so its readers stay inside the card. Parameters are named after the readers they came from and follow the order those readers first appear in; an identical reader used more than once shares one parameter. A Materialize inside another Materialize is consumed by the inner one, which leaves it static for the outer one.",
+        syntax: [
+          {
+            spans: [
+              required("Materialize"),
+              plain("("),
+              required("expression"),
+              plain(")"),
+            ],
+            note: "the readers in the expression become the lambda's parameters",
+          },
+          {
+            spans: [
+              required("Dynamic"),
+              plain("("),
+              required("expression"),
+              plain(")"),
+            ],
+            note: "give an expression a parameter of its own, even without a reader in it",
+          },
+          {
+            spans: [
+              required("Static"),
+              plain("("),
+              required("expression"),
+              plain(")"),
+            ],
+            note: "keep an expression fixed so its readers are not abstracted",
+          },
+        ],
+        examples: [
+          {
+            kind: "concrete",
+            text: "Materialize(numberAdd(InventoryReader(0).inventoryCount, 2))",
+            caption:
+              "the reader becomes the parameter, the 2 is built into the card",
+          },
+          {
+            kind: "concrete",
+            text: "Materialize(Static(InventoryReader(0).inventoryCount))",
+            caption: "Static keeps the reader inside the card",
+          },
+          {
+            kind: "concrete",
+            text: "Materialize(numberAdd(Dynamic(1), InventoryReader(0).inventoryCount))",
+            caption: "Dynamic adds a parameter that has no reader in it",
+          },
+        ],
+        links: [
+          readerLink("inventory", "Inventory reader"),
+          readerAspectLink(
+            "inventory",
+            "INTEGER_COUNT",
+            "Inventory Count aspect"
+          ),
+          operatorLink("ARITHMETIC_ADDITION", "add / numberAdd"),
+        ],
+      },
+      {
         heading: "Statements",
         summary: "Separate statements with a semicolon.",
         syntax: [
@@ -1281,6 +1481,7 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
           "Naming the cards in game needs a labeller; think of them as variable names in another language.",
           "A red X overlay on a display panel points at the input that is wrong.  You can hover over the red X to see what the error is.",
           "The left display panel is what shows in game, the right display panel uses extra logic in this project to lean more towards showing what's truely expected.",
+          "A materializer step shows the lambda being built: the card you are materializing sits on top, the variable slot the lambda's parameter fills is on the left, and the resulting lambda card is on the right. Each reader it abstracted then gets its own card and an apply step that feeds it to that lambda.",
         ],
       },
       {

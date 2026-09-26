@@ -173,6 +173,18 @@ const normalizeNode = (node: TypeAST.AST, ctx: NormalizeCtx): TypeAST.AST => {
         value: { ...node.value, simulatedOutput },
       };
     }
+    case "Materialize": {
+      const value = normalizeNode(node.value, ctx);
+      return value === node.value ? node : { type: "Materialize", value };
+    }
+    case "Dynamic": {
+      const value = normalizeNode(node.value, ctx);
+      return value === node.value ? node : { type: "Dynamic", value };
+    }
+    case "Static": {
+      const value = normalizeNode(node.value, ctx);
+      return value === node.value ? node : { type: "Static", value };
+    }
     case "NetworkCards": {
       let changed = false;
       const definitions = node.definitions.map((def) => {

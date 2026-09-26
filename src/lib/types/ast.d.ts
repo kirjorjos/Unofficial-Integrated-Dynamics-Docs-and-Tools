@@ -54,6 +54,14 @@ namespace TypeAST {
     varName?: string;
   };
 
+  type Dynamic = { type: "Dynamic"; value: AST; varName?: string };
+
+  type Static = { type: "Static"; value: AST; varName?: string };
+
+  type Materialize = { type: "Materialize"; value: AST; varName?: string };
+
+  type Wrapper = Materialize | Dynamic | Static;
+
   type BaseOperator = {
     type: "Operator";
     opName: TypeOperatorKey;
@@ -124,5 +132,5 @@ namespace TypeAST {
 
   type Operator = BaseOperator | Flip | Pipe | Pipe2 | Curried;
 
-  type AST = Constant | Operator | NetworkCards;
+  type AST = Constant | Operator | NetworkCards | Wrapper;
 }

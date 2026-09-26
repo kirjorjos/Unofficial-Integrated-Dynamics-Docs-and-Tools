@@ -844,4 +844,14 @@ describe("TestCondensedTransformer", () => {
     expect(getNodeComment(ast.args[0]!)).toBeUndefined();
     expect(getNodeComment(ast.args[1]!)).toBeUndefined();
   });
+
+  it("testUnknownCallNameIsReportedBeforeItsArguments", () => {
+    expect(() => CondensedToAST("Materalize(x => add Dynamic(x) 2)")).toThrow(
+      "Unknown identifier: Materalize"
+    );
+    expect(() => CondensedToAST("Materalize(numberAdd(1, 2))")).toThrow(
+      "Unknown identifier: Materalize"
+    );
+    expect(CondensedToAST("Materialize(numberAdd(1, 2))")).toBeTruthy();
+  });
 });

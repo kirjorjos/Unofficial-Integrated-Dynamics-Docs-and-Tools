@@ -135,6 +135,10 @@ export const astContainsVariableValueByIdReader = (
       );
     case "Flip":
       return astContainsVariableValueByIdReader(ast.arg);
+    case "Materialize":
+    case "Dynamic":
+    case "Static":
+      return astContainsVariableValueByIdReader(ast.value);
     default:
       return false;
   }

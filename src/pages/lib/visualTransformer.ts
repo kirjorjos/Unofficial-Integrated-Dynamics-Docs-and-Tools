@@ -252,6 +252,9 @@ export function getStepActualOutputType(step: {
   tooltipOperatorKey?: string;
   node?: TypeAST.AST;
 }): string {
+  if (step.sourceType === "Materialize") {
+    return "Operator";
+  }
   if (step.sourceType === "Reader" && step.node?.type === "Reader") {
     return getReaderOutputType(step.node);
   }

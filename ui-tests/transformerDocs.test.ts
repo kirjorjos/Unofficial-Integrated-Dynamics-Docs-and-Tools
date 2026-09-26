@@ -190,7 +190,8 @@ test.describe("transformersPageInputDocs", () => {
   }) => {
     await openDocs(page, "Condensed");
     const sections = page.locator(".input-docs-section");
-    for (let index = 0; index < 4; index += 1) {
+    const collapsedCount = 5;
+    for (let index = 0; index < collapsedCount; index += 1) {
       await sections.nth(index).locator("summary").click();
     }
 
@@ -201,7 +202,7 @@ test.describe("transformersPageInputDocs", () => {
 
     await page.goto(page.url());
     await expect(page.locator(".input-docs-body")).toBeVisible();
-    for (let index = 0; index < 4; index += 1) {
+    for (let index = 0; index < collapsedCount; index += 1) {
       await expect(sections.nth(index)).not.toHaveAttribute("open", "");
     }
   });

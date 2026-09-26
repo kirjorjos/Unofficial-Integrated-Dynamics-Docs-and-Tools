@@ -4,6 +4,7 @@ import DisplayPanelViewHolder from "./DisplayPanelViewHolder.vue";
 import {
   getCumulativeStepError,
   getDisplayPanelAlignment,
+  getDisplayPanelSourceStep,
   getDisplayPanelText,
   type VisualStep,
 } from "pages-lib/visualTransformerLogic";
@@ -14,12 +15,16 @@ const props = defineProps<{
   reproUrl?: string;
 }>();
 
-const panelText = (step: VisualStep): string => getDisplayPanelText(step);
+const panelStep = (step: VisualStep): VisualStep =>
+  getDisplayPanelSourceStep(step, props.steps);
+const panelText = (step: VisualStep): string =>
+  getDisplayPanelText(panelStep(step));
 const panelHardenedText = (step: VisualStep): string =>
-  getDisplayPanelText(step, { harden: true });
-const panelColor = (step: VisualStep): string => getDisplayPanelColor(step);
+  getDisplayPanelText(panelStep(step), { harden: true });
+const panelColor = (step: VisualStep): string =>
+  getDisplayPanelColor(panelStep(step));
 const panelAlign = (step: VisualStep): string =>
-  getDisplayPanelAlignment(step.sourceType);
+  getDisplayPanelAlignment(panelStep(step).sourceType);
 const panelError = (step: VisualStep): string | undefined =>
   getCumulativeStepError(props.steps, step.variableId);
 </script>
@@ -31,7 +36,7 @@ const panelError = (step: VisualStep): string | undefined =>
         :text="panelText(step)"
         :text-color="panelColor(step)"
         :align="panelAlign(step)"
-        :type-name="step.sourceType"
+        :type-name="panelStep(step).sourceType"
         :type-error="panelError(step)"
         :repro-url="props.reproUrl"
       />
@@ -39,7 +44,7 @@ const panelError = (step: VisualStep): string | undefined =>
         :text="panelHardenedText(step)"
         :text-color="panelColor(step)"
         :align="panelAlign(step)"
-        :type-name="step.sourceType"
+        :type-name="panelStep(step).sourceType"
         :type-error="panelError(step)"
         :repro-url="props.reproUrl"
       />

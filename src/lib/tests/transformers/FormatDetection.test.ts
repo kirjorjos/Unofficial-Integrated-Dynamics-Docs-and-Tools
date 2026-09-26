@@ -40,6 +40,23 @@ describe("TestFormatDetection", () => {
     ["pipe :: Operator -> (operator -> Operator)", "expanded"],
     ["var1 :: A -> B\nvar1 = 5", "expanded"],
     ['stringConcat(\n  "a=b",\n  "c"\n)', "condensed"],
+    ["add 2 Materialize(add 2 Dynamic(3))", "codeline"],
+    ["Materialize(add 2 Dynamic(3))", "codeline"],
+    ["Materialize(numberAdd InventoryReader(0).inventoryCount 2)", "codeline"],
+    ["Materialize(Static(add 2 3))", "codeline"],
+    [
+      "Materialize(numberAdd Dynamic(1) InventoryReader(0).inventoryCount)",
+      "codeline",
+    ],
+    ["Materialize(add 2 Dynamic(3))\n3", "codeline"],
+    ["Materialize(numberAdd(1, 2))", "condensed"],
+    ["Materialize(Static(InventoryReader(0).inventoryCount))", "condensed"],
+    [
+      "Materialize(numberAdd(Dynamic(1), InventoryReader(0).inventoryCount))",
+      "condensed",
+    ],
+    ["Materialize(InventoryReader(0).inventoryCount)", "condensed"],
+    ["Materialize(numberAdd(1, 2))\n3", "condensed"],
   ] as const)("detectInputFormat%jReturns%s", (input, expected) => {
     expect(detectInputFormat(input)).toBe(expected);
   });
@@ -79,6 +96,41 @@ describe("TestFormatDetection", () => {
   it("detectedCodelineCondensedInputsStillParseInTheirOwnFormats", () => {
     expect(CondensedToAST("apply(add, 1, 2)")).toBeTruthy();
     expect(CodeLineToAST("apply add 1 2")).toBeTruthy();
+  });
+
+  it("detectedWrapperCallsParseInTheFormatTheyWereDetectedAs", () => {
+    const parser = {
+      expanded: ExpandedToAST,
+      codeline: CodeLineToAST,
+      condensed: CondensedToAST,
+    };
+
+    const inputs = [
+      "add 2 Materialize(add 2 Dynamic(3))",
+      "Materialize(add 2 Dynamic(3))",
+      "Materialize(numberAdd InventoryReader(0).inventoryCount 2)",
+      "Materialize(Static(add InventoryReader(0).inventoryCount 2))",
+      "Materialize(numberAdd Dynamic(1) InventoryReader(0).inventoryCount)",
+      "Materialize(Static(add 2 3))",
+      "Materialize(add 2 Dynamic(3))\n3",
+      "Materialize(numberAdd(1, 2))",
+      "Materialize(Static(InventoryReader(0).inventoryCount))",
+      "Materialize(numberAdd(Dynamic(1), InventoryReader(0).inventoryCount))",
+      "Materialize(InventoryReader(0).inventoryCount)",
+      "Materialize(5)",
+    ];
+
+    for (const input of inputs) {
+      const format = detectInputFormat(input);
+      if (
+        format !== "expanded" &&
+        format !== "codeline" &&
+        format !== "condensed"
+      ) {
+        throw new Error(`${input} was detected as ${format}`);
+      }
+      expect(() => parser[format](input)).not.toThrow();
+    }
   });
 
   it("detectedMultilineInputsParseLikeTheirSingleLineForm", () => {

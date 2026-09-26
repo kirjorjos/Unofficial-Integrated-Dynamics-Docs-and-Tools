@@ -392,7 +392,10 @@ export const CondensedToAST = (
         type: "Reader";
         value: TypeAST.Reader["value"];
         varName?: string;
-      };
+      }
+    | { type: "Materialize"; value: InternalAST; varName?: string }
+    | { type: "Dynamic"; value: InternalAST; varName?: string }
+    | { type: "Static"; value: InternalAST; varName?: string };
 
   function tryParseParams(): string[] | null {
     const startPos = pos;
@@ -490,6 +493,62 @@ export const CondensedToAST = (
     return node;
   }
 
+  function tryParseWrapperExpression(
+    scope: Set<string>
+  ): InternalAST | undefined {
+    const token = tokens[pos];
+    if (!token || token.type !== "identifier") return undefined;
+    const lower = token.value.toLowerCase();
+    const canonical =
+      lower === "materialize"
+        ? "Materialize"
+        : lower === "dynamic"
+          ? "Dynamic"
+          : lower === "static"
+            ? "Static"
+            : undefined;
+    if (!canonical) return undefined;
+    if (scope.has(token.value) || externalScope.has(token.value)) {
+      return undefined;
+    }
+    const open = tokens[pos + 1];
+    if (!open || open.type !== "structural" || open.value !== "(") {
+      return undefined;
+    }
+    pos += 2; // consume name and '('
+    const value = parseExpression(scope);
+    if (
+      !tokens[pos] ||
+      tokens[pos]!.type !== "structural" ||
+      tokens[pos]!.value !== ")"
+    ) {
+      throw new StructuralParseError(
+        `Expected ')' after ${canonical} argument`
+      );
+    }
+    pos++; // consume ')'
+    return { type: canonical, value } as InternalAST;
+  }
+
+  const CALLABLE_IDENTIFIER_KEYWORDS = [
+    "block",
+    "item",
+    "fluid",
+    "entity",
+    "ingredients",
+    "recipe",
+    "operator",
+    "variable",
+  ];
+
+  function isKnownCallName(name: string, scope: Set<string>): boolean {
+    if (name.startsWith("@")) return true;
+    if (scope.has(name) || externalScope.has(name)) return true;
+    if (operatorRegistry.operatorByNickname(name)) return true;
+    if (CALLABLE_IDENTIFIER_KEYWORDS.includes(name.toLowerCase())) return true;
+    return resolveImplicitFlipOperator(name) !== undefined;
+  }
+
   function parseExpressionInner(scope: Set<string>): InternalAST {
     const params = tryParseParams();
     if (params !== null) {
@@ -509,6 +568,9 @@ export const CondensedToAST = (
         return result;
       }
     }
+
+    const wrapperExpr = tryParseWrapperExpression(scope);
+    if (wrapperExpr !== undefined) return wrapperExpr;
 
     const readerExpr = tryParseReaderExpression(scope);
     if (readerExpr !== undefined) return readerExpr;
@@ -562,6 +624,11 @@ export const CondensedToAST = (
       tokens[pos]!.type === "structural" &&
       tokens[pos]!.value === "("
     ) {
+      if (!isKnownCallName(token.value, scope)) {
+        throw new UnknownIdentifierParseError(
+          `Unknown identifier: ${token.value}`
+        );
+      }
       pos++; // consume '('
       const args: InternalAST[] = [];
       while (
@@ -1162,6 +1229,13 @@ export const CondensedToAST = (
         containsVar(name, ast.op3)
       );
     if (ast.type === "Flip") return containsVar(name, ast.arg);
+    if (
+      ast.type === "Dynamic" ||
+      ast.type === "Static" ||
+      ast.type === "Materialize"
+    ) {
+      return containsVar(name, ast.value as InternalAST);
+    }
     if (ast.type === "Reader" && ast.value.simulatedOutput) {
       return containsVar(name, ast.value.simulatedOutput as InternalAST);
     }
@@ -1298,6 +1372,12 @@ export const CondensedToAST = (
 
     if (!containsVar(param, body)) {
       return condense({ type: "Curry", base: CONST_OP, args: [body] });
+    } else if (
+      body.type === "Dynamic" ||
+      body.type === "Static" ||
+      body.type === "Materialize"
+    ) {
+      return abstract(param, body.value as InternalAST);
     } else if (body.type === "Variable") {
       return IDEN_OP;
     } else if (body.type === "Pipe") {
@@ -1797,6 +1877,18 @@ export const ASTToCondensed = (
 
       case "Recipe":
         result = `Recipe(${JSON.stringify(node.value)})`;
+        break;
+
+      case "Materialize":
+        result = `Materialize(${stringify(node.value, false)})`;
+        break;
+
+      case "Dynamic":
+        result = `Dynamic(${stringify(node.value, false)})`;
+        break;
+
+      case "Static":
+        result = `Static(${stringify(node.value, false)})`;
         break;
 
       case "Reader": {

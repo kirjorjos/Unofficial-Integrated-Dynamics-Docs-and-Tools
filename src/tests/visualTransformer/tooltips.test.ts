@@ -89,7 +89,11 @@ describe("operatorCardTooltips", () => {
       { output: "x", inputs: [], sourceType: "Operator" } as any,
       3
     );
-    expect(tooltip.lines).toEqual(["§e§oVariable ID: §r§o3"]);
+    expect(tooltip.lines).toEqual([
+      "§e§oVariable ID: §r§o3",
+      "§5§oClear or copy in a crafting",
+      "§5§ogrid",
+    ]);
   });
 });
 
