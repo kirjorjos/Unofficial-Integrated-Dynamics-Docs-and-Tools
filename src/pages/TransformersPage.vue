@@ -6,12 +6,10 @@ import {
   ASTToCondensed,
   ASTToExpanded,
   ASTToExpandedWithSignatureOptions,
-  ASTtoJSON,
   CodeLineToAST,
   CompressedToAST,
   CondensedToAST,
   ExpandedToAST,
-  JSONtoAST,
   decodeSettingsOpts,
   encodeSettingsOpts,
   DEFAULT_TRANSFORMER_SETTINGS,
@@ -31,6 +29,7 @@ import Tile from "../components/Tile.vue";
 import TileGrid from "../components/TileGrid.vue";
 import { FULL_TILE_SPAN } from "pages-lib/tileLayout";
 import { settingHelpText } from "lib/transformers/settingHelp";
+import { MAX_INDENTATION } from "lib/transformers/transformerSettings";
 import {
   inputDocExampleInput,
   type InputDocExample,
@@ -42,10 +41,13 @@ import {
   computeCodeLineOverlay,
   computeCondensedOverlay,
   computeExpandedOverlay,
-  computeJsonOverlay,
+  computeSnbtOverlay,
   discoverSignatureRestoreModes,
   stripAutoCurryVarNames,
 } from "lib/transformers/inputState";
+import { ASTToSnbt, snbtInputToAST } from "lib/transformers/snbtFormat";
+import { astToGiveCommands } from "lib/transformers/astGiveCommands";
+import { inputToGiveCommands } from "lib/transformers/giveCommands";
 import { compressWithInputState } from "lib/transformers/Compressed";
 import { decodeTransformerUrlCode } from "lib/transformers/decodeUrlState";
 
@@ -68,6 +70,7 @@ const expandedOutputViewer = ref<InstanceType<
 const currentAst = ref<any>(null);
 const settingsPanelOpen = ref(false);
 const visualStepIds = ref<string[]>([]);
+const outputWarnings = ref<string[]>([]);
 let restoringState = false;
 let loadingExample = false;
 
@@ -104,10 +107,14 @@ const canonicalFormatters: Record<FormatKey, FormatFormatter> = {
     toAST: (value) => CompressedToAST(value),
     fromAST: (ast) => ASTToCompressed(ast),
   },
-  json: {
-    label: "JSON",
-    toAST: (value) => JSONtoAST(JSON.parse(value) as jsonData),
-    fromAST: (ast) => JSON.stringify(ASTtoJSON(ast), null, 2),
+  snbt: {
+    label: "SNBT",
+    toAST: (value) =>
+      snbtInputToAST(value, {
+        missingParts: settings.value.missingParts,
+        conflicts: settings.value.conflicts,
+      }),
+    fromAST: (ast) => ASTToSnbt(ast),
   },
 };
 
@@ -146,8 +153,26 @@ const formatters: Record<FormatKey, FormatFormatter> = {
       }),
   },
   compressed: canonicalFormatters.compressed,
-  json: canonicalFormatters.json,
+  snbt: {
+    label: "SNBT",
+    toAST: canonicalFormatters.snbt.toAST,
+    fromAST: (ast) =>
+      detectInputFormat(inputText.value) === "snbt"
+        ? inputToGiveCommands(inputText.value, snbtGiveOptions()).text
+        : astToGiveCommands(ast, snbtGiveOptions()).text,
+  },
 };
+
+const snbtGiveOptions = () => ({
+  materialize: settings.value.materialize,
+  outputShape: settings.value.outputShape,
+  layout: settings.value.layout,
+  indentation: settings.value.indentation,
+  cardIds: settings.value.cardIds,
+  missingParts: settings.value.missingParts,
+  conflicts: settings.value.conflicts,
+  startVariableId: settings.value.initialVariableId,
+});
 
 const settingsToSigOpts = (
   s: TransformerSettings
@@ -183,7 +208,7 @@ const outputFormatters: Record<
   condensed: formatters.condensed,
   expanded: formatters.expanded,
   codeline: formatters.codeline,
-  json: formatters.json,
+  snbt: formatters.snbt,
   visual: {
     label: "Visual",
     fromAST: (ast) =>
@@ -261,7 +286,7 @@ const buildStateUrl = (
     url.searchParams.delete("output");
   }
 
-  const opts = encodeSettingsOpts(settings.value);
+  const opts = encodeSettingsOpts(settings.value, outputFormat.value);
   if (opts !== null) {
     url.searchParams.set("opts", opts);
   } else {
@@ -438,12 +463,12 @@ const buildInputStateSection = (
     return { format: "expanded", mode: "raw", rawText: rawInput };
   }
 
-  if (sourceFormat === "json") {
-    const overlay = computeJsonOverlay(rawInput, canonicalInput);
+  if (sourceFormat === "snbt") {
+    const overlay = computeSnbtOverlay(rawInput, canonicalInput);
     if (overlay.mode === 0) {
-      return { format: "json", mode: "overlay", overlay };
+      return { format: "snbt", mode: "overlay", overlay };
     }
-    return { format: "json", mode: "raw", rawText: rawInput };
+    return { format: "snbt", mode: "raw", rawText: rawInput };
   }
 
   return null;
@@ -541,11 +566,31 @@ const transform = (skipUrlUpdate: boolean = false): void => {
     const rawInput = inputText.value; // untrimmed (no-trim rule)
     const sourceFormat = detectInputFormat(rawInput);
     const dupWarnings: string[] = [];
-    const ast = canonicalFormatters[sourceFormat].toAST(rawInput, {
-      allowDuplicateNames: settings.value.duplicateNames === "allow",
-      warnings: dupWarnings,
-      declarationCards: settings.value.declarationCards,
-    });
+    let ast: TypeAST.AST;
+    if (sourceFormat === "snbt") {
+      outputWarnings.value = inputToGiveCommands(rawInput, {
+        missingParts: settings.value.missingParts,
+        conflicts: settings.value.conflicts,
+        startVariableId: initialVariableId.value,
+      }).warnings;
+      ast = snbtInputToAST(rawInput, {
+        missingParts: settings.value.missingParts,
+        conflicts: settings.value.conflicts,
+      });
+    } else {
+      outputWarnings.value = [];
+      ast = canonicalFormatters[sourceFormat].toAST(rawInput, {
+        allowDuplicateNames: settings.value.duplicateNames === "allow",
+        warnings: dupWarnings,
+        declarationCards: settings.value.declarationCards,
+      });
+      if (outputFormat.value === "snbt") {
+        outputWarnings.value = astToGiveCommands(
+          ast,
+          snbtGiveOptions()
+        ).warnings;
+      }
+    }
     currentAst.value = ast;
     if (!updateOutputFromAst(ast, outputFormat.value)) return;
     inputDirty.value = false;
@@ -599,6 +644,14 @@ const settingEnabled = (setting: string): boolean => {
       return true;
     case "statementLayout":
       return fmt === "codeline" || fmt === "condensed";
+    case "materialize":
+    case "outputShape":
+    case "layout":
+    case "indentation":
+    case "cardIds":
+    case "missingParts":
+    case "conflicts":
+      return fmt === "snbt";
     case "referenceStyle":
       return fmt === "codeline" || fmt === "condensed" || fmt === "expanded";
     case "signatureDepth":
@@ -642,7 +695,7 @@ onMounted(async () => {
 
   const opts = url.searchParams.get("opts");
   if (opts !== null) {
-    settings.value = decodeSettingsOpts(opts);
+    settings.value = decodeSettingsOpts(opts, output ?? undefined);
   }
 
   const varId = url.searchParams.get("varId");
@@ -774,6 +827,186 @@ onMounted(async () => {
                 step="1"
                 aria-label="Initial variable ID"
               />
+            </div>
+
+            <div
+              class="settings-row"
+              :class="{ disabled: !settingEnabled('materialize') }"
+            >
+              <label
+                class="settings-label"
+                for="setting-materialize"
+                :data-help="settingHelpText('materialize')"
+              >
+                Materialize<sup class="settings-help-mark" aria-hidden="true"
+                  >?</sup
+                >
+              </label>
+              <input
+                id="setting-materialize"
+                v-model="settings.materialize"
+                type="checkbox"
+                :disabled="!settingEnabled('materialize')"
+                aria-label="Materialize"
+              />
+            </div>
+
+            <div
+              class="settings-row"
+              :class="{ disabled: !settingEnabled('outputShape') }"
+            >
+              <label
+                class="settings-label"
+                for="setting-output-shape"
+                :data-help="settingHelpText('outputShape')"
+              >
+                Output shape<sup class="settings-help-mark" aria-hidden="true"
+                  >?</sup
+                >
+              </label>
+              <select
+                id="setting-output-shape"
+                v-model="settings.outputShape"
+                class="select"
+                :disabled="!settingEnabled('outputShape')"
+                aria-label="Output shape"
+              >
+                <option value="cards">Variable cards</option>
+                <option value="varstore">Variable stores</option>
+              </select>
+            </div>
+
+            <div
+              class="settings-row"
+              :class="{ disabled: !settingEnabled('layout') }"
+            >
+              <label
+                class="settings-label"
+                for="setting-layout"
+                :data-help="settingHelpText('layout')"
+              >
+                Layout<sup class="settings-help-mark" aria-hidden="true">?</sup>
+              </label>
+              <select
+                id="setting-layout"
+                v-model="settings.layout"
+                class="select"
+                :disabled="!settingEnabled('layout')"
+                aria-label="Layout"
+              >
+                <option value="minimize">One line</option>
+                <option value="readable">Readable</option>
+              </select>
+            </div>
+
+            <div
+              class="settings-row"
+              :class="{
+                disabled:
+                  !settingEnabled('indentation') ||
+                  settings.layout !== 'readable',
+              }"
+            >
+              <label
+                class="settings-label"
+                for="setting-indentation"
+                :data-help="settingHelpText('indentation')"
+              >
+                Indentation<sup class="settings-help-mark" aria-hidden="true"
+                  >?</sup
+                >
+              </label>
+              <input
+                id="setting-indentation"
+                v-model.number="settings.indentation"
+                class="select"
+                type="number"
+                min="0"
+                :max="MAX_INDENTATION"
+                step="1"
+                :disabled="
+                  !settingEnabled('indentation') ||
+                  settings.layout !== 'readable'
+                "
+                aria-label="Indentation"
+              />
+            </div>
+
+            <div
+              class="settings-row"
+              :class="{ disabled: !settingEnabled('cardIds') }"
+            >
+              <label
+                class="settings-label"
+                for="setting-card-ids"
+                :data-help="settingHelpText('cardIds')"
+              >
+                Variable IDs<sup class="settings-help-mark" aria-hidden="true"
+                  >?</sup
+                >
+              </label>
+              <select
+                id="setting-card-ids"
+                v-model="settings.cardIds"
+                class="select"
+                :disabled="!settingEnabled('cardIds')"
+                aria-label="Variable IDs"
+              >
+                <option value="remap">Renumber from the initial ID</option>
+                <option value="preserve">Keep the pasted IDs</option>
+              </select>
+            </div>
+
+            <div
+              class="settings-row"
+              :class="{ disabled: !settingEnabled('missingParts') }"
+            >
+              <label
+                class="settings-label"
+                for="setting-missing-parts"
+                :data-help="settingHelpText('missingParts')"
+              >
+                Missing parts<sup class="settings-help-mark" aria-hidden="true"
+                  >?</sup
+                >
+              </label>
+              <select
+                id="setting-missing-parts"
+                v-model="settings.missingParts"
+                class="select"
+                :disabled="!settingEnabled('missingParts')"
+                aria-label="Missing parts"
+              >
+                <option value="error">Error</option>
+                <option value="warn">Warn</option>
+              </select>
+            </div>
+
+            <div
+              class="settings-row"
+              :class="{ disabled: !settingEnabled('conflicts') }"
+            >
+              <label
+                class="settings-label"
+                for="setting-conflicts"
+                :data-help="settingHelpText('conflicts')"
+              >
+                Duplicate conflicts<sup
+                  class="settings-help-mark"
+                  aria-hidden="true"
+                  >?</sup
+                >
+              </label>
+              <select
+                id="setting-conflicts"
+                v-model="settings.conflicts"
+                class="select"
+                :disabled="!settingEnabled('conflicts')"
+                aria-label="Duplicate conflicts"
+              >
+                <option value="error">Error</option>
+                <option value="warn">Keep the first and warn</option>
+              </select>
             </div>
 
             <div
@@ -1298,6 +1531,12 @@ onMounted(async () => {
         </div>
 
         <p v-if="status" class="status">{{ status }}</p>
+
+        <ul v-if="outputWarnings.length > 0" class="status warnings">
+          <li v-for="(warning, index) in outputWarnings" :key="index">
+            {{ warning }}
+          </li>
+        </ul>
       </Tile>
 
       <Tile

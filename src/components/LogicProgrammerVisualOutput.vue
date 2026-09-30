@@ -514,6 +514,45 @@ const cloneAstWithoutVarNames = (ast: TypeAST.AST): TypeAST.AST => {
         type: "Static",
         value: cloneAstWithoutVarNames(ast.value),
       };
+    case "Display":
+      return {
+        type: "Display",
+        value: cloneAstWithoutVarNames(ast.value),
+      };
+    case "Card":
+      return {
+        type: "Card",
+        value: cloneAstWithoutVarNames(ast.value),
+      };
+    case "VarStore":
+      return {
+        type: "VarStore",
+        value: {
+          id: ast.value.id,
+          cards: ast.value.cards.map(cloneAstWithoutVarNames),
+        },
+      };
+    case "DisplayPanel":
+      return {
+        type: "DisplayPanel",
+        value: {
+          id: ast.value.id,
+          settings: ast.value.settings,
+          inventory: ast.value.inventory.map(cloneAstWithoutVarNames),
+        },
+      };
+    case "Writer":
+    case "Exporter":
+    case "Importer":
+      return {
+        type: ast.type,
+        value: {
+          partType: ast.value.partType,
+          id: ast.value.id,
+          settings: ast.value.settings,
+          inventory: ast.value.inventory.map(cloneAstWithoutVarNames),
+        },
+      };
   }
 };
 

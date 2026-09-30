@@ -125,12 +125,6 @@ describe("TestVariables", () => {
       const strTag = new StringTag(new iString("abc"));
       testRoundTrip(strTag);
     });
-
-    it("testNbtTypeInvalidString", () => {
-      expect(() => {
-        CompoundTag.fromJSON('"');
-      }).toThrow();
-    });
   });
 
   describe("IngredientsType", () => {

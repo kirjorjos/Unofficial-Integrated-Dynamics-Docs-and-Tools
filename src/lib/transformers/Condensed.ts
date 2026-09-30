@@ -33,6 +33,12 @@ import {
 } from "lib/transformers/NetworkCards";
 import { normalizeSegments } from "lib/transformers/MixedLists";
 import {
+  extractCardOperands,
+  getCardOperandIndex,
+  parseCardOperand,
+} from "lib/transformers/cardOperand";
+import { sourceToNetworkCards } from "lib/transformers/sourceNodes";
+import {
   InvalidArityParseError,
   InvalidEscapeParseError,
   InternalParseError,
@@ -347,7 +353,8 @@ export const CondensedToAST = (
   allowVarRefs = false,
   normalizeMixedLists = true
 ): TypeAST.AST => {
-  const { tokens, comments } = tokenizeWithComments(condensed);
+  const { text, operands } = extractCardOperands(condensed);
+  const { tokens, comments } = tokenizeWithComments(text);
   let pos = 0;
   const spans: CommentSpan[] = [];
 
@@ -395,7 +402,9 @@ export const CondensedToAST = (
       }
     | { type: "Materialize"; value: InternalAST; varName?: string }
     | { type: "Dynamic"; value: InternalAST; varName?: string }
-    | { type: "Static"; value: InternalAST; varName?: string };
+    | { type: "Static"; value: InternalAST; varName?: string }
+    | { type: "Display"; value: InternalAST; varName?: string }
+    | { type: "Card"; value: InternalAST; varName?: string };
 
   function tryParseParams(): string[] | null {
     const startPos = pos;
@@ -506,7 +515,9 @@ export const CondensedToAST = (
           ? "Dynamic"
           : lower === "static"
             ? "Static"
-            : undefined;
+            : lower === "display"
+              ? "Display"
+              : undefined;
     if (!canonical) return undefined;
     if (scope.has(token.value) || externalScope.has(token.value)) {
       return undefined;
@@ -660,6 +671,13 @@ export const CondensedToAST = (
     args: InternalAST[],
     scope: Set<string>
   ): InternalAST {
+    for (const arg of args) {
+      if (arg.type === "Card") {
+        throw new StructuralParseError(
+          "Card(...) cannot be used inside a call; give it a name of its own"
+        );
+      }
+    }
     if (name.startsWith("@") && name.slice(1).toLowerCase() === "variable") {
       if (args.length !== 1 || args[0]!.type !== "String") {
         throw new InvalidArityParseError(
@@ -1232,7 +1250,9 @@ export const CondensedToAST = (
     if (
       ast.type === "Dynamic" ||
       ast.type === "Static" ||
-      ast.type === "Materialize"
+      ast.type === "Materialize" ||
+      ast.type === "Display" ||
+      ast.type === "Card"
     ) {
       return containsVar(name, ast.value as InternalAST);
     }
@@ -1375,7 +1395,9 @@ export const CondensedToAST = (
     } else if (
       body.type === "Dynamic" ||
       body.type === "Static" ||
-      body.type === "Materialize"
+      body.type === "Materialize" ||
+      body.type === "Display" ||
+      body.type === "Card"
     ) {
       return abstract(param, body.value as InternalAST);
     } else if (body.type === "Variable") {
@@ -1672,7 +1694,17 @@ export const CondensedToAST = (
         return { type: "Null" };
       case "nbt":
         return { type: "NBT", value: JSON.parse(token.value) };
-      case "identifier":
+      case "identifier": {
+        const operandIndex = getCardOperandIndex(token.value);
+        if (operandIndex !== null) {
+          const operand = operands[operandIndex];
+          if (operand === undefined) {
+            throw new StructuralParseError(
+              `Unknown card operand ${token.value}`
+            );
+          }
+          return parseCardOperand(operand) as InternalAST;
+        }
         if (token.value.startsWith("@"))
           return { type: "Variable", name: token.value } as InternalAST;
         if (scope.has(token.value))
@@ -1706,6 +1738,7 @@ export const CondensedToAST = (
         throw new UnknownIdentifierParseError(
           `Unknown identifier: ${token.value}`
         );
+      }
       default:
         throw new InternalParseError(`Unexpected token type: ${token.type}`);
     }
@@ -1890,6 +1923,26 @@ export const ASTToCondensed = (
       case "Static":
         result = `Static(${stringify(node.value, false)})`;
         break;
+
+      case "Display":
+      case "Card":
+        result = stringify(node.value, false);
+        break;
+
+      case "VarStore":
+      case "DisplayPanel":
+      case "Writer":
+      case "Exporter":
+      case "Importer":
+        return sourceToNetworkCards(node)
+          .definitions.map((def) => {
+            const oldVarName = def.node.varName;
+            delete def.node.varName;
+            const statement = stringify(def.node, true);
+            if (oldVarName) def.node.varName = oldVarName;
+            return statement;
+          })
+          .join(outputOpts.joinStatements === "\n" ? "\n" : "; ");
 
       case "Reader": {
         const val = node.value;

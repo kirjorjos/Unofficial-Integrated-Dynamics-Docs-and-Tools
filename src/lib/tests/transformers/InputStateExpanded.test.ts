@@ -21,7 +21,7 @@ const compressExpandedSection = (
     mode: "overlay",
     overlay,
   };
-  return compressWithInputState(ast, "json", section);
+  return compressWithInputState(ast, "snbt", section);
 };
 
 const compressExpandedRaw = (
@@ -33,7 +33,7 @@ const compressExpandedRaw = (
     mode: "raw",
     rawText,
   };
-  return compressWithInputState(ast, "json", section);
+  return compressWithInputState(ast, "snbt", section);
 };
 
 describe("TestExpandedOverlay", () => {

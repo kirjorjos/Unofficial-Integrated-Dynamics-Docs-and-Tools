@@ -1,6 +1,7 @@
 import { operatorRegistry } from "lib/IntegratedDynamicsClasses/registries/operatorRegistry";
 import { flattenAnonymousBaseOperatorApplication } from "lib/transformers/helpers";
 import type { NormalizedSegment } from "lib/transformers/MixedLists";
+import { getSourceCards } from "lib/transformers/sourceNodes";
 
 export const isVarRefNode = (
   node: TypeAST.AST
@@ -51,7 +52,25 @@ export const astContentKey = (ast: TypeAST.AST): string => {
     case "Materialize":
     case "Dynamic":
     case "Static":
+    case "Display":
+    case "Card":
       return `${ast.type}:${astContentKey(ast.value)}`;
+    case "VarStore":
+      return `VarStore:${ast.value.id ?? ""}:[${ast.value.cards
+        .map(astContentKey)
+        .join(",")}]`;
+    case "DisplayPanel":
+    case "Writer":
+    case "Exporter":
+    case "Importer": {
+      const partType =
+        ast.type === "DisplayPanel"
+          ? "integrateddynamics:display_panel"
+          : ast.value.partType;
+      return `${ast.type}:${partType}:${ast.value.id ?? ""}:${
+        ast.value.settings ? JSON.stringify(ast.value.settings) : ""
+      }:[${getSourceCards(ast).map(astContentKey).join(",")}]`;
+    }
     case "NetworkCards":
       return `NetworkCards[${ast.definitions
         .map((d) => `${d.name}:${astContentKey(d.node)}`)
@@ -61,7 +80,9 @@ export const astContentKey = (ast: TypeAST.AST): string => {
   }
 };
 
-const getCurryChunks = (ast: TypeAST.Curried): { args: TypeAST.AST[] }[] => {
+export const getCurryChunks = (
+  ast: TypeAST.Curried
+): { args: TypeAST.AST[] }[] => {
   const flattened = flattenAnonymousBaseOperatorApplication(ast);
   if (flattened?.fullyApplied) return [];
 
@@ -143,6 +164,20 @@ export const countCards = (
       );
     case "Flip":
       return 1 + countCards(ast.arg, seen, contentSeen);
+    case "Display":
+    case "Card":
+      return countCards(ast.value, seen, contentSeen);
+    case "VarStore":
+    case "DisplayPanel":
+    case "Writer":
+    case "Exporter":
+    case "Importer": {
+      let count = 0;
+      for (const card of getSourceCards(ast)) {
+        count += countCards(card, seen, contentSeen);
+      }
+      return count;
+    }
     case "List": {
       let count = 1;
       for (const entry of ast.value) {
@@ -211,7 +246,16 @@ const resolveVarRefs = (
     case "Materialize":
     case "Dynamic":
     case "Static":
+    case "Display":
+    case "Card":
       resolveVarRefs(node.value, resolve);
+      break;
+    case "VarStore":
+    case "DisplayPanel":
+    case "Writer":
+    case "Exporter":
+    case "Importer":
+      for (const card of getSourceCards(node)) resolveVarRefs(card, resolve);
       break;
     default:
       break;

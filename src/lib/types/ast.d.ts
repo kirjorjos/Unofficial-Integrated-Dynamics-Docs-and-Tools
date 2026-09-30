@@ -60,7 +60,60 @@ namespace TypeAST {
 
   type Materialize = { type: "Materialize"; value: AST; varName?: string };
 
-  type Wrapper = Materialize | Dynamic | Static;
+  type Display = { type: "Display"; value: AST; varName?: string };
+
+  type Card = { type: "Card"; value: AST; varName?: string };
+
+  type Wrapper = Materialize | Dynamic | Static | Display | Card;
+
+  type PartSettings = Record<string, jsonData>;
+
+  type VarStore = {
+    type: "VarStore";
+    value: { id?: string; cards: AST[] };
+    varName?: string;
+  };
+
+  type DisplayPanel = {
+    type: "DisplayPanel";
+    value: { id?: string; inventory: AST[]; settings?: PartSettings };
+    varName?: string;
+  };
+
+  type Writer = {
+    type: "Writer";
+    value: {
+      partType: string;
+      id?: string;
+      inventory: AST[];
+      settings?: PartSettings;
+    };
+    varName?: string;
+  };
+
+  type Exporter = {
+    type: "Exporter";
+    value: {
+      partType: string;
+      id?: string;
+      inventory: AST[];
+      settings?: PartSettings;
+    };
+    varName?: string;
+  };
+
+  type Importer = {
+    type: "Importer";
+    value: {
+      partType: string;
+      id?: string;
+      inventory: AST[];
+      settings?: PartSettings;
+    };
+    varName?: string;
+  };
+
+  type Source = VarStore | DisplayPanel | Writer | Exporter | Importer;
 
   type BaseOperator = {
     type: "Operator";
@@ -104,7 +157,8 @@ namespace TypeAST {
     | Ingredients
     | Recipe
     | Nbt
-    | Reader;
+    | Reader
+    | Source;
 
   type Variable = { type: "Variable"; name: string; varName?: string };
 

@@ -3,6 +3,8 @@ import { ExpandedToAST } from "lib/transformers/Expanded";
 import { CodeLineToAST } from "lib/transformers/CodeLine";
 import { CondensedToAST } from "lib/transformers/Condensed";
 import { abstractDynamicParts } from "lib/transformers/lambdaAbstraction";
+import { inputToGiveCommands } from "lib/transformers/giveCommands";
+import { snbtInputToAST } from "lib/transformers/snbtFormat";
 import {
   INPUT_DOC_FORMAT_TAB_IDS,
   INPUT_DOC_TABS,
@@ -25,6 +27,7 @@ describe("TestInputDocs", () => {
       "expanded",
       "codeline",
       "condensed",
+      "snbt",
       "visual",
     ]);
     expect(INPUT_DOC_FORMAT_TAB_IDS).toEqual([
@@ -119,6 +122,34 @@ describe("TestInputDocs", () => {
       const materialize = rootOf(perFormat[tabId]) as TypeAST.Materialize;
       expect(materialize.type).toBe("Materialize");
       expect(abstractDynamicParts(materialize.value).params).toHaveLength(1);
+    }
+  });
+
+  it("testEverySnbtExampleIsDetectedAndParses", () => {
+    const examples = inputDocTab("snbt").sections.flatMap(
+      (section) =>
+        section.examples?.filter((example) => example.kind === "concrete") ?? []
+    );
+    expect(examples.length).toBeGreaterThan(0);
+
+    for (const example of examples) {
+      expect(detectInputFormat(example.text)).toBe("snbt");
+      const parsed = snbtInputToAST(example.text, { missingParts: "warn" });
+      expect(parsed).toBeTruthy();
+    }
+  });
+
+  it("testSnbtExamplesProduceGiveCommands", () => {
+    const examples = inputDocTab("snbt").sections.flatMap(
+      (section) =>
+        section.examples?.filter((example) => example.kind === "concrete") ?? []
+    );
+    for (const example of examples) {
+      const out = inputToGiveCommands(example.text, { missingParts: "warn" });
+      expect(out.lines.length).toBeGreaterThan(0);
+      expect(out.lines.every((line) => line.startsWith("/give @p "))).toBe(
+        true
+      );
     }
   });
 

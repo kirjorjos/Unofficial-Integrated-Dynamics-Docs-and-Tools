@@ -340,6 +340,45 @@ test.describe("transformersPageVisualOutputDom", () => {
   });
 });
 
+test.describe("transformersPageSnbtFromAnAuthoredProgram", () => {
+  const emit = async (
+    page: import("@playwright/test").Page,
+    input: string
+  ): Promise<import("@playwright/test").Locator> => {
+    await page.goto("/");
+    await page.locator('textarea[aria-label="Transformer input"]').fill(input);
+    await page
+      .locator('select[aria-label="Output format"]')
+      .selectOption("snbt");
+    await page.getByRole("button", { name: "Transform", exact: true }).click();
+    return page.locator('textarea[aria-label="SNBT"]');
+  };
+
+  test("testWritesACodeLineProgramAsVariableCards", async ({ page }) => {
+    const output = await emit(page, 'apply stringConcat "a" "b"');
+    await expect(output).toHaveValue(
+      /^\/give @p integrateddynamics:variable\{_id:0,_type:"integrateddynamics:valuetype",typeName:"integrateddynamics:string",value:"a"\}/ //
+    );
+    await expect(output).toHaveValue(
+      /operatorName:"integrateddynamics:string_concat",variableIds:\[I;0,1\]/
+    );
+  });
+
+  test("testWritesADisplayAsADisplayPanel", async ({ page }) => {
+    const output = await emit(page, 'Display(stringConcat("a", "b"))');
+    await expect(output).toHaveValue(
+      /^\/give @p integrateddynamics:part_display_panel\{id:0,aspectProperties:\{map:\[\]\},enabled:1b,updateInterval:1,inventory:\[/
+    );
+  });
+
+  test("testWritesAReaderAsItsPartAndAnAspectCard", async ({ page }) => {
+    const output = await emit(page, "InventoryReader(2).inventoryCount");
+    await expect(output).toHaveValue(
+      /^\/give @p integrateddynamics:part_inventory_reader\{id:0,aspectProperties:\{map:\[\]\},enabled:1b,updateInterval:1\}\n\/give @p integrateddynamics:variable\{_id:0,_type:"integrateddynamics:aspect",aspectName:"integrateddynamics:read_integer_inventory_count",partId:0\}/
+    );
+  });
+});
+
 test.describe("transformersPageInputStateRestore", () => {
   const runTransform = async (
     page: import("@playwright/test").Page,
@@ -485,31 +524,17 @@ test.describe("transformersPageInputStateRestore", () => {
     );
   });
 
-  test("testReloadRestoresJsonInputWithSpellingAndWhitespace", async ({
+  test("testReloadRestoresSnbtInputWithSpellingAndWhitespace", async ({
     page,
   }) => {
     const input =
-      '\n  {"curry":{"values":[{"valueType":"integrateddynamics:integer","value":1.0}],"baseOperator":{"operatorName":"integrateddynamics:arithmetic_addition"}}} \t';
-    await runTransformReload(page, input, "json");
+      '\n  /give @p integrateddynamics:variable{_id:4,_type:"integrateddynamics:valuetype",typeName:"integrateddynamics:integer",value:5} \t';
+    await runTransformReload(page, input, "snbt");
     await expect(
       page.locator('textarea[aria-label="Transformer input"]')
     ).toHaveValue(input);
-    await expect(page.locator('textarea[aria-label="JSON"]')).toHaveValue(
-      [
-        "{",
-        '  "curry": {',
-        '    "values": [',
-        "      {",
-        '        "valueType": "integrateddynamics:integer",',
-        '        "value": 1',
-        "      }",
-        "    ],",
-        '    "baseOperator": {',
-        '      "operatorName": "integrateddynamics:arithmetic_addition"',
-        "    }",
-        "  }",
-        "}",
-      ].join("\n")
+    await expect(page.locator('textarea[aria-label="SNBT"]')).toHaveValue(
+      '/give @p integrateddynamics:variable{_id:0,_type:"integrateddynamics:valuetype",typeName:"integrateddynamics:integer",value:5}'
     );
   });
 

@@ -2,6 +2,8 @@ import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
 import { iString } from "lib/IntegratedDynamicsClasses/typeWrappers/iString";
 import { CompoundTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
+import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
+import { SNBTToCompoundTag } from "lib/transformers/SNBT";
 
 export class OPERATOR_PARSE_NBT extends BaseOperator<iString, CompoundTag> {
   static override internalName =
@@ -47,7 +49,13 @@ export class OPERATOR_PARSE_NBT extends BaseOperator<iString, CompoundTag> {
         normalizeSignature
       ),
       function: (data: iString): CompoundTag => {
-        return CompoundTag.fromJSON(data.valueOf());
+        try {
+          return SNBTToCompoundTag(data.valueOf());
+        } catch (e: any) {
+          throw new iError(
+            `Could not parse nbt from "${data.valueOf()}": ${e.message}`
+          );
+        }
       },
     });
   }

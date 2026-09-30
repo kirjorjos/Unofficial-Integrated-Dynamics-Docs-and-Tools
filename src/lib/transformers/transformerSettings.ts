@@ -25,6 +25,13 @@ export interface TransformerSettings {
   resolve: boolean;
   preferSourceNames: boolean;
   declarationCards: "ignore" | "add";
+  materialize: boolean;
+  outputShape: "cards" | "varstore";
+  layout: "minimize" | "readable";
+  indentation: number;
+  cardIds: "preserve" | "remap";
+  missingParts: "error" | "warn";
+  conflicts: "error" | "warn";
 }
 
 export const DEFAULT_TRANSFORMER_SETTINGS: TransformerSettings = {
@@ -47,7 +54,16 @@ export const DEFAULT_TRANSFORMER_SETTINGS: TransformerSettings = {
   resolve: false,
   preferSourceNames: false,
   declarationCards: "ignore",
+  materialize: false,
+  outputShape: "cards",
+  layout: "minimize",
+  indentation: 2,
+  cardIds: "remap",
+  missingParts: "error",
+  conflicts: "error",
 };
+
+export const MAX_INDENTATION = 16;
 
 export const isDefaultSettings = (settings: TransformerSettings): boolean => {
   const { initialVariableId, ...rest } = settings;
@@ -86,6 +102,12 @@ const FLAG_ORDER: {
   { bit: (s) => s.resolve }, // row 17
   { bit: (s) => s.preferSourceNames }, // row 18
   { bit: (s) => s.declarationCards === "add" }, // row 19
+  { bit: (s) => s.materialize }, // row 20
+  { bit: (s) => s.outputShape === "varstore" }, // row 21
+  { bit: (s) => s.layout === "readable" }, // row 22
+  { bit: (s) => s.cardIds === "preserve" }, // row 23
+  { bit: (s) => s.missingParts === "warn" }, // row 24
+  { bit: (s) => s.conflicts === "warn" }, // row 25
 ];
 
 const encodeDepth = (depth: number): number => (depth === -1 ? 0 : depth + 1);
@@ -93,8 +115,12 @@ const encodeDepth = (depth: number): number => (depth === -1 ? 0 : depth + 1);
 const decodeDepth = (encoded: number): number =>
   encoded === 0 ? -1 : encoded - 1;
 
+const slotIsIndentation = (outputFormat?: string): boolean =>
+  outputFormat === "snbt";
+
 export const encodeSettingsOpts = (
-  settings: TransformerSettings
+  settings: TransformerSettings,
+  outputFormat?: string
 ): string | null => {
   if (isDefaultSettings(settings)) return null;
 
@@ -102,12 +128,18 @@ export const encodeSettingsOpts = (
   for (const { bit } of FLAG_ORDER) {
     writer.writeBit(bit(settings));
   }
-  writeVarUint(writer, encodeDepth(settings.signatureDepth));
+  writeVarUint(
+    writer,
+    slotIsIndentation(outputFormat)
+      ? Math.max(0, Math.trunc(settings.indentation))
+      : encodeDepth(settings.signatureDepth)
+  );
   return writer.toBase64URL();
 };
 
 export const decodeSettingsOpts = (
-  opts: string | null
+  opts: string | null,
+  outputFormat?: string
 ): TransformerSettings => {
   if (!opts) return { ...DEFAULT_TRANSFORMER_SETTINGS };
 
@@ -167,6 +199,24 @@ export const decodeSettingsOpts = (
       case 16:
         settings.declarationCards = enabled ? "add" : "ignore";
         break;
+      case 17:
+        settings.materialize = enabled;
+        break;
+      case 18:
+        settings.outputShape = enabled ? "varstore" : "cards";
+        break;
+      case 19:
+        settings.layout = enabled ? "readable" : "minimize";
+        break;
+      case 20:
+        settings.cardIds = enabled ? "preserve" : "remap";
+        break;
+      case 21:
+        settings.missingParts = enabled ? "warn" : "error";
+        break;
+      case 22:
+        settings.conflicts = enabled ? "warn" : "error";
+        break;
       default:
         break;
     }
@@ -176,7 +226,9 @@ export const decodeSettingsOpts = (
     setterFor(i, reader.readBit());
   }
 
-  settings.signatureDepth = decodeDepth(readVarUint(reader));
+  const slot = readVarUint(reader);
+  if (slotIsIndentation(outputFormat)) settings.indentation = slot;
+  else settings.signatureDepth = decodeDepth(slot);
 
   if (!reader.isExhausted()) {
     throw new Error("Trailing non-zero bits in opts param");

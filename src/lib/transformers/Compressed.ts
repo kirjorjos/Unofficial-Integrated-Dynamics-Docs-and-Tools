@@ -75,6 +75,17 @@ const enum WrapperKind {
   Materialize = 0b00,
   Dynamic = 0b01,
   Static = 0b10,
+  Extended = 0b11,
+}
+
+const enum ExtendedWrapperKind {
+  Display = 0,
+  Card = 1,
+  VarStore = 2,
+  DisplayPanel = 3,
+  Writer = 4,
+  Exporter = 5,
+  Importer = 6,
 }
 
 const enum JSONKind {
@@ -402,11 +413,11 @@ const readString = (reader: BitReader): string => {
   return textDecoder.decode(reader.readBytes(length));
 };
 
-export type InputFormatKey = "condensed" | "expanded" | "codeline" | "json";
+export type InputFormatKey = "condensed" | "expanded" | "codeline" | "snbt";
 
 export type InputStateSection =
   | {
-      format: "condensed" | "codeline" | "json";
+      format: "condensed" | "codeline" | "snbt";
       mode: "overlay";
       overlay: CondensedOverlay;
     }
@@ -417,14 +428,14 @@ const FORMAT_IDS: Record<InputFormatKey, number> = {
   condensed: 0,
   expanded: 1,
   codeline: 2,
-  json: 3,
+  snbt: 3,
 };
 
 const FORMATS_BY_ID: InputFormatKey[] = [
   "condensed",
   "expanded",
   "codeline",
-  "json",
+  "snbt",
 ];
 
 const writeCondensedOverlay = (
@@ -765,9 +776,6 @@ export const decodeInputStateFromCompressed = (
   }
   if (format === "expanded") {
     return { format, mode: "overlay", overlay: readExpandedOverlay(reader) };
-  }
-  if (format === "json") {
-    return { format, mode: "overlay", overlay: readCondensedOverlay(reader) };
   }
   return { format, mode: "overlay", overlay: readCondensedOverlay(reader) };
 };
@@ -1190,6 +1198,14 @@ const writeLiteralKind = (writer: BitWriter, kind: LiteralKind) => {
   writer.writeBits(kind, 5);
 };
 
+const writeOptionalId = (writer: BitWriter, id: string | undefined): void => {
+  writer.writeBit(id !== undefined);
+  if (id !== undefined) writeString(writer, id);
+};
+
+const readOptionalId = (reader: BitReader): string | undefined =>
+  reader.readBit() ? readString(reader) : undefined;
+
 const encodeIngredients = (
   writer: BitWriter,
   node: TypeAST.Ingredients,
@@ -1463,7 +1479,9 @@ const writeNode = (
 
     case "Materialize":
     case "Dynamic":
-    case "Static": {
+    case "Static":
+    case "Display":
+    case "Card": {
       writer.writeBits(NodeKind.Literal, 2);
       writeLiteralKind(writer, LiteralKind.Wrapper);
       const wrapperKind =
@@ -1471,9 +1489,61 @@ const writeNode = (
           ? WrapperKind.Materialize
           : node.type === "Dynamic"
             ? WrapperKind.Dynamic
-            : WrapperKind.Static;
+            : node.type === "Static"
+              ? WrapperKind.Static
+              : WrapperKind.Extended;
       writer.writeBits(wrapperKind, 2);
+      if (wrapperKind === WrapperKind.Extended) {
+        writer.writeBits(
+          node.type === "Display"
+            ? ExtendedWrapperKind.Display
+            : ExtendedWrapperKind.Card,
+          3
+        );
+      }
       writeNode(writer, node.value, seen);
+      writeNodeMetadata(writer, node);
+      return;
+    }
+
+    case "VarStore": {
+      writer.writeBits(NodeKind.Literal, 2);
+      writeLiteralKind(writer, LiteralKind.Wrapper);
+      writer.writeBits(WrapperKind.Extended, 2);
+      writer.writeBits(ExtendedWrapperKind.VarStore, 3);
+      writeOptionalId(writer, node.value.id);
+      writeVarUint(writer, node.value.cards.length);
+      for (const card of node.value.cards) writeNode(writer, card, seen);
+      writeNodeMetadata(writer, node);
+      return;
+    }
+
+    case "DisplayPanel":
+    case "Writer":
+    case "Exporter":
+    case "Importer": {
+      writer.writeBits(NodeKind.Literal, 2);
+      writeLiteralKind(writer, LiteralKind.Wrapper);
+      writer.writeBits(WrapperKind.Extended, 2);
+      writer.writeBits(
+        node.type === "DisplayPanel"
+          ? ExtendedWrapperKind.DisplayPanel
+          : node.type === "Writer"
+            ? ExtendedWrapperKind.Writer
+            : node.type === "Exporter"
+              ? ExtendedWrapperKind.Exporter
+              : ExtendedWrapperKind.Importer,
+        3
+      );
+      writeOptionalId(writer, node.value.id);
+      if (node.type !== "DisplayPanel")
+        writeString(writer, node.value.partType);
+      writer.writeBit(node.value.settings !== undefined);
+      if (node.value.settings !== undefined) {
+        writeJSONValue(writer, node.value.settings as jsonData);
+      }
+      writeVarUint(writer, node.value.inventory.length);
+      for (const card of node.value.inventory) writeNode(writer, card, seen);
       writeNodeMetadata(writer, node);
       return;
     }
@@ -1710,15 +1780,70 @@ const readNode = (
         }
         case LiteralKind.Wrapper: {
           const wrapperKind = reader.readNumber(2);
-          const value = readNode(reader, decoded);
-          if (wrapperKind === WrapperKind.Materialize) {
-            node = { type: "Materialize", value };
-          } else if (wrapperKind === WrapperKind.Dynamic) {
-            node = { type: "Dynamic", value };
-          } else if (wrapperKind === WrapperKind.Static) {
-            node = { type: "Static", value };
+          if (wrapperKind !== WrapperKind.Extended) {
+            const value = readNode(reader, decoded);
+            node =
+              wrapperKind === WrapperKind.Materialize
+                ? { type: "Materialize", value }
+                : wrapperKind === WrapperKind.Dynamic
+                  ? { type: "Dynamic", value }
+                  : { type: "Static", value };
+            break;
+          }
+
+          const extendedKind = reader.readNumber(3);
+          if (
+            extendedKind === ExtendedWrapperKind.Display ||
+            extendedKind === ExtendedWrapperKind.Card
+          ) {
+            const value = readNode(reader, decoded);
+            node =
+              extendedKind === ExtendedWrapperKind.Display
+                ? { type: "Display", value }
+                : { type: "Card", value };
+            break;
+          }
+
+          const id = readOptionalId(reader);
+          if (extendedKind === ExtendedWrapperKind.VarStore) {
+            const count = readVarUint(reader);
+            const cards: ASTNode[] = [];
+            for (let i = 0; i < count; i++)
+              cards.push(readNode(reader, decoded));
+            node = { type: "VarStore", value: { id, cards } };
+            break;
+          }
+
+          const partType =
+            extendedKind === ExtendedWrapperKind.DisplayPanel
+              ? "integrateddynamics:display_panel"
+              : readString(reader);
+          const settings = reader.readBit()
+            ? (readJSONValue(reader) as TypeAST.PartSettings)
+            : undefined;
+          const count = readVarUint(reader);
+          const inventory: ASTNode[] = [];
+          for (let i = 0; i < count; i++)
+            inventory.push(readNode(reader, decoded));
+          if (extendedKind === ExtendedWrapperKind.DisplayPanel) {
+            node = { type: "DisplayPanel", value: { id, settings, inventory } };
+          } else if (extendedKind === ExtendedWrapperKind.Writer) {
+            node = {
+              type: "Writer",
+              value: { partType, id, settings, inventory },
+            };
+          } else if (extendedKind === ExtendedWrapperKind.Exporter) {
+            node = {
+              type: "Exporter",
+              value: { partType, id, settings, inventory },
+            };
+          } else if (extendedKind === ExtendedWrapperKind.Importer) {
+            node = {
+              type: "Importer",
+              value: { partType, id, settings, inventory },
+            };
           } else {
-            throw new Error(`Unknown compressed wrapper kind ${wrapperKind}`);
+            throw new Error(`Unknown compressed wrapper kind ${extendedKind}`);
           }
           break;
         }

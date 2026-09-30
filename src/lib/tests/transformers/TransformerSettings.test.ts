@@ -93,6 +93,60 @@ describe("TestTransformerSettingsOpts", () => {
   });
 });
 
+describe("TestTransformerSettingsSnbtIndentationSlot", () => {
+  const atDefault: TransformerSettings = { ...DEFAULT_TRANSFORMER_SETTINGS };
+
+  it("testRoundTripsIndentationForSnbtOutput", () => {
+    for (const indentation of [0, 1, 4, 127, 128]) {
+      const settings: TransformerSettings = { ...atDefault, indentation };
+      const encoded = encodeSettingsOpts(settings, "snbt");
+      if (indentation === DEFAULT_TRANSFORMER_SETTINGS.indentation) {
+        expect(encoded).toBeNull();
+        expect(decodeSettingsOpts(encoded, "snbt").indentation).toBe(
+          indentation
+        );
+        continue;
+      }
+      expect(encoded).not.toBeNull();
+      expect(decodeSettingsOpts(encoded, "snbt").indentation).toBe(indentation);
+    }
+  });
+
+  it("testReadsTheSameSlotAsSignatureDepthWithoutSnbtOutput", () => {
+    const settings: TransformerSettings = { ...atDefault, indentation: 8 };
+    const encoded = encodeSettingsOpts(settings, "snbt")!;
+    const decoded = decodeSettingsOpts(encoded);
+    expect(decoded.signatureDepth).toBe(7);
+    expect(decoded.indentation).toBe(DEFAULT_TRANSFORMER_SETTINGS.indentation);
+  });
+
+  it("testKeepsIndentationUntouchedWhileFlagsRoundTripForSnbt", () => {
+    const settings: TransformerSettings = {
+      ...atDefault,
+      materialize: true,
+      outputShape: "varstore",
+      layout: "readable",
+      indentation: 3,
+      cardIds: "preserve",
+      missingParts: "warn",
+      conflicts: "warn",
+    };
+    const encoded = encodeSettingsOpts(settings, "snbt")!;
+    expect(decodeSettingsOpts(encoded, "snbt")).toEqual(settings);
+  });
+
+  it("testOmitsConflictsAtItsDefaultAndRoundTripsItOtherwise", () => {
+    expect(
+      encodeSettingsOpts({ ...atDefault, conflicts: "error" }, "snbt")
+    ).toBeNull();
+    const encoded = encodeSettingsOpts(
+      { ...atDefault, conflicts: "warn" },
+      "snbt"
+    )!;
+    expect(decodeSettingsOpts(encoded, "snbt").conflicts).toBe("warn");
+  });
+});
+
 describe("TestTransformerStatementLayout", () => {
   const ast = ExpandedToAST("a = 5\nfinal = a");
 

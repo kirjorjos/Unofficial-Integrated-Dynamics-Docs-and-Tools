@@ -1259,13 +1259,13 @@ export const applyCodeLineOverlay = (
   return out;
 };
 
-export interface JsonTokenStream {
+export interface SnbtTokenStream {
   tokens: { type: string; value: string }[];
   gaps: string[];
   trailingGap: string;
 }
 
-export const tokenizeJson = (json: string): JsonTokenStream => {
+export const tokenizeSnbt = (snbt: string): SnbtTokenStream => {
   const tokens: { type: string; value: string }[] = [];
   const gaps: string[] = [];
   let pendingGap = "";
@@ -1277,12 +1277,8 @@ export const tokenizeJson = (json: string): JsonTokenStream => {
     tokens.push({ type, value });
   };
 
-  const fail = (msg: string): never => {
-    throw new StructuralParseError(msg);
-  };
-
-  while (i < json.length) {
-    const char = json[i]!;
+  while (i < snbt.length) {
+    const char = snbt[i]!;
 
     if (/^\s$/.test(char)) {
       pendingGap += char;
@@ -1290,117 +1286,72 @@ export const tokenizeJson = (json: string): JsonTokenStream => {
       continue;
     }
 
-    if (
-      char === "{" ||
-      char === "}" ||
-      char === "[" ||
-      char === "]" ||
-      char === ":" ||
-      char === ","
-    ) {
-      const type =
-        char === "{"
-          ? "lbrace"
-          : char === "}"
-            ? "rbrace"
-            : char === "["
-              ? "lbracket"
-              : char === "]"
-                ? "rbracket"
-                : char === ":"
-                  ? "colon"
-                  : "comma";
-      pushToken(type, char);
+    if (char === "{" || char === "}" || char === "[" || char === "]") {
+      pushToken("brace", char);
+      i++;
+      continue;
+    }
+    if (char === ":" || char === "," || char === ";") {
+      pushToken("separator", char);
       i++;
       continue;
     }
 
-    if (char === '"') {
-      let j = i + 1;
-      let value = '"';
+    if (char === '"' || char === "'") {
+      const triple = snbt.slice(i, i + 3) === char.repeat(3);
+      const delimiter = triple ? char.repeat(3) : char;
+      let j = i + delimiter.length;
+      let value = delimiter;
       let closed = false;
-      while (j < json.length) {
-        const c = json[j]!;
-        value += c;
+      while (j < snbt.length) {
+        const c = snbt[j]!;
         if (c === "\\") {
-          j++;
-          if (j >= json.length) break;
-          value += json[j]!;
-          j++;
+          value += c;
+          if (j + 1 < snbt.length) value += snbt[j + 1]!;
+          j += 2;
           continue;
         }
-        if (c === '"') {
+        if (snbt.startsWith(delimiter, j)) {
+          value += delimiter;
           closed = true;
-          j++;
+          j += delimiter.length;
           break;
         }
+        value += c;
         j++;
       }
-      if (!closed) fail(`Unterminated JSON string at position ${i}`);
+      if (!closed) {
+        throw new StructuralParseError(
+          `Unterminated SNBT string at position ${i}`
+        );
+      }
       pushToken("string", value);
       i = j;
       continue;
     }
 
-    if (char === "-" || (char >= "0" && char <= "9")) {
-      const at = (k: number): string => (k < json.length ? json[k]! : "");
-      let j = i;
-      if (at(j) === "-") j++;
-      if (at(j) === "0") {
-        j++;
-      } else if (at(j) >= "1" && at(j) <= "9") {
-        while (at(j) >= "0" && at(j) <= "9") j++;
-      } else {
-        fail(`Invalid JSON number at position ${i}`);
-      }
-      if (at(j) === ".") {
-        j++;
-        if (!(at(j) >= "0" && at(j) <= "9")) {
-          fail(`Invalid JSON number at position ${i}`);
-        }
-        while (at(j) >= "0" && at(j) <= "9") j++;
-      }
-      if (at(j) === "e" || at(j) === "E") {
-        j++;
-        if (at(j) === "+" || at(j) === "-") j++;
-        if (!(at(j) >= "0" && at(j) <= "9")) {
-          fail(`Invalid JSON number at position ${i}`);
-        }
-        while (at(j) >= "0" && at(j) <= "9") j++;
-      }
-      pushToken("number", json.slice(i, j));
-      i = j;
-      continue;
+    let j = i;
+    while (j < snbt.length && !/[\s{}\[\]:;,"']/.test(snbt[j]!)) j++;
+    if (j === i) {
+      throw new StructuralParseError(
+        `Unexpected character "${char}" at position ${i}`
+      );
     }
-
-    if (json.startsWith("true", i)) {
-      pushToken("boolean", "true");
-      i += 4;
-      continue;
-    }
-    if (json.startsWith("false", i)) {
-      pushToken("boolean", "false");
-      i += 5;
-      continue;
-    }
-    if (json.startsWith("null", i)) {
-      pushToken("null", "null");
-      i += 4;
-      continue;
-    }
-
-    fail(`Unexpected character "${char}" at position ${i}`);
+    pushToken("bare", snbt.slice(i, j));
+    i = j;
   }
 
   return { tokens, gaps, trailingGap: pendingGap };
 };
 
-export const computeJsonOverlay = (
+const computeTokenOverlay = (
   rawInput: string,
-  canonicalInput: string
+  canonicalInput: string,
+  tokenize: (text: string) => SnbtTokenStream,
+  extraBits: (overlay: Extract<CondensedOverlay, { mode: 0 }>) => number
 ): CondensedOverlay => {
-  const raw = tokenizeJson(rawInput);
-  const canon = tokenizeJson(canonicalInput);
+  const raw = tokenize(rawInput);
+  const canon = tokenize(canonicalInput);
 
   if (raw.tokens.length !== canon.tokens.length) {
     return { mode: 1, rawText: rawInput };
@@ -1428,19 +1379,20 @@ export const computeJsonOverlay = (
     trailingGap: raw.trailingGap,
   };
 
-  if (overlayBits(overlay) >= stringBits(rawInput)) {
+  if (extraBits(overlay) >= stringBits(rawInput)) {
     return { mode: 1, rawText: rawInput };
   }
   return overlay;
 };
 
-export const applyJsonOverlay = (
+const applyTokenOverlay = (
   canonicalInput: string,
-  overlay: CondensedOverlay
+  overlay: CondensedOverlay,
+  tokenize: (text: string) => SnbtTokenStream
 ): string => {
   if (overlay.mode === 1) return overlay.rawText;
 
-  const canon = tokenizeJson(canonicalInput);
+  const canon = tokenize(canonicalInput);
   const gaps = new Map(overlay.gapOverrides);
   const spellings = new Map(overlay.spellingOverrides);
 
@@ -1454,6 +1406,17 @@ export const applyJsonOverlay = (
   if (overlay.hasTrailingGap) out += overlay.trailingGap;
   return out;
 };
+
+export const computeSnbtOverlay = (
+  rawInput: string,
+  canonicalInput: string
+): CondensedOverlay =>
+  computeTokenOverlay(rawInput, canonicalInput, tokenizeSnbt, overlayBits);
+
+export const applySnbtOverlay = (
+  canonicalInput: string,
+  overlay: CondensedOverlay
+): string => applyTokenOverlay(canonicalInput, overlay, tokenizeSnbt);
 
 export const stripAutoCurryVarNames = (ast: TypeAST.AST): TypeAST.AST => {
   const clone = structuredClone(ast);
@@ -1526,7 +1489,22 @@ export const stripAutoCurryVarNames = (ast: TypeAST.AST): TypeAST.AST => {
       case "Materialize":
       case "Dynamic":
       case "Static":
+      case "Display":
+      case "Card":
         visitPair(original.value, (copied as TypeAST.Wrapper).value);
+        break;
+      case "VarStore":
+        original.value.cards.forEach((card, i) =>
+          visitPair(card, (copied as TypeAST.VarStore).value.cards[i]!)
+        );
+        break;
+      case "DisplayPanel":
+      case "Writer":
+      case "Exporter":
+      case "Importer":
+        original.value.inventory.forEach((card, i) =>
+          visitPair(card, (copied as TypeAST.DisplayPanel).value.inventory[i]!)
+        );
         break;
       default:
         break;
@@ -1580,7 +1558,18 @@ export const stripAutoCurryVarNames = (ast: TypeAST.AST): TypeAST.AST => {
       case "Materialize":
       case "Dynamic":
       case "Static":
+      case "Display":
+      case "Card":
         visit(node.value);
+        break;
+      case "VarStore":
+        for (const card of node.value.cards) visit(card);
+        break;
+      case "DisplayPanel":
+      case "Writer":
+      case "Exporter":
+      case "Importer":
+        for (const card of node.value.inventory) visit(card);
         break;
       default:
         break; // literals and value-holding nodes have no AST children

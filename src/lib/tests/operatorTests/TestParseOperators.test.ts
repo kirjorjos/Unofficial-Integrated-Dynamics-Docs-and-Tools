@@ -13,6 +13,14 @@ import { iBoolean } from "lib/IntegratedDynamicsClasses/typeWrappers/iBoolean";
 import { CompoundTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
 import { ListTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ListTag";
 import { IntTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/IntTag";
+import { ByteTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ByteTag";
+import { ShortTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ShortTag";
+import { LongTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/LongTag";
+import { FloatTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/FloatTag";
+import { DoubleTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/DoubleTag";
+import { ByteArrayTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ByteArrayTag";
+import { IntArrayTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/IntArrayTag";
+import { LongArrayTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/LongArrayTag";
 import { StringTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/StringTag";
 
 const s = (v: string) => new iString(v);
@@ -487,6 +495,79 @@ describe("TestParseOperators", () => {
         (nbt.get(s("CookTimeTotal")) as IntTag).valueOf().toJSNumber()
       ).toBe(0);
       expect((nbt.get(s("Lock")) as StringTag).valueOf().valueOf()).toBe("");
+    });
+
+    it.each(["5", "[1]", "[]", '"a"', "1b", "true", "[I;1]"])(
+      "testNBTNonCompoundRootIsRejected%j",
+      (text) => {
+        expect(() =>
+          new operatorRegistry.PARSE_NBT().evaluate(s(text))
+        ).toThrow();
+      }
+    );
+
+    it("testNBTTrailingDataIsRejected", () => {
+      expect(() =>
+        new operatorRegistry.PARSE_NBT().evaluate(s("{a:1b} junk"))
+      ).toThrow();
+      expect(() =>
+        new operatorRegistry.PARSE_NBT().evaluate(s("{a:1b} {b:2b}"))
+      ).toThrow();
+    });
+
+    it("testNBTNumericSuffixes", () => {
+      const nbt = new operatorRegistry.PARSE_NBT().evaluate(
+        s("{a:1b,b:2s,c:3,d:4L,e:1.5f,f:1.5d,g:1.0,h:1e5}")
+      ) as CompoundTag;
+      expect(nbt.get(s("a"))).toBeInstanceOf(ByteTag);
+      expect(nbt.get(s("b"))).toBeInstanceOf(ShortTag);
+      expect(nbt.get(s("c"))).toBeInstanceOf(IntTag);
+      expect(nbt.get(s("d"))).toBeInstanceOf(LongTag);
+      expect(nbt.get(s("e"))).toBeInstanceOf(FloatTag);
+      expect(nbt.get(s("f"))).toBeInstanceOf(DoubleTag);
+      expect(nbt.get(s("g"))).toBeInstanceOf(DoubleTag);
+      expect(nbt.get(s("h"))).toBeInstanceOf(DoubleTag);
+      expect((nbt.get(s("d")) as LongTag).valueOf().toJSNumber()).toBe(4);
+      expect((nbt.get(s("f")) as DoubleTag).valueOf().toJSNumber()).toBe(1.5);
+      expect((nbt.get(s("h")) as DoubleTag).valueOf().toJSNumber()).toBe(
+        100000
+      );
+    });
+
+    it("testNBTArrays", () => {
+      const nbt = new operatorRegistry.PARSE_NBT().evaluate(
+        s("{b:[B;0B,1B],i:[I;1,2],l:[L;1L,2L]}")
+      ) as CompoundTag;
+      expect(nbt.get(s("b"))).toBeInstanceOf(ByteArrayTag);
+      expect(nbt.get(s("i"))).toBeInstanceOf(IntArrayTag);
+      expect(nbt.get(s("l"))).toBeInstanceOf(LongArrayTag);
+    });
+
+    it("testNBTBooleansAreBytes", () => {
+      const nbt = new operatorRegistry.PARSE_NBT().evaluate(
+        s('{a:true,b:false,c:"true"}')
+      ) as CompoundTag;
+      expect(nbt.get(s("a"))).toBeInstanceOf(ByteTag);
+      expect((nbt.get(s("a")) as ByteTag).valueOf().toJSNumber()).toBe(1);
+      expect((nbt.get(s("b")) as ByteTag).valueOf().toJSNumber()).toBe(0);
+      expect(nbt.get(s("c"))).toBeInstanceOf(StringTag);
+    });
+
+    it("testNBTQuotedKeyWithAColon", () => {
+      const nbt = new operatorRegistry.PARSE_NBT().evaluate(
+        s('{"integrateddynamics:x":1b}')
+      ) as CompoundTag;
+      expect(
+        (nbt.get(s("integrateddynamics:x")) as ByteTag).valueOf().toJSNumber()
+      ).toBe(1);
+    });
+
+    // The Java operator wraps a parse failure in an evaluation error rather than
+    // letting the parser error escape, so the operator reports the input.
+    it("testNBTErrorReportsTheInput", () => {
+      expect(() =>
+        new operatorRegistry.PARSE_NBT().evaluate(s("}garbage{"))
+      ).toThrow(/Could not parse nbt from "}garbage{"/);
     });
   });
 });

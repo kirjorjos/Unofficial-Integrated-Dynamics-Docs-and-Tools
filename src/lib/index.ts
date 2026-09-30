@@ -34,7 +34,6 @@ export {
   astContainsVariableValueByIdReader,
   type StepLikeWithNode,
 } from "lib/transformers/helpers";
-export { ASTtoJSON, JSONtoAST } from "lib/transformers/JSON";
 export {
   LOGIC_PROGRAMMER_TYPE_COLORS,
   LOGIC_PROGRAMMER_DATA_TYPE_TABS,

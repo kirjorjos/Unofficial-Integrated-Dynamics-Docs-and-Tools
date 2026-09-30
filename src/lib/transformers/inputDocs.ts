@@ -10,7 +10,7 @@ export interface DocSyntaxLine {
   note?: string;
 }
 
-export type InputDocOutputFormat = "visual";
+export type InputDocOutputFormat = "visual" | "snbt";
 
 export interface InputDocExample {
   kind: "concrete" | "structural";
@@ -48,6 +48,7 @@ export type InputDocTabId =
   | "expanded"
   | "codeline"
   | "condensed"
+  | "snbt"
   | "visual";
 
 export interface InputDocTab {
@@ -85,6 +86,36 @@ const readerAspectLink = (
 ): DocLink => ({
   label,
   href: `#reader-${shortName}-${aspectKey.toLowerCase().replace(/_/g, "-")}`,
+});
+
+const displayAndCardSection = (): InputDocSection => ({
+  heading: "Display and Card",
+  summary:
+    'Two identifiers that only do something when the output is SNBT. Display(expression) says "put this in a display panel"; Card(...) or Cards(...) unwraps something you pasted instead of authoring it. Both pass straight through the text and visual outputs, so they change nothing until you switch the output to SNBT.',
+  syntax: [
+    {
+      spans: [
+        required("Display"),
+        plain("("),
+        required("expression"),
+        plain(")"),
+      ],
+      note: "a display panel holding the cards the expression needs",
+    },
+    {
+      spans: [required("Card"), plain("("), required("paste"), plain(")")],
+      note: "Cards is a synonym; either spelling is written back as Card",
+    },
+  ],
+  bullets: [
+    "Display's panel is emitted where the identifier sits, and the cards the expression needs go inside that panel rather than into commands of their own — otherwise the same card would be placed twice.",
+    "The generated panel carries what the game reads off an item's tag — an id, enabled and updateInterval — as well as the cards the expression needs, because an item with no id is placed as a fresh, empty part. The id comes from the same counter the parts are numbered from, since nothing in the program named one.",
+    "A panel recomputes what it shows from the card it holds, which is why no display value is written into it.",
+    "Card unwraps a pasted source into its cards and nothing else. It works around a display panel, a writer, an exporter, an importer or a variable store, but not a reader, which holds no card. One command per card, or variable stores, follows the Output shape setting.",
+    "Both must stand alone — a whole line, the value of a definition, or directly inside Materialize. Buried inside a call they are rejected, because there is no single panel to put the rest in.",
+    "Materialize and Display nest in either order and mean the same thing: the materialized card in a display panel.",
+    "A reader is written out as the part its aspect card reads, with that aspect's settings written back as the aspect's properties, so the card and its part always carry the same number; a reader that names no part id is given one.",
+  ],
 });
 
 export const INPUT_DOC_TABS: InputDocTab[] = [
@@ -645,6 +676,7 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
           operatorLink("ARITHMETIC_ADDITION", "add / numberAdd"),
         ],
       },
+      displayAndCardSection(),
       {
         heading: "Comments",
         summary: "A comment can sit on its own line or trail a definition.",
@@ -1068,6 +1100,7 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
           },
         ],
       },
+      displayAndCardSection(),
       {
         heading: "Comments",
         summary:
@@ -1462,10 +1495,198 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
         ],
         examples: [{ kind: "concrete", text: "add(1, 2); multiply(3, 4)" }],
       },
+      displayAndCardSection(),
       {
         heading: "Comments",
         summary: "A trailing comment runs to the end of the line.",
         examples: [{ kind: "concrete", text: 'add(1, 2) -- "note"' }],
+      },
+    ],
+  },
+  {
+    id: "snbt",
+    label: "SNBT",
+    sections: [
+      {
+        heading: "What you paste",
+        summary:
+          "Paste what the game gives you. F3+I on a block, an entity or an item; the chat output of data get; or a /give line this tool itself produced. One blob per line, with blank lines allowed in between; a blob may also run over several lines when its NBT is indented. The output is the /give command list that recreates what you pasted, and clicking one of the examples below runs it and switches the output to SNBT on its own.",
+        bullets: [
+          "F3+I on a block gives a /setblock line; on an entity it gives a compound with Pos, UUID and Item.",
+          "data get on a block gives prose followed by the block's data, including its id, coordinates and slot holes.",
+          "A blob with no cards and no parts in it is reported and skipped.",
+          "Pasting this tool's own output back in is the intended round trip.",
+        ],
+      },
+      {
+        heading: "Envelopes",
+        summary:
+          "The wrapper around the NBT says what it is, and the item id says what the payload is.",
+        syntax: [
+          {
+            spans: [
+              required("/setblock"),
+              plain(" x y z "),
+              required("block-id"),
+              optional("[state]"),
+              required("{nbt}"),
+            ],
+            note: "F3+I on a block",
+          },
+          {
+            spans: [
+              required("/give"),
+              plain(" targets "),
+              required("item-id"),
+              required("{nbt}"),
+            ],
+            note: "what this tool emits, and what F3+I gives on an item",
+          },
+          {
+            spans: [required("{nbt}")],
+            note: "a bare compound, identified from its own id / Pos / UUID / Item",
+          },
+          {
+            spans: [
+              optional("Server has the following block data: "),
+              required("{nbt}"),
+            ],
+            note: "data get prose; the three wordings are recognised and kept only for the reload",
+          },
+        ],
+        examples: [
+          {
+            kind: "concrete",
+            text: '/give @p integrateddynamics:variable{_id:4,_type:"integrateddynamics:valuetype",typeName:"integrateddynamics:integer",value:5}',
+            output: "snbt",
+          },
+          {
+            kind: "concrete",
+            text: '/setblock -7 -59 -1 integrateddynamics:cable{partContainer:{parts:[{__partType:"integrateddynamics:display_panel",__side:"east",id:1,inventory:[{Count:1b,Slot:0b,id:"integrateddynamics:variable",tag:{_id:7,_type:"integrateddynamics:operator",operatorName:"integrateddynamics:arithmetic_addition",variableIds:[I;3,3]}}]}]}}',
+            output: "snbt",
+          },
+          {
+            kind: "concrete",
+            text: 'Block at 0, 64, 0 has the following block data: {id:"minecraft:chest",Items:[{Count:1b,Slot:0b,id:"integrateddynamics:variable",tag:{_id:7,_type:"integrateddynamics:operator",operatorName:"integrateddynamics:arithmetic_addition",variableIds:[I;3,3]}}]}',
+            output: "snbt",
+          },
+          {
+            kind: "concrete",
+            text: '{Pos:[-8.62d,-60.0d,6.26d],UUID:[I;315053452,587874627,-1669597599,-1936039897],Item:{Count:1b,id:"integrateddynamics:variable",tag:{_id:7,_type:"integrateddynamics:operator",operatorName:"integrateddynamics:arithmetic_addition",variableIds:[I;3,3]}}}',
+            output: "snbt",
+          },
+        ],
+      },
+      {
+        heading: "Cards, parts and variable stores",
+        summary:
+          "Variables are read wherever the game keeps them: a variable store's inventory, a display panel's or writer's own inventory, a cable's part list, a chest's Items, a player's Inventory, or the tag of a dropped item.",
+        bullets: [
+          "A card's definition is its operator application (operatorName with variableIds); a cached typeName and value beside it is only the last rendered result, so two pastes of one card still match when their caches differ.",
+          "Two pastes of the same variable must agree on its definition; a differing body under one _id is an error rather than a guess. Duplicate conflicts lets you keep the first and carry on with a warning instead.",
+          "A card that reads a part the paste does not contain follows the Missing parts setting: an error by default, or a warning.",
+          "Interface parts are never emitted. A part pasted twice is one part: the second copy is dropped when it matches, and two copies that disagree under one part id follow the same Duplicate conflicts setting as the cards.",
+        ],
+      },
+      {
+        heading: "The /give output",
+        summary:
+          "Every card becomes a /give of a variable card, with the ids renumbered from the Initial variable ID unless Variable IDs is set to keep them. The parts a card needs are inserted just before the card that needs it, and only the fields that matter in the world are kept: a reader's aspect card brings the reader's part with it, and a reader that names no part id is given one, so the card and its part always carry the same number. A program that a pasted code decoded from a part is given as that part, with the cards it held inside it.",
+        syntax: [
+          {
+            spans: [
+              required("/give @p integrateddynamics:variable"),
+              required("{_id, _type, …}"),
+            ],
+            note: "one command per card",
+          },
+          {
+            spans: [
+              required("/give @p integrateddynamics:variablestore"),
+              required("{inventory:[…]}"),
+            ],
+            note: "Output shape: Variable stores — 45 cards (9x5) per store, the last one holding the remainder",
+          },
+          {
+            spans: [
+              required("/give @p integrateddynamics:part_display_panel"),
+              required(
+                "{id, aspectProperties, enabled, updateInterval, inventory:[…]}"
+              ),
+            ],
+            note: "a part is given as its own item, carrying the cards it holds and the state fields the game reads off the tag",
+          },
+          {
+            spans: [
+              required("/give @p integrateddynamics:part_<part>_reader"),
+              required("{id, aspectProperties:[…]}"),
+            ],
+            note: "a reader is given as the part its aspect card reads, with the aspect's settings as its properties",
+          },
+          {
+            spans: [
+              required("/give @p integrateddynamics:part_<part>_writer"),
+              required("{id, inventory:[…]}"),
+            ],
+            note: "a writer, exporter, importer or display panel a pasted code decoded to is given as its own item, holding the cards it had; a variable store is given as a store",
+          },
+        ],
+        examples: [
+          {
+            kind: "concrete",
+            text: '/give @p integrateddynamics:variable{_id:7,_type:"integrateddynamics:operator",operatorName:"integrateddynamics:arithmetic_addition",variableIds:[I;3,3]}',
+            output: "snbt",
+          },
+        ],
+      },
+      {
+        heading: "Layout and materialize",
+        summary:
+          "Layout minimizes each command to one line or indents its NBT over several, with Indentation spaces per level. Materialize wraps the program in a materializer, so reader values are baked into the cards and the readers they came from are dropped — a reader's card then carries its cached value instead of the aspect it read.",
+        bullets: [
+          "A materialized card needs its cached value; a card that has none keeps its application and says so.",
+          "Dropping the readers is what Materialize is for: a writer or exporter has side effects and is kept regardless.",
+        ],
+      },
+      {
+        heading: "Display and Card",
+        summary:
+          'These two are written in an expression format — Expanded, Code Line or Condensed — and only do something when the output is SNBT. They are how you say "put this program in a display panel" or "unwrap this paste into cards" without pasting anything, and they are the one part of the SNBT output that does not come from a paste.',
+        syntax: [
+          {
+            spans: [
+              required("Display"),
+              plain("("),
+              required("expr"),
+              plain(")"),
+            ],
+            note: "a display panel holding the cards the expression needs",
+          },
+          {
+            spans: [
+              required("Card"),
+              plain("("),
+              required("paste"),
+              plain(")"),
+            ],
+            note: "Cards is accepted as a synonym; either spelling is written back as Card",
+          },
+        ],
+        bullets: [
+          "Display emits the panel at the point the identifier sits, and the cards the expression needs go inside that panel rather than into commands of their own — otherwise the same card would be placed twice.",
+          "The generated panel carries what the game reads off an item's tag — an id, enabled and updateInterval — as well as the cards the expression needs, because an item with no id is placed as a fresh, empty part. The id comes from the same counter the parts are numbered from, since nothing in the program named one.",
+          "A panel recomputes what it shows from the card it holds, which is why no display value is written into it.",
+          "A reader is given as the part its aspect card reads, with that aspect's settings written back as the aspect's properties, so the card and its part always carry the same number; a reader that names no part id is given one.",
+          "Card unwraps a pasted source into the cards it holds and nothing else. It is valid around a display panel, a writer, an exporter, an importer or a variable store — not around a reader, which holds no card. Whether that is one command per card or variable stores follows the Output shape setting.",
+          "Both must stand alone: as a whole line, as the value of a definition, or directly inside Materialize. Buried inside a call they are rejected, because there is no single panel to put the rest in.",
+          "Materialize and Display nest in either order and mean the same thing — the materialized card, in a display panel.",
+          "A program a pasted code decoded from a part — a writer, an exporter, an importer or a display panel — is given as that part, with the cards it held inside it.",
+        ],
+      },
+      {
+        heading: "The 256 character limit",
+        summary:
+          "256 is the client chat box's limit, so a longer command cannot be typed there even though it is valid. Any command over it is marked inline with its length and a reminder to use a command block, which holds 32,500 characters; the marker is stripped again when the paste is read back.",
       },
     ],
   },

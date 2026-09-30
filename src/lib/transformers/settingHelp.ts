@@ -95,6 +95,41 @@ export const SETTING_HELP: Record<SettingHelpKey, SettingHelp> = {
       "Renders operator values with the user provided nickname rahter than the canonical name.",
     appliesTo: "Only applies to Expanded output.",
   },
+  materialize: {
+    description:
+      "Wraps the whole program in Materialize(...) before emitting, so reader values are baked in and the readers they came from are dropped.",
+    appliesTo: "Only applies to SNBT output.",
+  },
+  outputShape: {
+    description:
+      "Emits one /give per variable card, or fills integral variable stores of 45 slots (9×5) with the last store holding the remainder.",
+    appliesTo: "Only applies to SNBT output.",
+  },
+  layout: {
+    description:
+      "Writes each command on one line, or breaks the NBT over indented lines.",
+    appliesTo: "Only applies to SNBT output.",
+  },
+  indentation: {
+    description:
+      "How many spaces each nesting level is indented in Readable layout.",
+    appliesTo: "Only applies to SNBT output.",
+  },
+  cardIds: {
+    description:
+      "Keeps the variable and part ids the paste used, or renumbers them from the Initial variable ID.",
+    appliesTo: "Only applies to SNBT output.",
+  },
+  missingParts: {
+    description:
+      "What a card that reads a part the paste does not contain does: fail, or keep going with a warning.",
+    appliesTo: "Only applies to SNBT output.",
+  },
+  conflicts: {
+    description:
+      "What two pastes of one id that disagree do — a variable or a part defined twice with different contents. Fail, or keep the first and warn.",
+    appliesTo: "Only applies to SNBT output.",
+  },
 };
 
 export const settingHelpText = (key: SettingHelpKey): string => {

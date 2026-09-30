@@ -1,3 +1,5 @@
+import { getSourceCards, withSourceCards } from "lib/transformers/sourceNodes";
+
 const SIMPLE_ELEMENT_TYPES = new Set<string>([
   "Integer",
   "Long",
@@ -184,6 +186,21 @@ const normalizeNode = (node: TypeAST.AST, ctx: NormalizeCtx): TypeAST.AST => {
     case "Static": {
       const value = normalizeNode(node.value, ctx);
       return value === node.value ? node : { type: "Static", value };
+    }
+    case "Display":
+    case "Card": {
+      const value = normalizeNode(node.value, ctx);
+      return value === node.value ? node : { ...node, value };
+    }
+    case "VarStore":
+    case "DisplayPanel":
+    case "Writer":
+    case "Exporter":
+    case "Importer": {
+      const original = getSourceCards(node);
+      const cards = original.map((card) => normalizeNode(card, ctx));
+      if (cards.every((card, i) => card === original[i])) return node;
+      return withSourceCards(node, cards);
     }
     case "NetworkCards": {
       let changed = false;

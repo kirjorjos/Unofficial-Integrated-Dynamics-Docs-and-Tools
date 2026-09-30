@@ -2162,6 +2162,19 @@ describe("TestNbtOperators", () => {
     expect((res2 as iString).valueOf()).toBe("");
   });
 
+  it("testNbtAsStringOnANonStringTag", () => {
+    const res = new operatorRegistry.NBT_AS_STRING().evaluate(
+      new IntTag(new Integer(5))
+    );
+    expect(res).toBeInstanceOf(iString);
+    expect((res as iString).valueOf()).toBe("");
+
+    const byteRes = new operatorRegistry.NBT_AS_STRING().evaluate(
+      new ByteTag(new Integer(1))
+    );
+    expect((byteRes as iString).valueOf()).toBe("");
+  });
+
   it("testInvalidInputNbtAsStringSizeLarge", () => {
     expect(() => {
       new operatorRegistry.NBT_AS_STRING().evaluate(nempty, nempty);
