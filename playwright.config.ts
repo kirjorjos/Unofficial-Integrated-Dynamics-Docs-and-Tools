@@ -42,4 +42,5 @@ export default defineConfig({
     reuseExistingServer: false,
     timeout: 120_000,
   },
+  workers: 1,
 });

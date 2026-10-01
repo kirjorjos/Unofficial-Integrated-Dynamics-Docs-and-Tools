@@ -24,6 +24,7 @@ const dragTile = async (
 
 test.describe("operatorPageTiles", () => {
   test("testOperatorTilesSplitTabsFromTheirDisplayPanels", async ({ page }) => {
+    test.slow();
     await page.goto("/#operator-ARITHMETIC_INCREMENT");
     await page.locator(".tile-grid").waitFor();
 

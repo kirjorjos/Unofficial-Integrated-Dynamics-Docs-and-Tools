@@ -2,6 +2,7 @@
 !.gitignore
 !.prettierignore
 !.github/
+.envrc
 
 boot.sh
 Integrated Dynamics Website.code-workspace
