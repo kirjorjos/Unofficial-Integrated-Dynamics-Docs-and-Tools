@@ -84,7 +84,7 @@ jobs:
   sync:
     needs: resolve
     if: needs.resolve.outputs.should_sync == 'true'
-    container: mcr.microsoft.com/playwright:v1.62.1-noble
+    container: mcr.microsoft.com/playwright:v1.63.0-noble
     runs-on: ubuntu-24.04
     outputs:
       committed: ${{ steps.commit.outputs.committed }}
@@ -154,7 +154,7 @@ jobs:
   deploy:
     needs: [resolve, sync]
     if: always() && needs.resolve.outputs.bot_push != 'true'
-    container: mcr.microsoft.com/playwright:v1.62.1-noble
+    container: mcr.microsoft.com/playwright:v1.63.0-noble
     runs-on: ubuntu-24.04
     environment:
       name: github-pages
