@@ -18,10 +18,9 @@ import {
 } from "lib/transformers/inputState";
 import { CodeLineToAST, ASTToCodeLine } from "lib/transformers/CodeLine";
 import { ExpandedToAST, ASTToExpanded } from "lib/transformers/Expanded";
-import { ASTtoJSON, JSONtoAST } from "lib/transformers/JSON";
 import {
-  computeJsonOverlay,
-  applyJsonOverlay,
+  applySnbtOverlay,
+  computeSnbtOverlay,
 } from "lib/transformers/inputState";
 
 const buildSection = (
@@ -81,13 +80,13 @@ describe("TestInputStateSection", () => {
 
     it.each(cases)("roundTrips%jOutputFormatJson", ({ raw }) => {
       const { section, ast, canonical } = buildSection(raw);
-      const code = compressWithInputState(ast, "json", section);
+      const code = compressWithInputState(ast, "snbt", section);
 
       const roundTripped = CompressedToAST(code);
       expect(() => CompressedToAST(code)).not.toThrow();
       expect(roundTripped.type).toBe(ast.type);
 
-      const decoded = decodeInputStateFromCompressed(code, "json");
+      const decoded = decodeInputStateFromCompressed(code, "snbt");
       expect(decoded).not.toBeNull();
       if (!decoded) return;
       expect(decoded.format).toBe("condensed");
@@ -104,9 +103,9 @@ describe("TestInputStateSection", () => {
           overlay.mode === 0
             ? { format: "codeline", mode: "overlay", overlay }
             : { format: "codeline", mode: "raw", rawText: raw };
-        const code = compressWithInputState(ast, "json", section);
+        const code = compressWithInputState(ast, "snbt", section);
 
-        const decoded = decodeInputStateFromCompressed(code, "json");
+        const decoded = decodeInputStateFromCompressed(code, "snbt");
         expect(decoded).not.toBeNull();
         if (!decoded) return;
         expect(decoded.format).toBe("codeline");
@@ -136,9 +135,9 @@ describe("TestInputStateSection", () => {
         mode: "overlay",
         overlay: overlay.overlay,
       };
-      const code = compressWithInputState(ast, "json", section);
+      const code = compressWithInputState(ast, "snbt", section);
 
-      const decoded = decodeInputStateFromCompressed(code, "json");
+      const decoded = decodeInputStateFromCompressed(code, "snbt");
       expect(decoded).not.toBeNull();
       if (!decoded) return;
       expect(decoded.format).toBe("expanded");
@@ -168,8 +167,8 @@ describe("TestInputStateSection", () => {
         mode: "overlay",
         overlay: overlay.overlay,
       };
-      const code = compressWithInputState(ast, "json", section);
-      const decoded = decodeInputStateFromCompressed(code, "json");
+      const code = compressWithInputState(ast, "snbt", section);
+      const decoded = decodeInputStateFromCompressed(code, "snbt");
       expect(decoded).not.toBeNull();
       if (!decoded) return;
       expect(decoded.format).toBe("expanded");
@@ -185,32 +184,31 @@ describe("TestInputStateSection", () => {
       expect(applyExpandedOverlay(canonical, decoded.overlay)).toBe(raw);
     });
 
-    it("jsonSectionRoundTripsAnOperatorPayloadWithWhitespacePlusSpellings", () => {
-      const baseAst: TypeAST.Curried = {
+    it("snbtSectionRoundTripsAPasteWithWhitespacePlusSpellings", () => {
+      const raw =
+        '  /give @p integrateddynamics:variable{_id:4,_type: "integrateddynamics:valuetype"} \t';
+      const ast: TypeAST.AST = {
         type: "Curry",
         base: { type: "Operator", opName: "ARITHMETIC_ADDITION" },
         args: [{ type: "Integer", value: "10" }],
       };
-      const minified = JSON.stringify(ASTtoJSON(baseAst));
-      const raw =
-        "\n  " + minified.replace('"value":10', '"value":1.0') + " \t";
-      const ast = JSONtoAST(JSON.parse(raw) as jsonData);
-      const canonical = JSON.stringify(ASTtoJSON(ast), null, 2);
-      const overlay = computeJsonOverlay(raw, canonical);
+      const canonical =
+        '/give @p integrateddynamics:variable{_id:4,_type:"integrateddynamics:valuetype"}';
+      const overlay = computeSnbtOverlay(raw, canonical);
       const section: InputStateSection =
         overlay.mode === 0
-          ? { format: "json", mode: "overlay", overlay }
-          : { format: "json", mode: "raw", rawText: raw };
-      const code = compressWithInputState(ast, "json", section);
+          ? { format: "snbt", mode: "overlay", overlay }
+          : { format: "snbt", mode: "raw", rawText: raw };
+      const code = compressWithInputState(ast, "snbt", section);
 
-      const decoded = decodeInputStateFromCompressed(code, "json");
+      const decoded = decodeInputStateFromCompressed(code, "snbt");
       expect(decoded).not.toBeNull();
       if (!decoded) return;
-      expect(decoded.format).toBe("json");
+      expect(decoded.format).toBe("snbt");
       const restored =
-        decoded.mode !== "overlay" || decoded.format !== "json"
+        decoded.mode !== "overlay"
           ? raw
-          : applyJsonOverlay(canonical, decoded.overlay);
+          : applySnbtOverlay(canonical, decoded.overlay as CondensedOverlay);
       expect(restored).toBe(raw);
     });
 
@@ -332,12 +330,12 @@ describe("TestInputStateSection", () => {
         rawText: "x",
       });
 
-      const diff = compressWithInputState(ast, "json", {
+      const diff = compressWithInputState(ast, "snbt", {
         format: "condensed",
         mode: "raw",
         rawText: "x",
       });
-      const decodedDiff = decodeInputStateFromCompressed(diff, "json");
+      const decodedDiff = decodeInputStateFromCompressed(diff, "snbt");
       expect(decodedDiff).toEqual({
         format: "condensed",
         mode: "raw",

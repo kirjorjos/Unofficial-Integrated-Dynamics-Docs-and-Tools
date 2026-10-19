@@ -34,6 +34,12 @@ import {
 } from "lib/transformers/NetworkCards";
 import { normalizeSegments } from "lib/transformers/MixedLists";
 import { QuoteDelimiter, unquoteString } from "lib/transformers/Condensed";
+import {
+  extractCardOperands,
+  getCardOperandIndex,
+  parseCardOperand,
+} from "lib/transformers/cardOperand";
+import { sourceToNetworkCards } from "lib/transformers/sourceNodes";
 
 export interface CodeLineOutputOptions {
   joinStatements?: ";" | "\n";
@@ -239,6 +245,26 @@ export const ASTToCodeLine = (
         result = `Static(${stringify(node.value, false)})`;
         break;
 
+      case "Display":
+      case "Card":
+        result = stringify(node.value, false);
+        break;
+
+      case "VarStore":
+      case "DisplayPanel":
+      case "Writer":
+      case "Exporter":
+      case "Importer":
+        return sourceToNetworkCards(node)
+          .definitions.map((def) => {
+            const oldVarName = def.node.varName;
+            delete def.node.varName;
+            const statement = stringify(def.node, true);
+            if (oldVarName) def.node.varName = oldVarName;
+            return statement;
+          })
+          .join(outputOpts.joinStatements === "\n" ? "\n" : "; ");
+
       case "Reader": {
         const val = node.value;
         const partIdStr =
@@ -293,6 +319,8 @@ export const CodeLineToAST = (
   allowVarRefs = false,
   normalizeMixedLists = true
 ): TypeAST.AST => {
+  const { text, operands } = extractCardOperands(codeLine);
+  codeLine = text;
   const tokens: string[] = [];
   const comments: TokenComment[] = [];
   let current = "";
@@ -438,7 +466,9 @@ export const CodeLineToAST = (
       }
     | { type: "Materialize"; value: InternalAST; varName?: string }
     | { type: "Dynamic"; value: InternalAST; varName?: string }
-    | { type: "Static"; value: InternalAST; varName?: string };
+    | { type: "Static"; value: InternalAST; varName?: string }
+    | { type: "Display"; value: InternalAST; varName?: string }
+    | { type: "Card"; value: InternalAST; varName?: string };
 
   function tryParseParams(): string[] | null {
     const startPos = pos;
@@ -514,7 +544,9 @@ export const CodeLineToAST = (
           ? "Dynamic"
           : lower === "static"
             ? "Static"
-            : undefined;
+            : lower === "display"
+              ? "Display"
+              : undefined;
     if (!canonical) return undefined;
     if (scope.has(token) || externalScope.has(token)) return undefined;
     if (tokens[pos + 1] !== "(") return undefined;
@@ -615,6 +647,14 @@ export const CodeLineToAST = (
     if (token === "false") return { type: "Boolean", value: false };
     if (token === "null") return { type: "Null" };
 
+    const operandIndex = getCardOperandIndex(token);
+    if (operandIndex !== null) {
+      const operand = operands[operandIndex];
+      if (operand === undefined) {
+        throw new StructuralParseError(`Unknown card operand ${token}`);
+      }
+      return parseCardOperand(operand) as InternalAST;
+    }
     if (scope.has(token)) return { type: "Variable", name: token };
     if (externalScope.has(token))
       return externalScope.get(token)! as InternalAST;
@@ -980,6 +1020,13 @@ export const CodeLineToAST = (
     base: InternalAST,
     args: InternalAST[]
   ): InternalAST {
+    for (const arg of args) {
+      if (arg.type === "Card") {
+        throw new StructuralParseError(
+          "Card(...) cannot be used inside a call; give it a name of its own"
+        );
+      }
+    }
     if (base.type === "Curry" && !base.varName) {
       return handleCallInternal(base.base, [...base.args, ...args]);
     }
@@ -1153,7 +1200,9 @@ export const CodeLineToAST = (
     if (
       ast.type === "Dynamic" ||
       ast.type === "Static" ||
-      ast.type === "Materialize"
+      ast.type === "Materialize" ||
+      ast.type === "Display" ||
+      ast.type === "Card"
     ) {
       return containsVar(name, ast.value as InternalAST);
     }
@@ -1267,7 +1316,9 @@ export const CodeLineToAST = (
     } else if (
       body.type === "Dynamic" ||
       body.type === "Static" ||
-      body.type === "Materialize"
+      body.type === "Materialize" ||
+      body.type === "Display" ||
+      body.type === "Card"
     ) {
       return abstract(param, body.value as InternalAST);
     } else if (body.type === "Variable") {

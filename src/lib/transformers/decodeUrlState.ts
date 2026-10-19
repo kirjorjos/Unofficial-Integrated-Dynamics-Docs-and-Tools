@@ -6,15 +6,15 @@ import {
 import { ASTToCondensed } from "lib/transformers/Condensed";
 import { ASTToCodeLine } from "lib/transformers/CodeLine";
 import { ASTToExpandedWithSignatureOptions } from "lib/transformers/Expanded";
-import { ASTtoJSON } from "lib/transformers/JSON";
 import {
   applyCodeLineOverlay,
   applyCondensedOverlay,
   applyExpandedOverlay,
-  applyJsonOverlay,
+  applySnbtOverlay,
   resolveExpandedOverlayNames,
   stripAutoCurryVarNames,
 } from "lib/transformers/inputState";
+import { ASTToSnbt } from "lib/transformers/snbtFormat";
 
 export type UrlCodeOutputFormat = InputFormatKey | "visual";
 
@@ -36,18 +36,11 @@ const canonicalInputForFormat = (
       return ASTToCodeLine(ast, true, initialVariableId);
     case "expanded":
       return ASTToExpandedWithSignatureOptions(ast, "Condensed", null, true);
-    case "json":
-      return JSON.stringify(ASTtoJSON(ast), null, 2);
+    case "snbt":
+      return ASTToSnbt(ast);
   }
 };
 
-/**
- * Decodes a transformers-page `?code=` compressed state (as written to the
- * URL by TransformersPage) back into its AST and, when an input-state section
- * was stored, the exact raw input text the user typed. Shared by the page
- * itself and by the GitHub Action that re-decodes issue repro URLs with the
- * current transformer code.
- */
 export const decodeTransformerUrlCode = (
   code: string,
   outputFormat: UrlCodeOutputFormat,
@@ -102,10 +95,10 @@ export const decodeTransformerUrlCode = (
       input: applyCodeLineOverlay(canonicalInput, inputState.overlay),
     };
   }
-  if (inputState.format === "json") {
+  if (inputState.format === "snbt") {
     return {
       ast,
-      input: applyJsonOverlay(canonicalInput, inputState.overlay),
+      input: applySnbtOverlay(canonicalInput, inputState.overlay),
     };
   }
   return {

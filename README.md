@@ -13,9 +13,7 @@ Current plans for this project are as follows:
 
 - [x] Ability to eval custom operators
 - [ ] Ability to convert to and from AST:
-  - [ ] SNBT
-    - [x] JSON
-    - [ ] Add stringify and parse for JSON in correct places
+  - [x] SNBT
   - [x] Condensed
   - [x] Expanded
   - [x] CodeLine
