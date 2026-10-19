@@ -23,6 +23,12 @@ import {
 } from "lib/transformers/NetworkCards";
 import { normalizeSegments } from "lib/transformers/MixedLists";
 import { StructuralParseError } from "lib/transformers/parseErrors";
+import {
+  getSourceCards,
+  isSourceNode,
+  sourceToNetworkCards,
+  withSourceCards,
+} from "lib/transformers/sourceNodes";
 
 const getLabel = (index: number): string => {
   let label = "";
@@ -406,8 +412,24 @@ const computeSignature = (
     }
     case "Dynamic":
     case "Static":
-    case "Materialize": {
+    case "Materialize":
+    case "Display":
+    case "Card": {
       signature = computeSignature(node.value, scope, resolve);
+      break;
+    }
+    case "VarStore":
+    case "DisplayPanel":
+    case "Writer":
+    case "Exporter":
+    case "Importer": {
+      const cards = getSourceCards(node);
+      if (cards.length !== 1) {
+        throw new Error(
+          `A ${node.type} is not a value - it holds ${cards.length} cards`
+        );
+      }
+      signature = computeSignature(cards[0]!, scope, resolve);
       break;
     }
   }
@@ -452,7 +474,18 @@ const collectVariables = (
     case "Dynamic":
     case "Static":
     case "Materialize":
+    case "Display":
+    case "Card":
       collectVariables(node.value, collected, seen);
+      break;
+    case "VarStore":
+    case "DisplayPanel":
+    case "Writer":
+    case "Exporter":
+    case "Importer":
+      for (const card of getSourceCards(node)) {
+        collectVariables(card, collected, seen);
+      }
       break;
   }
 
@@ -595,6 +628,8 @@ const getVarName = (node: TypeAST.AST): string => {
       return `Materialized{${getVarName(node.value)}}`;
     case "Dynamic":
     case "Static":
+    case "Display":
+    case "Card":
       return getVarName(node.value);
     case "Reader": {
       const readerClass = getReaderClassByTypeName(node.value.reader);
@@ -708,12 +743,22 @@ const decomposeAST = (node: TypeAST.AST): TypeAST.AST => {
   if (
     node.type === "Materialize" ||
     node.type === "Dynamic" ||
-    node.type === "Static"
+    node.type === "Static" ||
+    node.type === "Display" ||
+    node.type === "Card"
   ) {
     const result = {
       ...node,
       value: decomposeAST(node.value),
     };
+    if (!result.varName) result.varName = getVarName(result);
+    return result;
+  }
+  if (isSourceNode(node)) {
+    const result = withSourceCards(
+      node,
+      getSourceCards(node).map(decomposeAST)
+    );
     if (!result.varName) result.varName = getVarName(result);
     return result;
   }
@@ -802,9 +847,10 @@ export const ASTToExpandedWithSignatureOptions = (
 ): string => {
   resetExpandedVarCounter();
 
+  const root = isSourceNode(ast) ? sourceToNetworkCards(ast) : ast;
   const roots: TypeAST.AST[] =
-    ast.type === "NetworkCards" ? ast.definitions.map((d) => d.node) : [ast];
-  const comments = displayOpts.comments ? defComments(ast) : null;
+    root.type === "NetworkCards" ? root.definitions.map((d) => d.node) : [root];
+  const comments = displayOpts.comments ? defComments(root) : null;
 
   const initialVars = new Set<TypeAST.AST>();
   for (const root of roots) {
@@ -1569,9 +1615,14 @@ export const ExpandedToAST = (
         if (
           node.type === "Materialize" ||
           node.type === "Dynamic" ||
-          node.type === "Static"
+          node.type === "Static" ||
+          node.type === "Display" ||
+          node.type === "Card"
         ) {
           return hasAmbiguousRef(node.value);
+        }
+        if (isSourceNode(node)) {
+          return getSourceCards(node).some(hasAmbiguousRef);
         }
         return false;
       };

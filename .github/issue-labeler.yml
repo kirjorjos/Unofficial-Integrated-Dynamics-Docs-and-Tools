@@ -15,8 +15,8 @@ bug/reader-view:
   - '/### What''s wrong\?[\s\S]*-\s*\[[xX]\]\s*Reader View|-\s*\[[xX]\]\s*Reader View[\s\S]*### What''s wrong\?/'
 bug/visual-transformer:
   - '/### What''s wrong\?[\s\S]*-\s*\[[xX]\]\s*Visual Transformer|-\s*\[[xX]\]\s*Visual Transformer[\s\S]*### What''s wrong\?/'
-bug/json-transformer:
-  - '/### What''s wrong\?[\s\S]*-\s*\[[xX]\]\s*JSON Transformer|-\s*\[[xX]\]\s*JSON Transformer[\s\S]*### What''s wrong\?/'
+bug/snbt-transformer:
+  - '/### What''s wrong\?[\s\S]*-\s*\[[xX]\]\s*SNBT Transformer|-\s*\[[xX]\]\s*SNBT Transformer[\s\S]*### What''s wrong\?/'
 bug/code-line-transformer:
   - '/### What''s wrong\?[\s\S]*-\s*\[[xX]\]\s*Code Line Transformer|-\s*\[[xX]\]\s*Code Line Transformer[\s\S]*### What''s wrong\?/'
 bug/expanded-transformer:
@@ -42,8 +42,8 @@ enhancement/reader-view:
   - '/### Describe the suggestion[\s\S]*-\s*\[[xX]\]\s*Reader View|-\s*\[[xX]\]\s*Reader View[\s\S]*### Describe the suggestion/'
 enhancement/visual-transformer:
   - '/### Describe the suggestion[\s\S]*-\s*\[[xX]\]\s*Visual Transformer|-\s*\[[xX]\]\s*Visual Transformer[\s\S]*### Describe the suggestion/'
-enhancement/json-transformer:
-  - '/### Describe the suggestion[\s\S]*-\s*\[[xX]\]\s*JSON Transformer|-\s*\[[xX]\]\s*JSON Transformer[\s\S]*### Describe the suggestion/'
+enhancement/snbt-transformer:
+  - '/### Describe the suggestion[\s\S]*-\s*\[[xX]\]\s*SNBT Transformer|-\s*\[[xX]\]\s*SNBT Transformer[\s\S]*### Describe the suggestion/'
 enhancement/code-line-transformer:
   - '/### Describe the suggestion[\s\S]*-\s*\[[xX]\]\s*Code Line Transformer|-\s*\[[xX]\]\s*Code Line Transformer[\s\S]*### Describe the suggestion/'
 enhancement/expanded-transformer:

@@ -5,7 +5,16 @@ export type TransformerFormatKey =
   | "expanded"
   | "codeline"
   | "compressed"
-  | "json";
+  | "snbt";
+
+const DATA_GET_REGEX =
+  /has the following (block data|entity data|contents):\s*\{[\s\S]*\}$/;
+
+export const detectSnbtInput = (value: string): boolean => {
+  const first = value.trim()[0];
+  if (first === "/" || first === "{") return true;
+  return DATA_GET_REGEX.test(value.trim());
+};
 
 const disallowedChars = BaseOperator.nicknameRegexDisallowedChars.join("");
 
@@ -194,8 +203,9 @@ export const detectInputFormat = (value: string): TransformerFormatKey => {
   value = value.trim();
   const code = stripComments(value);
 
+  if (detectSnbtInput(value)) return "snbt";
+
   if (value.includes("\n")) {
-    if (value[0] === "{") return "json";
     if (!hasTopLevelAssignment(code)) {
       if (hasTopLevelDoubleColon(code)) return "expanded";
       const first = firstMeaningfulLine(code);
@@ -211,7 +221,6 @@ export const detectInputFormat = (value: string): TransformerFormatKey => {
   if (variableWrapperDefinitionRegex.test(code)) return "expanded";
   if (typedDefinitionRegex.test(code)) return "expanded";
   if (hasTopLevelDoubleColon(code)) return "expanded";
-  if (value[0] === "{") return "json";
   const wrapperFormat = detectWrapperFormat(code);
   if (wrapperFormat !== null) return wrapperFormat;
   if (condensedCallRegex.test(code)) return "condensed";

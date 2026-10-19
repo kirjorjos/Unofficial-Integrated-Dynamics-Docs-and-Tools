@@ -186,25 +186,6 @@ export class CompoundTag extends Tag<CompoundTag> {
     return obj;
   }
 
-  static fromJSON(data: string): CompoundTag {
-    const jsonStr = data
-      .replace(/([{,]\s*)([A-Za-z_]+)(\s*:)/g, '$1"$2"$3') //quote keys
-      .replace(
-        /(:\s*)([A-Za-z0-9_]*[A-Za-z][A-Za-z0-9_]*)(?=\s*[,}])/g,
-        '$1"$2"'
-      ) //quote many values
-      .replace(
-        /\[(?<type>[BIL]);(?<values>-?\d+[bl]?(?:,-?\d+[bl]?)*?)\]/g,
-        (_, type, values) => {
-          const arr = values.split(",");
-          return JSON.stringify({ type, values: arr });
-        }
-      );
-
-    const json = JSON.parse(jsonStr);
-    return new CompoundTag(json);
-  }
-
   compoundSubset(subset: CompoundTag): boolean {
     for (const key of subset.getAllKeys().valueOf()) {
       const subValue = subset.get(key);

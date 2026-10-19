@@ -1,11 +1,20 @@
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from "vue";
+import {
+  computed,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  reactive,
+  ref,
+  watch,
+} from "vue";
 import {
   INPUT_DOC_TABS,
-  type DocSpan,
   type InputDocExample,
   type InputDocTabId,
 } from "lib/transformers/inputDocs";
+import BreakableText from "./BreakableText.vue";
+import DocSpans from "./DocSpans.vue";
 
 const emit = defineEmits<{
   (event: "load-example", example: InputDocExample): void;
@@ -36,9 +45,6 @@ const panelId = (id: InputDocTabId): string => `input-doc-panel-${id}`;
 const activePanel = computed(
   () => tabs.find((tab) => tab.id === activeTab.value) ?? tabs[0]!
 );
-
-const spanClass = (span: DocSpan): string | undefined =>
-  span.emphasis ? `input-doc-span-${span.emphasis}` : undefined;
 
 const isSectionOpen = (tabId: InputDocTabId, sectionIndex: number): boolean =>
   collapsedSections[sectionStateKey(tabId, sectionIndex)] !== true;
@@ -147,10 +153,118 @@ const selectTab = (id: InputDocTabId): void => {
   updateDocsStateUrl();
 };
 
+const PREVIEW_MIN_LINES = 4;
+const PREVIEW_MAX_LINES = 2;
+
+const panelEl = ref<HTMLElement | null>(null);
+const measurerEl = ref<HTMLElement | null>(null);
+const previewText = reactive<Record<string, string>>({});
+
+const exampleKey = (
+  tabIdValue: InputDocTabId,
+  sectionIndex: number,
+  exampleIndex: number
+): string => `${tabIdValue}:${sectionIndex}:${exampleIndex}`;
+
+const exampleElement = (key: string): HTMLElement | null =>
+  panelEl.value?.querySelector<HTMLElement>(
+    `[data-example-key="${key}"] .input-docs-example-text`
+  ) ?? null;
+
+const exampleWidth = (key: string): number =>
+  exampleElement(key)?.clientWidth ?? 0;
+
+const lineCount = (text: string, width: number): number => {
+  const measurer = measurerEl.value;
+  if (measurer === null || width <= 0) return 0;
+  measurer.style.width = `${width}px`;
+  measurer.textContent = "x";
+  const single = measurer.getBoundingClientRect().height;
+  if (single <= 0) return 0;
+  measurer.textContent = text;
+  return Math.round(measurer.getBoundingClientRect().height / single);
+};
+
+const CLOSER_OF: Record<string, string> = { "{": "}", "[": "]", "(": ")" };
+const OPENER_OF: Record<string, string> = { "}": "{", "]": "[", ")": "(" };
+
+const closersFor = (prefix: string): string => {
+  const bare = prefix.replace(/"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'/g, "");
+  const stack: string[] = [];
+  for (const char of bare) {
+    if (char in CLOSER_OF) {
+      stack.push(char);
+    } else if (
+      char in OPENER_OF &&
+      stack[stack.length - 1] === OPENER_OF[char]
+    ) {
+      stack.pop();
+    }
+  }
+  return stack
+    .reverse()
+    .map((opener) => CLOSER_OF[opener])
+    .join("");
+};
+
+const shortened = (text: string, width: number): string | null => {
+  if (lineCount(text, width) < PREVIEW_MIN_LINES) return null;
+
+  const cuts: number[] = [];
+  for (let index = 0; index < text.length; index += 1) {
+    const char = text[index];
+    if (char === "{" || char === "[") cuts.push(index);
+  }
+  if (cuts.length === 0) return null;
+
+  let shortest: string | null = null;
+  for (let index = cuts.length - 1; index >= 0; index -= 1) {
+    const prefix = text.slice(0, cuts[index]! + 1);
+    const snippet = `${prefix}…${closersFor(prefix)}`;
+    shortest = snippet;
+    if (lineCount(snippet, width) <= PREVIEW_MAX_LINES) return snippet;
+  }
+  return shortest;
+};
+
+const refreshPreviews = async (): Promise<void> => {
+  await nextTick();
+  if (panelEl.value === null) return;
+
+  const tabIdValue = activePanel.value.id;
+  activePanel.value.sections.forEach((section, sectionIndex) => {
+    section.examples?.forEach((example, exampleIndex) => {
+      const key = exampleKey(tabIdValue, sectionIndex, exampleIndex);
+      const width = exampleWidth(key);
+      const next = width > 0 ? shortened(example.text, width) : null;
+      if (next === null) {
+        if (previewText[key] !== undefined) delete previewText[key];
+        return;
+      }
+      if (previewText[key] !== next) previewText[key] = next;
+    });
+  });
+};
+
+const previewOf = (key: string): string | null => previewText[key] ?? null;
+
+let resizeObserver: ResizeObserver | null = null;
+let refreshHandle = 0;
+
+const scheduleRefresh = (): void => {
+  if (typeof window === "undefined") return;
+  if (refreshHandle !== 0) window.cancelAnimationFrame(refreshHandle);
+  refreshHandle = window.requestAnimationFrame(() => {
+    refreshHandle = 0;
+    void refreshPreviews();
+  });
+};
+
 const togglePanel = (event: MouseEvent): void => {
   event.preventDefault();
   docsPanelOpen.value = !docsPanelOpen.value;
   updateDocsStateUrl();
+  scheduleRefresh();
 };
 
 const toggleSection = (
@@ -166,6 +280,7 @@ const toggleSection = (
     collapsedSections[key] = true;
   }
   updateDocsStateUrl();
+  scheduleRefresh();
 };
 
 const handleTabKeydown = (event: KeyboardEvent, index: number): void => {
@@ -184,7 +299,24 @@ const handleTabKeydown = (event: KeyboardEvent, index: number): void => {
   document.getElementById(tabId(target.id))?.focus();
 };
 
-onMounted(applyDocsState);
+watch(activeTab, scheduleRefresh);
+
+onMounted(() => {
+  applyDocsState();
+  scheduleRefresh();
+  void document.fonts?.ready.then(scheduleRefresh);
+
+  if (typeof ResizeObserver !== "undefined") {
+    resizeObserver = new ResizeObserver(scheduleRefresh);
+    if (panelEl.value !== null) resizeObserver.observe(panelEl.value);
+  }
+});
+
+onBeforeUnmount(() => {
+  resizeObserver?.disconnect();
+  resizeObserver = null;
+  if (refreshHandle !== 0) window.cancelAnimationFrame(refreshHandle);
+});
 
 const loadExample = (example: InputDocExample): void => {
   if (example.kind !== "concrete") return;
@@ -222,6 +354,7 @@ const loadExample = (example: InputDocExample): void => {
 
       <div
         :id="panelId(activePanel.id)"
+        ref="panelEl"
         class="input-docs-panel"
         role="tabpanel"
         :aria-labelledby="tabId(activePanel.id)"
@@ -237,12 +370,12 @@ const loadExample = (example: InputDocExample): void => {
             class="input-docs-heading"
             @click="toggleSection($event, activePanel.id, sectionIndex)"
           >
-            {{ section.heading }}
+            <DocSpans :spans="section.heading" />
           </summary>
 
           <div class="input-docs-section-body">
             <p v-if="section.summary" class="input-docs-text">
-              {{ section.summary }}
+              <DocSpans :spans="section.summary" />
             </p>
 
             <ul v-if="section.bullets" class="input-docs-bullets">
@@ -250,7 +383,7 @@ const loadExample = (example: InputDocExample): void => {
                 v-for="(bullet, bulletIndex) in section.bullets"
                 :key="bulletIndex"
               >
-                {{ bullet }}
+                <DocSpans :spans="bullet" />
               </li>
             </ul>
 
@@ -260,10 +393,13 @@ const loadExample = (example: InputDocExample): void => {
                 :key="entry.emphasis"
                 class="input-docs-legend-row"
               >
-                <dt :class="`input-doc-span-${entry.emphasis}`">
-                  {{ entry.label }}
+                <dt
+                  :class="`input-doc-span-${entry.emphasis}`"
+                  :style="entry.color ? { color: entry.color } : undefined"
+                >
+                  <DocSpans :spans="entry.label" />
                 </dt>
-                <dd>{{ entry.description }}</dd>
+                <dd><DocSpans :spans="entry.description" /></dd>
               </div>
             </dl>
 
@@ -277,13 +413,17 @@ const loadExample = (example: InputDocExample): void => {
                   <span
                     v-for="(span, spanIndex) in line.spans"
                     :key="spanIndex"
-                    :class="spanClass(span)"
-                    >{{ span.text }}</span
-                  >
+                    :class="
+                      span.emphasis
+                        ? `input-doc-span-${span.emphasis}`
+                        : undefined
+                    "
+                    ><BreakableText :text="span.text"
+                  /></span>
                 </code>
-                <span v-if="line.note" class="input-docs-note">{{
-                  line.note
-                }}</span>
+                <span v-if="line.note" class="input-docs-note">
+                  <DocSpans :spans="line.note" />
+                </span>
               </div>
             </div>
 
@@ -296,30 +436,58 @@ const loadExample = (example: InputDocExample): void => {
                   v-if="example.kind === 'concrete'"
                   type="button"
                   class="input-docs-example input-docs-example-concrete"
+                  :data-example-key="
+                    exampleKey(activePanel.id, sectionIndex, exampleIndex)
+                  "
                   @click="loadExample(example)"
                 >
-                  <code class="input-docs-example-text">{{
-                    example.text
-                  }}</code>
+                  <code
+                    class="input-docs-example-text"
+                    :class="{
+                      'input-docs-example-shortened': previewOf(
+                        exampleKey(activePanel.id, sectionIndex, exampleIndex)
+                      ),
+                    }"
+                    ><BreakableText
+                      :text="
+                        previewOf(
+                          exampleKey(activePanel.id, sectionIndex, exampleIndex)
+                        ) ?? example.text
+                      "
+                  /></code>
                   <span
                     v-if="example.caption"
                     class="input-docs-example-caption"
                   >
-                    {{ example.caption }}
+                    <DocSpans :spans="example.caption" />
                   </span>
                 </button>
                 <div
                   v-else
                   class="input-docs-example input-docs-example-structural"
+                  :data-example-key="
+                    exampleKey(activePanel.id, sectionIndex, exampleIndex)
+                  "
                 >
-                  <code class="input-docs-example-text">{{
-                    example.text
-                  }}</code>
+                  <code
+                    class="input-docs-example-text"
+                    :class="{
+                      'input-docs-example-shortened': previewOf(
+                        exampleKey(activePanel.id, sectionIndex, exampleIndex)
+                      ),
+                    }"
+                    ><BreakableText
+                      :text="
+                        previewOf(
+                          exampleKey(activePanel.id, sectionIndex, exampleIndex)
+                        ) ?? example.text
+                      "
+                  /></code>
                   <span
                     v-if="example.caption"
                     class="input-docs-example-caption"
                   >
-                    {{ example.caption }}
+                    <DocSpans :spans="example.caption" />
                   </span>
                 </div>
               </template>
@@ -332,11 +500,17 @@ const loadExample = (example: InputDocExample): void => {
                 class="input-docs-link"
                 :href="link.href"
               >
-                {{ link.label }}
+                <DocSpans :spans="link.label" />
               </a>
             </div>
           </div>
         </details>
+
+        <div
+          ref="measurerEl"
+          class="input-docs-measure"
+          aria-hidden="true"
+        ></div>
       </div>
     </div>
   </details>

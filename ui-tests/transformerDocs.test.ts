@@ -31,18 +31,36 @@ test.describe("transformersPageInputDocs", () => {
     expect(docsBox!.y).toBeLessThan(inputBoxRect!.y);
   });
 
-  test("testFiveTabsWithOverviewSelectedAndArrowKeyNavigation", async ({
+  test("testEveryTabWrapsInsideTheDocsPanel", async ({ page }) => {
+    await page.setViewportSize({ width: 1000, height: 900 });
+    await page.goto("/#transformers");
+    await page.locator(".input-docs-summary").click();
+
+    const tabs = page.locator(".input-docs-tab");
+    const count = await tabs.count();
+    expect(count).toBeGreaterThan(0);
+    for (let index = 0; index < count; index += 1) {
+      await tabs.nth(index).click();
+      const overflow = await page
+        .locator(".input-docs-body")
+        .evaluate((element) => element.scrollWidth - element.clientWidth);
+      expect(overflow).toBeLessThanOrEqual(1);
+    }
+  });
+
+  test("testSixTabsWithOverviewSelectedAndArrowKeyNavigation", async ({
     page,
   }) => {
     await openDocs(page);
 
     const tabs = page.locator(".input-docs-tab");
-    await expect(tabs).toHaveCount(5);
+    await expect(tabs).toHaveCount(6);
     await expect(tabs).toHaveText([
       "Overview",
       "Expanded",
       "Code Line",
       "Condensed",
+      "SNBT",
       "Visual",
     ]);
     await expect(tabs.nth(0)).toHaveAttribute("aria-selected", "true");
@@ -53,9 +71,104 @@ test.describe("transformersPageInputDocs", () => {
     await expect(tabs.nth(1)).toBeFocused();
 
     await page.keyboard.press("End");
-    await expect(tabs.nth(4)).toHaveAttribute("aria-selected", "true");
+    await expect(tabs.nth(5)).toHaveAttribute("aria-selected", "true");
     await expect(page.locator(".input-docs-panel")).toContainText(
       "in-game card"
+    );
+  });
+
+  test("testSnbtTabDocumentsThePasteEnvelopes", async ({ page }) => {
+    await openDocs(page, "SNBT");
+
+    const panel = page.locator(".input-docs-panel");
+    await expect(panel).toContainText("What you paste");
+    await expect(panel).toContainText("/setblock");
+    await expect(panel).toContainText("data get");
+    await expect(panel).toContainText("The 256 character limit");
+  });
+
+  test("testSnbtTabDocumentsDisplayAndCard", async ({ page }) => {
+    await openDocs(page, "SNBT");
+
+    const panel = page.locator(".input-docs-panel");
+    await expect(panel).toContainText("Display and Card");
+    await expect(panel).toContainText("then the cards the expression needs");
+    await expect(panel).toContainText("with the aspect's settings");
+    await expect(panel).toContainText("buried inside a call");
+    await expect(panel).toContainText("not a reader, which holds no card");
+    await expect(
+      panel.locator("button.input-docs-example-structural")
+    ).toHaveCount(0);
+  });
+
+  test("testSnbtTabShowsLongExamplesShortened", async ({ page }) => {
+    await openDocs(page, "SNBT");
+
+    const shortened = page.locator(
+      ".input-docs-example-text.input-docs-example-shortened"
+    );
+    const count = await shortened.count();
+    expect(count).toBeGreaterThan(0);
+
+    const first = shortened.first();
+    await expect(first).toContainText("…");
+    const shown = (await first.textContent())!;
+    expect(shown.length).toBeLessThan(400);
+    await expect(first).toHaveCSS("color", "rgb(21, 196, 11)");
+
+    const lines = await first.evaluate(
+      (element) =>
+        element.getBoundingClientRect().height /
+        parseFloat(getComputedStyle(element).lineHeight)
+    );
+    expect(lines).toBeLessThan(3.5);
+  });
+
+  test("testClickingAShortenedExampleLoadsTheFullText", async ({ page }) => {
+    await openDocs(page, "SNBT");
+
+    const storeExample = page.locator('[data-example-key="snbt:2:0"]');
+    await storeExample.click();
+
+    await expect(inputBox(page)).toHaveValue(
+      /^\/setblock -7 -60 -1 integrateddynamics:variablestore\[facing=west\]\{connected:.*value:"test"\}\}\]\}$/
+    );
+  });
+
+  test("testInlineCodeMarksSettingsInsteadOfStylingThemAsProse", async ({
+    page,
+  }) => {
+    await openDocs(page);
+
+    const code = page.locator(".input-docs-panel code.input-docs-code");
+    expect(await code.count()).toBeGreaterThan(0);
+    await expect(
+      page.locator(".input-docs-panel code.input-docs-code", {
+        hasText: "Preserve comments",
+      })
+    ).toHaveCount(1);
+    await expect(
+      page.locator(".input-docs-panel code.input-docs-code", {
+        hasText: "Expanded",
+      })
+    ).not.toHaveCount(0);
+  });
+
+  test("testSnbtExampleLoadsAndTransformsToGiveCommands", async ({ page }) => {
+    await openDocs(page, "SNBT");
+    await page.locator("button.input-docs-example-concrete").first().click();
+
+    await expect(inputBox(page)).toHaveValue(
+      '/give @p integrateddynamics:variable{_id:4,_type:"integrateddynamics:valuetype",typeName:"integrateddynamics:integer",value:5}'
+    );
+
+    await expect(
+      page.locator('select[aria-label="Output format"]')
+    ).toHaveValue("snbt");
+    await page.getByRole("button", { name: "Transform", exact: true }).click();
+
+    await expect(page.locator('textarea[aria-label="SNBT"]')).toHaveValue(
+      '/give @p integrateddynamics:variable{_id:0,_type:"integrateddynamics:valuetype",typeName:"integrateddynamics:integer",value:5}'
     );
   });
 
@@ -245,12 +358,12 @@ test.describe("transformersPageInputDocs", () => {
   });
 
   test("testMalformedDocsParamFallsBackToTheDefaultState", async ({ page }) => {
-    for (const malformed of ["", "!", "-", "a", "z"]) {
+    for (const malformed of ["", "!", "-", "z", "zz"]) {
       await page.goto(`/?docs=${encodeURIComponent(malformed)}#transformers`);
 
       await expect(page.locator(".input-docs-body")).toBeHidden();
       const tabs = page.locator(".input-docs-tab");
-      await expect(tabs).toHaveCount(5);
+      await expect(tabs).toHaveCount(6);
       await expect(tabs.first()).toHaveText("Overview");
       await expect(tabs.first()).toHaveAttribute("aria-selected", "true");
 
@@ -260,7 +373,22 @@ test.describe("transformersPageInputDocs", () => {
         "open",
         ""
       );
-      expect(new URL(page.url()).searchParams.get("docs")).toBe("5");
+      expect(new URL(page.url()).searchParams.get("docs")).toBe("6");
+    }
+  });
+
+  test("testExpressionTabsDocumentDisplayAndCard", async ({ page }) => {
+    for (const tab of ["Expanded", "Code Line", "Condensed"]) {
+      await openDocs(page, tab);
+
+      const panel = page.locator(".input-docs-panel");
+      await expect(panel).toContainText("Display and Card");
+      await expect(panel).toContainText(
+        "only do something when the output is SNBT"
+      );
+      await expect(
+        panel.locator("button.input-docs-example-structural")
+      ).toHaveCount(0);
     }
   });
 
@@ -285,7 +413,7 @@ test.describe("transformersPageSettingsHelp", () => {
     await page.locator(".settings-summary").click();
 
     const labels = page.locator(".settings-body .settings-label");
-    await expect(labels).toHaveCount(19);
+    await expect(labels).toHaveCount(26);
 
     const count = await labels.count();
     for (let index = 0; index < count; index += 1) {
@@ -295,7 +423,7 @@ test.describe("transformersPageSettingsHelp", () => {
       );
     }
 
-    await expect(page.locator(".settings-help-mark")).toHaveCount(19);
+    await expect(page.locator(".settings-help-mark")).toHaveCount(26);
   });
 
   test("testHoveringTheQuestionMarkRevealsTheHelpText", async ({ page }) => {

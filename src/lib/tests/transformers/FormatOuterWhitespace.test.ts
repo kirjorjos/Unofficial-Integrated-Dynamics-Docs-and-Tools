@@ -1,7 +1,7 @@
 import { CondensedToAST } from "lib/transformers/Condensed";
 import { ExpandedToAST } from "lib/transformers/Expanded";
 import { CodeLineToAST } from "lib/transformers/CodeLine";
-import { ASTtoJSON, JSONtoAST } from "lib/transformers/JSON";
+import { SNBTToTag } from "lib/transformers/SNBT";
 
 describe("TestFormatOuterWhitespaceTolerance", () => {
   describe("CondensedToAST", () => {
@@ -46,25 +46,17 @@ describe("TestFormatOuterWhitespaceTolerance", () => {
       expect(CodeLineToAST(wrapped)).toEqual(CodeLineToAST(clean));
     });
   });
-
-  describe("JSONtoASTViaThePagesJSONParsePath", () => {
-    const ast: TypeAST.Curried = {
-      type: "Curry",
-      base: { type: "Operator", opName: "ARITHMETIC_ADDITION" },
-      args: [{ type: "Integer", value: "10" }],
-    };
-    const json = JSON.stringify(ASTtoJSON(ast));
+  describe("SNBTToTag", () => {
+    const snbt =
+      '{_id:4,_type:"integrateddynamics:valuetype",typeName:"integrateddynamics:integer",value:5}';
 
     it.each([
-      [`  ${json}  `, json],
-      [`\n\n\t${json}\n\n`, json],
+      [`  ${snbt}  `, snbt],
+      [`\n\n\t${snbt}\n\n`, snbt],
     ] as Array<[string, string]>)(
       "parsesUntrimmed%jLikeTrimmed%j",
       (wrapped, clean) => {
-        expect(JSON.parse(wrapped)).toEqual(JSON.parse(clean));
-        expect(JSONtoAST(JSON.parse(wrapped) as jsonData)).toEqual(
-          JSONtoAST(JSON.parse(clean) as jsonData)
-        );
+        expect(SNBTToTag(wrapped).toJSON()).toEqual(SNBTToTag(clean).toJSON());
       }
     );
   });

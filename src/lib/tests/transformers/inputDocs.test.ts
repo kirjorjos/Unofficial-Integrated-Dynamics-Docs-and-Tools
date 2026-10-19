@@ -3,9 +3,12 @@ import { ExpandedToAST } from "lib/transformers/Expanded";
 import { CodeLineToAST } from "lib/transformers/CodeLine";
 import { CondensedToAST } from "lib/transformers/Condensed";
 import { abstractDynamicParts } from "lib/transformers/lambdaAbstraction";
+import { inputToGiveCommands } from "lib/transformers/giveCommands";
+import { snbtInputToAST } from "lib/transformers/snbtFormat";
 import {
   INPUT_DOC_FORMAT_TAB_IDS,
   INPUT_DOC_TABS,
+  docText,
   inputDocExampleInput,
   inputDocFormatExamples,
   inputDocTab,
@@ -25,6 +28,7 @@ describe("TestInputDocs", () => {
       "expanded",
       "codeline",
       "condensed",
+      "snbt",
       "visual",
     ]);
     expect(INPUT_DOC_FORMAT_TAB_IDS).toEqual([
@@ -39,20 +43,68 @@ describe("TestInputDocs", () => {
       expect(tab.label.length).toBeGreaterThan(0);
       expect(tab.sections.length).toBeGreaterThan(0);
       for (const section of tab.sections) {
-        expect(section.heading.length).toBeGreaterThan(0);
+        expect(docText(section.heading).length).toBeGreaterThan(0);
       }
     }
+  });
+
+  it("testNamesSettingsAsCodeSpansInTheOverviewComments", () => {
+    const summary = inputDocTab("overview").sections.find(
+      (section) => docText(section.heading) === "Comments"
+    )?.summary;
+    const code = summary?.filter((span) => span.code).map((span) => span.text);
+    expect(code).toEqual([
+      "Preserve comments",
+      "Expanded",
+      "Code Line",
+      "Condensed",
+    ]);
+  });
+
+  it("testSnbtGiveOutputDocumentsThePasteRules", () => {
+    const section = inputDocTab("snbt").sections.find(
+      (candidate) => docText(candidate.heading) === "The /give output"
+    );
+    expect(section).toBeDefined();
+
+    const bullets = (section!.bullets ?? []).map(docText);
+    expect(
+      bullets.some((bullet) => bullet.startsWith("Duplicate conflicts"))
+    ).toBe(true);
+    expect(bullets.some((bullet) => bullet.startsWith("Missing parts"))).toBe(
+      true
+    );
+    expect(bullets.some((bullet) => bullet.includes("Interface parts"))).toBe(
+      true
+    );
+
+    const shapes = (section!.syntax ?? []).map((line) => docText(line.spans));
+    expect(shapes).toEqual([
+      "/give @p integrateddynamics:variable{_id, _type, …}",
+      "/give @p integrateddynamics:variablestore{inventory:[…]}",
+      "/give @p integrateddynamics:part_display_panel{id, aspectProperties, enabled, updateInterval, inventory:[…]}",
+      "/give @p integrateddynamics:part_<part>_reader{id, aspectProperties:[…], inventory:[…]}",
+      "/give @p integrateddynamics:part_<part>_writer{id, inventory:[…]}",
+    ]);
+    expect((section!.examples ?? []).length).toBe(1);
   });
 
   it("testOverviewTabExplainsTheRequiredOptionalLegend", () => {
     const legend = inputDocTab("overview").sections.flatMap(
       (section) => section.legend ?? []
     );
-    expect(legend.map((entry) => entry.emphasis).sort()).toEqual([
-      "optional",
-      "plain",
-      "required",
+    expect(
+      legend.map((entry) => ({
+        emphasis: entry.emphasis,
+        color: entry.color ?? null,
+      }))
+    ).toEqual([
+      { emphasis: "required", color: null },
+      { emphasis: "optional", color: null },
+      { emphasis: "plain", color: null },
+      { emphasis: "plain", color: "#15c40b" },
     ]);
+    expect(docText(legend[3]!.label)).toBe("shortened");
   });
 
   it.each(
@@ -76,7 +128,7 @@ describe("TestInputDocs", () => {
 
     for (const tabId of INPUT_DOC_FORMAT_TAB_IDS) {
       const section = inputDocTab(tabId).sections.find(
-        (candidate) => candidate.heading === "Materializing readers"
+        (candidate) => docText(candidate.heading) === "Materializing readers"
       );
       expect(section).toBeDefined();
 
@@ -122,6 +174,34 @@ describe("TestInputDocs", () => {
     }
   });
 
+  it("testEverySnbtExampleIsDetectedAndParses", () => {
+    const examples = inputDocTab("snbt").sections.flatMap(
+      (section) =>
+        section.examples?.filter((example) => example.kind === "concrete") ?? []
+    );
+    expect(examples.length).toBeGreaterThan(0);
+
+    for (const example of examples) {
+      expect(detectInputFormat(example.text)).toBe("snbt");
+      const parsed = snbtInputToAST(example.text, { missingParts: "warn" });
+      expect(parsed).toBeTruthy();
+    }
+  });
+
+  it("testSnbtExamplesProduceGiveCommands", () => {
+    const examples = inputDocTab("snbt").sections.flatMap(
+      (section) =>
+        section.examples?.filter((example) => example.kind === "concrete") ?? []
+    );
+    for (const example of examples) {
+      const out = inputToGiveCommands(example.text, { missingParts: "warn" });
+      expect(out.lines.length).toBeGreaterThan(0);
+      expect(out.lines.every((line) => line.startsWith("/give @p "))).toBe(
+        true
+      );
+    }
+  });
+
   it("testLoadedExampleAddsItsCaptionAsALeadingComment", () => {
     expect(inputDocExampleInput({ kind: "concrete", text: "x = 5" })).toBe(
       "x = 5"
@@ -130,7 +210,7 @@ describe("TestInputDocs", () => {
       inputDocExampleInput({
         kind: "concrete",
         text: "x = 5",
-        caption: "a definition",
+        caption: [{ text: "a definition" }],
       })
     ).toBe("-- a definition\nx = 5");
   });

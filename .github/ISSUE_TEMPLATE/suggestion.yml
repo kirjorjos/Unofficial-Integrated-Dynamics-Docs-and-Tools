@@ -18,7 +18,7 @@ body:
         - label: Display Panel View
         - label: Reader View
         - label: Visual Transformer
-        - label: JSON Transformer
+        - label: SNBT Transformer
         - label: Code Line Transformer
         - label: Expanded Transformer
         - label: Condensed Transformer

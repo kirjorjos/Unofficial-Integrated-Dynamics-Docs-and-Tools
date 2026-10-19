@@ -1517,6 +1517,8 @@ button {
 .input-docs-section-body {
   display: grid;
   gap: 0.35rem;
+  min-width: 0;
+  overflow-wrap: normal;
 }
 
 .input-docs-heading {
@@ -1631,7 +1633,8 @@ button {
   font: inherit;
 }
 
-.input-docs-example-text {
+.input-docs-example-text,
+.input-docs-measure {
   font-family:
     "JetBrains Mono", "IBM Plex Mono", "Fira Code", ui-monospace,
     SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", monospace;
@@ -1657,8 +1660,30 @@ button {
   color: #5b8d97;
 }
 
+.input-docs-example-shortened {
+  color: #15c40b;
+}
+
 .input-docs-example-structural .input-docs-example-text {
   font-style: italic;
+}
+
+.input-docs-code {
+  font-family:
+    "JetBrains Mono", "IBM Plex Mono", "Fira Code", ui-monospace,
+    SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", monospace;
+  color: #123c47;
+}
+
+.input-docs-measure {
+  position: absolute;
+  top: 0;
+  left: -10000px;
+  width: 0;
+  padding: 0;
+  border: 0;
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .input-docs-links {

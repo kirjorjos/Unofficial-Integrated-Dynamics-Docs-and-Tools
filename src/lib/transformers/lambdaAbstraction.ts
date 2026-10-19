@@ -1,6 +1,12 @@
 import { ASTToCondensed, CondensedToAST } from "lib/transformers/Condensed";
 import { getExpandedVarName } from "lib/transformers/Expanded";
 import { astContentKey } from "lib/transformers/NetworkCards";
+import {
+  getSourceCards,
+  isSourceNode,
+  sourceToNetworkCards,
+  withSourceCards,
+} from "lib/transformers/sourceNodes";
 
 export interface AbstractedParam {
   name: string;
@@ -51,6 +57,13 @@ export const abstractDynamicParts = (expr: TypeAST.AST): DynamicAbstraction => {
 
     if (node.type === "Materialize") {
       return { ...node, value: rewrite(node.value, true) };
+    }
+
+    if (isSourceNode(node)) {
+      return withSourceCards(
+        node,
+        getSourceCards(node).map((card) => rewrite(card, staticProtected))
+      );
     }
 
     const isDynamicLeaf = node.type === "Reader" || node.type === "Dynamic";
@@ -119,12 +132,18 @@ export const abstractDynamicParts = (expr: TypeAST.AST): DynamicAbstraction => {
             node: rewrite(def.node, staticProtected),
           })),
         };
+      case "Display":
+      case "Card":
+        return { ...node, value: rewrite(node.value, staticProtected) };
       default:
         return node;
     }
   };
 
-  const openBody = rewrite(expr, false);
+  const openBody = rewrite(
+    isSourceNode(expr) ? sourceToNetworkCards(expr) : expr,
+    false
+  );
 
   let lambda: TypeAST.AST = openBody;
   if (params.length > 0) {

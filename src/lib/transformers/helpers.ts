@@ -5,6 +5,7 @@ import { getReaderClassByTypeName } from "lib/IntegratedDynamicsClasses/readers/
 import { operatorRegistry } from "lib/IntegratedDynamicsClasses/registries/operatorRegistry";
 import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 import { ASTtoOperator } from "lib/transformers/Operator";
+import { getSourceCards } from "lib/transformers/sourceNodes";
 
 export interface FlattenedBaseOperatorApplication {
   operator: TypeAST.Operator;
@@ -138,7 +139,15 @@ export const astContainsVariableValueByIdReader = (
     case "Materialize":
     case "Dynamic":
     case "Static":
+    case "Display":
+    case "Card":
       return astContainsVariableValueByIdReader(ast.value);
+    case "VarStore":
+    case "DisplayPanel":
+    case "Writer":
+    case "Exporter":
+    case "Importer":
+      return getSourceCards(ast).some(astContainsVariableValueByIdReader);
     default:
       return false;
   }

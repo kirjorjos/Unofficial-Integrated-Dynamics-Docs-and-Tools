@@ -20,6 +20,10 @@ import {
   OperatorSerializationRegistry,
 } from "lib/IntegratedDynamicsClasses/operators/Operator";
 import { CompoundTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/CompoundTag";
+import {
+  ValueTypeListProxyFactories,
+  ValueTypeListProxyMaterialized,
+} from "lib/IntegratedDynamicsClasses/ValueTypeListProxy";
 
 export class ValueHelpers {
   public static serializeRaw(value: IntegratedValue): Tag<any> {
@@ -37,15 +41,12 @@ export class ValueHelpers {
       return OperatorSerializationRegistry.serialize(value);
     if (value instanceof Tag) return value;
     if (value instanceof iArrayEager) {
-      return new ListTag(
-        new iArrayEager(
-          (value as iArrayEager<IntegratedValue>).valueOf().map((v) => {
-            const tag = new CompoundTag({
-              valueType: new StringTag(new iString(this.getTypeName(v))),
-              value: this.serializeRaw(v),
-            });
-            return tag;
-          })
+      if (ValueTypeListProxyFactories.REGISTRY.size === 0) {
+        ValueTypeListProxyFactories.load();
+      }
+      return ValueTypeListProxyFactories.serialize(
+        new ValueTypeListProxyMaterialized(
+          (value as iArrayEager<IntegratedValue>).valueOf()
         )
       );
     }
@@ -79,7 +80,17 @@ export class ValueHelpers {
         return OperatorSerializationRegistry.deserialize(tag);
       case "integrateddynamics:nbt":
         return tag;
-      case "integrateddynamics:list":
+      case "integrateddynamics:list": {
+        if (tag instanceof CompoundTag) {
+          const nameNode = tag.get(new iString("proxyName"));
+          if (nameNode instanceof StringTag) {
+            if (ValueTypeListProxyFactories.REGISTRY.size === 0) {
+              ValueTypeListProxyFactories.load();
+            }
+            const proxy = ValueTypeListProxyFactories.deserialize(tag);
+            return new iArrayEager(proxy.isInfinite() ? [] : proxy.valueOf());
+          }
+        }
         if (tag instanceof ListTag) {
           const values = tag
             .valueOf()
@@ -100,6 +111,7 @@ export class ValueHelpers {
           return new iArrayEager(values);
         }
         return new iArrayEager([]);
+      }
       default:
         throw new Error(`Cannot deserialize value of type ${typeName}`);
     }

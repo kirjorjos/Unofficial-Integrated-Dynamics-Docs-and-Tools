@@ -302,6 +302,48 @@ describe("TestCompressedTransformer", () => {
     }
   });
 
+  it("testSourceNodeRoundTrip", () => {
+    const cases: TypeAST.Source[] = [
+      {
+        type: "VarStore",
+        value: { id: "3", cards: [{ type: "Integer", value: "5" }] },
+      },
+      {
+        type: "DisplayPanel",
+        value: {
+          id: "1",
+          settings: { priority: 2 },
+          inventory: [{ type: "Integer", value: "5" }],
+        },
+      },
+      {
+        type: "Writer",
+        value: {
+          partType: "integrateddynamics:inventory_writer",
+          id: "4",
+          settings: { channel: 1 },
+          inventory: [{ type: "Integer", value: "5" }],
+        },
+      },
+      {
+        type: "Exporter",
+        value: {
+          partType: "integratedtunnels:exporter_item",
+          id: "5",
+          inventory: [],
+        },
+      },
+      {
+        type: "Importer",
+        value: { partType: "integratedtunnels:importer_item", inventory: [] },
+      },
+    ];
+
+    for (const ast of cases) {
+      expect(CompressedToAST(ASTToCompressed(ast))).toEqual(ast);
+    }
+  });
+
   it("testReaderRejectsUnknownAspect", () => {
     const ast: TypeAST.Reader = {
       type: "Reader",

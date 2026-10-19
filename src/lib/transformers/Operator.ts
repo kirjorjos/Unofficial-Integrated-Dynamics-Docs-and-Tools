@@ -160,6 +160,8 @@ export const ASTtoOperator = (ast: TypeAST.AST): IntegratedValue => {
     case "Materialize":
     case "Dynamic":
     case "Static":
+    case "Display":
+    case "Card":
       return ASTtoOperator(ast.value);
 
     case "Reader": {
