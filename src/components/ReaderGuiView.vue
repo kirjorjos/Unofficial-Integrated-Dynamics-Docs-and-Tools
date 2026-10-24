@@ -2,6 +2,7 @@
 import { computed } from "vue";
 import FitText from "./FitText.vue";
 import HoverMinecraftTooltip from "./HoverMinecraftTooltip.vue";
+import { buildAspectCardTooltip } from "pages-lib/visualTransformerLogic";
 import { publicAsset } from "pages-lib/visualTransformerHelpers";
 import { LOGIC_PROGRAMMER_TYPE_COLORS } from "pages-lib/visualTransformer";
 import type { ReaderStatic } from "lib/IntegratedDynamicsClasses/readers/ReaderBase";
@@ -10,11 +11,11 @@ import { getReaderAspectDefaultValue } from "lib/IntegratedDynamicsClasses/reade
 const props = withDefaults(
   defineProps<{
     reader: ReaderStatic;
-    /** The aspect currently being made — shown in search bar, scrolled to row 0. */
     focusedAspect?: string;
-    /** Per-aspect display values (aspectKey -> text shown in the value box). */
     values?: Record<string, string>;
     typeError?: string;
+    partId?: number | string;
+    variableId?: number;
   }>(),
   {}
 );
@@ -131,6 +132,17 @@ const title = computed(
     READER_TITLES[props.reader.shortName] ?? `${props.reader.shortName} Reader`
 );
 
+const outputSlotTooltip = computed(() => {
+  const aspectKey = props.focusedAspect;
+  if (!aspectKey || !props.reader.aspects[aspectKey]) return null;
+  return buildAspectCardTooltip({
+    aspectName: getAspectName(aspectKey),
+    typeName: getTypeName(aspectKey),
+    partId: props.partId,
+    variableId: props.variableId,
+  });
+});
+
 const searchQuery = computed(() =>
   props.focusedAspect ? getAspectName(props.focusedAspect) : ""
 );
@@ -226,6 +238,16 @@ const thumbTop = computed(() => {
               :lines="[]"
             >
               <span class="logic-type-error-icon reader-output-error-icon" />
+            </HoverMinecraftTooltip>
+            <HoverMinecraftTooltip
+              v-else-if="aspectKey === focusedAspect && outputSlotTooltip"
+              :title="outputSlotTooltip.title"
+              :lines="outputSlotTooltip.lines"
+            >
+              <div
+                class="reader-slot-output-card"
+                :style="cardStyle(aspectKey)"
+              />
             </HoverMinecraftTooltip>
             <div
               v-else-if="aspectKey === focusedAspect"

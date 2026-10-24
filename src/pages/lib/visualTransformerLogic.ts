@@ -1,9 +1,11 @@
 import { operatorRegistry } from "lib";
 import {
+  getReaderAspect,
   getReaderAspectDefaultValue,
   getReaderAspectOperatorDisplayText,
   getReaderClassByTypeName,
 } from "lib/IntegratedDynamicsClasses/readers/readerRegistry";
+import { getReaderPartType } from "lib/transformers/aspectNames";
 import {
   isResolvedReaderSimulatedValueError,
   resolveReaderSimulatedValue,
@@ -115,6 +117,8 @@ const VARIABLE_CARD_INFO_KEY = "item.integrateddynamics.variable.info";
 const SHIFT_HELD_TOOLTIP_INFO = tooltipInfo as Record<string, string>;
 const VALUE_TYPE_NAME_TEMPLATE = "§eType: §r%s";
 const VALUE_TEMPLATE = "§e§oValue: §r%s";
+const ASPECT_NAME_TEMPLATE = "§eAspect: §r%s";
+const PART_ID_TEMPLATE = "§ePart ID: §r%s";
 const OPERATOR_SIGNATURE_TEMPLATE = "§eSignature: §r%s";
 const EXPECTED_INPUT_TYPE_TEMPLATE = "§eExpected Type: %s";
 const EXPECTED_OUTPUT_TYPE_TEMPLATE = "§eExpected Output: %s";
@@ -928,6 +932,99 @@ export const buildValueCardTooltip = (
   };
 };
 
+export const buildAspectCardTooltip = (input: {
+  aspectName?: string;
+  typeName: string;
+  partId?: number | string;
+  variableId?: number;
+}): TooltipData => {
+  const typeMeta = getValueTypeMeta(input.typeName);
+  const lines: string[] = [];
+
+  if (input.aspectName) {
+    lines.push(formatTemplate(ASPECT_NAME_TEMPLATE, input.aspectName));
+  }
+
+  lines.push(
+    formatTemplate(
+      VALUE_TYPE_NAME_TEMPLATE,
+      `${typeMeta.altColorCode ?? typeMeta.colorCode}${typeMeta.label}`
+    )
+  );
+
+  if (input.partId !== undefined && input.partId !== "") {
+    lines.push(formatTemplate(PART_ID_TEMPLATE, `${input.partId}`));
+  }
+
+  if (input.variableId !== undefined) {
+    lines.push(
+      formatTemplate(VARIABLE_CARD_ID_TEMPLATE, `${input.variableId}`)
+    );
+  }
+
+  lines.push(...getTooltipInfoLines(VARIABLE_CARD_INFO_KEY));
+
+  return {
+    title: VARIABLE_CARD_NAME,
+    lines,
+  };
+};
+
+const parseAuthoredPartId = (
+  value: string | number | undefined
+): number | undefined => {
+  if (value === undefined) return undefined;
+  const parsed = typeof value === "number" ? value : Number.parseInt(value, 10);
+  return Number.isFinite(parsed) ? parsed : undefined;
+};
+
+export const getReaderPartIdForStep = (
+  steps: Pick<VisualStep, "node">[],
+  index: number,
+  startPartId: number
+): number | undefined => {
+  const used = new Set<number>();
+  const byReaderPart = new Map<string, number>();
+  let next = startPartId;
+
+  const take = (): number => {
+    while (used.has(next)) next += 1;
+    const id = next;
+    used.add(id);
+    next += 1;
+    return id;
+  };
+
+  for (let stepIndex = 0; stepIndex <= index; stepIndex += 1) {
+    const node = steps[stepIndex]?.node;
+    if (node?.type !== "Reader") continue;
+
+    const authored = parseAuthoredPartId(node.value.partId);
+    let id: number;
+    if (authored !== undefined) {
+      id = authored;
+      used.add(id);
+    } else {
+      const readerClass = getReaderClassByTypeName(node.value.reader);
+      const key =
+        (readerClass && getReaderPartType(readerClass)) ??
+        readerClass?.typeName ??
+        node.value.reader;
+      const known = byReaderPart.get(key);
+      if (known !== undefined) {
+        id = known;
+      } else {
+        id = take();
+        byReaderPart.set(key, id);
+      }
+    }
+
+    if (stepIndex === index) return id;
+  }
+
+  return undefined;
+};
+
 export const buildOperatorCardTooltip = (
   step: Pick<
     VisualStep,
@@ -1086,8 +1183,23 @@ export const buildStepTooltip = (
     | "node"
     | "tooltipOperatorKey"
   >,
-  variableId: number
+  variableId: number,
+  partId?: number
 ): TooltipData => {
+  if (step.node?.type === "Reader") {
+    const readerClass = getReaderClassByTypeName(step.node.value.reader);
+    const aspect = readerClass
+      ? getReaderAspect(readerClass, step.node.value.aspect)
+      : undefined;
+
+    return buildAspectCardTooltip({
+      aspectName: aspect?.fullDisplayName ?? step.node.value.aspect,
+      typeName: aspect?.outputType ?? getReaderOutputType(step.node),
+      partId,
+      variableId,
+    });
+  }
+
   if (step.kind === "operator" && step.sourceType !== "Operator") {
     return buildOperatorCardTooltip(step as any, variableId);
   }
@@ -1605,7 +1717,15 @@ export const generateVisualSteps = (
       step: Omit<VisualStep, "variableId" | "tooltip">
     ): VisualCardRef => {
       const variableId = startVariableId + result.length;
-      const tooltip = buildStepTooltip(step, variableId);
+      const partId =
+        step.sourceType === "Reader"
+          ? getReaderPartIdForStep(
+              [...result, step],
+              result.length,
+              startVariableId
+            )
+          : undefined;
+      const tooltip = buildStepTooltip(step, variableId, partId);
       const fullStep = {
         ...step,
         variableId,

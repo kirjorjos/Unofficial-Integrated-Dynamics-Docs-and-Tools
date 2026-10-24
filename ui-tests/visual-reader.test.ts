@@ -101,6 +101,24 @@ test.describe("readerVisualOutput", () => {
     await expect(page.locator(".display-panel-error-overlay")).toHaveCount(0);
   });
 
+  test("testReaderOutputSlotShowsVariableCardTooltip", async ({ page }) => {
+    await openVisual(page, (await CODE).inventorySlot);
+
+    const card = page.locator(".reader-slot-output-card");
+    await expect(card).toHaveCount(1);
+    await card.hover();
+
+    const tooltip = page.locator(".logic-card-tooltip");
+    await expect(tooltip).toBeVisible();
+    await expect(tooltip).toContainText("Variable Card");
+    await expect(tooltip).toContainText("Aspect: Slot Item");
+    await expect(tooltip).toContainText("Part ID: 0");
+    await expect(tooltip).toContainText("Variable ID: 0");
+
+    await page.locator(".reader-row-card").first().hover();
+    await expect(page.locator(".logic-card-tooltip")).toHaveCount(0);
+  });
+
   test("testReaderTypeErrorShowsRedXAndDisplayPanelError", async ({ page }) => {
     await openVisual(page, await TYPE_ERROR);
 
