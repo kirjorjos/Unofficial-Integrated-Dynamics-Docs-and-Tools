@@ -19,4 +19,15 @@ module.exports = {
     "^components/(.*)$": "<rootDir>/src/components/$1",
     "^pages-lib/(.*)$": "<rootDir>/src/pages/lib/$1",
   },
+  collectCoverageFrom: [
+    "src/lib/**/*.ts",
+    "src/pages/lib/**/*.ts",
+    "!src/lib/**/*.test.ts",
+    "!src/tests/**",
+    "!src/lib/generated/**",
+    "!src/lib/IntegratedDynamicsClasses/registries/registry.ts",
+    "!src/pages/lib/visualTransformerHelpers.ts",
+  ],
+  coverageReporters: ["lcov", "json-summary"],
+  coverageDirectory: "coverage",
 };

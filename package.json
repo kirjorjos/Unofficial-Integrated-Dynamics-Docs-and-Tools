@@ -28,6 +28,7 @@
     "dev:branch": "node scripts/dev-branch.mjs",
     "pages:deploy": "node scripts/pages-deploy.mjs",
     "test": "jest && npm run typecheck && node scripts/run-visual-tests.mjs",
+    "coverage": "jest --coverage",
     "test:debug": "jest --runInBand --no-cache",
     "test:screenshots": "node scripts/run-visual-tests.mjs",
     "test:report": "playwright show-report",
