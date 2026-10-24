@@ -25,6 +25,8 @@
   },
   "scripts": {
     "dev": "vite",
+    "dev:branch": "node scripts/dev-branch.mjs",
+    "pages:deploy": "node scripts/pages-deploy.mjs",
     "test": "jest && npm run typecheck && node scripts/run-visual-tests.mjs",
     "test:debug": "jest --runInBand --no-cache",
     "test:screenshots": "node scripts/run-visual-tests.mjs",
@@ -34,7 +36,7 @@
     "generate:screenshots": "node scripts/generate-screenshots.mjs",
     "format": "prettier --write .",
     "format:staged": "git diff --cached --name-only --diff-filter=ACMR | xargs -r git-format-staged --formatter 'prettier --ignore-unknown --stdin-filepath \"{}\"'",
-    "typecheck": "vue-tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.ui-tests.json",
+    "typecheck": "vue-tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.ui-tests.json && tsc --noEmit -p tsconfig.pagesDeploy.json",
     "build": "npm run format && npm run test && vite build",
     "build:ci": "npm run format && npx jest && npm run typecheck && npx playwright test --output=test-results && vite build",
     "preview": "vite preview",

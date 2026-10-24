@@ -10,6 +10,7 @@ Integrated Dynamics Website.code-workspace
 
 node_modules/
 docs/
+_site/
 *.log
 *.disabled
 

@@ -2,8 +2,11 @@ import { fileURLToPath, URL } from "node:url";
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 
+const rawBase = process.env.PAGES_BASE || "/";
+const base = rawBase === "/" ? "/" : `/${rawBase.replace(/^\/+|\/+$/g, "")}/`;
+
 export default defineConfig({
-  base: "/Unofficial-Integrated-Dynamics-Docs-and-Tools/",
+  base,
   plugins: [vue()],
   resolve: {
     alias: {
