@@ -21,6 +21,7 @@ import {
   setOperatorSourceName,
   getOperatorSourceName,
   flattenAnonymousBaseOperatorApplication,
+  parseNumericLiteralToken,
   type CommentSpan,
   type TokenComment,
 } from "lib/transformers/helpers";
@@ -30,8 +31,16 @@ import {
   getNetworkDefLastCardIds,
   getNetworkSegmentRefs,
   getRefInfo,
+  getRefName,
 } from "lib/transformers/NetworkCards";
 import { normalizeSegments } from "lib/transformers/MixedLists";
+import {
+  buildBlockLikeConstructor,
+  buildIngredientsConstructor,
+  buildRecipeConstructor,
+  ingredientsToText,
+  recipeToText,
+} from "lib/transformers/constructors";
 import {
   extractCardOperands,
   getCardOperandIndex,
@@ -93,19 +102,67 @@ const unescapeDelimited = (s: string, escapeQuote: "'" | '"'): string => {
       out += "/";
       i++;
     } else {
-      out += "\\" + next;
-      i++;
+      throw new InvalidEscapeParseError(
+        `Invalid escape sequence "\\${next}" in string literal`
+      );
     }
   }
   return out;
 };
 
+const assertKnownEscapes = (body: string): void => {
+  for (let i = 0; i < body.length; i++) {
+    if (body[i] !== "\\") continue;
+    const next = body[i + 1];
+    if (next === undefined) {
+      throw new InvalidEscapeParseError(
+        "String literal ends with a lone backslash"
+      );
+    }
+    if (!/^[nrtbf"'\\/]$/.test(next)) {
+      throw new InvalidEscapeParseError(
+        `Invalid escape sequence "\\${next}" in string literal`
+      );
+    }
+    i++;
+  }
+};
+
+const hasEscapedDoubleQuote = (body: string): boolean => {
+  let backslashes = 0;
+  for (let i = 0; i < body.length; i++) {
+    if (body[i] === "\\") {
+      backslashes++;
+      continue;
+    }
+    if (body[i] === '"' && backslashes % 2 === 1) {
+      if (body[i + 1] === '"' && body[i + 2] === '"') {
+        backslashes = 0;
+        continue;
+      }
+      return true;
+    }
+    backslashes = 0;
+  }
+  return false;
+};
+
 export const unquoteString = (raw: string): string => {
   if (raw.startsWith('"""') && raw.endsWith('"""') && raw.length >= 6) {
-    return unescapeDelimited(raw.slice(3, -3), '"');
+    const body = raw.slice(3, -3);
+    if (hasEscapedDoubleQuote(body)) {
+      throw new InvalidEscapeParseError(
+        "A triple-quoted string takes a bare quote, not an escaped one"
+      );
+    }
+    return unescapeDelimited(body, '"');
   }
   if (raw.startsWith("'") && raw.endsWith("'") && raw.length >= 2) {
     return unescapeDelimited(raw.slice(1, -1), "'");
+  }
+  if (raw.startsWith('"') && raw.endsWith('"') && raw.length >= 2) {
+    assertKnownEscapes(raw.slice(1, -1));
+    return JSON.parse(raw);
   }
   return JSON.parse(raw);
 };
@@ -133,15 +190,11 @@ const resolveType = (value: string, possible: string[]): string => {
   if (lower === "null" && possible.includes("null")) return "null";
   if ((lower === "true" || lower === "false") && possible.includes("boolean"))
     return "boolean";
-  if (possible.includes("integer") && /^-?\d+$/.test(value)) {
-    const num = BigInt(value);
-    if (num >= BigInt(-2147483648) && num <= BigInt(2147483647))
-      return "integer";
-    return "long";
-  }
-  if (possible.includes("long") && /^-?\d+[lL]$/.test(value)) return "long";
-  if (possible.includes("double")) {
-    if (/^-?(?:\d+\.\d+[dD]?|\d+\.|\d+[dD])$/.test(value)) return "double";
+  const numeric = parseNumericLiteralToken(value);
+  if (numeric !== null) {
+    const numericType = numeric.type.toLowerCase();
+    if (possible.includes(numericType)) return numericType;
+    if (/^[-.\d]/.test(value)) return numericType;
   }
   if (value.startsWith('"') || value.startsWith("'") || value.startsWith('"""'))
     return "string";
@@ -274,6 +327,12 @@ export const tokenizeWithComments = (
         condensed[i + 1] === '"' &&
         condensed[i + 2] === '"'
       ) {
+        let run = 1;
+        while (condensed[i + run] === '"') run++;
+        if (run > 3) {
+          currentToken += char;
+          continue;
+        }
         currentToken += '\"\"\"';
         i += 2; // Skip the other two closing quotes
         state.quote = null;
@@ -620,6 +679,11 @@ export const CondensedToAST = (
           throw new StructuralParseError("Expected ']'");
         }
         pos++;
+        if (values.some((value) => value.type === "Card")) {
+          throw new StructuralParseError(
+            "Card(...) cannot be used inside a list; give it a name of its own"
+          );
+        }
         return { type: "List", value: values };
       }
       if (token.value === ";") {
@@ -689,27 +753,32 @@ export const CondensedToAST = (
         name: `@${(args[0] as { value: string }).value}`,
       };
     }
-    const internalKey = operatorRegistry.operatorByNickname(name);
+    if (
+      [
+        "block",
+        "item",
+        "fluid",
+        "entity",
+        "ingredients",
+        "recipe",
+        "operator",
+        "variable",
+      ].includes(name.toLowerCase())
+    ) {
+      return handleCallInternal({ type: "Identifier", value: name }, args);
+    }
+
     if (scope.has(name)) {
       throw new InvalidArityParseError(
         `Non-base operator not directly callable, use apply`
       );
     }
+    const internalKey = operatorRegistry.operatorByNickname(name);
     const base: InternalAST = externalScope.has(name)
       ? (externalScope.get(name)! as InternalAST)
       : internalKey
         ? setOperatorSourceName({ type: "Operator", opName: internalKey }, name)
-        : [
-              "block",
-              "item",
-              "fluid",
-              "entity",
-              "ingredients",
-              "recipe",
-              "operator",
-            ].includes(name.toLowerCase())
-          ? { type: "Identifier", value: name }
-          : handleLiteral({ type: "identifier", value: name }, scope);
+        : handleLiteral({ type: "identifier", value: name }, scope);
 
     return handleCallInternal(base, args);
   }
@@ -964,6 +1033,11 @@ export const CondensedToAST = (
             );
           }
           partId = (a as { value: string }).value;
+          if (!/^\d+$/.test(partId)) {
+            throw new StructuralParseError(
+              `Reader part id must be a non-negative integer, got "${partId}"`
+            );
+          }
         }
         const aspectName = consumeDotAspectName();
         const aspectKey = getReaderAspectKey(readerClass, aspectName);
@@ -1132,72 +1206,23 @@ export const CondensedToAST = (
         }
         return { type: "Variable", name: `@${varName}` };
       }
-      if (
-        ["block", "item", "fluid", "entity", "ingredients"].includes(lowerName)
-      ) {
-        if (lowerName === "ingredients") {
-          return {
-            type: "Ingredients",
-            value: (args[0] as TypeAST.Ingredients).value,
-          };
-        }
+      if (["block", "item", "fluid", "entity"].includes(lowerName)) {
+        return buildBlockLikeConstructor(
+          lowerName as "block" | "item" | "fluid" | "entity",
+          args as TypeAST.AST[]
+        ) as InternalAST;
+      }
 
-        const id = (args[0] as { value: string }).value;
-        let size: TypeNumericString | undefined = undefined;
-        let props: jsonData | undefined = undefined;
-
-        if (args.length > 1) {
-          const arg1 = args[1]!;
-          if (
-            arg1.type === "Integer" ||
-            arg1.type === "Long" ||
-            arg1.type === "Double"
-          ) {
-            size = arg1.value;
-            if (args.length > 2) {
-              const arg2 = args[2]!;
-              if (arg2.type === "NBT" || arg2.type === "Identifier") {
-                props = arg2.value;
-              }
-            }
-          } else if (arg1.type === "NBT") {
-            props = arg1.value;
-          }
-        }
-
-        const value: jsonObject = { id };
-        if (size !== undefined) {
-          if (lowerName === "block") value["size"] = size;
-          if (lowerName === "item") value["size"] = size;
-          if (lowerName === "fluid") value["amount"] = size;
-        }
-        if (props !== undefined) {
-          if (lowerName === "block") value["properties"] = props as jsonObject;
-          else value["tag"] = props;
-        }
-
-        const type = (name.charAt(0).toUpperCase() + lowerName.slice(1)) as
-          | "Block"
-          | "Item"
-          | "Fluid"
-          | "Entity";
-        return { type, value } as InternalAST;
+      if (lowerName === "ingredients") {
+        return buildIngredientsConstructor(
+          args as TypeAST.AST[]
+        ) as unknown as InternalAST;
       }
 
       if (lowerName === "recipe") {
-        const val = (args[0] as { value: TypeAST.Recipe["value"] }).value;
-        return {
-          type: "Recipe",
-          value: {
-            input: val.input,
-            output: val.output,
-            inputReuseable: val.inputReuseable || {
-              items: [],
-              fluids: [],
-              energies: [],
-            },
-          },
-        } as InternalAST;
+        return buildRecipeConstructor(
+          args as TypeAST.AST[]
+        ) as unknown as InternalAST;
       }
     }
 
@@ -1675,17 +1700,16 @@ export const CondensedToAST = (
   ): InternalAST {
     switch (token.type) {
       case "integer":
-        return { type: "Integer", value: token.value as TypeNumericString };
       case "long":
-        return {
-          type: "Long",
-          value: token.value.replace(/[lL]$/, "") as TypeNumericString,
-        };
-      case "double":
-        return {
-          type: "Double",
-          value: token.value.replace(/[dD]$/, "") as TypeNumericString,
-        };
+      case "double": {
+        const numeric = parseNumericLiteralToken(token.value);
+        if (numeric === null) {
+          throw new StructuralParseError(
+            `Invalid numeric literal: ${token.value}`
+          );
+        }
+        return { type: numeric.type, value: numeric.value };
+      }
       case "string":
         return { type: "String", value: unquoteString(token.value) };
       case "boolean":
@@ -1786,6 +1810,8 @@ export interface CondensedOutputOptions {
   joinStatements?: ";" | "\n";
   refStyle?: "varId" | "refs";
   atNameRefs?: boolean;
+  useNames?: boolean;
+  varIdRefsByName?: Map<string, string>;
 }
 
 export const ASTToCondensed = (
@@ -1824,14 +1850,32 @@ export const ASTToCondensed = (
   };
 
   const stringify = (node: TypeAST.AST, topLevel = false): string => {
-    const ref = refString(node);
+    if (outputOpts.useNames) {
+      const refName = getRefName(node);
+      if (refName !== undefined && !/^@\d+$/.test(refName)) {
+        const name = refName.slice(1);
+        return isVarNameExpandedSafe(name)
+          ? refName
+          : `Variable(${JSON.stringify(name)})`;
+      }
+    }
+    const ref = outputOpts.useNames ? null : refString(node);
     if (ref !== null && !topLevel) {
       return ref;
     }
 
+    if (!topLevel && node.varName && outputOpts.varIdRefsByName) {
+      const varId = outputOpts.varIdRefsByName.get(node.varName);
+      if (varId !== undefined) return varId;
+    }
+
     if (node.varName && !topLevel) {
       const formatted = formatVarName(node.varName);
-      if (outputOpts.atNameRefs && !formatted.startsWith("@")) {
+      if (
+        outputOpts.atNameRefs &&
+        isVarNameExpandedSafe(node.varName) &&
+        !formatted.startsWith("@")
+      ) {
         return `@${formatted}`;
       }
       return formatted;
@@ -1866,6 +1910,11 @@ export const ASTToCondensed = (
       case "Variable": {
         if (node.name.startsWith("@")) {
           const name = node.name.slice(1);
+          const varId = outputOpts.varIdRefsByName?.get(name);
+          if (varId !== undefined) {
+            result = varId;
+            break;
+          }
           result = isVarNameExpandedSafe(name)
             ? node.name
             : `Variable(${JSON.stringify(name)})`;
@@ -1887,8 +1936,15 @@ export const ASTToCondensed = (
       case "Item":
       case "Fluid":
       case "Entity": {
+        if (node.type === "Entity" && typeof node.value === "string") {
+          result = `Entity(${JSON.stringify(node.value)})`;
+          break;
+        }
         const val = node.value as jsonObject;
         const args = [JSON.stringify(val["id"])];
+        if (node.type === "Block" && val["size"] !== undefined) {
+          args.push(val["size"] as string);
+        }
         if (node.type === "Item" && val["size"] !== undefined) {
           args.push(val["size"] as string);
         }
@@ -1905,11 +1961,11 @@ export const ASTToCondensed = (
       }
 
       case "Ingredients":
-        result = `${node.type}(${JSON.stringify(node.value)})`;
+        result = ingredientsToText(node, (entry) => stringify(entry, false));
         break;
 
       case "Recipe":
-        result = `Recipe(${JSON.stringify(node.value)})`;
+        result = recipeToText(node, (entry) => stringify(entry, false));
         break;
 
       case "Materialize":

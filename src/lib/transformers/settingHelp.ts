@@ -43,11 +43,11 @@ export const SETTING_HELP: Record<SettingHelpKey, SettingHelp> = {
   },
   referenceStyle: {
     description: "Renders card references as numeric variable IDs or as @refs.",
-    appliesTo: "Only applies to Code Line, Condensed and Expanded output.",
+    appliesTo: "Only applies to Code Line and Condensed output.",
   },
   expandedRefForm: {
     description:
-      "For Expanded output, renders card references as numeric IDs or as @name-prefixed references.",
+      "For Expanded output, renders card references as @name or as the resolved numeric card id of the definition. Expanded input accepts @name references and @calculation, not numeric @0 references.",
     appliesTo: "Only applies to Expanded output.",
   },
   wrap: {
@@ -60,7 +60,7 @@ export const SETTING_HELP: Record<SettingHelpKey, SettingHelp> = {
   },
   declarationCards: {
     description:
-      "Whether a unused operator declaration will result in card creation",
+      "Obsolete: a standalone operator declaration always creates its card now, wherever it sits. The old setting is still decoded from legacy links but has no effect.",
   },
   variableWrapper: {
     description:
@@ -74,7 +74,7 @@ export const SETTING_HELP: Record<SettingHelpKey, SettingHelp> = {
   },
   duplicateNames: {
     description:
-      "How a name redefined with a different definition is handled: a hard error, or allowed with a warning.",
+      "How a name redefined with a different definition is handled: a hard error, or the first definition is kept and the later ones are dropped with a warning.",
   },
   hardening: {
     description:
@@ -97,7 +97,7 @@ export const SETTING_HELP: Record<SettingHelpKey, SettingHelp> = {
   },
   materialize: {
     description:
-      "Wraps the whole program in Materialize(...) before emitting, so reader values are baked in and the readers they came from are dropped.",
+      "Wraps the whole program in Materialize(...) before emitting, so reader values are baked in and the readers they came from are dropped. A value that can be evaluated folds to its result and the cards that only built it are dropped; Dynamic parameters keep the chain.",
     appliesTo: "Only applies to SNBT output.",
   },
   outputShape: {
@@ -128,6 +128,11 @@ export const SETTING_HELP: Record<SettingHelpKey, SettingHelp> = {
   conflicts: {
     description:
       "Fail or warn when the input has 2 cards with the same ID and different values.",
+    appliesTo: "Only applies to SNBT output.",
+  },
+  entityUuidSeed: {
+    description:
+      "Seed for the UUIDs generated for text Entity values. The same seed and entity id always produce the same UUID, so the summon command and card stay in sync.",
     appliesTo: "Only applies to SNBT output.",
   },
 };

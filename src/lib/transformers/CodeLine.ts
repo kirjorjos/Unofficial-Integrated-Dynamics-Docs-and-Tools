@@ -22,6 +22,8 @@ import {
   resolveImplicitFlipOperator,
   setOperatorSourceName,
   flattenAnonymousBaseOperatorApplication,
+  getArity,
+  parseNumericLiteralToken,
   type CommentSpan,
   type TokenComment,
 } from "lib/transformers/helpers";
@@ -33,6 +35,13 @@ import {
   getRefInfo,
 } from "lib/transformers/NetworkCards";
 import { normalizeSegments } from "lib/transformers/MixedLists";
+import {
+  buildBlockLikeConstructor,
+  buildIngredientsConstructor,
+  buildRecipeConstructor,
+  ingredientsToText,
+  recipeToText,
+} from "lib/transformers/constructors";
 import { QuoteDelimiter, unquoteString } from "lib/transformers/Condensed";
 import {
   extractCardOperands,
@@ -45,6 +54,7 @@ export interface CodeLineOutputOptions {
   joinStatements?: ";" | "\n";
   refStyle?: "varId" | "refs";
   atNameRefs?: boolean;
+  varIdRefsByName?: Map<string, string>;
 }
 
 export const ASTToCodeLine = (
@@ -88,6 +98,8 @@ export const ASTToCodeLine = (
     }
 
     if (node.varName && !topLevel) {
+      const varId = outputOpts.varIdRefsByName?.get(node.varName);
+      if (varId !== undefined) return varId;
       const formatted = formatVarName(node.varName);
       if (outputOpts.atNameRefs && !formatted.startsWith("@")) {
         return `@${formatted}`;
@@ -145,6 +157,11 @@ export const ASTToCodeLine = (
       case "Variable": {
         if (node.name.startsWith("@")) {
           const name = node.name.slice(1);
+          const varId = outputOpts.varIdRefsByName?.get(name);
+          if (varId !== undefined) {
+            result = varId;
+            break;
+          }
           result = isVarNameExpandedSafe(name)
             ? node.name
             : `Variable(${JSON.stringify(name)})`;
@@ -205,7 +222,11 @@ export const ASTToCodeLine = (
       case "Item":
       case "Fluid":
       case "Entity": {
-        const val = node.value;
+        if (node.type === "Entity" && typeof node.value === "string") {
+          result = `Entity(${JSON.stringify(node.value)})`;
+          break;
+        }
+        const val = node.value as jsonObject;
         const args = [JSON.stringify(val["id"])];
         if (node.type === "Block" && val["size"] !== undefined) {
           args.push(val["size"] as string);
@@ -226,11 +247,11 @@ export const ASTToCodeLine = (
       }
 
       case "Ingredients":
-        result = `${node.type}(${JSON.stringify(node.value)})`;
+        result = ingredientsToText(node, (entry) => stringify(entry, false));
         break;
 
       case "Recipe":
-        result = `${node.type}(${JSON.stringify(node.value)})`;
+        result = recipeToText(node, (entry) => stringify(entry, false));
         break;
 
       case "Materialize":
@@ -342,9 +363,13 @@ export const CodeLineToAST = (
           codeLine[i + 2] === '"' &&
           codeLine[i - 1] !== "\\"
         ) {
-          quote = null;
-          current += '""';
-          i += 2;
+          let run = 1;
+          while (codeLine[i + run] === '"') run++;
+          if (run === 3) {
+            quote = null;
+            current += '""';
+            i += 2;
+          }
         }
       }
     } else if (inNBT > 0) {
@@ -601,6 +626,11 @@ export const CodeLineToAST = (
       }
       if (tokens[pos] !== "]") throw new StructuralParseError("Expected ']'");
       pos++;
+      if (values.some((value) => value.type === "Card")) {
+        throw new StructuralParseError(
+          "Card(...) cannot be used inside a list; give it a name of its own"
+        );
+      }
       return { type: "List", value: values };
     }
 
@@ -637,15 +667,14 @@ export const CodeLineToAST = (
       }
       return { type: "Variable", name: token } as InternalAST;
     }
-    if (/^-?\d+$/.test(token))
-      return { type: "Integer", value: token as TypeNumericString };
-    if (/^-?\d+l$/i.test(token))
-      return { type: "Long", value: token.slice(0, -1) as TypeNumericString };
-    if (/^-?\d+\.\d+$/.test(token))
-      return { type: "Double", value: token as TypeNumericString };
-    if (token === "true") return { type: "Boolean", value: true };
-    if (token === "false") return { type: "Boolean", value: false };
-    if (token === "null") return { type: "Null" };
+    const numeric = parseNumericLiteralToken(token);
+    if (numeric !== null) {
+      return { type: numeric.type, value: numeric.value } as InternalAST;
+    }
+    const lowerToken = token.toLowerCase();
+    if (lowerToken === "true") return { type: "Boolean", value: true };
+    if (lowerToken === "false") return { type: "Boolean", value: false };
+    if (lowerToken === "null") return { type: "Null" };
 
     const operandIndex = getCardOperandIndex(token);
     if (operandIndex !== null) {
@@ -659,7 +688,6 @@ export const CodeLineToAST = (
     if (externalScope.has(token))
       return externalScope.get(token)! as InternalAST;
 
-    const lowerToken = token.toLowerCase();
     if (
       [
         "block",
@@ -935,6 +963,11 @@ export const CodeLineToAST = (
             );
           }
           partId = (a as { value: string }).value;
+          if (!/^\d+$/.test(partId)) {
+            throw new StructuralParseError(
+              `Reader part id must be a non-negative integer, got "${partId}"`
+            );
+          }
         }
         const aspectName = consumeDotAspectName();
         const aspectKey = getReaderAspectKey(readerClass, aspectName);
@@ -1031,6 +1064,49 @@ export const CodeLineToAST = (
       return handleCallInternal(base.base, [...base.args, ...args]);
     }
 
+    if (base.type === "Operator") {
+      const opClass = operatorRegistry[base.opName];
+      let op: BaseOperator<IntegratedValue, IntegratedValue> | void = undefined;
+      if (opClass) {
+        try {
+          op = new opClass(false);
+        } catch (e) {}
+      }
+      if (!op) op = operatorRegistry.find(base.opName);
+
+      const arity = getArity(base);
+      const leadingArgsApplyAFunction = args
+        .slice(0, arity)
+        .some(
+          (arg) =>
+            arg.type === "Operator" ||
+            arg.type === "Curry" ||
+            arg.type === "Pipe" ||
+            arg.type === "Pipe2" ||
+            arg.type === "Flip"
+        );
+      if (
+        args.length > arity &&
+        arity !== 0 &&
+        op &&
+        !leadingArgsApplyAFunction
+      ) {
+        const resultType = op
+          .getSignatureNode()
+          .getOutput(arity - 1)
+          .getRootType();
+        const resultIsCallable =
+          resultType === "Function" ||
+          resultType === "Operator" ||
+          resultType === "Any";
+        if (!resultIsCallable) {
+          throw new InvalidArityParseError(
+            `Incorrect arity: operator expects ${arity} arguments but received ${args.length}.`
+          );
+        }
+      }
+    }
+
     let isApplyOp = false;
     if (base.type === "Operator") {
       const opClass = operatorRegistry[base.opName];
@@ -1083,69 +1159,23 @@ export const CodeLineToAST = (
         }
         return { type: "Variable", name: `@${varName}` };
       }
-      if (
-        ["block", "item", "fluid", "entity", "ingredients"].includes(lowerName)
-      ) {
-        if (lowerName === "ingredients") {
-          return {
-            type: "Ingredients",
-            value: (args[0] as { value: TypeAST.Ingredients["value"] }).value,
-          };
-        }
+      if (["block", "item", "fluid", "entity"].includes(lowerName)) {
+        return buildBlockLikeConstructor(
+          lowerName as "block" | "item" | "fluid" | "entity",
+          args as TypeAST.AST[]
+        ) as InternalAST;
+      }
 
-        const id = (args[0] as { value: string }).value;
-        let size: TypeNumericString | undefined = undefined;
-        let props: jsonData | undefined = undefined;
-
-        if (args.length > 1) {
-          const arg1 = args[1]!;
-          if (
-            arg1.type === "Integer" ||
-            arg1.type === "Long" ||
-            arg1.type === "Double"
-          ) {
-            size = arg1.value;
-            if (args.length > 2) {
-              props = (args[2] as { value: string }).value;
-            }
-          } else if (arg1.type === "NBT") {
-            props = arg1.value;
-          }
-        }
-
-        const value: jsonObject = { id };
-        if (size !== undefined) {
-          if (lowerName === "block") value["size"] = size;
-          if (lowerName === "item") value["size"] = size;
-          if (lowerName === "fluid") value["amount"] = size;
-        }
-        if (props !== undefined) {
-          if (lowerName === "block") value["properties"] = props as jsonObject;
-          else value["tag"] = props;
-        }
-
-        const type = (name.charAt(0).toUpperCase() + lowerName.slice(1)) as
-          | "Block"
-          | "Item"
-          | "Fluid"
-          | "Entity";
-        return { type, value } as InternalAST;
+      if (lowerName === "ingredients") {
+        return buildIngredientsConstructor(
+          args as TypeAST.AST[]
+        ) as unknown as InternalAST;
       }
 
       if (lowerName === "recipe") {
-        const val = (args[0] as TypeAST.Recipe).value;
-        return {
-          type: "Recipe",
-          value: {
-            input: val.input,
-            output: val.output,
-            inputReuseable: val.inputReuseable || {
-              items: [],
-              fluids: [],
-              energies: [],
-            },
-          },
-        } as TypeAST.Recipe;
+        return buildRecipeConstructor(
+          args as TypeAST.AST[]
+        ) as unknown as InternalAST;
       }
     }
 

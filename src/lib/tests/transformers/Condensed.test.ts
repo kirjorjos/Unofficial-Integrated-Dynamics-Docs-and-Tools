@@ -47,9 +47,9 @@ describe("TestCondensedTransformer", () => {
   });
 
   it("testTokenizeTripleQuoteString", () => {
-    const tokens = tokenize('"""has a \" double quote"""');
+    const tokens = tokenize('"""has a " double quote"""');
     expect(tokens).toEqual([
-      { type: "string", value: '"""has a \" double quote"""' },
+      { type: "string", value: '"""has a " double quote"""' },
     ]);
   });
 
@@ -69,12 +69,30 @@ describe("TestCondensedTransformer", () => {
     expect(ASTToCondensed(ast)).toBe(JSON.stringify(expected));
   });
 
-  it("testEscapedTripleQuoteStaysLiteral", () => {
-    const input = `"""left \\""" right"""`;
-    const ast = CondensedToAST(input);
-    const expected = `left """ right`;
-    expect(ast).toEqual({ type: "String", value: expected });
-    expect(ASTToCondensed(ast)).toBe(JSON.stringify(expected));
+  it("testTripleQuotesTakeABareQuoteAndRejectTheEscapedOne", () => {
+    expect(CondensedToAST('"""left " right"""')).toEqual({
+      type: "String",
+      value: 'left " right',
+    });
+    expect(CondensedToAST('""""a"""')).toEqual({
+      type: "String",
+      value: '"a',
+    });
+    expect(CondensedToAST('"""a""""')).toEqual({
+      type: "String",
+      value: 'a"',
+    });
+    expect(CondensedToAST('"""left \\""" right"""')).toEqual({
+      type: "String",
+      value: 'left """ right',
+    });
+    expect(() => CondensedToAST('"""left \\" right"""')).toThrow(
+      "takes a bare quote"
+    );
+    expect(CondensedToAST('"left \\"\\"\\" right"')).toEqual({
+      type: "String",
+      value: 'left """ right',
+    });
   });
 
   it("testOperatorPseudoConstructor", () => {
@@ -100,14 +118,12 @@ describe("TestCondensedTransformer", () => {
       type: "Operator",
       opName: "PARSE_INTEGER",
     });
-    expect(CondensedToAST('Operator("Block Block Properties")')).toEqual({
-      type: "Operator",
-      opName: "OBJECT_BLOCK_PROPERTIES",
-    });
-    expect(CondensedToAST('Operator("Block Properties")')).toEqual({
-      type: "Operator",
-      opName: "OBJECT_BLOCK_PROPERTIES",
-    });
+    expect(() => CondensedToAST('Operator("Block Block Properties")')).toThrow(
+      /Unknown operator/
+    );
+    expect(() => CondensedToAST('Operator("Block Properties")')).toThrow(
+      /Unknown operator/
+    );
     expect(
       CondensedToAST('Operator("Block Block Possible Properties")')
     ).toEqual({
@@ -339,6 +355,18 @@ describe("TestCondensedTransformer", () => {
     expect(CondensedToAST("null")).toEqual({ type: "Null" });
   });
 
+  it("testAcceptsLeadingTrailingDotAndExponentDoubles", () => {
+    expect(CondensedToAST(".5")).toEqual({ type: "Double", value: "0.5" });
+    expect(CondensedToAST("3.")).toEqual({ type: "Double", value: "3.0" });
+    expect(CondensedToAST("1e3")).toEqual({ type: "Double", value: "1000.0" });
+    expect(CondensedToAST("1.5e2")).toEqual({
+      type: "Double",
+      value: "150.0",
+    });
+    expect(CondensedToAST(".5d")).toEqual({ type: "Double", value: "0.5" });
+    expect(() => CondensedToAST("1abc")).toThrow("Unknown identifier");
+  });
+
   it("testListLiteral", () => {
     const ast = CondensedToAST('["c:armor", "c:tools"]');
     expect(ast).toEqual({
@@ -522,6 +550,22 @@ describe("TestCondensedTransformer", () => {
       value: { id: "minecraft:stone", size: "1" },
     });
     expect(ASTToCondensed(ast)).toBe(code);
+  });
+
+  it("testReaderPartIdMustBeANonNegativeInteger", () => {
+    for (const input of [
+      "InventoryReader(1.5).slotItem",
+      "InventoryReader(-1).slotItem",
+      'InventoryReader("stone").slotItem',
+    ]) {
+      expect(() => CondensedToAST(input)).toThrow(
+        "Reader part id must be a non-negative integer"
+      );
+    }
+    expect(
+      (CondensedToAST('InventoryReader("2").slotItem') as TypeAST.Reader).value
+        .partId
+    ).toBe("2");
   });
 
   it("testReaderSimulatedOutputTypeMismatchThrows", () => {
@@ -853,5 +897,66 @@ describe("TestCondensedTransformer", () => {
       "Unknown identifier: Materalize"
     );
     expect(CondensedToAST("Materialize(numberAdd(1, 2))")).toBeTruthy();
+  });
+
+  it("testLiteralConstructorsAcceptTheDocumentedShapes", () => {
+    expect(CondensedToAST('Item("minecraft:stone", 1)')).toBeTruthy();
+    expect(
+      CondensedToAST(
+        'Item("minecraft:stone", 64, {"display":{"Name":"Stone"}})'
+      )
+    ).toBeTruthy();
+    expect(
+      CondensedToAST('Item("minecraft:stone", {"display":{"Name":"Stone"}})')
+    ).toBeTruthy();
+    expect(
+      CondensedToAST('Block("minecraft:stone", 64, {"axis":"x"})')
+    ).toBeTruthy();
+    expect(CondensedToAST('Fluid("minecraft:water", 1000)')).toBeTruthy();
+    expect(
+      CondensedToAST('Entity("minecraft:cow", {"CustomName":"cow"})')
+    ).toBeTruthy();
+  });
+
+  it("testLiteralConstructorsRejectMalformedArguments", () => {
+    expect(() => CondensedToAST("Item(1)")).toThrow("quoted id");
+    expect(() => CondensedToAST('Item("minecraft:stone", "size")')).toThrow(
+      "integer size"
+    );
+    expect(() => CondensedToAST('Item("minecraft:stone", 1.5)')).toThrow(
+      "integer size"
+    );
+    expect(() => CondensedToAST('Item("minecraft:stone", 1, "tag")')).toThrow(
+      "NBT object"
+    );
+    expect(() => CondensedToAST('Item("minecraft:stone", 1, {}, 99)')).toThrow(
+      "at most 3 arguments"
+    );
+    expect(() => CondensedToAST('Block(["a"])')).toThrow("quoted id");
+    expect(() => CondensedToAST('Entity("minecraft:cow", 5)')).toThrow(
+      "optional NBT tag"
+    );
+    expect(() => CondensedToAST('Entity("minecraft:cow", {}, {})')).toThrow(
+      "at most 2 arguments"
+    );
+  });
+
+  it("testBlockSizeRoundTrips", () => {
+    const plain = CondensedToAST('Block("minecraft:stone", 64)');
+    expect(ASTToCondensed(plain)).toBe('Block("minecraft:stone", 64)');
+
+    const withProperties = CondensedToAST(
+      'Block("minecraft:oak_log", 3, {"axis":"x"})'
+    );
+    expect(ASTToCondensed(withProperties)).toBe(
+      'Block("minecraft:oak_log", 3, {"axis":"x"})'
+    );
+
+    const propertiesOnly = CondensedToAST(
+      'Block("minecraft:oak_log", {"axis":"x"})'
+    );
+    expect(ASTToCondensed(propertiesOnly)).toBe(
+      'Block("minecraft:oak_log", {"axis":"x"})'
+    );
   });
 });

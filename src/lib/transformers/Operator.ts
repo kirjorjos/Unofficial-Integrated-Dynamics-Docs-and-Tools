@@ -54,7 +54,11 @@ export const ASTtoOperator = (ast: TypeAST.AST): IntegratedValue => {
     case "Fluid":
       return new Fluid(new Properties(ast.value));
     case "Entity":
-      return new Entity(new Properties(ast.value));
+      return new Entity(
+        new Properties(
+          typeof ast.value === "string" ? { id: ast.value } : ast.value
+        )
+      );
 
     case "Ingredients": {
       const items = new iArrayEager(

@@ -13,6 +13,7 @@ import { ListTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftCla
 import { iArrayEager } from "lib/IntegratedDynamicsClasses/typeWrappers/iArrayEager";
 import { Item } from "lib/IntegratedDynamicsClasses/Item";
 import { Fluid } from "lib/IntegratedDynamicsClasses/Fluid";
+import { Block } from "lib/IntegratedDynamicsClasses/Block";
 import { Ingredients } from "lib/IntegratedDynamicsClasses/Ingredients";
 import { Recipe } from "lib/IntegratedDynamicsClasses/Recipe";
 import {
@@ -35,6 +36,14 @@ export class ValueHelpers {
     if (value instanceof iString) return new StringTag(value);
     if (value instanceof Item) return value.serializeNBT();
     if (value instanceof Fluid) return value.serializeNBT();
+    if (value instanceof Block) {
+      const data: Record<string, Tag<IntegratedValue>> = {
+        Name: new StringTag(value.getUniqueName()),
+      };
+      const properties = value.getProperties().get("properties");
+      if (properties instanceof CompoundTag) data["Properties"] = properties;
+      return new CompoundTag(data);
+    }
     if (value instanceof Ingredients) return value.serializeNBT();
     if (value instanceof Recipe) return value.serializeNBT();
     if (value instanceof Operator)
@@ -125,6 +134,7 @@ export class ValueHelpers {
     if (value instanceof iString) return "integrateddynamics:string";
     if (value instanceof Item) return "integrateddynamics:itemstack";
     if (value instanceof Fluid) return "integrateddynamics:fluidstack";
+    if (value instanceof Block) return "integrateddynamics:block";
     if (value instanceof Ingredients) return "integrateddynamics:ingredients";
     if (value instanceof Recipe) return "integrateddynamics:recipe";
     if (value instanceof Operator) return "integrateddynamics:operator";

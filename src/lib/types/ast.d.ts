@@ -13,7 +13,11 @@ namespace TypeAST {
   type Block = { type: "Block"; value: jsonObject; varName?: string };
   type Item = { type: "Item"; value: jsonObject; varName?: string };
   type Fluid = { type: "Fluid"; value: jsonObject; varName?: string };
-  type Entity = { type: "Entity"; value: jsonObject; varName?: string };
+  type Entity = {
+    type: "Entity";
+    value: jsonObject | string;
+    varName?: string;
+  };
 
   type Ingredients = {
     type: "Ingredients";

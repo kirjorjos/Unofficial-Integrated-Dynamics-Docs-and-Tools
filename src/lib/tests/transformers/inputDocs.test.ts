@@ -149,28 +149,45 @@ describe("TestInputDocs", () => {
     }
   });
 
-  it("testWrapperExamplesAbstractTheirReadersIntoLambdaParameters", () => {
+  it("testWrapperExamplesKeepReadersStaticUnlessMarkedDynamic", () => {
     const rootOf = (ast: TypeAST.AST): TypeAST.AST =>
       ast.type === "NetworkCards"
         ? ast.definitions[ast.definitions.length - 1]!.node
         : ast;
 
-    const perFormat: Record<InputDocFormatTabId, TypeAST.AST> = {
-      expanded: ExpandedToAST(
-        "slot = Materialize(numberAdd(InventoryReader(0).inventoryCount, 2))"
-      ) as TypeAST.AST,
-      codeline: CodeLineToAST(
-        "Materialize (numberAdd InventoryReader(0).inventoryCount 2)"
-      ) as TypeAST.AST,
-      condensed: CondensedToAST(
-        "Materialize(numberAdd(InventoryReader(0).inventoryCount, 2))"
-      ) as TypeAST.AST,
+    const sources: Record<InputDocFormatTabId, [string, string]> = {
+      expanded: [
+        "slot = Materialize(numberAdd(InventoryReader(0).inventoryCount, 2))",
+        "slot = Materialize(numberAdd(Dynamic(InventoryReader(0).inventoryCount), 2))",
+      ],
+      codeline: [
+        "Materialize (numberAdd InventoryReader(0).inventoryCount 2)",
+        "Materialize (numberAdd (Dynamic(InventoryReader(0).inventoryCount)) 2)",
+      ],
+      condensed: [
+        "Materialize(numberAdd(InventoryReader(0).inventoryCount, 2))",
+        "Materialize(numberAdd(Dynamic(InventoryReader(0).inventoryCount), 2))",
+      ],
+    };
+    const parsers = {
+      expanded: (source: string) => ExpandedToAST(source) as TypeAST.AST,
+      codeline: (source: string) => CodeLineToAST(source) as TypeAST.AST,
+      condensed: (source: string) => CondensedToAST(source) as TypeAST.AST,
     };
 
     for (const tabId of INPUT_DOC_FORMAT_TAB_IDS) {
-      const materialize = rootOf(perFormat[tabId]) as TypeAST.Materialize;
-      expect(materialize.type).toBe("Materialize");
-      expect(abstractDynamicParts(materialize.value).params).toHaveLength(1);
+      for (const [source, expectedParams] of [
+        [sources[tabId][0], 0],
+        [sources[tabId][1], 1],
+      ] as const) {
+        const materialize = rootOf(
+          parsers[tabId](source)
+        ) as TypeAST.Materialize;
+        expect(materialize.type).toBe("Materialize");
+        expect(abstractDynamicParts(materialize.value).params).toHaveLength(
+          expectedParams
+        );
+      }
     }
   });
 

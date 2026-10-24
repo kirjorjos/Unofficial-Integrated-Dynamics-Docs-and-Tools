@@ -40,10 +40,23 @@ describe("TestTransformerSettingsOpts", () => {
       resolve: true,
       preferSourceNames: true,
       declarationCards: "add",
+      entityUuidSeed: 123456,
     };
     const encoded = encodeSettingsOpts(settings);
     expect(encoded).not.toBeNull();
     expect(decodeSettingsOpts(encoded)).toEqual(settings);
+  });
+
+  it("testRoundTripsEntityUuidSeed", () => {
+    for (const seed of [0, 1, 127, 128, 987654321]) {
+      const settings: TransformerSettings = {
+        ...atDefault,
+        entityUuidSeed: seed,
+      };
+      expect(
+        decodeSettingsOpts(encodeSettingsOpts(settings)).entityUuidSeed
+      ).toBe(seed);
+    }
   });
 
   it("testRoundTripsDepthZeroOneOneTwoSevenAndOneTwoEight", () => {
@@ -201,24 +214,29 @@ describe("TestTransformerDuplicateNames", () => {
     expect(() => ExpandedToAST("x = 5\nx = 6")).toThrow(/already defined/);
   });
 
-  it("testKeepsBothCardsAndWarnsWhenAllowed", () => {
+  it("testKeepsTheFirstDefinitionAndWarnsWhenAllowed", () => {
     const warnings: string[] = [];
     const ast = ExpandedToAST("x = 5\nx = 6\nfinal = x", 0, {
       allowDuplicateNames: true,
       warnings,
     }) as TypeAST.NetworkCards;
-    expect(ast.definitions).toHaveLength(3);
-    expect(warnings.length).toBeGreaterThan(0);
-    expect(warnings[0]).toContain("redefined");
+    expect(ast.definitions).toHaveLength(2);
+    expect(ast.definitions[0]!.node).toMatchObject({ value: "5" });
+    expect(ast.definitions[1]!.node).toMatchObject({ value: "5" });
+    expect(warnings.length).toBe(1);
+    expect(warnings[0]).toContain("first definition was kept");
   });
 
-  it("testErrorsOnAtRefsToADuplicatedName", () => {
-    expect(() =>
-      ExpandedToAST("x = 5\nx = 6\nfinal = @x", 0, {
-        allowDuplicateNames: true,
-        warnings: [],
-      })
-    ).toThrow(/ambiguous/);
+  it("testAtRefsToADuplicatedNameUseTheFirstDefinition", () => {
+    const ast = ExpandedToAST("x = 5\nx = 6\nfinal = @x", 0, {
+      allowDuplicateNames: true,
+      warnings: [],
+    }) as TypeAST.NetworkCards;
+    expect(ast.definitions).toHaveLength(2);
+    expect(ast.definitions[1]!.node).toMatchObject({
+      type: "Integer",
+      value: "0",
+    });
   });
 });
 

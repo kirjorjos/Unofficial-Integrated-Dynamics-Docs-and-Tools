@@ -25,12 +25,13 @@ const aspectsOf = (abstraction: {
 describe("materializeVisualSteps", () => {
   beforeEach(beforeEachVisualTransformer);
 
-  it("testAbstractsReaderIntoLambdaWithReaderParamName", () => {
+  it("testReaderStaysStaticByDefault", () => {
     const abstraction = abstractDynamicParts(
       materialize("Materialize(numberAdd(inventoryReader.INTEGER_COUNT, 2))")
         .value
     );
-    expect(abstraction.params.map((p) => p.name)).toEqual(["inventoryCount"]);
+    expect(abstraction.params).toHaveLength(0);
+    expect(abstraction.lambda.type).toBe("Curry");
   });
 
   it("testStaticWrappedReaderIsNotAbstracted", () => {
@@ -51,44 +52,48 @@ describe("materializeVisualSteps", () => {
     expect(abstraction.params).toHaveLength(1);
   });
 
-  it("testMultipleReadersAreAbstractedInFirstAppearanceOrder", () => {
+  it("testMultipleReadersStayStatic", () => {
     const forward = abstractDynamicParts(
       materialize(
         "Materialize(numberAdd(redstoneReader.BOOLEAN_LOW, inventoryReader.INTEGER_COUNT))"
       ).value
     );
-    expect(aspectsOf(forward)).toEqual(["BOOLEAN_LOW", "INTEGER_COUNT"]);
-    expect(new Set(forward.params.map((p) => p.name)).size).toBe(2);
+    const forwardBody = forward.openBody as TypeAST.Curried;
+    expect(
+      aspectsOf({ params: forwardBody.args.map((arg) => ({ node: arg })) })
+    ).toEqual(["BOOLEAN_LOW", "INTEGER_COUNT"]);
+    expect(forward.params).toHaveLength(0);
 
     const reversed = abstractDynamicParts(
       materialize(
         "Materialize(numberAdd(inventoryReader.INTEGER_COUNT, redstoneReader.BOOLEAN_LOW))"
       ).value
     );
-    expect(aspectsOf(reversed)).toEqual(["INTEGER_COUNT", "BOOLEAN_LOW"]);
+    const reversedBody = reversed.openBody as TypeAST.Curried;
+    expect(
+      aspectsOf({ params: reversedBody.args.map((arg) => ({ node: arg })) })
+    ).toEqual(["INTEGER_COUNT", "BOOLEAN_LOW"]);
+    expect(reversed.params).toHaveLength(0);
   });
 
-  it("testStructurallyIdenticalReadersShareOneParameter", () => {
+  it("testStructurallyIdenticalReadersStayStatic", () => {
     const abstraction = abstractDynamicParts(
       materialize(
         "Materialize(numberAdd(inventoryReader.INTEGER_COUNT, inventoryReader.INTEGER_COUNT))"
       ).value
     );
-    expect(abstraction.params).toHaveLength(1);
+    expect(abstraction.params).toHaveLength(0);
     const body = abstraction.openBody as TypeAST.Curried;
     expect(astContentKey(body.args[0]!)).toBe(astContentKey(body.args[1]!));
-    expect((body.args[0] as TypeAST.Variable).name).toBe(
-      (body.args[1] as TypeAST.Variable).name
-    );
   });
 
-  it("testReaderSettingsMakeDistinctParameters", () => {
+  it("testReaderSettingsDoNotCreateParametersByDefault", () => {
     const abstraction = abstractDynamicParts(
       materialize(
         'Materialize(numberAdd(inventoryReader.OBJECT_ITEM_STACK_SLOT({"slotid": 1}), inventoryReader.OBJECT_ITEM_STACK_SLOT({"slotid": 2})))'
       ).value
     );
-    expect(abstraction.params).toHaveLength(2);
+    expect(abstraction.params).toHaveLength(0);
   });
 
   it("testParameterOrderingIsDeterministic", () => {
@@ -117,7 +122,7 @@ describe("materializeVisualSteps", () => {
     expect(abstractDynamicParts(inner.value).params).toHaveLength(1);
   });
 
-  it("testMaterializeEmitsLambdaThenMaterializerThenApplySteps", () => {
+  it("testStaticReaderMaterializesWithoutApplySteps", () => {
     const result = steps(
       CondensedToAST("Materialize(numberAdd(inventoryReader.INTEGER_COUNT, 2))")
     );
@@ -126,21 +131,14 @@ describe("materializeVisualSteps", () => {
       (s) => s.sourceType === "Materialize"
     );
     expect(materializeIdx).toBeGreaterThanOrEqual(0);
-
     expect(
-      result.slice(0, materializeIdx).every((s) => s.sourceType !== "Reader")
+      result.slice(0, materializeIdx).some((s) => s.sourceType === "Reader")
     ).toBe(true);
-
-    const readerIdx = result.findIndex((s) => s.sourceType === "Reader");
-    expect(readerIdx).toBeGreaterThan(materializeIdx);
-    expect(readerIdx).toBe(result.length - 2);
-    expect(result[result.length - 1]!.inputs.map((i) => i.variableId)).toEqual([
-      result[materializeIdx]!.variableId,
-      result[readerIdx]!.variableId,
-    ]);
+    expect(result[materializeIdx]!.inputs).toHaveLength(1);
+    expect(result.slice(materializeIdx + 1)).toHaveLength(0);
   });
 
-  it("testEachReaderGetsAReaderStepAndAnApplyStepInParameterOrder", () => {
+  it("testStaticReadersAddNoApplySteps", () => {
     const result = steps(
       CondensedToAST(
         "Materialize(numberAdd(redstoneReader.BOOLEAN_LOW, inventoryReader.INTEGER_COUNT))"
@@ -152,28 +150,7 @@ describe("materializeVisualSteps", () => {
     expect(materializeIdx).toBeGreaterThanOrEqual(0);
 
     const tail = result.slice(materializeIdx);
-    expect(
-      tail.map((s) =>
-        s.sourceType === "Reader"
-          ? "reader"
-          : s.sourceType === "Curry"
-            ? "apply"
-            : "other"
-      )
-    ).toEqual(["other", "reader", "apply", "reader", "apply"]);
-
-    const firstApply = tail[2]!;
-    const firstReader = tail[1]!;
-    expect(firstApply.inputs.map((i) => i.variableId)).toEqual([
-      tail[0]!.variableId,
-      firstReader.variableId,
-    ]);
-    const secondApply = tail[4]!;
-    const secondReader = tail[3]!;
-    expect(secondApply.inputs.map((i) => i.variableId)).toEqual([
-      firstApply.variableId,
-      secondReader.variableId,
-    ]);
+    expect(tail.map((s) => s.sourceType)).toEqual(["Materialize"]);
   });
 
   it("testNestedMaterializeRendersTwoMaterializerSteps", () => {
@@ -375,9 +352,8 @@ describe("getMaterializerMiddleText", () => {
 
     expect(resultCard.tooltip.title).toBe(`§o${materializeStep.output}`);
     expect(resultCard.tooltip.lines).toEqual([
-      "§eType: §r§2Operator",
-      "§eSignature: §rNumber -> Number",
-      "§e§oValue: §rApplied numberAdd [Integer]",
+      "§eType: §r§6Number",
+      "§e§oValue: §rApplied numberAdd [Integer; Integer]",
       `§e§oVariable ID: §r§o${topCard.variableId + 1}`,
       ...CRAFTING_GRID_LINES,
     ]);
@@ -392,7 +368,7 @@ describe("getMaterializerMiddleText", () => {
     ).find((s) => s.sourceType === "Materialize")!;
     const lines = getMaterializerResultCard(materializeStep).tooltip.lines;
     expect(lines[0]).toBe("§eType: §r§2Operator");
-    expect(lines[2]).toBe("§e§oValue: §rArithmetic Addition");
+    expect(lines[2]).toBe("§e§oValue: §rApplied numberAdd [Integer]");
   });
 
   it("testListResultCardTooltipShowsTheListValue", () => {
@@ -418,7 +394,19 @@ describe("getMaterializerMiddleText", () => {
       ),
       0
     ).find((s) => s.sourceType === "Materialize")!;
-    expect(getMaterializerResultCard(materializeStep).type).toBe("Operator");
+    expect(getMaterializerResultCard(materializeStep).type).toBe("Number");
+  });
+
+  it("testMaterializerStepFoldsAConstantExpression", () => {
+    const materializeStep = steps(
+      CondensedToAST("Materialize(add(1, 2))"),
+      0
+    ).find((s) => s.sourceType === "Materialize")!;
+    const topCard = materializeStep.inputs[0]!;
+    expect(getMaterializerMiddleText(topCard.node!, topCard.name)).toBe("3");
+    const resultCard = getMaterializerResultCard(materializeStep);
+    expect(resultCard.type).toBe("Integer");
+    expect(resultCard.tooltip.lines[1]).toBe("§e§oValue: §r3");
   });
 
   it("testOtherValueTypesUseTheStandardValueTooltip", () => {

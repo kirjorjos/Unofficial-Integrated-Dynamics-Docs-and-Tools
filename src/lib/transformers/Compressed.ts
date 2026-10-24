@@ -1406,7 +1406,11 @@ const writeNode = (
     case "Entity":
       writer.writeBits(NodeKind.Literal, 2);
       writeLiteralKind(writer, LiteralKind.Entity);
-      writeBitmaskObject(writer, node.value, ENTITY_KEYS);
+      writeBitmaskObject(
+        writer,
+        typeof node.value === "string" ? { id: node.value } : node.value,
+        ENTITY_KEYS
+      );
       writeNodeMetadata(writer, node);
       return;
 

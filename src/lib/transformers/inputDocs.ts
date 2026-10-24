@@ -86,7 +86,7 @@ const displayAndCardSection = (): InputDocSection => ({
   bullets: [
     [
       {
-        text: "Both must stand alone as a whole line, the value of a definition, or directly inside Materialize; buried inside a call they are rejected.",
+        text: "Card must stand alone as a whole line, the value of a definition, or directly inside Materialize; buried inside a call or placed in a list it is rejected. Card, Cards and the wrapper names Materialize, Dynamic, Static and Display are case-insensitive. Display is accepted anywhere: buried inside a call it emits no panel and stands for its expression, exactly as if the wrapper were not there.",
       },
     ],
     [
@@ -96,7 +96,7 @@ const displayAndCardSection = (): InputDocSection => ({
     ],
     [
       {
-        text: "Materialize and Display nest in either order and mean the same thing: the materialized card in a display panel.",
+        text: "Materialize and Display nest in either order and mean the same thing: the materialized card in a display panel. This only holds for values the output can bake; a reader without a cached value stays a reader, so Materialize and Display do not combine into a materializer for it.",
       },
     ],
   ],
@@ -123,7 +123,7 @@ const displayAndCardSection = (): InputDocSection => ({
       ],
       note: [
         {
-          text: "Cards is accepted too, and either spelling is written back as Card",
+          text: "Cards is accepted as an alias; the output is the cards it unwraps, never a Card(...) wrapper",
         },
       ],
     },
@@ -177,7 +177,9 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
           ],
           [
             { text: "Condensed", code: true },
-            { text: " has no definitions and no references at the moment." },
+            {
+              text: " has no definitions, but @<statement number> refers to the last card of an earlier statement, the same as in Code Line.",
+            },
           ],
           [
             { text: "In " },
@@ -188,7 +190,7 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
           ],
           [
             {
-              text: "Materialize(expression) wraps an expression in a materializer. You may use Static(...) and Dynamic(...) to explicitly specify if something is abstracted to an expected parameter of the materialized operator if you want. By default, reader values are dynamic and everything else is static.",
+              text: "Materialize(expression) wraps an expression in a materializer. Everything inside is static by default, readers included. Wrap an expression in Dynamic(...) to make it a parameter of the materialized operator instead, or in Static(...) to cancel a Dynamic around it.",
             },
           ],
         ],
@@ -266,7 +268,7 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
         heading: [{ text: "Definitions" }],
         summary: [
           {
-            text: "One definition per line. A name is given to an expression with =, and can carry a type signature written with ::.",
+            text: "One definition per line. A name is given to an expression with =, and can carry a type signature written with ::. In output every definition also gains an inferred signature line: Signature depth 0 collapses the type to its bare name but never removes the line, and Signature lines puts that line on its own line or inline, where Inline signature placement chooses before or after.",
           },
         ],
         syntax: [
@@ -302,6 +304,31 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
         ],
       },
       {
+        heading: [{ text: "Output and generated names" }],
+        bullets: [
+          [
+            {
+              text: "An unnamed expression gets a generated name in the output: the name is built from the pieces of the expression and the variable ID, so add(3, 4) becomes {addBy3}by4. The braces are part of the name, so the output re-parses. Wrappers add their own prefix, so Materialize becomes Materialized{expression}, Dynamic becomes Dynamic{expression} and Static becomes Static{expression}, and the braces can double up. A bare literal is not a name: it is written inline with no definition, so 5 stays 5, although a literal may appear inside a generated name (addBy3). A Block, Item, Fluid or Entity uses its registry display name in camelCase (Oak Log becomes oakLog); when the registry has no display name it falls back to item0, block0, fluid0 or entity0, counting per kind.",
+            },
+          ],
+          [
+            {
+              text: "An inferred signature is always the computed type, even when a typed definition declares a wider type such as Number.",
+            },
+          ],
+          [
+            {
+              text: "Expanded output can add helper definitions that the input did not write: a nested Materialize hoists its operand first ({addBy1}by2 = numberAdd(1, 2)), and a lambda whose parameter abstracts a flip emits flipNumberSubtract = operatorFlip(numberSubtract). Later lines refer to those helpers by their generated names.",
+            },
+          ],
+          [
+            {
+              text: 'Input accepts @name references (and @variable("name") as the same reference) and @calculation; @0 and other numeric references are rejected. @calculation is the last card of the final statement, so only an earlier definition can use it; in the final definition itself it is rejected, because that card does not exist yet. Expanded ref form chooses @name (the default) or the resolved card id of each definition in output: with Var ID, b = add(a, 1) is written b = add(0, 1). A numeric id is read back as a literal rather than a reference.',
+            },
+          ],
+        ],
+      },
+      {
         heading: [{ text: "Application" }],
         summary: [
           {
@@ -310,7 +337,9 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
           { text: "Code Line", code: true },
           { text: " or " },
           { text: "Condensed", code: true },
-          { text: " form." },
+          {
+            text: " form. An operator can be named by any unique name or symbol, and flip<Nickname> gives its flipped form; capitalisation matters, so flipAdd works and flipadd does not.",
+          },
         ],
         syntax: [
           {
@@ -356,7 +385,7 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
         heading: [{ text: "Type signatures" }],
         summary: [
           {
-            text: "A signature is checked against the expression's real signature. In a typed definition the type must be one of the in-game types (Any, Integer, Long, Double, Number, String, Boolean, Null, NBT, Block, Item, Fluid, Entity, Ingredients, Recipe, Operator or List). You can give an Any a name by either directly using the name, or Any<name>.  In a similar syntax to Any<name>, List<type> is also valid.",
+            text: "A typed definition is enforced: the declared type must match the expression's inferred type. In a typed definition the type must be concrete, so it must be one of the in-game types (Any, Integer, Long, Double, Number, String, Boolean, Null, NBT, Block, Item, Fluid, Entity, Ingredients, Recipe, Operator or List). Number accepts an Integer, Long or Double value, while Integer, Long and Double accept only their own kind. List<type> checks every element, not just the first, and List<Integer> is a valid definition type. A named type variable such as A or Any<A> is only valid inside a function signature: f :: A -> A and f :: List<A> -> A parse, while x :: List<A> = [1] and x :: Any<A> = 5 are rejected.",
           },
         ],
         syntax: [
@@ -431,7 +460,7 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
             ],
             note: [
               {
-                text: "integer, long (l suffix) and double (needs a decimal point)",
+                text: "a plain number is an Integer when it fits -2147483648 to 2147483647, a Long when it fits the long range, and a Double beyond that; any fraction is a Double, and .5, 3. and 1e3 are accepted as Doubles (written back as 0.5, 3.0 and 1000.0); 5l or 5L forces a Long and 3d or 3D forces a Double; leading zeros are read as the number (03 is 3); 3f and 1_0 are not numbers",
               },
             ],
           },
@@ -445,7 +474,7 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
             ],
             note: [
               {
-                text: "double, single or triple quoted; \\ escapes the next character.",
+                text: 'every quote style decodes \\n \\r \\t \\b \\f \\\\ \\/ and its own quote, and rejects every other escape, including \\" inside single quotes and \\\' inside double quotes; inside triple quotes a bare " is a literal quote anywhere, even as the first or last character, and \\" is only accepted when two more quotes follow it, which writes a literal triple quote; any other escaped quote is rejected there.',
               },
             ],
           },
@@ -516,12 +545,8 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
         heading: [{ text: "In-game values" }],
         summary: [
           {
-            text: "Blocks, items, fluids and entities are written as a constructor call: the type name, a quoted id, then an optional size and an optional tag object for items and entities or properties object for blocks. The type name is case-insensitive, a tag object may be given without a size, and Operator looks up an operator value by nickname, official name or display name. In ",
+            text: 'Blocks, items, fluids and entities are written as a constructor call: the type name, a quoted id, then an optional integer size for items and blocks, an optional integer amount for fluids, and an optional tag or properties object; the size or amount may be left out when a tag or properties object is given, as in Block("minecraft:oak_log", {"axis":"x"}). The type name is case-insensitive, the id must be quoted, and no extra arguments are accepted; Operator looks up an operator value by any of its names that is unique to one operator. A symbol such as + is only usable while exactly one operator claims it. Entity takes only its id and tag: it has no size. Ingredients(items, fluids?, energies?) takes a list of items, optional lists of fluids, and optional energies written as longs; Recipe(input, output) takes two Ingredients values.',
           },
-          { text: "Code Line", code: true },
-          { text: " and " },
-          { text: "Condensed", code: true },
-          { text: " a fluid is written with its id only." },
         ],
         syntax: [
           {
@@ -557,19 +582,21 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
               { text: "Fluid", emphasis: "required" },
               { text: "(" },
               { text: '"id"', emphasis: "required" },
+              { text: ", amount", emphasis: "optional" },
+              { text: ", {tag}", emphasis: "optional" },
               { text: ")" },
             ],
+            note: [{ text: 'e.g. Fluid("minecraft:water", 1000, {"x":1})' }],
           },
           {
             spans: [
               { text: "Entity", emphasis: "required" },
               { text: "(" },
               { text: '"id"', emphasis: "required" },
-              { text: ", size", emphasis: "optional" },
               { text: ", {tag}", emphasis: "optional" },
               { text: ")" },
             ],
-            note: [{ text: 'e.g. Entity("minecraft:cow", 1)' }],
+            note: [{ text: 'e.g. Entity("minecraft:cow")' }],
           },
           {
             spans: [
@@ -598,17 +625,19 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
           },
           {
             kind: "concrete",
-            text: 'cow = Entity("minecraft:cow", 1)',
+            text: 'cow = Entity("minecraft:cow")',
           },
           {
             kind: "concrete",
-            text: 'water = Fluid("minecraft:water")',
+            text: 'water = Fluid("minecraft:water", 1000)',
           },
           {
             kind: "concrete",
             text: 'orOperator = Operator("integrateddynamics:logical_or")',
             caption: [
-              { text: "official name, nickname and display name all work" },
+              {
+                text: "nickname, official name, display name and symbol all work, as long as the name is unique",
+              },
             ],
           },
         ],
@@ -620,7 +649,7 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
         heading: [{ text: "Readers" }],
         summary: [
           {
-            text: "A reader call names a reader, an optional part id, an aspect, optional aspect settings and an optional simulated result. Reader names are case-insensitive and the aspect may be written as its enum key or its display name.",
+            text: 'A reader call names a reader, an optional part id, an aspect, optional aspect settings and an optional simulated result. Reader names are case-insensitive and the aspect may be written as its enum key or its display name. A part id is a non-negative integer, and may also be written as a quoted string, such as InventoryReader("0").slotItem. The simulated result is the cached value that Materialize can bake into the card.',
           },
         ],
         syntax: [
@@ -636,7 +665,7 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
             ],
             note: [
               {
-                text: "dotted form; () is the same as leaving the part id out",
+                text: "dotted form; () is the same as leaving the part id out, and a part id may be a quoted string",
               },
             ],
           },
@@ -705,7 +734,7 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
         heading: [{ text: "Quoted names and references" }],
         summary: [
           {
-            text: 'A plain name is an identifier of letters, digits and underscores: it cannot contain spaces or punctuation and cannot be an operator nickname such as add or apply, because that would hide the operator. A name that is not a plain identifier is written as Variable("..."), both where it is defined and where it is used. @name refers to the variable ID of an earlier definition.',
+            text: 'A plain name can use letters, digits, underscores, dots, braces, dashes and most punctuation, but not whitespace, parentheses, brackets, commas, backslashes, quotes, @ or ;, nor the sequences --, ::, => or ->. It also cannot be an operator nickname such as add or apply, because that would hide the operator; the one exception is a definition that assigns that same operator, as in add = Operator("add"). A definition may be named like a literal (123 = 5) and its own line is written bare; a reference to it is still written Variable("123"), because a bare 123 is the number. Any other name that is not plain, or that contains = or \', is written as Variable("..."), both where it is defined and where it is used. @name refers to the variable ID of an earlier definition, and @calculation to the last card of the final statement, which only an earlier definition may use; numeric @0 references are rejected in Expanded, because there are no statement numbers. @variable("name") is the same reference as @name.',
           },
         ],
         syntax: [
@@ -747,7 +776,7 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
         heading: [{ text: "Lambdas" }],
         summary: [
           {
-            text: "A lambda is written param => expression, or as a definition whose parameters name its arguments.",
+            text: "A lambda is written param => expression, param -> expression or \\param.expression, or as a definition whose parameters name its arguments. Several parenthesised parameters are allowed, as in (x, y) => expression.",
           },
         ],
         syntax: [
@@ -786,6 +815,11 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
           },
           {
             kind: "concrete",
+            text: "sum = (x, y) => numberAdd(x, y)",
+            caption: [{ text: "parenthesised parameters" }],
+          },
+          {
+            kind: "concrete",
             text: "getGenome path bee = nbtPathMatchAll path (itemNBT bee)",
             caption: [{ text: "two parameters" }],
           },
@@ -801,7 +835,7 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
         heading: [{ text: "Materializing readers" }],
         summary: [
           {
-            text: "Materialize(expression) puts a materializer around the expression. Readers inside it are abstracted into the lambda's parameters instead of being read by the card, and the materializer's result is that lambda. Dynamic(expression) makes an expression a parameter in its own right, and Static(expression) pins an expression so its readers stay inside the card. Parameters are named after the readers they came from and follow the order those readers first appear in; an identical reader used more than once shares one parameter. A Materialize inside another Materialize is consumed by the inner one, which leaves it static for the outer one.",
+            text: "Materialize(expression) puts a materializer around the expression. Everything inside is static by default, so readers are read and built into the card. Dynamic(expression) makes an expression a parameter of the materialized operator instead, and Static(expression) keeps an expression fixed, cancelling a Dynamic around it. Parameters are named after the expression inside Dynamic(...) and follow the order those expressions first appear in; an identical expression used more than once shares one parameter, and an expression with no usable name becomes arg0, arg1, and so on. A Materialize inside another Materialize is consumed by the inner one, which leaves it static for the outer one.",
           },
         ],
         syntax: [
@@ -814,7 +848,7 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
             ],
             note: [
               {
-                text: "the readers in the expression become the lambda's parameters",
+                text: "everything inside is static unless it is wrapped in Dynamic",
               },
             ],
           },
@@ -827,7 +861,7 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
             ],
             note: [
               {
-                text: "give an expression a parameter of its own, even without a reader in it",
+                text: "make an expression a parameter of the materialized operator",
               },
             ],
           },
@@ -840,7 +874,7 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
             ],
             note: [
               {
-                text: "keep an expression fixed so its readers are not abstracted",
+                text: "cancel a Dynamic around an expression, keeping it fixed",
               },
             ],
           },
@@ -848,14 +882,14 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
         examples: [
           {
             kind: "concrete",
-            text: "slotCount = Materialize(InventoryReader(0).inventoryCount)",
+            text: "slotCount = Materialize(Dynamic(InventoryReader(0).inventoryCount))",
             caption: [
               { text: "the materializer's result is a lambda over the reader" },
             ],
           },
           {
             kind: "concrete",
-            text: "total = Materialize(numberAdd(InventoryReader(0).inventoryCount, 2))",
+            text: "total = Materialize(numberAdd(Dynamic(InventoryReader(0).inventoryCount), 2))",
             caption: [
               {
                 text: "the reader becomes the parameter, the 2 is built into the card",
@@ -864,8 +898,12 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
           },
           {
             kind: "concrete",
-            text: "fixed = Materialize(Static(InventoryReader(0).inventoryCount))",
-            caption: [{ text: "Static keeps the reader inside the card" }],
+            text: "fixed = Materialize(Static(Dynamic(InventoryReader(0).inventoryCount)))",
+            caption: [
+              {
+                text: "Static cancels Dynamic, keeping the reader inside the card",
+              },
+            ],
           },
           {
             kind: "concrete",
@@ -910,7 +948,7 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
         heading: [{ text: "Putting it together" }],
         summary: [
           {
-            text: "Definitions can be written in any order and refer to each other by name.",
+            text: "A definition can refer by name only to definitions written before it; a later definition is not in scope yet.",
           },
         ],
         examples: [
@@ -942,7 +980,7 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
         heading: [{ text: "Application" }],
         summary: [
           {
-            text: "Write the operator first, then its arguments separated by spaces. Parentheses may be used to make sub-calls as arguments as shown in Grouping.",
+            text: "Write the operator first, then its arguments separated by spaces. Parentheses may be used to make sub-calls as arguments as shown in Grouping. Supplying more arguments than the operator takes is an error unless the operator's result is itself callable, in which case the extra arguments apply left-associatively.",
           },
         ],
         syntax: [
@@ -1003,7 +1041,7 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
         heading: [{ text: "Values" }],
         summary: [
           {
-            text: "A value is the simplest possible argument: a number, a quoted string, true, false or null a [ ... ] list or { ... } NBT object.",
+            text: "A value is the simplest possible argument: a number, a quoted string, true, false or null (any capitalisation), a [ ... ] list or { ... } NBT object.",
           },
         ],
         syntax: [
@@ -1017,7 +1055,7 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
             ],
             note: [
               {
-                text: "integer, long (l suffix) and double (needs a decimal point)",
+                text: "a plain number is an Integer when it fits -2147483648 to 2147483647, a Long when it fits the long range, and a Double beyond that; any fraction is a Double, and .5, 3. and 1e3 are accepted as Doubles (written back as 0.5, 3.0 and 1000.0); 5l or 5L forces a Long and 3d or 3D forces a Double; leading zeros are read as the number (03 is 3); 3f and 1_0 are not numbers",
               },
             ],
           },
@@ -1031,7 +1069,7 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
             ],
             note: [
               {
-                text: "double, single or triple quoted; \\ escapes the next character, and -- inside a string is not a comment",
+                text: 'every quote style decodes \\n \\r \\t \\b \\f \\\\ \\/ and its own quote, and rejects every other escape, including \\" inside single quotes and \\\' inside double quotes; inside triple quotes a bare " is a literal quote anywhere, even as the first or last character, and \\" is only accepted when two more quotes follow it, which writes a literal triple quote; any other escaped quote is rejected there; -- inside a string is not a comment',
               },
             ],
           },
@@ -1073,8 +1111,9 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
           },
           {
             kind: "concrete",
-            text: 'add {"a":1} 1',
+            text: 'compoundIntersection {"a":1} {"b":2}',
             caption: [{ text: "NBT object as an argument" }],
+            output: "snbt",
           },
           {
             kind: "concrete",
@@ -1092,10 +1131,8 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
         heading: [{ text: "In-game values" }],
         summary: [
           {
-            text: "Blocks, items, fluids and entities are written as a constructor call: the type name, a quoted id, then an optional size or amount and an optional tag or properties object. The type name is case-insensitive, a tag object may be given without a size, and in ",
+            text: 'Blocks, items, fluids and entities are written as a constructor call: the type name, a quoted id, then an optional integer size for items and blocks, an optional integer amount for fluids, and an optional tag or properties object; the size or amount may be left out when a tag or properties object is given, as in Block("minecraft:oak_log", {"axis":"x"}). The type name is case-insensitive, the id must be quoted, and no extra arguments are accepted. A symbol such as + is only usable while exactly one operator claims it. Entity takes only its id and tag: it has no size. Ingredients(items, fluids?, energies?) takes a list of items, optional lists of fluids, and optional energies written as longs; Recipe(input, output) takes two Ingredients values.',
           },
-          { text: "Code Line", code: true },
-          { text: " a fluid takes an amount." },
         ],
         syntax: [
           {
@@ -1133,7 +1170,6 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
               { text: "Entity", emphasis: "required" },
               { text: "(" },
               { text: '"id"', emphasis: "required" },
-              { text: ", size", emphasis: "optional" },
               { text: ", {tag}", emphasis: "optional" },
               { text: ")" },
             ],
@@ -1171,10 +1207,12 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
             kind: "concrete",
             text: 'itemNBT Fluid("minecraft:water", 1000)',
             caption: [{ text: "fluid with an amount" }],
+            output: "snbt",
           },
           {
             kind: "concrete",
-            text: 'itemNBT Entity("minecraft:cow", 1)',
+            text: 'itemNBT Entity("minecraft:cow")',
+            output: "snbt",
           },
         ],
       },
@@ -1182,7 +1220,7 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
         heading: [{ text: "Operator names" }],
         summary: [
           {
-            text: "An operator is written by any of its names: a nickname such as add, its official name, or its display name. apply, pipe and flip are ordinary operators written the same way, and flipped operators have a shorthand, flip<Nickname>, to obtain the flipped form.",
+            text: "An operator is written by any of its names: a nickname such as add, its official name, its display name, its symbol or its interaction name, as long as that name belongs to only one operator. A shared symbol such as + is therefore rejected rather than guessed. apply, pipe and flip are ordinary operators written the same way, and flipped operators have a shorthand, flip<Nickname>, to obtain the flipped form; the nickname must keep its capitalisation, so flipAdd works and flipadd does not.",
           },
         ],
         examples: [
@@ -1209,7 +1247,7 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
         heading: [{ text: "Readers" }],
         summary: [
           {
-            text: "A reader call names a reader, an optional part id, an aspect, optional aspect settings and an optional simulated result. Reader names are case-insensitive and the aspect may be written as its enum key or its display name.",
+            text: 'A reader call names a reader, an optional part id, an aspect, optional aspect settings and an optional simulated result. Reader names are case-insensitive and the aspect may be written as its enum key or its display name. A part id is a non-negative integer, and may also be written as a quoted string, such as InventoryReader("0").slotItem. The simulated result is the cached value that Materialize can bake into the card.',
           },
         ],
         syntax: [
@@ -1225,7 +1263,7 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
             ],
             note: [
               {
-                text: "dotted form; () is the same as leaving the part id out",
+                text: "dotted form; () is the same as leaving the part id out, and a part id may be a quoted string",
               },
             ],
           },
@@ -1316,7 +1354,7 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
         heading: [{ text: "Materializing readers" }],
         summary: [
           {
-            text: "Materialize(expression) puts a materializer around the expression. Readers inside it are abstracted into the lambda's parameters instead of being read by the card, and the materializer's result is that lambda. Dynamic(expression) makes an expression a parameter in its own right, and Static(expression) pins an expression so its readers stay inside the card. The wrapper is written the same way as in ",
+            text: "Materialize(expression) puts a materializer around the expression. Everything inside is static by default, so readers are read and built into the card. Dynamic(expression) makes an expression a parameter of the materialized operator instead, and Static(expression) keeps an expression fixed, cancelling a Dynamic around it. The wrapper is written the same way as in ",
           },
           { text: "Condensed", code: true },
           { text: "; a " },
@@ -1341,7 +1379,7 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
             ],
             note: [
               {
-                text: "the readers in the expression become the lambda's parameters",
+                text: "everything inside is static unless it is wrapped in Dynamic",
               },
             ],
           },
@@ -1354,7 +1392,7 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
             ],
             note: [
               {
-                text: "give an expression a parameter of its own, even without a reader in it",
+                text: "make an expression a parameter of the materialized operator",
               },
             ],
           },
@@ -1367,7 +1405,7 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
             ],
             note: [
               {
-                text: "keep an expression fixed so its readers are not abstracted",
+                text: "cancel a Dynamic around an expression, keeping it fixed",
               },
             ],
           },
@@ -1375,23 +1413,27 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
         examples: [
           {
             kind: "concrete",
-            text: "apply Materialize(numberAdd InventoryReader(0).inventoryCount 2) 3",
+            text: "apply Materialize(x -> numberAdd x 1) 3",
             caption: [{ text: "apply the materialized lambda to a value" }],
           },
           {
             kind: "concrete",
-            text: "pipe Materialize(numberAdd InventoryReader(0).inventoryCount 2) arithmeticIncrement",
+            text: "pipe Materialize(x -> numberAdd x 1) arithmeticIncrement",
             caption: [{ text: "use the materialized lambda as an argument" }],
           },
           {
             kind: "concrete",
             text: "Materialize(numberAdd InventoryReader(0).inventoryCount 2)",
-            caption: [{ text: "on its own" }],
+            caption: [{ text: "the reader is built into the card" }],
           },
           {
             kind: "concrete",
-            text: "Materialize(Static(add InventoryReader(0).inventoryCount 2))",
-            caption: [{ text: "Static keeps the reader inside the card" }],
+            text: "Materialize(Static(Dynamic(add InventoryReader(0).inventoryCount 2)))",
+            caption: [
+              {
+                text: "Static cancels Dynamic, keeping everything inside the card",
+              },
+            ],
           },
           {
             kind: "concrete",
@@ -1442,7 +1484,7 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
         heading: [{ text: "References" }],
         summary: [
           {
-            text: "Inside a multi-statement input, @<statement number> refers to variable ID of the last card of an earlier statement, where statements are 0-indexed.",
+            text: "Inside a multi-statement input, @<statement number> refers to the variable ID of the last card of an earlier statement, where statements are 0-indexed, and @calculation refers to the last card of the final statement, which only an earlier statement may use; the final statement itself cannot refer to its own last card. In output, the default numeric reference style prints that card id, which is a plain literal when the text is read back; use @n when the output must re-parse as a reference.",
           },
         ],
         examples: [
@@ -1458,7 +1500,7 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
         heading: [{ text: "Comments" }],
         summary: [
           {
-            text: "A trailing comment belongs to the expression it follows, so move it to its own line to attach it to an earlier argument.",
+            text: "A trailing comment belongs to the expression it follows, so move it to its own line to attach it to an earlier argument. With Preserve comments on, argument comments are emitted in Expanded output as -- [argument N] just before the comment.",
           },
         ],
         examples: [
@@ -1551,7 +1593,7 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
           { text: "The same values as the other text forms apply in " },
           { text: "Condensed", code: true },
           {
-            text: ": numbers, quoted strings, true, false, null, [ ... ] lists, and { ... } NBT objects.",
+            text: ": numbers, quoted strings, true, false and null in any capitalisation, [ ... ] lists, and { ... } NBT objects.",
           },
         ],
         syntax: [
@@ -1565,7 +1607,7 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
             ],
             note: [
               {
-                text: "integer, long (l suffix) and double (needs a decimal point)",
+                text: "a plain number is an Integer when it fits -2147483648 to 2147483647, a Long when it fits the long range, and a Double beyond that; any fraction is a Double, and .5, 3. and 1e3 are accepted as Doubles (written back as 0.5, 3.0 and 1000.0); 5l or 5L forces a Long and 3d or 3D forces a Double; leading zeros are read as the number (03 is 3); 3f and 1_0 are not numbers",
               },
             ],
           },
@@ -1579,7 +1621,7 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
             ],
             note: [
               {
-                text: "double, single or triple quoted; \\ escapes the next character",
+                text: 'every quote style decodes \\n \\r \\t \\b \\f \\\\ \\/ and its own quote, and rejects every other escape, including \\" inside single quotes and \\\' inside double quotes; triple quotes use \\" as their quote',
               },
             ],
           },
@@ -1622,8 +1664,9 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
           },
           {
             kind: "concrete",
-            text: 'add({"a":1}, 1)',
+            text: 'compoundIntersection({"a":1}, {"b":2})',
             caption: [{ text: "NBT object" }],
+            output: "snbt",
           },
         ],
       },
@@ -1631,7 +1674,7 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
         heading: [{ text: "In-game values" }],
         summary: [
           {
-            text: "Blocks, items, fluids and entities are written as a constructor call: the type name, a quoted id, then an optional size and an optional tag or properties object. The type name is case-insensitive and a fluid takes only its id. Operator looks up an operator value by nickname, official name or display name.",
+            text: 'Blocks, items, fluids and entities are written as a constructor call: the type name, a quoted id, then an optional integer size for items and blocks, an optional integer amount for fluids, and an optional tag or properties object; the size or amount may be left out when a tag or properties object is given, as in Block("minecraft:oak_log", {"axis":"x"}). The type name is case-insensitive, the id must be quoted, and no extra arguments are accepted. Operator looks up an operator value by any name that is unique to one operator, symbol included. Entity takes only its id and tag: it has no size. Ingredients(items, fluids?, energies?) takes a list of items, optional lists of fluids, and optional energies written as longs; Recipe(input, output) takes two Ingredients values.',
           },
         ],
         syntax: [
@@ -1660,6 +1703,8 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
               { text: "Fluid", emphasis: "required" },
               { text: "(" },
               { text: '"id"', emphasis: "required" },
+              { text: ", amount", emphasis: "optional" },
+              { text: ", {tag}", emphasis: "optional" },
               { text: ")" },
             ],
           },
@@ -1668,7 +1713,6 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
               { text: "Entity", emphasis: "required" },
               { text: "(" },
               { text: '"id"', emphasis: "required" },
-              { text: ", size", emphasis: "optional" },
               { text: ", {tag}", emphasis: "optional" },
               { text: ")" },
             ],
@@ -1689,17 +1733,19 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
           },
           {
             kind: "concrete",
-            text: 'Entity("minecraft:cow", 1)',
+            text: 'Entity("minecraft:cow")',
           },
           {
             kind: "concrete",
-            text: 'Fluid("minecraft:water")',
+            text: 'Fluid("minecraft:water", 1000)',
           },
           {
             kind: "concrete",
             text: 'Operator("integrateddynamics:logical_or")',
             caption: [
-              { text: "official name, nickname and display name all work" },
+              {
+                text: "nickname, official name, display name and symbol all work, as long as the name is unique",
+              },
             ],
           },
           {
@@ -1716,7 +1762,7 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
         heading: [{ text: "Operator names" }],
         summary: [
           {
-            text: "An operator is written by any of its names: a nickname such as add, its official name, or its display name, followed by its arguments in parentheses.",
+            text: "An operator is written by any of its names: a nickname such as add, its official name, its display name, its symbol or its interaction name, followed by its arguments in parentheses; a name shared by several operators is ambiguous and is not accepted. flip<Nickname> gives the flipped form, and the nickname keeps its capitalisation, so flipAdd works and flipadd does not.",
           },
         ],
         examples: [
@@ -1736,7 +1782,7 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
         heading: [{ text: "Readers" }],
         summary: [
           {
-            text: "A reader call names a reader, an optional part id, an aspect, optional aspect settings and an optional simulated result. Reader names are case-insensitive and the aspect may be written as its enum key or its display name.",
+            text: 'A reader call names a reader, an optional part id, an aspect, optional aspect settings and an optional simulated result. Reader names are case-insensitive and the aspect may be written as its enum key or its display name. A part id is a non-negative integer, and may also be written as a quoted string, such as InventoryReader("0").slotItem. The simulated result is the cached value that Materialize can bake into the card.',
           },
         ],
         syntax: [
@@ -1838,7 +1884,7 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
         heading: [{ text: "Materializing readers" }],
         summary: [
           {
-            text: "Materialize(expression) puts a materializer around the expression. Readers inside it are abstracted into the lambda's parameters instead of being read by the card, and the materializer's result is that lambda. Dynamic(expression) makes an expression a parameter in its own right, and Static(expression) pins an expression so its readers stay inside the card. Parameters are named after the readers they came from and follow the order those readers first appear in; an identical reader used more than once shares one parameter. A Materialize inside another Materialize is consumed by the inner one, which leaves it static for the outer one.",
+            text: "Materialize(expression) puts a materializer around the expression. Everything inside is static by default, so readers are read and built into the card. Dynamic(expression) makes an expression a parameter of the materialized operator instead, and Static(expression) keeps an expression fixed, cancelling a Dynamic around it. Parameters are named after the expression inside Dynamic(...) and follow the order those expressions first appear in; an identical expression used more than once shares one parameter, and an expression with no usable name becomes arg0, arg1, and so on. A Materialize inside another Materialize is consumed by the inner one, which leaves it static for the outer one.",
           },
         ],
         syntax: [
@@ -1851,7 +1897,7 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
             ],
             note: [
               {
-                text: "the readers in the expression become the lambda's parameters",
+                text: "everything inside is static unless it is wrapped in Dynamic",
               },
             ],
           },
@@ -1864,7 +1910,7 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
             ],
             note: [
               {
-                text: "give an expression a parameter of its own, even without a reader in it",
+                text: "make an expression a parameter of the materialized operator",
               },
             ],
           },
@@ -1877,7 +1923,7 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
             ],
             note: [
               {
-                text: "keep an expression fixed so its readers are not abstracted",
+                text: "cancel a Dynamic around an expression, keeping it fixed",
               },
             ],
           },
@@ -1885,7 +1931,7 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
         examples: [
           {
             kind: "concrete",
-            text: "Materialize(numberAdd(InventoryReader(0).inventoryCount, 2))",
+            text: "Materialize(numberAdd(Dynamic(InventoryReader(0).inventoryCount), 2))",
             caption: [
               {
                 text: "the reader becomes the parameter, the 2 is built into the card",
@@ -1894,8 +1940,12 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
           },
           {
             kind: "concrete",
-            text: "Materialize(Static(InventoryReader(0).inventoryCount))",
-            caption: [{ text: "Static keeps the reader inside the card" }],
+            text: "Materialize(Static(Dynamic(InventoryReader(0).inventoryCount)))",
+            caption: [
+              {
+                text: "Static cancels Dynamic, keeping the reader inside the card",
+              },
+            ],
           },
           {
             kind: "concrete",
@@ -1933,6 +1983,21 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
           {
             kind: "concrete",
             text: "add(1, 2); multiply(3, 4)",
+          },
+        ],
+      },
+      {
+        heading: [{ text: "References" }],
+        summary: [
+          {
+            text: "Inside a multi-statement input, @<statement number> refers to the variable ID of the last card of an earlier statement, where statements are 0-indexed, and @calculation refers to the last card of the final statement, which only an earlier statement may use; the final statement itself cannot refer to its own last card. In output, the default numeric reference style prints that card id, which is a plain literal when the text is read back; use @n when the output must re-parse as a reference.",
+          },
+        ],
+        examples: [
+          {
+            kind: "concrete",
+            text: "5; add(@0, 1)",
+            caption: [{ text: "@0 is the first statement's card" }],
           },
         ],
       },
@@ -1983,7 +2048,12 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
           [
             { text: "data get", code: true },
             {
-              text: " gives the block's internal name, then its data: id, coordinates and slot holes.",
+              text: " gives the block's internal name, then its data: id, coordinates and slot holes. The formatted block and entity data lines are accepted, and so is a contents line whose payload is a compound (Chest has the following contents: {…}); a bracketed list payload and the raw /data get … command are not.",
+            },
+          ],
+          [
+            {
+              text: "A standalone NBT object is always detected as SNBT, so a bare NBT value cannot be entered as an Expanded, Code Line or Condensed expression.",
             },
           ],
         ],
@@ -2021,13 +2091,18 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
             spans: [{ text: "{nbt}", emphasis: "required" }],
             note: [
               { text: "A bare compound, identified from its own " },
-              { text: "_id", code: true },
-              { text: " / " },
               { text: "Pos", code: true },
               { text: " / " },
               { text: "UUID", code: true },
               { text: " / " },
               { text: "Item", code: true },
+              {
+                text: "; a bare card compound is scanned for cards, so it needs no /give line, but each card still needs its ",
+              },
+              { text: "_id", code: true },
+              { text: " and a recognized " },
+              { text: "_type", code: true },
+              { text: "." },
             ],
           },
           {
@@ -2098,7 +2173,12 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
           ],
           [
             {
-              text: "Interface parts are never emitted, and a part pasted twice counts once.",
+              text: "Interface parts are never emitted; the cards they hold come out on their own. A part pasted twice counts once.",
+            },
+          ],
+          [
+            {
+              text: "A reference (@name or @<statement>) comes out as an ordinary card holding the referenced card id as its value. The id is a number, not a live link, so the copy computes with that number rather than with the other card.",
             },
           ],
           [
@@ -2106,21 +2186,20 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
             { text: "Initial variable ID", code: true },
             { text: " unless " },
             { text: "Variable IDs", code: true },
-            { text: " keeps them." },
-          ],
-          [
             {
-              text: "A reader you write is given a part id; a pasted card keeps the part id from the paste.",
+              text: " is set to keep the pasted ids, in which case a pasted card and part keep the ids from the paste. A reader you write is always given a part id.",
             },
           ],
           [
             {
-              text: "A program decoded from a pasted part comes out as that part first and bare, then the cards it held: an expression needs a card per step and a panel's state ",
+              text: "A part that keeps its inventory when placed comes out as one line with the cards inside; a pasted panel, reader, writer, exporter or importer is always one line, never a bare part followed by loose cards. Cards that no emitted part holds, such as the cards inside an interface part, come out on their own, because an expression needs a card per step and a panel's state ",
             },
             { text: "inventory", code: true },
             {
-              text: " has one slot. A variable store is the exception, its cards stay inside.",
+              text: " has one slot. With ",
             },
+            { text: "Output shape = Variable stores", code: true },
+            { text: ", those loose cards are packed into stores instead." },
           ],
         ],
         syntax: [
@@ -2213,13 +2292,18 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
           },
           { text: "Indentation", code: true },
           {
-            text: " sets how far. Materialize bakes reader values into the cards, so a reader's card carries its cached value instead of the aspect it read.",
+            text: " sets how far. Materialize bakes reader values into the cards, so a reader's card carries its cached value instead of the aspect it read. An expression that can be evaluated folds to its result, and the cards that existed only to build it are dropped.",
           },
         ],
         bullets: [
           [
             {
-              text: "A materialized card needs its cached value; a card that has none keeps its application and says so.",
+              text: "A materialized card needs its cached value: give the reader a simulated result in the expression. A card that has none keeps its application and says so, and Display(Materialize(reader)) with Materialize switched on still emits the reader and aspect cards rather than a materializer. Without a Dynamic parameter the materializer folds to the value itself: Materialize(add(1, 2)) is emitted as the integer card 3. With a Dynamic parameter the whole chain is kept, because the result depends on a value the reader supplies.",
+            },
+          ],
+          [
+            {
+              text: "A text Block becomes a blockstate tag ({Name, Properties}); Properties appears only when block states are supplied, and the size has no in-game meaning. A text Entity becomes a UUID string in its card, and the output starts with a /summon line unless the input already carried a UUID or NBT UUID. The Entity UUID seed setting makes generated UUIDs repeatable.",
             },
           ],
           [
@@ -2256,12 +2340,12 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
           ],
           [
             {
-              text: "Card unwraps a paste into the cards it holds and nothing else; it takes a panel, writer, exporter, importer or store, but not a reader, which holds no card.",
+              text: "Card unwraps a paste into the cards it holds and nothing else; it takes a panel, writer, exporter, importer or store, or a bare /give … integrateddynamics:variable{…} card from the paste, but not a reader, which holds no card.",
             },
           ],
           [
             {
-              text: "Both must stand alone: a whole line, a definition's value, or directly inside Materialize; buried inside a call they are rejected, because there is no single panel to put the rest in.",
+              text: "Card must stand alone: a whole line, a definition's value, or directly inside Materialize; buried inside a call or placed in a list it is rejected, because there is no single panel to put the rest in. Card, Cards and the wrapper names Materialize, Dynamic, Static and Display are case-insensitive. Display is accepted anywhere: buried inside a call it emits no panel and stands for its expression, so only that expression's cards come out.",
             },
           ],
         ],
@@ -2288,7 +2372,7 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
             ],
             note: [
               {
-                text: "Cards is accepted too, and either spelling is written back as Card",
+                text: "Cards is accepted as an alias; the output is the cards it unwraps, never a Card(...) wrapper",
               },
             ],
           },
@@ -2334,7 +2418,12 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
           ],
           [
             {
-              text: "A materializer step shows the lambda being built: the card you are materializing sits on top, the variable slot the lambda's parameter fills is on the left, and the resulting lambda card is on the right. Each reader it abstracted then gets its own card and an apply step that feeds it to that lambda.",
+              text: "A reference (@name or @<statement>) is shown as an ordinary value card holding the referenced card id, not as a link to the other card.",
+            },
+          ],
+          [
+            {
+              text: "A materializer step shows the lambda being built: the card you are materializing sits on top, the variable slot the lambda's parameter fills is on the left, and the resulting lambda card is on the right. Each Dynamic hole it abstracted then gets its own card and an apply step that feeds it to that lambda.",
             },
           ],
         ],

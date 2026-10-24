@@ -6,7 +6,7 @@ import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 declare global {
   type TypeOperatorKey = Exclude<
     keyof typeof operatorRegistry,
-    "find" | "operatorByNickname"
+    "find" | "operatorByNickname" | "operatorNameOwners" | "nameForms"
   >;
   type TypeOperatorValue = (typeof operatorRegistry)[TypeOperatorKey];
   type TypeOperatorInternalName = TypeOperatorValue["internalName"];

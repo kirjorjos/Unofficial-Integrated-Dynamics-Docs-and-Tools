@@ -172,6 +172,7 @@ const snbtGiveOptions = () => ({
   missingParts: settings.value.missingParts,
   conflicts: settings.value.conflicts,
   startVariableId: settings.value.initialVariableId,
+  entityUuidSeed: settings.value.entityUuidSeed,
 });
 
 const settingsToSigOpts = (
@@ -640,7 +641,6 @@ const settingEnabled = (setting: string): boolean => {
     case "varId":
     case "wrap":
     case "duplicateNames":
-    case "declarationCards":
       return true;
     case "statementLayout":
       return fmt === "codeline" || fmt === "condensed";
@@ -651,6 +651,7 @@ const settingEnabled = (setting: string): boolean => {
     case "cardIds":
     case "missingParts":
     case "conflicts":
+    case "entityUuidSeed":
       return fmt === "snbt";
     case "referenceStyle":
       return fmt === "codeline" || fmt === "condensed" || fmt === "expanded";
@@ -929,6 +930,33 @@ onMounted(async () => {
                   settings.layout !== 'readable'
                 "
                 aria-label="Indentation"
+              />
+            </div>
+
+            <div
+              class="settings-row"
+              :class="{ disabled: !settingEnabled('entityUuidSeed') }"
+            >
+              <label
+                class="settings-label"
+                for="setting-entity-uuid-seed"
+                :data-help="settingHelpText('entityUuidSeed')"
+              >
+                Entity UUID seed<sup
+                  class="settings-help-mark"
+                  aria-hidden="true"
+                  >?</sup
+                >
+              </label>
+              <input
+                id="setting-entity-uuid-seed"
+                v-model.number="settings.entityUuidSeed"
+                class="select"
+                type="number"
+                min="0"
+                step="1"
+                :disabled="!settingEnabled('entityUuidSeed')"
+                aria-label="Entity UUID seed"
               />
             </div>
 
@@ -1273,33 +1301,6 @@ onMounted(async () => {
                 :disabled="!settingEnabled('comments')"
                 aria-label="Preserve comments"
               />
-            </div>
-
-            <div
-              class="settings-row"
-              :class="{ disabled: !settingEnabled('declarationCards') }"
-            >
-              <label
-                class="settings-label"
-                for="setting-declaration-cards"
-                :data-help="settingHelpText('declarationCards')"
-              >
-                Declaration-only operators<sup
-                  class="settings-help-mark"
-                  aria-hidden="true"
-                  >?</sup
-                >
-              </label>
-              <select
-                id="setting-declaration-cards"
-                v-model="settings.declarationCards"
-                class="select"
-                :disabled="!settingEnabled('declarationCards')"
-                aria-label="Declaration-only operators"
-              >
-                <option value="ignore">Accept and ignore</option>
-                <option value="add">Accept and add card</option>
-              </select>
             </div>
 
             <div

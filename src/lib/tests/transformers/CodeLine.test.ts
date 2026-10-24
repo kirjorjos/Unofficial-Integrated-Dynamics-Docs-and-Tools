@@ -12,6 +12,39 @@ describe("TestCodeLineTransformer", () => {
     expect(ASTToCodeLine(ast)).toBe(code);
   });
 
+  it("testRejectsExtraArguments", () => {
+    expect(() => CodeLineToAST("add 1 2 3")).toThrow("Incorrect arity");
+    expect(() => CodeLineToAST("binaryAnd 1 2 3")).toThrow("Incorrect arity");
+    expect(() => CodeLineToAST("add 1 2 (multiply 3 4)")).toThrow(
+      "Incorrect arity"
+    );
+  });
+
+  it("testReaderPartIdMustBeANonNegativeInteger", () => {
+    for (const input of [
+      "InventoryReader(1.5).slotItem",
+      "InventoryReader(-1).slotItem",
+    ]) {
+      expect(() => CodeLineToAST(input)).toThrow(
+        "Reader part id must be a non-negative integer"
+      );
+    }
+  });
+
+  it("testRejectsACardInsideAList", () => {
+    const card =
+      '/give @p integrateddynamics:variable{_id:7,_type:"integrateddynamics:operator",operatorName:"integrateddynamics:arithmetic_addition",variableIds:[I;3,3]}';
+    expect(() => CodeLineToAST(`[Card(${card})]`)).toThrow(
+      "Card(...) cannot be used inside a list"
+    );
+  });
+
+  it("testAcceptsLeadingTrailingDotAndExponentDoubles", () => {
+    expect(CodeLineToAST(".5")).toEqual({ type: "Double", value: "0.5" });
+    expect(CodeLineToAST("3.")).toEqual({ type: "Double", value: "3.0" });
+    expect(CodeLineToAST("1e3")).toEqual({ type: "Double", value: "1000.0" });
+  });
+
   it("testSingleAndTripleQuoteStrings", () => {
     const single = "'it\\'s \"quoted\"'";
     expect(CodeLineToAST(single)).toEqual({
@@ -23,6 +56,15 @@ describe("TestCodeLineTransformer", () => {
       type: "String",
       value: 'say "hi" to the world',
     });
+    expect(CodeLineToAST('""""a"""')).toEqual({
+      type: "String",
+      value: '"a',
+    });
+    expect(CodeLineToAST('"""a""""')).toEqual({
+      type: "String",
+      value: 'a"',
+    });
+    expect(() => CodeLineToAST('"""a\\"b"""')).toThrow("takes a bare quote");
   });
 
   it("testOperatorPseudoConstructor", () => {
@@ -85,14 +127,12 @@ describe("TestCodeLineTransformer", () => {
       type: "Operator",
       opName: "PARSE_INTEGER",
     });
-    expect(CodeLineToAST('Operator("Block Block Properties")')).toEqual({
-      type: "Operator",
-      opName: "OBJECT_BLOCK_PROPERTIES",
-    });
-    expect(CodeLineToAST('Operator("Block Properties")')).toEqual({
-      type: "Operator",
-      opName: "OBJECT_BLOCK_PROPERTIES",
-    });
+    expect(() => CodeLineToAST('Operator("Block Block Properties")')).toThrow(
+      /Unknown operator/
+    );
+    expect(() => CodeLineToAST('Operator("Block Properties")')).toThrow(
+      /Unknown operator/
+    );
     expect(
       CodeLineToAST('Operator("Block Block Possible Properties")')
     ).toEqual({
