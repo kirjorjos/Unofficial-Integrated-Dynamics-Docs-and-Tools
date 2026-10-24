@@ -1,0 +1,195 @@
+name: Coverage comment
+
+on:
+  workflow_run:
+    workflows: ["Coverage"]
+    types: [completed]
+
+permissions:
+  contents: read
+  actions: read
+  pull-requests: write
+  checks: write
+
+concurrency:
+  group: coverage-comment-${{ github.event.workflow_run.head_repository.full_name }}-${{ github.event.workflow_run.head_branch }}
+  cancel-in-progress: false
+
+jobs:
+  comment:
+    if: >-
+      github.event.workflow_run.conclusion != 'cancelled' &&
+      (github.event.workflow_run.event == 'pull_request' ||
+       github.event.workflow_run.event == 'workflow_dispatch')
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Download the coverage result from the measurement run
+        id: download
+        continue-on-error: true
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-result
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: ${{ runner.temp }}/coverage-result
+
+      - name: Comment coverage and complete the required check
+        uses: actions/github-script@v7
+        env:
+          RESULT_FILE: ${{ runner.temp }}/coverage-result/result.json
+        with:
+          script: |
+            const fs = require("node:fs");
+            const run = context.payload.workflow_run;
+            const marker = "<!-- coverage-fallback -->";
+            const isCoverallsLogin = (login) =>
+              /^coveralls(?:app|-app)?(?:\[bot\])?$/i.test(login ?? "");
+
+            let result = {};
+            try {
+              result = JSON.parse(fs.readFileSync(process.env.RESULT_FILE, "utf8"));
+            } catch {
+              core.warning(
+                "The coverage result artifact is missing; reporting the run as incomplete."
+              );
+            }
+
+            let number = Number.isInteger(result.pr) ? result.pr : null;
+            if (!number) {
+              number = run.pull_requests?.[0]?.number ?? null;
+            }
+            if (!number && run.event !== "workflow_dispatch") {
+              const headOwner = (run.head_repository?.full_name ?? "").split("/")[0];
+              if (headOwner && run.head_branch) {
+                const { data: pulls } = await github.rest.pulls.list({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  state: "open",
+                  head: `${headOwner}:${run.head_branch}`,
+                });
+                number = pulls[0]?.number ?? null;
+              }
+            }
+            if (!number) {
+              core.warning(
+                `Could not resolve the pull request for run ${run.id} (${run.head_branch}).`
+              );
+              return;
+            }
+
+            const { data: pull } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: number,
+            });
+
+            const listComments = () =>
+              github.paginate(github.rest.issues.listComments, {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: number,
+                per_page: 100,
+              });
+            let comments = await listComments();
+            let coverallsComment = comments.find((comment) =>
+              isCoverallsLogin(comment.user?.login)
+            );
+            // The Coveralls comment is posted by its backend, so give it a few
+            // seconds to land before treating the action's success as no comment.
+            for (let attempt = 0; attempt < 3 && !coverallsComment; attempt++) {
+              if (result.coveralls !== "success") break;
+              await new Promise((resolve) => setTimeout(resolve, 5000));
+              comments = await listComments();
+              coverallsComment = comments.find((comment) =>
+                isCoverallsLogin(comment.user?.login)
+              );
+            }
+            const fallbackComments = comments.filter((comment) =>
+              comment.body?.includes(marker)
+            );
+
+            const total = typeof result.total === "number" ? result.total : null;
+            let summary;
+            if (coverallsComment) {
+              summary = `Coveralls posted its coverage comment${
+                total === null ? "" : ` (${total}% of lines covered)`
+              }.`;
+              // Clean up a fallback posted while Coveralls was unavailable so
+              // the pull request keeps exactly one coverage comment.
+              for (const comment of fallbackComments) {
+                try {
+                  await github.rest.issues.deleteComment({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    comment_id: comment.id,
+                  });
+                } catch (error) {
+                  core.warning(
+                    `Could not remove stale fallback comment ${comment.id}: ${error.message}`
+                  );
+                }
+              }
+            } else {
+              const reason =
+                Object.keys(result).length === 0
+                  ? "Coverage measurement did not complete."
+                  : result.coveralls === "success"
+                    ? "Coveralls did not post a coverage comment (PR commenting may not be enabled)."
+                    : "Coveralls is currently unreachable.";
+              const measurement =
+                total === null
+                  ? "Coverage could not be measured."
+                  : `Coverage: ${total}% of lines covered (delta vs the base branch is unavailable).`;
+              const body = [
+                marker,
+                "",
+                reason,
+                measurement,
+                "",
+                `[Coverage run](${result.runUrl ?? run.html_url})`,
+              ].join("\n");
+
+              if (fallbackComments.length > 0) {
+                await github.rest.issues.updateComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: fallbackComments[0].id,
+                  body,
+                });
+                for (const comment of fallbackComments.slice(1)) {
+                  await github.rest.issues.deleteComment({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    comment_id: comment.id,
+                  });
+                }
+              } else {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: number,
+                  body,
+                });
+              }
+              summary =
+                reason +
+                (total === null
+                  ? " Coverage could not be measured."
+                  : ` Coverage: ${total}% (delta unavailable).`);
+            }
+
+            await github.rest.checks.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              name: "Coverage comment",
+              head_sha: result.sha || pull.head.sha,
+              status: "completed",
+              conclusion: "success",
+              output: {
+                title: coverallsComment
+                  ? "Coverage comment present"
+                  : "Coverage comment posted",
+                summary,
+              },
+            });
+            console.log(summary);
