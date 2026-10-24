@@ -2,7 +2,7 @@ name: Post-merge baseline sync
 
 on:
   push:
-    branches: ["1.19.2/main"]
+    branches: ["*/development", "*/main"]
   workflow_dispatch:
 
 permissions:
@@ -11,7 +11,7 @@ permissions:
   issues: read
 
 concurrency:
-  group: baseline-sync
+  group: baseline-sync-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -121,6 +121,7 @@ jobs:
         env:
           PUSH_TOKEN: ${{ steps.app-token.outputs.token }}
           PR_NUMBER: ${{ needs.resolve.outputs.pr_number }}
+          TARGET_BRANCH: ${{ github.ref_name }}
         run: |
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
           git add src/assets/visual-snapshots/
@@ -133,9 +134,10 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git remote set-url origin "https://x-access-token:${PUSH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
           git commit -m "chore: re-normalize visual baselines${PR_NUMBER:+ (PR #${PR_NUMBER})}"
-          git push origin HEAD:1.19.2/main || {
-            echo "push to 1.19.2/main failed — is branch protection blocking it?" >&2
-            echo "Check the GitHub App install + bypass-list setup (see comment above)." >&2
+          git push origin "HEAD:${TARGET_BRANCH}" || {
+            echo "push to ${TARGET_BRANCH} failed — is branch protection blocking it?" >&2
+            echo "Check that the baseline App is on the 'Main Protection' ruleset bypass list" >&2
+            echo "for refs/heads/*/development and refs/heads/*/main." >&2
             exit 1
           }
           echo "committed=true" >> "$GITHUB_OUTPUT"
