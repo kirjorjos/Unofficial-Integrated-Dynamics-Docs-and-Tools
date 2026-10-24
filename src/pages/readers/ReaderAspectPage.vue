@@ -40,6 +40,31 @@ const READER_TITLES: Record<string, string> = {
 
 const SETTING_INDENT = "\u00A0\u00A0";
 
+const PART_ID_PARAM = "partId";
+const VARIABLE_ID_PARAM = "varId";
+
+const readIdParam = (key: string): number => {
+  const raw = new URL(window.location.href).searchParams.get(key);
+  if (raw === null) return 0;
+  const parsed = Number.parseInt(raw, 10);
+  return Number.isFinite(parsed) && parsed >= 0 ? parsed : 0;
+};
+
+const writeIdParam = (key: string, value: number): void => {
+  const url = new URL(window.location.href);
+  if (value === 0) {
+    url.searchParams.delete(key);
+  } else {
+    url.searchParams.set(key, String(value));
+  }
+  window.history.replaceState({}, "", url.toString());
+};
+
+const normalizeId = (value: string): number => {
+  const parsed = Number.parseInt(value, 10);
+  return Number.isFinite(parsed) && parsed >= 0 ? parsed : 0;
+};
+
 const readerClass = computed<ReaderClass | undefined>(() =>
   getReaderClassByName(props.readerKey)
 );
@@ -73,6 +98,34 @@ const defaultText = computed(() =>
 );
 
 const valueText = ref("");
+
+const partId = ref(readIdParam(PART_ID_PARAM));
+const variableId = ref(readIdParam(VARIABLE_ID_PARAM));
+
+const updatePartId = (event: Event): void => {
+  partId.value = normalizeId((event.target as HTMLInputElement).value);
+  writeIdParam(PART_ID_PARAM, partId.value);
+};
+
+const updateVariableId = (event: Event): void => {
+  variableId.value = normalizeId((event.target as HTMLInputElement).value);
+  writeIdParam(VARIABLE_ID_PARAM, variableId.value);
+};
+
+const idFields = computed(() => [
+  {
+    key: PART_ID_PARAM,
+    label: "Part ID",
+    value: partId.value,
+    update: updatePartId,
+  },
+  {
+    key: VARIABLE_ID_PARAM,
+    label: "Variable ID",
+    value: variableId.value,
+    update: updateVariableId,
+  },
+]);
 
 watch(
   [readerClass, resolvedAspectKey],
@@ -203,28 +256,49 @@ const hasSettings = computed(() => settingsEntries.value.length > 0);
 
       <Tile id="input" :span="FULL_TILE_SPAN" :default-col="0" :default-row="2">
         <section class="reader-aspect-input-box">
-          <template v-if="isOperatorAspect">
-            <div class="reader-aspect-input-type">Signature</div>
-            <div class="reader-aspect-operator-signature">
-              {{ operatorSignature }}
+          <div class="reader-aspect-input-fields">
+            <div v-if="isOperatorAspect" class="reader-aspect-operator-fields">
+              <div class="reader-aspect-input-type">Signature</div>
+              <div class="reader-aspect-operator-signature">
+                {{ operatorSignature }}
+              </div>
+              <div class="reader-aspect-operator-blob">
+                {{ aspect?.fullDisplayName }} does not support an overridden
+                simulatedValue.
+              </div>
             </div>
-            <div class="reader-aspect-operator-blob">
-              {{ aspect?.fullDisplayName }} does not support an overridden
-              simulatedValue.
+            <div v-else class="reader-aspect-value-field">
+              <div
+                class="reader-aspect-input-type"
+                :style="{ color: typeColor }"
+              >
+                Simulated Value
+              </div>
+              <input
+                v-model="valueText"
+                class="reader-aspect-value-input"
+                type="text"
+                :aria-label="`Simulated ${outputType} value`"
+                :placeholder="defaultText"
+              />
             </div>
-          </template>
-          <template v-else>
-            <div class="reader-aspect-input-type" :style="{ color: typeColor }">
-              Simulated Value
-            </div>
-            <input
-              v-model="valueText"
-              class="reader-aspect-value-input"
-              type="text"
-              :aria-label="`Simulated ${outputType} value`"
-              :placeholder="defaultText"
-            />
-          </template>
+
+            <label
+              v-for="field in idFields"
+              :key="field.key"
+              class="reader-aspect-id-field"
+            >
+              <span class="reader-aspect-input-type">{{ field.label }}</span>
+              <input
+                class="reader-aspect-id-input"
+                type="number"
+                min="0"
+                step="1"
+                :value="field.value"
+                @input="field.update"
+              />
+            </label>
+          </div>
         </section>
       </Tile>
 
@@ -236,6 +310,8 @@ const hasSettings = computed(() => settingsEntries.value.length > 0);
             :focused-aspect="resolvedAspectKey"
             :values="readerValues"
             :type-error="typeError"
+            :part-id="partId"
+            :variable-id="variableId"
           />
         </section>
       </Tile>
@@ -335,7 +411,8 @@ const hasSettings = computed(() => settingsEntries.value.length > 0);
   color: #224855;
 }
 
-.reader-aspect-value-input {
+.reader-aspect-value-input,
+.reader-aspect-id-input {
   font: inherit;
   padding: 0.5rem 0.65rem;
   border: 1px solid #9cc9d3;
@@ -348,6 +425,34 @@ const hasSettings = computed(() => settingsEntries.value.length > 0);
 
 .reader-aspect-value-input::placeholder {
   color: #8aa7b0;
+}
+
+.reader-aspect-input-fields {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.5rem 1rem;
+}
+
+.reader-aspect-value-field,
+.reader-aspect-operator-fields {
+  display: grid;
+  gap: 0.5rem;
+  flex: 1 1 20rem;
+  min-width: 0;
+}
+
+.reader-aspect-operator-fields {
+  flex-basis: 100%;
+}
+
+.reader-aspect-id-field {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.reader-aspect-id-input {
+  width: 8rem;
 }
 
 .reader-aspect-operator-signature {

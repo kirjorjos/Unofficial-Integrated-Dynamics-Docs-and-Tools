@@ -120,6 +120,31 @@ test.describe("readerAspectPages", () => {
     ).toBeVisible();
   });
 
+  test("testOutputSlotTooltipUsesIdInputsAndPersistsThemInUrl", async ({
+    page,
+  }) => {
+    await openReaderAspect(page, "reader-redstone-integer-value");
+
+    const partIdInput = page.locator(".reader-aspect-id-input").first();
+    const variableIdInput = page.locator(".reader-aspect-id-input").nth(1);
+    await partIdInput.fill("4");
+    await variableIdInput.fill("7");
+
+    await page.locator(".reader-slot-output-card").hover();
+    const tooltip = page.locator(".logic-card-tooltip");
+    await expect(tooltip).toBeVisible();
+    await expect(tooltip).toContainText("Part ID: 4");
+    await expect(tooltip).toContainText("Variable ID: 7");
+
+    await page.reload();
+    await expect(page.locator(".reader-aspect-id-input").first()).toHaveValue(
+      "4"
+    );
+    await expect(page.locator(".reader-aspect-id-input").nth(1)).toHaveValue(
+      "7"
+    );
+  });
+
   test("testClearingInputFallsBackToDefaultAndPlaceholder", async ({
     page,
   }) => {

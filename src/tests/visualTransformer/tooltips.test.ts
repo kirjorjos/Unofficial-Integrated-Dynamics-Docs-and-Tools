@@ -1,4 +1,6 @@
+import tooltipInfo from "lib/generated/integratedDynamicsTooltipInfo.json";
 import {
+  buildAspectCardTooltip,
   buildValueCardTooltip,
   buildOperatorCardTooltip,
   buildStepTooltip,
@@ -7,8 +9,11 @@ import {
   getInputSlotTooltip,
   getOperatorTooltipMeta,
   getOutputSlotTooltip,
+  getReaderPartIdForStep,
 } from "pages-lib/visualTransformerLogic";
 import { beforeEachVisualTransformer, makeAst, steps } from "./fixtures";
+
+const VARIABLE_CARD_INFO = tooltipInfo["item.integrateddynamics.variable.info"];
 
 describe("valueCardTooltips", () => {
   beforeEach(beforeEachVisualTransformer);
@@ -54,6 +59,91 @@ describe("valueCardTooltips", () => {
       0
     );
     expect(tooltip.lines[0]).toBe("§eType: §r§6Integer");
+  });
+});
+
+describe("aspectCardTooltips", () => {
+  beforeEach(beforeEachVisualTransformer);
+
+  it("testBuildsVariableCardStructureInOrder", () => {
+    const tooltip = buildAspectCardTooltip({
+      aspectName: "Slot Item",
+      typeName: "Item",
+      partId: 0,
+      variableId: 3,
+    });
+
+    expect(tooltip.title).toBe("Variable Card");
+    expect(tooltip.lines[0]).toBe("§eAspect: §rSlot Item");
+    expect(tooltip.lines[1]).toBe("§eType: §r§7Item");
+    expect(tooltip.lines[2]).toBe("§ePart ID: §r0");
+    expect(tooltip.lines[3]).toBe("§e§oVariable ID: §r§o3");
+    const infoText = tooltip.lines
+      .slice(4)
+      .map((line) => line.replace(/^§5§o/, ""))
+      .join(" ");
+    expect(infoText).toBe(VARIABLE_CARD_INFO);
+    expect(
+      tooltip.lines.slice(4).every((line) => line.startsWith("§5§o"))
+    ).toBe(true);
+  });
+
+  it("testUsesTypeMetaColors", () => {
+    const integer = buildAspectCardTooltip({
+      aspectName: "Value",
+      typeName: "Integer",
+    });
+    expect(integer.lines).toContain("§eType: §r§6Integer");
+
+    const any = buildAspectCardTooltip({
+      aspectName: "Value",
+      typeName: "Any",
+    });
+    expect(any.lines).toContain("§eType: §r§fAny");
+  });
+
+  it("testOmitsOnlyTheLinesWithoutIds", () => {
+    const tooltip = buildAspectCardTooltip({
+      aspectName: "Value",
+      typeName: "Integer",
+    });
+
+    expect(tooltip.lines[0]).toBe("§eAspect: §rValue");
+    expect(tooltip.lines.some((line) => line.includes("Part ID"))).toBe(false);
+    expect(tooltip.lines.some((line) => line.includes("Variable ID"))).toBe(
+      false
+    );
+    expect(tooltip.lines).toContain("§eType: §r§6Integer");
+  });
+});
+
+describe("readerPartIds", () => {
+  beforeEach(beforeEachVisualTransformer);
+
+  it("testHonoursAuthoredPartIdsAndAssignsTheRest", () => {
+    const stepList = [
+      { node: makeAst.reader() },
+      { node: makeAst.readerWithSimulatedOutput() },
+    ];
+
+    expect(getReaderPartIdForStep(stepList, 0, 0)).toBe(0);
+    expect(getReaderPartIdForStep(stepList, 1, 0)).toBe(1);
+  });
+
+  it("testSharesOnePartIdPerReaderPart", () => {
+    const inventory = makeAst.reader() as TypeAST.Reader;
+    const withoutPartId: TypeAST.Reader = {
+      type: "Reader",
+      value: {
+        reader: inventory.value.reader,
+        aspect: inventory.value.aspect,
+        settings: inventory.value.settings,
+      },
+    };
+    const stepList = [{ node: withoutPartId }, { node: withoutPartId }];
+
+    expect(getReaderPartIdForStep(stepList, 0, 4)).toBe(4);
+    expect(getReaderPartIdForStep(stepList, 1, 4)).toBe(4);
   });
 });
 
@@ -111,6 +201,16 @@ describe("buildStepTooltip", () => {
     const [integerStep] = steps(makeAst.arithmetic());
     const tooltip = buildStepTooltip(integerStep!, 0);
     expect(tooltip.lines[0]).toBe("§eType: §r§6Integer");
+  });
+
+  it("testRoutesReaderStepsToAspectCard", () => {
+    const [readerStep] = steps(makeAst.reader());
+    const tooltip = buildStepTooltip(readerStep!, 0, 0);
+
+    expect(tooltip.title).toBe("Variable Card");
+    expect(tooltip.lines[0]).toBe("§eAspect: §rSlot Item");
+    expect(tooltip.lines).toContain("§ePart ID: §r0");
+    expect(tooltip.lines.some((line) => line.includes("Value:"))).toBe(false);
   });
 });
 
