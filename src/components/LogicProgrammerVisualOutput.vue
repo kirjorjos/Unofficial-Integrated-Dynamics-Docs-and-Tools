@@ -47,8 +47,10 @@ import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 import tooltipInfo from "lib/generated/integratedDynamicsTooltipInfo.json";
 import { LOGIC_PROGRAMMER_RENDER_PATTERNS } from "./logicProgrammerRenderPatterns";
 import {
+  buildAspectCardTooltip,
   getDisplayPanelSourceStep,
   getMaterializerResultCard,
+  getReaderPartIdForStep,
 } from "pages-lib/visualTransformerLogic";
 
 type OperatorClassLike = {
@@ -1779,8 +1781,21 @@ const buildStepTooltip = (
     | "node"
     | "tooltipOperatorKey"
   >,
-  variableId: number
+  variableId: number,
+  partId?: number
 ): TooltipData => {
+  if (step.node?.type === "Reader") {
+    const readerClass = getReaderClassByTypeName(step.node.value.reader);
+    const aspect = readerClass?.aspects[step.node.value.aspect];
+
+    return buildAspectCardTooltip({
+      aspectName: aspect?.fullDisplayName ?? step.node.value.aspect,
+      typeName: aspect?.outputType ?? getStepActualOutputType(step),
+      partId,
+      variableId,
+    });
+  }
+
   if (step.kind === "operator" && step.sourceType !== "Operator") {
     return buildOperatorCardTooltip(step, variableId);
   }
@@ -1871,7 +1886,15 @@ const steps = computed<VisualStep[]>(() => {
       step: Omit<VisualStep, "variableId" | "tooltip">
     ): VisualCardRef => {
       const variableId = props.startVariableId + result.length;
-      const tooltip = buildStepTooltip(step, variableId);
+      const partId =
+        step.sourceType === "Reader"
+          ? getReaderPartIdForStep(
+              [...result, step],
+              result.length,
+              props.startVariableId
+            )
+          : undefined;
+      const tooltip = buildStepTooltip(step, variableId, partId);
       const fullStep = {
         ...step,
         variableId,
@@ -2605,6 +2628,8 @@ defineExpose({ steps, displaySteps });
         :focused-aspect="getReaderViewFocusedAspect(step)"
         :values="getReaderViewValues(step)"
         :type-error="step.typeError"
+        :part-id="getReaderPartIdForStep(steps, index, startVariableId)"
+        :variable-id="step.variableId"
       />
       <MaterializerGuiView
         v-else-if="step.sourceType === 'Materialize'"

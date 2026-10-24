@@ -32,7 +32,7 @@ if (!branch) {
 if (!isServedBranch || !isServedBranch(branch)) {
   console.error(`Not a serveable branch: ${JSON.stringify(branch)}`);
   console.error(
-    "Expected <version>/main, <version>/development, or <version>/development/issue-<n>."
+    "Expected <version>/main, <version>/development, or <version>/development-issue-<n>."
   );
   process.exit(2);
 }

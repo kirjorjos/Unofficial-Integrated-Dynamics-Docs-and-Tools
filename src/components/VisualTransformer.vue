@@ -9,6 +9,7 @@ import {
   getCompactValueTextForAst,
   getCumulativeStepError,
   getMaterializerResultCard,
+  getReaderPartIdForStep,
 } from "pages-lib/visualTransformerLogic";
 import { getReaderClassByTypeName } from "lib/IntegratedDynamicsClasses/readers/readerRegistry";
 
@@ -69,6 +70,8 @@ const getReaderViewValues = (
         "
         :values="getReaderViewValues(step)"
         :type-error="step.typeError"
+        :part-id="getReaderPartIdForStep(steps, index, startId)"
+        :variable-id="step.variableId"
       />
       <MaterializerGuiView
         v-else-if="step.sourceType === 'Materialize'"

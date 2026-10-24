@@ -4,6 +4,7 @@ import { compileFixtures, openVisual } from "./visual-helpers";
 const FIXTURES = [
   { name: "arithmetic", input: "apply add 1 2" },
   { name: "type-mismatch", input: "apply add true 2" },
+  { name: "reader", input: 'InventoryReader(0).slotItem({"slot": 1})' },
 ] as const;
 
 const CODE = compileFixtures(FIXTURES);
@@ -67,6 +68,15 @@ test.describe("tooltipScreenshotsPinnedMcFont", () => {
     const tooltip = await hoverAndFrame(page, card);
     await expect(tooltip).toContainText(/Input Type 1/);
     await expect(tooltip).toHaveScreenshot("operator-card-tooltip.png");
+  });
+
+  test("testAspectCardTooltip", async ({ page }) => {
+    await openVisual(page, (await CODE).reader);
+    const card = page.locator(".reader-slot-output-card");
+    const tooltip = await hoverAndFrame(page, card);
+    await expect(tooltip).toContainText(/Aspect:/);
+    await expect(tooltip).toContainText(/Part ID:/);
+    await expect(tooltip).toHaveScreenshot("aspect-card-tooltip.png");
   });
 
   test("testErrorRedXTooltip", async ({ page }) => {

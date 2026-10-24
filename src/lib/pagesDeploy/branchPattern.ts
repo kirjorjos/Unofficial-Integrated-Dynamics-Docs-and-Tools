@@ -1,7 +1,7 @@
 import { DeployError } from "./errors";
 
 export const SERVED_BRANCH_RE =
-  /^[0-9]+\.[0-9]{1,2}\.[0-9]{1,2}\/(?:main|development(?:\/issue-[0-9]+)?)$/;
+  /^[0-9]+\.[0-9]{1,2}\.[0-9]{1,2}\/(?:main|development(?:-issue-[0-9]+)?)$/;
 
 export function isServedBranch(branch: string): boolean {
   return SERVED_BRANCH_RE.test(branch);

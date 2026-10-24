@@ -39,11 +39,11 @@ GitHub Pages hosts every served branch under the project base:
 | ------------------------------ | --------------------------------- |
 | `1.19.2/main` (primary)        | `…/1.19.2/main/`                  |
 | `1.19.2/development`           | `…/1.19.2/development/`           |
-| `1.19.2/development/issue-###` | `…/1.19.2/development/issue-###/` |
+| `1.19.2/development-issue-###` | `…/1.19.2/development-issue-###/` |
 
 ### Branch rules
 
-- Serveable branches match `^[0-9]+\.[0-9]{1,2}\.[0-9]{1,2}\/(?:main|development(?:\/issue-[0-9]+)?)$` and must be listed in `branches.json` on the `metadata` branch.
+- Serveable branches match `^[0-9]+\.[0-9]{1,2}\.[0-9]{1,2}\/(?:main|development(?:-issue-[0-9]+)?)$` and must be listed in `branches.json` on the `metadata` branch.
 - Add or remove a branch in `branches.json`, then run **Pages deploy** manually. Pushing to `1.19.2/main` auto-deploys it and pins the other served branches to their recorded SHAs.
 - `metadata` is a data branch (one orphan commit holding `branches.json`, README/licenses and `builds/<slug>/`). Never make it default, and don't edit it during a deploy — the store is force-pushed with `--force-with-lease`.
 - A branch that fails to build is dropped (404) until a later deploy succeeds. Stored builds are reused byte-for-byte unless the commit, base, Node, Vite or lockfile changes, so unchanged branches skip `npm ci`/Vite.

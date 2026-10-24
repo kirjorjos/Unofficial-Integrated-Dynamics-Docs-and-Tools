@@ -187,19 +187,19 @@ describe("TestPagesDeployStore", () => {
       served: [
         "1.19.2/main",
         "1.19.2/development",
-        "1.19.2/development/issue-1",
+        "1.19.2/development-issue-1",
       ],
-      pruned: ["1.19.2/development/issue-9"],
+      pruned: ["1.19.2/development-issue-9"],
       outcomes: [
         { branch: "1.19.2/main", action: "built" },
         { branch: "1.19.2/development", action: "reused" },
-        { branch: "1.19.2/development/issue-1", action: "failed" },
+        { branch: "1.19.2/development-issue-1", action: "failed" },
       ],
       existingFolders: [
         "1.19.2__main",
         "1.19.2__development",
-        "1.19.2__development__issue-1",
-        "1.19.2__development__issue-9",
+        "1.19.2__development-issue-1",
+        "1.19.2__development-issue-9",
         "orphan__folder",
       ],
     });
@@ -207,8 +207,8 @@ describe("TestPagesDeployStore", () => {
     expect(plan.keep).toEqual(["1.19.2__development", "1.19.2__main"]);
     expect(plan.write).toEqual(["1.19.2__main"]);
     expect(plan.drop).toEqual([
-      "1.19.2__development__issue-1",
-      "1.19.2__development__issue-9",
+      "1.19.2__development-issue-1",
+      "1.19.2__development-issue-9",
       "orphan__folder",
     ]);
     expect(plan.counts).toEqual({
