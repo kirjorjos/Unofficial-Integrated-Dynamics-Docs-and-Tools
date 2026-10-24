@@ -1,0 +1,220 @@
+name: Rescue fork PR
+
+on:
+  workflow_dispatch:
+    inputs:
+      pr:
+        description: "Pull request number to pseudo-merge"
+        required: true
+        type: number
+      override_guard:
+        description: "Proceed even though the PR changes .github/ or package.json (review the diff first)"
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rescue-pr-${{ inputs.pr }}
+  cancel-in-progress: false
+
+jobs:
+  rescue:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Check out the target branch
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Generate GitHub App installation token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.GH_APP_ID }}
+          private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ github.event.repository.name }}
+          permission-contents: write
+          permission-pull-requests: write
+          permission-issues: write
+
+      - name: Export the App token
+        env:
+          TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          echo "::add-mask::${TOKEN}"
+          echo "GH_TOKEN=${TOKEN}" >> "$GITHUB_ENV"
+
+      - name: Resolve the pull request
+        id: pr
+        env:
+          PR: ${{ inputs.pr }}
+        run: |
+          set -euo pipefail
+          gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR}" \
+            --jq '{number, title, state, base: .base.ref, head_ref: .head.ref, head_sha: .head.sha, head_repo: (.head.repo.full_name // "deleted"), author: .user.login}' \
+            > "$RUNNER_TEMP/pr.json"
+          cat "$RUNNER_TEMP/pr.json"
+          jq -r '.title' "$RUNNER_TEMP/pr.json" > "$RUNNER_TEMP/pr-title.txt"
+          for field in number state base head_ref head_sha head_repo author; do
+            value="$(jq -r --arg f "$field" '.[$f]' "$RUNNER_TEMP/pr.json")"
+            printf '%s=%s\n' "$field" "$value" >> "$GITHUB_OUTPUT"
+          done
+
+      - name: Validate the pull request
+        env:
+          PR_STATE: ${{ steps.pr.outputs.state }}
+          PR_BASE: ${{ steps.pr.outputs.base }}
+          PR_HEAD_REPO: ${{ steps.pr.outputs.head_repo }}
+        run: |
+          set -euo pipefail
+          if [ "${PR_STATE}" != "open" ]; then
+            echo "::error::Pull request #${{ inputs.pr }} is ${PR_STATE}; only open pull requests can be rescued."
+            exit 1
+          fi
+          if [ "${PR_BASE}" != "${{ github.ref_name }}" ]; then
+            echo "::error::Pull request #${{ inputs.pr }} targets '${PR_BASE}' but this run is on '${{ github.ref_name }}'. Dispatch it from '${PR_BASE}'."
+            exit 1
+          fi
+          if [ "${PR_HEAD_REPO}" = "deleted" ]; then
+            echo "::error::The head repository of pull request #${{ inputs.pr }} no longer exists."
+            exit 1
+          fi
+          if [ "${PR_HEAD_REPO}" = "${GITHUB_REPOSITORY}" ]; then
+            echo "::notice::Pull request #${{ inputs.pr }} is not from a fork; 'Update branch' is available for it. Rescuing anyway."
+          fi
+
+      - name: Guard CI-definition changes
+        env:
+          PR: ${{ inputs.pr }}
+          OVERRIDE: ${{ inputs.override_guard }}
+        run: |
+          set -euo pipefail
+          CHANGED="$(gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR}/files" --paginate --jq '.[].filename')"
+          GUARDED="$(printf '%s\n' "${CHANGED}" | grep -E '^(\.github/|package\.json$)' || true)"
+          if [ -z "${GUARDED}" ]; then
+            echo "No workflow or package.json changes in the diff."
+            exit 0
+          fi
+          if [ "${OVERRIDE}" = "true" ]; then
+            echo "::warning::Guarded paths present and override_guard=true; proceeding on the assumption they were reviewed:"
+            printf '%s\n' "${GUARDED}"
+            exit 0
+          fi
+          echo "::error::This pull request changes paths that define CI itself. On a fork those run with no secrets and after approval; on a rescue branch they run with this repository's tokens. Review the diff, then re-run with override_guard=true."
+          printf '%s\n' "${GUARDED}"
+          exit 1
+
+      - name: Create the rescue branch
+        env:
+          PR: ${{ inputs.pr }}
+          TARGET: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          BRANCH="rescue/pr-${PR}"
+          if git ls-remote --exit-code --heads origin "${BRANCH}" >/dev/null 2>&1; then
+            echo "::error::origin/${BRANCH} already exists. Delete it with 'gh api -X DELETE repos/${GITHUB_REPOSITORY}/git/refs/heads/${BRANCH}' and re-run."
+            exit 1
+          fi
+          git fetch --no-tags origin "refs/heads/${TARGET}:refs/remotes/origin/${TARGET}"
+          git fetch --no-tags origin "pull/${PR}/head:refs/remotes/origin/pr-${PR}"
+          git switch --create "${BRANCH}" "origin/${TARGET}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if ! git merge --no-ff -m "Pseudo-merge of #${PR}" \
+            -m "Original: ${{ steps.pr.outputs.head_repo }}:${{ steps.pr.outputs.head_ref }} at ${{ steps.pr.outputs.head_sha }}" \
+            "refs/remotes/origin/pr-${PR}"; then
+            echo "::error::Merging pull/${PR}/head into ${BRANCH} conflicted. Nothing was pushed; the contributor has to rebase."
+            git merge --abort || true
+            exit 1
+          fi
+
+      - name: Push the rescue branch and open the follow-up pull request
+        id: rescue
+        env:
+          PR: ${{ inputs.pr }}
+          TARGET: ${{ github.ref_name }}
+          APP_TOKEN: ${{ steps.app-token.outputs.token }}
+          HEAD_REPO: ${{ steps.pr.outputs.head_repo }}
+          HEAD_REF: ${{ steps.pr.outputs.head_ref }}
+          HEAD_SHA: ${{ steps.pr.outputs.head_sha }}
+          AUTHOR: ${{ steps.pr.outputs.author }}
+        run: |
+          set -euo pipefail
+          BRANCH="rescue/pr-${PR}"
+          # GitHub caps titles at 256 characters; keep the prefix intact.
+          TITLE="Pseudo-merge of #${PR}: $(cat "$RUNNER_TEMP/pr-title.txt")"
+          TITLE="${TITLE:0:240}"
+
+          git remote set-url origin "https://x-access-token:${APP_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git push origin "${BRANCH}"
+
+          BODY="$(cat <<EOF
+          Pseudo-merge of #${PR}.
+
+          The original pull request comes from a fork whose branch cannot be advanced to satisfy the up-to-date requirement on \`${TARGET}\`. Its commits were merged into \`${BRANCH}\` in this repository and are carried through CI by this pull request.
+
+          - Original: #${PR} by @${AUTHOR}
+          - Source: \`${HEAD_REPO}:${HEAD_REF}\` at \`${HEAD_SHA}\`
+          - Commit authorship is preserved; reviews and approvals are not carried over.
+
+          To continue the work, open a new pull request from a branch based on \`${TARGET}\`.
+          EOF
+          )"
+
+          URL="$(gh pr create --base "${TARGET}" --head "${BRANCH}" --title "${TITLE}" --body "${BODY}")"
+          NUMBER="${URL##*/}"
+          echo "Opened ${URL}"
+          echo "number=${NUMBER}" >> "$GITHUB_OUTPUT"
+          echo "url=${URL}" >> "$GITHUB_OUTPUT"
+
+          COMMENT="$(cat <<EOF
+          Pseudo-merged in #${NUMBER} (${URL}).
+
+          This branch is from a fork, so it cannot be advanced in place to satisfy the required up-to-date check. Its commits were merged into \`${BRANCH}\` in this repository instead and continue in #${NUMBER}. Commit authorship is preserved and this thread remains the discussion record.
+
+          To keep iterating, open a new pull request from a branch based on \`${TARGET}\`.
+          EOF
+          )"
+
+          gh pr close "${PR}" --comment "${COMMENT}"
+
+      - name: Arm auto-merge on the follow-up pull request
+        continue-on-error: true
+        env:
+          RESCUE: ${{ steps.rescue.outputs.number }}
+          PR: ${{ inputs.pr }}
+          HEAD_REPO: ${{ steps.pr.outputs.head_repo }}
+          HEAD_REF: ${{ steps.pr.outputs.head_ref }}
+          HEAD_SHA: ${{ steps.pr.outputs.head_sha }}
+        run: |
+          set -euo pipefail
+          gh pr merge "${RESCUE}" --merge --auto --delete-branch \
+            --subject "Pseudo-merge of #${PR}" \
+            --body "Original pull request: #${PR} (${HEAD_REPO}:${HEAD_REF} at ${HEAD_SHA}). Merged via rescue because the fork branch cannot satisfy the strict up-to-date requirement."
+
+      - name: Summarise
+        if: always() && steps.rescue.outputs.number != ''
+        env:
+          RESCUE: ${{ steps.rescue.outputs.number }}
+          PR: ${{ inputs.pr }}
+        run: |
+          {
+            echo "### Rescue of #${PR}"
+            echo ""
+            echo "- Follow-up pull request: #${RESCUE} (${{ steps.rescue.outputs.url }})"
+            echo "- Original pull request: closed with a pointer to #${RESCUE}"
+            echo ""
+            echo "Auto-merge was armed; if it did not take (repository auto-merge disabled, or the branch went out of date), finish with:"
+            echo ""
+            echo '```'
+            echo "gh pr update-branch ${RESCUE} && gh pr merge ${RESCUE} --merge --delete-branch --subject \"Pseudo-merge of #${PR}\""
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"

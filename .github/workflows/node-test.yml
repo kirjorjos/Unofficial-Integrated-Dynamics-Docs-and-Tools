@@ -12,33 +12,67 @@ jobs:
     defaults:
       run:
         shell: bash
+    env:
+      IS_PROMOTION: ${{ endsWith(github.event.pull_request.base.ref, '/main') && endsWith(github.event.pull_request.head.ref, '/development') }}
 
     steps:
+      - name: Promotion PR — development is assumed tested
+        if: env.IS_PROMOTION == 'true'
+        run: |
+          echo "::notice::Promoting '${{ github.event.pull_request.head.ref }}' into '${{ github.event.pull_request.base.ref }}'; skipping the suite. Run it on the pull requests into the development branch instead."
+
       - uses: actions/checkout@v5
+        if: env.IS_PROMOTION != 'true'
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Use Node.js
+        if: env.IS_PROMOTION != 'true'
         uses: actions/setup-node@v4
         with:
           node-version: "20.19.5"
           cache: npm
 
       - name: Install dependencies
+        if: env.IS_PROMOTION != 'true'
         run: npm ci
 
       - name: Jest + typecheck
+        if: env.IS_PROMOTION != 'true'
         run: npx jest && npm run typecheck
 
-      - name: Playwright — compare against committed baselines
+      - name: Check out the base branch's baselines
+        id: base
+        if: env.IS_PROMOTION != 'true'
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+        run: |
+          set -euo pipefail
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git fetch --no-tags origin "refs/heads/${BASE_REF}:refs/remotes/origin/${BASE_REF}"
+          BASE_SHA="$(git rev-parse "origin/${BASE_REF}")"
+          echo "base_sha=${BASE_SHA}" >> "$GITHUB_OUTPUT"
+          echo "Comparing against ${BASE_REF} at ${BASE_SHA}"
+          if git cat-file -e "${BASE_SHA}:src/assets/visual-snapshots" 2>/dev/null; then
+            # Replace rather than overlay: baselines deleted in the base branch
+            # must not linger, and baselines committed to the PR are regenerated
+            # by the update step below when they differ.
+            git rm -rq --ignore-unmatch src/assets/visual-snapshots
+            git checkout "${BASE_SHA}" -- src/assets/visual-snapshots
+          else
+            echo "::warning::${BASE_REF} has no src/assets/visual-snapshots - comparing against the PR head's copies."
+          fi
+
+      - name: Playwright — compare against the base branch's baselines
         id: compare
+        if: env.IS_PROMOTION != 'true'
         continue-on-error: true
         run: npx playwright test --output=test-results
 
       - name: Regenerate failing screenshots
         id: regen
-        if: steps.compare.outcome == 'failure'
+        if: env.IS_PROMOTION != 'true' && steps.compare.outcome == 'failure'
         continue-on-error: true
         run: npx playwright test --output=test-results --last-failed --update-snapshots
 
@@ -47,18 +81,16 @@ jobs:
       # be produced whatever else goes wrong in this job.
       - name: Detect changed baselines vs base branch
         id: changed
-        if: always()
+        if: always() && env.IS_PROMOTION != 'true'
         env:
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          BASE_SHA: ${{ steps.base.outputs.base_sha }}
         run: |
           set -euo pipefail
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
           mkdir -p "$RUNNER_TEMP/changed-baselines"
-          if [ -z "$BASE_SHA" ]; then
+          if [ -z "${BASE_SHA:-}" ]; then
+            echo "::warning::No base commit resolved - cannot list changed baselines."
             exit 0
-          fi
-          if ! git cat-file -e "$BASE_SHA^{commit}" 2>/dev/null; then
-            git fetch --no-tags --depth=1 origin "$BASE_SHA"
           fi
           git add -N src/assets/visual-snapshots/ || true
           git diff --name-only "$BASE_SHA" -- src/assets/visual-snapshots/ | sort \
@@ -70,11 +102,11 @@ jobs:
           fi
 
       - name: Fail — screenshot failures could not be regenerated
-        if: steps.compare.outcome == 'failure' && steps.regen.outcome != 'success'
+        if: env.IS_PROMOTION != 'true' && steps.compare.outcome == 'failure' && steps.regen.outcome != 'success'
         run: exit 1
 
       - name: Upload the changed baseline list for the comment workflow
-        if: always() && steps.changed.outputs.changed == 'true'
+        if: always() && env.IS_PROMOTION != 'true' && steps.changed.outputs.changed == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: changed-baselines
@@ -83,7 +115,7 @@ jobs:
           if-no-files-found: ignore
 
       - name: Upload Playwright report on failure (or after a regen)
-        if: failure() || steps.compare.outcome == 'failure'
+        if: env.IS_PROMOTION != 'true' && (failure() || steps.compare.outcome == 'failure')
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
