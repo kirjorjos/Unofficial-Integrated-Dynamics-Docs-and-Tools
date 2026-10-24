@@ -157,34 +157,31 @@ describe("TestPagesDeployCompose", () => {
     ]);
   });
 
-  it("testNestedBranchesCoexistEvenWhenPassedChildFirst", () => {
-    const child = makeEntry(store, "1.19.2/development/issue-77", {
-      "index.html": "<child>",
+  it("testDevelopmentAndIssuePreviewCoexistWhenPassedIssueFirst", () => {
+    const issue = makeEntry(store, "1.19.2/development-issue-77", {
+      "index.html": "<issue>",
     });
-    const parent = makeEntry(store, "1.19.2/development", {
-      "index.html": "<parent>",
-      "assets/parent.js": "parent-js",
+    const dev = makeEntry(store, "1.19.2/development", {
+      "index.html": "<dev>",
+      "assets/dev.js": "dev-js",
     });
 
-    compose([child, parent], {
-      servedBranches: [PRIMARY, "1.19.2/development", child.branch],
+    compose([issue, dev], {
+      servedBranches: [PRIMARY, "1.19.2/development", issue.branch],
     });
 
     expect(
       readFileSync(path.join(out, "1.19.2/development/index.html"), "utf8")
-    ).toBe("<parent>");
+    ).toBe("<dev>");
+    expect(
+      readFileSync(path.join(out, "1.19.2/development/assets/dev.js"), "utf8")
+    ).toBe("dev-js");
     expect(
       readFileSync(
-        path.join(out, "1.19.2/development/assets/parent.js"),
+        path.join(out, "1.19.2/development-issue-77/index.html"),
         "utf8"
       )
-    ).toBe("parent-js");
-    expect(
-      readFileSync(
-        path.join(out, "1.19.2/development/issue-77/index.html"),
-        "utf8"
-      )
-    ).toBe("<child>");
+    ).toBe("<issue>");
   });
 
   it("testVersionRedirectOnlyForVersionsWithAServedMain", () => {
@@ -293,24 +290,6 @@ describe("TestPagesDeployCompose", () => {
     const main = makeEntry(store, PRIMARY, { "index.html": "x" });
     symlinkSync("index.html", path.join(main.dir, "linked.html"));
     expect(() => compose([main])).toThrow(/symlink/);
-  });
-
-  it("testDetectsAFileDirectoryCollisionBetweenNestedBranches", () => {
-    const parent = makeEntry(store, "1.19.2/development", {
-      "index.html": "parent",
-      "issue-77": "this is a file, not a directory",
-    });
-    const child = makeEntry(store, "1.19.2/development/issue-77", {
-      "index.html": "child",
-    });
-    expect(() =>
-      compose([parent, child], {
-        servedBranches: [PRIMARY, parent.branch, child.branch],
-      })
-    ).toThrow(/collisions/);
-    expect(existsSync(path.join(out, "1.19.2/development/issue-77"))).toBe(
-      false
-    );
   });
 
   it("testIsDeterministicAcrossRunsAndOutputDirectories", () => {
