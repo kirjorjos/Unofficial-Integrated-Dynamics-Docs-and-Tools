@@ -34,7 +34,7 @@ describe("TestPagesDeployBranchesJson", () => {
       { primary: "1.19.2/nope", branches: [primary] },
       { primary, branches: [primary, primary] },
       { primary, branches: [primary, 42] },
-      { primary, branches: [primary, "1.19.2/development/issue-abc"] },
+      { primary, branches: [primary, "1.19.2/development-issue-abc"] },
       { primary, branches: [primary], extra: true },
       { primary, branches: [primary, " 1.19.2/development"] },
     ];
@@ -69,10 +69,10 @@ describe("TestPagesDeployBranchesJson", () => {
   it("testPruneRemovesMissingBranches", () => {
     const config = {
       primary,
-      branches: [primary, "1.19.2/development", "1.19.2/development/issue-1"],
+      branches: [primary, "1.19.2/development", "1.19.2/development-issue-1"],
     };
     const result = pruneMissing(config, [primary, "1.19.2/development"]);
-    expect(result.pruned).toEqual(["1.19.2/development/issue-1"]);
+    expect(result.pruned).toEqual(["1.19.2/development-issue-1"]);
     expect(result.config).toEqual({
       primary,
       branches: [primary, "1.19.2/development"],
