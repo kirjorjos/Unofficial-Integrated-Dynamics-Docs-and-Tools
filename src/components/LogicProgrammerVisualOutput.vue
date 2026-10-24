@@ -38,6 +38,7 @@ import {
 } from "lib/transformers/helpers";
 import { INTERNAL_BUG_MESSAGE } from "lib/transformers/parseErrors";
 import { abstractDynamicParts } from "lib/transformers/lambdaAbstraction";
+import { astContentKey } from "lib/transformers/NetworkCards";
 import {
   setLastInternalBugDetail,
   setLastInternalBugStep,
@@ -782,48 +783,6 @@ const getOperatorOutputType = (operatorClass: OperatorClassLike): string => {
 const getCardName = (ast: TypeAST.AST): string => {
   if (ast.varName) return ast.varName;
   return getExpandedVarName(ast);
-};
-
-const astContentKey = (ast: TypeAST.AST): string => {
-  switch (ast.type) {
-    case "Operator":
-      return `Operator:${ast.opName}`;
-    case "Curry":
-      return `Curry:${astContentKey(ast.base)}(${ast.args
-        .map(astContentKey)
-        .join(",")})`;
-    case "Pipe":
-      return `Pipe(${astContentKey(ast.op1)},${astContentKey(ast.op2)})`;
-    case "Pipe2":
-      return `Pipe2(${astContentKey(ast.op1)},${astContentKey(ast.op2)},${astContentKey(ast.op3)})`;
-    case "Flip":
-      return `Flip(${astContentKey(ast.arg)})`;
-    case "List":
-      return `List[${ast.value.map(astContentKey).join(",")}]`;
-    case "Variable":
-      return `Variable:${ast.name}`;
-    case "String":
-      return `String:${ast.value}`;
-    case "Boolean":
-      return `Boolean:${ast.value}`;
-    case "Integer":
-    case "Long":
-    case "Double":
-      return `${ast.type}:${ast.value}`;
-    case "Null":
-      return "Null";
-    case "NBT":
-      return `NBT:${JSON.stringify(ast.value)}`;
-    case "Block":
-    case "Item":
-    case "Fluid":
-    case "Entity":
-    case "Ingredients":
-    case "Recipe":
-      return `${ast.type}:${JSON.stringify(ast.value)}`;
-    default:
-      return (ast as TypeAST.AST).type;
-  }
 };
 
 const getExpandedCurryChunks = (

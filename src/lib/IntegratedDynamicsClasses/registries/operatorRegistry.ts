@@ -306,6 +306,40 @@ import { OPERATOR_LIST_LAZYBUILT } from "lib/IntegratedDynamicsClasses/operators
 import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
 import { RegistryHub } from "lib/IntegratedDynamicsClasses/registries/registryHub";
 
+const nonEmpty = (names: (string | undefined)[]): string[] =>
+  names.filter(
+    (name): name is string => typeof name === "string" && name.length > 0
+  );
+
+export const operatorAliasForms = (
+  key: string,
+  opClass: typeof BaseOperator
+): string[] =>
+  nonEmpty([
+    key,
+    opClass.internalName,
+    opClass.symbol,
+    opClass.interactName,
+    opClass.operatorName,
+    ...opClass.nicknames,
+    ...opClass.stringDisplayNames,
+  ]);
+
+export const operatorDisplayForms = (opClass: typeof BaseOperator): string[] =>
+  nonEmpty([opClass.displayName, opClass.fullDisplayName]);
+
+interface OperatorNameClaims {
+  aliases: TypeOperatorKey[];
+  displayNames: TypeOperatorKey[];
+}
+
+interface OperatorNameForms {
+  owners: Map<string, OperatorNameClaims>;
+  unique: Map<string, TypeOperatorKey>;
+}
+
+let cachedNameForms: OperatorNameForms | undefined;
+
 const operatorRegistryClass = class operatorRegistryClass {
   constructor() {}
 
@@ -317,22 +351,52 @@ const operatorRegistryClass = class operatorRegistryClass {
     }
   }
 
-  operatorByNickname(nickname: string): TypeOperatorKey | void {
-    for (const [key, opClass] of Object.entries(this)) {
-      if (key === "find" || key === "operatorByNickname") continue;
-      if (typeof opClass === "function") {
-        const staticOp = opClass as typeof BaseOperator;
-        if (staticOp.internalName === nickname) return key as TypeOperatorKey;
+  private nameForms(): OperatorNameForms {
+    if (cachedNameForms) return cachedNameForms;
 
-        if (key === nickname) return key as TypeOperatorKey;
+    const owners = new Map<string, OperatorNameClaims>();
+    const claim = (
+      name: string,
+      tier: keyof OperatorNameClaims,
+      key: TypeOperatorKey
+    ) => {
+      let claims = owners.get(name);
+      if (claims === undefined) {
+        claims = { aliases: [], displayNames: [] };
+        owners.set(name, claims);
+      }
+      const keys = claims[tier];
+      if (!keys.includes(key)) keys.push(key);
+    };
 
-        if (staticOp.nicknames.includes(nickname))
-          return key as TypeOperatorKey;
-
-        if (staticOp.stringDisplayNames.includes(nickname))
-          return key as TypeOperatorKey;
+    for (const [key, value] of Object.entries(this)) {
+      if (typeof value !== "function") continue;
+      const opClass = value as typeof BaseOperator;
+      for (const name of operatorAliasForms(key, opClass)) {
+        claim(name, "aliases", key as TypeOperatorKey);
+      }
+      for (const name of operatorDisplayForms(opClass)) {
+        claim(name, "displayNames", key as TypeOperatorKey);
       }
     }
+
+    const unique = new Map<string, TypeOperatorKey>();
+    for (const [name, claims] of owners) {
+      const keys = [...new Set([...claims.aliases, ...claims.displayNames])];
+      if (keys.length === 1) unique.set(name, keys[0]!);
+    }
+    cachedNameForms = { owners, unique };
+    return cachedNameForms;
+  }
+
+  operatorNameOwners(name: string): TypeOperatorKey[] {
+    const claims = this.nameForms().owners.get(name);
+    if (!claims) return [];
+    return [...new Set([...claims.aliases, ...claims.displayNames])];
+  }
+
+  operatorByNickname(nickname: string): TypeOperatorKey | void {
+    return this.nameForms().unique.get(nickname);
   }
 
   LOGICAL_AND = OPERATOR_LOGICAL_AND;

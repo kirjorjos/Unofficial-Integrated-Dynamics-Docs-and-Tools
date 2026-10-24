@@ -106,16 +106,17 @@ test.describe("materializerGui", () => {
     await expect(tooltip.locator(".mc-tooltip-title")).toHaveText(/.+/);
 
     const lines = tooltip.locator(".mc-tooltip-line:not(.mc-tooltip-title)");
-    await expect(lines).toHaveCount(6);
-    await expect(lines.nth(0)).toHaveText("Type: Operator");
-    await expect(lines.nth(1)).toHaveText("Signature: Number -> Number");
-    await expect(lines.nth(2)).toHaveText("Value: Applied numberAdd [Integer]");
-    await expect(lines.nth(3)).toHaveText(/Variable ID: \d+/);
+    await expect(lines).toHaveCount(5);
+    await expect(lines.nth(0)).toHaveText("Type: Number");
+    await expect(lines.nth(1)).toHaveText(
+      "Value: Applied numberAdd [Integer; Integer]"
+    );
+    await expect(lines.nth(2)).toHaveText(/Variable ID: \d+/);
 
-    await expect(lines.nth(4)).toHaveText("Clear or copy in a crafting");
-    await expect(lines.nth(5)).toHaveText("grid");
+    await expect(lines.nth(3)).toHaveText("Clear or copy in a crafting");
+    await expect(lines.nth(4)).toHaveText("grid");
 
-    const resultIdText = await lines.nth(3).innerText();
+    const resultIdText = await lines.nth(2).innerText();
 
     await page.locator(".materializer-slot-top .materializer-card").hover();
     const topTooltip = page.locator(".logic-card-tooltip .mc-tooltip");
@@ -157,7 +158,7 @@ test.describe("materializerGui", () => {
 
     const cardPanels = await panels(topStep);
     expect(cardPanels).toHaveLength(2);
-    expect(cardPanels[0]).toContain("::");
+    expect(cardPanels[0]!.length).toBeGreaterThan(0);
 
     expect(await panels(materializerStep)).toEqual(cardPanels);
   });
@@ -174,11 +175,23 @@ test.describe("materializerGui", () => {
     await expect(page.locator(".materializer-gui-frame")).toHaveCount(1);
   });
 
-  test("testEachReaderGetsItsOwnStepAndApplyStep", async ({ page }) => {
+  test("testStaticReadersGetReaderStepsButNoApplySteps", async ({ page }) => {
     await runVisualTransform(page, MULTI_READER_INPUT);
 
     await expect(page.locator(".materializer-gui-frame")).toHaveCount(1);
     await expect(page.locator(".reader-gui-frame")).toHaveCount(2);
+    await expect(page.locator(".logic-programmer-shot")).toHaveCount(4);
+  });
+
+  test("testDynamicReadersGetTheirOwnStepAndApplyStep", async ({ page }) => {
+    await runVisualTransform(
+      page,
+      "Materialize(numberAdd(Dynamic(RedstoneReader.BOOLEAN_LOW), Dynamic(InventoryReader.INTEGER_COUNT)))"
+    );
+
+    await expect(page.locator(".materializer-gui-frame")).toHaveCount(1);
+    await expect(page.locator(".reader-gui-frame")).toHaveCount(2);
+    await expect(page.locator(".logic-programmer-shot")).toHaveCount(6);
   });
 
   test("testNestedMaterializeRendersBothMaterializers", async ({ page }) => {

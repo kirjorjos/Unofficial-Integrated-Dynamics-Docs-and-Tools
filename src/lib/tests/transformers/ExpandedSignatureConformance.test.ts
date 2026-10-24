@@ -166,7 +166,7 @@ describe("ExpandedSignatureConformance", () => {
       "getReaderValue = apply(listGet, [2, 3])",
       "getCurrentReaderValue :: Number -> Integer",
       "getCurrentReaderValue = pipe(divideFifteen, getReaderValue)",
-      "notFull :: Integer -> Boolean",
+      "notFull :: Number -> Boolean",
       "notFull = pipe2(modFifteenPlusOne, getCurrentReaderValue, equals)",
       "isNotFull :: Item -> Boolean",
       "isNotFull = pipe(index0fTool, notFull)",

@@ -16,7 +16,11 @@ import {
   type ParsedPart,
 } from "lib/transformers/inputParser";
 import { KEPT_PART_FIELDS } from "lib/transformers/partFields";
-import { getPartItemId } from "lib/transformers/partItemIds";
+import {
+  getPartFamily,
+  getPartItemId,
+  getPartTypeForItemId,
+} from "lib/transformers/partItemIds";
 import { TagToSNBT, type SNBTSerializeOptions } from "lib/transformers/SNBT";
 
 export const CHAT_LIMIT = 256;
@@ -283,7 +287,22 @@ export const inputToGiveCommands = (
   const partKey = (part: ParsedPart): string =>
     part.partId ?? `#${parsed.parts.indexOf(part)}`;
 
+  const partTypeOf = (part: ParsedPart): string | undefined =>
+    part.partType ??
+    (part.itemId === undefined ? undefined : getPartTypeForItemId(part.itemId));
+
+  const isInterfacePart = (part: ParsedPart): boolean => {
+    const partType = partTypeOf(part);
+    return partType !== undefined && getPartFamily(partType) === "interface";
+  };
+
   const partCommand = (part: ParsedPart): string | null => {
+    if (isInterfacePart(part)) {
+      warnings.push(
+        `Part ${part.partId ?? "(no id)"} (${partTypeOf(part)}) is an interface part, which is never emitted; its cards come out on their own`
+      );
+      return null;
+    }
     const itemId =
       part.itemId ??
       (part.partType === undefined ? undefined : getPartItemId(part.partType));
@@ -338,14 +357,17 @@ export const inputToGiveCommands = (
     }
   };
 
-  const standalone = parsed.cards.filter((card) => !ownerOf.has(card));
+  const standalone = parsed.cards.filter((card) => {
+    const owner = ownerOf.get(card);
+    return owner === undefined || isInterfacePart(owner);
+  });
 
   if (shape === "cards") {
     for (const card of parsed.cards) {
       const owner = ownerOf.get(card);
       if (owner !== undefined) {
         emitPart(owner);
-        continue;
+        if (!isInterfacePart(owner)) continue;
       }
       emitPartsFor(card);
       lines.push(command(VARIABLE_ITEM_ID, tagOfCard(card)));

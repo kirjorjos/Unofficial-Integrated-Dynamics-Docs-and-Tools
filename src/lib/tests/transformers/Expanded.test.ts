@@ -5,11 +5,12 @@ import {
 } from "lib/transformers/Expanded";
 import type { ExpandedSignatureOptions } from "lib/transformers/Expanded";
 import { ASTToCodeLine, CodeLineToAST } from "lib/transformers/CodeLine";
-import { ASTToCondensed } from "lib/transformers/Condensed";
+import { ASTToCondensed, CondensedToAST } from "lib/transformers/Condensed";
 import { ASTToCompressed, CompressedToAST } from "lib/transformers/Compressed";
 import { globalMap } from "lib/HelperClasses/TypeMap";
 import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 import { stripAutoCurryVarNames } from "lib/transformers/inputState";
+import { abstractDynamicParts } from "lib/transformers/lambdaAbstraction";
 
 describe("TestExpandedTransformer", () => {
   beforeEach(() => {
@@ -570,7 +571,7 @@ final = apply add 3 4
     });
   });
 
-  it("testNetworkCardsRoundTripsThroughExpanded", () => {
+  it("testNetworkCardsEmitsReferencesAsCardIds", () => {
     const input = `step0 = 319
 step1 = 236
 final = [step0, step1]`;
@@ -578,11 +579,26 @@ final = [step0, step1]`;
     const expanded = ASTToExpanded(network);
     expect(expanded).toContain("step0 = 319");
     expect(expanded).toContain("step1 = 236");
-    expect(expanded).toContain("final = [step0, step1]");
+    expect(expanded).toContain("final = [0, 1]");
 
-    const back = ExpandedToAST(expanded);
-    expect(JSON.parse(JSON.stringify(back))).toEqual(
-      JSON.parse(JSON.stringify(network))
+    const named = ASTToExpandedWithSignatureOptions(
+      network,
+      "Condensed",
+      null,
+      false,
+      undefined,
+      { expandedRefForm: "name" }
+    );
+    expect(named).toContain("final = [@step0, @step1]");
+
+    const reparsed = ExpandedToAST(input) as TypeAST.NetworkCards;
+    expect(reparsed.definitions.map((d) => d.name)).toEqual([
+      "step0",
+      "step1",
+      "final",
+    ]);
+    expect((reparsed.definitions[2]!.node as TypeAST.List).value).toHaveLength(
+      2
     );
   });
 
@@ -704,11 +720,12 @@ final = [step0, step1]`;
       varName: "my cool variable",
     });
     const expanded = ASTToExpanded(network);
-    expect(expanded).toContain(
-      'final = numberAdd(Variable("my cool variable"), 1)'
-    );
-    const back = ExpandedToAST(expanded);
-    expect(JSON.stringify(back)).toBe(JSON.stringify(network));
+    expect(expanded).toContain("final = numberAdd(0, 1)");
+    const back = ExpandedToAST(expanded) as TypeAST.NetworkCards;
+    expect(back.definitions.map((d) => d.name)).toEqual([
+      "my cool variable",
+      "final",
+    ]);
   });
 
   it("testQuotedVarNameWrapperRequired", () => {
@@ -725,6 +742,16 @@ final = [step0, step1]`;
     expect(() => ExpandedToAST('Variable("add") = 5')).toThrow(
       /overshadows an operator nickname/
     );
+  });
+
+  it("testSelfShadowingAnOperatorNicknameIsAllowed", () => {
+    const network = ExpandedToAST(
+      'add = Operator("add")'
+    ) as TypeAST.NetworkCards;
+    expect(network.definitions[0]!.node).toMatchObject({
+      type: "Operator",
+      opName: "ARITHMETIC_ADDITION",
+    });
   });
 
   it("testAtVariablePseudoConstructorResolvesToCardId", () => {
@@ -826,6 +853,167 @@ final = [step0, step1]`;
     expect(ast.type).toBe("Double");
   });
 
+  it("testTypedDefinitionEnforcesNumericKinds", () => {
+    expect(rootOf(ExpandedToAST("x :: Number = 5"))).toBeTruthy();
+    expect(rootOf(ExpandedToAST("x :: Number = 1.5"))).toBeTruthy();
+    expect(() => ExpandedToAST("x :: Double = 5")).toThrow("declared as type");
+    expect(() => ExpandedToAST("x :: Integer = 5l")).toThrow(
+      "declared as type"
+    );
+    expect(() => ExpandedToAST("x :: Long = 5")).toThrow("declared as type");
+    expect(() => ExpandedToAST("x :: Integer = 3.0")).toThrow(
+      "declared as type"
+    );
+  });
+
+  it("testTypedDefinitionChecksEveryListElement", () => {
+    expect(rootOf(ExpandedToAST("x :: List<Integer> = [1, 2]"))).toBeTruthy();
+    expect(() => ExpandedToAST('x :: List<Integer> = [1, "a"]')).toThrow(
+      "declared as type"
+    );
+    expect(() => ExpandedToAST('x :: List<Integer> = ["a"]')).toThrow(
+      "declared as type"
+    );
+    expect(() => ExpandedToAST("x :: List<Double> = [1.5, 2]")).toThrow(
+      "declared as type"
+    );
+  });
+
+  it("testKeepsCodeLineArgumentCommentsWhenAsked", () => {
+    const on = ASTToExpandedWithSignatureOptions(
+      CodeLineToAST("add 2 3 -- note"),
+      "Condensed",
+      null,
+      false,
+      undefined,
+      { comments: true }
+    );
+    expect(on).toContain("-- [argument 2] note");
+
+    const moved = ASTToExpandedWithSignatureOptions(
+      CodeLineToAST("add 2 -- note\n3"),
+      "Condensed",
+      null,
+      false,
+      undefined,
+      { comments: true }
+    );
+    expect(moved).toContain("-- [argument 1] note");
+
+    const off = ASTToExpandedWithSignatureOptions(
+      CodeLineToAST("add 2 3 -- note"),
+      "Condensed",
+      null,
+      false,
+      undefined,
+      { comments: false }
+    );
+    expect(off).not.toContain("note");
+  });
+
+  it("testKeepsCommentsOnPartiallyAppliedDefinitions", () => {
+    const output = (source: string): string =>
+      ASTToExpandedWithSignatureOptions(
+        ExpandedToAST(source),
+        "Condensed",
+        null,
+        false,
+        undefined,
+        { comments: true }
+      );
+    expect(output("x = add 2 -- note")).toContain("-- note");
+    expect(output("-- note\nx = add 2")).toContain("-- note");
+    expect(output("x = add 2")).not.toContain("-- note");
+  });
+
+  it("testExpandedOutputUsesNameReferencesByDefault", () => {
+    const nameOptions = { expandedRefForm: "name" as const };
+    const ast = ExpandedToAST("one = 1\ntwo = numberAdd(@one, 1)");
+    expect(
+      ASTToExpandedWithSignatureOptions(
+        ast,
+        "Condensed",
+        null,
+        false,
+        undefined,
+        nameOptions
+      )
+    ).toContain("numberAdd(@one, 1)");
+
+    const plain = ExpandedToAST("one = 1\ntwo = numberAdd(one, 1)");
+    expect(
+      ASTToExpandedWithSignatureOptions(
+        plain,
+        "Condensed",
+        null,
+        false,
+        undefined,
+        nameOptions
+      )
+    ).toContain("numberAdd(@one, 1)");
+  });
+
+  it("testExpandedOutputCanUseNumericReferences", () => {
+    const ast = ExpandedToAST("one = 1\ntwo = numberAdd(@one, 1)");
+    const out = ASTToExpandedWithSignatureOptions(
+      ast,
+      "Condensed",
+      null,
+      false,
+      undefined,
+      { expandedRefForm: "varId" }
+    );
+    expect(out).toContain("numberAdd(0, 1)");
+  });
+
+  it("testCalculationRefErrorsOnItsOwnDefinition", () => {
+    expect(() =>
+      ExpandedToAST("a = 1\nb = numberAdd(@calculation, 1)")
+    ).toThrow(/@calculation points at the definition it is used in/);
+  });
+
+  it("testCalculationRefMayPointForwardToTheFinalCard", () => {
+    const ast = ExpandedToAST(
+      "a = numberAdd(@calculation, 1)\nb = 1"
+    ) as TypeAST.NetworkCards;
+    expect((ast.definitions[0]!.node as TypeAST.Curried).args[0]).toEqual({
+      type: "Integer",
+      value: "3",
+    });
+  });
+
+  it("testInlinesALiteralInsteadOfNamingIt", () => {
+    expect(ASTToExpanded(ExpandedToAST("5"))).toBe("5");
+    expect(ASTToExpanded(ExpandedToAST("5.5"))).toBe("5.5");
+    expect(ASTToExpanded(ExpandedToAST("true"))).toBe("true");
+    expect(ASTToExpanded(ExpandedToAST("null"))).toBe("null");
+    expect(ASTToExpanded(CondensedToAST("5"))).toBe("5");
+    expect(ASTToExpanded(ExpandedToAST('"hi"'))).toContain('string1 = "hi"');
+  });
+
+  it("testGeneratedNamesUseTheRegistryThenPerKindCounters", () => {
+    const paramName = (source: string): string => {
+      const ast = ExpandedToAST(source) as TypeAST.NetworkCards;
+      const materialize = ast.definitions[0]!.node as TypeAST.Materialize;
+      return abstractDynamicParts(materialize.value).params[0]!.name;
+    };
+    expect(
+      paramName('x = Materialize(Dynamic(Item("minecraft:oak_log")))')
+    ).toBe("oakLog");
+    expect(
+      paramName('x = Materialize(Dynamic(Item("minecraft:not_a_real_item")))')
+    ).toBe("item0");
+    expect(
+      paramName('x = Materialize(Dynamic(Block("minecraft:not_a_real_block")))')
+    ).toBe("block0");
+  });
+
+  it("testExpandedRejectsNumericAtRefs", () => {
+    expect(() => ExpandedToAST("a = 1\nb = numberAdd(@0, 1)")).toThrow(
+      "Use @name"
+    );
+  });
+
   it("testTypedDefinitionMultipleLines", () => {
     const input = `
 total :: Integer = 3
@@ -855,6 +1043,17 @@ final = total
     expect(() => ExpandedToAST("x :: Widget = 5")).toThrow(
       /Unknown declared type/
     );
+  });
+
+  it("testRejectsNamedTypeVariablesOutsideASignature", () => {
+    expect(() => ExpandedToAST("x :: List<A> = [1]")).toThrow(
+      /only valid inside a signature/
+    );
+    expect(() => ExpandedToAST("x :: Any<A> = 5")).toThrow(
+      /only valid inside a signature/
+    );
+    expect(ExpandedToAST("x :: List<Integer> = [1]")).toBeTruthy();
+    expect(ExpandedToAST("f = x => x\nf :: A -> A")).toBeTruthy();
   });
 
   it("testTypedDefinitionInvalidNameThrows", () => {
@@ -888,8 +1087,8 @@ matchesFilter = (f) => (i) => == (beeGenome f) (beeGenome i)
 
     expect(expanded).not.toContain("nbtPathMatchFirstByGenomePathWithItemNBT");
     expect(expanded).toContain("beeGenome = operatorPipe(itemStackNBT,");
-    expect(expanded).toContain("operatorPipe(beeGenome, anyEquals)");
-    expect(expanded).toContain("apply(operatorPipe, beeGenome)");
+    expect(expanded).toContain("operatorPipe(4, anyEquals)");
+    expect(expanded).toContain("apply(operatorPipe, 4)");
   });
 
   it.each(["Condensed", "CodeLine"] as const)(
@@ -920,12 +1119,12 @@ matchesFilter = (f) => (i) => == (beeGenome f) (beeGenome i)
     ["x{y", 'Variable("x{y") = 5'],
     ["}y", 'Variable("}y") = 5'],
     ["{}", 'Variable("{}") = 5'],
-    ["5", 'Variable("5") = 5'],
-    ["-5", 'Variable("-5") = 5'],
-    ["5l", 'Variable("5l") = 5'],
-    ["5.0", 'Variable("5.0") = 5'],
-    ["true", 'Variable("true") = 5'],
-    ["false", 'Variable("false") = 5'],
+    ["5", "5 = 5"],
+    ["-5", "-5 = 5"],
+    ["5l", "5l = 5"],
+    ["5.0", "5.0 = 5"],
+    ["true", "true = 5"],
+    ["false", "false = 5"],
   ] as const)(
     "testInvalidCharVarNamesWrapAndRoundTrip%s",
     (name, expectedLine) => {
@@ -939,7 +1138,6 @@ matchesFilter = (f) => (i) => == (beeGenome f) (beeGenome i)
       const expanded = ASTToExpanded(ast);
 
       expect(expanded).toContain(expectedLine);
-      expect(expanded.split("\n")).not.toContain(`${name} = 5`);
 
       const back = ExpandedToAST(expanded) as TypeAST.NetworkCards;
       expect(back.definitions.map((d) => d.name)).toEqual([name, "final"]);
@@ -956,9 +1154,17 @@ matchesFilter = (f) => (i) => == (beeGenome f) (beeGenome i)
     }
   );
 
-  it.each(["{}", "5", "-5", "5l", "5.0", "true", "false"])(
+  it.each([
+    ["{}", 'Variable("{}") = 5'],
+    ["5", "5 = 5"],
+    ["-5", "-5 = 5"],
+    ["5l", "5l = 5"],
+    ["5.0", "5.0 = 5"],
+    ["true", "true = 5"],
+    ["false", "false = 5"],
+  ] as const)(
     "testLiteralLikeVarNameRoundTripThroughVariableWrapper%s",
-    (name) => {
+    (name, expectedLine) => {
       const input = `Variable(${JSON.stringify(name)}) = 5\nfinal = Variable(${JSON.stringify(name)})`;
       const network = ExpandedToAST(input) as TypeAST.NetworkCards;
       expect(network.definitions.map((d) => d.name)).toEqual([name, "final"]);
@@ -974,8 +1180,7 @@ matchesFilter = (f) => (i) => == (beeGenome f) (beeGenome i)
       });
 
       const expanded = ASTToExpanded(network);
-      expect(expanded).toContain(`Variable(${JSON.stringify(name)}) = 5`);
-      expect(expanded.split("\n")).not.toContain(`${name} = 5`);
+      expect(expanded).toContain(expectedLine);
 
       const back = ExpandedToAST(expanded) as TypeAST.NetworkCards;
       expect(JSON.stringify(back)).toBe(JSON.stringify(network));
@@ -1173,15 +1378,8 @@ final = matches "a" "b"
     expect(() => ExpandedToAST("pipe -- note\nx = 1")).not.toThrow();
   });
 
-  it("ignoresDeclarationOnlyLinesWhenDefinitionsExistByDefault", () => {
+  it("keepsDeclarationOnlyLinesInSourceOrder", () => {
     const network = ExpandedToAST("pipe\nx = 1") as TypeAST.NetworkCards;
-    expect(network.definitions.map((d) => d.name)).toEqual(["x"]);
-  });
-
-  it("addsDeclarationCardsWhenTheKnobIsOn", () => {
-    const network = ExpandedToAST("pipe\nx = 1", 0, {
-      declarationCards: "add",
-    }) as TypeAST.NetworkCards;
     expect(network.definitions.map((d) => d.name)).toEqual(["", "x"]);
     expect(network.definitions[0]!.node.type).toBe("Operator");
   });

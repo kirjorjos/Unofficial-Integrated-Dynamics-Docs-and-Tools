@@ -213,22 +213,32 @@ export interface ResolvedRefInfo {
 }
 
 const REF_INFO = "__resolvedRef";
+const REF_NAME = "__resolvedRefName";
 
 export const getRefInfo = (node: TypeAST.AST): ResolvedRefInfo | undefined =>
   (node as unknown as Record<string, ResolvedRefInfo | undefined>)[REF_INFO];
+
+export const getRefName = (node: TypeAST.AST): string | undefined =>
+  (node as unknown as Record<string, string | undefined>)[REF_NAME];
 
 const resolveVarRefs = (
   node: TypeAST.AST,
   resolve: (refName: string) => { id: string; info: ResolvedRefInfo }
 ): void => {
   if (isVarRefNode(node)) {
-    const { id, info } = resolve(node.name);
+    const refName = node.name;
+    const { id, info } = resolve(refName);
     (node as unknown as { type: string; value?: string; name?: string }).type =
       "Integer";
     (node as unknown as { value?: string }).value = id;
     delete (node as unknown as { name?: string }).name;
     Object.defineProperty(node, REF_INFO, {
       value: info,
+      enumerable: false,
+      configurable: true,
+    });
+    Object.defineProperty(node, REF_NAME, {
+      value: refName,
       enumerable: false,
       configurable: true,
     });
@@ -314,7 +324,17 @@ export const buildNetworkCards = (
     });
   }
 
+  const finalSegmentDefIndex = segmentFlatIndex[segments.length - 1]!;
+
   const resolveRefIndex = (refName: string, currentIndex: number): number => {
+    if (refName === "@calculation") {
+      if (finalSegmentDefIndex === currentIndex) {
+        throw new Error(
+          `Card reference @calculation points at the definition it is used in, so it has no card to refer to (definition ${currentIndex})`
+        );
+      }
+      return finalSegmentDefIndex;
+    }
     const positional = refName.match(/^@(\d+)$/);
     let index: number | undefined;
     if (positional) {
@@ -337,7 +357,10 @@ export const buildNetworkCards = (
   const seen = new Set<TypeAST.AST>();
   const prefixSums: number[] = [];
   let cumulative = 0;
-  const finalSegmentDefIndex = segmentFlatIndex[segments.length - 1];
+  for (let i = 0; i < definitions.length; i++) {
+    cumulative += countCards(definitions[i]!.node, seen, new Set());
+    prefixSums[i] = cumulative;
+  }
 
   for (let i = 0; i < definitions.length; i++) {
     const definition = definitions[i]!;
@@ -352,9 +375,6 @@ export const buildNetworkCards = (
         },
       };
     });
-    const count = countCards(definition.node, seen, new Set());
-    cumulative += count;
-    prefixSums[i] = cumulative;
   }
 
   return { type: "NetworkCards", definitions };

@@ -1,4 +1,5 @@
 import { operatorRegistry } from "lib/IntegratedDynamicsClasses/registries/operatorRegistry";
+import { RegistryHub } from "lib/IntegratedDynamicsClasses/registries/registryHub";
 import { getReaderClassByTypeName } from "lib/IntegratedDynamicsClasses/readers/readerRegistry";
 import { ASTToCodeLine, CodeLineToAST } from "lib/transformers/CodeLine";
 import {
@@ -12,14 +13,17 @@ import {
   getOpName,
   getNicknameRegex,
   formatVarName,
+  formatDefinitionName,
   getOperatorSourceName,
   setOperatorSourceName,
   flattenAnonymousBaseOperatorApplication,
   getArity,
+  getNodeComment,
 } from "lib/transformers/helpers";
 import {
   astContentKey,
   buildNetworkCards,
+  getNetworkDefLastCardIds,
 } from "lib/transformers/NetworkCards";
 import { normalizeSegments } from "lib/transformers/MixedLists";
 import { StructuralParseError } from "lib/transformers/parseErrors";
@@ -240,6 +244,60 @@ const isApplyVariantNode = (node: TypeAST.AST): boolean =>
   isOperatorValue(node.base) &&
   (node.args[0] ? isOperatorValue(node.args[0]) : false);
 
+const collectDynamicParams = (
+  node: TypeAST.AST,
+  collected: TypeAST.Dynamic[] = [],
+  seen: Set<TypeAST.AST> = new Set()
+): TypeAST.Dynamic[] => {
+  if (seen.has(node)) return collected;
+  seen.add(node);
+  switch (node.type) {
+    case "Dynamic":
+      collected.push(node);
+      return collected;
+    case "Static":
+    case "Materialize":
+      return collected;
+    case "Curry":
+      collectDynamicParams(node.base, collected, seen);
+      for (const arg of node.args) collectDynamicParams(arg, collected, seen);
+      return collected;
+    case "Pipe":
+      collectDynamicParams(node.op1, collected, seen);
+      collectDynamicParams(node.op2, collected, seen);
+      return collected;
+    case "Pipe2":
+      collectDynamicParams(node.op1, collected, seen);
+      collectDynamicParams(node.op2, collected, seen);
+      collectDynamicParams(node.op3, collected, seen);
+      return collected;
+    case "Flip":
+      collectDynamicParams(node.arg, collected, seen);
+      return collected;
+    case "List":
+      for (const entry of node.value) {
+        collectDynamicParams(entry, collected, seen);
+      }
+      return collected;
+    case "Reader":
+      if (node.value.simulatedOutput) {
+        collectDynamicParams(node.value.simulatedOutput, collected, seen);
+      }
+      return collected;
+    case "Display":
+    case "Card":
+      collectDynamicParams(node.value, collected, seen);
+      return collected;
+    case "NetworkCards":
+      for (const definition of node.definitions) {
+        collectDynamicParams(definition.node, collected, seen);
+      }
+      return collected;
+    default:
+      return collected;
+  }
+};
+
 const computeSignature = (
   node: TypeAST.AST,
   scope?: Map<TypeAST.AST, ParsedSignature>,
@@ -277,11 +335,23 @@ const computeSignature = (
         break;
       }
 
-      const elementSignature = computeSignature(
-        node.value[0]!,
-        scope,
-        resolve
-      ).getAst();
+      const elementSignatures = node.value.map((entry) =>
+        computeSignature(entry, scope, resolve).getAst()
+      );
+      const first = elementSignatures[0]!;
+      const allSame = elementSignatures.every(
+        (entry) => JSON.stringify(entry) === JSON.stringify(first)
+      );
+      const elementSignature = allSame
+        ? first
+        : elementSignatures.every((entry) =>
+              ["Integer", "Long", "Double", "Number"].includes(entry.type)
+            )
+          ? ({ type: "Number" } as TypeRawSignatureAST.RawSignatureNode)
+          : ({
+              type: "Any",
+              typeID: ParsedSignature.getNewTypeID(),
+            } as TypeRawSignatureAST.RawSignatureNode);
       signature = new ParsedSignature(
         {
           type: "List",
@@ -410,9 +480,30 @@ const computeSignature = (
       signature = computeSignature(root, scope, resolve);
       break;
     }
+    case "Materialize": {
+      const inner = computeSignature(node.value, scope, resolve);
+      const dynamics = collectDynamicParams(node.value);
+      if (
+        dynamics.length === 0 ||
+        inner.getRootType() === "Function" ||
+        inner.getRootType() === "Operator"
+      ) {
+        signature = inner;
+        break;
+      }
+      let out = inner.getAst() as TypeRawSignatureAST.RawSignatureNode;
+      for (let i = dynamics.length - 1; i >= 0; i--) {
+        out = {
+          type: "Function",
+          from: computeSignature(dynamics[i]!.value, scope, resolve).getAst(),
+          to: out,
+        };
+      }
+      signature = new ParsedSignature(out, false);
+      break;
+    }
     case "Dynamic":
     case "Static":
-    case "Materialize":
     case "Display":
     case "Card": {
       signature = computeSignature(node.value, scope, resolve);
@@ -499,6 +590,10 @@ let varCounter = 0;
 export const resetExpandedVarCounter = (): void => {
   varCounter = 0;
   unamedStrings = 0;
+  constructorsSeen.item = 0;
+  constructorsSeen.block = 0;
+  constructorsSeen.fluid = 0;
+  constructorsSeen.entity = 0;
 };
 
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
@@ -542,6 +637,65 @@ const isSelfNicknameShadow = (varName: string, node: TypeAST.AST): boolean => {
 };
 
 let unamedStrings = 0;
+
+const constructorsSeen = {
+  item: 0,
+  block: 0,
+  fluid: 0,
+  entity: 0,
+};
+
+const camelCaseDisplayName = (name: string): string => {
+  const words = name
+    .replace(/'/g, "")
+    .split(/[^A-Za-z0-9]+/)
+    .filter((word) => word.length > 0);
+  if (words.length === 0) return "";
+  return words
+    .map((word, index) =>
+      index === 0
+        ? word.charAt(0).toLowerCase() + word.slice(1)
+        : word.charAt(0).toUpperCase() + word.slice(1)
+    )
+    .join("");
+};
+
+const getConstructorDisplayName = (
+  node: TypeAST.Block | TypeAST.Item | TypeAST.Fluid | TypeAST.Entity
+): string | undefined => {
+  const raw = node.value;
+  const id =
+    typeof raw === "string"
+      ? raw
+      : typeof (raw as jsonObject)["id"] === "string"
+        ? ((raw as jsonObject)["id"] as string)
+        : undefined;
+  if (id === undefined || id.length === 0) return undefined;
+
+  const registryName = `${node.type.toLowerCase()}Registry`;
+  const registry = (RegistryHub as unknown as Record<string, unknown>)[
+    registryName
+  ] as { items?: Record<string, new () => unknown> } | undefined;
+  const Constructor = registry?.items?.[id.toLowerCase()];
+  if (!Constructor) return undefined;
+
+  try {
+    const instance = new Constructor() as {
+      getProperties?: () => { get?: (key: string) => unknown };
+    };
+    const props = instance.getProperties?.();
+    for (const key of ["displayName", "itemName", "blockName"]) {
+      const value = props?.get?.(key) as
+        | { valueOf?: () => unknown }
+        | undefined;
+      const text = value?.valueOf?.();
+      if (typeof text === "string" && text.trim().length > 0) return text;
+    }
+  } catch {
+    return undefined;
+  }
+  return undefined;
+};
 
 const getVarName = (node: TypeAST.AST): string => {
   if (node.varName) return node.varName;
@@ -624,10 +778,22 @@ const getVarName = (node: TypeAST.AST): string => {
       return `flip${capitalize(getVarName(node.arg))}`;
     case "List":
       return "list";
+    case "Block":
+    case "Item":
+    case "Fluid":
+    case "Entity": {
+      const kind = node.type.toLowerCase() as keyof typeof constructorsSeen;
+      const display = getConstructorDisplayName(node);
+      const camel = display === undefined ? "" : camelCaseDisplayName(display);
+      if (camel.length > 0) return camel;
+      return `${kind}${constructorsSeen[kind]++}`;
+    }
     case "Materialize":
       return `Materialized{${getVarName(node.value)}}`;
     case "Dynamic":
+      return `Dynamic{${getVarName(node.value)}}`;
     case "Static":
+      return `Static{${getVarName(node.value)}}`;
     case "Display":
     case "Card":
       return getVarName(node.value);
@@ -655,6 +821,12 @@ const getVarName = (node: TypeAST.AST): string => {
 
   return `v${++varCounter}`;
 };
+
+const isLiteralVarName = (name: string): boolean =>
+  /^-?\d+(\.\d+)?$/.test(name) ||
+  name === "true" ||
+  name === "false" ||
+  name === "null";
 
 const decomposeAST = (node: TypeAST.AST): TypeAST.AST => {
   if (node.type === "Curry") {
@@ -777,7 +949,10 @@ export const decomposeASTForExpanded = (node: TypeAST.AST): TypeAST.AST => {
 export const ASTToExpanded = (
   ast: TypeAST.AST,
   style: "CodeLine" | "Condensed" = "Condensed"
-): string => ASTToExpandedWithSignatureOptions(ast, style, null);
+): string =>
+  ASTToExpandedWithSignatureOptions(ast, style, null, false, undefined, {
+    expandedRefForm: "varId",
+  });
 
 export interface ExpandedDisplayOptions {
   signatureLayout?: "own-line" | "inline";
@@ -802,19 +977,17 @@ const defComments = (ast: TypeAST.AST): Map<string, string[]> | null => {
   return map.size > 0 ? map : null;
 };
 
-const isSingleBlockDefinition = (node: TypeAST.AST): boolean => {
-  switch (node.type) {
-    case "Curry": {
-      const flattened = flattenAnonymousBaseOperatorApplication(node);
-      return Boolean(flattened?.fullyApplied);
+const argumentComments = (
+  node: TypeAST.AST
+): { index: number; comment: string }[] => {
+  if (node.type !== "Curry") return [];
+  const out: { index: number; comment: string }[] = [];
+  node.args.forEach((arg, position) => {
+    for (const comment of getNodeComment(arg) ?? []) {
+      out.push({ index: position + 1, comment });
     }
-    case "Pipe":
-    case "Pipe2":
-    case "Flip":
-      return true;
-    default:
-      return true;
-  }
+  });
+  return out;
 };
 
 const renderLambdaParamSugar = (
@@ -852,6 +1025,16 @@ export const ASTToExpandedWithSignatureOptions = (
     root.type === "NetworkCards" ? root.definitions.map((d) => d.node) : [root];
   const comments = displayOpts.comments ? defComments(root) : null;
 
+  const cardIdByName = new Map<string, string>();
+  if (root.type === "NetworkCards") {
+    const lastCardIds = getNetworkDefLastCardIds(root, 0);
+    for (const definition of root.definitions) {
+      if (!definition.name) continue;
+      const id = lastCardIds.get(definition.node);
+      if (id !== undefined) cardIdByName.set(definition.name, String(id));
+    }
+  }
+
   const initialVars = new Set<TypeAST.AST>();
   for (const root of roots) {
     collectVariables(root, initialVars, new Set());
@@ -879,6 +1062,7 @@ export const ASTToExpandedWithSignatureOptions = (
 
   for (let i = 0; i < finalVarsArray.length; i++) {
     const v = finalVarsArray[i]!;
+    const hadVarName = Boolean(v.varName);
     const name = v.varName || getVarName(v);
     const displayName = formatVarName(name);
     if (
@@ -900,6 +1084,7 @@ export const ASTToExpandedWithSignatureOptions = (
       ? formatter.formatDepth(sig, effOpts)
       : formatter.format(sig);
 
+    const nameReferences = (displayOpts.expandedRefForm ?? "name") === "name";
     const oldVarName = v.varName;
     delete v.varName;
     const exprStr =
@@ -907,17 +1092,38 @@ export const ASTToExpandedWithSignatureOptions = (
         ? ASTToCodeLine(v, true, 0, {
             joinStatements: displayOpts.joinStatements,
             refStyle: displayOpts.refStyle,
+            varIdRefsByName: nameReferences ? undefined : cardIdByName,
           })
         : ASTToCondensed(v, false, 0, preferSourceNames, {
             joinStatements: displayOpts.joinStatements,
             refStyle: displayOpts.refStyle,
+            useNames: nameReferences,
+            atNameRefs: nameReferences,
+            varIdRefsByName: nameReferences ? undefined : cardIdByName,
           });
     if (oldVarName) v.varName = oldVarName;
 
+    if (!hadVarName && isLiteralVarName(name)) {
+      if (!output.includes(exprStr)) output.push(exprStr);
+      if (i < finalVarsArray.length - 1) output.push("");
+      continue;
+    }
+
     const nameDisplay = displayOpts.variableWrapper
       ? `Variable("${name.replace(/"/g, '\\"')}")`
-      : displayName;
+      : v.varName
+        ? formatDefinitionName(name)
+        : displayName;
     let assignment = `${nameDisplay} = ${exprStr}`;
+    if (displayOpts.comments) {
+      const suffix = argumentComments(v)
+        .map(
+          ({ index, comment }) =>
+            `-- [argument ${index}] ${comment.replace(/^--\s*/, "")}`
+        )
+        .join(" ");
+      if (suffix) assignment = `${assignment} ${suffix}`;
+    }
     if (displayOpts.lambdaParamSugar) {
       const sugar = renderLambdaParamSugar(v, nameDisplay);
       if (sugar !== null) assignment = sugar;
@@ -926,7 +1132,7 @@ export const ASTToExpandedWithSignatureOptions = (
 
     const commentLines =
       displayOpts.comments && v.varName ? comments?.get(v.varName) : undefined;
-    if (commentLines && isSingleBlockDefinition(v)) {
+    if (commentLines) {
       output.push(...commentLines);
     }
 
@@ -1021,29 +1227,21 @@ const DECLARED_TYPE_NAMES = [
   "List",
 ] as const;
 
-const normalizeDeclaredTypeName = (text: string): string => {
-  const lowered = text.trim().toLowerCase();
-  const match = DECLARED_TYPE_NAMES.find(
-    (name) => name.toLowerCase() === lowered
-  );
-  if (!match) {
+const isBareDeclaredTypeName = (text: string): boolean =>
+  /^[A-Za-z0-9_.]+$/.test(text.trim());
+
+const assertKnownDeclaredType = (text: string): void => {
+  const trimmed = text.trim();
+  if (!isBareDeclaredTypeName(trimmed)) return;
+  if (
+    !DECLARED_TYPE_NAMES.some(
+      (name) => name.toLowerCase() === trimmed.toLowerCase()
+    )
+  ) {
     throw new Error(
-      `Unknown declared type "${text.trim()}". Valid types: ${DECLARED_TYPE_NAMES.join(", ")}`
+      `Unknown declared type "${trimmed}". Valid types: ${DECLARED_TYPE_NAMES.join(", ")}`
     );
   }
-  return match;
-};
-
-const typeMatchesDeclaration = (
-  actualType: string,
-  declared: string
-): boolean => {
-  if (declared === "Any") return true;
-  if (actualType === "Any") return true;
-  if (declared === "Operator")
-    return actualType === "Operator" || actualType === "Function";
-  if (declared === "List") return actualType === "List";
-  return actualType.toLowerCase() === declared.toLowerCase();
 };
 
 type DeclaredTypeNode =
@@ -1056,6 +1254,17 @@ type DeclaredTypeToken =
   | { type: "id"; value: string }
   | { type: "arrow" }
   | { type: "punctuation"; value: string }; // < > ( ) ,
+
+const hasDeclaredTypeVariable = (node: DeclaredTypeNode): boolean => {
+  if (node.kind === "anyVar") return true;
+  if (node.kind === "fn") {
+    return (
+      hasDeclaredTypeVariable(node.left) || hasDeclaredTypeVariable(node.right)
+    );
+  }
+  if (node.kind === "param") return node.args.some(hasDeclaredTypeVariable);
+  return false;
+};
 
 const tokenizeDeclaredType = (input: string): DeclaredTypeToken[] => {
   const tokens: DeclaredTypeToken[] = [];
@@ -1193,16 +1402,30 @@ const unwrapFunctionNode = (
   return null;
 };
 
-const typeNameMatches = (a: string, b: string): boolean =>
-  a.toLowerCase() === b.toLowerCase() ||
-  (["Integer", "Long", "Double", "Number"].includes(a) &&
-    ["Integer", "Long", "Double", "Number"].includes(b));
+const NUMERIC_TYPE_NAMES = ["Integer", "Long", "Double"];
+
+const typeNameMatches = (actual: string, declared: string): boolean => {
+  const actualName = actual.toLowerCase();
+  const declaredName = declared.toLowerCase();
+  if (actualName === declaredName) return true;
+  return (
+    declaredName === "number" &&
+    NUMERIC_TYPE_NAMES.some((name) => name.toLowerCase() === actualName)
+  );
+};
+
+interface DeclaredMatchOptions {
+  strictGenericSlots?: boolean;
+  bindings?: Map<string, string>;
+}
 
 const declaredMatchesComputed = (
   declared: DeclaredTypeNode,
-  sig: ParsedSignature
+  sig: ParsedSignature,
+  options: DeclaredMatchOptions = {}
 ): boolean => {
   const node = sig.getAst() as TypeRawSignatureAST.RawSignatureNode;
+  const bindings = options.bindings ?? new Map<string, string>();
 
   if (declared.kind === "fn") {
     const fn = unwrapFunctionNode(node);
@@ -1210,15 +1433,25 @@ const declaredMatchesComputed = (
     return (
       declaredMatchesComputed(
         declared.left,
-        new ParsedSignature(fn.from, false)
+        new ParsedSignature(fn.from, false),
+        { ...options, bindings }
       ) &&
-      declaredMatchesComputed(declared.right, new ParsedSignature(fn.to, false))
+      declaredMatchesComputed(
+        declared.right,
+        new ParsedSignature(fn.to, false),
+        { ...options, bindings }
+      )
     );
   }
 
   if (declared.kind === "anyVar") {
-    // `Any<X>` must land on a generic `Any` slot.
-    return node.type === "Any";
+    if (options.strictGenericSlots) return node.type === "Any";
+    const bound = bindings.get(declared.name);
+    if (bound === undefined) {
+      bindings.set(declared.name, node.type);
+      return true;
+    }
+    return bound.toLowerCase() === node.type.toLowerCase();
   }
 
   if (declared.kind === "param") {
@@ -1227,7 +1460,8 @@ const declaredMatchesComputed = (
         node.type === "List" &&
         declaredMatchesComputed(
           declared.args[0]!,
-          new ParsedSignature(node.listType, false)
+          new ParsedSignature(node.listType, false),
+          options
         )
       );
     }
@@ -1239,6 +1473,57 @@ const declaredMatchesComputed = (
     return node.type === "Operator" || node.type === "Function";
   if (declared.name === "List") return node.type === "List";
   return typeNameMatches(node.type, declared.name);
+};
+
+const assertNoNumericAtRefs = (node: TypeAST.AST): void => {
+  const visit = (current: TypeAST.AST): void => {
+    if (current.type === "Variable" && /^@\d+$/.test(current.name)) {
+      throw new Error(
+        `Expanded references use names, not numbers: "${current.name}" is not allowed. Use @name to target a definition.`
+      );
+    }
+    if (isSourceNode(current)) {
+      for (const card of getSourceCards(current)) visit(card);
+      return;
+    }
+    switch (current.type) {
+      case "Curry":
+        visit(current.base);
+        for (const arg of current.args) visit(arg);
+        return;
+      case "Pipe":
+        visit(current.op1);
+        visit(current.op2);
+        return;
+      case "Pipe2":
+        visit(current.op1);
+        visit(current.op2);
+        visit(current.op3);
+        return;
+      case "Flip":
+        visit(current.arg);
+        return;
+      case "List":
+        for (const entry of current.value) visit(entry);
+        return;
+      case "NetworkCards":
+        for (const definition of current.definitions) visit(definition.node);
+        return;
+      case "Reader":
+        if (current.value.simulatedOutput) visit(current.value.simulatedOutput);
+        return;
+      case "Materialize":
+      case "Dynamic":
+      case "Static":
+      case "Display":
+      case "Card":
+        visit(current.value);
+        return;
+      default:
+        return;
+    }
+  };
+  visit(node);
 };
 
 export interface ExpandedToASTOptions {
@@ -1450,6 +1735,8 @@ export const ExpandedToAST = (
       }
     }
 
+    assertNoNumericAtRefs(lineAST);
+
     if (lineAST.type === "NetworkCards") {
       throw new Error(
         `Line ${i + 1} contains semicolon-separated statements, which are only valid at the top level`
@@ -1457,11 +1744,17 @@ export const ExpandedToAST = (
     }
 
     if (declaredType) {
-      const declared = normalizeDeclaredTypeName(declaredType);
-      const actualType = computeSignature(lineAST).getAst().type;
-      if (!typeMatchesDeclaration(actualType, declared)) {
+      assertKnownDeclaredType(declaredType);
+      const declared = parseDeclaredType(declaredType);
+      if (declared.kind !== "fn" && hasDeclaredTypeVariable(declared)) {
         throw new Error(
-          `Line ${i + 1}: variable "${varName}" is declared as type "${declared}" but the expression has type "${actualType}"`
+          `Line ${i + 1}: named type variables are only valid inside a signature; declare a concrete type for "${varName}"`
+        );
+      }
+      const signature = computeSignature(lineAST);
+      if (!declaredMatchesComputed(declared, signature)) {
+        throw new Error(
+          `Line ${i + 1}: variable "${varName}" is declared as type "${declaredType.trim()}" but the expression has type "${signature.getAst().type}"`
         );
       }
     }
@@ -1485,25 +1778,23 @@ export const ExpandedToAST = (
               `Variable "${varName}" is already defined; redefinition is only allowed if the new definition resolves to the same AST`
             );
           }
-        } else {
-          lineAST = existing.node;
-          scope.set(varName, existing.node);
+          warnings.push(
+            `Variable "${varName}" was defined twice; the first definition was kept and the later one was dropped.`
+          );
         }
+        continue;
       }
-      if (existing && astContentKey(existing.node) === astContentKey(lineAST)) {
-      } else {
-        if (definitions.some((def) => def.node === lineAST)) {
-          lineAST = structuredClone(lineAST);
-        }
-        lineAST.varName = varName;
-        scope.set(varName, lineAST);
-        definitions.push({
-          name: varName,
-          node: lineAST,
-          comment: lineComments.get(i),
-          origin: processedLineOrigins[i]!,
-        });
+      if (definitions.some((def) => def.node === lineAST)) {
+        lineAST = structuredClone(lineAST);
       }
+      lineAST.varName = varName;
+      scope.set(varName, lineAST);
+      definitions.push({
+        name: varName,
+        node: lineAST,
+        comment: lineComments.get(i),
+        origin: processedLineOrigins[i]!,
+      });
     } else {
       declarations.push({
         name: "",
@@ -1531,7 +1822,8 @@ export const ExpandedToAST = (
       if (
         !declaredMatchesComputed(
           declared,
-          computeSignature(opNode, undefined, true)
+          computeSignature(opNode, undefined, true),
+          { strictGenericSlots: true }
         )
       ) {
         throw new Error(
@@ -1549,7 +1841,8 @@ export const ExpandedToAST = (
     if (
       !declaredMatchesComputed(
         declared,
-        computeSignature(def.node, undefined, true)
+        computeSignature(def.node, undefined, true),
+        { strictGenericSlots: true }
       )
     ) {
       throw new Error(
@@ -1563,78 +1856,9 @@ export const ExpandedToAST = (
     ...declarations.map((entry) => ({ ...entry, declaration: true })),
   ].sort((a, b) => a.origin - b.origin);
 
-  const keepDeclarations =
-    definitions.length === 0 || opts.declarationCards === "add";
-  const kept = entries.filter(
-    (entry) => !entry.declaration || keepDeclarations
-  );
+  const kept = entries;
 
   if (kept.length === 0) throw new Error("Could not determine final AST");
-
-  if (opts.allowDuplicateNames) {
-    const counts = new Map<string, number>();
-    for (const def of definitions) {
-      counts.set(def.name, (counts.get(def.name) ?? 0) + 1);
-    }
-    for (const [name, count] of counts) {
-      if (count > 1) {
-        warnings.push(
-          `Variable "${name}" redefined with a different definition; both cards kept (later definition wins scope).`
-        );
-      }
-    }
-
-    const duplicated = new Set(
-      [...counts.entries()].filter(([, c]) => c > 1).map(([name]) => name)
-    );
-    if (duplicated.size > 0) {
-      const hasAmbiguousRef = (node: TypeAST.AST): boolean => {
-        if (node.type === "Variable" && node.name.startsWith("@")) {
-          return duplicated.has(node.name.slice(1));
-        }
-        if (node.type === "Curry") {
-          return hasAmbiguousRef(node.base) || node.args.some(hasAmbiguousRef);
-        }
-        if (node.type === "Pipe") {
-          return hasAmbiguousRef(node.op1) || hasAmbiguousRef(node.op2);
-        }
-        if (node.type === "Pipe2") {
-          return (
-            hasAmbiguousRef(node.op1) ||
-            hasAmbiguousRef(node.op2) ||
-            hasAmbiguousRef(node.op3)
-          );
-        }
-        if (node.type === "Flip") return hasAmbiguousRef(node.arg);
-        if (node.type === "List") return node.value.some(hasAmbiguousRef);
-        if (node.type === "Reader") {
-          return node.value.simulatedOutput
-            ? hasAmbiguousRef(node.value.simulatedOutput)
-            : false;
-        }
-        if (
-          node.type === "Materialize" ||
-          node.type === "Dynamic" ||
-          node.type === "Static" ||
-          node.type === "Display" ||
-          node.type === "Card"
-        ) {
-          return hasAmbiguousRef(node.value);
-        }
-        if (isSourceNode(node)) {
-          return getSourceCards(node).some(hasAmbiguousRef);
-        }
-        return false;
-      };
-      for (const def of definitions) {
-        if (hasAmbiguousRef(def.node)) {
-          throw new Error(
-            `Variable "${def.name}" references a duplicated variable name via @-ref; duplicate names are ambiguous in @-reference form`
-          );
-        }
-      }
-    }
-  }
 
   const names = kept.map((entry) => entry.name);
   const network = buildNetworkCards(

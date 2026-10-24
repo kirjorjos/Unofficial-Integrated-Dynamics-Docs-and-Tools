@@ -190,6 +190,34 @@ const hasTopLevelDoubleColon = (value: string): boolean =>
 const firstMeaningfulLine = (value: string): string =>
   (value.split("\n").find((line) => line.trim() !== "") ?? value).trim();
 
+const topLevelStatements = (value: string): string[] =>
+  value
+    .split("\n")
+    .flatMap((line) => {
+      const parts: string[] = [];
+      let start = 0;
+      while (start <= line.length) {
+        const offset = findTopLevel(
+          line.slice(start),
+          (index) => line[start + index] === ";"
+        );
+        if (offset === -1) {
+          parts.push(line.slice(start));
+          break;
+        }
+        parts.push(line.slice(start, start + offset));
+        start += offset + 1;
+      }
+      return parts;
+    })
+    .map((statement) => statement.trim())
+    .filter((statement) => statement !== "");
+
+const hasCondensedCallStatement = (value: string): boolean =>
+  topLevelStatements(value).some((statement) =>
+    condensedCallRegex.test(statement)
+  );
+
 const detectWrapperFormat = (value: string): TransformerFormatKey | null => {
   let rest = value;
   if (!wrapperCallRegex.test(rest)) return null;
@@ -211,7 +239,7 @@ export const detectInputFormat = (value: string): TransformerFormatKey => {
       const first = firstMeaningfulLine(code);
       const wrapperFormat = detectWrapperFormat(first);
       if (wrapperFormat !== null) return wrapperFormat;
-      return condensedCallRegex.test(first) ? "condensed" : "codeline";
+      return hasCondensedCallStatement(code) ? "condensed" : "codeline";
     }
     return "expanded";
   }
@@ -223,6 +251,6 @@ export const detectInputFormat = (value: string): TransformerFormatKey => {
   if (hasTopLevelDoubleColon(code)) return "expanded";
   const wrapperFormat = detectWrapperFormat(code);
   if (wrapperFormat !== null) return wrapperFormat;
-  if (condensedCallRegex.test(code)) return "condensed";
+  if (hasCondensedCallStatement(code)) return "condensed";
   return "codeline";
 };

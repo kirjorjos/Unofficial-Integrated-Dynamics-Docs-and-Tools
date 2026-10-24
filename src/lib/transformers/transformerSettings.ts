@@ -32,6 +32,7 @@ export interface TransformerSettings {
   cardIds: "preserve" | "remap";
   missingParts: "error" | "warn";
   conflicts: "error" | "warn";
+  entityUuidSeed: number;
 }
 
 export const DEFAULT_TRANSFORMER_SETTINGS: TransformerSettings = {
@@ -43,7 +44,7 @@ export const DEFAULT_TRANSFORMER_SETTINGS: TransformerSettings = {
   inlinePlacement: "after",
   statementLayout: "same-line",
   referenceStyle: "varId",
-  expandedRefForm: "varId",
+  expandedRefForm: "name",
   wrap: false,
   comments: false,
   variableWrapper: false,
@@ -61,6 +62,7 @@ export const DEFAULT_TRANSFORMER_SETTINGS: TransformerSettings = {
   cardIds: "remap",
   missingParts: "error",
   conflicts: "error",
+  entityUuidSeed: 0,
 };
 
 export const MAX_INDENTATION = 16;
@@ -134,6 +136,7 @@ export const encodeSettingsOpts = (
       ? Math.max(0, Math.trunc(settings.indentation))
       : encodeDepth(settings.signatureDepth)
   );
+  writeVarUint(writer, Math.max(0, Math.trunc(settings.entityUuidSeed)));
   return writer.toBase64URL();
 };
 
@@ -229,6 +232,10 @@ export const decodeSettingsOpts = (
   const slot = readVarUint(reader);
   if (slotIsIndentation(outputFormat)) settings.indentation = slot;
   else settings.signatureDepth = decodeDepth(slot);
+
+  if (!reader.isExhausted()) {
+    settings.entityUuidSeed = readVarUint(reader);
+  }
 
   if (!reader.isExhausted()) {
     throw new Error("Trailing non-zero bits in opts param");

@@ -37,7 +37,7 @@ const deriveParamName = (
   index: number,
   used: Set<string>
 ): string => {
-  const raw = getExpandedVarName(node);
+  const raw = getExpandedVarName(node.type === "Dynamic" ? node.value : node);
   const base = isValidParamName(raw) ? raw : `arg${index}`;
   return makeUniqueName(base, used);
 };
@@ -66,7 +66,7 @@ export const abstractDynamicParts = (expr: TypeAST.AST): DynamicAbstraction => {
       );
     }
 
-    const isDynamicLeaf = node.type === "Reader" || node.type === "Dynamic";
+    const isDynamicLeaf = node.type === "Dynamic";
     if (isDynamicLeaf && !staticProtected) {
       const contentKey = astContentKey(node);
       const existing = paramByContent.get(contentKey);

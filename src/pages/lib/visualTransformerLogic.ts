@@ -25,6 +25,7 @@ import {
   resetExpandedVarCounter,
 } from "lib/transformers/Expanded";
 import {
+  evaluateStaticAst,
   flattenAnonymousBaseOperatorApplication,
   getNodeComment,
 } from "lib/transformers/helpers";
@@ -528,7 +529,8 @@ export const getMaterializerMiddleText = (
   node: TypeAST.AST,
   fallback = ""
 ): string => {
-  const unwrapped = unwrapMaterializerMiddleTextNode(node);
+  const unwrapped =
+    evaluateStaticAst(node) ?? unwrapMaterializerMiddleTextNode(node);
   switch (unwrapped.type) {
     case "Operator":
     case "Curry":
@@ -562,16 +564,30 @@ export const getMaterializerResultCard = (
   step: Pick<VisualStep, "output" | "inputs" | "variableId">
 ): { name: string; type: string; tooltip: TooltipData } => {
   const topCard = step.inputs[0];
-  const node = topCard?.node
-    ? unwrapMaterializerMiddleTextNode(topCard.node)
-    : undefined;
+  const folded = topCard?.node ? evaluateStaticAst(topCard.node) : undefined;
+  const node = folded
+    ? folded
+    : topCard?.node
+      ? unwrapMaterializerMiddleTextNode(topCard.node)
+      : undefined;
   const variableId = topCard ? topCard.variableId + 1 : step.variableId;
 
   const valueType = node?.type ?? "Operator";
-  const isOperator = MATERIALIZER_OPERATOR_LIKE_TYPES.has(valueType);
-  const typeMeta = getValueTypeMetaForAst(
-    (isOperator ? "Operator" : valueType) as TypeAST.AST["type"]
-  );
+  const panelLines = node
+    ? getDisplayPanelText({ node, output: topCard!.name }).split("\n")
+    : [];
+  const signature = panelLines
+    .slice(1)
+    .map((line) => line.replace(/^\s*->\s*/, "").trim())
+    .filter((line) => line.length > 0)
+    .join(" -> ");
+  const isOperator =
+    node !== undefined &&
+    MATERIALIZER_OPERATOR_LIKE_TYPES.has(valueType) &&
+    signature.includes("->");
+  const firstType = signature.split(/[<\s]/)[0];
+  const typeName = isOperator ? "Operator" : firstType || valueType;
+  const typeMeta = getValueTypeMetaForAst(typeName as TypeAST.AST["type"]);
 
   const lines = [
     formatTemplate(
@@ -581,22 +597,17 @@ export const getMaterializerResultCard = (
   ];
 
   if (node && isOperator) {
-    const panelLines = getDisplayPanelText({
-      node,
-      output: topCard!.name,
-    }).split("\n");
     const valueText = (panelLines[0] ?? "").replace(/\s*::\s*$/, "");
-    const signature = panelLines
-      .slice(1)
-      .map((line) => line.replace(/^\s*->\s*/, "").trim())
-      .filter((line) => line.length > 0)
-      .join(" -> ");
     if (signature) {
       lines.push(formatTemplate(OPERATOR_SIGNATURE_TEMPLATE, signature));
     }
     lines.push(formatTemplate(VALUE_TEMPLATE, valueText));
   } else if (node) {
-    lines.push(formatTemplate(VALUE_TEMPLATE, getCompactValueTextForAst(node)));
+    const panelValue = (panelLines[0] ?? "").replace(/\s*::\s*$/, "");
+    const valueText = MATERIALIZER_OPERATOR_LIKE_TYPES.has(valueType)
+      ? panelValue || getCompactValueTextForAst(node)
+      : getCompactValueTextForAst(node);
+    lines.push(formatTemplate(VALUE_TEMPLATE, valueText));
   }
 
   lines.push(...getBaseTooltipLines(variableId));

@@ -24,7 +24,10 @@ import {
   VARSTORE_CAPACITY,
   overlongMarker,
 } from "lib/transformers/giveCommands";
-import { flattenAnonymousBaseOperatorApplication } from "lib/transformers/helpers";
+import {
+  evaluateStaticAst,
+  flattenAnonymousBaseOperatorApplication,
+} from "lib/transformers/helpers";
 import {
   applyOperatorKeyForArgs,
   astContentKey,
@@ -34,6 +37,12 @@ import { ASTtoOperator } from "lib/transformers/Operator";
 import { KEPT_PART_FIELDS } from "lib/transformers/partFields";
 import { getPartItemId } from "lib/transformers/partItemIds";
 import { StructuralParseError } from "lib/transformers/parseErrors";
+import {
+  intsToUuid,
+  isUuidString,
+  seededUuid,
+  uuidToInts,
+} from "lib/transformers/entityUuid";
 import { TagToSNBT, type SNBTSerializeOptions } from "lib/transformers/SNBT";
 import { getSourceCards, isSourceNode } from "lib/transformers/sourceNodes";
 
@@ -46,6 +55,7 @@ export interface AstGiveOptions {
   startVariableId?: number;
   target?: string;
   markOverlong?: boolean;
+  entityUuidSeed?: number;
 }
 
 export interface AstGiveOutput {
@@ -76,6 +86,21 @@ const intTag = (value: number): IntTag => new IntTag(new Integer(value));
 const byteTag = (value: number): ByteTag => new ByteTag(new Integer(value));
 const intArrayTag = (values: number[]): IntArrayTag =>
   new IntArrayTag(new iArrayEager(values.map((v) => new Integer(v))));
+
+const findUuid = (value: unknown): string | undefined => {
+  if (value === null || typeof value !== "object") return undefined;
+  const record = value as Record<string, unknown>;
+  const candidate = record["uuid"] ?? record["UUID"];
+  if (isUuidString(candidate)) return candidate;
+  if (
+    Array.isArray(candidate) &&
+    candidate.length === 4 &&
+    candidate.every((entry) => Number.isInteger(entry))
+  ) {
+    return intsToUuid(candidate as number[]);
+  }
+  return undefined;
+};
 const listTag = (entries: Tag<IntegratedValue>[]): ListTag =>
   new ListTag(new iArrayEager(entries));
 
@@ -323,19 +348,28 @@ const applicationChildren = (node: TypeAST.AST): TypeAST.AST[] => {
   }
 };
 
+interface EntitySpawn {
+  id: string;
+  uuid: string;
+  tag: jsonObject | undefined;
+}
+
 class CardWriter {
   readonly cards: { id: number; tag: CompoundTag }[] = [];
   private readonly byKey = new Map<string, number>();
   readonly refs = new Map<string, number>();
   readonly parts = new Map<number, EmittedPart>();
   private readonly partRefs = new Map<string, number>();
+  readonly entitySpawns: EntitySpawn[] = [];
+  private readonly entityUuidById = new Map<string, string>();
 
   constructor(
     private nextId: number,
     private readonly partIds: PartIds,
     private readonly materialize: boolean,
     private readonly preservePartIds: boolean,
-    private readonly warnings: string[]
+    private readonly warnings: string[],
+    private readonly entityUuidSeed: number
   ) {}
 
   partIdFor(authored?: number): number {
@@ -354,6 +388,10 @@ class CardWriter {
     const partId = this.cards[index]!.tag.get(new iString("partId"));
     if (!(partId instanceof NumericTag)) return undefined;
     return this.parts.get(partId.getAsDouble());
+  }
+
+  get materializing(): boolean {
+    return this.materialize;
   }
 
   cardIndicesIn(node: TypeAST.AST): number[] {
@@ -429,9 +467,65 @@ class CardWriter {
         for (const entry of node.value) this.write(entry);
         return this.add(key, (id) => valueCardTag(id, node));
       }
+      case "Entity":
+        return this.add(key, (id) => this.entityCardTag(id, node));
       default:
         return this.add(key, (id) => valueCardTag(id, node));
     }
+  }
+
+  private entityCardTag(id: number, node: TypeAST.Entity): CompoundTag {
+    const { uuid } = this.entityValue(node);
+    return new CompoundTag({
+      _id: intTag(id),
+      _type: "integrateddynamics:valuetype",
+      typeName: new StringTag(new iString("integrateddynamics:entity")),
+      value: new StringTag(new iString(uuid)),
+    });
+  }
+
+  private entityValue(node: TypeAST.Entity): { uuid: string } {
+    const raw = node.value as unknown;
+    if (typeof raw === "string") {
+      return { uuid: raw };
+    }
+    if (raw === null || typeof raw !== "object") {
+      throw new StructuralParseError(
+        "Entity(...) needs a quoted entity id or a UUID"
+      );
+    }
+    const value = raw as Record<string, unknown>;
+    const entityId =
+      typeof value["id"] === "string" ? (value["id"] as string) : undefined;
+    const tag =
+      value["tag"] !== undefined
+        ? (value["tag"] as jsonObject)
+        : value["nbt"] !== undefined
+          ? (value["nbt"] as jsonObject)
+          : undefined;
+
+    const existing = findUuid(value) ?? findUuid(tag);
+    if (existing !== undefined) return { uuid: existing };
+
+    if (entityId === undefined) {
+      throw new StructuralParseError(
+        "Entity(...) needs a quoted entity id or a UUID"
+      );
+    }
+
+    const known = this.entityUuidById.get(entityId);
+    if (known !== undefined) {
+      const spawn = this.entitySpawns.find((entry) => entry.id === entityId);
+      if (spawn !== undefined && spawn.tag === undefined && tag !== undefined) {
+        spawn.tag = tag;
+      }
+      return { uuid: known };
+    }
+
+    const uuid = seededUuid(this.entityUuidSeed, entityId);
+    this.entityUuidById.set(entityId, uuid);
+    this.entitySpawns.push({ id: entityId, uuid, tag });
+    return { uuid };
   }
 
   private writeReader(node: TypeAST.Reader): number {
@@ -557,6 +651,7 @@ class CardWriter {
         )
       );
     });
+    this.byKey.set(key, current);
     return current;
   }
 
@@ -681,6 +776,11 @@ const expandUnit = (
 
   if (node.type === "Display") {
     const operand = node.value;
+    if (operand.type === "Card") {
+      throw new StructuralParseError(
+        "Card(...) cannot be used inside a call; give it a name of its own"
+      );
+    }
     const partType = DISPLAY_PANEL_PART_TYPE;
     const itemId = getPartItemId(partType);
     if (itemId === undefined) {
@@ -689,12 +789,15 @@ const expandUnit = (
       );
     }
     const before = writer.cards.length;
-    writer.write(operand);
+    const materializedOperand = writer.materializing
+      ? (evaluateStaticAst(operand) ?? operand)
+      : operand;
+    writer.write(materializedOperand);
     const fresh: number[] = [];
     for (let index = before; index < writer.cards.length; index++) {
       fresh.push(index);
     }
-    const held = writer.cardIndicesIn(operand);
+    const held = writer.cardIndicesIn(materializedOperand);
     const cards = held.length > 0 ? held : fresh;
     emissions.push({
       kind: "item",
@@ -749,7 +852,9 @@ const expandUnit = (
   }
 
   const before = writer.cards.length;
-  writer.write(node);
+  const foldable = writer.materializing || node.type === "Materialize";
+  const folded = foldable ? evaluateStaticAst(node) : undefined;
+  writer.write(folded ?? node);
   for (let index = before; index < writer.cards.length; index++) {
     emitCard(writer, emissions, index);
   }
@@ -780,21 +885,6 @@ const authoredPartIds = (node: TypeAST.AST): Set<number> => {
   };
   visit(node);
   return ids;
-};
-
-const assertDisplayPlacement = (node: TypeAST.AST, root: boolean): void => {
-  if (node.type === "Display") return;
-  if (node.type === "Materialize" && node.value.type === "Display") return;
-  for (const child of applicationChildren(node)) {
-    if (child.type === "Display") {
-      throw new StructuralParseError(
-        root
-          ? "Display(...) cannot be buried inside another expression; give it a definition of its own"
-          : "Display(...) cannot be used inside a call; give it a definition of its own"
-      );
-    }
-    assertDisplayPlacement(child, root);
-  }
 };
 
 export const astToGiveCommands = (
@@ -829,7 +919,8 @@ export const astToGiveCommands = (
     new PartIds(start, preserveIds ? authoredPartIds(root) : new Set<number>()),
     wrapped,
     preserveIds,
-    warnings
+    warnings,
+    options.entityUuidSeed ?? 0
   );
   const emissions: Emission[] = [];
 
@@ -839,7 +930,6 @@ export const astToGiveCommands = (
       : [root];
 
   for (const unit of units) {
-    assertDisplayPlacement(unit, true);
     expandUnit(unit, writer, emissions, options, warnings);
   }
 
@@ -918,6 +1008,17 @@ export const astToGiveCommands = (
       if (emission.kind === "part") partCommand(emission.part);
     }
     if (!itemsLead) emitItems();
+  }
+
+  if (writer.entitySpawns.length > 0) {
+    const summons = writer.entitySpawns.map((spawn) => {
+      const data = new CompoundTag({
+        ...(spawn.tag ?? {}),
+        UUID: intArrayTag(uuidToInts(spawn.uuid)),
+      });
+      return `/summon ${spawn.id} ~ ~ ~ ${TagToSNBT(data, { layout: "minimize" })}`;
+    });
+    lines.unshift(...summons);
   }
 
   const overlong: { line: number; length: number }[] = [];

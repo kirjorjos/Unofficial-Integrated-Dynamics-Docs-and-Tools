@@ -185,6 +185,27 @@ test.describe("transformersPageVisualOutputDom", () => {
     await expect(page.locator(".logic-programmer-shot")).toHaveCount(2);
   });
 
+  test("testSnbtCableWithAnInterfacePartRendersOnlyItsCards", async ({
+    page,
+  }) => {
+    const card =
+      '{_id:3,_type:"integrateddynamics:valuetype",typeName:"integrateddynamics:integer",value:5}';
+    const paste = `/setblock 0 0 0 integrateddynamics:cable{partContainer:{parts:[{__partType:"integratedtunnels:interface_item",__side:"east",id:9,inventory:[{Count:1b,Slot:0b,id:"integrateddynamics:variable",tag:${card}}]}]}}`;
+
+    await page.goto("/");
+    await page.locator('textarea[aria-label="Transformer input"]').fill(paste);
+    await page
+      .locator('select[aria-label="Output format"]')
+      .selectOption("visual");
+    await page.getByRole("button", { name: "Transform", exact: true }).click();
+
+    await expect(page.locator(".logic-programmer-shot")).toHaveCount(1);
+    await expect(page.locator(".logic-programmer-step-title")).toHaveText("5");
+    await expect(page.locator(".logic-programmer-shot")).not.toContainText(
+      "interface"
+    );
+  });
+
   test("testListValueRendersElementStepsPlusListStep", async ({ page }) => {
     await openVisual(page, (await CODE).list);
     await expect(page.locator(".logic-programmer-shot")).toHaveCount(4);
