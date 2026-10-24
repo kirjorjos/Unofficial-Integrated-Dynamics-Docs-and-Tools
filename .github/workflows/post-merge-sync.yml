@@ -2,15 +2,13 @@ name: Post-merge baseline sync
 
 on:
   push:
-    branches: ["main"]
+    branches: ["1.19.2/main"]
   workflow_dispatch:
 
 permissions:
   contents: read
   pull-requests: read
   issues: read
-  pages: write
-  id-token: write
 
 concurrency:
   group: baseline-sync
@@ -43,7 +41,7 @@ jobs:
             SHOULD_SYNC="true"
             SPECS="ALL"
           elif [ "${{ github.event.head_commit.author.name }}" = "github-actions[bot]" ]; then
-            echo "head commit authored by the baseline bot — skipping sync and deploy"
+            echo "head commit authored by the baseline bot — skipping sync"
             BOT_PUSH="true"
           else
             if PR_JSON="$(gh api "repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/pulls" \
@@ -95,7 +93,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: "20.x"
+          node-version: "20.19.5"
           cache: npm
 
       - name: Install dependencies
@@ -135,8 +133,8 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git remote set-url origin "https://x-access-token:${PUSH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
           git commit -m "chore: re-normalize visual baselines${PR_NUMBER:+ (PR #${PR_NUMBER})}"
-          git push origin HEAD:main || {
-            echo "push to main failed — is branch protection blocking it?" >&2
+          git push origin HEAD:1.19.2/main || {
+            echo "push to 1.19.2/main failed — is branch protection blocking it?" >&2
             echo "Check the GitHub App install + bypass-list setup (see comment above)." >&2
             exit 1
           }
@@ -147,53 +145,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: sync-playwright-report
-          path: playwright-report
-          retention-days: 7
-          if-no-files-found: ignore
-
-  deploy:
-    needs: [resolve, sync]
-    if: always() && needs.resolve.outputs.bot_push != 'true'
-    container: mcr.microsoft.com/playwright:v1.63.0-noble
-    runs-on: ubuntu-24.04
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Checkout final main (includes pushed baselines)
-        uses: actions/checkout@v5
-        with:
-          ref: main
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20.x"
-          cache: npm
-
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Test + build site
-        run: npm run build:ci
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: docs
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
-
-      - name: Upload Playwright report on failure
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: deploy-playwright-report
           path: playwright-report
           retention-days: 7
           if-no-files-found: ignore

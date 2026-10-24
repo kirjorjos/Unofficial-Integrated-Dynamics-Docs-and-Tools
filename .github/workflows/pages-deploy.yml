@@ -1,0 +1,129 @@
+name: Pages deploy
+
+on:
+  push:
+    branches: ["1.19.2/main"]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Build and compose, print the tree, push nothing and deploy nothing"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-deploy
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write # force-push the one-commit metadata store
+    env:
+      PAGES_BASE: /Unofficial-Integrated-Dynamics-Docs-and-Tools/
+      PAGES_SITE_URL: https://kirjorjos.github.io
+    steps:
+      - name: Checkout the triggering commit
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Use Node.js 20.19.5
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.19.5"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Plan, build and push the build store
+        env:
+          PAGES_PUSH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            MODE=all
+          else
+            MODE=auto
+          fi
+          ARGS=(build --mode "${MODE}" --trigger-branch "${GITHUB_REF_NAME}" --trigger-sha "${GITHUB_SHA}")
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            ARGS+=(--dry-run)
+          fi
+          node scripts/pages-deploy.mjs "${ARGS[@]}"
+
+      - name: Bundle the composer for the publish job
+        run: node scripts/pages-deploy.mjs --bundle "$RUNNER_TEMP/pages-deploy.cjs"
+
+      - name: Upload composer bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: pages-deploy-bundle
+          path: ${{ runner.temp }}/pages-deploy.cjs
+          retention-days: 1
+
+      - name: Upload staged site (dry run)
+        if: inputs.dry_run == true
+        uses: actions/upload-artifact@v4
+        with:
+          name: pages-dry-run-site
+          path: _site
+          retention-days: 7
+          if-no-files-found: error
+
+  publish:
+    needs: build
+    if: github.event_name == 'push' || inputs.dry_run != true
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout the metadata store
+        uses: actions/checkout@v5
+        with:
+          ref: metadata
+          fetch-depth: 1
+
+      - name: Download composer bundle
+        uses: actions/download-artifact@v4
+        with:
+          name: pages-deploy-bundle
+          path: ${{ runner.temp }}
+
+      - name: Compose the Pages artifact
+        env:
+          PAGES_BASE: /Unofficial-Integrated-Dynamics-Docs-and-Tools/
+        run: node "$RUNNER_TEMP/pages-deploy.cjs" publish --out _site
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Upload composed tree on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pages-compose-failure
+          path: _site
+          retention-days: 7
+          if-no-files-found: ignore

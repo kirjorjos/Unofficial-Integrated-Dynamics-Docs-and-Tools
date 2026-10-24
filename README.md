@@ -31,6 +31,33 @@ Current plans for this project are as follows:
   - [ ] Explaining [InSr](https://github.com/cyclopsmc/IntegratedScripting)
   - [ ] Explaining [InMk](https://github.com/cyclopsmc/IntegratedMekanism)
 
+## Deployments
+
+GitHub Pages hosts every served branch under the project base:
+
+| branch                         | URL                               |
+| ------------------------------ | --------------------------------- |
+| `1.19.2/main` (primary)        | `…/1.19.2/main/`                  |
+| `1.19.2/development`           | `…/1.19.2/development/`           |
+| `1.19.2/development/issue-###` | `…/1.19.2/development/issue-###/` |
+
+### Branch rules
+
+- Serveable branches match `^[0-9]+\.[0-9]{1,2}\.[0-9]{1,2}\/(?:main|development(?:\/issue-[0-9]+)?)$` and must be listed in `branches.json` on the `metadata` branch.
+- Add or remove a branch in `branches.json`, then run **Pages deploy** manually. Pushing to `1.19.2/main` auto-deploys it and pins the other served branches to their recorded SHAs.
+- `metadata` is a data branch (one orphan commit holding `branches.json`, README/licenses and `builds/<slug>/`). Never make it default, and don't edit it during a deploy — the store is force-pushed with `--force-with-lease`.
+- A branch that fails to build is dropped (404) until a later deploy succeeds. Stored builds are reused byte-for-byte unless the commit, base, Node, Vite or lockfile changes, so unchanged branches skip `npm ci`/Vite.
+- Node is pinned to `20.19.5`; bumping it, Vite or a branch's lockfile rebuilds every branch next deploy.
+- `dry_run: true` builds and composes without pushing or deploying. Once a second `<version>/main` exists, remove the push trigger and deploy manually.
+
+### Local preview
+
+```bash
+npm run dev:branch -- 1.19.2/development
+```
+
+Serves the app at `http://localhost:5173/1.19.2/development/`. Locally the prefix is optional (default `/`); set `PAGES_BASE` to mirror Pages, and `PAGES_BASE=/` plus `PAGES_SITE_URL` for a custom domain.
+
 ## Contributing
 
 If you think something is wrong or missing, feel free to [open an issue](https://github.com/kirjorjos/Unofficial-Integrated-Dynamics-Docs-and-Tools/issues) or [submit a pull request](https://github.com/kirjorjos/Unofficial-Integrated-Dynamics-Docs-and-Tools/pulls).

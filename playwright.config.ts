@@ -1,7 +1,11 @@
 import { defineConfig } from "@playwright/test";
 
 const PORT = 5199;
-const BASE_PATH = "/Unofficial-Integrated-Dynamics-Docs-and-Tools/";
+const RAW_BASE = process.env.PAGES_BASE || "/";
+const BASE_PATH =
+  RAW_BASE === "/"
+    ? "/"
+    : `${RAW_BASE.startsWith("/") ? "" : "/"}${RAW_BASE.replace(/\/+$/, "")}/`;
 const BASE_URL = `http://localhost:${PORT}${BASE_PATH}`;
 const LOCAL_SNAPSHOTS = process.env.LOCAL_SNAPSHOTS === "1";
 
