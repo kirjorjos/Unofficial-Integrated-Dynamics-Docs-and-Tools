@@ -145,6 +145,23 @@ describe("readerPartIds", () => {
     expect(getReaderPartIdForStep(stepList, 0, 4)).toBe(4);
     expect(getReaderPartIdForStep(stepList, 1, 4)).toBe(4);
   });
+
+  it("testReturnsNothingForStepsThatAreNotReaders", () => {
+    const stepList = steps(makeAst.arithmetic());
+
+    expect(getReaderPartIdForStep(stepList, 0, 0)).toBeUndefined();
+  });
+
+  it("testGroupsUnknownReadersByTheirTypeName", () => {
+    const unknownReader: TypeAST.Reader = {
+      type: "Reader",
+      value: { reader: "MysteryReader", aspect: "VALUE", settings: {} },
+    };
+    const stepList = [{ node: unknownReader }, { node: unknownReader }];
+
+    expect(getReaderPartIdForStep(stepList, 0, 2)).toBe(2);
+    expect(getReaderPartIdForStep(stepList, 1, 2)).toBe(2);
+  });
 });
 
 describe("operatorCardTooltips", () => {

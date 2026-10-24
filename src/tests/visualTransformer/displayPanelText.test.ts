@@ -1,9 +1,39 @@
 import {
+  getCompactValueTextForAst,
   getDisplayPanelText,
   isTypeAssignable,
 } from "pages-lib/visualTransformerLogic";
 import { ExpandedToAST } from "lib/transformers/Expanded";
 import { beforeEachVisualTransformer, makeAst, steps } from "./fixtures";
+
+describe("getCompactValueTextForAst", () => {
+  beforeEach(beforeEachVisualTransformer);
+
+  it("testRendersSimulatedReaderOutputAsCompactText", () => {
+    expect(getCompactValueTextForAst(makeAst.readerWithSimulatedOutput())).toBe(
+      "true"
+    );
+  });
+
+  it("testFallsBackToReaderAspectDefaultWithoutSimulatedOutput", () => {
+    expect(getCompactValueTextForAst(makeAst.readerVarById())).toBe(
+      "Virtual operator.integrateddynamics.virtual.variablebyid"
+    );
+  });
+
+  it("testRendersEmptyTextForUnknownReaderAspect", () => {
+    const unknownAspect: TypeAST.Reader = {
+      type: "Reader",
+      value: {
+        reader: "NetworkReader",
+        aspect: "NOT_AN_ASPECT",
+        settings: {},
+      },
+    };
+
+    expect(getCompactValueTextForAst(unknownAspect)).toBe("");
+  });
+});
 
 describe("getDisplayPanelText", () => {
   beforeEach(beforeEachVisualTransformer);
