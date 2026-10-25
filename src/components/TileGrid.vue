@@ -41,20 +41,55 @@ const cols = computed(() =>
   computeColumnCount(availableWidth.value || props.pitch * 3, props.pitch)
 );
 
-const registry = shallowReactive<TileDefinition[]>([]);
+type RegisteredTile = {
+  definition: TileDefinition;
+  element: HTMLElement | null;
+};
 
-const register = (definition: TileDefinition): (() => void) => {
-  registry.push({ ...definition });
+const registry = shallowReactive<RegisteredTile[]>([]);
+
+const documentOrderIndex = (element: HTMLElement): number => {
+  if (!element.isConnected) return registry.length;
+  for (let index = 0; index < registry.length; index += 1) {
+    const other = registry[index]!.element;
+    if (!other?.isConnected) continue;
+    if (
+      other.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_PRECEDING
+    ) {
+      return index;
+    }
+  }
+  return registry.length;
+};
+
+const register = (
+  definition: TileDefinition,
+  element?: HTMLElement | null
+): (() => void) => {
+  const entry: RegisteredTile = {
+    definition: { ...definition },
+    element: element ?? null,
+  };
+  const index = entry.element
+    ? documentOrderIndex(entry.element)
+    : registry.length;
+  registry.splice(index, 0, entry);
   return () => {
-    const index = registry.findIndex((tile) => tile.id === definition.id);
-    if (index >= 0) registry.splice(index, 1);
+    const at = registry.findIndex(
+      (tile) => tile.definition.id === definition.id
+    );
+    if (at >= 0) registry.splice(at, 1);
   };
 };
 
 const overrides = ref<LayoutOverrides>({});
 
 const placements = computed(() =>
-  packTiles([...registry], cols.value, overrides.value)
+  packTiles(
+    registry.map((tile) => tile.definition),
+    cols.value,
+    overrides.value
+  )
 );
 const placementById = computed(
   () => new Map(placements.value.map((placement) => [placement.id, placement]))
@@ -122,7 +157,7 @@ const onDragEnd = (event: MouseEvent): void => {
   const targetId = target?.getAttribute("data-tile-id");
   if (!targetId || targetId === sourceId) return;
 
-  const order = registry.map((tile) => tile.id);
+  const order = registry.map((tile) => tile.definition.id);
   const fromIndex = order.indexOf(sourceId);
   const toIndex = order.indexOf(targetId);
   if (fromIndex < 0 || toIndex < 0) return;

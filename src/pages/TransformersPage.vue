@@ -746,6 +746,7 @@ onMounted(async () => {
       :ast="currentAst"
       :start-variable-id="initialVariableId"
       operator-preview-mode="pattern"
+      :labeller="settings.labeller"
       discovery-only
       @steps="onVisualSteps"
     />
@@ -849,6 +850,28 @@ onMounted(async () => {
                 type="checkbox"
                 :disabled="!settingEnabled('materialize')"
                 aria-label="Materialize"
+              />
+            </div>
+
+            <div
+              class="settings-row"
+              :class="{ disabled: !settingEnabled('labeller') }"
+            >
+              <label
+                class="settings-label"
+                for="setting-labeller"
+                :data-help="settingHelpText('labeller')"
+              >
+                Labeller<sup class="settings-help-mark" aria-hidden="true"
+                  >?</sup
+                >
+              </label>
+              <input
+                id="setting-labeller"
+                v-model="settings.labeller"
+                type="checkbox"
+                :disabled="!settingEnabled('labeller')"
+                aria-label="Labeller"
               />
             </div>
 
@@ -1541,9 +1564,9 @@ onMounted(async () => {
       </Tile>
 
       <Tile
-        v-for="(stepId, index) in visualStepIds"
+        v-for="stepId in visualStepIds"
         :key="stepId"
-        :id="`step${index}`"
+        :id="`step-${stepId}`"
         :span="2"
       >
         <LogicProgrammerVisualOutput
@@ -1554,6 +1577,7 @@ onMounted(async () => {
           :show-step-titles="true"
           :render-step-id="stepId"
           operator-preview-mode="pattern"
+          :labeller="settings.labeller"
           force-show-output-card
           :repro-url="reproUrl"
         />

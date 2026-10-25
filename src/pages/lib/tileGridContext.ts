@@ -2,7 +2,10 @@ import type { ComputedRef, InjectionKey } from "vue";
 import type { TileDefinition, TilePlacement } from "pages-lib/tileLayout";
 
 export interface TileGridContext {
-  register: (definition: TileDefinition) => () => void;
+  register: (
+    definition: TileDefinition,
+    element?: HTMLElement | null
+  ) => () => void;
   placementFor: (id: string) => TilePlacement | undefined;
   cols: ComputedRef<number>;
   startDrag: (event: MouseEvent, id: string) => void;

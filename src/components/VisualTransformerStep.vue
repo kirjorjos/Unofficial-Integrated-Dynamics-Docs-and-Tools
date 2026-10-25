@@ -79,7 +79,7 @@ const panelError = computed(
         v-if="props.showStepTitles !== false"
         class="logic-programmer-step-title"
       >
-        {{ step.output }}
+        {{ step.kind === "labeller" ? step.title : step.output }}
       </div>
     </div>
 
@@ -92,14 +92,17 @@ const panelError = computed(
     <slot
       v-if="
         props.step.sourceType === 'Reader' ||
-        props.step.sourceType === 'Materialize'
+        props.step.sourceType === 'Materialize' ||
+        props.step.kind === 'labeller'
       "
     />
     <div v-else class="logic-programmer-frame-shell">
       <slot />
     </div>
 
-    <DisplayPanelViewHolder v-if="props.showDisplayPanels">
+    <DisplayPanelViewHolder
+      v-if="props.showDisplayPanels && props.step.kind !== 'labeller'"
+    >
       <DisplayPanelView
         :text="panelText"
         :text-color="panelColor"

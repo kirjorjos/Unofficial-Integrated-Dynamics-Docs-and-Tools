@@ -26,6 +26,7 @@ export interface TransformerSettings {
   preferSourceNames: boolean;
   declarationCards: "ignore" | "add";
   materialize: boolean;
+  labeller: boolean;
   outputShape: "cards" | "varstore";
   layout: "minimize" | "readable";
   indentation: number;
@@ -56,6 +57,7 @@ export const DEFAULT_TRANSFORMER_SETTINGS: TransformerSettings = {
   preferSourceNames: false,
   declarationCards: "ignore",
   materialize: false,
+  labeller: false,
   outputShape: "cards",
   layout: "minimize",
   indentation: 2,
@@ -110,6 +112,7 @@ const FLAG_ORDER: {
   { bit: (s) => s.cardIds === "preserve" }, // row 23
   { bit: (s) => s.missingParts === "warn" }, // row 24
   { bit: (s) => s.conflicts === "warn" }, // row 25
+  { bit: (s) => s.labeller }, // row 26
 ];
 
 const encodeDepth = (depth: number): number => (depth === -1 ? 0 : depth + 1);
@@ -219,6 +222,9 @@ export const decodeSettingsOpts = (
         break;
       case 22:
         settings.conflicts = enabled ? "warn" : "error";
+        break;
+      case 23:
+        settings.labeller = enabled;
         break;
       default:
         break;

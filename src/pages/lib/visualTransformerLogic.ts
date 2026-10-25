@@ -64,7 +64,7 @@ export type VisualStep = {
   searchLabel: string;
   panelLabel?: string;
   symbol: string;
-  kind: "operator" | "value";
+  kind: "operator" | "value" | "labeller";
   sourceType: TypeAST.AST["type"];
   renderPattern?: LogicProgrammerRenderPatternKey;
   inputs: VisualCardRef[];
@@ -80,6 +80,11 @@ export type VisualStep = {
   workspaceMode?: "operatorValue" | "pattern";
   typeError?: string;
   comment?: string;
+};
+
+export type VisualStepOptions = {
+  /** Adds a labeller step after every non-self-naming (reader/materializer) step. */
+  labeller?: boolean;
 };
 
 export type VisualCardRef = {
@@ -565,7 +570,8 @@ const MATERIALIZER_OPERATOR_LIKE_TYPES: ReadonlySet<string> = new Set([
 ]);
 
 export const getMaterializerResultCard = (
-  step: Pick<VisualStep, "output" | "inputs" | "variableId">
+  step: Pick<VisualStep, "output" | "inputs" | "variableId">,
+  options?: { unnamed?: boolean }
 ): { name: string; type: string; tooltip: TooltipData } => {
   const topCard = step.inputs[0];
   const folded = topCard?.node ? evaluateStaticAst(topCard.node) : undefined;
@@ -619,7 +625,10 @@ export const getMaterializerResultCard = (
   return {
     name: step.output,
     type: typeMeta.label,
-    tooltip: { title: getCardTitle(step.output), lines },
+    tooltip: {
+      title: getCardTitle(options?.unnamed ? "" : step.output),
+      lines,
+    },
   };
 };
 
@@ -715,9 +724,10 @@ export const isDirectListValue = (node: TypeAST.AST): boolean => {
 };
 
 export const getDisplayPanelText = (
-  step: Pick<VisualStep, "output" | "node">,
+  step: Pick<VisualStep, "output" | "node"> & { kind?: VisualStep["kind"] },
   options?: { harden?: boolean }
 ): string => {
+  if (step.kind === "labeller") return step.output;
   if (step.node) {
     if (step.node.type === "Reader") {
       const readerClass = getReaderClassByTypeName(step.node.value.reader);
@@ -979,7 +989,7 @@ const parseAuthoredPartId = (
 };
 
 export const getReaderPartIdForStep = (
-  steps: Pick<VisualStep, "node">[],
+  steps: (Pick<VisualStep, "node"> & { kind?: VisualStep["kind"] })[],
   index: number,
   startPartId: number
 ): number | undefined => {
@@ -996,7 +1006,9 @@ export const getReaderPartIdForStep = (
   };
 
   for (let stepIndex = 0; stepIndex <= index; stepIndex += 1) {
-    const node = steps[stepIndex]?.node;
+    const step = steps[stepIndex];
+    if (step?.kind === "labeller") continue;
+    const node = step?.node;
     if (node?.type !== "Reader") continue;
 
     const authored = parseAuthoredPartId(node.value.partId);
@@ -1563,11 +1575,13 @@ const astContentKey = (ast: TypeAST.AST): string => {
 export const generateVisualSteps = (
   ast: TypeAST.AST,
   startVariableId: number,
-  operatorPreviewMode?: "value" | "pattern"
+  operatorPreviewMode?: "value" | "pattern",
+  options?: VisualStepOptions
 ): VisualStep[] => {
   resetExpandedVarCounter();
 
   const isPatternMode = operatorPreviewMode === "pattern";
+  const labellerEnabled = options?.labeller === true;
 
   const getExpandedCurryChunks = (
     ast: TypeAST.Curried
@@ -1680,6 +1694,7 @@ export const generateVisualSteps = (
   const result: VisualStep[] = [];
   const seen = new Map<TypeAST.AST, VisualCardRef>();
   const contentSeen = new Map<string, VisualCardRef>();
+  let cardCount = 0;
 
   const toStepComment = (
     comments: string[] | undefined
@@ -1714,9 +1729,14 @@ export const generateVisualSteps = (
 
     const nextName = getCardName(ast);
     const register = (
-      step: Omit<VisualStep, "variableId" | "tooltip">
+      step: Omit<VisualStep, "id" | "variableId" | "tooltip">
     ): VisualCardRef => {
-      const variableId = startVariableId + result.length;
+      const stepId = `step-${result.length + 1}`;
+      const getsLabeller =
+        labellerEnabled &&
+        (step.sourceType === "Reader" || step.sourceType === "Materialize");
+      const variableId = startVariableId + cardCount;
+      cardCount += 1;
       const partId =
         step.sourceType === "Reader"
           ? getReaderPartIdForStep(
@@ -1725,9 +1745,17 @@ export const generateVisualSteps = (
               startVariableId
             )
           : undefined;
-      const tooltip = buildStepTooltip(step, variableId, partId);
+      const tooltip = buildStepTooltip(
+        getsLabeller ? { ...step, output: "" } : step,
+        variableId,
+        partId
+      );
+      const labelTooltip = getsLabeller
+        ? buildStepTooltip(step, variableId, partId)
+        : tooltip;
       const fullStep = {
         ...step,
+        id: stepId,
         variableId,
         tooltip,
       };
@@ -1755,6 +1783,32 @@ export const generateVisualSteps = (
       };
       seen.set(ast, card);
       contentSeen.set(contentKey, card);
+      if (getsLabeller) {
+        const resultCard =
+          step.sourceType === "Materialize"
+            ? getMaterializerResultCard(fullStep)
+            : undefined;
+        const labellerCard = {
+          ...card,
+          type: (resultCard?.type ?? card.type) as TypeAST.AST["type"],
+          tooltip: resultCard?.tooltip ?? labelTooltip,
+        };
+        result.push({
+          id: `${stepId}-labeller`,
+          title: "Labeller",
+          searchLabel: "Labeller",
+          panelLabel: "Labeller",
+          symbol: "L",
+          kind: "labeller",
+          sourceType: labellerCard.type,
+          inputs: [labellerCard],
+          output: fullStep.output,
+          detail: step.detail,
+          node: step.node,
+          variableId,
+          tooltip: labellerCard.tooltip,
+        });
+      }
       return card;
     };
 
@@ -1770,7 +1824,6 @@ export const generateVisualSteps = (
       case "Operator": {
         const operator = getOperatorDisplay(ast.opName);
         return register({
-          id: `step-${result.length + 1}`,
           title: operator.title,
           searchLabel: "Operator",
           panelLabel: operator.panelLabel,
@@ -1871,7 +1924,6 @@ export const generateVisualSteps = (
           }
 
           const step = {
-            id: `step-${result.length + 1}`,
             title: getOperatorDisplay(flattened.operator.opName).title,
             searchLabel: getOperatorDisplay(flattened.operator.opName)
               .searchLabel,
@@ -1901,7 +1953,6 @@ export const generateVisualSteps = (
           const stepBase = chunk.node.base;
           const argOutputs = chunk.args.map((a) => visit(a));
           const step = {
-            id: `step-${result.length + 1}`,
             title:
               stepBase.type === "Operator"
                 ? getOperatorDisplay(stepBase.opName).title
@@ -1930,7 +1981,6 @@ export const generateVisualSteps = (
       case "Pipe": {
         const virtualOperator = getVirtualOperatorDisplay("pipe");
         return register({
-          id: `step-${result.length + 1}`,
           title: virtualOperator.title,
           searchLabel: virtualOperator.searchLabel,
           symbol: virtualOperator.symbol,
@@ -1946,7 +1996,6 @@ export const generateVisualSteps = (
       case "Pipe2": {
         const virtualOperator = getVirtualOperatorDisplay("pipe2");
         return register({
-          id: `step-${result.length + 1}`,
           title: virtualOperator.title,
           searchLabel: virtualOperator.searchLabel,
           symbol: virtualOperator.symbol,
@@ -1962,7 +2011,6 @@ export const generateVisualSteps = (
       case "Flip": {
         const virtualOperator = getVirtualOperatorDisplay("flip");
         return register({
-          id: `step-${result.length + 1}`,
           title: virtualOperator.title,
           searchLabel: virtualOperator.searchLabel,
           symbol: virtualOperator.symbol,
@@ -1978,7 +2026,6 @@ export const generateVisualSteps = (
       case "List": {
         const elementCards = ast.value.map((a) => visit(a));
         return register({
-          id: `step-${result.length + 1}`,
           title: "List",
           searchLabel: "List",
           symbol: "[]",
@@ -1997,7 +2044,6 @@ export const generateVisualSteps = (
         const lambdaCard = visit(abstraction.lambda);
 
         let finalCard = register({
-          id: `step-${result.length + 1}`,
           title: "Materialize",
           searchLabel: "Materialize",
           panelLabel: "Materializer",
@@ -2014,7 +2060,6 @@ export const generateVisualSteps = (
           const leafCard = visit(param.node, true);
           const applyDisplay = getVirtualOperatorDisplay("apply");
           finalCard = register({
-            id: `step-${result.length + 1}`,
             title: applyDisplay.title,
             searchLabel: applyDisplay.searchLabel,
             symbol: applyDisplay.symbol,
@@ -2045,7 +2090,6 @@ export const generateVisualSteps = (
           }
         }
         return register({
-          id: `step-${result.length + 1}`,
           title: readerClass?.shortName ?? ast.value.reader,
           searchLabel: getValueTypeSearchLabel(ast.type),
           panelLabel: readerClass?.typeName ?? ast.value.reader,
@@ -2061,7 +2105,6 @@ export const generateVisualSteps = (
       }
       default:
         return register({
-          id: `step-${result.length + 1}`,
           title: ast.type,
           searchLabel: getValueTypeSearchLabel(ast.type),
           symbol:

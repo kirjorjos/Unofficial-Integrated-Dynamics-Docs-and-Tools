@@ -3,6 +3,7 @@ import { computed, watch } from "vue";
 import FitText from "./FitText.vue";
 import HoverMinecraftTooltip from "./HoverMinecraftTooltip.vue";
 import VisualTransformerStep from "./VisualTransformerStep.vue";
+import LabellerGuiView from "./LabellerGuiView.vue";
 import MaterializerGuiView from "./MaterializerGuiView.vue";
 import ReaderGuiView from "./ReaderGuiView.vue";
 import {
@@ -71,7 +72,7 @@ type VisualStep = {
   searchLabel: string;
   panelLabel?: string;
   symbol: string;
-  kind: "operator" | "value";
+  kind: "operator" | "value" | "labeller";
   sourceType: TypeAST.AST["type"];
   renderPattern?: LogicProgrammerRenderPatternKey;
   inputs: VisualCardRef[];
@@ -177,6 +178,7 @@ const props = withDefaults(
     renderStepId?: string;
     discoveryOnly?: boolean;
     showDisplayPanels?: boolean;
+    labeller?: boolean;
   }>(),
   { showDisplayPanels: true }
 );
@@ -1860,6 +1862,7 @@ const steps = computed<VisualStep[]>(() => {
   const result: VisualStep[] = [];
   const seen = new Map<TypeAST.AST, VisualCardRef>();
   const contentSeen = new Map<string, VisualCardRef>();
+  let cardCount = 0;
 
   const attachDefinitionComment = (
     card: VisualCardRef,
@@ -1883,9 +1886,14 @@ const steps = computed<VisualStep[]>(() => {
 
     const nextName = getCardName(ast);
     const register = (
-      step: Omit<VisualStep, "variableId" | "tooltip">
+      step: Omit<VisualStep, "id" | "variableId" | "tooltip">
     ): VisualCardRef => {
-      const variableId = props.startVariableId + result.length;
+      const stepId = `step-${result.length + 1}`;
+      const getsLabeller =
+        props.labeller === true &&
+        (step.sourceType === "Reader" || step.sourceType === "Materialize");
+      const variableId = props.startVariableId + cardCount;
+      cardCount += 1;
       const partId =
         step.sourceType === "Reader"
           ? getReaderPartIdForStep(
@@ -1894,9 +1902,17 @@ const steps = computed<VisualStep[]>(() => {
               props.startVariableId
             )
           : undefined;
-      const tooltip = buildStepTooltip(step, variableId, partId);
+      const tooltip = buildStepTooltip(
+        getsLabeller ? { ...step, output: "" } : step,
+        variableId,
+        partId
+      );
+      const labelTooltip = getsLabeller
+        ? buildStepTooltip(step, variableId, partId)
+        : tooltip;
       const fullStep = {
         ...step,
+        id: stepId,
         variableId,
         tooltip,
       };
@@ -1924,6 +1940,32 @@ const steps = computed<VisualStep[]>(() => {
       };
       seen.set(ast, card);
       contentSeen.set(contentKey, card);
+      if (getsLabeller) {
+        const resultCard =
+          step.sourceType === "Materialize"
+            ? getMaterializerResultCard(fullStep)
+            : undefined;
+        const labellerCard = {
+          ...card,
+          type: (resultCard?.type ?? card.type) as TypeAST.AST["type"],
+          tooltip: resultCard?.tooltip ?? labelTooltip,
+        };
+        result.push({
+          id: `${stepId}-labeller`,
+          title: "Labeller",
+          searchLabel: "Labeller",
+          panelLabel: "Labeller",
+          symbol: "L",
+          kind: "labeller",
+          sourceType: labellerCard.type,
+          inputs: [labellerCard],
+          output: fullStep.output,
+          detail: step.detail,
+          node: step.node,
+          variableId,
+          tooltip: labellerCard.tooltip,
+        });
+      }
       return card;
     };
 
@@ -1939,7 +1981,6 @@ const steps = computed<VisualStep[]>(() => {
       case "Operator": {
         const operator = getOperatorDisplay(ast.opName);
         return register({
-          id: `step-${result.length + 1}`,
           title: operator.title,
           searchLabel: isPatternMode ? "Operator" : operator.searchLabel,
           panelLabel: operator.panelLabel,
@@ -1980,7 +2021,6 @@ const steps = computed<VisualStep[]>(() => {
               expected !== "Operator" &&
               !isTypeAssignable(actual, expected)
             ) {
-              // For arity 1 operators, try to harden "Any" into a concrete type
               if (actual === "Any" && isArityOne) {
                 try {
                   const argOp = ASTtoOperator(flattened.args[i]!) as any;
@@ -1992,9 +2032,6 @@ const steps = computed<VisualStep[]>(() => {
                         : null;
                   if (sig) {
                     let hardened = sig.rewrite().getRootType();
-                    // If type is still unresolved via the type system, try
-                    // evaluating the argument to get a concrete value type.
-                    // This works because all inputs are known constants.
                     if (
                       hardened === "Any" &&
                       typeof argOp?.getFn === "function"
@@ -2012,25 +2049,18 @@ const steps = computed<VisualStep[]>(() => {
                             hardened = evalType;
                           }
                         }
-                      } catch {
-                        // Evaluation failed, keep type-system result
-                      }
+                      } catch {}
                     }
                     if (!isTypeAssignable(hardened, expected)) {
-                      // If type is still "Any" after hardening, it's genuinely
-                      // unknown — treat as compatible (no error)
                       if (hardened === "Any") {
                         continue;
                       }
                       typeError = `Type mismatch: expected ${expected}, got ${hardened}`;
                       break;
                     }
-                    // Hardened matches expected — no error
                     continue;
                   }
-                } catch {
-                  // Couldn't harden, fall through
-                }
+                } catch {}
               }
               if (isArityOne || actual !== "Any") {
                 typeError = `Type mismatch: expected ${expected}, got ${actual}`;
@@ -2040,7 +2070,6 @@ const steps = computed<VisualStep[]>(() => {
           }
 
           const step = {
-            id: `step-${result.length + 1}`,
             title: getOperatorDisplay(flattened.operator.opName).title,
             searchLabel: getOperatorDisplay(flattened.operator.opName)
               .searchLabel,
@@ -2070,7 +2099,6 @@ const steps = computed<VisualStep[]>(() => {
           const stepBase = chunk.node.base;
           const argOutputs = chunk.args.map((a) => visit(a));
           const step = {
-            id: `step-${result.length + 1}`,
             title:
               stepBase.type === "Operator"
                 ? getOperatorDisplay(stepBase.opName).title
@@ -2099,7 +2127,6 @@ const steps = computed<VisualStep[]>(() => {
       case "Pipe": {
         const virtualOperator = getVirtualOperatorDisplay("pipe");
         return register({
-          id: `step-${result.length + 1}`,
           title: virtualOperator.title,
           searchLabel: virtualOperator.searchLabel,
           symbol: virtualOperator.symbol,
@@ -2115,7 +2142,6 @@ const steps = computed<VisualStep[]>(() => {
       case "Pipe2": {
         const virtualOperator = getVirtualOperatorDisplay("pipe2");
         return register({
-          id: `step-${result.length + 1}`,
           title: virtualOperator.title,
           searchLabel: virtualOperator.searchLabel,
           symbol: virtualOperator.symbol,
@@ -2131,7 +2157,6 @@ const steps = computed<VisualStep[]>(() => {
       case "Flip": {
         const virtualOperator = getVirtualOperatorDisplay("flip");
         return register({
-          id: `step-${result.length + 1}`,
           title: virtualOperator.title,
           searchLabel: virtualOperator.searchLabel,
           symbol: virtualOperator.symbol,
@@ -2147,7 +2172,6 @@ const steps = computed<VisualStep[]>(() => {
       case "List": {
         const elementCards = ast.value.map((a) => visit(a));
         return register({
-          id: `step-${result.length + 1}`,
           title: "List",
           searchLabel: "List",
           symbol: "[]",
@@ -2166,7 +2190,6 @@ const steps = computed<VisualStep[]>(() => {
         const lambdaCard = visit(abstraction.lambda);
 
         let finalCard = register({
-          id: `step-${result.length + 1}`,
           title: "Materialize",
           searchLabel: "Materialize",
           panelLabel: "Materializer",
@@ -2183,7 +2206,6 @@ const steps = computed<VisualStep[]>(() => {
           const leafCard = visit(param.node, true);
           const applyDisplay = getVirtualOperatorDisplay("apply");
           finalCard = register({
-            id: `step-${result.length + 1}`,
             title: applyDisplay.title,
             searchLabel: applyDisplay.searchLabel,
             symbol: applyDisplay.symbol,
@@ -2216,7 +2238,6 @@ const steps = computed<VisualStep[]>(() => {
           }
         }
         return register({
-          id: `step-${result.length + 1}`,
           title: readerClass?.shortName ?? ast.value.reader,
           searchLabel: getValueTypeSearchLabel(ast.type),
           panelLabel: readerClass?.typeName ?? ast.value.reader,
@@ -2232,7 +2253,6 @@ const steps = computed<VisualStep[]>(() => {
       }
       default:
         return register({
-          id: `step-${result.length + 1}`,
           title: ast.type,
           searchLabel: getValueTypeSearchLabel(ast.type),
           symbol:
@@ -2575,8 +2595,9 @@ const getReaderViewValues = (
 
 const getMaterializerTopCard = (step: VisualStep) => step.inputs[0];
 
-// A materializer step shows the panel of the card it materializes, so the two
-// panels are identical.
+const hasLabellerAfter = (index: number): boolean =>
+  steps.value[index + 1]?.kind === "labeller";
+
 const panelSourceStep = (step: VisualStep): VisualStep =>
   getDisplayPanelSourceStep(step, steps.value);
 
@@ -2622,8 +2643,13 @@ defineExpose({ steps, displaySteps });
       :display-panel-error="getStepDisplayError(step)"
       :repro-url="props.reproUrl"
     >
+      <LabellerGuiView
+        v-if="step.kind === 'labeller'"
+        :card="step.inputs[0]"
+        :label="step.output"
+      />
       <ReaderGuiView
-        v-if="step.sourceType === 'Reader'"
+        v-else-if="step.sourceType === 'Reader'"
         :reader="getReaderViewReader(step)!"
         :focused-aspect="getReaderViewFocusedAspect(step)"
         :values="getReaderViewValues(step)"
@@ -2634,7 +2660,9 @@ defineExpose({ steps, displaySteps });
       <MaterializerGuiView
         v-else-if="step.sourceType === 'Materialize'"
         :top-card="getMaterializerTopCard(step)"
-        :result-card="getMaterializerResultCard(step)"
+        :result-card="
+          getMaterializerResultCard(step, { unnamed: hasLabellerAfter(index) })
+        "
       />
       <div v-else class="logic-programmer-frame">
         <div class="logic-programmer-overlay">
