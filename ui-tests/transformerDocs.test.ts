@@ -177,8 +177,9 @@ test.describe("transformersPageInputDocs", () => {
     const panel = page.locator(".input-docs-panel");
     await expect(panel).toContainText("required");
     await expect(panel).toContainText("optional");
-    await expect(panel.locator(".input-doc-span-required")).toHaveCount(1);
-    await expect(panel.locator(".input-doc-span-optional")).toHaveCount(1);
+    const legend = panel.locator(".input-docs-legend");
+    await expect(legend.locator(".input-doc-span-required")).toHaveCount(1);
+    await expect(legend.locator(".input-doc-span-optional")).toHaveCount(1);
   });
 
   test("testConcreteExampleLoadsIntoAnEmptyInputWithoutPrompting", async ({
@@ -413,7 +414,7 @@ test.describe("transformersPageSettingsHelp", () => {
     await page.locator(".settings-summary").click();
 
     const labels = page.locator(".settings-body .settings-label");
-    await expect(labels).toHaveCount(27);
+    await expect(labels).toHaveCount(28);
 
     const count = await labels.count();
     for (let index = 0; index < count; index += 1) {
@@ -423,7 +424,7 @@ test.describe("transformersPageSettingsHelp", () => {
       );
     }
 
-    await expect(page.locator(".settings-help-mark")).toHaveCount(27);
+    await expect(page.locator(".settings-help-mark")).toHaveCount(28);
   });
 
   test("testHoveringTheQuestionMarkRevealsTheHelpText", async ({ page }) => {

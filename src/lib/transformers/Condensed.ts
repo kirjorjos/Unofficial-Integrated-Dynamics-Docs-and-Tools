@@ -35,6 +35,13 @@ import {
 } from "lib/transformers/NetworkCards";
 import { normalizeSegments } from "lib/transformers/MixedLists";
 import {
+  isReservedName,
+  operatorLabel,
+  reservedNameMessage,
+  shadowedOperatorKey,
+  type NameShadowOptions,
+} from "lib/transformers/nicknameShadow";
+import {
   buildBlockLikeConstructor,
   buildIngredientsConstructor,
   buildRecipeConstructor,
@@ -47,6 +54,11 @@ import {
   parseCardOperand,
 } from "lib/transformers/cardOperand";
 import { sourceToNetworkCards } from "lib/transformers/sourceNodes";
+import {
+  isConvenienceExpression,
+  markConvenienceExpression,
+  resolveConvenienceOperator,
+} from "lib/transformers/convenienceOperators";
 import {
   InvalidArityParseError,
   InvalidEscapeParseError,
@@ -405,12 +417,31 @@ export const tokenizeWithComments = (
 export const tokenize = (condensed: string) =>
   tokenizeWithComments(condensed).tokens;
 
+const convenienceInProgress = new Set<string>();
+
+export const convenienceAstFor = (name: string): TypeAST.AST | undefined => {
+  if (convenienceInProgress.has(name)) return undefined;
+  const entry = resolveConvenienceOperator(name);
+  if (!entry) return undefined;
+  convenienceInProgress.add(name);
+  try {
+    return markConvenienceExpression(
+      CondensedToAST(entry.expression, new Map(), 0, true, false, {})
+    );
+  } catch {
+    return undefined;
+  } finally {
+    convenienceInProgress.delete(name);
+  }
+};
+
 export const CondensedToAST = (
   condensed: string,
   externalScope: Map<string, TypeAST.AST> = new Map(),
   startVariableId = 0,
   allowVarRefs = false,
-  normalizeMixedLists = true
+  normalizeMixedLists = true,
+  opts: NameShadowOptions = {}
 ): TypeAST.AST => {
   const { text, operands } = extractCardOperands(condensed);
   const { tokens, comments } = tokenizeWithComments(text);
@@ -465,6 +496,26 @@ export const CondensedToAST = (
     | { type: "Display"; value: InternalAST; varName?: string }
     | { type: "Card"; value: InternalAST; varName?: string };
 
+  const checkParamShadow = (name: string): void => {
+    if (isReservedName(name)) {
+      throw new StructuralParseError(reservedNameMessage(name));
+    }
+    const aliasKey = shadowedOperatorKey(name);
+    if (!aliasKey) return;
+    if ((opts.operatorShadow ?? "error") === "error") {
+      throw new StructuralParseError(
+        `Variable name "${name}" clashes with an existing operator nickname (${operatorLabel(
+          aliasKey
+        )}). Rename it, or set "Operator shadow" to Warn.`
+      );
+    }
+    opts.warnings?.push(
+      `Parameter "${name}" clashes with an existing operator nickname (${operatorLabel(
+        aliasKey
+      )}).`
+    );
+  };
+
   function tryParseParams(): string[] | null {
     const startPos = pos;
     const next = tokens[pos];
@@ -483,11 +534,7 @@ export const CondensedToAST = (
           pos = startPos;
           return null;
         }
-        if (operatorRegistry.operatorByNickname(p.value)) {
-          throw new StructuralParseError(
-            `Variable name "${p.value}" clashes with an existing operator nickname`
-          );
-        }
+        checkParamShadow(p.value);
         if (seenParams.has(p.value)) {
           throw new StructuralParseError(
             `Duplicate variable name "${p.value}" in lambda`
@@ -542,11 +589,7 @@ export const CondensedToAST = (
         arrow.type === "structural" &&
         (arrow.value === "=>" || arrow.value === "->")
       ) {
-        if (operatorRegistry.operatorByNickname(p!.value)) {
-          throw new StructuralParseError(
-            `Variable name "${p!.value}" clashes with an existing operator nickname`
-          );
-        }
+        checkParamShadow(p!.value);
         return [p!.value];
       }
     }
@@ -616,6 +659,7 @@ export const CondensedToAST = (
     if (scope.has(name) || externalScope.has(name)) return true;
     if (operatorRegistry.operatorByNickname(name)) return true;
     if (CALLABLE_IDENTIFIER_KEYWORDS.includes(name.toLowerCase())) return true;
+    if (resolveConvenienceOperator(name)) return true;
     return resolveImplicitFlipOperator(name) !== undefined;
   }
 
@@ -1138,7 +1182,11 @@ export const CondensedToAST = (
       }
     }
 
-    if (base.type === "Curry" && !base.varName) {
+    if (
+      base.type === "Curry" &&
+      !base.varName &&
+      !isConvenienceExpression(base)
+    ) {
       return handleCallInternal(base.base, [...base.args, ...args]);
     }
 
@@ -1203,6 +1251,28 @@ export const CondensedToAST = (
         const varName = (args[0] as { value: string }).value;
         if (externalScope.has(varName)) {
           return externalScope.get(varName)! as InternalAST;
+        }
+        if (isReservedName(varName)) {
+          throw new StructuralParseError(reservedNameMessage(varName));
+        }
+        const aliasKey = shadowedOperatorKey(varName);
+        if (aliasKey) {
+          if ((opts.operatorShadow ?? "error") === "error") {
+            throw new StructuralParseError(
+              `Variable("${varName}") overshadows an operator nickname (${operatorLabel(
+                aliasKey
+              )}). Rename it, or set "Operator shadow" to Warn.`
+            );
+          }
+          opts.warnings?.push(
+            `Variable("${varName}") refers to the operator ${operatorLabel(
+              aliasKey
+            )} because the setting allows overshadowing.`
+          );
+          return setOperatorSourceName(
+            { type: "Operator", opName: aliasKey },
+            varName
+          ) as InternalAST;
         }
         return { type: "Variable", name: `@${varName}` };
       }
@@ -1759,6 +1829,8 @@ export const CondensedToAST = (
             token.value
           );
         }
+        const convenience = convenienceAstFor(token.value);
+        if (convenience) return convenience as InternalAST;
         throw new UnknownIdentifierParseError(
           `Unknown identifier: ${token.value}`
         );

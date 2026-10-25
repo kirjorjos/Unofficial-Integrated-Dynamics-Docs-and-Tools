@@ -1888,7 +1888,6 @@ const steps = computed<VisualStep[]>(() => {
     const register = (
       step: Omit<VisualStep, "id" | "variableId" | "tooltip">
     ): VisualCardRef => {
-    
       const stepId = `step-${result.length + 1}`;
       const getsLabeller =
         props.labeller === true &&

@@ -196,6 +196,68 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
         ],
       },
       {
+        heading: [{ text: "Rotate names" }],
+        summary: [
+          {
+            text: "A rotate is a name that reorders the arguments of the operator it is given, and it is available without being defined anywhere. The digits after rotate give argument positions, and each position from 1 to n must appear exactly once. The definition is generated from the digits, so there is no fixed list to check: ",
+          },
+          { text: "rotate_1_2_4_3", code: true },
+          { text: ", " },
+          { text: "rotate_1_2_4_3_6_5", code: true },
+          { text: " and " },
+          { text: "rotate_2_3_4_5_6_1", code: true },
+          { text: " all work as written." },
+        ],
+        syntax: [
+          {
+            spans: [
+              { text: "rotate", emphasis: "required" },
+              { text: "_" },
+              { text: "positions", emphasis: "required" },
+            ],
+            note: [
+              {
+                text: "one position per argument, written rotate_3_1_2 or rotate_312",
+              },
+            ],
+          },
+          {
+            spans: [
+              { text: "r", emphasis: "required" },
+              { text: "positions", emphasis: "required" },
+            ],
+            note: [{ text: "the short spelling: r_3_1_2 or r312" }],
+          },
+        ],
+        bullets: [
+          [
+            {
+              text: "Each digit says which of the rotation's arguments lands in that slot of the operator it wraps: rotate_3_1_2(t) is the operator that calls t(z, x, y), so rotate_2_1(t) is a flip.",
+            },
+          ],
+          [
+            {
+              text: "Only the digits matter. rotate_1_3_2 and rotate_132 are two spellings of the same generated definition, and the underscores or the collapsed digits may not be mixed within one name.",
+            },
+          ],
+          [
+            {
+              text: "A name may reach any number of arguments. The separated spelling takes one number per position, so rotate_10_1_2_3_4_5_6_7_8_9 brings the tenth argument to the front, while the collapsed spelling stops at nine because each position there is a single digit. rotate_1_2_10 and rotate_12_3 are still rejected: 10 and 12 are not positions of a three- or two-argument rotation.",
+            },
+          ],
+          [
+            {
+              text: "All three text forms accept a rotate wherever an operator is expected, and a definition of your own with the same name takes precedence over the generated one.",
+            },
+          ],
+          [
+            {
+              text: "pipe_N is the other name usable without a definition, generated for any N from 2 up. pipe_2(f, g) passes g the expanded result of f instead of the operator f returns, and every later pipe_N does the same for an operator that takes N arguments: pipe_5(f, g) is the operator that calls g(f(x, y, z, w, v)).",
+            },
+          ],
+        ],
+      },
+      {
         heading: [{ text: "The settings panel" }],
         summary: [
           {
@@ -372,6 +434,11 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
             kind: "concrete",
             text: "a = numberAdd 1 2",
             caption: [{ text: "space-separated" }],
+          },
+          {
+            kind: "concrete",
+            text: "flippedAdd = rotate_2_1(numberAdd)",
+            caption: [{ text: "a rotate name needs no definition" }],
           },
         ],
         links: [
@@ -1235,6 +1302,15 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
               { text: "implicit flip: flip + the operator's nickname" },
             ],
           },
+          {
+            kind: "concrete",
+            text: "rotate_21 numberAdd",
+            caption: [
+              {
+                text: "generate a rotate by its digits: rotate_21 is rotate_2_1",
+              },
+            ],
+          },
         ],
         links: [
           { label: [{ text: "booleanOr" }], href: "#operator-LOGICAL_OR" },
@@ -1769,6 +1845,13 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
           {
             kind: "concrete",
             text: "pipe(arithmeticIncrement, arithmeticIncrement)",
+          },
+          {
+            kind: "concrete",
+            text: "r21(numberAdd)",
+            caption: [
+              { text: "generate a rotate by its digits: r21 is rotate_2_1" },
+            ],
           },
         ],
         links: [

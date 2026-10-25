@@ -1,4 +1,5 @@
 import { ASTToExpanded, ExpandedToAST } from "lib/transformers/Expanded";
+import { generatePipeExpression } from "lib/transformers/convenienceOperators";
 
 const PIPE_4_SOURCE = [
   "flipPipe = flip(pipe)",
@@ -19,6 +20,35 @@ describe("TestCyclicSignature", () => {
   it("testRenderingATypeCycleTerminates", () => {
     const ast = ExpandedToAST(PIPE_4_SOURCE, 0, {});
     expect(() => ASTToExpanded(ast)).not.toThrow();
+  });
+
+  it("testGeneratedPipesKeepTerminating", () => {
+    const sizes = [5, 6, 7, 8, 9, 10, 11, 12];
+    const rendered = ASTToExpanded(
+      ExpandedToAST(
+        [
+          PIPE_4_SOURCE,
+          ...sizes.map(
+            (size) => `pipe_${size} = ${generatePipeExpression(size)}`
+          ),
+        ].join("\n"),
+        0,
+        {}
+      )
+    );
+    for (const size of sizes) {
+      expect([size, rendered.includes(`pipe_${size} ::`)]).toEqual([
+        size,
+        true,
+      ]);
+    }
+    const deepest = rendered
+      .split("\n")
+      .find((line) => line.startsWith("pipe_12 ::"));
+    expect([
+      deepest !== undefined,
+      (deepest?.match(/Any →/g) ?? []).length,
+    ]).toEqual([true, 25]);
   });
 
   it("testCompoundedDefinitionsKeepReadableSignatures", () => {

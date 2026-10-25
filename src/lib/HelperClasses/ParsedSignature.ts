@@ -67,12 +67,13 @@ export class ParsedSignature {
           listType: remap(node.listType),
         };
       } else if (node.type === "Any") {
-        if (!id_map.has(node.typeID)) {
-          id_map.set(node.typeID, ParsedSignature.getNewTypeID());
+        const canonical = globalMap.findBaseID(node.typeID);
+        if (!id_map.has(canonical)) {
+          id_map.set(canonical, ParsedSignature.getNewTypeID());
         }
         result = {
           type: "Any",
-          typeID: id_map.get(node.typeID)!,
+          typeID: id_map.get(canonical)!,
         };
       } else if (node.type === "Operator") {
         result = {

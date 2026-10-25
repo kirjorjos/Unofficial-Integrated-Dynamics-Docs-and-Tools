@@ -89,7 +89,11 @@ type FormatFormatter = {
 const canonicalFormatters: Record<FormatKey, FormatFormatter> = {
   condensed: {
     label: "Condensed",
-    toAST: (value) => CondensedToAST(value, undefined, initialVariableId.value),
+    toAST: (value, opts) =>
+      CondensedToAST(value, undefined, initialVariableId.value, false, true, {
+        operatorShadow: opts?.operatorShadow,
+        warnings: opts?.warnings,
+      }),
     fromAST: (ast) => ASTToCondensed(ast, true, initialVariableId.value),
   },
   expanded: {
@@ -99,7 +103,11 @@ const canonicalFormatters: Record<FormatKey, FormatFormatter> = {
   },
   codeline: {
     label: "Code Line",
-    toAST: (value) => CodeLineToAST(value, undefined, initialVariableId.value),
+    toAST: (value, opts) =>
+      CodeLineToAST(value, undefined, initialVariableId.value, false, true, {
+        operatorShadow: opts?.operatorShadow,
+        warnings: opts?.warnings,
+      }),
     fromAST: (ast) => ASTToCodeLine(ast, true, initialVariableId.value),
   },
   compressed: {
@@ -584,6 +592,7 @@ const transform = (skipUrlUpdate: boolean = false): void => {
         allowDuplicateNames: settings.value.duplicateNames === "allow",
         warnings: dupWarnings,
         declarationCards: settings.value.declarationCards,
+        operatorShadow: settings.value.operatorShadow,
       });
       if (outputFormat.value === "snbt") {
         outputWarnings.value = astToGiveCommands(
@@ -1397,6 +1406,33 @@ onMounted(async () => {
               >
                 <option value="error">Hard error</option>
                 <option value="allow">Allow + warning</option>
+              </select>
+            </div>
+
+            <div
+              class="settings-row"
+              :class="{ disabled: !settingEnabled('operatorShadow') }"
+            >
+              <label
+                class="settings-label"
+                for="setting-operator-shadow"
+                :data-help="settingHelpText('operatorShadow')"
+              >
+                Operator shadow<sup
+                  class="settings-help-mark"
+                  aria-hidden="true"
+                  >?</sup
+                >
+              </label>
+              <select
+                id="setting-operator-shadow"
+                v-model="settings.operatorShadow"
+                class="select"
+                :disabled="!settingEnabled('operatorShadow')"
+                aria-label="Operator shadow"
+              >
+                <option value="error">Hard error</option>
+                <option value="warn">Warn + rename</option>
               </select>
             </div>
 

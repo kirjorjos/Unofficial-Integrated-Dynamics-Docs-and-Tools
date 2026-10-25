@@ -76,6 +76,10 @@ export const SETTING_HELP: Record<SettingHelpKey, SettingHelp> = {
     description:
       "How a name redefined with a different definition is handled: a hard error, or the first definition is kept and the later ones are dropped with a warning.",
   },
+  operatorShadow: {
+    description:
+      "What a variable name that matches a built-in operator name does: a hard error, or a warning after which the output uses another name for that operator. The last usable name of an operator can never be shadowed.",
+  },
   hardening: {
     description:
       "Which hardening logic the signature rendering uses: the In-game logic or the Full hardening logic.",
