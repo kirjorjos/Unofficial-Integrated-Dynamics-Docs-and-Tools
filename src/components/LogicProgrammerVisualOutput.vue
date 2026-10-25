@@ -1888,12 +1888,14 @@ const steps = computed<VisualStep[]>(() => {
     const register = (
       step: Omit<VisualStep, "id" | "variableId" | "tooltip">
     ): VisualCardRef => {
+    
       const stepId = `step-${result.length + 1}`;
       const getsLabeller =
         props.labeller === true &&
         (step.sourceType === "Reader" || step.sourceType === "Materialize");
       const variableId = props.startVariableId + cardCount;
       cardCount += 1;
+
       const partId =
         step.sourceType === "Reader"
           ? getReaderPartIdForStep(
