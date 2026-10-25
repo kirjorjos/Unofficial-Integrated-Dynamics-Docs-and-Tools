@@ -413,7 +413,7 @@ test.describe("transformersPageSettingsHelp", () => {
     await page.locator(".settings-summary").click();
 
     const labels = page.locator(".settings-body .settings-label");
-    await expect(labels).toHaveCount(26);
+    await expect(labels).toHaveCount(27);
 
     const count = await labels.count();
     for (let index = 0; index < count; index += 1) {
@@ -423,7 +423,7 @@ test.describe("transformersPageSettingsHelp", () => {
       );
     }
 
-    await expect(page.locator(".settings-help-mark")).toHaveCount(26);
+    await expect(page.locator(".settings-help-mark")).toHaveCount(27);
   });
 
   test("testHoveringTheQuestionMarkRevealsTheHelpText", async ({ page }) => {

@@ -40,6 +40,7 @@ describe("TestTransformerSettingsOpts", () => {
       resolve: true,
       preferSourceNames: true,
       declarationCards: "add",
+      labeller: true,
       entityUuidSeed: 123456,
     };
     const encoded = encodeSettingsOpts(settings);
@@ -77,6 +78,20 @@ describe("TestTransformerSettingsOpts", () => {
       signatureDepth: -1,
     };
     expect(encodeSettingsOpts(settings)).toBeNull();
+  });
+
+  it("testLabellerIsOffByDefaultAndOmitsOpts", () => {
+    expect(atDefault.labeller).toBe(false);
+    expect(encodeSettingsOpts(atDefault)).toBeNull();
+    expect(decodeSettingsOpts(null).labeller).toBe(false);
+    expect(decodeSettingsOpts("").labeller).toBe(false);
+  });
+
+  it("testRoundTripsTheLabellerFlag", () => {
+    const settings: TransformerSettings = { ...atDefault, labeller: true };
+    const encoded = encodeSettingsOpts(settings);
+    expect(encoded).not.toBeNull();
+    expect(decodeSettingsOpts(encoded).labeller).toBe(true);
   });
 
   it("testDecodesNullAndEmptyToDefaults", () => {

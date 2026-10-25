@@ -33,6 +33,21 @@ describe("generateVisualSteps", () => {
     expect(result[2]!.tooltipOperatorKey).toBe("OPERATOR_APPLY_2");
   });
 
+  it("testGivesEveryStepItsOwnIdEvenForPipeAndFlipSteps", () => {
+    const inputs = [
+      "flip numberAdd",
+      "flip numberIncrement",
+      "pipe numberIncrement numberMultiply",
+      "pipe2 numberIncrement numberIncrement numberAdd",
+      "apply add 1 2",
+    ];
+
+    for (const input of inputs) {
+      const ids = steps(CodeLineToAST(input)).map((step) => step.id);
+      expect(new Set(ids).size).toBe(ids.length);
+    }
+  });
+
   it("testHonorsStartVariableIdOffset", () => {
     const result = steps(makeAst.arithmetic(), 10);
     expect(result.map((s) => s.variableId)).toEqual([10, 11, 12]);
