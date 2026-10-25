@@ -298,12 +298,19 @@ const collectDynamicParams = (
   }
 };
 
+const instantiateSignature = (sig: ParsedSignature): ParsedSignature => {
+  const copy = new ParsedSignature(sig.getAst(), true);
+  copy.applyTainted = sig.applyTainted;
+  copy.errorInfo = sig.errorInfo;
+  return copy;
+};
+
 const computeSignature = (
   node: TypeAST.AST,
   scope?: Map<TypeAST.AST, ParsedSignature>,
   resolve = false
 ): ParsedSignature => {
-  if (scope && scope.has(node)) return scope.get(node)!;
+  if (scope && scope.has(node)) return instantiateSignature(scope.get(node)!);
 
   let signature: ParsedSignature;
   switch (node.type) {

@@ -1,5 +1,7 @@
 import { globalMap } from "lib/HelperClasses/TypeMap";
 
+const rewritingTypeIds = new Set<number>();
+
 export class ParsedSignature {
   private static maxTypeID = 0;
   private static NUMBER_TYPES = ["Integer", "Long", "Double", "Number"];
@@ -381,8 +383,16 @@ export class ParsedSignature {
 
     if (this.ast.type === "Any") {
       const alias = globalMap.findBase(this.ast.typeID);
-      if (alias instanceof ParsedSignature) {
-        finalSignature = alias.rewrite();
+      if (
+        alias instanceof ParsedSignature &&
+        !rewritingTypeIds.has(this.ast.typeID)
+      ) {
+        rewritingTypeIds.add(this.ast.typeID);
+        try {
+          finalSignature = alias.rewrite();
+        } finally {
+          rewritingTypeIds.delete(this.ast.typeID);
+        }
       } else {
         finalSignature = this;
       }
