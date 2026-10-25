@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, inject, onBeforeUnmount, onMounted } from "vue";
+import { computed, inject, onBeforeUnmount, onMounted, ref } from "vue";
 import { TILE_GRID_KEY } from "pages-lib/tileGridContext";
 
 const props = withDefaults(
@@ -13,17 +13,21 @@ const props = withDefaults(
 );
 
 const grid = inject(TILE_GRID_KEY, null);
+const root = ref<HTMLElement | null>(null);
 
 let unregister: (() => void) | null = null;
 
 onMounted(() => {
   if (!grid) return;
-  unregister = grid.register({
-    id: props.id,
-    span: props.span,
-    defaultCol: props.defaultCol,
-    defaultRow: props.defaultRow,
-  });
+  unregister = grid.register(
+    {
+      id: props.id,
+      span: props.span,
+      defaultCol: props.defaultCol,
+      defaultRow: props.defaultRow,
+    },
+    root.value
+  );
 });
 
 onBeforeUnmount(() => {
@@ -50,6 +54,7 @@ const beginDrag = (event: MouseEvent): void => {
 
 <template>
   <section
+    ref="root"
     class="tile"
     :class="{ 'tile-dragging': dragging }"
     :data-tile-id="id"

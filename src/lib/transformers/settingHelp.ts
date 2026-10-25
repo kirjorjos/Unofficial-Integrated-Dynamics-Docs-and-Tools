@@ -100,6 +100,11 @@ export const SETTING_HELP: Record<SettingHelpKey, SettingHelp> = {
       "Wraps the whole program in Materialize(...) before emitting, so reader values are baked in and the readers they came from are dropped. A value that can be evaluated folds to its result and the cards that only built it are dropped; Dynamic parameters keep the chain.",
     appliesTo: "Only applies to SNBT output.",
   },
+  labeller: {
+    description:
+      "Shows naming as its own labeller step after reader and materializer steps.",
+    appliesTo: "Only applies to visual output.",
+  },
   outputShape: {
     description:
       "Emits one /give per variable card, or fills variable stores of 45 slots (9×5) with the last store holding the remainder.",

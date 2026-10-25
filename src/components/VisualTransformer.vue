@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import VisualTransformerStep from "./VisualTransformerStep.vue";
+import LabellerGuiView from "./LabellerGuiView.vue";
 import LogicProgrammerView from "./LogicProgrammerView.vue";
 import MaterializerGuiView from "./MaterializerGuiView.vue";
 import ReaderGuiView from "./ReaderGuiView.vue";
@@ -20,12 +21,15 @@ const props = defineProps<{
   showStepTitles?: boolean;
   operatorPreviewMode?: "value" | "pattern";
   forceShowOutputCard?: boolean;
+  labeller?: boolean;
 }>();
 
 const startId = props.startVariableId ?? 0;
 
 const steps = computed(() =>
-  generateVisualSteps(props.ast, startId, props.operatorPreviewMode)
+  generateVisualSteps(props.ast, startId, props.operatorPreviewMode, {
+    labeller: props.labeller,
+  })
 );
 
 const getReaderViewReader = (step: (typeof steps.value)[number]) => {
@@ -45,6 +49,9 @@ const getReaderViewValues = (
   }
   return undefined;
 };
+
+const hasLabellerAfter = (index: number): boolean =>
+  steps.value[index + 1]?.kind === "labeller";
 </script>
 
 <template>
@@ -62,8 +69,13 @@ const getReaderViewValues = (
         step.typeError ?? getCumulativeStepError(steps, step.variableId)
       "
     >
+      <LabellerGuiView
+        v-if="step.kind === 'labeller'"
+        :card="step.inputs[0]"
+        :label="step.output"
+      />
       <ReaderGuiView
-        v-if="step.sourceType === 'Reader'"
+        v-else-if="step.sourceType === 'Reader'"
         :reader="getReaderViewReader(step)!"
         :focused-aspect="
           step.node?.type === 'Reader' ? step.node.value.aspect : undefined
@@ -76,7 +88,9 @@ const getReaderViewValues = (
       <MaterializerGuiView
         v-else-if="step.sourceType === 'Materialize'"
         :top-card="step.inputs[0]"
-        :result-card="getMaterializerResultCard(step)"
+        :result-card="
+          getMaterializerResultCard(step, { unnamed: hasLabellerAfter(index) })
+        "
       />
       <LogicProgrammerView
         v-else

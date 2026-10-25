@@ -23,7 +23,7 @@ type VisualStep = {
   searchLabel: string;
   panelLabel?: string;
   symbol: string;
-  kind: "operator" | "value";
+  kind: "operator" | "value" | "labeller";
   sourceType: globalThis.TypeAST.AST["type"];
   renderPattern?: LogicProgrammerRenderPatternKey;
   inputs: {
