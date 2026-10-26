@@ -1066,14 +1066,14 @@ final = total
   });
 
   it("testTypedDefinitionSuffixWithLambdaParams", () => {
-    expect(() => ExpandedToAST("bad name = 5 :: Integer")).toThrow(
+    expect(() => ExpandedToAST("bad zzz = 5 :: Integer")).toThrow(
       /declared as type "Integer"/
     );
 
-    const ast = rootOf(ExpandedToAST("bad name = 5"));
+    const ast = rootOf(ExpandedToAST("bad zzz = 5"));
     expect(ast.varName).toBe("bad");
     expect(ast.type).toBe("Curry");
-    expect(ast).toEqual(rootOf(ExpandedToAST("bad = name => 5")));
+    expect(ast).toEqual(rootOf(ExpandedToAST("bad = zzz => 5")));
   });
 
   it("testNoDuplicateCardsWhenNamedVarReferencedInLambda", () => {
@@ -1123,8 +1123,6 @@ matchesFilter = (f) => (i) => == (beeGenome f) (beeGenome i)
     ["-5", "-5 = 5"],
     ["5l", "5l = 5"],
     ["5.0", "5.0 = 5"],
-    ["true", "true = 5"],
-    ["false", "false = 5"],
   ] as const)(
     "testInvalidCharVarNamesWrapAndRoundTrip%s",
     (name, expectedLine) => {
@@ -1160,8 +1158,6 @@ matchesFilter = (f) => (i) => == (beeGenome f) (beeGenome i)
     ["-5", "-5 = 5"],
     ["5l", "5l = 5"],
     ["5.0", "5.0 = 5"],
-    ["true", "true = 5"],
-    ["false", "false = 5"],
   ] as const)(
     "testLiteralLikeVarNameRoundTripThroughVariableWrapper%s",
     (name, expectedLine) => {

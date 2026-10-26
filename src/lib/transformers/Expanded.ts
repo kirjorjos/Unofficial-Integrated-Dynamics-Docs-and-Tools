@@ -26,6 +26,17 @@ import {
   getNetworkDefLastCardIds,
 } from "lib/transformers/NetworkCards";
 import { normalizeSegments } from "lib/transformers/MixedLists";
+import {
+  aliasesAfterShadowing,
+  clearShadowedOperatorNames,
+  collectOperatorSourceNames,
+  decideOperatorShadow,
+  isReservedName,
+  operatorLabel,
+  reservedNameMessage,
+  shadowedOperatorKey,
+  type OperatorShadowMode,
+} from "lib/transformers/nicknameShadow";
 import { StructuralParseError } from "lib/transformers/parseErrors";
 import {
   getSourceCards,
@@ -298,12 +309,19 @@ const collectDynamicParams = (
   }
 };
 
+const instantiateSignature = (sig: ParsedSignature): ParsedSignature => {
+  const copy = new ParsedSignature(sig.getAst(), true);
+  copy.applyTainted = sig.applyTainted;
+  copy.errorInfo = sig.errorInfo;
+  return copy;
+};
+
 const computeSignature = (
   node: TypeAST.AST,
   scope?: Map<TypeAST.AST, ParsedSignature>,
   resolve = false
 ): ParsedSignature => {
-  if (scope && scope.has(node)) return scope.get(node)!;
+  if (scope && scope.has(node)) return instantiateSignature(scope.get(node)!);
 
   let signature: ParsedSignature;
   switch (node.type) {
@@ -1109,11 +1127,12 @@ export const ASTToExpandedWithSignatureOptions = (
       continue;
     }
 
-    const nameDisplay = displayOpts.variableWrapper
-      ? `Variable("${name.replace(/"/g, '\\"')}")`
-      : v.varName
-        ? formatDefinitionName(name)
-        : displayName;
+    const nameDisplay =
+      displayOpts.variableWrapper || isReservedName(name)
+        ? `Variable("${name.replace(/"/g, '\\"')}")`
+        : v.varName
+          ? formatDefinitionName(name)
+          : displayName;
     let assignment = `${nameDisplay} = ${exprStr}`;
     if (displayOpts.comments) {
       const suffix = argumentComments(v)
@@ -1530,6 +1549,7 @@ export interface ExpandedToASTOptions {
   allowDuplicateNames?: boolean;
   warnings?: string[];
   declarationCards?: "ignore" | "add";
+  operatorShadow?: OperatorShadowMode;
 }
 
 export const ExpandedToAST = (
@@ -1541,6 +1561,10 @@ export const ExpandedToAST = (
   const processedLines: string[] = [];
   const processedLineOrigins: number[] = [];
   const warnings = opts.warnings ?? [];
+  const operatorShadow = opts.operatorShadow ?? "error";
+  const operatorUses = new Map<string, { count: number; firstLine: number }>();
+  const shadowedOperators = new Map<string, TypeOperatorKey>();
+  const lineAsts: TypeAST.AST[] = [];
 
   let pendingStandaloneComments: string[] = [];
   const lineComments = new Map<number, string[]>();
@@ -1714,7 +1738,10 @@ export const ExpandedToAST = (
 
     let lineAST: TypeAST.AST;
     try {
-      lineAST = CondensedToAST(exprStr, scope, 0, true, false);
+      lineAST = CondensedToAST(exprStr, scope, 0, true, false, {
+        operatorShadow,
+        warnings,
+      });
     } catch (e) {
       if (!(e instanceof StructuralParseError)) {
         throw new Error(
@@ -1724,7 +1751,10 @@ export const ExpandedToAST = (
         );
       }
       try {
-        lineAST = CodeLineToAST(exprStr, scope, 0, true, false);
+        lineAST = CodeLineToAST(exprStr, scope, 0, true, false, {
+          operatorShadow,
+          warnings,
+        });
       } catch (e2) {
         console.error(e);
         throw new Error(
@@ -1736,6 +1766,13 @@ export const ExpandedToAST = (
     }
 
     assertNoNumericAtRefs(lineAST);
+
+    collectOperatorSourceNames(lineAST, (sourceName) => {
+      const existing = operatorUses.get(sourceName);
+      if (existing) existing.count += 1;
+      else operatorUses.set(sourceName, { count: 1, firstLine: i });
+    });
+    lineAsts[i] = lineAST;
 
     if (lineAST.type === "NetworkCards") {
       throw new Error(
@@ -1759,14 +1796,47 @@ export const ExpandedToAST = (
       }
     }
 
-    if (
-      varName &&
-      operatorRegistry.operatorByNickname(varName) &&
-      !isSelfNicknameShadow(varName, lineAST)
-    ) {
-      throw new Error(
-        `Variable name "${varName}" overshadows an operator nickname`
-      );
+    if (varName) {
+      if (isReservedName(varName)) {
+        throw new Error(reservedNameMessage(varName));
+      }
+
+      const aliasKey = shadowedOperatorKey(varName);
+      if (aliasKey && !isSelfNicknameShadow(varName, lineAST)) {
+        const priorUse = operatorUses.get(varName);
+        if (priorUse) {
+          if (!opts.allowDuplicateNames) {
+            throw new Error(
+              `Variable "${varName}" is already used as an operator on line ${priorUse.firstLine + 1}; redefinition is only allowed if the new definition resolves to the same AST`
+            );
+          }
+          warnings.push(
+            `Variable "${varName}" is already used as an operator on line ${priorUse.firstLine + 1}; the definition was dropped.`
+          );
+          continue;
+        }
+
+        const decision = decideOperatorShadow({
+          name: varName,
+          key: aliasKey,
+          mode: operatorShadow,
+          shadowed: new Set(shadowedOperators.keys()),
+        });
+        if (!decision.allowed) {
+          throw new Error(decision.message);
+        }
+        shadowedOperators.set(varName, aliasKey);
+        const fallback =
+          decision.fallbackAlias ??
+          aliasesAfterShadowing(
+            aliasKey,
+            new Set([...shadowedOperators.keys(), varName])
+          )[0] ??
+          getOpName(aliasKey);
+        warnings.push(
+          `Variable "${varName}" shadows the operator ${operatorLabel(aliasKey)}. Output will use "${fallback}" for the operator.`
+        );
+      }
     }
 
     if (varName) {
@@ -1890,5 +1960,35 @@ export const ExpandedToAST = (
       });
     }
   }
+
+  const countOperatorUses = (
+    name: string
+  ): { count: number; firstLine?: number } => {
+    let count = 0;
+    let firstLine: number | undefined;
+    lineAsts.forEach((ast, index) => {
+      if (!ast) return;
+      let inLine = 0;
+      collectOperatorSourceNames(ast, (sourceName) => {
+        if (sourceName === name) inLine += 1;
+      });
+      if (inLine > 0 && firstLine === undefined) firstLine = index + 1;
+      count += inLine;
+    });
+    return { count, firstLine };
+  };
+
+  for (const [name] of shadowedOperators) {
+    const usage = countOperatorUses(name);
+    if (usage.count > 0) {
+      warnings.push(
+        `Variable "${name}" is still used as an operator ${usage.count} time${
+          usage.count === 1 ? "" : "s"
+        }${usage.firstLine !== undefined ? `, first on line ${usage.firstLine}` : ""}.`
+      );
+    }
+  }
+
+  clearShadowedOperatorNames(network, new Set(shadowedOperators.keys()));
   return network;
 };

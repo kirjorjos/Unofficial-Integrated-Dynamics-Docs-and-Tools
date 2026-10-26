@@ -36,19 +36,31 @@ import {
 } from "lib/transformers/NetworkCards";
 import { normalizeSegments } from "lib/transformers/MixedLists";
 import {
+  isReservedName,
+  operatorLabel,
+  reservedNameMessage,
+  shadowedOperatorKey,
+  type NameShadowOptions,
+} from "lib/transformers/nicknameShadow";
+import {
   buildBlockLikeConstructor,
   buildIngredientsConstructor,
   buildRecipeConstructor,
   ingredientsToText,
   recipeToText,
 } from "lib/transformers/constructors";
-import { QuoteDelimiter, unquoteString } from "lib/transformers/Condensed";
+import {
+  QuoteDelimiter,
+  convenienceAstFor,
+  unquoteString,
+} from "lib/transformers/Condensed";
 import {
   extractCardOperands,
   getCardOperandIndex,
   parseCardOperand,
 } from "lib/transformers/cardOperand";
 import { sourceToNetworkCards } from "lib/transformers/sourceNodes";
+import { isConvenienceExpression } from "lib/transformers/convenienceOperators";
 
 export interface CodeLineOutputOptions {
   joinStatements?: ";" | "\n";
@@ -338,7 +350,8 @@ export const CodeLineToAST = (
   externalScope: Map<string, TypeAST.AST> = new Map(),
   startVariableId = 0,
   allowVarRefs = false,
-  normalizeMixedLists = true
+  normalizeMixedLists = true,
+  opts: NameShadowOptions = {}
 ): TypeAST.AST => {
   const { text, operands } = extractCardOperands(codeLine);
   codeLine = text;
@@ -495,6 +508,26 @@ export const CodeLineToAST = (
     | { type: "Display"; value: InternalAST; varName?: string }
     | { type: "Card"; value: InternalAST; varName?: string };
 
+  const checkParamShadow = (name: string): void => {
+    if (isReservedName(name)) {
+      throw new StructuralParseError(reservedNameMessage(name));
+    }
+    const aliasKey = shadowedOperatorKey(name);
+    if (!aliasKey) return;
+    if ((opts.operatorShadow ?? "error") === "error") {
+      throw new StructuralParseError(
+        `Variable name "${name}" clashes with an existing operator nickname (${operatorLabel(
+          aliasKey
+        )}). Rename it, or set "Operator shadow" to Warn.`
+      );
+    }
+    opts.warnings?.push(
+      `Parameter "${name}" clashes with an existing operator nickname (${operatorLabel(
+        aliasKey
+      )}).`
+    );
+  };
+
   function tryParseParams(): string[] | null {
     const startPos = pos;
     let next = tokens[pos];
@@ -591,6 +624,7 @@ export const CodeLineToAST = (
     if (params !== null) {
       const sep = tokens[pos];
       if (sep === "=>" || sep === "->" || sep === ".") {
+        for (const param of params) checkParamShadow(param);
         pos++;
         const body = parseSequence(new Set([...scope, ...params]), true);
         let result = body;
@@ -724,6 +758,9 @@ export const CodeLineToAST = (
 
     const implicitFlip = resolveImplicitFlipOperator(token);
     if (implicitFlip) return implicitFlip as InternalAST;
+
+    const convenience = convenienceAstFor(token);
+    if (convenience) return convenience as InternalAST;
 
     throw new UnknownIdentifierParseError(`Unknown identifier: ${token}`);
   }
@@ -1060,10 +1097,13 @@ export const CodeLineToAST = (
         );
       }
     }
-    if (base.type === "Curry" && !base.varName) {
+    if (
+      base.type === "Curry" &&
+      !base.varName &&
+      !isConvenienceExpression(base)
+    ) {
       return handleCallInternal(base.base, [...base.args, ...args]);
     }
-
     if (base.type === "Operator") {
       const opClass = operatorRegistry[base.opName];
       let op: BaseOperator<IntegratedValue, IntegratedValue> | void = undefined;
@@ -1156,6 +1196,28 @@ export const CodeLineToAST = (
         const varName = (args[0] as { value: string }).value;
         if (externalScope.has(varName)) {
           return externalScope.get(varName)! as InternalAST;
+        }
+        if (isReservedName(varName)) {
+          throw new StructuralParseError(reservedNameMessage(varName));
+        }
+        const aliasKey = shadowedOperatorKey(varName);
+        if (aliasKey) {
+          if ((opts.operatorShadow ?? "error") === "error") {
+            throw new StructuralParseError(
+              `Variable("${varName}") overshadows an operator nickname (${operatorLabel(
+                aliasKey
+              )}). Rename it, or set "Operator shadow" to Warn.`
+            );
+          }
+          opts.warnings?.push(
+            `Variable("${varName}") refers to the operator ${operatorLabel(
+              aliasKey
+            )} because the setting allows overshadowing.`
+          );
+          return setOperatorSourceName(
+            { type: "Operator", opName: aliasKey },
+            varName
+          ) as InternalAST;
         }
         return { type: "Variable", name: `@${varName}` };
       }

@@ -5,6 +5,7 @@ import { getReaderClassByTypeName } from "lib/IntegratedDynamicsClasses/readers/
 import { operatorRegistry } from "lib/IntegratedDynamicsClasses/registries/operatorRegistry";
 import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 import { ASTtoOperator, OperatortoAST } from "lib/transformers/Operator";
+import { isConvenienceExpression } from "lib/transformers/convenienceOperators";
 import { StructuralParseError } from "lib/transformers/parseErrors";
 import { getSourceCards } from "lib/transformers/sourceNodes";
 
@@ -123,7 +124,11 @@ export const flattenAnonymousBaseOperatorApplication = (
   const args = [...node.args];
   let currentBase = node.base;
 
-  while (currentBase.type === "Curry" && !currentBase.varName) {
+  while (
+    currentBase.type === "Curry" &&
+    !currentBase.varName &&
+    !isConvenienceExpression(currentBase)
+  ) {
     args.unshift(...currentBase.args);
     currentBase = currentBase.base;
   }
@@ -490,6 +495,10 @@ export const getOperatorSourceName = (
   return operatorSourceNameMap.get(node);
 };
 
+export const clearOperatorSourceName = (node: TypeAST.BaseOperator): void => {
+  operatorSourceNameMap.delete(node);
+};
+
 export const getOpName = (opName: TypeOperatorKey): string => {
   const opClass = operatorRegistry[opName];
   if (opClass && opClass.interactName) return opClass.interactName;
@@ -649,6 +658,16 @@ export const getArity = (node: TypeAST.Operator): number => {
   return 0;
 };
 
+const APPLY_FAMILY = new Set<TypeOperatorKey>([
+  "OPERATOR_APPLY" as TypeOperatorKey,
+  "OPERATOR_APPLY_2" as TypeOperatorKey,
+  "OPERATOR_APPLY_3" as TypeOperatorKey,
+  "OPERATOR_APPLY_N" as TypeOperatorKey,
+]);
+
+const isApplyFamilyOperator = (opName: TypeOperatorKey): boolean =>
+  APPLY_FAMILY.has(opName);
+
 export const expectsOperatorArgument = (
   node: TypeAST.AST,
   index: number
@@ -662,6 +681,15 @@ export const expectsOperatorArgument = (
   }
 
   if (current.type === "Operator") {
+    const operatorArity = getArity(current);
+    if (
+      isApplyFamilyOperator(current.opName) &&
+      operatorArity !== 0 &&
+      effectiveIndex >= operatorArity
+    ) {
+      return true;
+    }
+
     const opClass = operatorRegistry[current.opName];
     let op: BaseOperator<IntegratedValue, IntegratedValue> | undefined;
     if (opClass) {

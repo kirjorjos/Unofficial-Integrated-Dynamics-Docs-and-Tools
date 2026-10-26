@@ -1,10 +1,11 @@
 import { detectInputFormat } from "lib/transformers/detectFormat";
-import { ExpandedToAST } from "lib/transformers/Expanded";
-import { CodeLineToAST } from "lib/transformers/CodeLine";
-import { CondensedToAST } from "lib/transformers/Condensed";
+import { ASTToExpanded, ExpandedToAST } from "lib/transformers/Expanded";
+import { ASTToCodeLine, CodeLineToAST } from "lib/transformers/CodeLine";
+import { ASTToCondensed, CondensedToAST } from "lib/transformers/Condensed";
 import { abstractDynamicParts } from "lib/transformers/lambdaAbstraction";
 import { inputToGiveCommands } from "lib/transformers/giveCommands";
 import { snbtInputToAST } from "lib/transformers/snbtFormat";
+import { isConvenienceName } from "lib/transformers/convenienceOperators";
 import {
   INPUT_DOC_FORMAT_TAB_IDS,
   INPUT_DOC_TABS,
@@ -87,6 +88,70 @@ describe("TestInputDocs", () => {
       "/give @p integrateddynamics:part_<part>_writer{id, inventory:[…]}",
     ]);
     expect((section!.examples ?? []).length).toBe(1);
+  });
+
+  it("testOverviewDocumentsRotateNamesByRuleRatherThanAList", () => {
+    const section = inputDocTab("overview").sections.find(
+      (candidate) => docText(candidate.heading) === "Rotate names"
+    );
+    expect(section).toBeDefined();
+
+    const documented = JSON.stringify(section);
+    for (const name of [
+      "rotate_2_1",
+      "rotate_3_1_2",
+      "rotate_312",
+      "rotate_132",
+      "r_3_1_2",
+      "r312",
+      "rotate_1_2_4_3",
+      "rotate_1_2_4_3_6_5",
+      "rotate_2_3_4_5_6_1",
+      "rotate_10_1_2_3_4_5_6_7_8_9",
+    ]) {
+      expect([name, documented.includes(name)]).toEqual([name, true]);
+      expect([name, isConvenienceName(name)]).toEqual([name, true]);
+    }
+
+    for (const name of ["rotate_1_2_10", "rotate_12_3"]) {
+      expect([name, documented.includes(name)]).toEqual([name, true]);
+      expect([name, isConvenienceName(name)]).toEqual([name, false]);
+    }
+  });
+
+  it("testOverviewDocumentsGeneratedPipes", () => {
+    const section = inputDocTab("overview").sections.find(
+      (candidate) => docText(candidate.heading) === "Rotate names"
+    );
+    expect(section).toBeDefined();
+
+    const documented = JSON.stringify(section);
+    for (const name of ["pipe_2", "pipe_5"]) {
+      expect([name, documented.includes(name)]).toEqual([name, true]);
+      expect([name, isConvenienceName(name)]).toEqual([name, true]);
+    }
+    expect(isConvenienceName("pipe_1")).toBe(false);
+  });
+
+  it("testEachFormatTabRunsARotateExample", () => {
+    const render: Record<InputDocFormatTabId, (text: string) => string> = {
+      expanded: (text) => ASTToExpanded(ExpandedToAST(text, 0, {})),
+      codeline: (text) =>
+        ASTToCodeLine(CodeLineToAST(text, undefined, 0, true) as TypeAST.AST),
+      condensed: (text) =>
+        ASTToCondensed(CondensedToAST(text, new Map(), 0, true, false, {})),
+    };
+    const isRotate = (text: string): boolean =>
+      /(?:^|[^A-Za-z])(?:rotate|r)_?\d/.test(text);
+
+    const formatExamples = inputDocFormatExamples();
+    for (const tabId of INPUT_DOC_FORMAT_TAB_IDS) {
+      const example = formatExamples
+        .find(({ tabId: id }) => id === tabId)!
+        .examples.find((candidate) => isRotate(candidate.text));
+      expect([tabId, example?.kind]).toEqual([tabId, "concrete"]);
+      expect(render[tabId](example!.text).length).toBeGreaterThan(0);
+    }
   });
 
   it("testOverviewTabExplainsTheRequiredOptionalLegend", () => {
