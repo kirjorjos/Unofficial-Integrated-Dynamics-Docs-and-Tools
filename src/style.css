@@ -867,8 +867,7 @@ button {
 }
 
 .mc-tooltip {
-  min-width: max-content;
-  max-width: 240px;
+  width: max-content;
   padding: 3px;
   border: 1px solid #2a0a63;
   background: linear-gradient(
@@ -887,8 +886,19 @@ button {
 }
 
 .mc-tooltip-line {
+  width: max-content;
   color: #ffffff;
   text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.9);
+}
+
+.mc-tooltip-line-info {
+  width: auto;
+  white-space: normal;
+}
+
+.mc-tooltip-word {
+  display: inline-block;
+  white-space: nowrap;
 }
 
 .mc-tooltip-title {

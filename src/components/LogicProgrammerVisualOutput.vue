@@ -47,6 +47,7 @@ import {
 import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 import tooltipInfo from "lib/generated/integratedDynamicsTooltipInfo.json";
 import { LOGIC_PROGRAMMER_RENDER_PATTERNS } from "./logicProgrammerRenderPatterns";
+import { toInfoLines } from "pages-lib/tooltipWidth";
 import {
   buildAspectCardTooltip,
   getDisplayPanelSourceStep,
@@ -209,28 +210,6 @@ const formatTemplate = (template: string, ...values: string[]): string => {
   return template.replace(/%s/g, () => values[currentIndex++] ?? "");
 };
 
-const splitTooltipInfoLines = (value: string, maxLength = 25): string[] => {
-  return value.split(/\\n/g).flatMap((partial) => {
-    const lines: string[] = [];
-    let buffer = "";
-
-    for (const word of partial.split(" ")) {
-      if (!word) continue;
-      buffer = buffer ? `${buffer} ${word}` : word;
-      if (buffer.length >= maxLength) {
-        lines.push(`§5§o${buffer}`);
-        buffer = "";
-      }
-    }
-
-    if (buffer) {
-      lines.push(`§5§o${buffer}`);
-    }
-
-    return lines;
-  });
-};
-
 const formatVariableId = (value: number): string => `${value}`;
 
 const getCardTitle = (name: string): string => {
@@ -349,8 +328,7 @@ const getValueTypeMetaForAst = (
 const getTooltipInfoLines = (infoKey?: string): string[] => {
   if (!infoKey) return [];
 
-  const line = SHIFT_HELD_TOOLTIP_INFO[infoKey];
-  return line ? splitTooltipInfoLines(line) : [];
+  return toInfoLines(SHIFT_HELD_TOOLTIP_INFO[infoKey] ?? "");
 };
 
 const getOperatorClass = (
@@ -1735,7 +1713,7 @@ const buildOperatorCardTooltip = (
     operatorKey === "OPERATOR_PIPE" ||
     operatorKey === "OPERATOR_PIPE2"
       ? []
-      : splitTooltipInfoLines(operatorMeta.tooltipInfo ?? "");
+      : toInfoLines(operatorMeta.tooltipInfo ?? "");
   const lines = [
     formatTemplate(
       OPERATOR_NAME_TEMPLATE,
