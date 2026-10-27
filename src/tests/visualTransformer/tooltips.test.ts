@@ -198,8 +198,7 @@ describe("operatorCardTooltips", () => {
     );
     expect(tooltip.lines).toEqual([
       "§e§oVariable ID: §r§o3",
-      "§5§oClear or copy in a crafting",
-      "§5§ogrid",
+      "§5§oClear or copy in a crafting grid",
     ]);
   });
 });

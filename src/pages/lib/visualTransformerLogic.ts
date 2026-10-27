@@ -34,6 +34,7 @@ import {
 import { abstractDynamicParts } from "lib/transformers/lambdaAbstraction";
 import tooltipInfo from "lib/generated/integratedDynamicsTooltipInfo.json";
 import { LOGIC_PROGRAMMER_RENDER_PATTERNS } from "pages-lib/logicProgrammerRenderPatterns";
+import { toInfoLines } from "./tooltipWidth";
 import {
   getValueTypeMeta,
   getValueTypeMetaForAst,
@@ -852,33 +853,10 @@ const formatTemplate = (template: string, ...values: string[]): string => {
   return template.replace(/%s/g, () => values[currentIndex++] ?? "");
 };
 
-const splitTooltipInfoLines = (value: string, maxLength = 25): string[] => {
-  return value.split(/\n/g).flatMap((partial) => {
-    const lines: string[] = [];
-    let buffer = "";
-
-    for (const word of partial.split(" ")) {
-      if (!word) continue;
-      buffer = buffer ? `${buffer} ${word}` : word;
-      if (buffer.length >= maxLength) {
-        lines.push(`§5§o${buffer}`);
-        buffer = "";
-      }
-    }
-
-    if (buffer) {
-      lines.push(`§5§o${buffer}`);
-    }
-
-    return lines;
-  });
-};
-
 const getTooltipInfoLines = (infoKey?: string): string[] => {
   if (!infoKey) return [];
 
-  const line = SHIFT_HELD_TOOLTIP_INFO[infoKey];
-  return line ? splitTooltipInfoLines(line) : [];
+  return toInfoLines(SHIFT_HELD_TOOLTIP_INFO[infoKey] ?? "");
 };
 
 export const getBaseTooltipLines = (variableId: number): string[] => {

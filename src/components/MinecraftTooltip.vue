@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
+import { computeTooltipWidth, isInfoLine } from "pages-lib/tooltipWidth";
 
 type TooltipSegment = {
   text: string;
@@ -8,10 +9,19 @@ type TooltipSegment = {
   italic: boolean;
 };
 
+type TooltipLine = {
+  info: boolean;
+  segments: TooltipSegment[];
+  words: string[];
+  wordClasses: (string | Record<string, boolean>)[];
+};
+
 const props = defineProps<{
   title: string;
   lines: string[];
 }>();
+
+const DEFAULT_COLOR_CLASS = "mc-tooltip-color-f";
 
 const LEGACY_COLOR_CLASS: Record<string, string> = {
   "0": "mc-tooltip-color-0",
@@ -34,7 +44,7 @@ const LEGACY_COLOR_CLASS: Record<string, string> = {
 
 const parseLegacyText = (value: string): TooltipSegment[] => {
   const segments: TooltipSegment[] = [];
-  let colorClass = "mc-tooltip-color-f";
+  let colorClass = DEFAULT_COLOR_CLASS;
   let bold = false;
   let italic = false;
   let buffer = "";
@@ -66,7 +76,7 @@ const parseLegacyText = (value: string): TooltipSegment[] => {
       } else if (formattingCode === "o") {
         italic = true;
       } else if (formattingCode === "r") {
-        colorClass = "mc-tooltip-color-f";
+        colorClass = DEFAULT_COLOR_CLASS;
         bold = false;
         italic = false;
       }
@@ -83,44 +93,132 @@ const parseLegacyText = (value: string): TooltipSegment[] => {
   return segments;
 };
 
+const classListFor = (
+  segment: Pick<TooltipSegment, "colorClass" | "bold" | "italic">
+): (string | Record<string, boolean>)[] => [
+  segment.colorClass,
+  {
+    "mc-tooltip-bold": segment.bold,
+    "mc-tooltip-italic": segment.italic,
+  },
+];
+
 const parsedTitle = computed(() => parseLegacyText(props.title));
-const parsedLines = computed(() =>
-  props.lines.map((line) => parseLegacyText(line))
+const parsedLines = computed<TooltipLine[]>(() =>
+  props.lines.map((line) => {
+    const segments = parseLegacyText(line);
+    if (!isInfoLine(line)) {
+      return { info: false, segments, words: [], wordClasses: [] };
+    }
+
+    const format = segments[0] ?? {
+      colorClass: DEFAULT_COLOR_CLASS,
+      bold: false,
+      italic: false,
+    };
+    const text = segments.map((segment) => segment.text).join("");
+
+    return {
+      info: true,
+      segments,
+      words: text.split(/\s+/).filter((word) => word.length > 0),
+      wordClasses: classListFor(format),
+    };
+  })
+);
+
+const tooltipRoot = ref<HTMLElement | null>(null);
+const tooltipWidth = ref<number | null>(null);
+
+const tooltipStyle = computed(() =>
+  tooltipWidth.value === null ? undefined : { width: `${tooltipWidth.value}px` }
+);
+
+const boxChromeWidth = (element: HTMLElement): number => {
+  const style = window.getComputedStyle(element);
+  const toPx = (value: string) => Number.parseFloat(value) || 0;
+
+  return (
+    toPx(style.paddingLeft) +
+    toPx(style.paddingRight) +
+    toPx(style.borderLeftWidth) +
+    toPx(style.borderRightWidth)
+  );
+};
+
+const measure = () => {
+  const root = tooltipRoot.value;
+  if (!root || typeof window === "undefined") return;
+
+  let widestLinePx = 0;
+  let widestWordPx = 0;
+
+  root
+    .querySelectorAll<HTMLElement>(
+      ".mc-tooltip-line:not(.mc-tooltip-line-info)"
+    )
+    .forEach((line) => {
+      widestLinePx = Math.max(widestLinePx, line.offsetWidth);
+    });
+
+  root.querySelectorAll<HTMLElement>(".mc-tooltip-word").forEach((word) => {
+    widestWordPx = Math.max(widestWordPx, word.offsetWidth);
+  });
+
+  const contentWidth = computeTooltipWidth({ widestLinePx, widestWordPx });
+  tooltipWidth.value =
+    contentWidth > 0 ? Math.ceil(contentWidth + boxChromeWidth(root)) : null;
+};
+
+onMounted(() => {
+  measure();
+  document.fonts?.ready.then(() => measure()).catch(() => undefined);
+});
+
+watch(
+  () => [props.title, ...props.lines],
+  () => measure(),
+  { flush: "post" }
 );
 </script>
 
 <template>
-  <div class="mc-tooltip" role="tooltip">
+  <div
+    ref="tooltipRoot"
+    class="mc-tooltip"
+    role="tooltip"
+    :style="tooltipStyle"
+  >
     <div class="mc-tooltip-line mc-tooltip-title">
-      <template v-for="segment in parsedTitle" :key="segment.text">
-        <span
-          :class="[
-            segment.colorClass,
-            {
-              'mc-tooltip-bold': segment.bold,
-              'mc-tooltip-italic': segment.italic,
-            },
-          ]"
-        >
-          {{ segment.text }}
-        </span>
-      </template>
+      <span
+        v-for="segment in parsedTitle"
+        :key="segment.text"
+        :class="classListFor(segment)"
+      >
+        {{ segment.text }}
+      </span>
     </div>
 
     <div
       v-for="(line, lineIndex) in parsedLines"
       :key="lineIndex"
       class="mc-tooltip-line"
+      :class="{ 'mc-tooltip-line-info': line.info }"
     >
-      <template v-for="segment in line" :key="`${lineIndex}-${segment.text}`">
+      <template v-if="line.info">
+        <template v-for="(word, wordIndex) in line.words" :key="wordIndex">
+          <span class="mc-tooltip-word" :class="line.wordClasses">{{
+            word
+          }}</span>
+          {{ " " }}
+        </template>
+      </template>
+
+      <template v-else>
         <span
-          :class="[
-            segment.colorClass,
-            {
-              'mc-tooltip-bold': segment.bold,
-              'mc-tooltip-italic': segment.italic,
-            },
-          ]"
+          v-for="segment in line.segments"
+          :key="`${lineIndex}-${segment.text}`"
+          :class="classListFor(segment)"
         >
           {{ segment.text }}
         </span>
