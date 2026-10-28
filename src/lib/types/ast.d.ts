@@ -164,7 +164,34 @@ namespace TypeAST {
     | Reader
     | Source;
 
-  type Variable = { type: "Variable"; name: string; varName?: string };
+  type Variable = {
+    type: "Variable";
+    id?: string;
+    label?: string;
+    valueType?: string;
+    varName?: string;
+  };
+
+  interface LambdaParam {
+    name: string;
+    type?: string;
+  }
+
+  type Lambda = {
+    type: "Lambda";
+    params: LambdaParam[];
+    body: AST;
+    text?: string;
+    varName?: string;
+  };
+
+  type Param = {
+    type: "Param";
+    index: number;
+    binderDepth?: number;
+    name?: string;
+    varName?: string;
+  };
 
   type NetworkCards = {
     type: "NetworkCards";
@@ -190,5 +217,7 @@ namespace TypeAST {
 
   type Operator = BaseOperator | Flip | Pipe | Pipe2 | Curried;
 
-  type AST = Constant | Operator | NetworkCards | Wrapper;
+  type FunctionValue = Lambda | Param;
+
+  type AST = Constant | Operator | NetworkCards | Wrapper | FunctionValue;
 }

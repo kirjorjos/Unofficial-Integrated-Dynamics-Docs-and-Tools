@@ -1493,6 +1493,9 @@ export const stripAutoCurryVarNames = (ast: TypeAST.AST): TypeAST.AST => {
       case "Card":
         visitPair(original.value, (copied as TypeAST.Wrapper).value);
         break;
+      case "Lambda":
+        visitPair(original.body, (copied as TypeAST.Lambda).body);
+        break;
       case "VarStore":
         original.value.cards.forEach((card, i) =>
           visitPair(card, (copied as TypeAST.VarStore).value.cards[i]!)
@@ -1561,6 +1564,9 @@ export const stripAutoCurryVarNames = (ast: TypeAST.AST): TypeAST.AST => {
       case "Display":
       case "Card":
         visit(node.value);
+        break;
+      case "Lambda":
+        visit(node.body);
         break;
       case "VarStore":
         for (const card of node.value.cards) visit(card);

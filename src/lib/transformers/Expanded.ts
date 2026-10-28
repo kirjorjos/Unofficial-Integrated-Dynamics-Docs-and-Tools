@@ -38,6 +38,9 @@ import {
   type OperatorShadowMode,
 } from "lib/transformers/nicknameShadow";
 import { StructuralParseError } from "lib/transformers/parseErrors";
+import { parseParamType } from "lib/transformers/lambdaParams";
+import { lowerLambda } from "lib/transformers/lambdaLowering";
+import { mapAst, visitAst } from "lib/transformers/astTraversal";
 import {
   getSourceCards,
   isSourceNode,
@@ -68,10 +71,65 @@ export interface ExpandedSignatureOptions {
   parenFromFns?: boolean;
 }
 
+const splitLambdaParamEntries = (text: string): string[] => {
+  const entries: string[] = [];
+  let current = "";
+  let depth = 0;
+  let sawComma = false;
+  for (const char of text) {
+    if (char === "<") depth++;
+    else if (char === ">" && depth > 0) depth--;
+    if (char === "," && depth === 0) {
+      entries.push(current.trim());
+      current = "";
+      sawComma = true;
+      continue;
+    }
+    current += char;
+  }
+  if (current.trim().length > 0) entries.push(current.trim());
+  if (
+    !sawComma &&
+    entries.length === 1 &&
+    /\s/.test(entries[0]!) &&
+    !entries[0]!.includes(":")
+  ) {
+    return entries[0]!.split(/\s+/).filter((part) => part.length > 0);
+  }
+  return entries;
+};
+
+const parseLambdaParamText = (
+  text: string,
+  index: number
+): TypeAST.LambdaParam => {
+  const trimmed = text.trim();
+  if (trimmed.length === 0) {
+    throw new StructuralParseError(
+      `Missing parameter name at position ${index + 1}`
+    );
+  }
+  const colon = trimmed.indexOf(":");
+  if (colon === -1) return { name: trimmed };
+  const name = trimmed.slice(0, colon).trim();
+  const type = trimmed.slice(colon + 1).trim();
+  if (name.length === 0) {
+    throw new StructuralParseError(
+      `Missing parameter name at position ${index + 1}`
+    );
+  }
+  if (type.length === 0) {
+    throw new StructuralParseError(
+      `Missing type for parameter ${index + 1} ("${name}")`
+    );
+  }
+  return { name, type: parseParamType(type, name, index) };
+};
+
 const parseDefinitionVarName = (
   raw: string,
   splitParams: boolean
-): { name: string; quoted: boolean; params: string[] } => {
+): { name: string; quoted: boolean; params: TypeAST.LambdaParam[] } => {
   const trimmed = raw.trim();
   const wrapper = trimmed.match(/^Variable\s*\(\s*(.*?)\s*\)$/i);
   if (wrapper) {
@@ -87,16 +145,40 @@ const parseDefinitionVarName = (
   if (!splitParams) {
     return { name: trimmed, quoted: false, params: [] };
   }
-  const parts = trimmed.split(/\s+/);
-  return {
-    name: parts[0]!,
-    quoted: false,
-    params: parts.slice(1),
-  };
+  const match = trimmed.match(/^(\S+)\s*([\s\S]*)$/);
+  if (!match) return { name: trimmed, quoted: false, params: [] };
+  const name = match[1]!;
+  let rest = match[2]!.trim();
+  if (rest.length === 0) return { name, quoted: false, params: [] };
+  if (rest.startsWith("(")) {
+    if (!rest.endsWith(")")) {
+      throw new StructuralParseError(
+        `Expected ')' after the parameter list of "${name}"`
+      );
+    }
+    rest = rest.slice(1, -1);
+  }
+  const params = splitLambdaParamEntries(rest)
+    .filter((entry) => entry.length > 0)
+    .map((entry, index) => parseLambdaParamText(entry, index));
+  return { name, quoted: false, params };
 };
 
-const applyLambdaParams = (exprStr: string, params: string[]): string =>
-  params.length > 0 ? `${params.join(" => ")} => ${exprStr}` : exprStr;
+const applyLambdaParams = (
+  exprStr: string,
+  params: TypeAST.LambdaParam[]
+): string =>
+  params.length === 0
+    ? exprStr
+    : params.length === 1 && params[0]!.type === undefined
+      ? `${params[0]!.name} => ${exprStr}`
+      : `(${params
+          .map((param) =>
+            param.type === undefined
+              ? param.name
+              : `${param.name}: ${param.type}`
+          )
+          .join(", ")}) => ${exprStr}`;
 
 class SignatureFormatter {
   private typeIDToLabel = new Map<number, string>();
@@ -316,6 +398,86 @@ const instantiateSignature = (sig: ParsedSignature): ParsedSignature => {
   return copy;
 };
 
+const rawSignatureForParamType = (
+  raw: string | undefined
+): TypeRawSignatureAST.RawSignatureNode => {
+  const text = raw?.trim();
+  if (!text) return { type: "Any", typeID: ParsedSignature.getNewTypeID() };
+
+  let depth = 0;
+  for (let i = 0; i < text.length - 1; i++) {
+    const char = text[i];
+    if (char === "<") depth++;
+    else if (char === ">" && depth > 0) depth--;
+    if (depth === 0 && char === "-" && text[i + 1] === ">") {
+      return {
+        type: "Function",
+        from: rawSignatureForParamType(text.slice(0, i)),
+        to: rawSignatureForParamType(text.slice(i + 2)),
+      };
+    }
+    if (depth === 0 && char === "→") {
+      return {
+        type: "Function",
+        from: rawSignatureForParamType(text.slice(0, i)),
+        to: rawSignatureForParamType(text.slice(i + 1)),
+      };
+    }
+  }
+
+  const generic = text.match(/^([A-Za-z0-9_.]+)\s*<([\s\S]*)>$/);
+  if (generic) {
+    const name = generic[1]!.toLowerCase();
+    const inner = generic[2]!;
+    if (name === "list") {
+      return {
+        type: "List",
+        listType: rawSignatureForParamType(inner) as
+          | TypeRawSignatureAST.RawSignatureDefiniteValue
+          | TypeRawSignatureAST.RawSignatureAny,
+      };
+    }
+    if (name === "operator") {
+      const fn = rawSignatureForParamType(inner);
+      return {
+        type: "Operator",
+        obscured:
+          fn.type === "Function"
+            ? fn
+            : {
+                type: "Function",
+                from: { type: "Any", typeID: ParsedSignature.getNewTypeID() },
+                to: fn,
+              },
+      };
+    }
+  }
+
+  const lower = text.toLowerCase();
+  if (lower === "any") {
+    return { type: "Any", typeID: ParsedSignature.getNewTypeID() };
+  }
+  if (lower === "list") {
+    return {
+      type: "List",
+      listType: { type: "Any", typeID: ParsedSignature.getNewTypeID() },
+    };
+  }
+  if (lower === "operator") {
+    return {
+      type: "Operator",
+      obscured: {
+        type: "Function",
+        from: { type: "Any", typeID: ParsedSignature.getNewTypeID() },
+        to: { type: "Any", typeID: ParsedSignature.getNewTypeID() },
+      },
+    };
+  }
+  return {
+    type: text as TypeRawSignatureAST.RawSignatureDefiniteValue["type"],
+  } as TypeRawSignatureAST.RawSignatureNode;
+};
+
 const computeSignature = (
   node: TypeAST.AST,
   scope?: Map<TypeAST.AST, ParsedSignature>,
@@ -485,10 +647,31 @@ const computeSignature = (
       break;
     }
     case "Variable": {
+      signature = node.valueType
+        ? new ParsedSignature(rawSignatureForParamType(node.valueType), false)
+        : new ParsedSignature(
+            { type: "Any", typeID: ParsedSignature.getNewTypeID() },
+            false
+          );
+      break;
+    }
+    case "Param": {
       signature = new ParsedSignature(
         { type: "Any", typeID: ParsedSignature.getNewTypeID() },
         false
       );
+      break;
+    }
+    case "Lambda": {
+      let out = computeSignature(node.body, scope, resolve).getAst();
+      for (let i = node.params.length - 1; i >= 0; i--) {
+        out = {
+          type: "Function",
+          from: rawSignatureForParamType(node.params[i]!.type),
+          to: out,
+        };
+      }
+      signature = new ParsedSignature(out, false);
       break;
     }
     case "NetworkCards": {
@@ -550,34 +733,37 @@ const computeSignature = (
 const collectVariables = (
   node: TypeAST.AST,
   collected: Set<TypeAST.AST>,
-  seen: Set<TypeAST.AST>
+  seen: Set<TypeAST.AST>,
+  inLambda = false
 ) => {
   if (seen.has(node)) return;
   seen.add(node);
+  const collect = (child: TypeAST.AST) =>
+    collectVariables(child, collected, seen, inLambda);
 
   switch (node.type) {
     case "Curry":
-      collectVariables(node.base, collected, seen);
-      for (const arg of node.args) collectVariables(arg, collected, seen);
+      collect(node.base);
+      for (const arg of node.args) collect(arg);
       break;
     case "Pipe":
-      collectVariables(node.op1, collected, seen);
-      collectVariables(node.op2, collected, seen);
+      collect(node.op1);
+      collect(node.op2);
       break;
     case "Pipe2":
-      collectVariables(node.op1, collected, seen);
-      collectVariables(node.op2, collected, seen);
-      collectVariables(node.op3, collected, seen);
+      collect(node.op1);
+      collect(node.op2);
+      collect(node.op3);
       break;
     case "Flip":
-      collectVariables(node.arg, collected, seen);
+      collect(node.arg);
       break;
     case "List":
-      for (const value of node.value) collectVariables(value, collected, seen);
+      for (const value of node.value) collect(value);
       break;
     case "NetworkCards":
       for (const def of node.definitions) {
-        collectVariables(def.node, collected, seen);
+        collect(def.node);
       }
       break;
     case "Dynamic":
@@ -585,7 +771,10 @@ const collectVariables = (
     case "Materialize":
     case "Display":
     case "Card":
-      collectVariables(node.value, collected, seen);
+      collect(node.value);
+      break;
+    case "Lambda":
+      collectVariables(node.body, collected, seen, true);
       break;
     case "VarStore":
     case "DisplayPanel":
@@ -593,20 +782,26 @@ const collectVariables = (
     case "Exporter":
     case "Importer":
       for (const card of getSourceCards(node)) {
-        collectVariables(card, collected, seen);
+        collect(card);
       }
       break;
   }
 
-  if (node.varName) {
+  if (
+    node.varName &&
+    node.type !== "Lambda" &&
+    !(inLambda && containsParam(node))
+  ) {
     collected.add(node);
   }
 };
 
 let varCounter = 0;
+let lambdaCounter = 0;
 
 export const resetExpandedVarCounter = (): void => {
   varCounter = 0;
+  lambdaCounter = 0;
   unamedStrings = 0;
   constructorsSeen.item = 0;
   constructorsSeen.block = 0;
@@ -648,6 +843,15 @@ const isApplyNode = (node: TypeAST.AST): boolean => {
 const isSelfNicknameShadow = (varName: string, node: TypeAST.AST): boolean => {
   const nicknameInternalKey = operatorRegistry.operatorByNickname(varName);
   if (!nicknameInternalKey) return false;
+
+  if (node.type === "Lambda") {
+    if (node.params.length === 0) return false;
+    try {
+      return isSelfNicknameShadow(varName, lowerLambda(node));
+    } catch {
+      return false;
+    }
+  }
 
   if (node.type !== "Operator") return false;
 
@@ -730,7 +934,11 @@ const getVarName = (node: TypeAST.AST): string => {
     case "Null":
       return "null";
     case "Variable":
-      return node.name;
+      return node.label ?? `@${node.id}`;
+    case "Param":
+      return node.name ?? `p${node.index}`;
+    case "Lambda":
+      return `lambda${lambdaCounter++ === 0 ? "" : lambdaCounter}`;
     case "Operator": {
       const sourceName = getOperatorSourceName(node);
       if (sourceName) return sourceName;
@@ -846,7 +1054,28 @@ const isLiteralVarName = (name: string): boolean =>
   name === "false" ||
   name === "null";
 
-const decomposeAST = (node: TypeAST.AST): TypeAST.AST => {
+const containsParam = (node: TypeAST.AST): boolean => {
+  let found = false;
+  visitAst(node, (current) => {
+    if (current.type === "Param") found = true;
+  });
+  return found;
+};
+
+const stripHoistedNamesAroundParams = (node: TypeAST.AST): TypeAST.AST => {
+  if (!containsParam(node)) return node;
+  const stripped = { ...node } as TypeAST.AST & { varName?: string };
+  delete stripped.varName;
+  return mapAst(stripped, (child) => stripHoistedNamesAroundParams(child));
+};
+
+const decomposeAST = (node: TypeAST.AST, canHoist = true): TypeAST.AST => {
+  if (node.type === "Lambda") {
+    return {
+      ...node,
+      body: stripHoistedNamesAroundParams(decomposeAST(node.body, canHoist)),
+    };
+  }
   if (node.type === "Curry") {
     const flattened = flattenAnonymousBaseOperatorApplication(node);
 
@@ -854,21 +1083,21 @@ const decomposeAST = (node: TypeAST.AST): TypeAST.AST => {
       const result = {
         ...node,
         base: flattened.operator,
-        args: flattened.args.map(decomposeAST),
+        args: flattened.args.map((arg) => decomposeAST(arg, canHoist)),
       };
 
-      if (!result.varName) result.varName = getVarName(result);
+      if (canHoist && !result.varName) result.varName = getVarName(result);
       return result;
     }
 
-    const args = node.args.map(decomposeAST);
-    const base = decomposeAST(node.base) as TypeAST.Operator;
+    const args = node.args.map((arg) => decomposeAST(arg, canHoist));
+    const base = decomposeAST(node.base, canHoist) as TypeAST.Operator;
 
     if (base.type === "Operator" && args.length === 0) {
       return base;
     }
 
-    if (!base.varName && base.type !== "Operator") {
+    if (canHoist && !base.varName && base.type !== "Operator") {
       base.varName = getVarName(base);
     }
 
@@ -893,9 +1122,13 @@ const decomposeAST = (node: TypeAST.AST): TypeAST.AST => {
 
       const newNode: TypeAST.Curried = {
         ...chunkNode,
-        varName: isLast
-          ? node.varName || getVarName(chunkNode)
-          : getVarName(chunkNode),
+        ...(canHoist
+          ? {
+              varName: isLast
+                ? node.varName || getVarName(chunkNode)
+                : getVarName(chunkNode),
+            }
+          : {}),
       };
       current = newNode;
       i += take;
@@ -905,29 +1138,29 @@ const decomposeAST = (node: TypeAST.AST): TypeAST.AST => {
   if (node.type === "Pipe") {
     const result = {
       ...node,
-      op1: decomposeAST(node.op1) as TypeAST.Operator,
-      op2: decomposeAST(node.op2) as TypeAST.Operator,
+      op1: decomposeAST(node.op1, canHoist) as TypeAST.Operator,
+      op2: decomposeAST(node.op2, canHoist) as TypeAST.Operator,
     };
 
-    if (!result.varName) result.varName = getVarName(result);
+    if (canHoist && !result.varName) result.varName = getVarName(result);
     return result;
   }
   if (node.type === "Pipe2") {
     const result = {
       ...node,
-      op1: decomposeAST(node.op1) as TypeAST.Operator,
-      op2: decomposeAST(node.op2) as TypeAST.Operator,
-      op3: decomposeAST(node.op3) as TypeAST.Operator,
+      op1: decomposeAST(node.op1, canHoist) as TypeAST.Operator,
+      op2: decomposeAST(node.op2, canHoist) as TypeAST.Operator,
+      op3: decomposeAST(node.op3, canHoist) as TypeAST.Operator,
     };
-    if (!result.varName) result.varName = getVarName(result);
+    if (canHoist && !result.varName) result.varName = getVarName(result);
     return result;
   }
   if (node.type === "Flip") {
     const result = {
       ...node,
-      arg: decomposeAST(node.arg) as TypeAST.Operator,
+      arg: decomposeAST(node.arg, canHoist) as TypeAST.Operator,
     };
-    if (!result.varName) result.varName = getVarName(result);
+    if (canHoist && !result.varName) result.varName = getVarName(result);
     return result;
   }
   if (
@@ -939,20 +1172,31 @@ const decomposeAST = (node: TypeAST.AST): TypeAST.AST => {
   ) {
     const result = {
       ...node,
-      value: decomposeAST(node.value),
+      value: decomposeAST(node.value, canHoist),
     };
-    if (!result.varName) result.varName = getVarName(result);
+    if (canHoist && !result.varName) result.varName = getVarName(result);
     return result;
   }
   if (isSourceNode(node)) {
     const result = withSourceCards(
       node,
-      getSourceCards(node).map(decomposeAST)
+      getSourceCards(node).map((card) => decomposeAST(card, canHoist))
     );
-    if (!result.varName) result.varName = getVarName(result);
+    if (canHoist && !result.varName) result.varName = getVarName(result);
     return result;
   }
   return node;
+};
+
+const decomposeASTRoot = (node: TypeAST.AST): TypeAST.AST => {
+  if (node.type === "Lambda") {
+    return {
+      ...node,
+      body: stripHoistedNamesAroundParams(decomposeAST(node.body, true)),
+      varName: node.varName ?? getVarName(node),
+    };
+  }
+  return decomposeAST(node);
 };
 
 export const getExpandedVarName = (node: TypeAST.AST): string => {
@@ -961,7 +1205,7 @@ export const getExpandedVarName = (node: TypeAST.AST): string => {
 
 export const decomposeASTForExpanded = (node: TypeAST.AST): TypeAST.AST => {
   resetExpandedVarCounter();
-  return decomposeAST(structuredClone(node));
+  return decomposeASTRoot(structuredClone(node));
 };
 
 export const ASTToExpanded = (
@@ -1022,9 +1266,18 @@ const renderLambdaParamSugar = (
   const bodyAst: TypeAST.AST = {
     type: "Curry",
     base: flattened.operator,
-    args: [{ type: "Variable", name: param }, ...flattened.args],
+    args: [{ type: "Param", index: 0, name: param }, ...flattened.args],
   };
-  const body = ASTToCondensed(bodyAst, false, 0, false);
+  const lambdaText = ASTToCondensed(
+    { type: "Lambda", params: [{ name: param }], body: bodyAst },
+    false,
+    0,
+    false
+  );
+  const prefix = `${param} => `;
+  const body = lambdaText.startsWith(prefix)
+    ? lambdaText.slice(prefix.length)
+    : lambdaText;
   return `${baseName} ${param} = ${body}`;
 };
 
@@ -1049,7 +1302,16 @@ export const ASTToExpandedWithSignatureOptions = (
     for (const definition of root.definitions) {
       if (!definition.name) continue;
       const id = lastCardIds.get(definition.node);
-      if (id !== undefined) cardIdByName.set(definition.name, String(id));
+      if (id === undefined) continue;
+      let isFunctionValue = false;
+      try {
+        const rootType = computeSignature(definition.node).getRootType();
+        isFunctionValue = rootType === "Operator" || rootType === "Function";
+      } catch {
+        isFunctionValue = false;
+      }
+      if (isFunctionValue) continue;
+      cardIdByName.set(definition.name, String(id));
     }
   }
 
@@ -1063,7 +1325,7 @@ export const ASTToExpandedWithSignatureOptions = (
   const finalSeen = new Set<TypeAST.AST>();
 
   const processAndCollect = (node: TypeAST.AST) => {
-    const decomposed = decomposeAST(node);
+    const decomposed = decomposeASTRoot(node);
     collectVariables(decomposed, finalVars, finalSeen);
     finalVars.add(decomposed);
     finalSeen.add(decomposed);
@@ -1496,9 +1758,9 @@ const declaredMatchesComputed = (
 
 const assertNoNumericAtRefs = (node: TypeAST.AST): void => {
   const visit = (current: TypeAST.AST): void => {
-    if (current.type === "Variable" && /^@\d+$/.test(current.name)) {
+    if (current.type === "Variable" && current.id !== undefined) {
       throw new Error(
-        `Expanded references use names, not numbers: "${current.name}" is not allowed. Use @name to target a definition.`
+        `Expanded references use names, not numbers: "@${current.id}" is not allowed. Use @name to target a definition.`
       );
     }
     if (isSourceNode(current)) {
@@ -1524,6 +1786,9 @@ const assertNoNumericAtRefs = (node: TypeAST.AST): void => {
         return;
       case "List":
         for (const entry of current.value) visit(entry);
+        return;
+      case "Lambda":
+        visit(current.body);
         return;
       case "NetworkCards":
         for (const definition of current.definitions) visit(definition.node);

@@ -422,8 +422,15 @@ const scanBlob = (envelope: ParsedEnvelope, state: ScanState): void => {
 
 const collectRefs = (ast: TypeAST.AST, into: string[]): void => {
   switch (ast.type) {
-    case "Variable":
-      if (ast.name.startsWith("@")) into.push(ast.name.slice(1));
+    case "Variable": {
+      const ref = ast.label ?? ast.id;
+      if (ref !== undefined) into.push(ref);
+      return;
+    }
+    case "Lambda":
+      collectRefs(ast.body, into);
+      return;
+    case "Param":
       return;
     case "Curry":
       collectRefs(ast.base, into);

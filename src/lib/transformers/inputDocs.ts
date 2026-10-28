@@ -843,7 +843,10 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
         heading: [{ text: "Lambdas" }],
         summary: [
           {
-            text: "A lambda is written param => expression, param -> expression or \\param.expression, or as a definition whose parameters name its arguments. Several parenthesised parameters are allowed, as in (x, y) => expression.",
+            text: "A lambda is written param => expression, param -> expression or \\param.expression, or as a definition whose parameters name its arguments. Several parenthesised parameters are allowed, as in (x, y) => expression, and a parameter may carry a type such as (x: integer). A definition with several parameters builds one lambda, not a chain of nested lambdas, and output always uses the arrow form.",
+          },
+          {
+            text: "A lambda definition keeps its name from the left-hand side. A top-level lambda with no name becomes lambda, lambda2, and so on. Nested lambdas stay inline and are never given their own definition, because moving a capturing lambda out would turn its captured parameters into free variables.",
           },
         ],
         syntax: [
@@ -888,7 +891,22 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
           {
             kind: "concrete",
             text: "getGenome path bee = nbtPathMatchAll path (itemNBT bee)",
-            caption: [{ text: "two parameters" }],
+            caption: [{ text: "two parameters, printed as one lambda" }],
+          },
+          {
+            kind: "concrete",
+            text: "inc (x: integer) = numberAdd x 1",
+            caption: [{ text: "typed parameter" }],
+          },
+          {
+            kind: "concrete",
+            text: "f = () => numberAdd 1 2",
+            caption: [{ text: "no parameters" }],
+          },
+          {
+            kind: "concrete",
+            text: "f = x => operatorMap(y => numberAdd(x, y), [1, 2])",
+            caption: [{ text: "nested lambda stays inline" }],
           },
         ],
         links: [
@@ -1408,21 +1426,42 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
         heading: [{ text: "Lambdas" }],
         summary: [
           {
-            text: "A lambda is written param -> expression, param => expression, or \\param.expression.",
+            text: "A lambda is written param => expression; the older param -> expression and \\param.expression spellings are also accepted, but output always uses the arrow form. The body follows Code Line's whitespace application, and several parameters can be written (x, y) => expression. A parameter may carry a type, as in (x: integer) => expression, and () => expression makes a lambda with no parameters.",
+          },
+          {
+            text: "A lambda stays a lambda: it is printed back in arrow form instead of being rewritten into pipe or apply calls. Nested lambdas stay inline, and a parameter keeps its name. A function value is called with an apply operator, not by writing f x.",
           },
         ],
         examples: [
           {
             kind: "concrete",
-            text: "x -> numberAdd x 1",
-          },
-          {
-            kind: "concrete",
             text: "x => numberAdd x 1",
+            caption: [{ text: "arrow form" }],
           },
           {
             kind: "concrete",
-            text: "\\x.numberAdd x 1",
+            text: "x -> numberAdd x 1",
+            caption: [{ text: "alias, printed as =>" }],
+          },
+          {
+            kind: "concrete",
+            text: "(x: integer, y) => numberAdd x y",
+            caption: [{ text: "typed parameters" }],
+          },
+          {
+            kind: "concrete",
+            text: "() => numberAdd 1 2",
+            caption: [{ text: "no parameters" }],
+          },
+          {
+            kind: "concrete",
+            text: "operatorMap (x => numberAdd x 1) [1, 2]",
+            caption: [{ text: "a lambda argument is parenthesised" }],
+          },
+          {
+            kind: "concrete",
+            text: "x => y => numberAdd x y",
+            caption: [{ text: "nested lambda stays inline" }],
           },
         ],
       },
@@ -1945,21 +1984,32 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
         heading: [{ text: "Lambdas" }],
         summary: [
           {
-            text: "A lambda is written param -> expression, param => expression, or \\param.expression.",
+            text: "A lambda is written param => expression; the older param -> expression and \\param.expression spellings are also accepted, but output always uses the arrow form. Several parameters can be written (x, y) => expression, a parameter may carry a type such as (x: integer) or (x: List<integer>), and () => expression makes a lambda with no parameters.",
+          },
+          {
+            text: "A lambda now round-trips as a lambda: it is no longer printed as pipe or apply calls. Nested lambdas stay inline, parameter names are kept, and a parameter is printed from the lambda that binds it. A function value is called with an apply operator, not by writing f(x).",
           },
         ],
         examples: [
           {
             kind: "concrete",
-            text: "pipe(x -> numberAdd(x, 1), arithmeticIncrement)",
-          },
-          {
-            kind: "concrete",
             text: "pipe(x => numberAdd(x, 1), arithmeticIncrement)",
+            caption: [{ text: "arrow form as a call argument" }],
           },
           {
             kind: "concrete",
-            text: "pipe(\\x.numberAdd(x, 1), arithmeticIncrement)",
+            text: "pipe((x: integer) => numberIncrement(x), arithmeticIncrement)",
+            caption: [{ text: "typed parameter" }],
+          },
+          {
+            kind: "concrete",
+            text: "pipe(() => numberAdd(1, 2), arithmeticIncrement)",
+            caption: [{ text: "no parameters" }],
+          },
+          {
+            kind: "concrete",
+            text: "pipe(x => y => numberAdd(x, y), arithmeticIncrement)",
+            caption: [{ text: "nested lambda stays inline" }],
           },
         ],
       },
@@ -2392,6 +2442,24 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
           [
             {
               text: "Dropping the readers is what Materialize is for; a writer or exporter has side effects and is kept regardless.",
+            },
+          ],
+        ],
+      },
+      {
+        heading: [{ text: "Lambdas" }],
+        summary: [
+          {
+            text: "SNBT has no lambda card, so a lambda is lowered to the operator chain that computes it before any card is written. A parameter becomes the argument fed into that chain, and a nested lambda is lowered inside its enclosing one. The output is the usual several cards, never a single lambda or parameter card.",
+          },
+          {
+            text: "A named reference (@name) is resolved to the card of the definition it names; a reference to a name that is not part of the input stops the output with an error rather than guessing a card. Numeric references (@5) keep meaning card id 5.",
+          },
+        ],
+        bullets: [
+          [
+            {
+              text: "Lambda, Param and an unresolved Variable cannot appear in SNBT. Lowering reports every blocker it finds and writes nothing until they are fixed.",
             },
           ],
         ],

@@ -1,4 +1,5 @@
 import { getSourceCards, withSourceCards } from "lib/transformers/sourceNodes";
+import { variableFromLabel } from "lib/transformers/variableRef";
 
 const SIMPLE_ELEMENT_TYPES = new Set<string>([
   "Integer",
@@ -70,7 +71,7 @@ const hoist = (node: TypeAST.AST, ctx: NormalizeCtx): TypeAST.Variable => {
     name,
     node: node.varName ? node : { ...node, varName: name },
   });
-  return { type: "Variable", name: `@${name}` };
+  return variableFromLabel(name);
 };
 
 type Chunk = { kind: "simple" | "derived"; values: TypeAST.AST[] };

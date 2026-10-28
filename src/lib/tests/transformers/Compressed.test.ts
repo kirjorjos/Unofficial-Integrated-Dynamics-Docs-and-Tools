@@ -58,7 +58,7 @@ describe("TestCompressedTransformer", () => {
           { type: "String", value: "c:tools" },
         ],
       },
-      { type: "Variable", name: "x", varName: "namedVar" },
+      { type: "Variable", label: "x", varName: "namedVar" },
     ];
 
     for (const ast of cases) {

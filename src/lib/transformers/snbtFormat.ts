@@ -8,6 +8,7 @@ import { ValueHelpers } from "lib/IntegratedDynamicsClasses/ValueHelpers";
 import { Integer } from "lib/JavaNumberClasses/Integer";
 import { operatorNameValue } from "lib/transformers/astGiveCommands";
 import { ASTtoOperator } from "lib/transformers/Operator";
+import { lowerLambdasInAst } from "lib/transformers/lambdaLowering";
 import {
   parseSnbtInput,
   type ParseInputOptions,
@@ -24,8 +25,8 @@ const VALUE_TYPE_OPERATOR = "integrateddynamics:operator";
 
 const isCardRef = (
   node: TypeAST.AST
-): node is TypeAST.Variable & { name: `@${number}` } =>
-  node.type === "Variable" && /^@\d+$/.test(node.name);
+): node is TypeAST.Variable & { id: string } =>
+  node.type === "Variable" && node.id !== undefined && /^\d+$/.test(node.id);
 
 export const snbtInputToAST = (
   text: string,
@@ -67,9 +68,7 @@ const cardTagFromAST = (id: string, node: TypeAST.AST): CompoundTag => {
       operatorName: operatorNameValue(node.base),
       variableIds: new IntArrayTag(
         new iArrayEager(
-          node.args.map(
-            (arg) => new Integer((arg as TypeAST.Variable).name.slice(1))
-          )
+          node.args.map((arg) => new Integer((arg as TypeAST.Variable).id!))
         )
       ),
     });
@@ -88,9 +87,10 @@ const cardTagFromAST = (id: string, node: TypeAST.AST): CompoundTag => {
 };
 
 export const ASTToSnbt = (
-  ast: TypeAST.AST,
+  inputAst: TypeAST.AST,
   options: SNBTSerializeOptions = {}
 ): string => {
+  const ast = lowerLambdasInAst(inputAst);
   const root = isSourceNode(ast) ? sourceToNetworkCards(ast) : ast;
   const definitions =
     root.type === "NetworkCards"

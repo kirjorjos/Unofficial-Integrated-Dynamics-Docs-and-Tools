@@ -53,15 +53,12 @@ describe("TestConvenienceSignatures", () => {
 
     for (const size of sizes) {
       const line = signatureOf(`p${size}`);
-      expect([size, line.startsWith(`p${size} :: Operator<Number`)]).toEqual([
+      expect([size, line.startsWith(`p${size} :: Operator<Any`)]).toEqual([
         size,
         true,
       ]);
-      expect([size, (line.match(/Number/g) ?? []).length]).toEqual([
-        size,
-        size + 1,
-      ]);
-      expect([size, line.includes("Any")]).toEqual([size, false]);
+      expect([size, (line.match(/Number/g) ?? []).length]).toEqual([size, 1]);
+      expect([size, (line.match(/Any/g) ?? []).length]).toEqual([size, size]);
     }
   });
 
