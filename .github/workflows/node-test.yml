@@ -4,6 +4,7 @@ on: [pull_request]
 
 permissions:
   contents: read
+  actions: read
 
 jobs:
   test:
@@ -12,39 +13,159 @@ jobs:
     defaults:
       run:
         shell: bash
-    env:
-      IS_PROMOTION: ${{ endsWith(github.event.pull_request.base.ref, '/main') && endsWith(github.event.pull_request.head.ref, '/development') }}
 
     steps:
-      - name: Promotion PR — development is assumed tested
-        if: env.IS_PROMOTION == 'true'
+      - name: Classify the pull request target
+        id: target
+        env:
+          BASE_REF: ${{ github.base_ref }}
+          HEAD_REF: ${{ github.head_ref }}
         run: |
-          echo "::notice::Promoting '${{ github.event.pull_request.head.ref }}' into '${{ github.event.pull_request.base.ref }}'; skipping the suite. Run it on the pull requests into the development branch instead."
+          set -euo pipefail
+          if [[ "${BASE_REF}" != */main ]]; then
+            echo "kind=normal" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if [[ "${HEAD_REF}" != */development ]]; then
+            echo "::error::Only <version>/development may target ${BASE_REF}; got '${HEAD_REF}'."
+            exit 1
+          fi
+          base_version="${BASE_REF%/main}"
+          head_version="${HEAD_REF%/development}"
+          if [[ "${base_version}" != "${head_version}" ]]; then
+            echo "::error::Version mismatch: '${HEAD_REF}' cannot promote into '${BASE_REF}'."
+            exit 1
+          fi
+          echo "kind=promotion" >> "$GITHUB_OUTPUT"
+
+      - name: Wait for the development baseline chore
+        if: steps.target.outputs.kind == 'promotion'
+        uses: actions/github-script@v7
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          DEV_BRANCH: ${{ github.head_ref }}
+          BASE_REF: ${{ github.base_ref }}
+          SYNC_WORKFLOW: post-merge-sync.yml
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const sha = process.env.HEAD_SHA;
+            const branch = process.env.DEV_BRANCH;
+            const baseRef = process.env.BASE_REF;
+            const workflow = process.env.SYNC_WORKFLOW;
+
+            const ACTIVE = new Set([
+              "queued",
+              "in_progress",
+              "waiting",
+              "requested",
+              "pending",
+            ]);
+            const FAILED = new Set(["failure", "cancelled"]);
+            const POLL_MS = 30 * 1000;
+            const TIMEOUT_MS = 30 * 60 * 1000;
+            const deadline = Date.now() + TIMEOUT_MS;
+
+            const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+            const runsForHead = async () => {
+              let response;
+              try {
+                response = await github.rest.actions.listWorkflowRuns({
+                  owner,
+                  repo,
+                  workflow_id: workflow,
+                  branch,
+                  event: "push",
+                  per_page: 100,
+                });
+              } catch (error) {
+                core.setFailed(
+                  `Could not list "${workflow}" runs on ${branch} for ${sha} (the job needs "actions: read"): ` +
+                    `${error.message}`
+                );
+                return null;
+              }
+              return response.data.workflow_runs.filter((run) => run.head_sha === sha);
+            };
+
+            let polls = 0;
+            for (;;) {
+              const runs = await runsForHead();
+              if (runs === null) return;
+
+              const active = runs.filter((run) => ACTIVE.has(run.status));
+              if (active.length > 0) {
+                if (Date.now() >= deadline) {
+                  core.setFailed(
+                    `Waited 30 minutes for the baseline chore on ${sha} (${branch}); still ` +
+                      active
+                        .map((run) => `${run.status} at ${run.html_url}`)
+                        .join(", ") +
+                      "."
+                  );
+                  return;
+                }
+                polls += 1;
+                if (polls === 1) {
+                  core.notice(
+                    `Baseline chore is running on ${sha}: waiting up to 30 minutes ` +
+                      `(polling every 30 s) before this promotion can land green.`
+                  );
+                }
+                await sleep(POLL_MS);
+                continue;
+              }
+
+              let failed = false;
+              for (const run of runs) {
+                const jobs = await github.paginate(
+                  github.rest.actions.listJobsForWorkflowRun,
+                  { owner, repo, run_id: run.id, per_page: 100 }
+                );
+                const sync = jobs.find((job) => job.name === "sync");
+                if (sync && FAILED.has(sync.conclusion)) {
+                  core.setFailed(
+                    `Baseline chore ${sync.conclusion} on ${branch} for ${sha}: ${run.html_url}`
+                  );
+                  failed = true;
+                }
+              }
+              if (failed) return;
+
+              core.notice(
+                `Promoting ${branch} into ${baseRef} at ${sha}: suite skipped — ` +
+                  `development is assumed tested. Baseline chore settled ` +
+                  `(${runs.length} run(s) checked).`
+              );
+              return;
+            }
 
       - uses: actions/checkout@v5
-        if: env.IS_PROMOTION != 'true'
+        if: steps.target.outputs.kind == 'normal'
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Use Node.js
-        if: env.IS_PROMOTION != 'true'
+        if: steps.target.outputs.kind == 'normal'
         uses: actions/setup-node@v4
         with:
           node-version: "20.19.5"
           cache: npm
 
       - name: Install dependencies
-        if: env.IS_PROMOTION != 'true'
+        if: steps.target.outputs.kind == 'normal'
         run: npm ci
 
       - name: Jest + typecheck
-        if: env.IS_PROMOTION != 'true'
+        if: steps.target.outputs.kind == 'normal'
         run: npx jest && npm run typecheck
 
       - name: Check out the base branch's baselines
         id: base
-        if: env.IS_PROMOTION != 'true'
+        if: steps.target.outputs.kind == 'normal'
         env:
           BASE_REF: ${{ github.event.pull_request.base.ref }}
         run: |
@@ -66,13 +187,13 @@ jobs:
 
       - name: Playwright — compare against the base branch's baselines
         id: compare
-        if: env.IS_PROMOTION != 'true'
+        if: steps.target.outputs.kind == 'normal'
         continue-on-error: true
         run: npx playwright test --output=test-results
 
       - name: Regenerate failing screenshots
         id: regen
-        if: env.IS_PROMOTION != 'true' && steps.compare.outcome == 'failure'
+        if: steps.target.outputs.kind == 'normal' && steps.compare.outcome == 'failure'
         continue-on-error: true
         run: npx playwright test --output=test-results --last-failed --update-snapshots
 
@@ -81,7 +202,7 @@ jobs:
       # be produced whatever else goes wrong in this job.
       - name: Detect changed baselines vs base branch
         id: changed
-        if: always() && env.IS_PROMOTION != 'true'
+        if: always() && steps.target.outputs.kind == 'normal'
         env:
           BASE_SHA: ${{ steps.base.outputs.base_sha }}
         run: |
@@ -102,11 +223,11 @@ jobs:
           fi
 
       - name: Fail — screenshot failures could not be regenerated
-        if: env.IS_PROMOTION != 'true' && steps.compare.outcome == 'failure' && steps.regen.outcome != 'success'
+        if: steps.target.outputs.kind == 'normal' && steps.compare.outcome == 'failure' && steps.regen.outcome != 'success'
         run: exit 1
 
       - name: Upload the changed baseline list for the comment workflow
-        if: always() && env.IS_PROMOTION != 'true' && steps.changed.outputs.changed == 'true'
+        if: always() && steps.target.outputs.kind == 'normal' && steps.changed.outputs.changed == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: changed-baselines
@@ -115,7 +236,7 @@ jobs:
           if-no-files-found: ignore
 
       - name: Upload Playwright report on failure (or after a regen)
-        if: env.IS_PROMOTION != 'true' && (failure() || steps.compare.outcome == 'failure')
+        if: steps.target.outputs.kind == 'normal' && (failure() || steps.compare.outcome == 'failure')
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
