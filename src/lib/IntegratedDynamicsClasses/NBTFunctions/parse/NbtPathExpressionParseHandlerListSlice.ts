@@ -55,7 +55,7 @@ export class NbtPathExpressionParseHandlerListSlice
     step: number
   ): Array<number> {
     end -= start - 1;
-    let endScaled = end / step;
+    let endScaled = Math.trunc(end / step);
     let endMod = end % step > 0 ? 1 : 0;
     let countingArr = [];
     for (let i = 0; i < endScaled + endMod; i++) countingArr.push(i);
