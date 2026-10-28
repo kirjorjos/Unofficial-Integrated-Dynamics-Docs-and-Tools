@@ -1,12 +1,27 @@
 import { operatorRegistry } from "lib/IntegratedDynamicsClasses/registries/operatorRegistry";
 import { flattenAnonymousBaseOperatorApplication } from "lib/transformers/helpers";
 import type { NormalizedSegment } from "lib/transformers/MixedLists";
+import { astChildren } from "lib/transformers/astTraversal";
 import { getSourceCards } from "lib/transformers/sourceNodes";
 
-export const isVarRefNode = (
-  node: TypeAST.AST
-): node is TypeAST.Variable & { name: `@${string}` } =>
-  node.type === "Variable" && node.name.startsWith("@");
+export const isVarRefNode = (node: TypeAST.AST): node is TypeAST.Variable =>
+  node.type === "Variable" &&
+  (node.id !== undefined || node.label !== undefined);
+
+export const varRefName = (node: TypeAST.Variable): `@${string}` => {
+  if (node.label !== undefined) return `@${node.label}`;
+  if (node.id !== undefined) return `@${node.id}`;
+  throw new Error("A Variable node requires an id or a label");
+};
+
+export const assertValidVariable = (node: TypeAST.Variable): void => {
+  if (node.id === undefined && node.label === undefined) {
+    throw new Error("A Variable node requires an id or a label");
+  }
+  if (node.id !== undefined && !/^\d+$/.test(node.id)) {
+    throw new Error(`Invalid variable id "${node.id}": expected a decimal id`);
+  }
+};
 
 export const astContentKey = (ast: TypeAST.AST): string => {
   switch (ast.type) {
@@ -24,8 +39,16 @@ export const astContentKey = (ast: TypeAST.AST): string => {
       return `Flip(${astContentKey(ast.arg)})`;
     case "List":
       return `List[${ast.value.map(astContentKey).join(",")}]`;
+    case "Lambda":
+      return `Lambda(${ast.params
+        .map((param) => `${param.name}:${param.type ?? "Any"}`)
+        .join(",")})=>${astContentKey(ast.body)}|text:${
+        ast.text === undefined ? "<none>" : JSON.stringify(ast.text)
+      }`;
+    case "Param":
+      return `Param:${ast.index}:${ast.binderDepth ?? 0}:${ast.name ?? ""}`;
     case "Variable":
-      return `Variable:${ast.name}`;
+      return `Variable:${ast.id ?? ""}:${ast.label ?? ""}:${ast.valueType ?? ""}`;
     case "String":
       return `String:${ast.value}`;
     case "Boolean":
@@ -223,15 +246,17 @@ export const getRefName = (node: TypeAST.AST): string | undefined =>
 
 const resolveVarRefs = (
   node: TypeAST.AST,
-  resolve: (refName: string) => { id: string; info: ResolvedRefInfo }
+  resolve: (ref: TypeAST.Variable) => { id: string; info: ResolvedRefInfo }
 ): void => {
   if (isVarRefNode(node)) {
-    const refName = node.name;
-    const { id, info } = resolve(refName);
-    (node as unknown as { type: string; value?: string; name?: string }).type =
-      "Integer";
+    assertValidVariable(node);
+    const refName = varRefName(node);
+    const { id, info } = resolve(node);
+    (node as unknown as { type: string; value?: string }).type = "Integer";
     (node as unknown as { value?: string }).value = id;
-    delete (node as unknown as { name?: string }).name;
+    delete (node as unknown as { id?: string }).id;
+    delete (node as unknown as { label?: string }).label;
+    delete (node as unknown as { valueType?: string }).valueType;
     Object.defineProperty(node, REF_INFO, {
       value: info,
       enumerable: false,
@@ -284,6 +309,9 @@ const resolveVarRefs = (
     case "Importer":
       for (const card of getSourceCards(node)) resolveVarRefs(card, resolve);
       break;
+    case "Lambda":
+      resolveVarRefs(node.body, resolve);
+      break;
     default:
       break;
   }
@@ -326,8 +354,12 @@ export const buildNetworkCards = (
 
   const finalSegmentDefIndex = segmentFlatIndex[segments.length - 1]!;
 
-  const resolveRefIndex = (refName: string, currentIndex: number): number => {
-    if (refName === "@calculation") {
+  const resolveRefIndex = (
+    ref: TypeAST.Variable,
+    refName: string,
+    currentIndex: number
+  ): number => {
+    if (ref.label === "calculation" || refName === "@calculation") {
       if (finalSegmentDefIndex === currentIndex) {
         throw new Error(
           `Card reference @calculation points at the definition it is used in, so it has no card to refer to (definition ${currentIndex})`
@@ -335,13 +367,12 @@ export const buildNetworkCards = (
       }
       return finalSegmentDefIndex;
     }
-    const positional = refName.match(/^@(\d+)$/);
     let index: number | undefined;
-    if (positional) {
-      const segmentIndex = parseInt(positional[1]!, 10);
+    if (ref.label !== undefined) {
+      index = nameToIndex.get(ref.label);
+    } else if (ref.id !== undefined) {
+      const segmentIndex = parseInt(ref.id, 10);
       index = segmentFlatIndex[segmentIndex];
-    } else {
-      index = nameToIndex.get(refName.slice(1));
     }
     if (index === undefined) {
       throw new Error(`Unknown card reference: ${refName}`);
@@ -364,8 +395,8 @@ export const buildNetworkCards = (
 
   for (let i = 0; i < definitions.length; i++) {
     const definition = definitions[i]!;
-    resolveVarRefs(definition.node, (refName) => {
-      const index = resolveRefIndex(refName, i);
+    resolveVarRefs(definition.node, (ref) => {
+      const index = resolveRefIndex(ref, varRefName(ref), i);
       const id = startVariableId + prefixSums[index]! - 1;
       return {
         id: String(id),
@@ -386,6 +417,24 @@ export const assertNoVarRefs = (ast: TypeAST.AST): void => {
       "@-references are only valid inside a multi-statement (network) input"
     );
   });
+};
+
+export const assertNoTopLevelVarRefs = (ast: TypeAST.AST): void => {
+  const visit = (node: TypeAST.AST, insideLambda: boolean): void => {
+    if (isVarRefNode(node)) {
+      if (insideLambda) return;
+      throw new Error(
+        "@-references are only valid inside a multi-statement (network) input"
+      );
+    }
+    if (node.type === "Lambda") {
+      visit(node.body, true);
+      return;
+    }
+    if (node.type === "NetworkCards") return;
+    for (const child of astChildren(node)) visit(child, insideLambda);
+  };
+  visit(ast, false);
 };
 
 export const getNetworkDefLastCardIds = (

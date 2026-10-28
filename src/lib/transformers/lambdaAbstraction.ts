@@ -1,6 +1,6 @@
-import { ASTToCondensed, CondensedToAST } from "lib/transformers/Condensed";
 import { getExpandedVarName } from "lib/transformers/Expanded";
 import { astContentKey } from "lib/transformers/NetworkCards";
+import { lowerLambda } from "lib/transformers/lambdaLowering";
 import {
   getSourceCards,
   isSourceNode,
@@ -45,24 +45,27 @@ const deriveParamName = (
 export const abstractDynamicParts = (expr: TypeAST.AST): DynamicAbstraction => {
   const params: AbstractedParam[] = [];
   const used = new Set<string>();
-  const paramByContent = new Map<string, AbstractedParam>();
+  const paramByContent = new Map<string, number>();
 
   const rewrite = (
     node: TypeAST.AST,
-    staticProtected: boolean
+    staticProtected: boolean,
+    lambdaDepth = 0
   ): TypeAST.AST => {
     if (node.type === "Static") {
-      return { ...node, value: rewrite(node.value, true) };
+      return { ...node, value: rewrite(node.value, true, lambdaDepth) };
     }
 
     if (node.type === "Materialize") {
-      return { ...node, value: rewrite(node.value, true) };
+      return { ...node, value: rewrite(node.value, true, lambdaDepth) };
     }
 
     if (isSourceNode(node)) {
       return withSourceCards(
         node,
-        getSourceCards(node).map((card) => rewrite(card, staticProtected))
+        getSourceCards(node).map((card) =>
+          rewrite(card, staticProtected, lambdaDepth)
+        )
       );
     }
 
@@ -70,46 +73,92 @@ export const abstractDynamicParts = (expr: TypeAST.AST): DynamicAbstraction => {
     if (isDynamicLeaf && !staticProtected) {
       const contentKey = astContentKey(node);
       const existing = paramByContent.get(contentKey);
-      if (existing) return { type: "Variable", name: existing.name };
+      if (existing !== undefined) {
+        return {
+          type: "Param",
+          index: existing,
+          ...(lambdaDepth > 0 ? { binderDepth: lambdaDepth } : {}),
+          name: params[existing]!.name,
+        };
+      }
 
       const name = deriveParamName(node, params.length, used);
-      const param: AbstractedParam = { name, node };
-      params.push(param);
-      paramByContent.set(contentKey, param);
-      return { type: "Variable", name };
+      params.push({ name, node });
+      paramByContent.set(contentKey, params.length - 1);
+      return {
+        type: "Param",
+        index: params.length - 1,
+        ...(lambdaDepth > 0 ? { binderDepth: lambdaDepth } : {}),
+        name,
+      };
     }
 
     switch (node.type) {
       case "Dynamic":
-        return { ...node, value: rewrite(node.value, staticProtected) };
+        return {
+          ...node,
+          value: rewrite(node.value, staticProtected, lambdaDepth),
+        };
       case "Curry":
         return {
           ...node,
-          base: rewrite(node.base, staticProtected) as TypeAST.Operator,
-          args: node.args.map((arg) => rewrite(arg, staticProtected)),
+          base: rewrite(
+            node.base,
+            staticProtected,
+            lambdaDepth
+          ) as TypeAST.Operator,
+          args: node.args.map((arg) =>
+            rewrite(arg, staticProtected, lambdaDepth)
+          ),
         };
       case "Pipe":
         return {
           ...node,
-          op1: rewrite(node.op1, staticProtected) as TypeAST.Operator,
-          op2: rewrite(node.op2, staticProtected) as TypeAST.Operator,
+          op1: rewrite(
+            node.op1,
+            staticProtected,
+            lambdaDepth
+          ) as TypeAST.Operator,
+          op2: rewrite(
+            node.op2,
+            staticProtected,
+            lambdaDepth
+          ) as TypeAST.Operator,
         };
       case "Pipe2":
         return {
           ...node,
-          op1: rewrite(node.op1, staticProtected) as TypeAST.Operator,
-          op2: rewrite(node.op2, staticProtected) as TypeAST.Operator,
-          op3: rewrite(node.op3, staticProtected) as TypeAST.Operator,
+          op1: rewrite(
+            node.op1,
+            staticProtected,
+            lambdaDepth
+          ) as TypeAST.Operator,
+          op2: rewrite(
+            node.op2,
+            staticProtected,
+            lambdaDepth
+          ) as TypeAST.Operator,
+          op3: rewrite(
+            node.op3,
+            staticProtected,
+            lambdaDepth
+          ) as TypeAST.Operator,
         };
       case "Flip":
         return {
           ...node,
-          arg: rewrite(node.arg, staticProtected) as TypeAST.Operator,
+          arg: rewrite(
+            node.arg,
+            staticProtected,
+            lambdaDepth
+          ) as TypeAST.Operator,
         };
       case "List":
         return {
           ...node,
-          value: node.value.map((entry) => rewrite(entry, staticProtected)),
+          value: node.value.map((entry) =>
+            rewrite(entry, staticProtected, lambdaDepth)
+          ),
         };
       case "Reader":
         return node.value.simulatedOutput
@@ -119,7 +168,8 @@ export const abstractDynamicParts = (expr: TypeAST.AST): DynamicAbstraction => {
                 ...node.value,
                 simulatedOutput: rewrite(
                   node.value.simulatedOutput,
-                  staticProtected
+                  staticProtected,
+                  lambdaDepth
                 ),
               },
             }
@@ -129,12 +179,20 @@ export const abstractDynamicParts = (expr: TypeAST.AST): DynamicAbstraction => {
           ...node,
           definitions: node.definitions.map((def) => ({
             ...def,
-            node: rewrite(def.node, staticProtected),
+            node: rewrite(def.node, staticProtected, lambdaDepth),
           })),
+        };
+      case "Lambda":
+        return {
+          ...node,
+          body: rewrite(node.body, staticProtected, lambdaDepth + 1),
         };
       case "Display":
       case "Card":
-        return { ...node, value: rewrite(node.value, staticProtected) };
+        return {
+          ...node,
+          value: rewrite(node.value, staticProtected, lambdaDepth),
+        };
       default:
         return node;
     }
@@ -147,11 +205,13 @@ export const abstractDynamicParts = (expr: TypeAST.AST): DynamicAbstraction => {
 
   let lambda: TypeAST.AST = openBody;
   if (params.length > 0) {
-    const bodyText = ASTToCondensed(openBody);
-    const source = `(${params
-      .map((param) => param.name)
-      .join(", ")}) => ${bodyText}`;
-    lambda = CondensedToAST(source);
+    lambda = lowerLambda({
+      type: "Lambda",
+      params: params.map((param) => ({ name: param.name })),
+      body: openBody,
+    });
+  } else if (openBody.type === "Lambda") {
+    lambda = lowerLambda(openBody);
   }
 
   return { params, openBody, lambda };

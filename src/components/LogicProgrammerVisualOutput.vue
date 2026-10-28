@@ -39,6 +39,7 @@ import {
 } from "lib/transformers/helpers";
 import { INTERNAL_BUG_MESSAGE } from "lib/transformers/parseErrors";
 import { abstractDynamicParts } from "lib/transformers/lambdaAbstraction";
+import { lowerLambdasInAst } from "lib/transformers/lambdaLowering";
 import { astContentKey } from "lib/transformers/NetworkCards";
 import {
   setLastInternalBugDetail,
@@ -404,7 +405,25 @@ const cloneAstWithoutVarNames = (ast: TypeAST.AST): TypeAST.AST => {
     case "Variable":
       return {
         type: "Variable",
-        name: ast.name,
+        ...(ast.id !== undefined ? { id: ast.id } : {}),
+        ...(ast.label !== undefined ? { label: ast.label } : {}),
+        ...(ast.valueType !== undefined ? { valueType: ast.valueType } : {}),
+      };
+    case "Param":
+      return {
+        type: "Param",
+        index: ast.index,
+        ...(ast.binderDepth !== undefined
+          ? { binderDepth: ast.binderDepth }
+          : {}),
+        ...(ast.name !== undefined ? { name: ast.name } : {}),
+      };
+    case "Lambda":
+      return {
+        type: "Lambda",
+        params: ast.params.map((param) => ({ ...param })),
+        body: cloneAstWithoutVarNames(ast.body),
+        ...(ast.text !== undefined ? { text: ast.text } : {}),
       };
     case "Operator":
       return {
@@ -832,7 +851,9 @@ const primitiveDetail = (ast: TypeAST.AST): string | undefined => {
     case "NBT":
       return JSON.stringify(ast.value);
     case "Variable":
-      return ast.name;
+      return ast.label !== undefined ? `@${ast.label}` : `@${ast.id}`;
+    case "Param":
+      return ast.name ?? `p${ast.index}`;
     default:
       return undefined;
   }
@@ -1785,6 +1806,7 @@ const buildStepTooltip = (
 
 const steps = computed<VisualStep[]>(() => {
   resetExpandedVarCounter();
+  const ast = lowerLambdasInAst(props.ast);
 
   const toStepComment = (
     comments: string[] | undefined
@@ -1799,10 +1821,10 @@ const steps = computed<VisualStep[]>(() => {
 
   const isPatternMode = props.operatorPreviewMode === "pattern";
 
-  if (isPatternMode && props.ast.type === "Operator") {
-    const operator = getOperatorDisplay(props.ast.opName);
-    const operatorMeta = getOperatorTooltipMeta(props.ast.opName);
-    const signatureTypes = getOperatorValueSignatureTypes(props.ast.opName);
+  if (isPatternMode && ast.type === "Operator") {
+    const operator = getOperatorDisplay(ast.opName);
+    const operatorMeta = getOperatorTooltipMeta(ast.opName);
+    const signatureTypes = getOperatorValueSignatureTypes(ast.opName);
     const variableId = props.startVariableId;
     const step: Omit<VisualStep, "variableId" | "tooltip"> = {
       id: "operator-pattern-preview",
@@ -1814,10 +1836,10 @@ const steps = computed<VisualStep[]>(() => {
       sourceType: "Operator",
       renderPattern: operator.renderPattern,
       inputs: [],
-      output: getCardName(props.ast),
-      detail: props.ast.opName,
-      node: props.ast,
-      tooltipOperatorKey: props.ast.opName,
+      output: getCardName(ast),
+      detail: ast.opName,
+      node: ast,
+      tooltipOperatorKey: ast.opName,
       expectedInputTypes: operatorMeta.inputTypes,
       expectedOutputType:
         signatureTypes.length > 0
@@ -1832,7 +1854,7 @@ const steps = computed<VisualStep[]>(() => {
       variableId,
       tooltip: buildStepTooltip(step, variableId),
     };
-    const nodeComment = toStepComment(getNodeComment(props.ast));
+    const nodeComment = toStepComment(getNodeComment(ast));
     if (nodeComment) fullStep.comment = nodeComment;
     return [fullStep];
   }
@@ -2252,7 +2274,7 @@ const steps = computed<VisualStep[]>(() => {
     }
   };
 
-  visit(props.ast);
+  visit(ast);
   return result;
 });
 

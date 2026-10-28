@@ -105,7 +105,11 @@ const valueLabel = computed(() => {
     case "Operator":
       return props.ast.opName;
     case "Variable":
-      return props.ast.name;
+      return props.ast.label !== undefined
+        ? `@${props.ast.label}`
+        : `@${props.ast.id}`;
+    case "Param":
+      return props.ast.name ?? `p${props.ast.index}`;
     case "String":
       return props.ast.value;
     case "Boolean":

@@ -154,8 +154,8 @@ describe("TestParseSnbtInputSources", () => {
       type: "Curry",
       base: { type: "Operator", opName: "OPERATOR_APPLY" },
       args: [
-        { type: "Variable", name: "@13" },
-        { type: "Variable", name: "@14" },
+        { type: "Variable", id: "13" },
+        { type: "Variable", id: "14" },
       ],
     });
   });

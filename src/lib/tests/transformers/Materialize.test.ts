@@ -3,40 +3,17 @@ import { ASTToCondensed, CondensedToAST } from "lib/transformers/Condensed";
 import { ASTToExpanded, ExpandedToAST } from "lib/transformers/Expanded";
 import { ASTToCompressed, CompressedToAST } from "lib/transformers/Compressed";
 import { stripAutoCurryVarNames } from "lib/transformers/inputState";
+import { visitAst } from "lib/transformers/astTraversal";
 
 const collectVariableNames = (
   node: TypeAST.AST,
   out: string[] = []
 ): string[] => {
-  switch (node.type) {
-    case "Variable":
-      out.push(node.name);
-      break;
-    case "Curry":
-      collectVariableNames(node.base as TypeAST.AST, out);
-      node.args.forEach((arg) => collectVariableNames(arg, out));
-      break;
-    case "Pipe":
-      collectVariableNames(node.op1 as TypeAST.AST, out);
-      collectVariableNames(node.op2 as TypeAST.AST, out);
-      break;
-    case "Pipe2":
-      collectVariableNames(node.op1 as TypeAST.AST, out);
-      collectVariableNames(node.op2 as TypeAST.AST, out);
-      collectVariableNames(node.op3 as TypeAST.AST, out);
-      break;
-    case "Flip":
-      collectVariableNames(node.arg as TypeAST.AST, out);
-      break;
-    case "Dynamic":
-    case "Static":
-    case "Materialize":
-      collectVariableNames(node.value, out);
-      break;
-    case "List":
-      node.value.forEach((entry) => collectVariableNames(entry, out));
-      break;
-  }
+  visitAst(node, (current) => {
+    if (current.type === "Variable") {
+      out.push(current.label ?? `@${current.id}`);
+    }
+  });
   return out;
 };
 
@@ -127,7 +104,7 @@ describe("TestMaterializeConstructor", () => {
     ]) {
       const ast = CodeLineToAST(source);
       expect(collectVariableNames(ast)).toEqual([]);
-      expect(ASTToCondensed(ast)).toBe("Materialize(apply(numberAdd, 2))");
+      expect(ASTToCondensed(ast)).toBe("Materialize(x => numberAdd(x, 2))");
     }
   });
 });

@@ -22,17 +22,21 @@ import {
   getOperatorSourceName,
   flattenAnonymousBaseOperatorApplication,
   parseNumericLiteralToken,
+  unwrapParamWrapper,
   type CommentSpan,
   type TokenComment,
 } from "lib/transformers/helpers";
 import {
-  assertNoVarRefs,
+  assertNoTopLevelVarRefs,
   buildNetworkCards,
   getNetworkDefLastCardIds,
   getNetworkSegmentRefs,
   getRefInfo,
   getRefName,
 } from "lib/transformers/NetworkCards";
+import { BinderScope } from "lib/transformers/binderScope";
+import { parseLambdaParamEntry } from "lib/transformers/lambdaParams";
+import { variableFromAt, variableFromName } from "lib/transformers/variableRef";
 import { normalizeSegments } from "lib/transformers/MixedLists";
 import {
   isReservedName,
@@ -483,7 +487,27 @@ export const CondensedToAST = (
         args: InternalAST[];
         varName?: string;
       }
-    | { type: "Variable"; name: string }
+    | {
+        type: "Variable";
+        id?: string;
+        label?: string;
+        valueType?: string;
+        varName?: string;
+      }
+    | {
+        type: "Param";
+        index: number;
+        binderDepth?: number;
+        name?: string;
+        varName?: string;
+      }
+    | {
+        type: "Lambda";
+        params: TypeAST.LambdaParam[];
+        body: InternalAST;
+        text?: string;
+        varName?: string;
+      }
     | { type: "Identifier"; value: string }
     | {
         type: "Reader";
@@ -516,39 +540,26 @@ export const CondensedToAST = (
     );
   };
 
-  function tryParseParams(): string[] | null {
+  function tryParseParams(): TypeAST.LambdaParam[] | null {
     const startPos = pos;
     const next = tokens[pos];
     if (!next) return null;
 
     if (next.type === "structural" && next.value === "(") {
       pos++; // consume (
-      const params: string[] = [];
-      const seenParams = new Set<string>();
+      const entries: string[][] = [];
+      let entry: string[] = [];
       while (
         tokens[pos] &&
         !(tokens[pos]!.type === "structural" && tokens[pos]!.value === ")")
       ) {
-        const p = tokens[pos++];
-        if (!p || p.type !== "identifier") {
-          pos = startPos;
-          return null;
+        const p = tokens[pos++]!;
+        if (p.type === "structural" && p.value === ",") {
+          entries.push(entry);
+          entry = [];
+          continue;
         }
-        checkParamShadow(p.value);
-        if (seenParams.has(p.value)) {
-          throw new StructuralParseError(
-            `Duplicate variable name "${p.value}" in lambda`
-          );
-        }
-        params.push(p.value);
-        seenParams.add(p.value);
-        if (
-          tokens[pos] &&
-          tokens[pos]!.type === "structural" &&
-          tokens[pos]!.value === ","
-        ) {
-          pos++; // consume ,
-        }
+        entry.push(p.value);
       }
       if (!tokens[pos]) {
         pos = startPos;
@@ -557,12 +568,36 @@ export const CondensedToAST = (
       pos++; // consume )
       const arrow = tokens[pos];
       if (
-        arrow &&
-        arrow.type === "structural" &&
-        (arrow.value === "=>" || arrow.value === "->")
+        !arrow ||
+        arrow.type !== "structural" ||
+        (arrow.value !== "=>" && arrow.value !== "->")
       ) {
-        return params;
+        pos = startPos;
+        return null;
       }
+      entries.push(entry);
+      const params = entries
+        .filter((parts) => !(entries.length === 1 && parts.length === 0))
+        .map((parts, index) => {
+          const param = parseLambdaParamEntry(parts, index);
+          if (!getNicknameRegex().test(param.name)) {
+            throw new StructuralParseError(
+              `Invalid lambda parameter name: "${param.name}"`
+            );
+          }
+          checkParamShadow(param.name);
+          return param;
+        });
+      const seenParams = new Set<string>();
+      for (const param of params) {
+        if (seenParams.has(param.name)) {
+          throw new StructuralParseError(
+            `Duplicate variable name "${param.name}" in lambda`
+          );
+        }
+        seenParams.add(param.name);
+      }
+      return params;
     } else if (next.type === "structural" && next.value === "\\") {
       pos++; // consume \
       const paramToken = tokens[pos];
@@ -579,25 +614,26 @@ export const CondensedToAST = (
           tokens.splice(pos + 1, 0, { type: "identifier", value: rest });
         tokens.splice(pos, 0, { type: "identifier", value: param });
         pos++;
-        return [param];
+        checkParamShadow(param);
+        return [{ name: param }];
       }
     } else if (next.type === "identifier") {
-      const p = tokens[pos++];
+      const p = tokens[pos++]!;
       const arrow = tokens[pos];
       if (
         arrow &&
         arrow.type === "structural" &&
         (arrow.value === "=>" || arrow.value === "->")
       ) {
-        checkParamShadow(p!.value);
-        return [p!.value];
+        checkParamShadow(p.value);
+        return [{ name: p.value }];
       }
     }
     pos = startPos;
     return null;
   }
 
-  function parseExpression(scope: Set<string>): InternalAST {
+  function parseExpression(scope: BinderScope): InternalAST {
     const start = pos;
     const node = parseExpressionInner(scope);
     if (pos > start) spans.push({ start, end: pos, node: node as TypeAST.AST });
@@ -605,7 +641,7 @@ export const CondensedToAST = (
   }
 
   function tryParseWrapperExpression(
-    scope: Set<string>
+    scope: BinderScope
   ): InternalAST | undefined {
     const token = tokens[pos];
     if (!token || token.type !== "identifier") return undefined;
@@ -640,7 +676,10 @@ export const CondensedToAST = (
       );
     }
     pos++; // consume ')'
-    return { type: canonical, value } as InternalAST;
+    return unwrapParamWrapper({
+      type: canonical,
+      value,
+    } as TypeAST.Materialize) as InternalAST;
   }
 
   const CALLABLE_IDENTIFIER_KEYWORDS = [
@@ -654,7 +693,7 @@ export const CondensedToAST = (
     "variable",
   ];
 
-  function isKnownCallName(name: string, scope: Set<string>): boolean {
+  function isKnownCallName(name: string, scope: BinderScope): boolean {
     if (name.startsWith("@")) return true;
     if (scope.has(name) || externalScope.has(name)) return true;
     if (operatorRegistry.operatorByNickname(name)) return true;
@@ -663,7 +702,7 @@ export const CondensedToAST = (
     return resolveImplicitFlipOperator(name) !== undefined;
   }
 
-  function parseExpressionInner(scope: Set<string>): InternalAST {
+  function parseExpressionInner(scope: BinderScope): InternalAST {
     const params = tryParseParams();
     if (params !== null) {
       const sep = tokens[pos];
@@ -673,13 +712,10 @@ export const CondensedToAST = (
         (sep.value === "=>" || sep.value === "->" || sep.value === ".")
       ) {
         pos++; // consume separator
-        const body = parseExpression(new Set([...scope, ...params]));
-        let result = body;
-        for (let i = params.length - 1; i >= 0; i--) {
-          const p = params[i];
-          if (p) result = abstract(p, result);
-        }
-        return result;
+        const body = parseExpression(
+          scope.push(params.map((param) => param.name))
+        );
+        return { type: "Lambda", params, body };
       }
     }
 
@@ -776,7 +812,7 @@ export const CondensedToAST = (
   function handleCall(
     name: string,
     args: InternalAST[],
-    scope: Set<string>
+    scope: BinderScope
   ): InternalAST {
     for (const arg of args) {
       if (arg.type === "Card") {
@@ -791,10 +827,7 @@ export const CondensedToAST = (
           "Variable(...) expects exactly one string argument"
         );
       }
-      return {
-        type: "Variable",
-        name: `@${(args[0] as { value: string }).value}`,
-      };
+      return variableFromName((args[0] as { value: string }).value);
     }
     if (
       [
@@ -865,7 +898,7 @@ export const CondensedToAST = (
   };
 
   const parseReaderCallArgs = (
-    scope: Set<string>
+    scope: BinderScope
   ): {
     settings?: Record<string, number | boolean | string>;
     simulatedOutput?: InternalAST;
@@ -936,7 +969,7 @@ export const CondensedToAST = (
   };
 
   const tryParseReaderExpression = (
-    scope: Set<string>
+    scope: BinderScope
   ): InternalAST | undefined => {
     const token = tokens[pos];
     if (!token || token.type !== "identifier") return undefined;
@@ -1273,7 +1306,7 @@ export const CondensedToAST = (
             varName
           ) as InternalAST;
         }
-        return { type: "Variable", name: `@${varName}` };
+        return variableFromName(varName);
       }
       if (["block", "item", "fluid", "entity"].includes(lowerName)) {
         return buildBlockLikeConstructor(
@@ -1325,447 +1358,9 @@ export const CondensedToAST = (
     };
   }
 
-  function containsVar(name: string, ast: InternalAST): boolean {
-    if (ast.type === "Variable") return ast.name === name;
-    if (ast.type === "Curry")
-      return (
-        containsVar(name, ast.base) ||
-        ast.args.some((a) => containsVar(name, a))
-      );
-    if (ast.type === "Pipe")
-      return containsVar(name, ast.op1) || containsVar(name, ast.op2);
-    if (ast.type === "Pipe2")
-      return (
-        containsVar(name, ast.op1) ||
-        containsVar(name, ast.op2) ||
-        containsVar(name, ast.op3)
-      );
-    if (ast.type === "Flip") return containsVar(name, ast.arg);
-    if (
-      ast.type === "Dynamic" ||
-      ast.type === "Static" ||
-      ast.type === "Materialize" ||
-      ast.type === "Display" ||
-      ast.type === "Card"
-    ) {
-      return containsVar(name, ast.value as InternalAST);
-    }
-    if (ast.type === "Reader" && ast.value.simulatedOutput) {
-      return containsVar(name, ast.value.simulatedOutput as InternalAST);
-    }
-    return false;
-  }
-
-  const ID_OP = (opName: TypeOperatorKey): InternalAST => ({
-    type: "Operator",
-    opName,
-  });
-  const APPLY_OP = ID_OP("OPERATOR_APPLY" as TypeOperatorKey);
-  const CONST_OP = ID_OP("GENERAL_CONSTANT" as TypeOperatorKey);
-  const IDEN_OP = ID_OP("GENERAL_IDENTITY" as TypeOperatorKey);
-
-  function condense(body: InternalAST): InternalAST {
-    if (body.type === "Pipe") {
-      if (
-        body.op1.type === "Operator" &&
-        body.op1.opName === "GENERAL_IDENTITY"
-      ) {
-        return condense(body.op2);
-      }
-      if (
-        body.op2.type === "Operator" &&
-        body.op2.opName === "GENERAL_IDENTITY"
-      ) {
-        return condense(body.op1);
-      }
-      if (body.op2.type === "Operator" && body.op2.opName === "LOGICAL_NOT") {
-        return condense({
-          type: "Curry",
-          base: ID_OP("OPERATOR_NEGATION"),
-          args: [body.op1],
-        });
-      }
-      const condensedOp1 = condense(body.op1);
-      const condensedOp2 = condense(body.op2);
-      if (condensedOp1 === body.op1 && condensedOp2 === body.op2) {
-        return body;
-      }
-      return condense({
-        type: "Pipe",
-        ...(body.varName ? { varName: body.varName } : {}),
-        op1: condensedOp1,
-        op2: condensedOp2,
-      });
-    }
-    if (body.type === "Curry") {
-      if (body.base.type === "Curry") {
-        return condense({
-          type: "Curry",
-          ...(body.varName ? { varName: body.varName } : {}),
-          base: body.base.base,
-          args: [...body.base.args, ...body.args],
-        });
-      }
-      const condensedBase = condense(body.base);
-      const condensedArgs = body.args.map(condense);
-      if (
-        condensedBase === body.base &&
-        condensedArgs.every((a, i) => a === body.args[i])
-      ) {
-        return body;
-      }
-      return condense({
-        type: "Curry",
-        ...(body.varName ? { varName: body.varName } : {}),
-        base: condensedBase,
-        args: condensedArgs,
-      });
-    }
-    if (body.type === "Pipe2") {
-      if (body.op3.type === "Operator" && body.op3.opName === "LOGICAL_AND") {
-        return condense({
-          type: "Curry",
-          base: ID_OP("OPERATOR_CONJUNCTION"),
-          args: [body.op1, body.op2],
-        });
-      }
-      if (body.op3.type === "Operator" && body.op3.opName === "LOGICAL_OR") {
-        return condense({
-          type: "Curry",
-          base: ID_OP("OPERATOR_DISJUNCTION"),
-          args: [body.op1, body.op2],
-        });
-      }
-      const condensedOp1 = condense(body.op1);
-      const condensedOp2 = condense(body.op2);
-      const condensedOp3 = condense(body.op3);
-      if (
-        condensedOp1 === body.op1 &&
-        condensedOp2 === body.op2 &&
-        condensedOp3 === body.op3
-      ) {
-        return body;
-      }
-      return condense({
-        type: "Pipe2",
-        ...(body.varName ? { varName: body.varName } : {}),
-        op1: condensedOp1,
-        op2: condensedOp2,
-        op3: condensedOp3,
-      });
-    }
-    if (body.type === "Flip" && body.arg.type === "Operator") {
-      const originalOp = new operatorRegistry[body.arg.opName]();
-      if (originalOp instanceof BaseOperator && originalOp.flipTarget) {
-        return {
-          type: "Operator",
-          opName: originalOp.flipTarget,
-        };
-      }
-      const condensedArg = condense(body.arg);
-      if (condensedArg === body.arg) {
-        return body;
-      }
-      return condense({
-        type: "Flip",
-        ...(body.varName ? { varName: body.varName } : {}),
-        arg: condensedArg,
-      });
-    }
-    return body;
-  }
-
-  function abstract(param: string, body: InternalAST): InternalAST {
-    if (body.type === "Curry" && body.base.type === "Curry") {
-      return abstract(param, {
-        type: "Curry",
-        base: body.base.base,
-        args: [...body.base.args, ...body.args],
-      });
-    }
-
-    if (!containsVar(param, body)) {
-      return condense({ type: "Curry", base: CONST_OP, args: [body] });
-    } else if (
-      body.type === "Dynamic" ||
-      body.type === "Static" ||
-      body.type === "Materialize" ||
-      body.type === "Display" ||
-      body.type === "Card"
-    ) {
-      return abstract(param, body.value as InternalAST);
-    } else if (body.type === "Variable") {
-      return IDEN_OP;
-    } else if (body.type === "Pipe") {
-      const xInOp1 = containsVar(param, body.op1);
-      const xInOp2 = containsVar(param, body.op2);
-
-      if (xInOp1 && xInOp2) {
-        return condense({
-          type: "Pipe2",
-          op1: abstract(param, body.op1) as InternalAST,
-          op2: abstract(param, body.op2) as InternalAST,
-          op3: ID_OP("OPERATOR_PIPE") as InternalAST,
-        });
-      } else if (xInOp2) {
-        return condense({
-          type: "Pipe",
-          op1: abstract(param, body.op2),
-          op2: {
-            type: "Curry",
-            base: ID_OP("OPERATOR_PIPE"),
-            args: [body.op1 as InternalAST],
-          },
-        });
-      } else {
-        return condense({
-          type: "Pipe",
-          op1: abstract(param, body.op1),
-          op2: {
-            type: "Curry",
-            base: {
-              type: "Flip",
-              arg: ID_OP("OPERATOR_PIPE"),
-            },
-            args: [body.op2 as InternalAST],
-          },
-        });
-      }
-    } else if (body.type === "Pipe2") {
-      const xInOp1 = containsVar(param, body.op1);
-      const xInOp2 = containsVar(param, body.op2);
-      const xInOp3 = containsVar(param, body.op3);
-
-      if (xInOp1 && xInOp2 && xInOp3) {
-        return condense({
-          type: "Pipe2",
-          op1: {
-            type: "Pipe2",
-            op1: abstract(param, body.op1),
-            op2: abstract(param, body.op2),
-            op3: ID_OP("OPERATOR_PIPE2"),
-          },
-          op2: abstract(param, body.op3),
-          op3: APPLY_OP,
-        });
-      } else if (xInOp2 && xInOp3) {
-        return condense({
-          type: "Pipe2",
-          op1: abstract(param, body.op2),
-          op2: abstract(param, body.op3),
-          op3: {
-            type: "Curry",
-            base: ID_OP("OPERATOR_PIPE2"),
-            args: [body.op1],
-          },
-        });
-      } else if (xInOp1 && xInOp3) {
-        return condense({
-          type: "Pipe2",
-          op1: abstract(param, body.op1),
-          op2: abstract(param, body.op3),
-          op3: {
-            type: "Curry",
-            base: {
-              type: "Flip",
-              arg: ID_OP("OPERATOR_PIPE2"),
-            },
-            args: [body.op2],
-          },
-        });
-      } else if (xInOp1 && xInOp2) {
-        return condense({
-          type: "Pipe2",
-          op1: {
-            type: "Pipe",
-            op1: abstract(param, body.op1),
-            op2: ID_OP("OPERATOR_PIPE2"),
-          },
-          op2: abstract(param, body.op2),
-          op3: {
-            type: "Curry",
-            base: {
-              type: "Flip",
-              arg: ID_OP("OPERATOR_FLIP"),
-            },
-            args: [body.op3],
-          },
-        });
-      } else if (xInOp3) {
-        return condense({
-          type: "Pipe",
-          op1: abstract(param, body.op3),
-          op2: {
-            type: "Curry",
-            base: ID_OP("OPERATOR_PIPE2"),
-            args: [body.op1, body.op2],
-          },
-        });
-      } else if (xInOp2) {
-        return condense({
-          type: "Pipe",
-          op1: abstract(param, body.op2),
-          op2: {
-            type: "Curry",
-            base: {
-              type: "Flip",
-              arg: {
-                type: "Curry",
-                base: ID_OP("OPERATOR_PIPE2"),
-                args: [body.op1],
-              },
-            },
-            args: [body.op3],
-          },
-        });
-      } else {
-        return condense({
-          type: "Pipe",
-          op1: abstract(param, body.op1),
-          op2: {
-            type: "Curry",
-            base: {
-              type: "Flip",
-              arg: {
-                type: "Curry",
-                base: {
-                  type: "Flip",
-                  arg: ID_OP("OPERATOR_PIPE2"),
-                },
-                args: [body.op2],
-              },
-            },
-            args: [body.op3],
-          },
-        });
-      }
-    } else if (body.type === "Flip") {
-      return condense({
-        type: "Pipe",
-        op1: abstract(param, body.arg),
-        op2: ID_OP("OPERATOR_FLIP"),
-      });
-    } else if (body.type === "Curry") {
-      if (containsVar(param, body.base)) {
-        return abstract(param, {
-          type: "Curry",
-          base: APPLY_OP,
-          args: [body.base, ...body.args],
-        });
-      }
-      if (body.args.length === 1) {
-        return condense({
-          type: "Pipe",
-          op1: abstract(param, body.args[0]!),
-          op2: body.base,
-        });
-      } else if (body.args.length === 2) {
-        const arg1 = body.args[0]!;
-        const arg2 = body.args[1]!;
-        const arg1Contains = containsVar(param, arg1);
-        const arg2Contains = containsVar(param, arg2);
-
-        if (arg1Contains && arg2Contains) {
-          return condense({
-            type: "Pipe2",
-            op1: abstract(param, arg1),
-            op2: abstract(param, arg2),
-            op3: body.base,
-          });
-        } else if (arg2Contains) {
-          return condense({
-            type: "Pipe",
-            op1: abstract(param, arg2),
-            op2: {
-              type: "Curry",
-              base: body.base,
-              args: [arg1],
-            },
-          });
-        } else {
-          return condense({
-            type: "Pipe",
-            op1: abstract(param, arg1),
-            op2: {
-              type: "Curry",
-              base: {
-                type: "Flip",
-                arg: body.base,
-              },
-              args: [arg2],
-            },
-          });
-        }
-      } else {
-        const firstArgs = body.args.slice(0, -2);
-        const secondLastArg = body.args[body.args.length - 2]!;
-        const lastArg = body.args[body.args.length - 1]!;
-
-        if (firstArgs.some((a) => containsVar(param, a))) {
-          return abstract(param, {
-            type: "Curry",
-            base: APPLY_OP,
-            args: [
-              {
-                type: "Curry",
-                base: body.base,
-                args: [...firstArgs, secondLastArg],
-              },
-              lastArg,
-            ],
-          });
-        }
-
-        const base: InternalAST = {
-          type: "Curry",
-          base: body.base,
-          args: firstArgs,
-        };
-        const secondLastArgContains = containsVar(param, secondLastArg);
-        const lastArgContains = containsVar(param, lastArg);
-
-        if (secondLastArgContains && lastArgContains) {
-          return condense({
-            type: "Pipe2",
-            op1: abstract(param, secondLastArg),
-            op2: abstract(param, lastArg),
-            op3: base,
-          });
-        } else if (lastArgContains) {
-          return condense({
-            type: "Pipe",
-            op1: abstract(param, lastArg),
-            op2: {
-              type: "Curry",
-              base: body.base,
-              args: [...firstArgs, secondLastArg],
-            },
-          });
-        } else {
-          return condense({
-            type: "Pipe",
-            op1: abstract(param, secondLastArg),
-            op2: {
-              type: "Curry",
-              base: {
-                type: "Flip",
-                arg: base,
-              },
-              args: [lastArg],
-            },
-          });
-        }
-      }
-    }
-
-    throw new InternalParseError(
-      `Could not abstract "${param}" from expression`
-    );
-  }
-
   function handleLiteral(
     token: { type: string; value: string },
-    scope: Set<string>
+    scope: BinderScope
   ): InternalAST {
     switch (token.type) {
       case "integer":
@@ -1799,9 +1394,18 @@ export const CondensedToAST = (
           return parseCardOperand(operand) as InternalAST;
         }
         if (token.value.startsWith("@"))
-          return { type: "Variable", name: token.value } as InternalAST;
-        if (scope.has(token.value))
-          return { type: "Variable", name: token.value };
+          return variableFromAt(token.value) as InternalAST;
+        const binding = scope.lookup(token.value);
+        if (binding) {
+          return {
+            type: "Param",
+            index: binding.index,
+            ...(binding.binderDepth > 0
+              ? { binderDepth: binding.binderDepth }
+              : {}),
+            name: token.value,
+          };
+        }
         if (externalScope.has(token.value))
           return externalScope.get(token.value)! as InternalAST;
         const lower = token.value.toLowerCase();
@@ -1841,7 +1445,7 @@ export const CondensedToAST = (
 
   const segments: InternalAST[] = [];
   while (pos < tokens.length) {
-    segments.push(parseExpression(new Set()));
+    segments.push(parseExpression(new BinderScope()));
     if (
       pos < tokens.length &&
       tokens[pos]!.type === "structural" &&
@@ -1871,7 +1475,7 @@ export const CondensedToAST = (
       }));
 
   if (normalized.length === 1 && normalized[0]!.hoisted.length === 0) {
-    if (!allowVarRefs) assertNoVarRefs(normalized[0]!.node);
+    if (!allowVarRefs) assertNoTopLevelVarRefs(normalized[0]!.node);
     return normalized[0]!.node;
   }
   return buildNetworkCards(normalized, startVariableId);
@@ -1918,6 +1522,40 @@ export const ASTToCondensed = (
       }
     }
     return cardId;
+  };
+
+  const paramStack: TypeAST.LambdaParam[][] = [];
+
+  const stringifyParamHeader = (params: TypeAST.LambdaParam[]): string => {
+    if (params.length === 1 && params[0]!.type === undefined) {
+      return params[0]!.name;
+    }
+    const entries = params.map((param) =>
+      param.type === undefined ? param.name : `${param.name}: ${param.type}`
+    );
+    return `(${entries.join(", ")})`;
+  };
+
+  const stringifyParamReference = (node: TypeAST.Param): string => {
+    const depth = node.binderDepth ?? 0;
+    const binder = paramStack[paramStack.length - 1 - depth];
+    if (!binder) {
+      throw new StructuralParseError(
+        `Parameter #${node.index + 1} has no enclosing lambda for binder depth ${depth}`
+      );
+    }
+    const param = binder[node.index];
+    if (!param) {
+      throw new StructuralParseError(
+        `Parameter index ${node.index} is out of range for the enclosing lambda`
+      );
+    }
+    if (node.name !== undefined && node.name !== param.name) {
+      throw new StructuralParseError(
+        `Parameter #${node.index + 1} is named "${node.name}" but its binder calls it "${param.name}"`
+      );
+    }
+    return param.name;
   };
 
   const stringify = (node: TypeAST.AST, topLevel = false): string => {
@@ -1979,21 +1617,38 @@ export const ASTToCondensed = (
         result = "null";
         break;
       case "Variable": {
-        if (node.name.startsWith("@")) {
-          const name = node.name.slice(1);
-          const varId = outputOpts.varIdRefsByName?.get(name);
-          if (varId !== undefined) {
-            result = varId;
-            break;
-          }
-          result = isVarNameExpandedSafe(name)
-            ? node.name
-            : `Variable(${JSON.stringify(name)})`;
-        } else {
-          result = isVarNameExpandedSafe(node.name)
-            ? node.name
-            : `Variable(${JSON.stringify(node.name)})`;
+        const refName = node.label ?? node.id;
+        if (refName === undefined) {
+          throw new StructuralParseError(
+            "A Variable node requires an id or a label"
+          );
         }
+        if (node.label === undefined) {
+          result = `@${node.id}`;
+          break;
+        }
+        const varId = outputOpts.varIdRefsByName?.get(node.label);
+        if (varId !== undefined) {
+          result = varId;
+          break;
+        }
+        result = isVarNameExpandedSafe(refName)
+          ? `@${refName}`
+          : `Variable(${JSON.stringify(refName)})`;
+        break;
+      }
+      case "Param":
+        result = stringifyParamReference(node);
+        break;
+      case "Lambda": {
+        paramStack.push(node.params);
+        let body: string;
+        try {
+          body = stringify(node.body, false);
+        } finally {
+          paramStack.pop();
+        }
+        result = `${stringifyParamHeader(node.params)} => ${body}`;
         break;
       }
       case "List":

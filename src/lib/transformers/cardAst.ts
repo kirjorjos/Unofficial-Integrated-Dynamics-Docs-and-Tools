@@ -501,7 +501,7 @@ export const cardToAST = (
     }
     const args: TypeAST.AST[] = getVariableIds(tag).map((variableId) => ({
       type: "Variable",
-      name: `@${variableId}`,
+      id: String(variableId),
     }));
     return { value: { type: "Curry", base: decoded.value, args }, warnings };
   }

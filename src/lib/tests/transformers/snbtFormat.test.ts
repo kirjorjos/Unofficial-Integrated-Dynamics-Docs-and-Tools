@@ -36,8 +36,8 @@ describe("TestASTToSnbt", () => {
       type: "Curry",
       base: { type: "Operator", opName: "ARITHMETIC_ADDITION" },
       args: [
-        { type: "Variable", name: "@4" },
-        { type: "Variable", name: "@5" },
+        { type: "Variable", id: "4" },
+        { type: "Variable", id: "5" },
       ],
     });
     expect(text).toBe(
@@ -55,7 +55,7 @@ describe("TestASTToSnbt", () => {
           node: {
             type: "Curry",
             base: { type: "Operator", opName: "ARITHMETIC_ADDITION" },
-            args: [{ type: "Variable", name: "@4" }],
+            args: [{ type: "Variable", id: "4" }],
           },
         },
       ],

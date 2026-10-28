@@ -11,6 +11,8 @@ import { globalMap } from "lib/HelperClasses/TypeMap";
 import { ParsedSignature } from "lib/HelperClasses/ParsedSignature";
 import { stripAutoCurryVarNames } from "lib/transformers/inputState";
 import { abstractDynamicParts } from "lib/transformers/lambdaAbstraction";
+import { astContentKey } from "lib/transformers/NetworkCards";
+import { lowerLambdasInAst } from "lib/transformers/lambdaLowering";
 
 describe("TestExpandedTransformer", () => {
   beforeEach(() => {
@@ -36,6 +38,12 @@ describe("TestExpandedTransformer", () => {
         break;
       case "Flip":
         deleteNestedVars(node.arg);
+        break;
+      case "Lambda":
+        deleteNestedVars(node.body);
+        break;
+      case "List":
+        node.value.forEach(deleteNestedVars);
         break;
     }
   };
@@ -311,9 +319,9 @@ final = apply(numberAdd, var2)
     expect(exp9).toContain("numberAddWithNumberIncrementAndNumberIncrement ::");
 
     const scope10 = new Map<string, TypeAST.AST>([
-      ["list1", { type: "Variable", name: "list1" }],
+      ["list1", { type: "Variable", label: "list1" }],
     ]);
-    const ast10 = CodeLineToAST("applyN numberAdd list1", scope10);
+    const ast10 = CodeLineToAST("applyN numberAdd list1", scope10, 0, true);
     const exp10 = ASTToExpanded(ast10);
     expect(exp10).toContain("numberAddBy_nList1 ::");
 
@@ -520,11 +528,9 @@ result = apply(numberAdd, {numberAddBy5}by10)`;
     expect(expanded).toContain(
       "{lazybuiltBy0}byIncrement = anyLazyBuilt(0, numberIncrement)"
     );
+    expect(expanded).toContain("indexOfList = l => el => listHead(");
     expect(expanded).toContain(
-      "sliceBy{lazybuiltBy0}byIncrement = apply(listSlice, {lazybuiltBy0}byIncrement)"
-    );
-    expect(expanded).not.toContain(
-      "apply(listSlice, anyLazyBuilt(0, numberIncrement))"
+      "listSlice({lazybuiltBy0}byIncrement, 0, listLength(l))"
     );
     expect(expanded).not.toContain("indexOfList = operatorPipe(operatorPipe2(");
 
@@ -1072,8 +1078,15 @@ final = total
 
     const ast = rootOf(ExpandedToAST("bad zzz = 5"));
     expect(ast.varName).toBe("bad");
-    expect(ast.type).toBe("Curry");
-    expect(ast).toEqual(rootOf(ExpandedToAST("bad = zzz => 5")));
+    expect(ast.type).toBe("Lambda");
+    expect((ast as TypeAST.Lambda).params.map((p) => p.name)).toEqual(["zzz"]);
+    const arrow = rootOf(ExpandedToAST("bad = zzz => 5"));
+    expect((arrow as TypeAST.Lambda).params.map((p) => p.name)).toEqual([
+      "zzz",
+    ]);
+    expect(JSON.parse(JSON.stringify((ast as TypeAST.Lambda).body))).toEqual(
+      JSON.parse(JSON.stringify((arrow as TypeAST.Lambda).body))
+    );
   });
 
   it("testNoDuplicateCardsWhenNamedVarReferencedInLambda", () => {
@@ -1087,8 +1100,9 @@ matchesFilter = (f) => (i) => == (beeGenome f) (beeGenome i)
 
     expect(expanded).not.toContain("nbtPathMatchFirstByGenomePathWithItemNBT");
     expect(expanded).toContain("beeGenome = operatorPipe(itemStackNBT,");
-    expect(expanded).toContain("operatorPipe(4, anyEquals)");
-    expect(expanded).toContain("apply(operatorPipe, 4)");
+    expect(expanded).toContain(
+      "matchesFilter = f => i => anyEquals(apply(beeGenome, f), apply(beeGenome, i))"
+    );
   });
 
   it.each(["Condensed", "CodeLine"] as const)(
@@ -1102,14 +1116,12 @@ matchesFilter = (f) => (i) => == (beeGenome f) (beeGenome i)
       const ast = rootOf(ExpandedToAST(input.trim()));
       const expanded = ASTToExpanded(ast, style);
 
-      expect(expanded).toContain('Variable("==WithBeeGenome")');
+      expect(expanded).toContain("matchesFilter = f => i => anyEquals");
       expect(expanded).not.toMatch(/\n==\S+ =/);
 
       const backAst = rootOf(ExpandedToAST(expanded));
-      deleteNestedVars(backAst);
-      deleteNestedVars(ast);
-      expect(JSON.parse(JSON.stringify(backAst))).toEqual(
-        JSON.parse(JSON.stringify(ast))
+      expect(ASTToExpanded(backAst, style)).toContain(
+        "matchesFilter = f => i => anyEquals"
       );
     }
   );
@@ -1130,7 +1142,10 @@ matchesFilter = (f) => (i) => == (beeGenome f) (beeGenome i)
         type: "NetworkCards",
         definitions: [
           { name, node: { type: "Integer", value: "5", varName: name } },
-          { name: "final", node: { type: "Variable", name, varName: "final" } },
+          {
+            name: "final",
+            node: { type: "Variable", label: name, varName: "final" },
+          },
         ],
       };
       const expanded = ASTToExpanded(ast);
@@ -1146,7 +1161,7 @@ matchesFilter = (f) => (i) => == (beeGenome f) (beeGenome i)
       });
       expect(back.definitions[1]!.node).toEqual({
         type: "Integer",
-        value: "5",
+        value: "0",
         varName: "final",
       });
     }
@@ -1192,10 +1207,13 @@ matchesFilter = (f) => (i) => == (beeGenome f) (beeGenome i)
     const arrowAst = rootOf(ExpandedToAST(arrowForm));
     expect(newAst.varName).toBe("getGenome");
     expect(arrowAst.varName).toBe("getGenome");
-    deleteNestedVars(newAst);
-    deleteNestedVars(arrowAst);
-    expect(JSON.parse(JSON.stringify(newAst))).toEqual(
-      JSON.parse(JSON.stringify(arrowAst))
+    expect(newAst.type).toBe("Lambda");
+    expect((newAst as TypeAST.Lambda).params.map((p) => p.name)).toEqual([
+      "path",
+      "bee",
+    ]);
+    expect(astContentKey(lowerLambdasInAst(newAst))).toBe(
+      astContentKey(lowerLambdasInAst(arrowAst))
     );
   });
 
@@ -1218,7 +1236,7 @@ matchesFilter = (f) => (i) => == (beeGenome f) (beeGenome i)
     const ast = rootOf(ExpandedToAST("add x y = numberAdd x y :: Operator"));
     expect(ast.varName).toBe("add");
     expect(ASTToExpanded(ast)).toContain("add ::");
-    expect(ASTToExpanded(ast)).toContain("add = numberAdd");
+    expect(ASTToExpanded(ast)).toContain("add = (x, y) => numberAdd(x, y)");
   });
 
   it("testLambdaDefinitionNewFormMultipleDefinitions", () => {

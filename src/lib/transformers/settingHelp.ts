@@ -69,8 +69,9 @@ export const SETTING_HELP: Record<SettingHelpKey, SettingHelp> = {
   },
   lambdaParamSugar: {
     description:
-      "Switches lambda definitions from the canonical x => ... form to the inc x = ... param sugar.",
-    appliesTo: "Only applies to Expanded output.",
+      "Writes a partially applied operator as the inc x = ... param sugar instead of the point-free form.",
+    appliesTo:
+      "Only applies to Expanded output, and only to the point-free operator chain. A lambda that was written as a lambda keeps its arrow form even when this is on.",
   },
   duplicateNames: {
     description:
