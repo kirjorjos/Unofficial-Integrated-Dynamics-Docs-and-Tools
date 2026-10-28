@@ -329,6 +329,17 @@ describe("TestCondensedTransformer", () => {
     expect(() => CondensedToAST(midOp)).toThrow();
   });
 
+  it("testCallArgumentsRequireCommas", () => {
+    expect(() => CondensedToAST("x => nbtKeys (itemNBT x)")).toThrow(
+      "Expected ',' between arguments"
+    );
+    expect(CondensedToAST("x => nbtKeys(itemNBT(x))")).toEqual({
+      type: "Pipe",
+      op1: { type: "Operator", opName: "OBJECT_ITEMSTACK_NBT" },
+      op2: { type: "Operator", opName: "NBT_COMPOUND_KEYS" },
+    });
+  });
+
   it("testDirectVariableCallCondensed", () => {
     const code = "x => x(1)";
     expect(() => CondensedToAST(code)).toThrow();

@@ -1205,6 +1205,15 @@ matchesFilter = (f) => (i) => == (beeGenome f) (beeGenome i)
     expect(ast).toEqual(rootOf(ExpandedToAST("inc = x => numberAdd x 1")));
   });
 
+  it("testLambdaDefinitionNewFormAcceptsCodeLineBody", () => {
+    const newForm = "fun x = nbtKeys (itemNBT x)";
+    const arrowForm = "fun = x => nbtKeys (itemNBT x)";
+
+    const newAst = rootOf(ExpandedToAST(newForm));
+    expect(newAst.varName).toBe("fun");
+    expect(newAst).toEqual(rootOf(ExpandedToAST(arrowForm)));
+  });
+
   it("testLambdaDefinitionNewFormWithTypedRhs", () => {
     const ast = rootOf(ExpandedToAST("add x y = numberAdd x y :: Operator"));
     expect(ast.varName).toBe("add");

@@ -220,6 +220,11 @@ describe("TestCodeLineTransformer", () => {
     expect(ASTToCodeLine(ast)).toBe("numberAdd 1");
   });
 
+  it("testLambdaNestedCallArgument", () => {
+    const spaced = CodeLineToAST("x => nbtKeys (itemNBT x)");
+    expect(spaced).toEqual(CodeLineToAST("x => nbtKeys(itemNBT(x))"));
+  });
+
   it("testLambdaRule1", () => {
     // x => constantInX  =>  K constantInX
     const code = "x => 5";
