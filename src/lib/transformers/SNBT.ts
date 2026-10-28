@@ -350,7 +350,7 @@ const writeFloatingPoint = (value: Double): string => {
   return /[.eE]/.test(text) ? text : `${text}.0`;
 };
 
-const writeKey = (key: string): string => {
+export const writeKey = (key: string): string => {
   if (key !== "" && [...key].every(isAllowedInUnquotedString)) return key;
   return writeQuoted(key);
 };

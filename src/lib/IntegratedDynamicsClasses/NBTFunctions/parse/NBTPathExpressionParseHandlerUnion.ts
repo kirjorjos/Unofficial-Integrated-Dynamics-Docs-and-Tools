@@ -15,9 +15,18 @@ import {
 } from "lib/IntegratedDynamicsClasses/NBTFunctions/parse/INbtPathExpressionParseHandler";
 import { NbtPathExpressionExecutionContext } from "lib/IntegratedDynamicsClasses/NBTFunctions/parse/NBTPathExecutionContext";
 import { NbtPathNavigationAdapter } from "lib/IntegratedDynamicsClasses/NBTFunctions/navigate/NbtPathNavigationAdapter";
+import { NullTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/NullTag";
 import { iString } from "lib/IntegratedDynamicsClasses/typeWrappers/iString";
 import { Integer } from "lib/JavaNumberClasses/Integer";
 import { ListTag } from "lib/IntegratedDynamicsClasses/NBTFunctions/MinecraftClasses/ListTag";
+
+const parseJavaInt = (text: string): number | null => {
+  if (!/^[-+]?[0-9]+$/.test(text)) return null;
+  const value = Number(text);
+  if (!Number.isInteger(value)) return null;
+  if (value < -2147483648 || value > 2147483647) return null;
+  return value;
+};
 
 /**
  * A handler that handles union expressions in the form of "[10,12]" or "[10,]" or "[,12]",
@@ -41,12 +50,13 @@ export class NbtPathExpressionParseHandlerUnion
     let expressionLength = 1;
     for (const match of contents) {
       expressionLength += 1 + match.length;
-      try {
-        childIndexes.push(parseInt(match));
+      const parsedIndex = parseJavaInt(match);
+      if (parsedIndex !== null) {
+        childIndexes.push(parsedIndex);
         if (!(childNames.length == 0)) {
           return HandleResult.INVALID;
         }
-      } catch (e) {
+      } else {
         childNames.push(new iString(match));
         if (!(childIndexes.length == 0)) {
           return HandleResult.INVALID;
@@ -95,8 +105,7 @@ class Expression extends INbtPathExpression {
             return this.getChildIndexes()
               .map((i) => tag.get(new Integer(i)))
               .filter(
-                (subTag: Tag<IntegratedValue>) =>
-                  subTag.getType() == Tag.TAG_COMPOUND
+                (subTag: Tag<IntegratedValue>) => !(subTag instanceof NullTag)
               )
               .map(
                 (subTag: Tag<IntegratedValue>) =>
@@ -112,7 +121,7 @@ class Expression extends INbtPathExpression {
             let tag = nbt as CompoundTag;
             return this.getChildNames()
               .map((e) => tag.get(e))
-              .filter((e) => e != null)
+              .filter((e) => !(e instanceof NullTag))
               .map(
                 (subTag) =>
                   new NbtPathExpressionExecutionContext(

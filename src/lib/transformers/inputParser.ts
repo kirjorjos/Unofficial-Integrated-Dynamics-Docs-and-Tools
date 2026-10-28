@@ -193,7 +193,7 @@ const identifyPayload = (
   return {};
 };
 
-const parseEnvelope = (rawBlob: string): ParsedEnvelope | undefined => {
+export const parseEnvelope = (rawBlob: string): ParsedEnvelope | undefined => {
   const { blob, marker } = stripOverlongMarker(rawBlob);
 
   const setblock = SETBLOCK_REGEX.exec(blob);

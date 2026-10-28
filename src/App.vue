@@ -8,6 +8,7 @@ import IntegratedMekanismPage from "./pages/IntegratedMekanismPage.vue";
 import IntegratedScriptingPage from "./pages/IntegratedScriptingPage.vue";
 import IntegratedTerminalsPage from "./pages/IntegratedTerminalsPage.vue";
 import IntegratedTunnelsPage from "./pages/IntegratedTunnelsPage.vue";
+import NbtToolsPage from "./pages/NbtToolsPage.vue";
 import TransformersPage from "./pages/TransformersPage.vue";
 import DataTypesPage from "./pages/starting-out/DataTypesPage.vue";
 import DelayerPage from "./pages/starting-out/DelayerPage.vue";
@@ -332,6 +333,12 @@ const sections: NavItem[] = [
     id: "transformers",
     label: "Transformers",
     component: TransformersPage,
+  },
+  {
+    kind: "page",
+    id: "nbt-tools",
+    label: "NBT tools",
+    component: NbtToolsPage,
   },
   {
     kind: "folder",
