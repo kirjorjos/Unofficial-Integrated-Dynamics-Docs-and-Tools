@@ -5,6 +5,8 @@ import {
   setOperatorSourceName,
 } from "lib/transformers/helpers";
 import { BaseOperator } from "lib/IntegratedDynamicsClasses/operators/BaseOperator";
+import { assertValidParamReferences } from "lib/transformers/lambdaLowering";
+import { assertVariableShape } from "lib/transformers/variableRef";
 import { operatorRegistry } from "lib/IntegratedDynamicsClasses/registries/operatorRegistry";
 import {
   getReaderClassByNumericID,
@@ -30,12 +32,30 @@ const enum NodeKind {
   Reference = 0b11,
 }
 
-/**
- * Literal kind IDs, ordered chronologically by when each type/reader was
- * added to the IntegratedDynamics mod (sourced from git history).
- * Abstract type groupings and our constructs are appended at the end.
- * Extended to 5 bits (32 slots) to accommodate all entries.
- */
+const COMPRESSED_MAGIC = 0x1d2a;
+const COMPRESSED_VERSION = 1;
+
+export const OLD_COMPRESSED_CODE_MESSAGE =
+  "This compressed code was made by an older version and cannot be read.";
+
+const writeCompressedHeader = (writer: BitWriter) => {
+  writer.writeBits(COMPRESSED_MAGIC, 16);
+  writer.writeBits(COMPRESSED_VERSION, 4);
+};
+
+const readCompressedHeader = (reader: BitReader) => {
+  const magic = reader.readNumber(16);
+  if (magic !== COMPRESSED_MAGIC) {
+    throw new Error(OLD_COMPRESSED_CODE_MESSAGE);
+  }
+  const version = reader.readNumber(4);
+  if (version !== COMPRESSED_VERSION) {
+    throw new Error(
+      `Unsupported compressed code version ${version}; expected ${COMPRESSED_VERSION}`
+    );
+  }
+};
+
 const enum LiteralKind {
   Boolean = 0,
   RedstoneReader = 1,
@@ -69,6 +89,8 @@ const enum LiteralKind {
   Curry = 29,
   NetworkCards = 30,
   Wrapper = 31,
+  Lambda = 32,
+  Param = 33,
 }
 
 const enum WrapperKind {
@@ -736,6 +758,7 @@ export const compressWithInputState = (
   inputState: InputStateSection
 ): string => {
   const writer = new BitWriter();
+  writeCompressedHeader(writer);
   writeNode(writer, ast, new Map());
   writeInputStateSection(writer, outputFormat, inputState);
   return writer.toBase64URL();
@@ -746,6 +769,7 @@ export const decodeInputStateFromCompressed = (
   outputFormat: InputFormatKey | "visual"
 ): InputStateSection | null => {
   const reader = new BitReader(compressed);
+  readCompressedHeader(reader);
   readNode(reader, []);
   if (reader.isExhausted()) return null;
 
@@ -1195,7 +1219,7 @@ const isOperatorNode = (node: ASTNode): node is TypeAST.Operator => {
 };
 
 const writeLiteralKind = (writer: BitWriter, kind: LiteralKind) => {
-  writer.writeBits(kind, 5);
+  writer.writeBits(kind, 6);
 };
 
 const writeOptionalId = (writer: BitWriter, id: string | undefined): void => {
@@ -1565,7 +1589,37 @@ const writeNode = (
     case "Variable":
       writer.writeBits(NodeKind.Literal, 2);
       writeLiteralKind(writer, LiteralKind.Variable);
-      writeString(writer, node.name);
+      writer.writeBit(node.id !== undefined);
+      if (node.id !== undefined) writeString(writer, node.id);
+      writer.writeBit(node.label !== undefined);
+      if (node.label !== undefined) writeString(writer, node.label);
+      writer.writeBit(node.valueType !== undefined);
+      if (node.valueType !== undefined) writeString(writer, node.valueType);
+      writeNodeMetadata(writer, node);
+      return;
+
+    case "Param":
+      writer.writeBits(NodeKind.Literal, 2);
+      writeLiteralKind(writer, LiteralKind.Param);
+      writeVarUint(writer, node.index);
+      writeVarUint(writer, node.binderDepth ?? 0);
+      writer.writeBit(node.name !== undefined);
+      if (node.name !== undefined) writeString(writer, node.name);
+      writeNodeMetadata(writer, node);
+      return;
+
+    case "Lambda":
+      writer.writeBits(NodeKind.Literal, 2);
+      writeLiteralKind(writer, LiteralKind.Lambda);
+      writeVarUint(writer, node.params.length);
+      for (const param of node.params) {
+        writeString(writer, param.name);
+        writer.writeBit(param.type !== undefined);
+        if (param.type !== undefined) writeString(writer, param.type);
+      }
+      writeNode(writer, node.body, seen);
+      writer.writeBit(node.text !== undefined);
+      if (node.text !== undefined) writeString(writer, node.text);
       writeNodeMetadata(writer, node);
       return;
 
@@ -1663,7 +1717,7 @@ const readNode = (
     case NodeKind.Literal: {
       const slot = decoded.length;
       decoded.push(undefined);
-      const literalKind = reader.readNumber(5);
+      const literalKind = reader.readNumber(6);
       let node: ASTNode;
 
       switch (literalKind) {
@@ -1762,9 +1816,6 @@ const readNode = (
           node = { type: "List", value };
           break;
         }
-        case LiteralKind.Variable:
-          node = { type: "Variable", name: readString(reader) };
-          break;
         case LiteralKind.NetworkCards: {
           const defLength = readVarUint(reader);
           const definitions: { name: string; node: ASTNode }[] = [];
@@ -1851,6 +1902,48 @@ const readNode = (
           }
           break;
         }
+        case LiteralKind.Param: {
+          const index = readVarUint(reader);
+          const binderDepth = readVarUint(reader);
+          const name = reader.readBit() ? readString(reader) : undefined;
+          node = { type: "Param", index };
+          if (binderDepth > 0) node.binderDepth = binderDepth;
+          if (name !== undefined) node.name = name;
+          break;
+        }
+        case LiteralKind.Lambda: {
+          const paramCount = readVarUint(reader);
+          const params: TypeAST.LambdaParam[] = [];
+          for (let i = 0; i < paramCount; i++) {
+            const name = readString(reader);
+            const hasType = reader.readBit();
+            params.push(
+              hasType ? { name, type: readString(reader) } : { name }
+            );
+          }
+          const body = readNode(reader, decoded);
+          const text = reader.readBit() ? readString(reader) : undefined;
+          node = { type: "Lambda", params, body };
+          if (text !== undefined) node.text = text;
+          break;
+        }
+        case LiteralKind.Variable: {
+          const id = reader.readBit() ? readString(reader) : undefined;
+          const label = reader.readBit() ? readString(reader) : undefined;
+          const valueType = reader.readBit() ? readString(reader) : undefined;
+          node = { type: "Variable" };
+          if (id !== undefined) node.id = id;
+          if (label !== undefined) node.label = label;
+          if (valueType !== undefined) node.valueType = valueType;
+          try {
+            assertVariableShape(node);
+          } catch (error) {
+            throw new Error(
+              error instanceof Error ? error.message : String(error)
+            );
+          }
+          break;
+        }
         case LiteralKind.Curry: {
           const base = readNode(reader, decoded);
           if (!isOperatorNode(base)) {
@@ -1930,12 +2023,15 @@ const readNode = (
 
 export const ASTToCompressed = (ast: TypeAST.AST): string => {
   const writer = new BitWriter();
+  writeCompressedHeader(writer);
   writeNode(writer, ast, new Map());
   return writer.toBase64URL();
 };
 
 export const CompressedToAST = (compressed: string): TypeAST.AST => {
   const reader = new BitReader(compressed);
+  readCompressedHeader(reader);
   const ast = readNode(reader, []);
+  assertValidParamReferences(ast);
   return ast;
 };

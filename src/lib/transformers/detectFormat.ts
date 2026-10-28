@@ -24,6 +24,10 @@ const lambdaDefinitionRegex = new RegExp(
   `^[^${disallowedChars}=>]+(?:\\s+[^${disallowedChars}=>]+)+\\s*=(?!>)`
 );
 
+const lambdaValueDefinitionRegex = /^[^\s=]+\s*=(?!>)[^\n]*=>/;
+
+const typedLambdaDefinitionRegex = /^[^\s=]+\s*\([^)]*\)\s*=(?!>)/;
+
 const condensedCallRegex = new RegExp(`^[^${disallowedChars}]+\\(`);
 
 const wrapperCallRegex = /^(?:materialize|dynamic|static)\s*\(/i;
@@ -246,6 +250,8 @@ export const detectInputFormat = (value: string): TransformerFormatKey => {
 
   if (nicknamePrefixRegex.test(code)) return "expanded";
   if (lambdaDefinitionRegex.test(code)) return "expanded";
+  if (typedLambdaDefinitionRegex.test(code)) return "expanded";
+  if (lambdaValueDefinitionRegex.test(code)) return "expanded";
   if (variableWrapperDefinitionRegex.test(code)) return "expanded";
   if (typedDefinitionRegex.test(code)) return "expanded";
   if (hasTopLevelDoubleColon(code)) return "expanded";

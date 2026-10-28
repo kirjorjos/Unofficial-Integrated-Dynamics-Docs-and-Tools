@@ -12,7 +12,7 @@ import {
 import { getDisplayPanelColor } from "pages-lib/visualTransformer";
 import { beforeEachVisualTransformer, steps } from "./fixtures";
 
-const CRAFTING_GRID_LINES = ["§5§oClear or copy in a crafting", "§5§ogrid"];
+const CRAFTING_GRID_LINES = ["§5§oClear or copy in a crafting grid"];
 
 const materialize = (source: string): TypeAST.Materialize =>
   CondensedToAST(source) as TypeAST.Materialize;

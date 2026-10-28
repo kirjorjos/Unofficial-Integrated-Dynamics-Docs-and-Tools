@@ -34,6 +34,7 @@ import {
   getCurryChunks,
 } from "lib/transformers/NetworkCards";
 import { ASTtoOperator } from "lib/transformers/Operator";
+import { lowerLambdasInAst } from "lib/transformers/lambdaLowering";
 import { KEPT_PART_FIELDS } from "lib/transformers/partFields";
 import { getPartItemId } from "lib/transformers/partItemIds";
 import { StructuralParseError } from "lib/transformers/parseErrors";
@@ -420,14 +421,21 @@ class CardWriter {
       return this.write((node as { value: TypeAST.AST }).value);
     }
 
-    if (node.type === "Variable" && node.name.startsWith("@")) {
-      const original = node.name.slice(1);
+    if (node.type === "Variable") {
+      const original = node.label ?? node.id;
+      if (original === undefined) {
+        throw new StructuralParseError(
+          "A Variable node requires an id or a label"
+        );
+      }
       const id = this.refs.get(original);
       if (id !== undefined) return id;
-      this.warnings.push(
-        `The card refers to variable ${original}, which is not in the same paste; its id was left as it was`
+      if (node.label === undefined && /^\d+$/.test(original)) {
+        return Number(original);
+      }
+      throw new StructuralParseError(
+        `The card refers to @${original}, which is not part of this input`
       );
-      return Number(original);
     }
 
     const key = astContentKey(node);
@@ -888,9 +896,10 @@ const authoredPartIds = (node: TypeAST.AST): Set<number> => {
 };
 
 export const astToGiveCommands = (
-  ast: TypeAST.AST,
+  inputAst: TypeAST.AST,
   options: AstGiveOptions = {}
 ): AstGiveOutput => {
+  const ast = lowerLambdasInAst(inputAst);
   const layout = options.layout ?? "minimize";
   const shape = options.outputShape ?? "cards";
   const target = options.target ?? "@p";

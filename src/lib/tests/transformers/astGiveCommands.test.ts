@@ -220,7 +220,7 @@ describe("TestAstToGiveCommandsCardGraph", () => {
 
     const cardValued = {
       type: "Curry",
-      base: { type: "Variable", name: "@0" },
+      base: { type: "Variable", id: "0" },
       args: values,
     } as unknown as TypeAST.Curried;
     expect(getCurryChunks(cardValued).map((c) => c.args.length)).toEqual([

@@ -69,12 +69,17 @@ export const SETTING_HELP: Record<SettingHelpKey, SettingHelp> = {
   },
   lambdaParamSugar: {
     description:
-      "Switches lambda definitions from the canonical x => ... form to the inc x = ... param sugar.",
-    appliesTo: "Only applies to Expanded output.",
+      "Writes a partially applied operator as the inc x = ... param sugar instead of the point-free form.",
+    appliesTo:
+      "Only applies to Expanded output, and only to the point-free operator chain. A lambda that was written as a lambda keeps its arrow form even when this is on.",
   },
   duplicateNames: {
     description:
       "How a name redefined with a different definition is handled: a hard error, or the first definition is kept and the later ones are dropped with a warning.",
+  },
+  operatorShadow: {
+    description:
+      "What a variable name that matches a built-in operator name does: a hard error, or a warning after which the output uses another name for that operator. The last usable name of an operator can never be shadowed.",
   },
   hardening: {
     description:

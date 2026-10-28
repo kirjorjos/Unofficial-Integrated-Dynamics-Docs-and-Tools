@@ -98,10 +98,11 @@ describe("ExpandedSignatureConformance", () => {
     const sigItems = result.overlay.items.filter(
       (it) => it.kind === 5 || it.kind === 6 || it.kind === 7
     ).length;
-    expect((kinds[7] ?? 0) + (kinds[5] ?? 0)).toBeGreaterThan(
-      (kinds[6] ?? 0) + (kinds[2] ?? 0)
-    );
     expect(sigItems).toBeGreaterThan(0);
+    const sigLineCount = RAW.split("\n").length / 2;
+    expect(
+      (kinds[5] ?? 0) + (kinds[6] ?? 0) + (kinds[7] ?? 0) + (kinds[2] ?? 0)
+    ).toBe(sigLineCount);
 
     const code = compressWithInputState(ast, "expanded", {
       format: "expanded",
@@ -180,10 +181,10 @@ describe("ExpandedSignatureConformance", () => {
     const ast = ExpandedToAST(A_FORM);
     const expanded = ASTToExpanded(ast);
     expect(expanded).toContain(
-      "index0f :: Operator<List<Any> → Operator<Any → Any>>"
+      "index0f :: Operator<List<Any> → Operator<Any → Integer>>"
     );
-    expect(expanded).toContain("index0fTool :: Operator<Any → Any>");
-    expect(expanded).toContain("isNotFull :: Operator<Any → Boolean>");
+    expect(expanded).toContain("index0fTool :: Operator<Item → Integer>");
+    expect(expanded).toContain("isNotFull :: Operator<Item → Boolean>");
   });
 
   it("splitsSigLineCommentsIntoThePerNameSuffixBlock", () => {
@@ -216,7 +217,7 @@ describe("ExpandedSignatureConformance", () => {
     const impItem = result.overlay.items.find(
       (it) => (it as { name?: string }).name === "importPredicate"
     );
-    expect(impItem?.kind).toBe(7);
+    expect(impItem?.kind).toBe(6);
 
     const code = compressWithInputState(ast, "expanded", {
       format: "expanded",
@@ -239,7 +240,7 @@ describe("ExpandedSignatureConformance", () => {
     expect(applyExpandedOverlay(decodeCanon, decoded.overlay)).toBe(RAW);
   });
 
-  it("foldsAResolvedFaceSigWithCommentAsKind6PlusSuffix", () => {
+  it("foldsAResolvedFaceSigWithCommentWhenItMatchesInference", () => {
     const aForm = RAW.replace(
       "importPredicate :: Any -> Boolean -- this is a comment",
       "importPredicate :: Item -> Boolean -- this is a comment"
@@ -259,7 +260,7 @@ describe("ExpandedSignatureConformance", () => {
       "Condensed",
       sigOpts
     );
-    expect(canon).toContain("importPredicate :: Any -> Boolean");
+    expect(canon).toContain("importPredicate :: Item -> Boolean");
     const result = computeExpandedOverlay(aForm, canon, sigOpts);
     expect(result.mode).toBe(0);
     if (result.mode !== 0) return;
@@ -269,7 +270,7 @@ describe("ExpandedSignatureConformance", () => {
     const impItem = result.overlay.items.find(
       (it) => (it as { name?: string }).name === "importPredicate"
     );
-    expect(impItem?.kind).toBe(6);
+    expect(impItem?.kind).toBe(7);
     expect(applyExpandedOverlay(canon, result.overlay)).toBe(aForm);
   });
 

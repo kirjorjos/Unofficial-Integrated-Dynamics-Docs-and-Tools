@@ -5,8 +5,38 @@ import { getReaderClassByTypeName } from "lib/IntegratedDynamicsClasses/readers/
 import { operatorRegistry } from "lib/IntegratedDynamicsClasses/registries/operatorRegistry";
 import { iError } from "lib/IntegratedDynamicsClasses/typeWrappers/iError";
 import { ASTtoOperator, OperatortoAST } from "lib/transformers/Operator";
+import { visitAst } from "lib/transformers/astTraversal";
+import { isConvenienceExpression } from "lib/transformers/convenienceOperators";
 import { StructuralParseError } from "lib/transformers/parseErrors";
-import { getSourceCards } from "lib/transformers/sourceNodes";
+
+const isWrapperAstNode = (
+  node: TypeAST.AST
+): node is
+  | TypeAST.Materialize
+  | TypeAST.Dynamic
+  | TypeAST.Static
+  | TypeAST.Display
+  | TypeAST.Card =>
+  node.type === "Materialize" ||
+  node.type === "Dynamic" ||
+  node.type === "Static" ||
+  node.type === "Display" ||
+  node.type === "Card";
+
+export const unwrapParamWrapper = <
+  T extends
+    | TypeAST.Materialize
+    | TypeAST.Dynamic
+    | TypeAST.Static
+    | TypeAST.Display
+    | TypeAST.Card,
+>(
+  node: T
+): TypeAST.AST => {
+  let innermost: TypeAST.AST = node;
+  while (isWrapperAstNode(innermost)) innermost = innermost.value;
+  return innermost.type === "Param" ? innermost : node;
+};
 
 const INT_MIN = BigInt("-2147483648");
 const INT_MAX = BigInt("2147483647");
@@ -123,7 +153,11 @@ export const flattenAnonymousBaseOperatorApplication = (
   const args = [...node.args];
   let currentBase = node.base;
 
-  while (currentBase.type === "Curry" && !currentBase.varName) {
+  while (
+    currentBase.type === "Curry" &&
+    !currentBase.varName &&
+    !isConvenienceExpression(currentBase)
+  ) {
     args.unshift(...currentBase.args);
     currentBase = currentBase.base;
   }
@@ -209,6 +243,8 @@ const isStaticallyEvaluable = (node: TypeAST.AST): boolean => {
       return isStaticallyEvaluable(node.value);
     case "Dynamic":
     case "Variable":
+    case "Lambda":
+    case "Param":
     case "NetworkCards":
     case "Pipe":
     case "Pipe2":
@@ -294,43 +330,11 @@ export const isVariableValueByIdReader = (ast: TypeAST.AST): boolean => {
 export const astContainsVariableValueByIdReader = (
   ast: TypeAST.AST
 ): boolean => {
-  if (isVariableValueByIdReader(ast)) return true;
-  switch (ast.type) {
-    case "Curry":
-      return (
-        astContainsVariableValueByIdReader(ast.base) ||
-        ast.args.some(astContainsVariableValueByIdReader)
-      );
-    case "List":
-      return ast.value.some(astContainsVariableValueByIdReader);
-    case "Pipe":
-      return (
-        astContainsVariableValueByIdReader(ast.op1) ||
-        astContainsVariableValueByIdReader(ast.op2)
-      );
-    case "Pipe2":
-      return (
-        astContainsVariableValueByIdReader(ast.op1) ||
-        astContainsVariableValueByIdReader(ast.op2) ||
-        astContainsVariableValueByIdReader(ast.op3)
-      );
-    case "Flip":
-      return astContainsVariableValueByIdReader(ast.arg);
-    case "Materialize":
-    case "Dynamic":
-    case "Static":
-    case "Display":
-    case "Card":
-      return astContainsVariableValueByIdReader(ast.value);
-    case "VarStore":
-    case "DisplayPanel":
-    case "Writer":
-    case "Exporter":
-    case "Importer":
-      return getSourceCards(ast).some(astContainsVariableValueByIdReader);
-    default:
-      return false;
-  }
+  let found = false;
+  visitAst(ast, (node) => {
+    if (!found && isVariableValueByIdReader(node)) found = true;
+  });
+  return found;
 };
 
 export const buildVariableValueByIdOperator = (
@@ -488,6 +492,10 @@ export const getOperatorSourceName = (
   node: TypeAST.BaseOperator
 ): string | undefined => {
   return operatorSourceNameMap.get(node);
+};
+
+export const clearOperatorSourceName = (node: TypeAST.BaseOperator): void => {
+  operatorSourceNameMap.delete(node);
 };
 
 export const getOpName = (opName: TypeOperatorKey): string => {
@@ -649,6 +657,16 @@ export const getArity = (node: TypeAST.Operator): number => {
   return 0;
 };
 
+const APPLY_FAMILY = new Set<TypeOperatorKey>([
+  "OPERATOR_APPLY" as TypeOperatorKey,
+  "OPERATOR_APPLY_2" as TypeOperatorKey,
+  "OPERATOR_APPLY_3" as TypeOperatorKey,
+  "OPERATOR_APPLY_N" as TypeOperatorKey,
+]);
+
+const isApplyFamilyOperator = (opName: TypeOperatorKey): boolean =>
+  APPLY_FAMILY.has(opName);
+
 export const expectsOperatorArgument = (
   node: TypeAST.AST,
   index: number
@@ -662,6 +680,15 @@ export const expectsOperatorArgument = (
   }
 
   if (current.type === "Operator") {
+    const operatorArity = getArity(current);
+    if (
+      isApplyFamilyOperator(current.opName) &&
+      operatorArity !== 0 &&
+      effectiveIndex >= operatorArity
+    ) {
+      return true;
+    }
+
     const opClass = operatorRegistry[current.opName];
     let op: BaseOperator<IntegratedValue, IntegratedValue> | undefined;
     if (opClass) {

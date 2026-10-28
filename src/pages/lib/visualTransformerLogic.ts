@@ -32,8 +32,10 @@ import {
   getNodeComment,
 } from "lib/transformers/helpers";
 import { abstractDynamicParts } from "lib/transformers/lambdaAbstraction";
+import { lowerLambdasInAst } from "lib/transformers/lambdaLowering";
 import tooltipInfo from "lib/generated/integratedDynamicsTooltipInfo.json";
 import { LOGIC_PROGRAMMER_RENDER_PATTERNS } from "pages-lib/logicProgrammerRenderPatterns";
+import { toInfoLines } from "./tooltipWidth";
 import {
   getValueTypeMeta,
   getValueTypeMetaForAst,
@@ -342,7 +344,25 @@ export const getCompactValueTextForAst = (ast: TypeAST.AST): string => {
       case "Variable":
         return {
           type: "Variable",
-          name: ast.name,
+          ...(ast.id !== undefined ? { id: ast.id } : {}),
+          ...(ast.label !== undefined ? { label: ast.label } : {}),
+          ...(ast.valueType !== undefined ? { valueType: ast.valueType } : {}),
+        };
+      case "Param":
+        return {
+          type: "Param",
+          index: ast.index,
+          ...(ast.binderDepth !== undefined
+            ? { binderDepth: ast.binderDepth }
+            : {}),
+          ...(ast.name !== undefined ? { name: ast.name } : {}),
+        };
+      case "Lambda":
+        return {
+          type: "Lambda",
+          params: ast.params.map((param) => ({ ...param })),
+          body: cloneAstWithoutVarNames(ast.body),
+          ...(ast.text !== undefined ? { text: ast.text } : {}),
         };
       case "Operator":
         return {
@@ -852,33 +872,10 @@ const formatTemplate = (template: string, ...values: string[]): string => {
   return template.replace(/%s/g, () => values[currentIndex++] ?? "");
 };
 
-const splitTooltipInfoLines = (value: string, maxLength = 25): string[] => {
-  return value.split(/\n/g).flatMap((partial) => {
-    const lines: string[] = [];
-    let buffer = "";
-
-    for (const word of partial.split(" ")) {
-      if (!word) continue;
-      buffer = buffer ? `${buffer} ${word}` : word;
-      if (buffer.length >= maxLength) {
-        lines.push(`§5§o${buffer}`);
-        buffer = "";
-      }
-    }
-
-    if (buffer) {
-      lines.push(`§5§o${buffer}`);
-    }
-
-    return lines;
-  });
-};
-
 const getTooltipInfoLines = (infoKey?: string): string[] => {
   if (!infoKey) return [];
 
-  const line = SHIFT_HELD_TOOLTIP_INFO[infoKey];
-  return line ? splitTooltipInfoLines(line) : [];
+  return toInfoLines(SHIFT_HELD_TOOLTIP_INFO[infoKey] ?? "");
 };
 
 export const getBaseTooltipLines = (variableId: number): string[] => {
@@ -1543,7 +1540,15 @@ const astContentKey = (ast: TypeAST.AST): string => {
     case "List":
       return `List[${ast.value.map(astContentKey).join(",")}]`;
     case "Variable":
-      return `Variable:${ast.name}`;
+      return `Variable:${ast.id ?? ""}:${ast.label ?? ""}:${ast.valueType ?? ""}`;
+    case "Param":
+      return `Param:${ast.index}:${ast.binderDepth ?? 0}:${ast.name ?? ""}`;
+    case "Lambda":
+      return `Lambda(${ast.params
+        .map((param) => `${param.name}:${param.type ?? "Any"}`)
+        .join(",")})=>${astContentKey(ast.body)}|text:${
+        ast.text === undefined ? "<none>" : JSON.stringify(ast.text)
+      }`;
     case "String":
       return `String:${ast.value}`;
     case "Boolean":
@@ -1573,12 +1578,13 @@ const astContentKey = (ast: TypeAST.AST): string => {
 };
 
 export const generateVisualSteps = (
-  ast: TypeAST.AST,
+  inputAst: TypeAST.AST,
   startVariableId: number,
   operatorPreviewMode?: "value" | "pattern",
   options?: VisualStepOptions
 ): VisualStep[] => {
   resetExpandedVarCounter();
+  const ast = lowerLambdasInAst(inputAst);
 
   const isPatternMode = operatorPreviewMode === "pattern";
   const labellerEnabled = options?.labeller === true;
@@ -1648,7 +1654,9 @@ export const generateVisualSteps = (
       case "NBT":
         return JSON.stringify(ast.value);
       case "Variable":
-        return ast.name;
+        return ast.label !== undefined ? `@${ast.label}` : `@${ast.id}`;
+      case "Param":
+        return ast.name ?? `p${ast.index}`;
       default:
         return undefined;
     }

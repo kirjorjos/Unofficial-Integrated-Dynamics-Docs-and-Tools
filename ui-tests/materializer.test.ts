@@ -106,15 +106,14 @@ test.describe("materializerGui", () => {
     await expect(tooltip.locator(".mc-tooltip-title")).toHaveText(/.+/);
 
     const lines = tooltip.locator(".mc-tooltip-line:not(.mc-tooltip-title)");
-    await expect(lines).toHaveCount(5);
+    await expect(lines).toHaveCount(4);
     await expect(lines.nth(0)).toHaveText("Type: Number");
     await expect(lines.nth(1)).toHaveText(
       "Value: Applied numberAdd [Integer; Integer]"
     );
     await expect(lines.nth(2)).toHaveText(/Variable ID: \d+/);
 
-    await expect(lines.nth(3)).toHaveText("Clear or copy in a crafting");
-    await expect(lines.nth(4)).toHaveText("grid");
+    await expect(lines.nth(3)).toHaveText("Clear or copy in a crafting grid");
 
     const resultIdText = await lines.nth(2).innerText();
 

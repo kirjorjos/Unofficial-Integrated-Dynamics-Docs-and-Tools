@@ -34,6 +34,40 @@ export class TypeMap {
     return baseID;
   }
 
+  private occursIn(typeID: number, signature: ParsedSignature): boolean {
+    const target = this.findBaseID(typeID);
+    let found = false;
+
+    const walk = (node: any): void => {
+      if (found || !node) return;
+      switch (node.type) {
+        case "Any":
+          if (
+            node.typeID === target ||
+            this.findBaseID(node.typeID) === target
+          ) {
+            found = true;
+          }
+          return;
+        case "Function":
+          walk(node.from);
+          walk(node.to);
+          return;
+        case "Operator":
+          walk(node.obscured);
+          return;
+        case "List":
+          walk(node.listType);
+          return;
+        default:
+          return;
+      }
+    };
+
+    walk(signature.getAst());
+    return found;
+  }
+
   /**
    * Sets a and b to be equal in the alias map
    * @param a The first node
@@ -105,10 +139,14 @@ export class TypeMap {
       }
       if (aResolved instanceof ParsedSignature) {
         // a has a concrete type — make b point to a (preserves a's alias)
-        this.aliases.set(bBaseID, aBaseID);
+        if (!this.occursIn(b.getTypeID(), aResolved)) {
+          this.aliases.set(bBaseID, aBaseID);
+        }
       } else if (bResolved instanceof ParsedSignature) {
         // b has a concrete type — make a point to b
-        this.aliases.set(aBaseID, bBaseID);
+        if (!this.occursIn(a.getTypeID(), bResolved)) {
+          this.aliases.set(aBaseID, bBaseID);
+        }
       } else {
         // Neither has a concrete type — normal behavior
         this.aliases.set(aBaseID, bBaseID);
@@ -135,7 +173,8 @@ export class TypeMap {
           oldRoot !== newRoot &&
           (oldRoot === "Named" || oldRoot === "UniquelyNamed") &&
           newRoot !== "Named" &&
-          newRoot !== "UniquelyNamed"
+          newRoot !== "UniquelyNamed" &&
+          !this.occursIn(b.getTypeID(), a)
         ) {
           this.aliases.set(this.findBaseID(b.getTypeID()), a);
         }
@@ -146,7 +185,11 @@ export class TypeMap {
       // inputs like Named → String) and should not propagate through type
       // variable resolution. Parent types should only appear as explicit
       // input/output constraints, not as resolved type variable values.
-      if (a.getRootType() !== "Named" && a.getRootType() !== "UniquelyNamed") {
+      if (
+        a.getRootType() !== "Named" &&
+        a.getRootType() !== "UniquelyNamed" &&
+        !this.occursIn(bBaseAlias, a)
+      ) {
         this.aliases.set(bBaseAlias, a);
       }
       return null;

@@ -10,6 +10,7 @@ import {
 } from "lib/transformers/Condensed";
 import { ExpandedToAST } from "lib/transformers/Expanded";
 import { getNodeComment } from "lib/transformers/helpers";
+import { lowerLambda } from "lib/transformers/lambdaLowering";
 
 describe("TestCondensedTransformer", () => {
   it("testTokenizePrimitives", () => {
@@ -181,15 +182,15 @@ describe("TestCondensedTransformer", () => {
   it("testVariablePseudoConstructor", () => {
     expect(CondensedToAST('Variable("my var")', undefined, 0, true)).toEqual({
       type: "Variable",
-      name: "@my var",
+      label: "my var",
     });
     expect(CondensedToAST('Variable("x")', undefined, 0, true)).toEqual({
       type: "Variable",
-      name: "@x",
+      label: "x",
     });
     expect(CondensedToAST('Variable("0")', undefined, 0, true)).toEqual({
       type: "Variable",
-      name: "@0",
+      id: "0",
     });
   });
 
@@ -226,11 +227,11 @@ describe("TestCondensedTransformer", () => {
   it("testAtVariablePseudoConstructorParsesToRef", () => {
     expect(CondensedToAST('@Variable("my var")', undefined, 0, true)).toEqual({
       type: "Variable",
-      name: "@my var",
+      label: "my var",
     });
     expect(CondensedToAST('@variable("x")', undefined, 0, true)).toEqual({
       type: "Variable",
-      name: "@x",
+      label: "x",
     });
     expect(() => CondensedToAST("@Variable(1)", undefined, 0, true)).toThrow(
       "Variable(...) expects exactly one string argument"
@@ -250,10 +251,10 @@ describe("TestCondensedTransformer", () => {
   });
 
   it("testVariablePseudoConstructorRoundTrip", () => {
-    expect(ASTToCondensed({ type: "Variable", name: "@my var" })).toBe(
+    expect(ASTToCondensed({ type: "Variable", label: "my var" })).toBe(
       'Variable("my var")'
     );
-    expect(ASTToCondensed({ type: "Variable", name: "@x" })).toBe("@x");
+    expect(ASTToCondensed({ type: "Variable", label: "x" })).toBe("@x");
     const ast = CondensedToAST('Variable("my var")', undefined, 0, true);
     const out = ASTToCondensed(ast as TypeAST.AST);
     expect(
@@ -268,13 +269,13 @@ describe("TestCondensedTransformer", () => {
       0,
       true
     );
-    expect(afterSpace).toEqual({ type: "Variable", name: "@my @var" });
+    expect(afterSpace).toEqual({ type: "Variable", label: "my @var" });
     expect(ASTToCondensed(afterSpace as TypeAST.AST)).toBe(
       'Variable("my @var")'
     );
 
     const atStart = CondensedToAST('Variable("@my var")', undefined, 0, true);
-    expect(atStart).toEqual({ type: "Variable", name: "@@my var" });
+    expect(atStart).toEqual({ type: "Variable", label: "@my var" });
     expect(ASTToCondensed(atStart as TypeAST.AST)).toBe('Variable("@my var")');
   });
 
@@ -327,6 +328,19 @@ describe("TestCondensedTransformer", () => {
     // Operator as value argument where not expected (incorrect arity of arguments)
     const midOp = "numberAdd(numberIncrement, 1)";
     expect(() => CondensedToAST(midOp)).toThrow();
+  });
+
+  it("testCallArgumentsRequireCommas", () => {
+    expect(() => CondensedToAST("x => nbtKeys (itemNBT x)")).toThrow(
+      "Expected ',' between arguments"
+    );
+    expect(
+      lowerLambda(CondensedToAST("x => nbtKeys(itemNBT(x))") as TypeAST.Lambda)
+    ).toEqual({
+      type: "Pipe",
+      op1: { type: "Operator", opName: "OBJECT_ITEMSTACK_NBT" },
+      op2: { type: "Operator", opName: "NBT_COMPOUND_KEYS" },
+    });
   });
 
   it("testDirectVariableCallCondensed", () => {
@@ -409,31 +423,41 @@ describe("TestCondensedTransformer", () => {
 
   it("testLambdaIdentity", () => {
     const ast = CondensedToAST("x => x");
-    expect(ast).toEqual({ type: "Operator", opName: "GENERAL_IDENTITY" });
+    expect(ast).toEqual({
+      type: "Lambda",
+      params: [{ name: "x" }],
+      body: { type: "Param", index: 0, name: "x" },
+    });
   });
 
   it("testLambdaRule1", () => {
     // x => constantInX  =>  K constantInX
     const ast = CondensedToAST("x => 5");
-    expect(ASTToCondensed(ast)).toBe("apply(anyConstant, 5)");
+    expect(ASTToCondensed(lowerLambda(ast as TypeAST.Lambda))).toBe(
+      "apply(anyConstant, 5)"
+    );
   });
 
   it("testLambdaRule2", () => {
     // x => f x  =>  f
     const ast = CondensedToAST("x => numberIncrement(x)");
-    expect(ASTToCondensed(ast)).toBe("numberIncrement");
+    expect(ASTToCondensed(lowerLambda(ast as TypeAST.Lambda))).toBe(
+      "numberIncrement"
+    );
   });
 
   it("testLambdaRule3", () => {
     // x => f x y  =>  flip f y
     const ast = CondensedToAST("x => numberAdd(x, 1)");
-    expect(ASTToCondensed(ast)).toBe("apply(numberAdd, 1)");
+    expect(ASTToCondensed(lowerLambda(ast as TypeAST.Lambda))).toBe(
+      "apply(numberAdd, 1)"
+    );
   });
 
   it("testLambdaRule4", () => {
     // x => f gOfX  =>  pipe (x => gOfX) f
     const ast = CondensedToAST("x => numberIncrement(numberIncrement(x))");
-    expect(ASTToCondensed(ast)).toBe(
+    expect(ASTToCondensed(lowerLambda(ast as TypeAST.Lambda))).toBe(
       "operatorPipe(numberIncrement, numberIncrement)"
     );
   });
@@ -443,7 +467,7 @@ describe("TestCondensedTransformer", () => {
     const ast = CondensedToAST(
       "x => numberAdd(numberIncrement(x), numberDecrement(x))"
     );
-    expect(ASTToCondensed(ast)).toBe(
+    expect(ASTToCondensed(lowerLambda(ast as TypeAST.Lambda))).toBe(
       "operatorPipe2(numberIncrement, numberDecrement, numberAdd)"
     );
   });
@@ -453,7 +477,7 @@ describe("TestCondensedTransformer", () => {
     const ast = CondensedToAST(
       "x => operatorApply(x, operatorApply(operatorNegation(x), true))"
     );
-    expect(ASTToCondensed(ast)).toBe(
+    expect(ASTToCondensed(lowerLambda(ast as TypeAST.Lambda))).toBe(
       "operatorPipe2(anyIdentity, operatorPipe(operatorNegation, apply(operatorFlip(operatorApply), true)), operatorApply)"
     );
   });
@@ -461,14 +485,16 @@ describe("TestCondensedTransformer", () => {
   it("testLambdaNegation", () => {
     const code = "x => not(itemstackIsStackable(x))";
     const ast = CondensedToAST(code);
-    expect(ASTToCondensed(ast)).toBe("operatorNegation(itemstackIsStackable)");
+    expect(ASTToCondensed(lowerLambda(ast as TypeAST.Lambda))).toBe(
+      "operatorNegation(itemstackIsStackable)"
+    );
   });
 
   it("testLambdaConjunction", () => {
     const code =
       "x => logicalAnd(itemstackIsStackable(x), itemstackIsDamageable(x))";
     const ast = CondensedToAST(code);
-    expect(ASTToCondensed(ast)).toBe(
+    expect(ASTToCondensed(lowerLambda(ast as TypeAST.Lambda))).toBe(
       "operatorConjunction(itemstackIsStackable, itemstackIsDamageable)"
     );
   });
@@ -477,14 +503,16 @@ describe("TestCondensedTransformer", () => {
     const code =
       "x => logicalOr(itemstackIsStackable(x), itemstackIsDamageable(x))";
     const ast = CondensedToAST(code);
-    expect(ASTToCondensed(ast)).toBe(
+    expect(ASTToCondensed(lowerLambda(ast as TypeAST.Lambda))).toBe(
       "operatorDisjunction(itemstackIsStackable, itemstackIsDamageable)"
     );
   });
 
   it("testLambdaFlip", () => {
     const ast = CondensedToAST("(a, b) => stringConcat(b, a)");
-    expect(ASTToCondensed(ast)).toBe("operatorFlip(stringConcat)");
+    expect(ASTToCondensed(lowerLambda(ast as TypeAST.Lambda))).toBe(
+      "operatorFlip(stringConcat)"
+    );
   });
 
   it("testLambdaActualFlip", () => {
@@ -517,24 +545,30 @@ describe("TestCondensedTransformer", () => {
 
   it("testLambdaFork", () => {
     const ast = CondensedToAST("x => arithmeticAddition(x, x)");
-    expect(ASTToCondensed(ast)).toBe(
+    expect(ASTToCondensed(lowerLambda(ast as TypeAST.Lambda))).toBe(
       "operatorPipe2(anyIdentity, anyIdentity, numberAdd)"
     );
   });
 
   it("testLambdaShort", () => {
     const ast = CondensedToAST("\\x.numberAdd(x, 1)");
-    expect(ASTToCondensed(ast)).toBe("apply(numberAdd, 1)");
+    expect(ASTToCondensed(lowerLambda(ast as TypeAST.Lambda))).toBe(
+      "apply(numberAdd, 1)"
+    );
   });
 
   it("testLambdaArrow", () => {
     const ast = CondensedToAST("x -> numberAdd(x, 1)");
-    expect(ASTToCondensed(ast)).toBe("apply(numberAdd, 1)");
+    expect(ASTToCondensed(lowerLambda(ast as TypeAST.Lambda))).toBe(
+      "apply(numberAdd, 1)"
+    );
   });
 
   it("testLambdaVarWithDot", () => {
     const ast = CondensedToAST("\\var.with.dot.numberAdd(var.with.dot, 1)");
-    expect(ASTToCondensed(ast)).toBe("apply(numberAdd, 1)");
+    expect(ASTToCondensed(lowerLambda(ast as TypeAST.Lambda))).toBe(
+      "apply(numberAdd, 1)"
+    );
   });
   it("testReaderDottedForm", () => {
     const code =

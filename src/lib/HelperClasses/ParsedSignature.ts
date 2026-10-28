@@ -1,5 +1,7 @@
 import { globalMap } from "lib/HelperClasses/TypeMap";
 
+const rewritingTypeIds = new Set<number>();
+
 export class ParsedSignature {
   private static maxTypeID = 0;
   private static NUMBER_TYPES = ["Integer", "Long", "Double", "Number"];
@@ -65,12 +67,13 @@ export class ParsedSignature {
           listType: remap(node.listType),
         };
       } else if (node.type === "Any") {
-        if (!id_map.has(node.typeID)) {
-          id_map.set(node.typeID, ParsedSignature.getNewTypeID());
+        const canonical = globalMap.findBaseID(node.typeID);
+        if (!id_map.has(canonical)) {
+          id_map.set(canonical, ParsedSignature.getNewTypeID());
         }
         result = {
           type: "Any",
-          typeID: id_map.get(node.typeID)!,
+          typeID: id_map.get(canonical)!,
         };
       } else if (node.type === "Operator") {
         result = {
@@ -381,8 +384,16 @@ export class ParsedSignature {
 
     if (this.ast.type === "Any") {
       const alias = globalMap.findBase(this.ast.typeID);
-      if (alias instanceof ParsedSignature) {
-        finalSignature = alias.rewrite();
+      if (
+        alias instanceof ParsedSignature &&
+        !rewritingTypeIds.has(this.ast.typeID)
+      ) {
+        rewritingTypeIds.add(this.ast.typeID);
+        try {
+          finalSignature = alias.rewrite();
+        } finally {
+          rewritingTypeIds.delete(this.ast.typeID);
+        }
       } else {
         finalSignature = this;
       }

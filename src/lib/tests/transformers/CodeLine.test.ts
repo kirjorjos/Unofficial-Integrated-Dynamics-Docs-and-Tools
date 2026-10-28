@@ -1,6 +1,8 @@
 import { ASTToCodeLine, CodeLineToAST } from "lib/transformers/CodeLine";
 import { ExpandedToAST } from "lib/transformers/Expanded";
 import { getNodeComment } from "lib/transformers/helpers";
+import { lowerLambda } from "lib/transformers/lambdaLowering";
+import { visitAst } from "lib/transformers/astTraversal";
 
 describe("TestCodeLineTransformer", () => {
   it("testBlock", () => {
@@ -85,11 +87,11 @@ describe("TestCodeLineTransformer", () => {
   it("testVariablePseudoConstructor", () => {
     expect(CodeLineToAST('Variable("my var")', undefined, 0, true)).toEqual({
       type: "Variable",
-      name: "@my var",
+      label: "my var",
     });
     expect(CodeLineToAST('Variable("x")', undefined, 0, true)).toEqual({
       type: "Variable",
-      name: "@x",
+      label: "x",
     });
     expect(() => CodeLineToAST("Variable(1)", undefined, 0, true)).toThrow(
       "Variable(...) expects exactly one string argument"
@@ -99,7 +101,7 @@ describe("TestCodeLineTransformer", () => {
   it("testAtVariablePseudoConstructorParsesToRef", () => {
     expect(CodeLineToAST('@Variable("my var")', undefined, 0, true)).toEqual({
       type: "Variable",
-      name: "@my var",
+      label: "my var",
     });
     expect(() => CodeLineToAST("@Variable(1)", undefined, 0, true)).toThrow(
       "Variable(...) expects exactly one string argument"
@@ -107,10 +109,10 @@ describe("TestCodeLineTransformer", () => {
   });
 
   it("testVariablePseudoConstructorRoundTrip", () => {
-    expect(ASTToCodeLine({ type: "Variable", name: "@my var" })).toBe(
+    expect(ASTToCodeLine({ type: "Variable", label: "my var" })).toBe(
       'Variable("my var")'
     );
-    expect(ASTToCodeLine({ type: "Variable", name: "@x" })).toBe("@x");
+    expect(ASTToCodeLine({ type: "Variable", label: "x" })).toBe("@x");
     const ast = CodeLineToAST('Variable("my var")', undefined, 0, true);
     const out = ASTToCodeLine(ast as TypeAST.AST);
     expect(
@@ -205,47 +207,64 @@ describe("TestCodeLineTransformer", () => {
   it("testLambda", () => {
     const code = "x => (numberAdd x 1)";
     const ast = CodeLineToAST(code);
-    expect(ASTToCodeLine(ast)).toBe("numberAdd 1");
+    expect(ASTToCodeLine(lowerLambda(ast as TypeAST.Lambda))).toBe(
+      "numberAdd 1"
+    );
   });
 
   it("testLambdaShort", () => {
     const code = "\\x.numberAdd x 1";
     const ast = CodeLineToAST(code);
-    expect(ASTToCodeLine(ast)).toBe("numberAdd 1");
+    expect(ASTToCodeLine(lowerLambda(ast as TypeAST.Lambda))).toBe(
+      "numberAdd 1"
+    );
   });
 
   it("testLambdaArrow", () => {
     const code = "x -> numberAdd x 1";
     const ast = CodeLineToAST(code);
-    expect(ASTToCodeLine(ast)).toBe("numberAdd 1");
+    expect(ASTToCodeLine(lowerLambda(ast as TypeAST.Lambda))).toBe(
+      "numberAdd 1"
+    );
+  });
+
+  it("testLambdaNestedCallArgument", () => {
+    const spaced = CodeLineToAST("x => nbtKeys (itemNBT x)");
+    expect(spaced).toEqual(CodeLineToAST("x => nbtKeys(itemNBT(x))"));
   });
 
   it("testLambdaRule1", () => {
     // x => constantInX  =>  K constantInX
     const code = "x => 5";
     const ast = CodeLineToAST(code);
-    expect(ASTToCodeLine(ast)).toBe("anyConstant 5");
+    expect(ASTToCodeLine(lowerLambda(ast as TypeAST.Lambda))).toBe(
+      "anyConstant 5"
+    );
   });
 
   it("testLambdaRule2", () => {
     // x => f x  =>  f
     const code = "x => (numberIncrement x)";
     const ast = CodeLineToAST(code);
-    expect(ASTToCodeLine(ast)).toBe("numberIncrement");
+    expect(ASTToCodeLine(lowerLambda(ast as TypeAST.Lambda))).toBe(
+      "numberIncrement"
+    );
   });
 
   it("testLambdaRule3", () => {
     // x => f x y  =>  flip f y
     const code = "x => (numberAdd x 1)";
     const ast = CodeLineToAST(code);
-    expect(ASTToCodeLine(ast)).toBe("numberAdd 1");
+    expect(ASTToCodeLine(lowerLambda(ast as TypeAST.Lambda))).toBe(
+      "numberAdd 1"
+    );
   });
 
   it("testLambdaRule4", () => {
     // x => f gOfX  =>  pipe (x => gOfX) f
     const code = "x => (numberIncrement (numberIncrement x))";
     const ast = CodeLineToAST(code);
-    expect(ASTToCodeLine(ast)).toBe(
+    expect(ASTToCodeLine(lowerLambda(ast as TypeAST.Lambda))).toBe(
       "operatorPipe numberIncrement numberIncrement"
     );
   });
@@ -254,7 +273,7 @@ describe("TestCodeLineTransformer", () => {
     // x => f gOfX hOfX  =>  pipe2 (x => gOfX) (x => hOfX) f
     const code = "x => (numberAdd (numberIncrement x) (numberDecrement x))";
     const ast = CodeLineToAST(code);
-    expect(ASTToCodeLine(ast)).toBe(
+    expect(ASTToCodeLine(lowerLambda(ast as TypeAST.Lambda))).toBe(
       "operatorPipe2 numberIncrement numberDecrement numberAdd"
     );
   });
@@ -263,7 +282,7 @@ describe("TestCodeLineTransformer", () => {
     // x => fOfX gOfX  =>  pipe2 (x => fOfX) (x => gOfX) apply
     const code = "x => x (operatorNegation x true)";
     const ast = CodeLineToAST(code);
-    expect(ASTToCodeLine(ast)).toBe(
+    expect(ASTToCodeLine(lowerLambda(ast as TypeAST.Lambda))).toBe(
       "operatorPipe2 anyIdentity ((operatorFlip operatorNegation) true) operatorApply"
     );
   });
@@ -271,14 +290,16 @@ describe("TestCodeLineTransformer", () => {
   it("testLambdaNegation", () => {
     const code = "x => not (itemstackIsStackable x)";
     const ast = CodeLineToAST(code);
-    expect(ASTToCodeLine(ast)).toBe("operatorNegation itemstackIsStackable");
+    expect(ASTToCodeLine(lowerLambda(ast as TypeAST.Lambda))).toBe(
+      "operatorNegation itemstackIsStackable"
+    );
   });
 
   it("testLambdaConjunction", () => {
     const code =
       "x => (logicalAnd (itemstackIsStackable x) (itemstackIsDamageable x))";
     const ast = CodeLineToAST(code);
-    expect(ASTToCodeLine(ast)).toBe(
+    expect(ASTToCodeLine(lowerLambda(ast as TypeAST.Lambda))).toBe(
       "operatorConjunction itemstackIsStackable itemstackIsDamageable"
     );
   });
@@ -292,30 +313,9 @@ describe("TestCodeLineTransformer", () => {
     const ast = CodeLineToAST("(f) => (i) => == (a f) (a i)", scope, 0, true);
 
     const varNames: string[] = [];
-    const walk = (n: TypeAST.AST) => {
+    visitAst(ast, (n) => {
       if (n.varName) varNames.push(n.varName);
-      switch (n.type) {
-        case "Curry":
-          walk(n.base);
-          n.args.forEach(walk);
-          break;
-        case "Pipe":
-          walk(n.op1);
-          walk(n.op2);
-          break;
-        case "Pipe2":
-          walk(n.op1);
-          walk(n.op2);
-          walk(n.op3);
-          break;
-        case "Flip":
-          walk(n.arg);
-          break;
-        default:
-          break;
-      }
-    };
-    walk(ast);
+    });
     expect(varNames).toContain("a");
   });
 
@@ -323,7 +323,7 @@ describe("TestCodeLineTransformer", () => {
     const code =
       "x => (logicalOr (itemstackIsStackable x) (itemstackIsDamageable x))";
     const ast = CodeLineToAST(code);
-    expect(ASTToCodeLine(ast)).toBe(
+    expect(ASTToCodeLine(lowerLambda(ast as TypeAST.Lambda))).toBe(
       "operatorDisjunction itemstackIsStackable itemstackIsDamageable"
     );
   });
@@ -331,7 +331,9 @@ describe("TestCodeLineTransformer", () => {
   it("testLambdaVarWithDot", () => {
     const code = "\\var.with.dot.numberAdd var.with.dot 1";
     const ast = CodeLineToAST(code);
-    expect(ASTToCodeLine(ast)).toBe("numberAdd 1");
+    expect(ASTToCodeLine(lowerLambda(ast as TypeAST.Lambda))).toBe(
+      "numberAdd 1"
+    );
   });
 
   it("testComplicated2", () => {

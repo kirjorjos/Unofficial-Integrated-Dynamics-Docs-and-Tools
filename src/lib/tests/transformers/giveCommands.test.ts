@@ -283,7 +283,7 @@ describe("TestInputToGiveCommands", () => {
           .map((card) => card.ast)
           .filter((ast): ast is TypeAST.AST => ast !== undefined)
           .map((ast) =>
-            astContentKey(ast).replaceAll(/Variable:@\d+/g, "Variable:@")
+            astContentKey(ast).replaceAll(/Variable:\d+::/g, "Variable:@")
           )
           .sort();
       expect(keys(reparsed.cards)).toEqual(keys(out.parsed.cards));
