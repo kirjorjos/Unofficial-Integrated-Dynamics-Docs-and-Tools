@@ -757,12 +757,11 @@ export const CondensedToAST = (
       ) {
         const arg = parseExpression(scope);
         args.push(arg);
-        if (
-          tokens[pos] &&
-          tokens[pos]!.type === "structural" &&
-          tokens[pos]!.value === ","
-        ) {
+        const next = tokens[pos];
+        if (next && next.type === "structural" && next.value === ",") {
           pos++; // consume ','
+        } else if (!next || next.value !== ")") {
+          throw new StructuralParseError("Expected ',' between arguments");
         }
       }
       if (!tokens[pos]) throw new StructuralParseError("Expected ')'");
