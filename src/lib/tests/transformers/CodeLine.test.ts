@@ -233,6 +233,16 @@ describe("TestCodeLineTransformer", () => {
     expect(spaced).toEqual(CodeLineToAST("x => nbtKeys(itemNBT(x))"));
   });
 
+  it("testCommaCallSyntaxPassesSeparateArguments", () => {
+    expect(CodeLineToAST("add(1, 2)")).toEqual(CodeLineToAST("add 1 2"));
+    expect(CodeLineToAST("add(add(1, 2), 3)")).toEqual(
+      CodeLineToAST("add (add 1 2) 3")
+    );
+    expect(
+      CodeLineToAST("operatorMap(x => numberIncrement x, [1, 2])")
+    ).toEqual(CodeLineToAST("operatorMap (x => numberIncrement x) [1, 2]"));
+  });
+
   it("testLambdaRule1", () => {
     // x => constantInX  =>  K constantInX
     const code = "x => 5";
