@@ -145,6 +145,11 @@ export const SETTING_HELP: Record<SettingHelpKey, SettingHelp> = {
       "Seed for the UUIDs generated for text Entity values. The same seed and entity id always produce the same UUID, so the summon command and card stay in sync.",
     appliesTo: "Only applies to SNBT output.",
   },
+  targetTick: {
+    description:
+      "How many ticks to simulate from tick 0. Delays sample every N ticks and keep the last C samples.",
+    appliesTo: "Only affects delays in the visual and SNBT output.",
+  },
 };
 
 export const settingHelpText = (key: SettingHelpKey): string => {

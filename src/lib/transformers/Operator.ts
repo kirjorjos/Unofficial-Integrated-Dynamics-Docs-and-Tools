@@ -26,6 +26,7 @@ import {
   forceValue,
   lazyValue,
 } from "lib/IntegratedDynamicsClasses/typeWrappers/ValueVariable";
+import { InternalParseError } from "lib/transformers/parseErrors";
 
 /**
  * Transforms an AST to an Operator.
@@ -167,6 +168,11 @@ export const ASTtoOperator = (ast: TypeAST.AST): IntegratedValue => {
     case "Display":
     case "Card":
       return ASTtoOperator(ast.value);
+
+    case "Delay":
+      throw new InternalParseError(
+        "ASTtoOperator received a Delay node; delays must be resolved at the target tick first (delaySimulation.evaluateAtTick)"
+      );
 
     case "Reader": {
       if (ast.value.simulatedOutput) {

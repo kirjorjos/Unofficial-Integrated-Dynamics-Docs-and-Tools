@@ -35,6 +35,7 @@ export interface TransformerSettings {
   missingParts: "error" | "warn";
   conflicts: "error" | "warn";
   entityUuidSeed: number;
+  targetTick: number;
 }
 
 export const DEFAULT_TRANSFORMER_SETTINGS: TransformerSettings = {
@@ -67,6 +68,7 @@ export const DEFAULT_TRANSFORMER_SETTINGS: TransformerSettings = {
   missingParts: "error",
   conflicts: "error",
   entityUuidSeed: 0,
+  targetTick: 0,
 };
 
 export const MAX_INDENTATION = 16;
@@ -143,6 +145,7 @@ export const encodeSettingsOpts = (
       : encodeDepth(settings.signatureDepth)
   );
   writeVarUint(writer, Math.max(0, Math.trunc(settings.entityUuidSeed)));
+  writeVarUint(writer, Math.max(0, Math.trunc(settings.targetTick)));
   return writer.toBase64URL();
 };
 
@@ -247,6 +250,10 @@ export const decodeSettingsOpts = (
 
   if (!reader.isExhausted()) {
     settings.entityUuidSeed = readVarUint(reader);
+  }
+
+  if (!reader.isExhausted()) {
+    settings.targetTick = readVarUint(reader);
   }
 
   if (!reader.isExhausted()) {

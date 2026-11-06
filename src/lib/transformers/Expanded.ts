@@ -42,6 +42,10 @@ import { parseParamType } from "lib/transformers/lambdaParams";
 import { lowerLambda } from "lib/transformers/lambdaLowering";
 import { mapAst, visitAst } from "lib/transformers/astTraversal";
 import {
+  delayPromiseNode,
+  validatePromises,
+} from "lib/transformers/delayPromises";
+import {
   getSourceCards,
   isSourceNode,
   sourceToNetworkCards,
@@ -541,6 +545,21 @@ const computeSignature = (
       );
       break;
     }
+    case "Delay": {
+      const elementSignature = computeSignature(
+        node.value,
+        scope,
+        resolve
+      ).getAst();
+      signature = new ParsedSignature(
+        {
+          type: "List",
+          listType: elementSignature,
+        },
+        false
+      );
+      break;
+    }
     case "Operator": {
       const internalKey = operatorRegistry.operatorByNickname(node.opName);
       if (!internalKey) throw new Error(`Unknown operator: ${node.opName}`);
@@ -1016,6 +1035,8 @@ const getVarName = (node: TypeAST.AST): string => {
     }
     case "Materialize":
       return `Materialized{${getVarName(node.value)}}`;
+    case "Delay":
+      return `Delayed{${getVarName(node.value)}}`;
     case "Dynamic":
       return `Dynamic{${getVarName(node.value)}}`;
     case "Static":
@@ -1924,6 +1945,23 @@ export const ExpandedToAST = (
   const definitions: ExpandedEntry[] = [];
   const declarations: ExpandedEntry[] = [];
 
+  for (const line of processedLines) {
+    const match =
+      /^\s*(?:"([^"]*)"|([A-Za-z_][A-Za-z0-9_.]*))\s*(?:::[^=]*)?=(?!=|>)/.exec(
+        line
+      );
+    const definedName = match?.[1] ?? match?.[2];
+    if (
+      definedName &&
+      !scope.has(definedName) &&
+      !isReservedName(definedName) &&
+      operatorRegistry.operatorByNickname(definedName) === undefined &&
+      shadowedOperatorKey(definedName) === undefined
+    ) {
+      scope.set(definedName, delayPromiseNode(definedName));
+    }
+  }
+
   for (let i = 0; i < processedLines.length; i++) {
     const line = processedLines[i]!;
 
@@ -2139,6 +2177,8 @@ export const ExpandedToAST = (
       });
     }
   }
+
+  validatePromises(definitions);
 
   for (const sig of standaloneSignatures) {
     const declared = parseDeclaredType(sig.declared);

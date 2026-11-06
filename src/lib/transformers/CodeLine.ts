@@ -34,7 +34,13 @@ import {
   getNetworkSegmentRefs,
   getRefInfo,
 } from "lib/transformers/NetworkCards";
+import {
+  delayArgsFromPositional,
+  delayToText,
+  parseDelayArgument,
+} from "lib/transformers/delaySyntax";
 import { normalizeSegments } from "lib/transformers/MixedLists";
+import { calculationValueRefNode } from "lib/transformers/delayPromises";
 import { BinderScope } from "lib/transformers/binderScope";
 import { parseLambdaParamEntry } from "lib/transformers/lambdaParams";
 import { variableFromAt, variableFromName } from "lib/transformers/variableRef";
@@ -211,6 +217,10 @@ export const ASTToCodeLine = (
             "A Variable node requires an id or a label"
           );
         }
+        if (node.promise === true) {
+          result = refName;
+          break;
+        }
         if (node.label === undefined) {
           result = `@${node.id}`;
           break;
@@ -323,6 +333,10 @@ export const ASTToCodeLine = (
 
       case "Materialize":
         result = `Materialize(${stringify(node.value, false)})`;
+        break;
+
+      case "Delay":
+        result = `Delay(${stringify(node.value, false)}${delayToText(node)})`;
         break;
 
       case "Dynamic":
@@ -502,6 +516,7 @@ export const CodeLineToAST = (
   if (current.trim()) tokens.push(current.trim());
 
   let pos = 0;
+  let promiseDepth = 0;
 
   type InternalAST =
     | { type: "Integer"; value: TypeNumericString; varName?: string }
@@ -581,7 +596,18 @@ export const CodeLineToAST = (
     | { type: "Dynamic"; value: InternalAST; varName?: string }
     | { type: "Static"; value: InternalAST; varName?: string }
     | { type: "Display"; value: InternalAST; varName?: string }
-    | { type: "Card"; value: InternalAST; varName?: string };
+    | { type: "Card"; value: InternalAST; varName?: string }
+    | {
+        type: "Delay";
+        value: InternalAST;
+        interval?: number;
+        capacity?: number;
+        freezeAt?: number;
+        seeds?: InternalAST[];
+        proxyId?: string;
+        proxyCardId?: string;
+        varName?: string;
+      };
 
   const checkParamShadow = (name: string): void => {
     if (isReservedName(name)) {
@@ -693,6 +719,83 @@ export const CodeLineToAST = (
     return node;
   }
 
+  function tryParseDelayExpression(
+    scope: BinderScope
+  ): InternalAST | undefined {
+    const token = tokens[pos];
+    if (token === undefined) return undefined;
+    if (token.toLowerCase() !== "delay") return undefined;
+    if (scope.has(token) || externalScope.has(token)) return undefined;
+    if (tokens[pos + 1] !== "(") return undefined;
+
+    let depth = 0;
+    let close = -1;
+    const commas: number[] = [];
+    for (let i = pos + 1; i < tokens.length; i++) {
+      const current = tokens[i];
+      if (current === "(") {
+        depth++;
+      } else if (current === ")") {
+        depth--;
+        if (depth === 0) {
+          close = i;
+          break;
+        }
+      } else if (current === "," && depth === 1) {
+        commas.push(i);
+      }
+    }
+    if (close === -1) return undefined;
+    if (commas.length > 3) {
+      throw new StructuralParseError("Delay takes at most four arguments");
+    }
+
+    pos += 2; // consume name and '('
+    const boundary = commas[0];
+    let value: InternalAST;
+    promiseDepth += 1;
+    try {
+      if (boundary === undefined) {
+        value = parseSequence(scope, false);
+      } else {
+        const saved = tokens[boundary]!;
+        tokens[boundary] = ")";
+        try {
+          value = parseSequence(scope, false);
+        } finally {
+          tokens[boundary] = saved;
+        }
+      }
+    } finally {
+      promiseDepth -= 1;
+    }
+
+    const args: number[] = [];
+    while (tokens[pos] === ",") {
+      pos++; // consume ','
+      let sign = "";
+      if (tokens[pos] === "-") {
+        sign = "-";
+        pos++;
+      }
+      const argToken = tokens[pos];
+      if (argToken === undefined || argToken === ")") {
+        throw new StructuralParseError("Expected ')' after Delay argument");
+      }
+      pos++;
+      args.push(parseDelayArgument(args.length + 1, sign + argToken));
+    }
+    if (tokens[pos] !== ")") {
+      throw new StructuralParseError("Expected ')' after Delay argument");
+    }
+    pos++; // consume ')'
+    return {
+      type: "Delay",
+      value,
+      ...delayArgsFromPositional(args),
+    } as InternalAST;
+  }
+
   function tryParseWrapperExpression(
     scope: BinderScope
   ): InternalAST | undefined {
@@ -739,6 +842,9 @@ export const CodeLineToAST = (
         return { type: "Lambda", params, body };
       }
     }
+
+    const delayExpr = tryParseDelayExpression(scope);
+    if (delayExpr !== undefined) return delayExpr;
 
     const wrapperExpr = tryParseWrapperExpression(scope);
     if (wrapperExpr !== undefined) return wrapperExpr;
@@ -874,6 +980,14 @@ export const CodeLineToAST = (
 
     const convenience = convenienceAstFor(token);
     if (convenience) return convenience as InternalAST;
+
+    if (/^#\d+$/.test(token)) {
+      return calculationValueRefNode(token) as InternalAST;
+    }
+
+    if (promiseDepth > 0) {
+      return calculationValueRefNode(token) as InternalAST;
+    }
 
     throw new UnknownIdentifierParseError(`Unknown identifier: ${token}`);
   }
