@@ -1,0 +1,10 @@
+{
+  "branch": "1.19.2/main",
+  "sha": "4a0a5b58d5b9a0c7a4bea66e7336b8ce326e1536",
+  "base": "/Unofficial-Integrated-Dynamics-Docs-and-Tools/1.19.2/main/",
+  "toolchain": {
+    "node": "v20.19.5",
+    "vite": "5.4.21",
+    "lockHash": "15595c3a9af4a1cb6c16c03d3188049ab7cd264d263d887136ccb99706d10513"
+  }
+}
