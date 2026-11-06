@@ -94,10 +94,14 @@ jobs:
             let coverallsComment = comments.find((comment) =>
               isCoverallsLogin(comment.user?.login)
             );
-            // The Coveralls comment is posted by its backend, so give it a few
-            // seconds to land before treating the action's success as no comment.
-            for (let attempt = 0; attempt < 3 && !coverallsComment; attempt++) {
-              if (result.coveralls !== "success") break;
+            const COVERALLS_COMMENT_TIMEOUT_MS = 120000;
+            const coverallsCommentDeadline =
+              Date.now() + COVERALLS_COMMENT_TIMEOUT_MS;
+            while (
+              !coverallsComment &&
+              result.coveralls === "success" &&
+              Date.now() < coverallsCommentDeadline
+            ) {
               await new Promise((resolve) => setTimeout(resolve, 5000));
               comments = await listComments();
               coverallsComment = comments.find((comment) =>

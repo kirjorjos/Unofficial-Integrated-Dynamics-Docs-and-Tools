@@ -45,9 +45,15 @@ jobs:
           set -euo pipefail
           echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
           if [ "${GITHUB_EVENT_NAME}" = "workflow_dispatch" ]; then
-            echo "branch=$(gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}" --jq '.head.ref')" >> "$GITHUB_OUTPUT"
+            read -r head_ref base_ref < <(
+              gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}" \
+                --jq '[.head.ref, .base.ref] | @tsv'
+            )
+            echo "branch=${head_ref}" >> "$GITHUB_OUTPUT"
+            echo "base_ref=${base_ref}" >> "$GITHUB_OUTPUT"
           elif [ "${GITHUB_EVENT_NAME}" = "pull_request" ]; then
             echo "branch=${GITHUB_HEAD_REF}" >> "$GITHUB_OUTPUT"
+            echo "base_ref=${GITHUB_BASE_REF}" >> "$GITHUB_OUTPUT"
           else
             echo "branch=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
           fi
@@ -64,6 +70,7 @@ jobs:
           file: ./coverage/lcov.info
           git-commit: ${{ steps.target.outputs.sha }}
           git-branch: ${{ steps.target.outputs.branch }}
+          compare-ref: ${{ steps.target.outputs.base_ref }}
 
       - name: Record the coverage result
         if: always()
