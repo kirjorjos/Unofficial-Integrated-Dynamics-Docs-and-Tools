@@ -305,6 +305,26 @@ export class ParsedSignature {
     }
 
     if (this.ast.type !== "Function") {
+      if (this.ast.type === "Any") {
+        const resolved = globalMap.findBase(this.ast.typeID);
+        if (resolved instanceof ParsedSignature) {
+          if (resolved.getRootType() === "Function") {
+            return resolved.apply(argType);
+          }
+        } else {
+          const resultAst: TypeRawSignatureAST.RawSignatureAny = {
+            type: "Any",
+            typeID: ParsedSignature.getNewTypeID(),
+          };
+          const functionSignature = new ParsedSignature(
+            { type: "Function", from: argType.getAst(), to: resultAst },
+            false
+          );
+          globalMap.unify(functionSignature, this);
+          return new ParsedSignature(resultAst, false);
+        }
+      }
+
       const errorSig = new ParsedSignature(this.ast, false);
       errorSig.errorInfo = {
         message: "Cannot apply to a non-function signature",

@@ -517,6 +517,7 @@ export const CodeLineToAST = (
 
   let pos = 0;
   let promiseDepth = 0;
+  let callArgDepth = 0;
 
   type InternalAST =
     | { type: "Integer"; value: TypeNumericString; varName?: string }
@@ -837,7 +838,8 @@ export const CodeLineToAST = (
         pos++;
         const body = parseSequence(
           scope.push(params.map((param) => param.name)),
-          true
+          true,
+          callArgDepth > 0
         );
         return { type: "Lambda", params, body };
       }
@@ -992,25 +994,73 @@ export const CodeLineToAST = (
     throw new UnknownIdentifierParseError(`Unknown identifier: ${token}`);
   }
 
-  function parseSequence(scope: BinderScope, consumeAll: boolean): InternalAST {
+  const parenHasTopLevelComma = (): boolean => {
+    let depth = 0;
+    for (let i = pos; i < tokens.length; i++) {
+      const token = tokens[i];
+      if (token === "(" || token === "[") {
+        depth++;
+      } else if (token === ")" || token === "]") {
+        depth--;
+        if (depth === 0) return false;
+      } else if (token === "," && depth === 1) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  function parseCallArguments(scope: BinderScope): InternalAST[] {
+    pos++; // consume '('
+    const args: InternalAST[] = [];
+    callArgDepth++;
+    try {
+      while (pos < tokens.length && tokens[pos] !== ")") {
+        args.push(parseSequence(scope, false, true));
+        if (tokens[pos] === ",") pos++;
+      }
+    } finally {
+      callArgDepth--;
+    }
+    if (tokens[pos] !== ")") {
+      throw new StructuralParseError("Expected ')' after arguments");
+    }
+    pos++; // consume ')'
+    return args;
+  }
+
+  function parseSequence(
+    scope: BinderScope,
+    consumeAll: boolean,
+    stopAtComma = false
+  ): InternalAST {
     let result: InternalAST | undefined = undefined;
 
     while (
       pos < tokens.length &&
       (consumeAll || tokens[pos] !== ")") &&
-      tokens[pos] !== ";"
+      tokens[pos] !== ";" &&
+      !(stopAtComma && tokens[pos] === ",")
     ) {
       const next = tokens[pos];
       if (next === ")" || next === ";") break;
 
-      const expr = parseExpression(scope);
-      if (result === undefined) {
-        result = expr;
+      if (
+        result !== undefined &&
+        tokens[pos] === "(" &&
+        parenHasTopLevelComma()
+      ) {
+        result = handleCallInternal(result, parseCallArguments(scope));
       } else {
-        result = handleCallInternal(result, [expr]);
+        const expr = parseExpression(scope);
+        if (result === undefined) {
+          result = expr;
+        } else {
+          result = handleCallInternal(result, [expr]);
+        }
       }
 
-      if (tokens[pos] === ",") {
+      if (!stopAtComma && tokens[pos] === ",") {
         pos++;
       }
     }

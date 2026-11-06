@@ -13,7 +13,7 @@ const nodeOf = (ast: TypeAST.AST): TypeAST.AST =>
     : ast;
 
 describe("TestExpandedLambda", () => {
-  it("parses both definition forms into one lambda", () => {
+  it("parsesBothDefinitionFormsIntoOneLambda", () => {
     const arrow = nodeOf(ExpandedToAST("f = (x, y) => add(x, y)"));
     const short = nodeOf(ExpandedToAST("f (x, y) = add(x, y)"));
     expect(arrow.type).toBe("Lambda");
@@ -28,12 +28,12 @@ describe("TestExpandedLambda", () => {
     ]);
   });
 
-  it("keeps the definition name from the left-hand side", () => {
+  it("keepsTheDefinitionNameFromTheLeftHandSide", () => {
     const ast = ExpandedToAST("f = x => add(x, 1)") as TypeAST.NetworkCards;
     expect(ast.definitions[0]!.node.varName).toBe("f");
   });
 
-  it("accepts typed left-hand side parameters", () => {
+  it("acceptsTypedLeftHandSideParameters", () => {
     const ast = ExpandedToAST(
       "f (x: integer, y: List<integer>) = add(1, 2)"
     ) as TypeAST.NetworkCards;
@@ -43,7 +43,7 @@ describe("TestExpandedLambda", () => {
     ]);
   });
 
-  it("names anonymous top-level lambdas deterministically", () => {
+  it("namesAnonymousTopLevelLambdasDeterministically", () => {
     const printed = ASTToExpanded(
       CondensedToAST("x => numberAdd(x, 1); y => numberAdd(y, 2)")
     );
@@ -51,7 +51,7 @@ describe("TestExpandedLambda", () => {
     expect(printed).toContain("lambda2 = y => numberAdd(y, 2)");
   });
 
-  it("keeps nested capturing lambdas inline", () => {
+  it("keepsNestedCapturingLambdasInline", () => {
     const printed = ASTToExpanded(
       ExpandedToAST("f = x => map(y => add(x, y), [1, 2])")
     );
@@ -61,7 +61,7 @@ describe("TestExpandedLambda", () => {
     expect(printed).not.toMatch(/^g = /m);
   });
 
-  it("keeps a lambda body inside its binder after a compressed round-trip", () => {
+  it("keepsALambdaBodyInsideItsBinderAfterACompressedRoundTrip", () => {
     const stored = stripAutoCurryVarNames(
       CompressedToAST(ASTToCompressed(ExpandedToAST("f = x => add(x, 1)")))
     );
@@ -70,14 +70,14 @@ describe("TestExpandedLambda", () => {
     expect(printed).not.toMatch(/^\{.*\} = /m);
   });
 
-  it("infers untyped parameter types from how the body uses them (issue #171)", () => {
+  it("infersUntypedParameterTypesFromHowTheBodyUsesThem (issue #171)", () => {
     const printed = ASTToExpanded(
       ExpandedToAST("out list = uniq_p list (el1 => el2 => false)")
     );
     expect(printed).toContain("out :: List<Any> → List<Any>");
   });
 
-  it("computes function signatures from parameter types", () => {
+  it("computesFunctionSignaturesFromParameterTypes", () => {
     const untyped = ASTToExpanded(ExpandedToAST("f = x => x"));
     expect(untyped).toContain("f :: Any → Any");
     const typed = ASTToExpanded(ExpandedToAST("f = (x: integer) => x"));
@@ -92,5 +92,29 @@ describe("TestExpandedLambda", () => {
         {}
       )
     ).toContain("f :: integer → Any");
+  });
+
+  it("supportsParametersThatAreAppliedAsFunctions (issue #172)", () => {
+    const direct = ASTToExpanded(ExpandedToAST("out = f => x => f x"));
+    expect(direct).toContain("out = f => x => apply(f, x)");
+
+    const predicate = ASTToExpanded(
+      ExpandedToAST("out = list => f => uniq_p list (el1 => el2 => f el1 el2)")
+    );
+    expect(predicate).toContain(
+      "out = list => f => listUniquePredicate(list, el1 => el2 => apply(apply(f, el1), el2))"
+    );
+  });
+
+  it("parsesCommaCallSyntaxInsideAPointFreeLambdaArgument (issue #172)", () => {
+    const printed = ASTToExpanded(
+      ExpandedToAST(
+        "out = list => uniq_p list (el1 => el2 => booleanAnd(el1, el2))"
+      )
+    );
+    expect(printed).toContain("out :: List<Boolean> → List<Boolean>");
+    expect(printed).toContain(
+      "out = list => listUniquePredicate(list, el1 => el2 => booleanAnd(el1, el2))"
+    );
   });
 });
