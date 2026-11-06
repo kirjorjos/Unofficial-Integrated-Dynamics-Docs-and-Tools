@@ -30,6 +30,8 @@ export const astChildren = (node: TypeAST.AST): TypeAST.AST[] => {
     case "Display":
     case "Card":
       return [node.value];
+    case "Delay":
+      return [node.value, ...(node.seeds ?? [])];
     case "NetworkCards":
       return node.definitions.map((definition) => definition.node);
     case "Lambda":
@@ -119,6 +121,12 @@ export const mapAst = (
     case "Display":
     case "Card":
       return { ...node, value: map(node.value) };
+    case "Delay":
+      return {
+        ...node,
+        value: map(node.value),
+        ...(node.seeds ? { seeds: node.seeds.map(map) } : {}),
+      };
     case "NetworkCards":
       return {
         ...node,

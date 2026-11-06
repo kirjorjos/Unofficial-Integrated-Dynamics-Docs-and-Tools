@@ -68,6 +68,18 @@ namespace TypeAST {
 
   type Card = { type: "Card"; value: AST; varName?: string };
 
+  type Delay = {
+    type: "Delay";
+    value: AST;
+    interval?: number;
+    capacity?: number;
+    freezeAt?: number;
+    seeds?: AST[];
+    proxyId?: string;
+    proxyCardId?: string;
+    varName?: string;
+  };
+
   type Wrapper = Materialize | Dynamic | Static | Display | Card;
 
   type PartSettings = Record<string, jsonData>;
@@ -170,6 +182,7 @@ namespace TypeAST {
     label?: string;
     valueType?: string;
     varName?: string;
+    promise?: true;
   };
 
   interface LambdaParam {
@@ -219,5 +232,11 @@ namespace TypeAST {
 
   type FunctionValue = Lambda | Param;
 
-  type AST = Constant | Operator | NetworkCards | Wrapper | FunctionValue;
+  type AST =
+    | Constant
+    | Operator
+    | NetworkCards
+    | Wrapper
+    | Delay
+    | FunctionValue;
 }

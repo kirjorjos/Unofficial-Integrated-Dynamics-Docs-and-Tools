@@ -108,6 +108,7 @@ const enum ExtendedWrapperKind {
   Writer = 4,
   Exporter = 5,
   Importer = 6,
+  Delay = 7,
 }
 
 const enum JSONKind {
@@ -1534,6 +1535,33 @@ const writeNode = (
       return;
     }
 
+    case "Delay": {
+      writer.writeBits(NodeKind.Literal, 2);
+      writeLiteralKind(writer, LiteralKind.Wrapper);
+      writer.writeBits(WrapperKind.Extended, 2);
+      writer.writeBits(ExtendedWrapperKind.Delay, 3);
+      writeNode(writer, node.value, seen);
+      writer.writeBit(node.interval !== undefined);
+      if (node.interval !== undefined) writeVarUint(writer, node.interval);
+      writer.writeBit(node.capacity !== undefined);
+      if (node.capacity !== undefined) writeVarUint(writer, node.capacity);
+      writer.writeBit(node.freezeAt !== undefined);
+      if (node.freezeAt !== undefined) writeVarUint(writer, node.freezeAt);
+      writer.writeBit(node.seeds !== undefined);
+      if (node.seeds !== undefined) {
+        writeVarUint(writer, node.seeds.length);
+        for (const seed of node.seeds) writeNode(writer, seed, seen);
+      }
+      writer.writeBit(node.proxyId !== undefined);
+      if (node.proxyId !== undefined) writeString(writer, node.proxyId);
+      writer.writeBit(node.proxyCardId !== undefined);
+      if (node.proxyCardId !== undefined) {
+        writeString(writer, node.proxyCardId);
+      }
+      writeNodeMetadata(writer, node);
+      return;
+    }
+
     case "VarStore": {
       writer.writeBits(NodeKind.Literal, 2);
       writeLiteralKind(writer, LiteralKind.Wrapper);
@@ -1856,6 +1884,26 @@ const readNode = (
               extendedKind === ExtendedWrapperKind.Display
                 ? { type: "Display", value }
                 : { type: "Card", value };
+            break;
+          }
+
+          if (extendedKind === ExtendedWrapperKind.Delay) {
+            const value = readNode(reader, decoded);
+            const delay: TypeAST.Delay = { type: "Delay", value };
+            if (reader.readBit()) delay.interval = readVarUint(reader);
+            if (reader.readBit()) delay.capacity = readVarUint(reader);
+            if (reader.readBit()) delay.freezeAt = readVarUint(reader);
+            if (reader.readBit()) {
+              const seedCount = readVarUint(reader);
+              const seeds: ASTNode[] = [];
+              for (let i = 0; i < seedCount; i++) {
+                seeds.push(readNode(reader, decoded));
+              }
+              delay.seeds = seeds;
+            }
+            if (reader.readBit()) delay.proxyId = readString(reader);
+            if (reader.readBit()) delay.proxyCardId = readString(reader);
+            node = delay;
             break;
           }
 

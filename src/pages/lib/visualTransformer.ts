@@ -255,6 +255,9 @@ export function getStepActualOutputType(step: {
   if (step.sourceType === "Materialize") {
     return "Operator";
   }
+  if (step.sourceType === "Delay") {
+    return "List";
+  }
   if (step.sourceType === "Reader" && step.node?.type === "Reader") {
     return getReaderOutputType(step.node);
   }

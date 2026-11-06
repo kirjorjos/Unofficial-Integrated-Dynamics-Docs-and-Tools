@@ -196,6 +196,44 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
         ],
       },
       {
+        heading: [{ text: "Delay" }],
+        summary: [
+          {
+            text: "Delay(expression, tickInterval, capacity, freezeAt) builds a delayed value from a delayer with the set tickInterval (operations per tick), capacity, and step to freeze at all being optional, provided no value at a later arg is used.",
+          },
+        ],
+        bullets: [
+          [
+            {
+              text: "The Target tick setting decides how many ticks are simulated from tick 0. A pasted delayer seeds the list with the samples it already stored, so a delay pasted with a full history shows that history instead of sampling from scratch.",
+            },
+          ],
+          [
+            {
+              text: "freezeAt specifies the tick at which a Materalize call takes effect: Delay(5, 1, 5, 3) holds the history it had at tick 3 for every later target tick. The freeAt argument is only valid when Materalized is used in conjunction.",
+            },
+          ],
+        ],
+        syntax: [
+          {
+            spans: [
+              { text: "Delay", emphasis: "required" },
+              { text: "(" },
+              { text: "expression", emphasis: "required" },
+              { text: ", tickInterval", emphasis: "optional" },
+              { text: ", capacity", emphasis: "optional" },
+              { text: ", freezeAt", emphasis: "optional" },
+              { text: ")" },
+            ],
+            note: [
+              {
+                text: "defaults: interval 1 and capacity 5; the name is case-insensitive, like Materialize",
+              },
+            ],
+          },
+        ],
+      },
+      {
         heading: [{ text: "Rotate names" }],
         summary: [
           {
@@ -1601,12 +1639,22 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
           {
             text: "Inside a multi-statement input, @<statement number> refers to the variable ID of the last card of an earlier statement, where statements are 0-indexed, and @calculation refers to the last card of the final statement, which only an earlier statement may use; the final statement itself cannot refer to its own last card. In output, the default numeric reference style prints that card id, which is a plain literal when the text is read back; use @n when the output must re-parse as a reference.",
           },
+          {
+            text: " #<statement number> is the value reference: it stands for the value of that statement's last card at the tick being viewed.",
+          },
         ],
         examples: [
           {
             kind: "concrete",
             text: "319; 236; map NetworkReader.variableValueById [@0, @1]",
             caption: [{ text: "@0 and @1 are the two earlier statements" }],
+          },
+          {
+            kind: "concrete",
+            text: "3; numberAdd #0 1",
+            caption: [
+              { text: "#0 is the value of the first statement's card" },
+            ],
           },
         ],
       },
@@ -2125,12 +2173,22 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
           {
             text: "Inside a multi-statement input, @<statement number> refers to the variable ID of the last card of an earlier statement, where statements are 0-indexed, and @calculation refers to the last card of the final statement, which only an earlier statement may use; the final statement itself cannot refer to its own last card. In output, the default numeric reference style prints that card id, which is a plain literal when the text is read back; use @n when the output must re-parse as a reference.",
           },
+          {
+            text: " #<statement number> is the value reference: it stands for the value of that statement's last card at the tick being viewed.",
+          },
         ],
         examples: [
           {
             kind: "concrete",
             text: "5; add(@0, 1)",
             caption: [{ text: "@0 is the first statement's card" }],
+          },
+          {
+            kind: "concrete",
+            text: "3; numberAdd(#0, 1)",
+            caption: [
+              { text: "#0 is the value of the first statement's card" },
+            ],
           },
         ],
       },
@@ -2575,6 +2633,11 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
           [
             {
               text: "A materializer step shows the lambda being built: the card you are materializing sits on top, the variable slot the lambda's parameter fills is on the left, and the resulting lambda card is on the right. Each Dynamic hole it abstracted then gets its own card and an apply step that feeds it to that lambda.",
+            },
+          ],
+          [
+            {
+              text: "A delayer step shows the input card on top, the history list card in the right slot, and the list itself in the display panel, with the current tick next to the title and the interval and capacity under the slots.",
             },
           ],
         ],

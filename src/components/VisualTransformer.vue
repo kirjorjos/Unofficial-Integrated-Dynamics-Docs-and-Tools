@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import VisualTransformerStep from "./VisualTransformerStep.vue";
+import DelayGuiView from "./DelayGuiView.vue";
 import LabellerGuiView from "./LabellerGuiView.vue";
 import LogicProgrammerView from "./LogicProgrammerView.vue";
 import MaterializerGuiView from "./MaterializerGuiView.vue";
@@ -9,6 +10,8 @@ import {
   generateVisualSteps,
   getCompactValueTextForAst,
   getCumulativeStepError,
+  getDelayHistoryText,
+  getDelayResultCard,
   getMaterializerResultCard,
   getReaderPartIdForStep,
 } from "pages-lib/visualTransformerLogic";
@@ -22,6 +25,7 @@ const props = defineProps<{
   operatorPreviewMode?: "value" | "pattern";
   forceShowOutputCard?: boolean;
   labeller?: boolean;
+  targetTick?: number;
 }>();
 
 const startId = props.startVariableId ?? 0;
@@ -29,6 +33,7 @@ const startId = props.startVariableId ?? 0;
 const steps = computed(() =>
   generateVisualSteps(props.ast, startId, props.operatorPreviewMode, {
     labeller: props.labeller,
+    targetTick: props.targetTick,
   })
 );
 
@@ -84,6 +89,19 @@ const hasLabellerAfter = (index: number): boolean =>
         :type-error="step.typeError"
         :part-id="getReaderPartIdForStep(steps, index, startId)"
         :variable-id="step.variableId"
+      />
+      <DelayGuiView
+        v-else-if="step.sourceType === 'Delay'"
+        :input-card="step.inputs[0]"
+        :result-card="
+          getDelayResultCard(step, { unnamed: hasLabellerAfter(index) })
+        "
+        :value-text="getDelayHistoryText(step)"
+        :tick="step.delayTick"
+        :interval="step.delayInterval"
+        :capacity="step.delayCapacity"
+        :frozen="step.delayFrozen"
+        :error="step.delayError"
       />
       <MaterializerGuiView
         v-else-if="step.sourceType === 'Materialize'"

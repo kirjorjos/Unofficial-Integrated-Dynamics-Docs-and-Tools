@@ -31,6 +31,11 @@ import {
   flattenAnonymousBaseOperatorApplication,
   getNodeComment,
 } from "lib/transformers/helpers";
+import {
+  delayCapacity,
+  delayInterval,
+  simulateDocument,
+} from "lib/transformers/delaySimulation";
 import { abstractDynamicParts } from "lib/transformers/lambdaAbstraction";
 import { lowerLambdasInAst } from "lib/transformers/lambdaLowering";
 import tooltipInfo from "lib/generated/integratedDynamicsTooltipInfo.json";
@@ -82,11 +87,17 @@ export type VisualStep = {
   workspaceMode?: "operatorValue" | "pattern";
   typeError?: string;
   comment?: string;
+  delayHistory?: TypeAST.AST[];
+  delayError?: string;
+  delayTick?: number;
+  delayInterval?: number;
+  delayCapacity?: number;
+  delayFrozen?: boolean;
 };
 
 export type VisualStepOptions = {
-  /** Adds a labeller step after every non-self-naming (reader/materializer) step. */
   labeller?: boolean;
+  targetTick?: number;
 };
 
 export type VisualCardRef = {
@@ -340,6 +351,17 @@ export const getCompactValueTextForAst = (ast: TypeAST.AST): string => {
         return {
           type: "List",
           value: ast.value.map(cloneAstWithoutVarNames),
+        };
+      case "Delay":
+        return {
+          type: "Delay",
+          value: cloneAstWithoutVarNames(ast.value),
+          ...(ast.interval !== undefined ? { interval: ast.interval } : {}),
+          ...(ast.capacity !== undefined ? { capacity: ast.capacity } : {}),
+          ...(ast.freezeAt !== undefined ? { freezeAt: ast.freezeAt } : {}),
+          ...(ast.seeds
+            ? { seeds: ast.seeds.map(cloneAstWithoutVarNames) }
+            : {}),
         };
       case "Variable":
         return {
@@ -652,6 +674,49 @@ export const getMaterializerResultCard = (
   };
 };
 
+export const getDelayHistory = (
+  step: Pick<VisualStep, "delayHistory">
+): TypeAST.AST[] => step.delayHistory ?? [];
+
+export const getDelayHistoryText = (
+  step: Pick<VisualStep, "delayHistory">
+): string =>
+  `[${getDelayHistory(step)
+    .map((entry) => getCompactValueTextForAst(entry))
+    .join(", ")}]`;
+
+export const getDelayResultCard = (
+  step: Pick<
+    VisualStep,
+    "output" | "variableId" | "delayHistory" | "delayError"
+  >,
+  options?: { unnamed?: boolean }
+): { name: string; type: string; tooltip: TooltipData } => {
+  const elementType = getDelayHistory(step)[0]?.type;
+  const typeLabel = elementType ? `List<${elementType}>` : "List";
+  const typeMeta = getValueTypeMeta("List");
+  const lines = [
+    formatTemplate(
+      VALUE_TYPE_NAME_TEMPLATE,
+      `${typeMeta.altColorCode ?? typeMeta.colorCode}${typeLabel}`
+    ),
+    formatTemplate(VALUE_TEMPLATE, getDelayHistoryText(step)),
+  ];
+  if (step.delayError) {
+    lines.push(`§c${step.delayError}`);
+  }
+  lines.push(...getBaseTooltipLines(step.variableId));
+
+  return {
+    name: step.output,
+    type: "List",
+    tooltip: {
+      title: getCardTitle(options?.unnamed ? "" : step.output),
+      lines,
+    },
+  };
+};
+
 export const getOperatorValueSignatureText = (
   opName: TypeOperatorKey
 ): string => {
@@ -744,7 +809,10 @@ export const isDirectListValue = (node: TypeAST.AST): boolean => {
 };
 
 export const getDisplayPanelText = (
-  step: Pick<VisualStep, "output" | "node"> & { kind?: VisualStep["kind"] },
+  step: Pick<VisualStep, "output" | "node"> & {
+    kind?: VisualStep["kind"];
+    delayHistory?: TypeAST.AST[];
+  },
   options?: { harden?: boolean }
 ): string => {
   if (step.kind === "labeller") return step.output;
@@ -758,6 +826,9 @@ export const getDisplayPanelText = (
         );
         if (operatorText) return operatorText;
       }
+    }
+    if (step.node.type === "Delay") {
+      return getDelayHistoryText(step);
     }
     if (VALUE_NODE_TYPES.has(step.node.type)) {
       return getCompactValueTextForAst(step.node);
@@ -1195,6 +1266,15 @@ export const buildStepTooltip = (
   variableId: number,
   partId?: number
 ): TooltipData => {
+  if (step.node?.type === "Delay") {
+    return getDelayResultCard({
+      output: step.output,
+      variableId,
+      delayHistory: (step as VisualStep).delayHistory,
+      delayError: (step as VisualStep).delayError,
+    }).tooltip;
+  }
+
   if (step.node?.type === "Reader") {
     const readerClass = getReaderClassByTypeName(step.node.value.reader);
     const aspect = readerClass
@@ -1699,6 +1779,15 @@ export const generateVisualSteps = (
     ];
   }
 
+  let delaySimulation: ReturnType<typeof simulateDocument> | undefined;
+  let delaySimulationError: string | undefined;
+  try {
+    delaySimulation = simulateDocument(ast, options?.targetTick ?? 0);
+  } catch (error) {
+    delaySimulationError =
+      error instanceof Error ? error.message : String(error);
+  }
+
   const result: VisualStep[] = [];
   const seen = new Map<TypeAST.AST, VisualCardRef>();
   const contentSeen = new Map<string, VisualCardRef>();
@@ -1742,7 +1831,9 @@ export const generateVisualSteps = (
       const stepId = `step-${result.length + 1}`;
       const getsLabeller =
         labellerEnabled &&
-        (step.sourceType === "Reader" || step.sourceType === "Materialize");
+        (step.sourceType === "Reader" ||
+          step.sourceType === "Materialize" ||
+          step.sourceType === "Delay");
       const variableId = startVariableId + cardCount;
       cardCount += 1;
       const partId =
@@ -1795,7 +1886,9 @@ export const generateVisualSteps = (
         const resultCard =
           step.sourceType === "Materialize"
             ? getMaterializerResultCard(fullStep)
-            : undefined;
+            : step.sourceType === "Delay"
+              ? getDelayResultCard(fullStep)
+              : undefined;
         const labellerCard = {
           ...card,
           type: (resultCard?.type ?? card.type) as TypeAST.AST["type"],
@@ -2083,6 +2176,29 @@ export const generateVisualSteps = (
 
         seen.set(ast, finalCard);
         return finalCard;
+      }
+      case "Delay": {
+        const inputCard = visit(ast.value);
+        const simulation = delaySimulation?.byNode.get(ast);
+        const error = simulation?.error ?? delaySimulationError;
+        return register({
+          title: "Delay",
+          searchLabel: "Delay",
+          panelLabel: "Delayer",
+          symbol: "D",
+          kind: "value",
+          sourceType: ast.type,
+          inputs: [inputCard],
+          output: nextName,
+          node: ast,
+          typeError: error,
+          delayHistory: simulation?.history ?? [],
+          delayError: error,
+          delayTick: simulation?.tick ?? 0,
+          delayInterval: delayInterval(ast),
+          delayCapacity: delayCapacity(ast),
+          delayFrozen: simulation?.frozen ?? false,
+        });
       }
       case "Reader": {
         const readerClass = getReaderClassByTypeName(ast.value.reader);
