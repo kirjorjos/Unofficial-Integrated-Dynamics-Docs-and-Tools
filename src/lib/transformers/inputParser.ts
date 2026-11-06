@@ -9,6 +9,7 @@ import {
   CARD_TYPE_OPERATOR,
   CARD_TYPE_PROXY,
   cardToAST,
+  decodeValueTag,
   getCardId,
   getCardPartId,
   getCardType,
@@ -79,18 +80,31 @@ export interface ParsedVarStore {
   cards: ParsedCard[];
 }
 
+export interface ParsedDelayBlock {
+  lineIndex: number;
+  proxyId: number;
+  capacity: number;
+  interval: number;
+  seeds: TypeAST.AST[];
+  node: TypeAST.Delay;
+  warnings: string[];
+  tag: CompoundTag;
+}
+
 export interface ParsedSource {
   lineIndex: number;
   envelope: ParsedEnvelope;
   cards: ParsedCard[];
   parts: ParsedPart[];
   varStores: ParsedVarStore[];
+  delayBlocks?: ParsedDelayBlock[];
 }
 
 export interface ParsedInput {
   sources: ParsedSource[];
   cards: ParsedCard[];
   parts: ParsedPart[];
+  delayBlocks?: ParsedDelayBlock[];
   warnings: string[];
   missingPartIds: string[];
 }
@@ -102,6 +116,11 @@ export interface ParseInputOptions {
 
 const VARIABLE_ITEM_ID = "integrateddynamics:variable";
 const VARIABLE_STORE_ITEM_ID = "integrateddynamics:variablestore";
+const DELAY_ITEM_ID = "integrateddynamics:delay";
+const DEFAULT_DELAY_CAPACITY = 5;
+const DEFAULT_DELAY_INTERVAL = 1;
+const DELAY_READ_SLOT = 0;
+const DELAY_PROXY_SLOT = 2;
 
 const CONTAINER_ITEM_IDS: readonly string[] = [
   VARIABLE_STORE_ITEM_ID,
@@ -268,6 +287,7 @@ interface ScanState {
   cards: ParsedCard[];
   parts: ParsedPart[];
   varStores: ParsedVarStore[];
+  delayBlocks: ParsedDelayBlock[];
   warnings: string[];
 }
 
@@ -382,6 +402,11 @@ const scanPayload = (
   state: ScanState,
   itemId?: string
 ): ParsedCard[] => {
+  const blockEntity = tag.get(new iString("BlockEntityTag"));
+  if (blockEntity instanceof CompoundTag) {
+    return scanPayload(blockEntity, state, itemId);
+  }
+
   const cards = scanItemList(tag, "inventory", state);
   scanItemList(tag, "Items", state);
   scanItemList(tag, "Inventory", state);
@@ -398,9 +423,116 @@ const scanPayload = (
   return cards;
 };
 
+const numericField = (tag: CompoundTag, key: string): number | undefined => {
+  const value = tag.get(new iString(key));
+  return value instanceof NumericTag ? value.getAsDouble() : undefined;
+};
+
+const inventorySlot = (
+  tag: CompoundTag,
+  slot: number
+): CompoundTag | undefined =>
+  listEntries(tag, "inventory").find(
+    (entry) => numericField(entry, "Slot") === slot
+  );
+
+const entryTag = (entry: CompoundTag): CompoundTag | undefined => {
+  const tag = entry.get(new iString("tag"));
+  return tag instanceof CompoundTag ? tag : undefined;
+};
+
+const decodeDelayBlock = (
+  tag: CompoundTag,
+  state: ScanState
+): ParsedDelayBlock | undefined => {
+  const proxyId = numericField(tag, "proxyId");
+  if (proxyId === undefined) return undefined;
+
+  const capacity = numericField(tag, "capacity") ?? DEFAULT_DELAY_CAPACITY;
+  const interval =
+    numericField(tag, "updateInterval") ?? DEFAULT_DELAY_INTERVAL;
+  const label = `Delay block ${proxyId}`;
+  const warnings: string[] = [];
+
+  const seeds: TypeAST.AST[] = [];
+  for (const entry of listEntries(tag, "values")) {
+    const valueType = getStringField(entry, "valueType");
+    const value = entry.get(new iString("value"));
+    if (valueType === undefined || value === undefined) {
+      warnings.push(
+        `${label}: a stored history value has no type, so it was left out`
+      );
+      continue;
+    }
+    const decoded = decodeValueTag(valueType, value);
+    warnings.push(...decoded.warnings.map((warning) => `${label}: ${warning}`));
+    if (decoded.value !== undefined) seeds.push(decoded.value);
+  }
+
+  const readEntry = inventorySlot(tag, DELAY_READ_SLOT);
+  const readTag = readEntry === undefined ? undefined : entryTag(readEntry);
+  const input = readTag === undefined ? undefined : cardToAST(readTag).value;
+
+  let value: TypeAST.AST;
+  if (input === undefined) {
+    warnings.push(
+      `${label}: the input card is missing, so its stored history is shown as a plain list`
+    );
+    value = { type: "List", value: seeds };
+  } else {
+    value = input;
+  }
+
+  const proxyEntry = inventorySlot(tag, DELAY_PROXY_SLOT);
+  const proxyTag = proxyEntry === undefined ? undefined : entryTag(proxyEntry);
+  const proxyCardId = proxyTag === undefined ? undefined : getCardId(proxyTag);
+
+  const node: TypeAST.Delay = {
+    type: "Delay",
+    value,
+    proxyId: String(proxyId),
+  };
+  if (interval !== DEFAULT_DELAY_INTERVAL) node.interval = interval;
+  if (capacity !== DEFAULT_DELAY_CAPACITY) node.capacity = capacity;
+  if (seeds.length > 0) node.seeds = seeds;
+  if (proxyCardId !== undefined) node.proxyCardId = proxyCardId;
+
+  return {
+    lineIndex: state.lineIndex,
+    proxyId,
+    capacity,
+    interval,
+    seeds,
+    node,
+    warnings,
+    tag,
+  };
+};
+
+const scanDelayBlock = (envelope: ParsedEnvelope, state: ScanState): void => {
+  const inner = envelope.tag.get(new iString("BlockEntityTag"));
+  const tag =
+    inner instanceof CompoundTag
+      ? inner
+      : envelope.id === DELAY_ITEM_ID
+        ? envelope.tag
+        : undefined;
+  if (tag === undefined) return;
+  if (
+    envelope.id !== DELAY_ITEM_ID &&
+    getStringField(tag, "id") !== DELAY_ITEM_ID
+  ) {
+    return;
+  }
+  const block = decodeDelayBlock(tag, state);
+  if (block !== undefined) state.delayBlocks.push(block);
+};
+
 const scanBlob = (envelope: ParsedEnvelope, state: ScanState): void => {
   const tag = envelope.tag;
   const itemId = envelope.id;
+
+  scanDelayBlock(envelope, state);
 
   if (itemId === VARIABLE_ITEM_ID) {
     if (isVariableCard(tag)) state.cards.push(toCard(tag, state));
@@ -644,6 +776,7 @@ export const parseSnbtInput = (
       cards: [],
       parts: [],
       varStores: [],
+      delayBlocks: [],
       warnings,
     };
     scanBlob(envelope, state);
@@ -653,7 +786,8 @@ export const parseSnbtInput = (
     if (
       state.cards.length === 0 &&
       state.parts.length === 0 &&
-      state.varStores.length === 0
+      state.varStores.length === 0 &&
+      state.delayBlocks.length === 0
     ) {
       warnings.push(
         `Blob ${lineIndex + 1}: no variable cards or parts were found in it`
@@ -661,6 +795,7 @@ export const parseSnbtInput = (
     }
   });
 
+  const allDelayBlocks: ParsedDelayBlock[] = [];
   for (const state of scanned) {
     sources.push({
       lineIndex: state.lineIndex,
@@ -668,9 +803,27 @@ export const parseSnbtInput = (
       cards: state.cards,
       parts: state.parts,
       varStores: state.varStores,
+      delayBlocks: state.delayBlocks,
     });
     allCards.push(...state.cards);
     allParts.push(...state.parts);
+    allDelayBlocks.push(...state.delayBlocks);
+  }
+
+  const delayByProxyId = new Map<string, ParsedDelayBlock>();
+  for (const block of allDelayBlocks) {
+    warnings.push(...block.warnings);
+    const partId = String(block.proxyId);
+    delayByProxyId.set(partId, block);
+    allParts.push({
+      lineIndex: block.lineIndex,
+      partType: DELAY_ITEM_ID,
+      itemId: DELAY_ITEM_ID,
+      family: "other",
+      partId,
+      tag: block.tag,
+      cards: [],
+    });
   }
 
   const partsById = new Map<string, ParsedPart>();
@@ -680,6 +833,15 @@ export const parseSnbtInput = (
     }
   }
   for (const card of allCards) {
+    const delayBlock =
+      card.type === CARD_TYPE_DELAY && card.partId !== undefined
+        ? delayByProxyId.get(card.partId)
+        : undefined;
+    if (delayBlock !== undefined) {
+      card.ast = delayBlock.node;
+      card.decodeWarnings = [];
+      continue;
+    }
     const decoded = cardToAST(card.tag, {
       getPart: (partId) => partsById.get(partId),
     });
@@ -738,6 +900,7 @@ export const parseSnbtInput = (
     sources,
     cards,
     parts: dedupeParts(allParts, warnings, conflicts),
+    delayBlocks: allDelayBlocks,
     warnings,
     missingPartIds,
   };

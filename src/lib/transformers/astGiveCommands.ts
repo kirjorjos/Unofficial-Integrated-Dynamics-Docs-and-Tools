@@ -46,6 +46,7 @@ import {
 } from "lib/transformers/entityUuid";
 import { TagToSNBT, type SNBTSerializeOptions } from "lib/transformers/SNBT";
 import { getSourceCards, isSourceNode } from "lib/transformers/sourceNodes";
+import { simulateDelay } from "lib/transformers/delaySimulation";
 
 export interface AstGiveOptions {
   materialize?: boolean;
@@ -57,6 +58,7 @@ export interface AstGiveOptions {
   target?: string;
   markOverlong?: boolean;
   entityUuidSeed?: number;
+  targetTick?: number;
 }
 
 export interface AstGiveOutput {
@@ -67,6 +69,7 @@ export interface AstGiveOutput {
 }
 
 const DISPLAY_PANEL_PART_TYPE = "integrateddynamics:display_panel";
+const DELAY_ITEM_ID = "integrateddynamics:delay";
 const OPERATOR_PIPE = "OPERATOR_PIPE";
 const OPERATOR_PIPE2 = "OPERATOR_PIPE2";
 const OPERATOR_FLIP = "OPERATOR_FLIP";
@@ -663,6 +666,10 @@ class CardWriter {
     return current;
   }
 
+  addRawCard(tag: (id: number) => CompoundTag): number {
+    return this.add(`raw:${this.nextId}`, tag);
+  }
+
   private add(key: string, tag: (id: number) => CompoundTag): number {
     const id = this.nextId++;
     this.cards.push({ id, tag: tag(id) });
@@ -779,6 +786,82 @@ const expandUnit = (
 ): void => {
   if (isSourceNode(node)) {
     expandSource(node, writer, emissions, warnings);
+    return;
+  }
+
+  if (node.type === "Delay") {
+    const simulation = simulateDelay(node, options.targetTick ?? 0);
+    const inputId = writer.write(node.value);
+    const inputIndex = writer.cards.findIndex((card) => card.id === inputId);
+    for (const index of writer.cardIndicesIn(node.value)) {
+      if (index !== inputIndex) emitCard(writer, emissions, index);
+    }
+
+    const proxyId = writer.partIdFor(givenPartId(node.proxyId, warnings));
+    const proxyCardId = writer.addRawCard(
+      (id) =>
+        new CompoundTag({
+          _id: intTag(id),
+          _type: DELAY_ITEM_ID,
+          partId: intTag(proxyId),
+        })
+    );
+    const proxyIndex = writer.cards.findIndex(
+      (card) => card.id === proxyCardId
+    );
+
+    const historyNode: TypeAST.List = {
+      type: "List",
+      value: simulation.history,
+    };
+    const historyId = writer.write(historyNode);
+    const historyIndex = writer.cards.findIndex(
+      (card) => card.id === historyId
+    );
+
+    if (simulation.error !== undefined) warnings.push(simulation.error);
+
+    const values = listTag(
+      simulation.history.map((entry) => {
+        const value = ASTtoOperator(entry);
+        return new CompoundTag({
+          value: ValueHelpers.serializeRaw(value),
+          valueType: new StringTag(
+            new iString(ValueHelpers.getTypeName(value))
+          ),
+        });
+      })
+    );
+
+    const variableSlot = (slot: number, tag: CompoundTag): CompoundTag =>
+      new CompoundTag({
+        Count: byteTag(1),
+        Slot: byteTag(slot),
+        id: VARIABLE_ITEM_ID,
+        tag,
+      });
+
+    const blockTag = new CompoundTag({
+      proxyId: intTag(proxyId),
+      capacity: intTag(node.capacity ?? 5),
+      updateInterval: intTag(node.interval ?? 1),
+      inventory: listTag([
+        variableSlot(0, writer.cards[inputIndex]!.tag),
+        variableSlot(2, writer.cards[proxyIndex]!.tag),
+      ]),
+      values,
+    });
+
+    emissions.push({
+      kind: "item",
+      itemId: DELAY_ITEM_ID,
+      tag: new CompoundTag({
+        proxyId: intTag(proxyId),
+        BlockEntityTag: blockTag,
+      }),
+      holds: [inputIndex, proxyIndex],
+    });
+    emissions.push({ kind: "card", index: historyIndex });
     return;
   }
 

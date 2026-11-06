@@ -3,6 +3,11 @@ import { flattenAnonymousBaseOperatorApplication } from "lib/transformers/helper
 import type { NormalizedSegment } from "lib/transformers/MixedLists";
 import { astChildren } from "lib/transformers/astTraversal";
 import { getSourceCards } from "lib/transformers/sourceNodes";
+import {
+  collectCalculationValueRefs,
+  validatePromises,
+} from "lib/transformers/delayPromises";
+import { StructuralParseError } from "lib/transformers/parseErrors";
 
 export const isVarRefNode = (node: TypeAST.AST): node is TypeAST.Variable =>
   node.type === "Variable" &&
@@ -48,7 +53,9 @@ export const astContentKey = (ast: TypeAST.AST): string => {
     case "Param":
       return `Param:${ast.index}:${ast.binderDepth ?? 0}:${ast.name ?? ""}`;
     case "Variable":
-      return `Variable:${ast.id ?? ""}:${ast.label ?? ""}:${ast.valueType ?? ""}`;
+      return `Variable:${ast.id ?? ""}:${ast.label ?? ""}:${ast.valueType ?? ""}${
+        ast.promise === true ? ":promise" : ""
+      }`;
     case "String":
       return `String:${ast.value}`;
     case "Boolean":
@@ -78,6 +85,12 @@ export const astContentKey = (ast: TypeAST.AST): string => {
     case "Display":
     case "Card":
       return `${ast.type}:${astContentKey(ast.value)}`;
+    case "Delay":
+      return `Delay(${astContentKey(ast.value)};i=${ast.interval ?? 1};c=${
+        ast.capacity ?? 5
+      };f=${ast.freezeAt ?? "-"};s=[${(ast.seeds ?? [])
+        .map(astContentKey)
+        .join(",")}])`;
     case "VarStore":
       return `VarStore:${ast.value.id ?? ""}:[${ast.value.cards
         .map(astContentKey)
@@ -248,7 +261,7 @@ const resolveVarRefs = (
   node: TypeAST.AST,
   resolve: (ref: TypeAST.Variable) => { id: string; info: ResolvedRefInfo }
 ): void => {
-  if (isVarRefNode(node)) {
+  if (isVarRefNode(node) && node.promise !== true) {
     assertValidVariable(node);
     const refName = varRefName(node);
     const { id, info } = resolve(node);
@@ -302,6 +315,10 @@ const resolveVarRefs = (
     case "Card":
       resolveVarRefs(node.value, resolve);
       break;
+    case "Delay":
+      resolveVarRefs(node.value, resolve);
+      for (const seed of node.seeds ?? []) resolveVarRefs(seed, resolve);
+      break;
     case "VarStore":
     case "DisplayPanel":
     case "Writer":
@@ -324,6 +341,20 @@ export const buildNetworkCards = (
 ): TypeAST.NetworkCards => {
   if (segments.length === 0) {
     throw new Error("NetworkCards must contain at least one definition");
+  }
+
+  const statementCount = segments.length;
+  for (const segment of segments) {
+    const nodes = [...segment.hoisted.map((entry) => entry.node), segment.node];
+    for (const node of nodes) {
+      for (const index of collectCalculationValueRefs(node)) {
+        if (index >= statementCount) {
+          throw new StructuralParseError(
+            `Calculation with index ${index} does not exist`
+          );
+        }
+      }
+    }
   }
 
   const definitions: {
@@ -351,6 +382,8 @@ export const buildNetworkCards = (
       writable: true,
     });
   }
+
+  validatePromises(definitions);
 
   const finalSegmentDefIndex = segmentFlatIndex[segments.length - 1]!;
 

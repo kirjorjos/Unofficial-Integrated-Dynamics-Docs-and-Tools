@@ -93,6 +93,7 @@ const panelError = computed(
       v-if="
         props.step.sourceType === 'Reader' ||
         props.step.sourceType === 'Materialize' ||
+        props.step.sourceType === 'Delay' ||
         props.step.kind === 'labeller'
       "
     />

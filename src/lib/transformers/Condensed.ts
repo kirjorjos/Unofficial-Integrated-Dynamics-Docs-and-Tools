@@ -37,7 +37,14 @@ import {
 import { BinderScope } from "lib/transformers/binderScope";
 import { parseLambdaParamEntry } from "lib/transformers/lambdaParams";
 import { variableFromAt, variableFromName } from "lib/transformers/variableRef";
+import {
+  delayArgsFromPositional,
+  delayToText,
+  parseDelayArgument,
+} from "lib/transformers/delaySyntax";
 import { normalizeSegments } from "lib/transformers/MixedLists";
+import { foldDelayDependent } from "lib/transformers/tickFold";
+import { calculationValueRefNode } from "lib/transformers/delayPromises";
 import {
   isReservedName,
   operatorLabel,
@@ -450,6 +457,7 @@ export const CondensedToAST = (
   const { text, operands } = extractCardOperands(condensed);
   const { tokens, comments } = tokenizeWithComments(text);
   let pos = 0;
+  let promiseDepth = 0;
   const spans: CommentSpan[] = [];
 
   type InternalAST =
@@ -518,7 +526,18 @@ export const CondensedToAST = (
     | { type: "Dynamic"; value: InternalAST; varName?: string }
     | { type: "Static"; value: InternalAST; varName?: string }
     | { type: "Display"; value: InternalAST; varName?: string }
-    | { type: "Card"; value: InternalAST; varName?: string };
+    | { type: "Card"; value: InternalAST; varName?: string }
+    | {
+        type: "Delay";
+        value: InternalAST;
+        interval?: number;
+        capacity?: number;
+        freezeAt?: number;
+        seeds?: InternalAST[];
+        proxyId?: string;
+        proxyCardId?: string;
+        varName?: string;
+      };
 
   const checkParamShadow = (name: string): void => {
     if (isReservedName(name)) {
@@ -655,7 +674,9 @@ export const CondensedToAST = (
             ? "Static"
             : lower === "display"
               ? "Display"
-              : undefined;
+              : lower === "delay"
+                ? "Delay"
+                : undefined;
     if (!canonical) return undefined;
     if (scope.has(token.value) || externalScope.has(token.value)) {
       return undefined;
@@ -665,7 +686,58 @@ export const CondensedToAST = (
       return undefined;
     }
     pos += 2; // consume name and '('
-    const value = parseExpression(scope);
+    let value: InternalAST;
+    if (canonical === "Delay") {
+      promiseDepth += 1;
+      try {
+        value = parseExpression(scope);
+      } finally {
+        promiseDepth -= 1;
+      }
+    } else {
+      value = parseExpression(scope);
+    }
+    if (canonical === "Delay") {
+      const args: number[] = [];
+      while (
+        tokens[pos] &&
+        tokens[pos]!.type === "structural" &&
+        tokens[pos]!.value === ","
+      ) {
+        if (args.length === 3) {
+          throw new StructuralParseError("Delay takes at most four arguments");
+        }
+        pos++; // consume ','
+        let sign = "";
+        if (
+          tokens[pos] &&
+          tokens[pos]!.type === "structural" &&
+          tokens[pos]!.value === "-"
+        ) {
+          sign = "-";
+          pos++;
+        }
+        const argToken = tokens[pos];
+        if (!argToken || argToken.type === "structural") {
+          throw new StructuralParseError("Expected ')' after Delay argument");
+        }
+        pos++;
+        args.push(parseDelayArgument(args.length + 1, sign + argToken.value));
+      }
+      if (
+        !tokens[pos] ||
+        tokens[pos]!.type !== "structural" ||
+        tokens[pos]!.value !== ")"
+      ) {
+        throw new StructuralParseError("Expected ')' after Delay argument");
+      }
+      pos++; // consume ')'
+      return {
+        type: "Delay",
+        value,
+        ...delayArgsFromPositional(args),
+      } as InternalAST;
+    }
     if (
       !tokens[pos] ||
       tokens[pos]!.type !== "structural" ||
@@ -1393,8 +1465,9 @@ export const CondensedToAST = (
           }
           return parseCardOperand(operand) as InternalAST;
         }
-        if (token.value.startsWith("@"))
+        if (token.value.startsWith("@")) {
           return variableFromAt(token.value) as InternalAST;
+        }
         const binding = scope.lookup(token.value);
         if (binding) {
           return {
@@ -1434,6 +1507,12 @@ export const CondensedToAST = (
         }
         const convenience = convenienceAstFor(token.value);
         if (convenience) return convenience as InternalAST;
+        if (/^#\d+$/.test(token.value)) {
+          return calculationValueRefNode(token.value) as InternalAST;
+        }
+        if (promiseDepth > 0) {
+          return calculationValueRefNode(token.value) as InternalAST;
+        }
         throw new UnknownIdentifierParseError(
           `Unknown identifier: ${token.value}`
         );
@@ -1487,6 +1566,8 @@ export interface CondensedOutputOptions {
   atNameRefs?: boolean;
   useNames?: boolean;
   varIdRefsByName?: Map<string, string>;
+  /** Simulates delays this far and prints their resolved values. */
+  targetTick?: number;
 }
 
 export const ASTToCondensed = (
@@ -1496,8 +1577,12 @@ export const ASTToCondensed = (
   preferSourceNames = false,
   outputOpts: CondensedOutputOptions = {}
 ): string => {
-  const defLastCardIds = getNetworkDefLastCardIds(ast, startVariableId);
-  const segmentRefs = getNetworkSegmentRefs(ast);
+  const workingAst =
+    outputOpts.targetTick === undefined
+      ? ast
+      : foldDelayDependent(ast, outputOpts.targetTick, startVariableId);
+  const defLastCardIds = getNetworkDefLastCardIds(workingAst, startVariableId);
+  const segmentRefs = getNetworkSegmentRefs(workingAst);
 
   const refString = (node: TypeAST.AST): string | null => {
     const lastCardId = defLastCardIds.get(node);
@@ -1623,6 +1708,10 @@ export const ASTToCondensed = (
             "A Variable node requires an id or a label"
           );
         }
+        if (node.promise === true) {
+          result = refName;
+          break;
+        }
         if (node.label === undefined) {
           result = `@${node.id}`;
           break;
@@ -1696,6 +1785,10 @@ export const ASTToCondensed = (
 
       case "Materialize":
         result = `Materialize(${stringify(node.value, false)})`;
+        break;
+
+      case "Delay":
+        result = `Delay(${stringify(node.value, false)}${delayToText(node)})`;
         break;
 
       case "Dynamic":
@@ -1827,5 +1920,5 @@ export const ASTToCondensed = (
     return result;
   };
 
-  return stringify(ast, isTopLevel);
+  return stringify(workingAst, isTopLevel);
 };

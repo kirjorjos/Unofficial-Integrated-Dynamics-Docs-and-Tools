@@ -50,6 +50,13 @@ import { astToGiveCommands } from "lib/transformers/astGiveCommands";
 import { inputToGiveCommands } from "lib/transformers/giveCommands";
 import { compressWithInputState } from "lib/transformers/Compressed";
 import { decodeTransformerUrlCode } from "lib/transformers/decodeUrlState";
+import {
+  buildInternalBugIssueUrl,
+  INTERNAL_BUG_REPORT_HINT,
+  isInternalBugMessage,
+  setLastInternalBugDetail,
+} from "lib/issueReporter";
+import { InternalParseError } from "lib/transformers/parseErrors";
 
 type FormatKey = TransformerFormatKey;
 type OutputFormatKey = Exclude<FormatKey, "compressed"> | "visual";
@@ -135,6 +142,7 @@ const formatters: Record<FormatKey, FormatFormatter> = {
         joinStatements:
           settings.value.statementLayout === "newline" ? "\n" : ";",
         refStyle: settings.value.referenceStyle,
+        targetTick: settings.value.targetTick,
       }),
   },
   expanded: {
@@ -181,6 +189,7 @@ const snbtGiveOptions = () => ({
   conflicts: settings.value.conflicts,
   startVariableId: settings.value.initialVariableId,
   entityUuidSeed: settings.value.entityUuidSeed,
+  targetTick: settings.value.targetTick,
 });
 
 const settingsToSigOpts = (
@@ -502,6 +511,19 @@ const buildUrlCode = (): string | null => {
     : ASTToCompressed(currentAst.value as TypeAST.AST);
 };
 
+const outputErrorMessage = (error: unknown): string => {
+  if (error instanceof InternalParseError) {
+    setLastInternalBugDetail(error.detail);
+  }
+  return error instanceof Error ? error.message : String(error);
+};
+
+const outputErrorHref = computed<string | undefined>(() =>
+  isInternalBugMessage(outputError.value)
+    ? buildInternalBugIssueUrl({ reproUrl: reproUrl.value })
+    : undefined
+);
+
 const reproUrl = computed<string | undefined>(() => {
   if (!currentAst.value || !inputText.value.trim()) return undefined;
   try {
@@ -523,7 +545,7 @@ const updateOutputFromAst = (
     return true;
   } catch (error) {
     outputText.value = "";
-    outputError.value = error instanceof Error ? error.message : String(error);
+    outputError.value = outputErrorMessage(error);
     status.value = "";
     return false;
   }
@@ -554,6 +576,14 @@ watch(
       : 0;
     if (normalized !== settings.value.initialVariableId) {
       settings.value.initialVariableId = normalized;
+      return;
+    }
+
+    const tick = Number.isFinite(settings.value.targetTick)
+      ? Math.max(0, Math.trunc(settings.value.targetTick))
+      : 0;
+    if (tick !== settings.value.targetTick) {
+      settings.value.targetTick = tick;
       return;
     }
 
@@ -620,7 +650,7 @@ const transform = (skipUrlUpdate: boolean = false): void => {
     updateUrlState(code);
   } catch (error) {
     outputText.value = "";
-    outputError.value = error instanceof Error ? error.message : String(error);
+    outputError.value = outputErrorMessage(error);
     status.value = "";
     if (!skipUrlUpdate) {
       updateUrlState(null);
@@ -756,6 +786,7 @@ onMounted(async () => {
       :start-variable-id="initialVariableId"
       operator-preview-mode="pattern"
       :labeller="settings.labeller"
+      :target-tick="settings.targetTick"
       discovery-only
       @steps="onVisualSteps"
     />
@@ -881,6 +912,31 @@ onMounted(async () => {
                 type="checkbox"
                 :disabled="!settingEnabled('labeller')"
                 aria-label="Labeller"
+              />
+            </div>
+
+            <div
+              class="settings-row"
+              :class="{ disabled: !settingEnabled('targetTick') }"
+            >
+              <label
+                class="settings-label"
+                for="setting-target-tick"
+                :data-help="settingHelpText('targetTick')"
+              >
+                Target tick<sup class="settings-help-mark" aria-hidden="true"
+                  >?</sup
+                >
+              </label>
+              <input
+                id="setting-target-tick"
+                v-model.number="settings.targetTick"
+                class="select"
+                type="number"
+                min="0"
+                step="1"
+                :disabled="!settingEnabled('targetTick')"
+                aria-label="Target tick"
               />
             </div>
 
@@ -1566,7 +1622,17 @@ onMounted(async () => {
       <Tile id="output" :span="2">
         <label class="field">
           <span>{{ outputFormatters[displayedOutputFormat].label }}</span>
-          <div v-if="outputError" class="output-error" v-text="outputError" />
+          <div v-if="outputError" class="output-error">
+            <span v-text="outputError" />
+            <a
+              v-if="outputErrorHref"
+              class="output-error-report"
+              :href="outputErrorHref"
+              target="_blank"
+              rel="noopener noreferrer"
+              >{{ INTERNAL_BUG_REPORT_HINT }}</a
+            >
+          </div>
           <FoldableExpandedOutput
             v-else-if="displayedOutputFormat === 'expanded'"
             ref="expandedOutputViewer"
@@ -1614,6 +1680,7 @@ onMounted(async () => {
           :render-step-id="stepId"
           operator-preview-mode="pattern"
           :labeller="settings.labeller"
+          :target-tick="settings.targetTick"
           force-show-output-card
           :repro-url="reproUrl"
         />

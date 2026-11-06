@@ -187,26 +187,35 @@ export const evaluateFullyAppliedCurry = (
     return undefined;
   }
 
-  const resolveArg = (arg: IntegratedValue): IntegratedValue => {
-    if (arg instanceof Operator) {
-      const result = arg.getFn()(null);
-      if (
-        result != null &&
-        typeof result !== "function" &&
-        !(result instanceof Operator)
-      ) {
-        return result;
-      }
+  const resolveArgAst = (argAst: TypeAST.AST): IntegratedValue | undefined => {
+    if (argAst.type === "Curry") {
+      const nested = evaluateFullyAppliedCurry(argAst);
+      if (nested !== undefined) return nested;
     }
-    return arg;
+    try {
+      const arg = ASTtoOperator(argAst);
+      if (arg instanceof Operator) {
+        const result = arg.getFn()(null);
+        if (
+          result != null &&
+          typeof result !== "function" &&
+          !(result instanceof Operator)
+        ) {
+          return result;
+        }
+      }
+      return arg;
+    } catch {
+      return undefined;
+    }
   };
 
   try {
     const argValues: IntegratedValue[] = [];
     for (const argAst of flat.args) {
-      try {
-        argValues.push(resolveArg(ASTtoOperator(argAst)));
-      } catch {}
+      const argValue = resolveArgAst(argAst);
+      if (argValue === undefined) return undefined;
+      argValues.push(argValue);
     }
 
     const baseOp = ASTtoOperator(flat.operator);
@@ -242,6 +251,7 @@ const isStaticallyEvaluable = (node: TypeAST.AST): boolean => {
     case "Card":
       return isStaticallyEvaluable(node.value);
     case "Dynamic":
+    case "Delay":
     case "Variable":
     case "Lambda":
     case "Param":
@@ -539,6 +549,7 @@ const isLiteralLikeName = (name: string): boolean => {
 
 export const isVarNameExpandedSafe = (name: string): boolean =>
   getNicknameRegex().test(name) &&
+  !name.startsWith("#") &&
   !name.includes("=") &&
   !name.includes("'") &&
   name !== "{}" &&

@@ -33,6 +33,7 @@ const RESERVED_NAMES = new Set([
   "dynamic",
   "static",
   "display",
+  "delay",
   "card",
 ]);
 
