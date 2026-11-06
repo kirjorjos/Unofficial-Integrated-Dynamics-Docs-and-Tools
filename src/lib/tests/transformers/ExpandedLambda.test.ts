@@ -70,6 +70,13 @@ describe("TestExpandedLambda", () => {
     expect(printed).not.toMatch(/^\{.*\} = /m);
   });
 
+  it("infers untyped parameter types from how the body uses them (issue #171)", () => {
+    const printed = ASTToExpanded(
+      ExpandedToAST("out list = uniq_p list (el1 => el2 => false)")
+    );
+    expect(printed).toContain("out :: List<Any> → List<Any>");
+  });
+
   it("computes function signatures from parameter types", () => {
     const untyped = ASTToExpanded(ExpandedToAST("f = x => x"));
     expect(untyped).toContain("f :: Any → Any");

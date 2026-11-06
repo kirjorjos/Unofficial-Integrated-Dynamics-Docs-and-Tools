@@ -482,10 +482,13 @@ const rawSignatureForParamType = (
   } as TypeRawSignatureAST.RawSignatureNode;
 };
 
+type ParamBinderFrame = (ParsedSignature | undefined)[];
+
 const computeSignature = (
   node: TypeAST.AST,
   scope?: Map<TypeAST.AST, ParsedSignature>,
-  resolve = false
+  resolve = false,
+  binders: ParamBinderFrame[] = []
 ): ParsedSignature => {
   if (scope && scope.has(node)) return instantiateSignature(scope.get(node)!);
 
@@ -520,7 +523,7 @@ const computeSignature = (
       }
 
       const elementSignatures = node.value.map((entry) =>
-        computeSignature(entry, scope, resolve).getAst()
+        computeSignature(entry, scope, resolve, binders).getAst()
       );
       const first = elementSignatures[0]!;
       const allSame = elementSignatures.every(
@@ -549,7 +552,8 @@ const computeSignature = (
       const elementSignature = computeSignature(
         node.value,
         scope,
-        resolve
+        resolve,
+        binders
       ).getAst();
       signature = new ParsedSignature(
         {
@@ -570,10 +574,10 @@ const computeSignature = (
       break;
     }
     case "Curry": {
-      let currentSig = computeSignature(node.base, scope, resolve);
+      let currentSig = computeSignature(node.base, scope, resolve, binders);
       for (const arg of node.args) {
         currentSig = unwrapOperator(currentSig)
-          .apply(computeSignature(arg, scope, resolve))
+          .apply(computeSignature(arg, scope, resolve, binders))
           .rewrite();
       }
       signature =
@@ -586,24 +590,34 @@ const computeSignature = (
       break;
     }
     case "Pipe": {
-      const sig1 = unwrapOperator(computeSignature(node.op1, scope, resolve));
-      const sig2 = unwrapOperator(computeSignature(node.op2, scope, resolve));
+      const sig1 = unwrapOperator(
+        computeSignature(node.op1, scope, resolve, binders)
+      );
+      const sig2 = unwrapOperator(
+        computeSignature(node.op2, scope, resolve, binders)
+      );
       signature = wrapInOperator(sig1.pipe(sig2).rewrite(), resolve);
       // Piping INTO an apply-variant curry keeps the distinction relevant.
       signature.applyTainted = isApplyVariantNode(node.op2);
       break;
     }
     case "Pipe2": {
-      const sig1 = unwrapOperator(computeSignature(node.op1, scope, resolve));
-      const sig2 = unwrapOperator(computeSignature(node.op2, scope, resolve));
-      const sig3 = unwrapOperator(computeSignature(node.op3, scope, resolve));
+      const sig1 = unwrapOperator(
+        computeSignature(node.op1, scope, resolve, binders)
+      );
+      const sig2 = unwrapOperator(
+        computeSignature(node.op2, scope, resolve, binders)
+      );
+      const sig3 = unwrapOperator(
+        computeSignature(node.op3, scope, resolve, binders)
+      );
       signature = wrapInOperator(sig1.pipe2(sig2, sig3).rewrite(), resolve);
       signature.applyTainted = isApplyVariantNode(node.op3);
       break;
     }
     case "Flip": {
       const innerSignature = unwrapOperator(
-        computeSignature(node.arg, scope, resolve)
+        computeSignature(node.arg, scope, resolve, binders)
       );
       signature = wrapInOperator(innerSignature.flip().rewrite(), resolve);
       signature.applyTainted = isApplyVariantNode(node.arg);
@@ -675,18 +689,36 @@ const computeSignature = (
       break;
     }
     case "Param": {
-      signature = new ParsedSignature(
-        { type: "Any", typeID: ParsedSignature.getNewTypeID() },
-        false
-      );
+      const depth = node.binderDepth ?? 0;
+      const bound = binders[binders.length - 1 - depth]?.[node.index];
+      signature = bound
+        ? new ParsedSignature(bound.getAst(), false)
+        : new ParsedSignature(
+            { type: "Any", typeID: ParsedSignature.getNewTypeID() },
+            false
+          );
       break;
     }
     case "Lambda": {
-      let out = computeSignature(node.body, scope, resolve).getAst();
+      const paramBinders: ParamBinderFrame = node.params.map((param) =>
+        param.type === undefined
+          ? new ParsedSignature(
+              { type: "Any", typeID: ParsedSignature.getNewTypeID() },
+              false
+            )
+          : undefined
+      );
+      let out = computeSignature(node.body, scope, resolve, [
+        ...binders,
+        paramBinders,
+      ]).getAst();
       for (let i = node.params.length - 1; i >= 0; i--) {
+        const inferred = paramBinders[i]?.rewrite();
         out = {
           type: "Function",
-          from: rawSignatureForParamType(node.params[i]!.type),
+          from: inferred
+            ? inferred.getAst()
+            : rawSignatureForParamType(node.params[i]!.type),
           to: out,
         };
       }
@@ -697,11 +729,11 @@ const computeSignature = (
       const root = node.definitions[node.definitions.length - 1]?.node;
       if (!root)
         throw new Error("NetworkCards must contain at least one definition");
-      signature = computeSignature(root, scope, resolve);
+      signature = computeSignature(root, scope, resolve, binders);
       break;
     }
     case "Materialize": {
-      const inner = computeSignature(node.value, scope, resolve);
+      const inner = computeSignature(node.value, scope, resolve, binders);
       const dynamics = collectDynamicParams(node.value);
       if (
         dynamics.length === 0 ||
@@ -715,7 +747,12 @@ const computeSignature = (
       for (let i = dynamics.length - 1; i >= 0; i--) {
         out = {
           type: "Function",
-          from: computeSignature(dynamics[i]!.value, scope, resolve).getAst(),
+          from: computeSignature(
+            dynamics[i]!.value,
+            scope,
+            resolve,
+            binders
+          ).getAst(),
           to: out,
         };
       }
@@ -726,7 +763,7 @@ const computeSignature = (
     case "Static":
     case "Display":
     case "Card": {
-      signature = computeSignature(node.value, scope, resolve);
+      signature = computeSignature(node.value, scope, resolve, binders);
       break;
     }
     case "VarStore":
@@ -740,7 +777,7 @@ const computeSignature = (
           `A ${node.type} is not a value - it holds ${cards.length} cards`
         );
       }
-      signature = computeSignature(cards[0]!, scope, resolve);
+      signature = computeSignature(cards[0]!, scope, resolve, binders);
       break;
     }
   }

@@ -34,7 +34,7 @@ test.describe("transformersPageLambdaInput", () => {
       .selectOption("expanded");
     await page.getByRole("button", { name: "Transform", exact: true }).click();
     const expanded = page.locator(".expanded-output-viewer");
-    await expect(expanded).toContainText("f :: Any → Number");
+    await expect(expanded).toContainText("f :: Number → Number");
     await expect(expanded).toContainText("f = x => numberAdd(x, 1)");
   });
 
