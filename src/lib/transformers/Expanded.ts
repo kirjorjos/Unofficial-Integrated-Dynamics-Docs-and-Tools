@@ -39,7 +39,12 @@ import {
 } from "lib/transformers/nicknameShadow";
 import { StructuralParseError } from "lib/transformers/parseErrors";
 import { parseParamType } from "lib/transformers/lambdaParams";
-import { lowerLambda } from "lib/transformers/lambdaLowering";
+import {
+  astContainsLambda,
+  lowerLambda,
+  lowerLambdasInAst,
+  lowerLambdasInAstWithSteps,
+} from "lib/transformers/lambdaLowering";
 import { mapAst, visitAst } from "lib/transformers/astTraversal";
 import {
   delayPromiseNode,
@@ -877,6 +882,20 @@ const getInternalName = (node: TypeAST.AST): string | undefined => {
   return undefined;
 };
 
+const collapseApplyWrappers = (node: TypeAST.AST): TypeAST.AST => {
+  const mapped = mapAst(node, collapseApplyWrappers);
+  if (mapped.type !== "Curry" || !isApplyNode(mapped.base)) return mapped;
+  const [first, ...rest] = mapped.args;
+  if (!first) return mapped;
+  if (rest.length === 0) return first;
+  return {
+    type: "Curry",
+    base: first as TypeAST.Operator,
+    args: rest,
+    ...(mapped.varName ? { varName: mapped.varName } : {}),
+  };
+};
+
 const isApplyNode = (node: TypeAST.AST): boolean => {
   const internalName = getInternalName(node);
   if (
@@ -1281,6 +1300,7 @@ export interface ExpandedDisplayOptions {
   resolve?: boolean;
   variableWrapper?: boolean;
   lambdaParamSugar?: boolean;
+  lambdaExpansionSteps?: boolean;
   comments?: boolean;
   joinStatements?: ";" | "\n";
   refStyle?: "varId" | "refs";
@@ -1337,6 +1357,113 @@ const renderLambdaParamSugar = (
     ? lambdaText.slice(prefix.length)
     : lambdaText;
   return `${baseName} ${param} = ${body}`;
+};
+
+const renderExpansionSteps = (
+  node: TypeAST.AST,
+  nameDisplay: string,
+  displayOpts: ExpandedDisplayOptions,
+  style: "CodeLine" | "Condensed",
+  preferSourceNames: boolean,
+  formatSig: (sig: ParsedSignature) => string,
+  commentLines: string[] | undefined
+): string[] | null => {
+  let steps: TypeAST.AST[];
+  try {
+    steps = lowerLambdasInAstWithSteps(node).steps;
+  } catch {
+    return null;
+  }
+
+  const topLevelParamIndices = (node: TypeAST.AST): number[] => {
+    const indices = new Set<number>();
+    visitAst(node, (child) => {
+      if (child.type === "Param" && (child.binderDepth ?? 0) === 0) {
+        indices.add(child.index);
+      }
+    });
+    return [...indices].sort((a, b) => a - b);
+  };
+
+  const bindRemainingParams = (
+    step: TypeAST.AST,
+    params: TypeAST.Lambda["params"]
+  ): TypeAST.AST => {
+    const indices = topLevelParamIndices(step);
+    if (indices.length === 0) return step;
+    return {
+      type: "Lambda",
+      params: indices.map((index) => {
+        const declared = params[index];
+        return {
+          name: declared?.name ?? `p${index}`,
+          ...(declared?.type ? { type: declared.type } : {}),
+        };
+      }),
+      body: step,
+    };
+  };
+
+  const lambdaParams = node.type === "Lambda" ? node.params : [];
+  const nameReferences = (displayOpts.expandedRefForm ?? "name") === "name";
+  const rendered: { text: string; sig: string }[] = [];
+  for (const [stepIndex, rawStep] of steps.entries()) {
+    const step =
+      stepIndex === 0 ? rawStep : bindRemainingParams(rawStep, lambdaParams);
+    const stepVarName = step.varName;
+    delete step.varName;
+    let text: string;
+    try {
+      text =
+        style === "CodeLine"
+          ? ASTToCodeLine(step, true, 0, {
+              joinStatements: displayOpts.joinStatements,
+              refStyle: displayOpts.refStyle,
+            })
+          : ASTToCondensed(step, false, 0, preferSourceNames, {
+              joinStatements: displayOpts.joinStatements,
+              refStyle: displayOpts.refStyle,
+              useNames: nameReferences,
+              atNameRefs: nameReferences,
+            });
+    } catch {
+      if (stepVarName) step.varName = stepVarName;
+      return null;
+    }
+    if (stepVarName) step.varName = stepVarName;
+
+    if (rendered.length > 0 && rendered[rendered.length - 1]!.text === text) {
+      continue;
+    }
+    let sig: string;
+    try {
+      sig = formatSig(computeSignature(step));
+    } catch {
+      return null;
+    }
+    rendered.push({ text, sig });
+  }
+
+  if (rendered.length < 2) return null;
+
+  const lines: string[] = commentLines ? [...commentLines] : [];
+  let lastSig: string | null = null;
+  for (const { text, sig } of rendered) {
+    if (displayOpts.signatureLayout === "inline") {
+      lines.push(
+        displayOpts.inlinePlacement === "before"
+          ? `${nameDisplay} :: ${sig} = ${text}`
+          : `${nameDisplay} = ${text} :: ${sig}`
+      );
+    } else {
+      if (lastSig === null || lastSig !== sig) {
+        lines.push(`${nameDisplay} :: ${sig}`);
+      }
+      lines.push(`${nameDisplay} = ${text}`);
+    }
+    lastSig = sig;
+  }
+  return lines;
 };
 
 export const ASTToExpandedWithSignatureOptions = (
@@ -1409,6 +1536,30 @@ export const ASTToExpandedWithSignatureOptions = (
     ) {
       continue;
     }
+    if (displayOpts.lambdaExpansionSteps && astContainsLambda(v)) {
+      const chainNameDisplay =
+        displayOpts.variableWrapper || isReservedName(name)
+          ? `Variable("${name.replace(/"/g, '\\"')}")`
+          : v.varName
+            ? formatDefinitionName(name)
+            : displayName;
+      const chain = renderExpansionSteps(
+        v,
+        chainNameDisplay,
+        displayOpts,
+        style,
+        preferSourceNames,
+        (sig) =>
+          sigOpts ? formatter.formatDepth(sig, sigOpts) : formatter.format(sig),
+        displayOpts.comments && v.varName ? comments?.get(v.varName) : undefined
+      );
+      if (chain !== null) {
+        output.push(...chain);
+        if (i < finalVarsArray.length - 1) output.push("");
+        continue;
+      }
+    }
+
     const overrideOpts = v.varName ? sigOverrides?.get(v.varName) : undefined;
     const effOpts = overrideOpts ?? sigOpts;
     const effResolveAnys = Boolean(
@@ -2183,6 +2334,21 @@ export const ExpandedToAST = (
       const existing = definitions.find((def) => def.name === varName);
       if (existing) {
         if (astContentKey(existing.node) !== astContentKey(lineAST)) {
+          let isChainStep = false;
+          if (astContainsLambda(existing.node) || astContainsLambda(lineAST)) {
+            try {
+              isChainStep =
+                astContentKey(
+                  collapseApplyWrappers(lowerLambdasInAst(existing.node))
+                ) ===
+                astContentKey(
+                  collapseApplyWrappers(lowerLambdasInAst(lineAST))
+                );
+            } catch {
+              isChainStep = false;
+            }
+          }
+          if (isChainStep) continue;
           if (!opts.allowDuplicateNames) {
             throw new Error(
               `Variable "${varName}" is already defined; redefinition is only allowed if the new definition resolves to the same AST`
@@ -2250,16 +2416,28 @@ export const ExpandedToAST = (
       continue;
     }
 
-    if (
-      !declaredMatchesComputed(
-        declared,
-        computeSignature(def.node, undefined, true),
-        { strictGenericSlots: true }
-      )
-    ) {
-      throw new Error(
-        `Signature line ${sig.lineNum}: variable "${sig.name}" is declared as type "${sig.declared}" but the expression has a different signature`
+    const matchesKept = declaredMatchesComputed(
+      declared,
+      computeSignature(def.node, undefined, true),
+      { strictGenericSlots: true }
+    );
+    if (!matchesKept) {
+      const stepIndex = processedLineOrigins.findIndex(
+        (origin) => origin >= sig.lineNum - 1
       );
+      const stepAst = stepIndex === -1 ? undefined : lineAsts[stepIndex];
+      const matchesStep =
+        stepAst !== undefined &&
+        declaredMatchesComputed(
+          declared,
+          computeSignature(stepAst, undefined, true),
+          { strictGenericSlots: true }
+        );
+      if (!matchesStep) {
+        throw new Error(
+          `Signature line ${sig.lineNum}: variable "${sig.name}" is declared as type "${sig.declared}" but the expression has a different signature`
+        );
+      }
     }
   }
 

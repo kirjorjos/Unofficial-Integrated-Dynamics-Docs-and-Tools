@@ -73,6 +73,11 @@ export const SETTING_HELP: Record<SettingHelpKey, SettingHelp> = {
     appliesTo:
       "Only applies to Expanded output, and only to the point-free operator chain. A lambda that was written as a lambda keeps its arrow form even when this is on.",
   },
+  lambdaExpansionSteps: {
+    description:
+      "Prints each definition that contains a lambda as a chain of repeated definitions, from the given lambda to the final point-free form.",
+    appliesTo: "Only applies to Expanded output.",
+  },
   duplicateNames: {
     description:
       "How a name redefined with a different definition is handled: a hard error, or the first definition is kept and the later ones are dropped with a warning.",

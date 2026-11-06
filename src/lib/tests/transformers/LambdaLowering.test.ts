@@ -10,40 +10,40 @@ const lower = (source: string): string =>
   astContentKey(lowerLambda(CondensedToAST(source) as TypeAST.Lambda));
 
 describe("TestLambdaLowering", () => {
-  it("lowers a partial application like the old abstraction", () => {
+  it("lowersAPartialApplicationLikeTheOldAbstraction", () => {
     expect(lower("x => add(x, 1)")).toBe(
       "Curry:Operator:ARITHMETIC_ADDITION(Integer:1)"
     );
   });
 
-  it("preserves swapped argument order with a flip", () => {
+  it("preservesSwappedArgumentOrderWithAFlip", () => {
     expect(lower("(x, y) => subtract(y, x)")).toBe(
       "Flip(Operator:ARITHMETIC_SUBTRACTION)"
     );
   });
 
-  it("keeps repeated parameters", () => {
+  it("keepsRepeatedParameters", () => {
     expect(lower("x => add(x, x)")).toBe(
       "Pipe2(Operator:GENERAL_IDENTITY,Operator:GENERAL_IDENTITY,Operator:ARITHMETIC_ADDITION)"
     );
   });
 
-  it("lowers three parameters", () => {
+  it("lowersThreeParameters", () => {
     expect(lower("(a, b, c) => add(add(a, b), c)")).toBe(
       "Pipe(Operator:ARITHMETIC_ADDITION,Curry:Flip(Operator:OPERATOR_PIPE)(Operator:ARITHMETIC_ADDITION))"
     );
   });
 
-  it("lowers operator-typed parameters to the operator value", () => {
+  it("lowersOperatorTypedParametersToTheOperatorValue", () => {
     expect(lower("(f, x) => apply(f, x)")).toBe("Operator:OPERATOR_APPLY");
   });
 
-  it("lowers nested captures inside-out", () => {
+  it("lowersNestedCapturesInsideOut", () => {
     const lowered = lowerLambdasInAst(CondensedToAST("x => y => add(x, y)"));
     expect(astContentKey(lowered)).toBe("Operator:ARITHMETIC_ADDITION");
   });
 
-  it("lowers constant, identity and reference bodies", () => {
+  it("lowersConstantIdentityAndReferenceBodies", () => {
     expect(lower("x => 5")).toBe("Curry:Operator:GENERAL_CONSTANT(Integer:5)");
     expect(lower("x => x")).toBe("Operator:GENERAL_IDENTITY");
     expect(lower("x => @5")).toBe(
@@ -51,14 +51,14 @@ describe("TestLambdaLowering", () => {
     );
   });
 
-  it("does not mutate the input lambda", () => {
+  it("doesNotMutateTheInputLambda", () => {
     const lambda = CondensedToAST("x => y => add(x, y)") as TypeAST.Lambda;
     const before = JSON.stringify(lambda);
     lowerLambda(lambda);
     expect(JSON.stringify(lambda)).toBe(before);
   });
 
-  it("lowers lambdas nested in call arguments", () => {
+  it("lowersLambdasNestedInCallArguments", () => {
     const lowered = lowerLambdasInAst(
       CondensedToAST("map(x => add(x, 1), [1, 2])")
     );
@@ -72,13 +72,26 @@ describe("TestLambdaLowering", () => {
     expect(astContentKey(lowered)).toContain("OPERATOR_MAP");
   });
 
-  it("reports every blocker instead of emitting partial output", () => {
+  it("reportsEveryBlockerInsteadOfEmittingPartialOutput", () => {
     expect(() =>
-      lowerLambda(CondensedToAST("x => [x]") as TypeAST.Lambda)
+      lowerLambda(CondensedToAST("x => Delay(x, 1)") as TypeAST.Lambda)
     ).toThrow(/Could not lower the lambda:\n- cannot lower a lambda parameter/);
   });
 
-  it("rejects an out-of-range parameter", () => {
+  it("lowersListBodiesWithPlacementBasedAppendAndConcat", () => {
+    expect(lower("x => [x, 1]")).toContain("LIST_APPEND");
+    expect(lower("x => [x, 1]")).toContain("LIST_CONCAT");
+    expect(lower("x => [1, x]")).toContain("LIST_CONCAT");
+  });
+
+  it("guardsDuplicateParameterNamesWithChoiceAndError", () => {
+    const key = lower("(x, x) => x");
+    expect(key).toContain("GENERAL_CHOICE");
+    expect(key).toContain("RELATIONAL_EQUALS");
+    expect(key).toContain("STRING_ERROR");
+  });
+
+  it("rejectsAnOutOfRangeParameter", () => {
     const lambda: TypeAST.Lambda = {
       type: "Lambda",
       params: [{ name: "x" }],
@@ -87,7 +100,7 @@ describe("TestLambdaLowering", () => {
     expect(() => lowerLambda(lambda)).toThrow(/out of range/);
   });
 
-  it("rejects network cards inside a lambda body", () => {
+  it("rejectsNetworkCardsInsideALambdaBody", () => {
     const lambda: TypeAST.Lambda = {
       type: "Lambda",
       params: [{ name: "x" }],

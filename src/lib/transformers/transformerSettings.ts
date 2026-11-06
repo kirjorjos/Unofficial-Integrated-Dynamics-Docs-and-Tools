@@ -19,6 +19,7 @@ export interface TransformerSettings {
   comments: boolean;
   variableWrapper: boolean;
   lambdaParamSugar: boolean;
+  lambdaExpansionSteps: boolean;
   duplicateNames: "error" | "allow";
   operatorShadow: "error" | "warn";
   hardening: "inGame" | "full";
@@ -52,6 +53,7 @@ export const DEFAULT_TRANSFORMER_SETTINGS: TransformerSettings = {
   comments: false,
   variableWrapper: false,
   lambdaParamSugar: false,
+  lambdaExpansionSteps: false,
   duplicateNames: "error",
   operatorShadow: "error",
   hardening: "inGame",
@@ -118,6 +120,7 @@ const FLAG_ORDER: {
   { bit: (s) => s.conflicts === "warn" }, // row 25
   { bit: (s) => s.labeller }, // row 26
   { bit: (s) => s.operatorShadow === "warn" }, // row 27
+  { bit: (s) => s.lambdaExpansionSteps }, // row 28
 ];
 
 const encodeDepth = (depth: number): number => (depth === -1 ? 0 : depth + 1);
@@ -234,6 +237,9 @@ export const decodeSettingsOpts = (
         break;
       case 24:
         settings.operatorShadow = enabled ? "warn" : "error";
+        break;
+      case 25:
+        settings.lambdaExpansionSteps = enabled;
         break;
       default:
         break;
