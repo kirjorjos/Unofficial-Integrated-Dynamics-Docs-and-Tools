@@ -607,15 +607,6 @@ export const CondensedToAST = (
           checkParamShadow(param.name);
           return param;
         });
-      const seenParams = new Set<string>();
-      for (const param of params) {
-        if (seenParams.has(param.name)) {
-          throw new StructuralParseError(
-            `Duplicate variable name "${param.name}" in lambda`
-          );
-        }
-        seenParams.add(param.name);
-      }
       return params;
     } else if (next.type === "structural" && next.value === "\\") {
       pos++; // consume \

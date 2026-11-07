@@ -2038,6 +2038,13 @@ export const INPUT_DOC_TABS: InputDocTab[] = [
             text: "A lambda now round-trips as a lambda: it is no longer printed as pipe or apply calls. Nested lambdas stay inline, parameter names are kept, and a parameter is printed from the lambda that binds it. A function value is called with an apply operator, not by writing f(x).",
           },
         ],
+        bullets: [
+          [
+            {
+              text: "With Lambda expansion steps on, a definition that contains a lambda is printed as repeated definitions of the same name, from the given lambda to the point-free form.",
+            },
+          ],
+        ],
         examples: [
           {
             kind: "concrete",
