@@ -13,6 +13,8 @@ import {
   getDelayHistoryText,
   getDelayResultCard,
   getMaterializerResultCard,
+  getProxyPartIdForStep,
+  getProxyResultCard,
   getReaderPartIdForStep,
 } from "pages-lib/visualTransformerLogic";
 import { getReaderClassByTypeName } from "lib/IntegratedDynamicsClasses/readers/readerRegistry";
@@ -102,6 +104,17 @@ const hasLabellerAfter = (index: number): boolean =>
         :capacity="step.delayCapacity"
         :frozen="step.delayFrozen"
         :error="step.delayError"
+      />
+      <MaterializerGuiView
+        v-else-if="step.sourceType === 'Proxy'"
+        title="Proxy"
+        :top-card="step.inputs[0]"
+        :result-card="
+          getProxyResultCard(step, {
+            unnamed: hasLabellerAfter(index),
+            partId: getProxyPartIdForStep(steps, index, startId),
+          })
+        "
       />
       <MaterializerGuiView
         v-else-if="step.sourceType === 'Materialize'"
