@@ -169,6 +169,14 @@ export const ASTtoOperator = (ast: TypeAST.AST): IntegratedValue => {
     case "Card":
       return ASTtoOperator(ast.value);
 
+    case "Proxy":
+      return ast.value === undefined
+        ? ASTtoOperator({
+            type: "Operator",
+            opName: "GENERAL_IDENTITY" as TypeOperatorKey,
+          })
+        : ASTtoOperator(ast.value);
+
     case "Delay":
       throw new InternalParseError(
         "ASTtoOperator received a Delay node; delays must be resolved at the target tick first (delaySimulation.evaluateAtTick)"

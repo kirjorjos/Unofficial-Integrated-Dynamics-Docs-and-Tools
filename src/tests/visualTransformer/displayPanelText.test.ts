@@ -1,8 +1,10 @@
 import {
   getCompactValueTextForAst,
   getDisplayPanelText,
+  getMaterializerMiddleText,
   isTypeAssignable,
 } from "pages-lib/visualTransformerLogic";
+import { CondensedToAST } from "lib/transformers/Condensed";
 import { ExpandedToAST } from "lib/transformers/Expanded";
 import { beforeEachVisualTransformer, makeAst, steps } from "./fixtures";
 
@@ -32,6 +34,17 @@ describe("getCompactValueTextForAst", () => {
     };
 
     expect(getCompactValueTextForAst(unknownAspect)).toBe("");
+  });
+
+  it("testRendersAProxiedCardAsItsCompactValueText", () => {
+    expect(getCompactValueTextForAst(CondensedToAST("Proxy(5)"))).toBe("5");
+    expect(getCompactValueTextForAst(CondensedToAST("Proxy()"))).toBe("");
+  });
+
+  it("testUnwrapsABareProxyForTheMaterializerMiddleText", () => {
+    expect(
+      getMaterializerMiddleText(CondensedToAST("Proxy()"), "fallback")
+    ).toBe("");
   });
 });
 

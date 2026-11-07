@@ -15,6 +15,7 @@ export interface MaterializerCard {
 const props = defineProps<{
   topCard?: MaterializerCard;
   resultCard?: MaterializerCard;
+  title?: string;
 }>();
 
 const getTextureName = (type: string | undefined): string => {
@@ -76,7 +77,7 @@ const middleText = computed(() => {
       <div class="materializer-gui-overlay">
         <div class="materializer-title">
           <FitText
-            text="Materializer"
+            :text="props.title ?? 'Materializer'"
             align="left"
             :min-scale="0.5"
             exact-fit

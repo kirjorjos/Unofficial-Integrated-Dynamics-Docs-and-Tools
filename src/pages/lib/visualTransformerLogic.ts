@@ -137,6 +137,7 @@ const VALUE_TYPE_NAME_TEMPLATE = "§eType: §r%s";
 const VALUE_TEMPLATE = "§e§oValue: §r%s";
 const ASPECT_NAME_TEMPLATE = "§eAspect: §r%s";
 const PART_ID_TEMPLATE = "§ePart ID: §r%s";
+const PROXY_ID_TEMPLATE = "§eProxy ID: §r%s";
 const OPERATOR_SIGNATURE_TEMPLATE = "§eSignature: §r%s";
 const EXPECTED_INPUT_TYPE_TEMPLATE = "§eExpected Type: %s";
 const EXPECTED_OUTPUT_TYPE_TEMPLATE = "§eExpected Output: %s";
@@ -467,6 +468,14 @@ export const getCompactValueTextForAst = (ast: TypeAST.AST): string => {
           type: "Materialize",
           value: cloneAstWithoutVarNames(ast.value),
         };
+      case "Proxy":
+        return {
+          type: "Proxy",
+          ...(ast.value === undefined
+            ? {}
+            : { value: cloneAstWithoutVarNames(ast.value) }),
+          ...(ast.proxyId === undefined ? {} : { proxyId: ast.proxyId }),
+        };
       case "Dynamic":
         return {
           type: "Dynamic",
@@ -560,12 +569,21 @@ export const getCompactValueTextForAst = (ast: TypeAST.AST): string => {
         ? getReaderAspectDefaultValue(readerClass, ast.value.aspect)
         : "";
     }
+    case "Proxy":
+      return ast.value === undefined
+        ? ""
+        : getCompactValueTextForAst(ast.value);
   }
 
   return JSON.stringify(ast);
 };
 
 const unwrapMaterializerMiddleTextNode = (node: TypeAST.AST): TypeAST.AST => {
+  if (node.type === "Proxy") {
+    return node.value === undefined
+      ? node
+      : unwrapMaterializerMiddleTextNode(node.value);
+  }
   if (
     node.type === "Materialize" ||
     node.type === "Dynamic" ||
@@ -671,6 +689,44 @@ export const getMaterializerResultCard = (
       title: getCardTitle(options?.unnamed ? "" : step.output),
       lines,
     },
+  };
+};
+
+export const buildProxyCardTooltip = (input: {
+  name?: string;
+  proxyId?: number;
+  partId?: number;
+  variableId: number;
+  labeller?: boolean;
+}): TooltipData => {
+  const proxyId = input.proxyId ?? input.partId;
+  return {
+    title: getCardTitle(input.labeller ? "" : (input.name ?? "")),
+    lines: [
+      formatTemplate(
+        PROXY_ID_TEMPLATE,
+        proxyId === undefined ? "" : `${proxyId}`
+      ),
+      formatTemplate(VARIABLE_CARD_ID_TEMPLATE, `${input.variableId}`),
+      ...getTooltipInfoLines(VARIABLE_CARD_INFO_KEY),
+    ],
+  };
+};
+
+export const getProxyResultCard = (
+  step: Pick<VisualStep, "output" | "variableId" | "node">,
+  options?: { unnamed?: boolean; partId?: number }
+): { name: string; type: string; tooltip: TooltipData } => {
+  const node = step.node?.type === "Proxy" ? step.node : undefined;
+  return {
+    name: step.output,
+    type: "Proxy",
+    tooltip: buildProxyCardTooltip({
+      name: options?.unnamed ? "" : step.output,
+      proxyId: node?.proxyId ?? options?.partId,
+      variableId: step.variableId,
+      labeller: options?.unnamed,
+    }),
   };
 };
 
@@ -829,6 +885,11 @@ export const getDisplayPanelText = (
     }
     if (step.node.type === "Delay") {
       return getDelayHistoryText(step);
+    }
+    if (step.node.type === "Proxy") {
+      return step.node.value === undefined
+        ? ""
+        : getCompactValueTextForAst(step.node.value);
     }
     if (VALUE_NODE_TYPES.has(step.node.type)) {
       return getCompactValueTextForAst(step.node);
@@ -1056,10 +1117,15 @@ const parseAuthoredPartId = (
   return Number.isFinite(parsed) ? parsed : undefined;
 };
 
-export const getReaderPartIdForStep = (
-  steps: (Pick<VisualStep, "node"> & { kind?: VisualStep["kind"] })[],
+type PartAllocationStep = Pick<VisualStep, "node"> & {
+  kind?: VisualStep["kind"];
+};
+
+const getPartIdForStep = (
+  steps: PartAllocationStep[],
   index: number,
-  startPartId: number
+  startPartId: number,
+  target: "Reader" | "Proxy"
 ): number | undefined => {
   const used = new Set<number>();
   const byReaderPart = new Map<string, number>();
@@ -1077,6 +1143,15 @@ export const getReaderPartIdForStep = (
     const step = steps[stepIndex];
     if (step?.kind === "labeller") continue;
     const node = step?.node;
+
+    if (node?.type === "Proxy") {
+      const authored = parseAuthoredPartId(node.proxyId);
+      const id = authored === undefined ? take() : authored;
+      if (authored !== undefined) used.add(id);
+      if (stepIndex === index) return target === "Proxy" ? id : undefined;
+      continue;
+    }
+
     if (node?.type !== "Reader") continue;
 
     const authored = parseAuthoredPartId(node.value.partId);
@@ -1099,11 +1174,23 @@ export const getReaderPartIdForStep = (
       }
     }
 
-    if (stepIndex === index) return id;
+    if (stepIndex === index) return target === "Reader" ? id : undefined;
   }
 
   return undefined;
 };
+
+export const getReaderPartIdForStep = (
+  steps: PartAllocationStep[],
+  index: number,
+  startPartId: number
+): number | undefined => getPartIdForStep(steps, index, startPartId, "Reader");
+
+export const getProxyPartIdForStep = (
+  steps: PartAllocationStep[],
+  index: number,
+  startPartId: number
+): number | undefined => getPartIdForStep(steps, index, startPartId, "Proxy");
 
 export const buildOperatorCardTooltip = (
   step: Pick<
@@ -1266,6 +1353,15 @@ export const buildStepTooltip = (
   variableId: number,
   partId?: number
 ): TooltipData => {
+  if (step.node?.type === "Proxy") {
+    return buildProxyCardTooltip({
+      name: step.output,
+      proxyId: step.node.proxyId,
+      partId,
+      variableId,
+    });
+  }
+
   if (step.node?.type === "Delay") {
     return getDelayResultCard({
       output: step.output,
@@ -1652,6 +1748,10 @@ const astContentKey = (ast: TypeAST.AST): string => {
       return `Reader:${ast.value.reader}:${ast.value.aspect}:${ast.value.partId ?? ""}:${
         ast.value.settings ? JSON.stringify(ast.value.settings) : ""
       }:${ast.value.simulatedOutput ? astContentKey(ast.value.simulatedOutput) : ""}`;
+    case "Proxy":
+      return `Proxy:${ast.proxyId ?? ""}:${
+        ast.value === undefined ? "" : astContentKey(ast.value)
+      }`;
     default:
       return (ast as TypeAST.AST).type;
   }
@@ -1833,6 +1933,7 @@ export const generateVisualSteps = (
         labellerEnabled &&
         (step.sourceType === "Reader" ||
           step.sourceType === "Materialize" ||
+          step.sourceType === "Proxy" ||
           step.sourceType === "Delay");
       const variableId = startVariableId + cardCount;
       cardCount += 1;
@@ -1843,7 +1944,13 @@ export const generateVisualSteps = (
               result.length,
               startVariableId
             )
-          : undefined;
+          : step.sourceType === "Proxy"
+            ? getProxyPartIdForStep(
+                [...result, step],
+                result.length,
+                startVariableId
+              )
+            : undefined;
       const tooltip = buildStepTooltip(
         getsLabeller ? { ...step, output: "" } : step,
         variableId,
@@ -1886,9 +1993,11 @@ export const generateVisualSteps = (
         const resultCard =
           step.sourceType === "Materialize"
             ? getMaterializerResultCard(fullStep)
-            : step.sourceType === "Delay"
-              ? getDelayResultCard(fullStep)
-              : undefined;
+            : step.sourceType === "Proxy"
+              ? getProxyResultCard(fullStep, { partId })
+              : step.sourceType === "Delay"
+                ? getDelayResultCard(fullStep)
+                : undefined;
         const labellerCard = {
           ...card,
           type: (resultCard?.type ?? card.type) as TypeAST.AST["type"],
@@ -2176,6 +2285,21 @@ export const generateVisualSteps = (
 
         seen.set(ast, finalCard);
         return finalCard;
+      }
+      case "Proxy": {
+        const inputCard =
+          ast.value === undefined ? undefined : visit(ast.value);
+        return register({
+          title: "Proxy",
+          searchLabel: "Proxy",
+          panelLabel: "Proxy",
+          symbol: "P",
+          kind: "value",
+          sourceType: ast.type,
+          inputs: inputCard === undefined ? [] : [inputCard],
+          output: nextName,
+          node: ast,
+        });
       }
       case "Delay": {
         const inputCard = visit(ast.value);

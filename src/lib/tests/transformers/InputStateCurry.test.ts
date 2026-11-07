@@ -30,6 +30,11 @@ describe("TestCurryCanonicalStabilization", () => {
       expect((intAst as TypeAST.Curried).varName).toBeUndefined();
     });
 
+    it("copiesAProxyAndItsWrappedCard", () => {
+      const proxy = CondensedToAST("Proxy(5, 3)");
+      expect(stripAutoCurryVarNames(proxy)).toEqual(proxy);
+    });
+
     it("removesTheAutoNameInjectedByTheRoundTrip", () => {
       const roundTripped = CompressedToAST(ASTToCompressed(intAst));
       expect((roundTripped as TypeAST.Curried).varName).toBeDefined();

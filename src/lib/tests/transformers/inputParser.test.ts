@@ -126,6 +126,16 @@ describe("TestParseSnbtInputEnvelopes", () => {
 });
 
 describe("TestParseSnbtInputSources", () => {
+  it("testReadsAProxyCardWithoutTreatingItAsAReference", () => {
+    const { cards } = parseSnbtInput(
+      '{_id:2,_type:"integrateddynamics:proxy",partId:7}',
+      { missingParts: "warn" }
+    );
+    expect(cards).toHaveLength(1);
+    expect(cards[0]!.ast).toEqual({ type: "Proxy", proxyId: 7 });
+    expect(getCardReferences(cards[0]!)).toEqual([]);
+  });
+
   it("testReadsEveryCardOfAVariablestoreInventoryInPasteOrder", () => {
     const { cards } = parseSnbtInput(VARIABLE_STORE);
     expect(ids(cards)).toEqual(["4", "5", "16", "20"]);

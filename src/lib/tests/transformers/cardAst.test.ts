@@ -318,9 +318,17 @@ describe("TestCardAst", () => {
       expect(result.warnings.join(" ")).toContain("part 15");
     });
 
-    it("testApproximatesAProxyCardWithTheIdentityOperator", () => {
+    it("testDecodesAProxyCardWithItsProxyId", () => {
       const result = decodeCard(
         '{_id:2,_type:"integrateddynamics:proxy",partId:0}'
+      );
+      expect(result.value).toEqual({ type: "Proxy", proxyId: 0 });
+      expect(result.warnings.join(" ")).not.toContain("identity operator");
+    });
+
+    it("testKeepsApproximatingDelayCardsWithTheIdentityOperator", () => {
+      const result = decodeCard(
+        '{_id:3,_type:"integrateddynamics:delay",partId:1}'
       );
       expect(result.value).toEqual({
         type: "Operator",

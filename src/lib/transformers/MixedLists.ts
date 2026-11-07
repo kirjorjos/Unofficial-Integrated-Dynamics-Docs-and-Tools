@@ -176,6 +176,10 @@ const normalizeLambdaNode = (node: TypeAST.AST): TypeAST.AST => {
     case "Display":
     case "Card":
       return { ...node, value: normalizeLambdaNode(node.value) };
+    case "Proxy":
+      return node.value === undefined
+        ? node
+        : { ...node, value: normalizeLambdaNode(node.value) };
     default:
       return node;
   }
@@ -247,6 +251,11 @@ const normalizeNode = (node: TypeAST.AST, ctx: NormalizeCtx): TypeAST.AST => {
     case "Materialize": {
       const value = normalizeNode(node.value, ctx);
       return value === node.value ? node : { type: "Materialize", value };
+    }
+    case "Proxy": {
+      if (node.value === undefined) return node;
+      const value = normalizeNode(node.value, ctx);
+      return value === node.value ? node : { ...node, value };
     }
     case "Dynamic": {
       const value = normalizeNode(node.value, ctx);

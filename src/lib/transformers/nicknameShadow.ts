@@ -151,6 +151,9 @@ const walkAst = (
     case "Card":
       walkAst(node.value, visitOperator, seen);
       return;
+    case "Proxy":
+      if (node.value !== undefined) walkAst(node.value, visitOperator, seen);
+      return;
     case "NetworkCards":
       for (const def of node.definitions) {
         walkAst(def.node, visitOperator, seen);
