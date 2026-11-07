@@ -335,6 +335,15 @@ export const ASTToCodeLine = (
         result = `Materialize(${stringify(node.value, false)})`;
         break;
 
+      case "Proxy":
+        result =
+          node.value === undefined
+            ? "Proxy()"
+            : `Proxy(${stringify(node.value, false)}${
+                node.proxyId === undefined ? "" : `, ${node.proxyId}`
+              })`;
+        break;
+
       case "Delay":
         result = `Delay(${stringify(node.value, false)}${delayToText(node)})`;
         break;
@@ -594,6 +603,12 @@ export const CodeLineToAST = (
         varName?: string;
       }
     | { type: "Materialize"; value: InternalAST; varName?: string }
+    | {
+        type: "Proxy";
+        value?: InternalAST;
+        proxyId?: number;
+        varName?: string;
+      }
     | { type: "Dynamic"; value: InternalAST; varName?: string }
     | { type: "Static"; value: InternalAST; varName?: string }
     | { type: "Display"; value: InternalAST; varName?: string }
@@ -671,15 +686,6 @@ export const CodeLineToAST = (
           checkParamShadow(param.name);
           return param;
         });
-      const seenParams = new Set<string>();
-      for (const param of params) {
-        if (seenParams.has(param.name)) {
-          throw new StructuralParseError(
-            `Duplicate variable name "${param.name}" in lambda`
-          );
-        }
-        seenParams.add(param.name);
-      }
       return params;
     } else if (next === "\\") {
       pos++;
@@ -812,18 +818,48 @@ export const CodeLineToAST = (
             ? "Static"
             : lower === "display"
               ? "Display"
-              : undefined;
+              : lower === "proxy"
+                ? "Proxy"
+                : undefined;
     if (!canonical) return undefined;
     if (scope.has(token) || externalScope.has(token)) return undefined;
     if (tokens[pos + 1] !== "(") return undefined;
     pos += 2; // consume name and '('
-    const value = parseSequence(scope, false);
+    let value: InternalAST | undefined;
+    if (canonical === "Proxy" && tokens[pos] === ")") {
+      value = undefined;
+    } else {
+      value = parseSequence(scope, false, canonical === "Proxy");
+    }
+    let proxyId: number | undefined;
+    if (canonical === "Proxy" && tokens[pos] === ",") {
+      pos++; // consume ','
+      const argToken = tokens[pos];
+      if (argToken === undefined || argToken === ")") {
+        throw new StructuralParseError("Expected ')' after Proxy part id");
+      }
+      pos++;
+      const parsed = Number(argToken);
+      if (!Number.isInteger(parsed) || parsed < 0) {
+        throw new StructuralParseError(
+          "Proxy's part id must be a non-negative integer"
+        );
+      }
+      proxyId = parsed;
+    }
     if (tokens[pos] !== ")") {
       throw new StructuralParseError(
         `Expected ')' after ${canonical} argument`
       );
     }
     pos++; // consume ')'
+    if (canonical === "Proxy") {
+      return {
+        type: "Proxy",
+        ...(value === undefined ? {} : { value }),
+        ...(proxyId === undefined ? {} : { proxyId }),
+      } as InternalAST;
+    }
     return unwrapParamWrapper({
       type: canonical,
       value,

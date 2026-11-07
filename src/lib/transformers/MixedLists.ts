@@ -115,6 +115,79 @@ const foldConcat = (exprs: TypeAST.AST[]): TypeAST.AST => {
   return acc;
 };
 
+const chunkToLambdaExpr = (chunk: Chunk): TypeAST.AST => {
+  if (chunk.kind === "simple") {
+    return { type: "List", value: chunk.values };
+  }
+  let acc: TypeAST.AST = { type: "List", value: [] };
+  for (const value of chunk.values) {
+    acc = curry(opNode("LIST_APPEND"), [acc, value]);
+  }
+  return acc;
+};
+
+const normalizeLambdaNode = (node: TypeAST.AST): TypeAST.AST => {
+  switch (node.type) {
+    case "List": {
+      const elements = node.value.map(normalizeLambdaNode);
+      if (elements.every(isSimpleListElement)) return node;
+      const folded = foldConcat(chunkList(elements).map(chunkToLambdaExpr));
+      return node.varName ? { ...folded, varName: node.varName } : folded;
+    }
+    case "Lambda":
+      return { ...node, body: normalizeLambdaNode(node.body) };
+    case "Curry":
+      return {
+        ...node,
+        base: normalizeLambdaNode(node.base) as TypeAST.Operator,
+        args: node.args.map(normalizeLambdaNode),
+      };
+    case "Pipe":
+      return {
+        ...node,
+        op1: normalizeLambdaNode(node.op1) as TypeAST.Operator,
+        op2: normalizeLambdaNode(node.op2) as TypeAST.Operator,
+      };
+    case "Pipe2":
+      return {
+        ...node,
+        op1: normalizeLambdaNode(node.op1) as TypeAST.Operator,
+        op2: normalizeLambdaNode(node.op2) as TypeAST.Operator,
+        op3: normalizeLambdaNode(node.op3) as TypeAST.Operator,
+      };
+    case "Flip":
+      return {
+        ...node,
+        arg: normalizeLambdaNode(node.arg) as TypeAST.Operator,
+      };
+    case "Reader":
+      return node.value.simulatedOutput
+        ? {
+            ...node,
+            value: {
+              ...node.value,
+              simulatedOutput: normalizeLambdaNode(node.value.simulatedOutput),
+            },
+          }
+        : node;
+    case "Materialize":
+    case "Dynamic":
+    case "Static":
+    case "Display":
+    case "Card":
+      return { ...node, value: normalizeLambdaNode(node.value) };
+    case "Proxy":
+      return node.value === undefined
+        ? node
+        : { ...node, value: normalizeLambdaNode(node.value) };
+    default:
+      return node;
+  }
+};
+
+export const normalizeLambdaBody = (node: TypeAST.AST): TypeAST.AST =>
+  normalizeLambdaNode(node);
+
 const normalizeNode = (node: TypeAST.AST, ctx: NormalizeCtx): TypeAST.AST => {
   switch (node.type) {
     case "List": {
@@ -178,6 +251,11 @@ const normalizeNode = (node: TypeAST.AST, ctx: NormalizeCtx): TypeAST.AST => {
     case "Materialize": {
       const value = normalizeNode(node.value, ctx);
       return value === node.value ? node : { type: "Materialize", value };
+    }
+    case "Proxy": {
+      if (node.value === undefined) return node;
+      const value = normalizeNode(node.value, ctx);
+      return value === node.value ? node : { ...node, value };
     }
     case "Dynamic": {
       const value = normalizeNode(node.value, ctx);

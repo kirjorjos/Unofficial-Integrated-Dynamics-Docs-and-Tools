@@ -480,6 +480,23 @@ class CardWriter {
       }
       case "Entity":
         return this.add(key, (id) => this.entityCardTag(id, node));
+      case "Proxy": {
+        const proxyId = this.partIdFor(
+          node.proxyId === undefined
+            ? undefined
+            : givenPartId(String(node.proxyId), this.warnings)
+        );
+        if (node.value !== undefined) this.write(node.value);
+        return this.add(
+          key,
+          (id) =>
+            new CompoundTag({
+              _id: intTag(id),
+              _type: "integrateddynamics:proxy",
+              partId: intTag(proxyId),
+            })
+        );
+      }
       default:
         return this.add(key, (id) => valueCardTag(id, node));
     }

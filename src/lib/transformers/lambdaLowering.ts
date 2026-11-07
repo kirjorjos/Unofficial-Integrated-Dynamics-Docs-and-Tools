@@ -3,6 +3,7 @@ import { operatorRegistry } from "lib/IntegratedDynamicsClasses/registries/opera
 import { astChildren, mapAst, visitAst } from "lib/transformers/astTraversal";
 import { StructuralParseError } from "lib/transformers/parseErrors";
 import { assertVariableShape } from "lib/transformers/variableRef";
+import { normalizeLambdaBody } from "lib/transformers/MixedLists";
 
 const ID_OP = (opName: string): TypeAST.BaseOperator => ({
   type: "Operator",
@@ -189,6 +190,12 @@ const abstractParam = (
       op2: FLIP_OP,
     });
   }
+  if (
+    body.type === "Reader" &&
+    body.value.simulatedOutput?.type === "Dynamic"
+  ) {
+    return abstractParam(index, body.value.simulatedOutput, ctx);
+  }
   if (body.type === "Curry") {
     const fun = body.base;
     if (containsParam(index, fun)) {
@@ -239,22 +246,27 @@ const abstractParam = (
     const lastArg = body.args[body.args.length - 1]!;
 
     if (firstArgs.some((arg) => containsParam(index, arg))) {
-      return abstractParam(
+      const partial = abstractParam(
         index,
-        {
-          type: "Curry",
-          base: APPLY_OP,
-          args: [
-            abstractParam(
-              index,
-              { type: "Curry", base: fun, args: [...firstArgs, secondLastArg] },
-              ctx
-            ),
-            lastArg,
-          ],
-        },
+        { type: "Curry", base: fun, args: [...firstArgs, secondLastArg] },
         ctx
       );
+      if (containsParam(index, lastArg)) {
+        return abstractParam(
+          index,
+          { type: "Curry", base: APPLY_OP, args: [partial, lastArg] },
+          ctx
+        );
+      }
+      return condense({
+        type: "Pipe",
+        op1: partial as TypeAST.Operator,
+        op2: {
+          type: "Curry",
+          base: { type: "Flip", arg: APPLY_OP },
+          args: [lastArg],
+        },
+      });
     }
 
     const secondLastContains = containsParam(index, secondLastArg);
@@ -315,25 +327,64 @@ const lowerNodeChildren = (
   return mapAst(node, (child) => lowerChild(child, ctx));
 };
 
+const guardDuplicateParams = (
+  lambda: TypeAST.Lambda,
+  body: TypeAST.AST
+): TypeAST.AST => {
+  const firstIndex = new Map<string, number>();
+  let guarded = body;
+  for (let i = 0; i < lambda.params.length; i++) {
+    const name = lambda.params[i]!.name;
+    const first = firstIndex.get(name);
+    if (first === undefined) {
+      firstIndex.set(name, i);
+      continue;
+    }
+    guarded = {
+      type: "Curry",
+      base: ID_OP("GENERAL_CHOICE"),
+      args: [
+        {
+          type: "Curry",
+          base: ID_OP("RELATIONAL_EQUALS"),
+          args: [
+            { type: "Param", index: first, name },
+            { type: "Param", index: i, name },
+          ],
+        },
+        guarded,
+        {
+          type: "Curry",
+          base: ID_OP("STRING_ERROR"),
+          args: [{ type: "String", value: "X is not consistent" }],
+        },
+      ],
+    };
+  }
+  return guarded;
+};
+
+const lowerLambdaToSteps = (
+  lambda: TypeAST.Lambda,
+  ctx: LoweringContext
+): TypeAST.AST[] => {
+  let result = lowerChild(lambda.body, ctx);
+  result = guardDuplicateParams(lambda, result);
+  result = normalizeLambdaBody(result);
+  const steps: TypeAST.AST[] = [];
+  for (let i = lambda.params.length - 1; i >= 0; i--) {
+    result = abstractParam(i, result, ctx);
+    steps.push(result);
+  }
+  return steps;
+};
+
 const lowerLambdaInternal = (
   lambda: TypeAST.Lambda,
   ctx: LoweringContext
 ): TypeAST.AST => {
-  const seen = new Set<string>();
-  for (const param of lambda.params) {
-    if (seen.has(param.name)) {
-      ctx.blockers.push(
-        `lambda parameter "${param.name}" is declared more than once`
-      );
-    }
-    seen.add(param.name);
-  }
-
-  let result = lowerChild(lambda.body, ctx);
-  for (let i = lambda.params.length - 1; i >= 0; i--) {
-    result = abstractParam(i, result, ctx);
-  }
-  return result;
+  const steps = lowerLambdaToSteps(lambda, ctx);
+  return steps[steps.length - 1] ?? lowerChild(lambda.body, ctx);
 };
 
 const validateNodes = (node: TypeAST.AST, ctx: LoweringContext): void => {
@@ -414,6 +465,39 @@ export const lowerLambda = (lambda: TypeAST.Lambda): TypeAST.AST => {
   }
   assertNoLambdaLeft(result);
   return result;
+};
+
+export interface LoweringSteps {
+  ast: TypeAST.AST;
+  steps: TypeAST.AST[];
+}
+
+export const lowerLambdasInAstWithSteps = (ast: TypeAST.AST): LoweringSteps => {
+  if (!astContainsLambda(ast)) return { ast, steps: [ast] };
+
+  const ctx: LoweringContext = { blockers: [] };
+  validateNodes(ast, ctx);
+
+  if (ast.type === "Lambda") {
+    const steps = lowerLambdaToSteps(ast, ctx);
+    if (ctx.blockers.length > 0) {
+      throw new StructuralParseError(
+        `Could not lower the lambda:\n- ${ctx.blockers.join("\n- ")}`
+      );
+    }
+    const ready = steps[steps.length - 1] ?? ast;
+    assertNoLambdaLeft(ready);
+    return { ast: ready, steps: [ast, ...steps] };
+  }
+
+  const ready = lowerNodeChildren(ast, ctx);
+  if (ctx.blockers.length > 0) {
+    throw new StructuralParseError(
+      `Could not lower the lambda:\n- ${ctx.blockers.join("\n- ")}`
+    );
+  }
+  assertNoLambdaLeft(ready);
+  return { ast: ready, steps: [ast, ready] };
 };
 
 export const lowerLambdasInAst = (ast: TypeAST.AST): TypeAST.AST => {

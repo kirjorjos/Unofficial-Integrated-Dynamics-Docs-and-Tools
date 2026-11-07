@@ -8,7 +8,7 @@ const asLambda = (ast: TypeAST.AST): TypeAST.Lambda => {
 };
 
 describe("TestLambdaParsing", () => {
-  it("parses a single parameter in Condensed", () => {
+  it("parsesASingleParameterInCondensed", () => {
     const lambda = asLambda(CondensedToAST("x => add(x, 1)"));
     expect(lambda.params).toEqual([{ name: "x" }]);
     expect(lambda.body).toEqual({
@@ -21,7 +21,7 @@ describe("TestLambdaParsing", () => {
     });
   });
 
-  it("keeps parameter order for multiple parameters", () => {
+  it("keepsParameterOrderForMultipleParameters", () => {
     const lambda = asLambda(CondensedToAST("(x, y) => subtract(y, x)"));
     expect(lambda.params.map((param) => param.name)).toEqual(["x", "y"]);
     expect(lambda.body).toMatchObject({
@@ -32,7 +32,7 @@ describe("TestLambdaParsing", () => {
     });
   });
 
-  it("accepts typed and generic parameter annotations", () => {
+  it("acceptsTypedAndGenericParameterAnnotations", () => {
     expect(asLambda(CondensedToAST("(x: integer) => x")).params).toEqual([
       { name: "x", type: "integer" },
     ]);
@@ -41,13 +41,13 @@ describe("TestLambdaParsing", () => {
     ]);
   });
 
-  it("accepts zero parameter lambdas", () => {
+  it("acceptsZeroParameterLambdas", () => {
     const lambda = asLambda(CondensedToAST("() => add(1, 2)"));
     expect(lambda.params).toEqual([]);
     expect(lambda.body.type).toBe("Curry");
   });
 
-  it("accepts the arrow and backslash spellings", () => {
+  it("acceptsTheArrowAndBackslashSpellings", () => {
     expect(asLambda(CondensedToAST("x -> add(x, 1)")).params).toEqual([
       { name: "x" },
     ]);
@@ -59,14 +59,14 @@ describe("TestLambdaParsing", () => {
     ]);
   });
 
-  it("parses lambdas as call arguments in CodeLine", () => {
+  it("parsesLambdasAsCallArgumentsInCodeLine", () => {
     const ast = CodeLineToAST("map (x => add x 1) [1, 2]");
     expect(ast.type).toBe("Curry");
     const curry = ast as TypeAST.Curried;
     expect(curry.args[0]!.type).toBe("Lambda");
   });
 
-  it("parses nested lambdas and captures", () => {
+  it("parsesNestedLambdasAndCaptures", () => {
     const outer = asLambda(CondensedToAST("x => y => add(x, y)"));
     const inner = asLambda(outer.body);
     expect(outer.params.map((param) => param.name)).toEqual(["x"]);
@@ -79,13 +79,13 @@ describe("TestLambdaParsing", () => {
     });
   });
 
-  it("uses lexical shadowing for captures", () => {
+  it("usesLexicalShadowingForCaptures", () => {
     const outer = asLambda(CondensedToAST("x => x => x"));
     const inner = asLambda(outer.body);
     expect(inner.body).toEqual({ type: "Param", index: 0, name: "x" });
   });
 
-  it("keeps constant, identity and reference bodies", () => {
+  it("keepsConstantIdentityAndReferenceBodies", () => {
     expect(asLambda(CondensedToAST("x => 5")).body).toEqual({
       type: "Integer",
       value: "5",
@@ -105,13 +105,13 @@ describe("TestLambdaParsing", () => {
     });
   });
 
-  it("rejects duplicate parameter names", () => {
-    expect(() => CondensedToAST("(x, x) => x")).toThrow(
-      /Duplicate variable name "x"/
-    );
+  it("allowsDuplicateParameterNames", () => {
+    const lambda = CondensedToAST("(x, x) => x") as TypeAST.Lambda;
+    expect(lambda.params.map((param) => param.name)).toEqual(["x", "x"]);
+    expect(lambda.body).toEqual({ type: "Param", index: 0, name: "x" });
   });
 
-  it("rejects unknown and malformed parameter types", () => {
+  it("rejectsUnknownAndMalformedParameterTypes", () => {
     expect(() => CondensedToAST("(x: integerr) => x")).toThrow(
       /unknown type name "integerr"/
     );
@@ -121,7 +121,7 @@ describe("TestLambdaParsing", () => {
     expect(() => CondensedToAST("(x: List<integer) => x")).toThrow();
   });
 
-  it("parses typed definition parameters in Expanded", () => {
+  it("parsesTypedDefinitionParametersInExpanded", () => {
     const network = ExpandedToAST(
       "f (x: integer, y) = add(x, 1)"
     ) as TypeAST.NetworkCards;

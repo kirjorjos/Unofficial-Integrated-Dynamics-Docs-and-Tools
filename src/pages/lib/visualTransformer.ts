@@ -258,6 +258,11 @@ export function getStepActualOutputType(step: {
   if (step.sourceType === "Delay") {
     return "List";
   }
+  if (step.sourceType === "Proxy") {
+    return step.node?.type === "Proxy" && step.node.value !== undefined
+      ? step.node.value.type
+      : "Proxy";
+  }
   if (step.sourceType === "Reader" && step.node?.type === "Reader") {
     return getReaderOutputType(step.node);
   }

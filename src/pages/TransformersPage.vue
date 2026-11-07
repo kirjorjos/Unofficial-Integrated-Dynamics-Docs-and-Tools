@@ -210,6 +210,7 @@ const settingsToDisplayOpts = (
   expandedRefForm: s.expandedRefForm,
   variableWrapper: s.variableWrapper,
   lambdaParamSugar: s.lambdaParamSugar,
+  lambdaExpansionSteps: s.lambdaExpansionSteps,
   comments: s.comments,
   joinStatements: s.statementLayout === "newline" ? "\n" : ";",
   refStyle: s.referenceStyle,
@@ -703,6 +704,7 @@ const settingEnabled = (setting: string): boolean => {
     case "comments":
     case "variableWrapper":
     case "lambdaParamSugar":
+    case "lambdaExpansionSteps":
     case "hardening":
     case "hideOperatorWrappers":
     case "resolve":
@@ -1436,6 +1438,30 @@ onMounted(async () => {
                 type="checkbox"
                 :disabled="!settingEnabled('lambdaParamSugar')"
                 aria-label="Lambda-param sugar"
+              />
+            </div>
+
+            <div
+              class="settings-row"
+              :class="{ disabled: !settingEnabled('lambdaExpansionSteps') }"
+            >
+              <label
+                class="settings-label"
+                for="setting-lambda-steps"
+                :data-help="settingHelpText('lambdaExpansionSteps')"
+              >
+                Lambda expansion steps<sup
+                  class="settings-help-mark"
+                  aria-hidden="true"
+                  >?</sup
+                >
+              </label>
+              <input
+                id="setting-lambda-steps"
+                v-model="settings.lambdaExpansionSteps"
+                type="checkbox"
+                :disabled="!settingEnabled('lambdaExpansionSteps')"
+                aria-label="Lambda expansion steps"
               />
             </div>
 
