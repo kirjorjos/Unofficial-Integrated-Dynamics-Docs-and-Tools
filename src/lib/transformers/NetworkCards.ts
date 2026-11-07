@@ -85,6 +85,10 @@ export const astContentKey = (ast: TypeAST.AST): string => {
     case "Display":
     case "Card":
       return `${ast.type}:${astContentKey(ast.value)}`;
+    case "Proxy":
+      return `Proxy(${ast.proxyId ?? ""}:${
+        ast.value === undefined ? "" : astContentKey(ast.value)
+      })`;
     case "Delay":
       return `Delay(${astContentKey(ast.value)};i=${ast.interval ?? 1};c=${
         ast.capacity ?? 5
@@ -314,6 +318,9 @@ const resolveVarRefs = (
     case "Display":
     case "Card":
       resolveVarRefs(node.value, resolve);
+      break;
+    case "Proxy":
+      if (node.value !== undefined) resolveVarRefs(node.value, resolve);
       break;
     case "Delay":
       resolveVarRefs(node.value, resolve);

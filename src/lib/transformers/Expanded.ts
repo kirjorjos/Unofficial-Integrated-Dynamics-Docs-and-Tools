@@ -360,6 +360,11 @@ const collectDynamicParams = (
     case "Static":
     case "Materialize":
       return collected;
+    case "Proxy":
+      if (node.value !== undefined) {
+        collectDynamicParams(node.value, collected, seen);
+      }
+      return collected;
     case "Curry":
       collectDynamicParams(node.base, collected, seen);
       for (const arg of node.args) collectDynamicParams(arg, collected, seen);
@@ -771,6 +776,16 @@ const computeSignature = (
       signature = computeSignature(node.value, scope, resolve, binders);
       break;
     }
+    case "Proxy": {
+      signature =
+        node.value === undefined
+          ? new ParsedSignature(
+              { type: "Any", typeID: ParsedSignature.getNewTypeID() },
+              false
+            )
+          : computeSignature(node.value, scope, resolve, binders);
+      break;
+    }
     case "VarStore":
     case "DisplayPanel":
     case "Writer":
@@ -833,6 +848,9 @@ const collectVariables = (
     case "Display":
     case "Card":
       collect(node.value);
+      break;
+    case "Proxy":
+      if (node.value !== undefined) collect(node.value);
       break;
     case "Lambda":
       collectVariables(node.body, collected, seen, true);
@@ -1091,6 +1109,10 @@ const getVarName = (node: TypeAST.AST): string => {
     }
     case "Materialize":
       return `Materialized{${getVarName(node.value)}}`;
+    case "Proxy":
+      return node.value === undefined
+        ? "Proxy"
+        : `Proxy{${getVarName(node.value)}}`;
     case "Delay":
       return `Delayed{${getVarName(node.value)}}`;
     case "Dynamic":
@@ -1236,6 +1258,15 @@ const decomposeAST = (node: TypeAST.AST, canHoist = true): TypeAST.AST => {
     const result = {
       ...node,
       arg: decomposeAST(node.arg, canHoist) as TypeAST.Operator,
+    };
+    if (canHoist && !result.varName) result.varName = getVarName(result);
+    return result;
+  }
+  if (node.type === "Proxy") {
+    if (node.value === undefined) return node;
+    const result = {
+      ...node,
+      value: decomposeAST(node.value, canHoist),
     };
     if (canHoist && !result.varName) result.varName = getVarName(result);
     return result;
@@ -2011,6 +2042,9 @@ const assertNoNumericAtRefs = (node: TypeAST.AST): void => {
       case "Display":
       case "Card":
         visit(current.value);
+        return;
+      case "Proxy":
+        if (current.value !== undefined) visit(current.value);
         return;
       default:
         return;

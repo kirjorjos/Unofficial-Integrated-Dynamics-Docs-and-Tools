@@ -1491,8 +1491,16 @@ export const stripAutoCurryVarNames = (ast: TypeAST.AST): TypeAST.AST => {
       case "Static":
       case "Display":
       case "Card":
-        visitPair(original.value, (copied as TypeAST.Wrapper).value);
+        visitPair(original.value, (copied as TypeAST.Materialize).value);
         break;
+      case "Proxy": {
+        const originalValue = original.value;
+        const copiedValue = (copied as TypeAST.Proxy).value;
+        if (originalValue !== undefined && copiedValue !== undefined) {
+          visitPair(originalValue, copiedValue);
+        }
+        break;
+      }
       case "Lambda":
         visitPair(original.body, (copied as TypeAST.Lambda).body);
         break;
@@ -1564,6 +1572,9 @@ export const stripAutoCurryVarNames = (ast: TypeAST.AST): TypeAST.AST => {
       case "Display":
       case "Card":
         visit(node.value);
+        break;
+      case "Proxy":
+        if (node.value !== undefined) visit(node.value);
         break;
       case "Lambda":
         visit(node.body);

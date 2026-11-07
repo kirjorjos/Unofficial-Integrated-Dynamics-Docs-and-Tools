@@ -25,7 +25,9 @@ const labellerSteps = (steps: VisualStep[]): VisualStep[] =>
   steps.filter((step) => step.kind === "labeller");
 
 const isNonSelfNaming = (step: VisualStep): boolean =>
-  step.sourceType === "Reader" || step.sourceType === "Materialize";
+  step.sourceType === "Reader" ||
+  step.sourceType === "Materialize" ||
+  step.sourceType === "Proxy";
 
 describe("labellerVisualSteps", () => {
   beforeEach(beforeEachVisualTransformer);
@@ -124,6 +126,24 @@ describe("labellerVisualSteps", () => {
     expect(onReader.tooltip.lines).toEqual(offReader.tooltip.lines);
     expect(labeller.tooltip.title).toBe(offReader.tooltip.title);
     expect(labeller.tooltip.lines).toEqual(offReader.tooltip.lines);
+  });
+
+  it("testMovesTheNameOntoTheLabellerCardForAProxyStep", () => {
+    const off = build("Proxy(5, 3)", false);
+    const on = build("Proxy(5, 3)", true);
+
+    const offProxy = cardSteps(off).find(
+      (step) => step.sourceType === "Proxy"
+    )!;
+    const onProxy = cardSteps(on).find((step) => step.sourceType === "Proxy")!;
+    const labeller = labellerSteps(on).find(
+      (step) => step.node.type === "Proxy"
+    )!;
+
+    expect(onProxy.tooltip.title).toBe("Variable Card");
+    expect(labeller.tooltip.title).toBe(`§o${onProxy.output}`);
+    expect(labeller.inputs[0]!.tooltip.title).toBe(`§o${labeller.output}`);
+    expect(offProxy.tooltip.title).toBe(`§o${offProxy.output}`);
   });
 
   it("testNeverLabelsLogicProgrammerSteps", () => {

@@ -93,6 +93,7 @@ const panelError = computed(
       v-if="
         props.step.sourceType === 'Reader' ||
         props.step.sourceType === 'Materialize' ||
+        props.step.sourceType === 'Proxy' ||
         props.step.sourceType === 'Delay' ||
         props.step.kind === 'labeller'
       "
@@ -102,7 +103,11 @@ const panelError = computed(
     </div>
 
     <DisplayPanelViewHolder
-      v-if="props.showDisplayPanels && props.step.kind !== 'labeller'"
+      v-if="
+        props.showDisplayPanels &&
+        props.step.kind !== 'labeller' &&
+        props.step.sourceType !== 'Proxy'
+      "
     >
       <DisplayPanelView
         :text="panelText"

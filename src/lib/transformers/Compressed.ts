@@ -91,6 +91,7 @@ const enum LiteralKind {
   Wrapper = 31,
   Lambda = 32,
   Param = 33,
+  Proxy = 34,
 }
 
 const enum WrapperKind {
@@ -1535,6 +1536,17 @@ const writeNode = (
       return;
     }
 
+    case "Proxy": {
+      writer.writeBits(NodeKind.Literal, 2);
+      writeLiteralKind(writer, LiteralKind.Proxy);
+      writer.writeBit(node.value !== undefined);
+      if (node.value !== undefined) writeNode(writer, node.value, seen);
+      writer.writeBit(node.proxyId !== undefined);
+      if (node.proxyId !== undefined) writeVarUint(writer, node.proxyId);
+      writeNodeMetadata(writer, node);
+      return;
+    }
+
     case "Delay": {
       writer.writeBits(NodeKind.Literal, 2);
       writeLiteralKind(writer, LiteralKind.Wrapper);
@@ -1948,6 +1960,18 @@ const readNode = (
           } else {
             throw new Error(`Unknown compressed wrapper kind ${extendedKind}`);
           }
+          break;
+        }
+        case LiteralKind.Proxy: {
+          const value = reader.readBit()
+            ? readNode(reader, decoded)
+            : undefined;
+          const proxyId = reader.readBit() ? readVarUint(reader) : undefined;
+          node = {
+            type: "Proxy",
+            ...(value === undefined ? {} : { value }),
+            ...(proxyId === undefined ? {} : { proxyId }),
+          };
           break;
         }
         case LiteralKind.Param: {

@@ -63,6 +63,8 @@ import {
   buildAspectCardTooltip,
   getDisplayPanelSourceStep,
   getMaterializerResultCard,
+  getProxyPartIdForStep,
+  getProxyResultCard,
   getReaderPartIdForStep,
 } from "pages-lib/visualTransformerLogic";
 
@@ -532,6 +534,14 @@ const cloneAstWithoutVarNames = (ast: TypeAST.AST): TypeAST.AST => {
         type: "Materialize",
         value: cloneAstWithoutVarNames(ast.value),
       };
+    case "Proxy":
+      return {
+        type: "Proxy",
+        ...(ast.value === undefined
+          ? {}
+          : { value: cloneAstWithoutVarNames(ast.value) }),
+        ...(ast.proxyId === undefined ? {} : { proxyId: ast.proxyId }),
+      };
     case "Dynamic":
       return {
         type: "Dynamic",
@@ -626,6 +636,10 @@ const getCompactValueTextForAst = (ast: TypeAST.AST): string => {
         ? getReaderAspectDefaultValue(readerClass, ast.value.aspect)
         : "";
     }
+    case "Proxy":
+      return ast.value === undefined
+        ? ""
+        : getCompactValueTextForAst(ast.value);
   }
 
   return ASTToCondensed(cloneAstWithoutVarNames(ast));
@@ -1521,6 +1535,11 @@ const getStepActualOutputType = (
   if (step.sourceType === "Delay") {
     return "List";
   }
+  if (step.sourceType === "Proxy") {
+    return step.node?.type === "Proxy" && step.node.value !== undefined
+      ? step.node.value.type
+      : "Proxy";
+  }
   if (step.sourceType === "Reader" && step.node?.type === "Reader") {
     const readerClass = getReaderClassByTypeName(step.node.value.reader);
     return readerClass?.aspects[step.node.value.aspect]?.outputType ?? "Any";
@@ -1952,6 +1971,7 @@ const steps = computed<VisualStep[]>(() => {
         props.labeller === true &&
         (step.sourceType === "Reader" ||
           step.sourceType === "Materialize" ||
+          step.sourceType === "Proxy" ||
           step.sourceType === "Delay");
       const variableId = props.startVariableId + cardCount;
       cardCount += 1;
@@ -1963,7 +1983,13 @@ const steps = computed<VisualStep[]>(() => {
               result.length,
               props.startVariableId
             )
-          : undefined;
+          : step.sourceType === "Proxy"
+            ? getProxyPartIdForStep(
+                [...result, step],
+                result.length,
+                props.startVariableId
+              )
+            : undefined;
       const tooltip = buildStepTooltip(
         getsLabeller ? { ...step, output: "" } : step,
         variableId,
@@ -2006,9 +2032,11 @@ const steps = computed<VisualStep[]>(() => {
         const resultCard =
           step.sourceType === "Materialize"
             ? getMaterializerResultCard(fullStep)
-            : step.sourceType === "Delay"
-              ? getDelayResultCard(fullStep)
-              : undefined;
+            : step.sourceType === "Proxy"
+              ? getProxyResultCard(fullStep, { partId })
+              : step.sourceType === "Delay"
+                ? getDelayResultCard(fullStep)
+                : undefined;
         const labellerCard = {
           ...card,
           type: (resultCard?.type ?? card.type) as TypeAST.AST["type"],
@@ -2285,6 +2313,21 @@ const steps = computed<VisualStep[]>(() => {
 
         seen.set(ast, finalCard);
         return finalCard;
+      }
+      case "Proxy": {
+        const inputCard =
+          ast.value === undefined ? undefined : visit(ast.value);
+        return register({
+          title: "Proxy",
+          searchLabel: "Proxy",
+          panelLabel: "Proxy",
+          symbol: "P",
+          kind: "value",
+          sourceType: ast.type,
+          inputs: inputCard === undefined ? [] : [inputCard],
+          output: nextName,
+          node: ast,
+        });
       }
       case "Delay": {
         const inputCard = visit(ast.value);
@@ -2756,6 +2799,17 @@ defineExpose({ steps, displaySteps });
         :capacity="step.delayCapacity"
         :frozen="step.delayFrozen"
         :error="step.delayError"
+      />
+      <MaterializerGuiView
+        v-else-if="step.sourceType === 'Proxy'"
+        title="Proxy"
+        :top-card="step.inputs[0]"
+        :result-card="
+          getProxyResultCard(step, {
+            unnamed: hasLabellerAfter(index),
+            partId: getProxyPartIdForStep(steps, index, startVariableId),
+          })
+        "
       />
       <MaterializerGuiView
         v-else-if="step.sourceType === 'Materialize'"

@@ -592,6 +592,9 @@ const collectRefs = (ast: TypeAST.AST, into: string[]): void => {
     case "Static":
       collectRefs(ast.value, into);
       return;
+    case "Proxy":
+      if (ast.value !== undefined) collectRefs(ast.value, into);
+      return;
     default:
       return;
   }
