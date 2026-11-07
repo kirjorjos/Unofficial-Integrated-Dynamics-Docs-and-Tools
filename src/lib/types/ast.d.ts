@@ -64,6 +64,13 @@ namespace TypeAST {
 
   type Materialize = { type: "Materialize"; value: AST; varName?: string };
 
+  type Proxy = {
+    type: "Proxy";
+    value?: AST;
+    proxyId?: number;
+    varName?: string;
+  };
+
   type Display = { type: "Display"; value: AST; varName?: string };
 
   type Card = { type: "Card"; value: AST; varName?: string };
@@ -80,7 +87,7 @@ namespace TypeAST {
     varName?: string;
   };
 
-  type Wrapper = Materialize | Dynamic | Static | Display | Card;
+  type Wrapper = Materialize | Proxy | Dynamic | Static | Display | Card;
 
   type PartSettings = Record<string, jsonData>;
 

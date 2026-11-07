@@ -475,11 +475,20 @@ export const cardToAST = (
     return decodeAspectCard(tag, options, warnings);
   }
 
-  if (type === CARD_TYPE_PROXY || type === CARD_TYPE_DELAY) {
+  if (type === CARD_TYPE_PROXY) {
+    const proxyId = intField(tag, "proxyId") ?? intField(tag, "partId");
+    return {
+      value: {
+        type: "Proxy",
+        ...(proxyId === undefined ? {} : { proxyId }),
+      },
+      warnings,
+    };
+  }
+
+  if (type === CARD_TYPE_DELAY) {
     warnings.push(
-      `${label}: ${
-        type === CARD_TYPE_PROXY ? "proxy" : "delay"
-      } parts are approximated with the identity operator`
+      `${label}: delay parts are approximated with the identity operator`
     );
     const identity = operatorRegistry.find(IDENTITY_OPERATOR);
     if (!identity) return { warnings };

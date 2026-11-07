@@ -250,6 +250,8 @@ const isStaticallyEvaluable = (node: TypeAST.AST): boolean => {
     case "Display":
     case "Card":
       return isStaticallyEvaluable(node.value);
+    case "Proxy":
+      return node.value !== undefined && isStaticallyEvaluable(node.value);
     case "Dynamic":
     case "Delay":
     case "Variable":
@@ -288,13 +290,22 @@ export const evaluateStaticValue = (
   if (!isStaticallyEvaluable(node)) return undefined;
 
   let current = node;
-  while (
-    current.type === "Materialize" ||
-    current.type === "Static" ||
-    current.type === "Display" ||
-    current.type === "Card"
-  ) {
-    current = current.value;
+  while (true) {
+    if (current.type === "Proxy") {
+      if (current.value === undefined) break;
+      current = current.value;
+      continue;
+    }
+    if (
+      current.type === "Materialize" ||
+      current.type === "Static" ||
+      current.type === "Display" ||
+      current.type === "Card"
+    ) {
+      current = current.value;
+      continue;
+    }
+    break;
   }
   if (current.type === "Reader") {
     if (current.value.simulatedOutput === undefined) return undefined;

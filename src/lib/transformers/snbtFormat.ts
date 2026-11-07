@@ -57,6 +57,14 @@ export const snbtInputToAST = (
 const cardTagFromAST = (id: string, node: TypeAST.AST): CompoundTag => {
   const name = id === "" ? "0" : id;
 
+  if (node.type === "Proxy") {
+    return new CompoundTag({
+      _id: new IntTag(new Integer(name)),
+      _type: "integrateddynamics:proxy",
+      partId: new IntTag(new Integer(node.proxyId ?? 0)),
+    });
+  }
+
   if (
     node.type === "Curry" &&
     node.base.type === "Operator" &&
