@@ -41,19 +41,22 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number || inputs.pr || '' }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha || '' }}
         run: |
           set -euo pipefail
           echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
           if [ "${GITHUB_EVENT_NAME}" = "workflow_dispatch" ]; then
-            read -r head_ref base_ref < <(
+            read -r head_ref base_ref base_sha < <(
               gh api "repos/${GITHUB_REPOSITORY}/pulls/${PR_NUMBER}" \
-                --jq '[.head.ref, .base.ref] | @tsv'
+                --jq '[.head.ref, .base.ref, .base.sha] | @tsv'
             )
             echo "branch=${head_ref}" >> "$GITHUB_OUTPUT"
             echo "base_ref=${base_ref}" >> "$GITHUB_OUTPUT"
+            echo "base_sha=${base_sha}" >> "$GITHUB_OUTPUT"
           elif [ "${GITHUB_EVENT_NAME}" = "pull_request" ]; then
             echo "branch=${GITHUB_HEAD_REF}" >> "$GITHUB_OUTPUT"
             echo "base_ref=${GITHUB_BASE_REF}" >> "$GITHUB_OUTPUT"
+            echo "base_sha=${BASE_SHA}" >> "$GITHUB_OUTPUT"
           else
             echo "branch=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
           fi
@@ -71,6 +74,7 @@ jobs:
           git-commit: ${{ steps.target.outputs.sha }}
           git-branch: ${{ steps.target.outputs.branch }}
           compare-ref: ${{ steps.target.outputs.base_ref }}
+          compare-sha: ${{ steps.target.outputs.base_sha }}
 
       - name: Record the coverage result
         if: always()
@@ -78,6 +82,8 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number || inputs.pr || '' }}
           COMMIT_SHA: ${{ steps.target.outputs.sha }}
           BRANCH: ${{ steps.target.outputs.branch }}
+          BASE_REF: ${{ steps.target.outputs.base_ref }}
+          BASE_SHA: ${{ steps.target.outputs.base_sha }}
           COVERALLS_OUTCOME: ${{ steps.coveralls.outcome }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
@@ -103,6 +109,8 @@ jobs:
                 pr: Number.isInteger(pr) && pr > 0 ? pr : null,
                 sha: process.env.COMMIT_SHA || null,
                 branch: process.env.BRANCH || null,
+                baseRef: process.env.BASE_REF || null,
+                baseSha: process.env.BASE_SHA || null,
                 total,
                 coveralls: process.env.COVERALLS_OUTCOME || "skipped",
                 runUrl: process.env.RUN_URL,
