@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, ref, watch } from "vue";
+import { computed, nextTick, onBeforeUnmount, ref, watch } from "vue";
 import Tile from "../components/Tile.vue";
 import TileGrid from "../components/TileGrid.vue";
 import NbtTreeView from "../components/NbtTreeView.vue";
 import LogicProgrammerVisualOutput from "../components/LogicProgrammerVisualOutput.vue";
+import NbtToolsGuide from "../components/NbtToolsGuide.vue";
 import { FULL_TILE_SPAN } from "pages-lib/tileLayout";
 import { compressWithInputState } from "lib/transformers/Compressed";
 import {
@@ -22,6 +23,7 @@ import {
   type NbtPathSegment,
   type NbtTreeNode,
 } from "lib/transformers/nbtTools";
+import type { NbtGuideExampleLoad } from "lib/transformers/nbtToolsGuide";
 
 const NBT_PARAM = "nbt";
 const NBT_URL_WRITE_DELAY = 300;
@@ -90,35 +92,6 @@ onBeforeUnmount(() => {
 const tree = computed(() =>
   activeBlob.value ? buildNbtTree(activeBlob.value.tag) : undefined
 );
-
-const templateTokens: { tokens: string[]; meaning: string }[] = [
-  {
-    tokens: ["$name"],
-    meaning:
-      "That selection's path, substituted in before validation: $a becomes .stats.health.",
-  },
-  {
-    tokens: ["> 5", ">= 5", "< 5", "<= 5"],
-    meaning:
-      "Compares the value at that point to a number: 1b when it holds, else 0b.",
-  },
-  {
-    tokens: ['== "Steve"'],
-    meaning: "Compares the value to a string literal: 1b when equal, else 0b.",
-  },
-  {
-    tokens: [".length"],
-    meaning: "Entry count of the list or compound at that point.",
-  },
-  {
-    tokens: ["[?(…)]"],
-    meaning: "Keeps only the children the inner expression holds for.",
-  },
-  {
-    tokens: ["@"],
-    meaning: "The node the surrounding filter is checking.",
-  },
-];
 
 const operatorOptions: { value: NbtPathOperator; label: string }[] = [
   { value: "matchFirst", label: "nbtPathMatchFirst" },
@@ -283,13 +256,69 @@ const removeName = (index: number): void => {
   );
 };
 
+const findNodeByPath = (
+  root: NbtTreeNode,
+  path: string
+): NbtTreeNode | undefined => {
+  if (root.path === path) return root;
+  for (const child of root.children) {
+    const match = findNodeByPath(child, path);
+    if (match) return match;
+  }
+  return undefined;
+};
+
+const expandAncestors = (segments: NbtPathSegment[]): void => {
+  if (!tree.value) return;
+  const next = new Set(expandedIds.value);
+  for (let length = 0; length < segments.length; length += 1) {
+    const ancestor = findNbtNode(tree.value, segments.slice(0, length));
+    if (ancestor && ancestor.children.length > 0) next.add(ancestor.id);
+  }
+  expandedIds.value = next;
+};
+
+const loadGuideExample = (load: NbtGuideExampleLoad): void => {
+  if (load.nbt) snbtInput.value = load.nbt;
+  operator.value = load.operator;
+  templateText.value = load.code;
+  templateTouched.value = true;
+  if (load.operator !== "matchFirst") {
+    void nextTick(() => {
+      const el = document.getElementById("nbt-template");
+      el?.focus();
+      el?.scrollIntoView({ block: "center" });
+    });
+    return;
+  }
+  void nextTick(() => {
+    const node = tree.value ? findNodeByPath(tree.value, load.code) : undefined;
+    if (node) {
+      expandAncestors(node.segments);
+      selectNode(node);
+      namedEntries.value = [
+        { name: load.selectionName, segments: node.segments },
+      ];
+    }
+    document
+      .querySelector('[data-tile-id="output"]')
+      ?.scrollIntoView({ block: "center" });
+  });
+};
+
+const guideRef = ref<InstanceType<typeof NbtToolsGuide> | null>(null);
+
+const openGuideSection = (id: string): void => {
+  guideRef.value?.openSection(id);
+};
+
 // --- Generated path --------------------------------------------------------
 
 type GeneratedPath = { path: string } | { error: string };
 
 const pathResult = computed<GeneratedPath>(() => {
   if (!tree.value) return { error: "" };
-  if (namedEntries.value.length === 0) {
+  if (operator.value !== "test" && namedEntries.value.length === 0) {
     return { error: "Name a selection to generate a path." };
   }
   if (operator.value === "matchFirst") {
@@ -480,6 +509,7 @@ const openInTransformer = (): void => {
       </Tile>
 
       <Tile id="input" :span="2">
+        <NbtToolsGuide ref="guideRef" @load-example="loadGuideExample" />
         <label class="field">
           <span>SNBT input</span>
           <textarea
@@ -630,30 +660,17 @@ const openInTransformer = (): void => {
             placeholder="$name > 5"
             @input="onTemplateInput"
           />
-          <div class="nbt-help" data-testid="template-help">
-            <table class="nbt-token-table">
-              <thead>
-                <tr>
-                  <th scope="col">Token</th>
-                  <th scope="col">Meaning</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="entry in templateTokens" :key="entry.meaning">
-                  <td class="nbt-token-cell">
-                    <code v-for="token in entry.tokens" :key="token">{{
-                      token
-                    }}</code>
-                  </td>
-                  <td>{{ entry.meaning }}</td>
-                </tr>
-              </tbody>
-            </table>
-            <span class="nbt-help-note">
-              <code>&&</code>, <code>||</code>, <code>!</code> and grouping
-              parentheses are not part of the grammar.
-            </span>
-          </div>
+          <p class="nbt-note" data-testid="template-guide-hint">
+            Templates accept a path literal or <code>$name</code> placeholders;
+            <button
+              type="button"
+              class="nbt-guide-link"
+              @click="openGuideSection('logic-templates')"
+            >
+              see Logic templates
+            </button>
+            in the guide above.
+          </p>
         </div>
 
         <p v-if="pathError" class="nbt-error" data-testid="path-error">
@@ -797,56 +814,14 @@ const openInTransformer = (): void => {
   word-break: break-all;
 }
 
-.nbt-help {
-  display: block;
-  padding: 0.5rem 0.6rem;
-  border-radius: 0.35rem;
-  background: #e7eaec;
-  color: #000000;
-  font-size: 0.75rem;
-}
-
-.nbt-token-table {
-  border-collapse: collapse;
-  width: 100%;
-}
-
-.nbt-token-table th {
-  padding: 0 0.5rem 0.2rem 0;
-  border-bottom: 1px solid #c3c9cd;
-  color: #333333;
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-align: left;
-  text-transform: uppercase;
-}
-
-.nbt-token-table td {
-  padding: 0.2rem 0.5rem 0.2rem 0;
-  vertical-align: top;
-}
-
-.nbt-token-cell {
-  width: 1%;
-  white-space: nowrap;
-}
-
-.nbt-token-table code {
-  display: inline-block;
-  margin-right: 0.2rem;
-  padding: 0.02rem 0.3rem;
-  border: 1px solid #aeb7bc;
-  border-radius: 0.25rem;
-  background: #ffffff;
-  color: #0451a5;
-  font-weight: 600;
-}
-
-.nbt-help-note {
-  display: block;
-  margin-top: 0.35rem;
-  color: #333333;
+.nbt-guide-link {
+  padding: 0;
+  border: none;
+  background: none;
+  color: #1b6f83;
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 .nbt-operator-row {
