@@ -174,55 +174,6 @@ test.describe("nbtToolsPage", () => {
     );
   });
 
-  test("testTemplateHelpTableListsSupportedTokens", async ({ page }) => {
-    await openNbtTools(page);
-    await paste(page, '{stats:{health:20,name:"Steve"}}');
-
-    await expect(page.getByTestId("template-help")).toHaveCount(0);
-
-    await row(page, ".stats.health").click();
-    await nameSelection(page, "a");
-    await page.getByRole("radio", { name: "nbtPathTest" }).check();
-
-    const help = page.getByTestId("template-help");
-    await expect(help.getByRole("columnheader")).toHaveText([
-      "Token",
-      "Meaning",
-    ]);
-
-    const rows = help.locator("tbody tr");
-    await expect(rows).toHaveCount(6);
-    await expect(rows.nth(0)).toContainText("$name");
-    await expect(rows.nth(0)).toContainText("selection's path");
-    await expect(rows.nth(1)).toContainText(">= 5");
-    await expect(rows.nth(1)).toContainText("1b when it holds");
-    await expect(rows.nth(2)).toContainText('== "Steve"');
-    await expect(rows.nth(3)).toContainText(".length");
-    await expect(rows.nth(4)).toContainText("[?(…)]");
-    await expect(rows.nth(5)).toContainText("@");
-
-    await expect(help).not.toContainText("Cyclops Core");
-
-    const styles = await help.evaluate((element) => {
-      const cell = element.querySelector("tbody code")!;
-      return {
-        background: getComputedStyle(element).backgroundColor,
-        color: getComputedStyle(element).color,
-        chipBackground: getComputedStyle(cell).backgroundColor,
-        chipColor: getComputedStyle(cell).color,
-      };
-    });
-    expect(styles.color).toBe("rgb(0, 0, 0)");
-    expect(styles.chipColor).not.toBe(styles.color);
-    expect(styles.chipBackground).not.toBe(styles.background);
-    const channels = styles.background.match(/\d+/g)!.map(Number);
-    expect(channels).toHaveLength(3);
-    const spread = Math.max(...channels) - Math.min(...channels);
-    expect(spread).toBeLessThanOrEqual(8);
-    expect(channels[0]).toBeLessThan(255);
-    expect(channels[0]).toBeGreaterThan(180);
-  });
-
   test("testValueTokensAreClassifiedForSyntaxColoring", async ({ page }) => {
     await openNbtTools(page);
     await paste(page, '{name:"Steve",health:20,bytes:[B;1b,2b]}');

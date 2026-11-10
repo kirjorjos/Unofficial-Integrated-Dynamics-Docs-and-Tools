@@ -113,8 +113,41 @@ jobs:
             );
 
             const total = typeof result.total === "number" ? result.total : null;
+            const isFirstBuild = (body) => /\bfirst build\b/i.test(body ?? "");
+            const hasComparison =
+              Boolean(coverallsComment) && !isFirstBuild(coverallsComment.body);
+            const baseRef =
+              typeof result.baseRef === "string" ? result.baseRef : null;
+            let baseCoverage = null;
+            if (!hasComparison && total !== null && baseRef) {
+              try {
+                const response = await fetch(
+                  `https://coveralls.io/github/${context.repo.owner}/${context.repo.repo}.json?branch=${encodeURIComponent(baseRef)}`
+                );
+                if (response.ok) {
+                  const base = await response.json();
+                  if (typeof base.covered_percent === "number") {
+                    baseCoverage = base.covered_percent;
+                  }
+                }
+              } catch (error) {
+                core.warning(
+                  `Could not read the latest coverage for ${baseRef}: ${error.message}`
+                );
+              }
+            }
+            const delta =
+              total !== null && baseCoverage !== null
+                ? total - baseCoverage
+                : null;
+            const formatPercent = (value) =>
+              `${Math.round(value * 1000) / 1000}%`;
+            const formatDelta = (value) => {
+              const rounded = Math.round(value * 100) / 100;
+              return `${rounded > 0 ? "+" : ""}${rounded.toFixed(2)}%`;
+            };
             let summary;
-            if (coverallsComment) {
+            if (hasComparison) {
               summary = `Coveralls posted its coverage comment${
                 total === null ? "" : ` (${total}% of lines covered)`
               }.`;
@@ -137,13 +170,17 @@ jobs:
               const reason =
                 Object.keys(result).length === 0
                   ? "Coverage measurement did not complete."
-                  : result.coveralls === "success"
-                    ? "Coveralls did not post a coverage comment (PR commenting may not be enabled)."
-                    : "Coveralls is currently unreachable.";
+                  : coverallsComment && isFirstBuild(coverallsComment.body)
+                    ? "Coveralls did not find a base build (it reported a first build)."
+                    : result.coveralls === "success"
+                      ? "Coveralls did not post a coverage comment (PR commenting may not be enabled)."
+                      : "Coveralls is currently unreachable.";
               const measurement =
                 total === null
                   ? "Coverage could not be measured."
-                  : `Coverage: ${total}% of lines covered (delta vs the base branch is unavailable).`;
+                  : delta !== null
+                    ? `Coverage on this PR: ${formatPercent(total)} (${formatDelta(delta)} vs ${baseRef} at ${formatPercent(baseCoverage)}).`
+                    : `Coverage: ${formatPercent(total)} (delta vs the target branch is unavailable).`;
               const body = [
                 marker,
                 "",
@@ -179,7 +216,9 @@ jobs:
                 reason +
                 (total === null
                   ? " Coverage could not be measured."
-                  : ` Coverage: ${total}% (delta unavailable).`);
+                  : delta !== null
+                    ? ` Coverage: ${formatPercent(total)} (${formatDelta(delta)} vs ${baseRef}).`
+                    : ` Coverage: ${formatPercent(total)} (delta unavailable).`);
             }
 
             await github.rest.checks.create({
@@ -190,7 +229,7 @@ jobs:
               status: "completed",
               conclusion: "success",
               output: {
-                title: coverallsComment
+                title: hasComparison
                   ? "Coverage comment present"
                   : "Coverage comment posted",
                 summary,
