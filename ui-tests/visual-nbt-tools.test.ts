@@ -108,4 +108,18 @@ test.describe("nbtToolsVisual", () => {
     await expect(page.locator(".logic-programmer-sequence")).toBeVisible();
     await shot(page, ".tile-grid", "pathTestComparison");
   });
+
+  test("testExpandedGuideShotWithEverySectionOpen", async ({ page }) => {
+    await openNbtTools(page, STATS_INPUT);
+
+    await page.locator(".nbt-guide .input-docs-summary").click();
+    await expect(page.getByTestId("nbt-guide-body")).toBeVisible();
+    await waitForFontsAndNetworkIdle(page);
+    await expandShellForScreenshots(page);
+    await page.mouse.move(0, 0);
+
+    await expect(page.locator(".nbt-guide")).toHaveScreenshot(
+      "guideExpanded.png"
+    );
+  });
 });
