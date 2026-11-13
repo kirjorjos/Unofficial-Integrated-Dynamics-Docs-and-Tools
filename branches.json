@@ -1,0 +1,8 @@
+{
+  "primary": "1.19.2/main",
+  "branches": [
+    "1.19.2/development",
+    "1.19.2/development-issue-185",
+    "1.19.2/main"
+  ]
+}
