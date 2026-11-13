@@ -88,6 +88,8 @@ export class OPERATOR_OBJECT_FLUIDSTACK_SOUND_BUCKET_FILL extends BaseOperator<
     "Bucket Fill Sound",
   ];
   static override kind = "fluidstack" as const;
+  static override signatureNames = ["Fluid", "Sound"];
+
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({

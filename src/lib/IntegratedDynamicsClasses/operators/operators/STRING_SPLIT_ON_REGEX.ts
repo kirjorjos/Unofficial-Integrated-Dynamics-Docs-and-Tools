@@ -51,6 +51,7 @@ export class OPERATOR_STRING_SPLIT_ON_REGEX extends BaseOperator<
     "String Split On regex",
     "String Split On Regex",
   ];
+  static override signatureNames = ["Pattern", "Haystack", "Parts"];
   static override tooltipInfo =
     "Get a list containing pieces, split on the given regular expression, of the given string." as const;
 

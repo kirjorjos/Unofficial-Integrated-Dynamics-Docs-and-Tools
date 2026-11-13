@@ -26,6 +26,8 @@ export class OPERATOR_BINARY_COMPLEMENT extends BaseOperator<Integer, Integer> {
     "Binary complement",
     "Binary Complement",
   ];
+  static override signatureNames = ["Value", "Complement"];
+
   static override kind = "binary" as const;
   static override renderPattern = "PREFIX_1" as const;
   constructor(normalizeSignature = true) {

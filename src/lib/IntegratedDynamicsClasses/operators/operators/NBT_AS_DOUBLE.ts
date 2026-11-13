@@ -116,6 +116,7 @@ export class OPERATOR_NBT_AS_DOUBLE extends BaseOperator<DoubleTag, Double> {
     "NBT NBT Double As double",
     "NBT NBT Double As Double",
   ];
+  static override signatureNames = ["NBT", "Double"];
   static override tooltipInfo =
     "Get the Double value of the given NBT Double tag" as const;
 

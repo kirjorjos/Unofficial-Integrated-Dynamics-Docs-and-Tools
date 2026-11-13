@@ -77,6 +77,7 @@ export class OPERATOR_NBT_COMPOUND_VALUE_TAG extends BaseOperator<
     "NBT NBT Compound value",
     "NBT NBT Compound Value",
   ];
+  static override signatureNames = ["Compound", "Key", "Tag"];
   static override tooltipInfo =
     "The value of any type in the given NBT compound tag with the given key" as const;
 

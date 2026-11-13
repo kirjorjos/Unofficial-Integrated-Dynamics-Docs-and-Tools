@@ -36,6 +36,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_DAMAGE extends BaseOperator<
     "damage",
     "Damage",
   ];
+  static override signatureNames = ["Item", "Damage"];
   static override tooltipInfo = "The current item damage" as const;
 
   static override kind = "itemstack" as const;

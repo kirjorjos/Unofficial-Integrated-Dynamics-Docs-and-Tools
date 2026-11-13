@@ -39,6 +39,7 @@ export class OPERATOR_OBJECT_ENTITY_FLUIDS extends BaseOperator<
     "Entity Entity fluids",
     "Entity Entity Fluids",
   ];
+  static override signatureNames = ["Entity", "Fluids"];
   static override tooltipInfo =
     "The fluids that are contained within this entity." as const;
 

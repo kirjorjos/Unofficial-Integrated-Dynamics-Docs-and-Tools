@@ -40,6 +40,7 @@ export class OPERATOR_STRING_REGEX_SCAN extends BaseOperator<
     "String Regex scan",
     "String Regex Scan",
   ];
+  static override signatureNames = ["Pattern", "Index", "Haystack", "Captures"];
   static override tooltipInfo =
     "Search for all matches of the given regular expression and return the group at the given index, in the given string." as const;
 

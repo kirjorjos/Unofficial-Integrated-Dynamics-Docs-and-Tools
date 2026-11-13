@@ -1041,6 +1041,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISITEMEQUALNODATA extends BaseOperator<
     "Raw ItemStack Equals no NBT",
     "Raw ItemStack Equals No NBT",
   ];
+  static override signatureNames = ["Item1", "Item2", "Equal"];
   static override tooltipInfo =
     "If the raw items of the given stacks are equal, ignoring NBT but including damage value." as const;
 

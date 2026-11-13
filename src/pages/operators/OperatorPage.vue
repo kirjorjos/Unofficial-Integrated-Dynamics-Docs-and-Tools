@@ -24,6 +24,7 @@ type OperatorPageClass = {
   interactName: string;
   displayName?: string;
   fullDisplayName?: string;
+  signatureNames?: string[];
   tooltipInfo?: string;
 };
 
@@ -34,14 +35,23 @@ const operatorClass = computed(() => {
 });
 
 const SIGNATURE_ARROW = "\u2192";
+const SIGNATURE_ARROW_PAD = "   ";
 
 type OperatorSignatureSlot = {
+  heading: string;
   label: string;
   text: string;
 };
 
+type OperatorSignatureRows = {
+  names: string;
+  types: string;
+  hasArrows: boolean;
+};
+
 type OperatorSignatureDisplay = {
   main: string;
+  named: OperatorSignatureRows | null;
   slots: OperatorSignatureSlot[];
 };
 
@@ -55,8 +65,41 @@ const signatureLetter = (index: number): string => {
   return label;
 };
 
+const buildNamedSignature = (
+  cells: { name: string; type: string }[]
+): OperatorSignatureRows => {
+  const starts: number[] = [];
+  let types = cells.length > 1 ? SIGNATURE_ARROW_PAD : "";
+
+  cells.forEach((cell, index) => {
+    starts[index] = types.length;
+    types += cell.type;
+    if (index < cells.length - 1) {
+      types +=
+        index === cells.length - 2
+          ? `${SIGNATURE_ARROW_PAD}${SIGNATURE_ARROW}${SIGNATURE_ARROW_PAD}`
+          : `${SIGNATURE_ARROW_PAD}${SIGNATURE_ARROW}${SIGNATURE_ARROW_PAD}(`;
+    }
+  });
+  if (cells.length > 1) types += ")".repeat(cells.length - 2);
+  let names = "";
+  cells.forEach((cell, index) => {
+    const offset = Math.floor((cell.type.length - cell.name.length) / 2);
+    const target = Math.max(0, starts[index]! + offset);
+    if (target > names.length) {
+      names += " ".repeat(target - names.length);
+    } else if (names.length > 0) {
+      names += " ";
+    }
+    names += cell.name;
+  });
+
+  return { names, types, hasArrows: cells.length > 1 };
+};
+
 const buildOperatorSignature = (
-  root: TypeRawSignatureAST.RawSignatureNode
+  root: TypeRawSignatureAST.RawSignatureNode,
+  signatureNames: string[]
 ): OperatorSignatureDisplay => {
   const operatorNumbers = new Map<
     TypeRawSignatureAST.RawSignatureNode,
@@ -105,7 +148,7 @@ const buildOperatorSignature = (
   ): string => {
     switch (node.type) {
       case "Function": {
-        const body = `${render(node.from)} ${SIGNATURE_ARROW} ${render(
+        const body = `${render(node.from)}${SIGNATURE_ARROW_PAD}${SIGNATURE_ARROW}${SIGNATURE_ARROW_PAD}${render(
           node.to,
           true
         )}`;
@@ -124,19 +167,45 @@ const buildOperatorSignature = (
 
   assign(root);
 
+  const chainNodes: TypeRawSignatureAST.RawSignatureNode[] = [];
+  let chainNode: TypeRawSignatureAST.RawSignatureNode = root;
+  while (chainNode.type === "Function") {
+    chainNodes.push(chainNode.from);
+    chainNode = chainNode.to;
+  }
+  chainNodes.push(chainNode);
+
+  const named =
+    slots.length === 0 && signatureNames.length === chainNodes.length
+      ? buildNamedSignature(
+          chainNodes.map((node, index) => ({
+            name: signatureNames[index]!,
+            type: render(node),
+          }))
+        )
+      : null;
+
   return {
     main: render(root),
-    slots: slots.map(({ label, obscured }) => ({
-      label: `${label}`,
-      text: render(obscured),
-    })),
+    named,
+    slots: slots.map(({ label, obscured }) => {
+      const name = signatureNames[label - 1];
+      return {
+        heading: name ? `${name} (${label})` : `${label}`,
+        label: `${label}`,
+        text: render(obscured),
+      };
+    }),
   };
 };
 
 const operatorSignature = computed<OperatorSignatureDisplay | null>(() => {
   try {
     const operator = new operatorClass.value(false);
-    return buildOperatorSignature(operator.getParsedSignature().getAst());
+    return buildOperatorSignature(
+      operator.getParsedSignature().getAst(),
+      operatorClass.value.signatureNames ?? []
+    );
   } catch {
     return null;
   }
@@ -228,7 +297,18 @@ const operatorRows = (cols: number) =>
             <template v-if="operatorSignature">
               <dt>Signature</dt>
               <dd class="operator-signature">
-                <div class="operator-signature-main">
+                <div
+                  v-if="operatorSignature.named"
+                  class="operator-signature-aligned"
+                >
+                  <div class="operator-signature-types">
+                    {{ operatorSignature.named.types }}
+                  </div>
+                  <div class="operator-signature-names">
+                    {{ operatorSignature.named.names }}
+                  </div>
+                </div>
+                <div v-else class="operator-signature-main">
                   {{ operatorSignature.main }}
                 </div>
                 <div
@@ -236,7 +316,7 @@ const operatorRows = (cols: number) =>
                   :key="slot.label"
                   class="operator-signature-slot"
                 >
-                  {{ slot.label }}: {{ slot.text }}
+                  {{ slot.heading }}: {{ slot.text }}
                 </div>
               </dd>
             </template>
@@ -338,7 +418,23 @@ const operatorRows = (cols: number) =>
   overflow-wrap: anywhere;
 }
 
+.operator-signature-aligned {
+  display: grid;
+  overflow-x: auto;
+}
+
+.operator-signature-types,
+.operator-signature-names {
+  white-space: pre;
+}
+
+.operator-signature-names {
+  color: #4a6974;
+  font-style: italic;
+}
+
 .operator-signature-slot {
   color: #4a6974;
+  overflow-wrap: anywhere;
 }
 </style>

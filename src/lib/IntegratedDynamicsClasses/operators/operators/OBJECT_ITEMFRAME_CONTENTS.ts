@@ -102,6 +102,7 @@ export class OPERATOR_OBJECT_ITEMFRAME_CONTENTS extends BaseOperator<
     "ItemStack Frame contents",
     "ItemStack Frame Contents",
   ];
+  static override signatureNames = ["Item Frame", "Contents"];
   static override tooltipInfo =
     "The contents from the given Item Frame." as const;
 

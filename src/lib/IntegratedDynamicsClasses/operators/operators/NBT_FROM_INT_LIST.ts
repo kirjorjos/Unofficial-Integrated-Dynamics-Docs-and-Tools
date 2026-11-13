@@ -411,6 +411,7 @@ export class OPERATOR_NBT_FROM_INT_LIST extends BaseOperator<
     "NBT NBT Integer Array From Integer list",
     "NBT NBT Integer Array From Integer List",
   ];
+  static override signatureNames = ["Int List", "NBT"];
   static override tooltipInfo =
     "Create an NBT Integer Array tag from the given Integer List value" as const;
 

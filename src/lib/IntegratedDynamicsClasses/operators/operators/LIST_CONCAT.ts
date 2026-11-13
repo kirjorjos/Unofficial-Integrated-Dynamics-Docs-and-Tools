@@ -26,6 +26,7 @@ export class OPERATOR_LIST_CONCAT extends BaseOperator<
     "List concat",
     "List Concat",
   ];
+  static override signatureNames = ["List1", "List2", "Result"];
   static override tooltipInfo =
     "Concatenate the two list to each other." as const;
 

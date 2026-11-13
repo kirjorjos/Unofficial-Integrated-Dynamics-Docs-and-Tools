@@ -411,6 +411,7 @@ export class OPERATOR_NBT_FROM_BYTE_LIST extends BaseOperator<
     "NBT NBT Byte Array From Byte list",
     "NBT NBT Byte Array From Byte List",
   ];
+  static override signatureNames = ["Byte List", "NBT"];
   static override tooltipInfo =
     "Create an NBT Byte Array tag from the given Integer List value" as const;
 

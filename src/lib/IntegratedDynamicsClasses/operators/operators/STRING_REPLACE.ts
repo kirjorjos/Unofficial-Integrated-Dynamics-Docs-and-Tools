@@ -23,6 +23,12 @@ export class OPERATOR_STRING_REPLACE extends BaseOperator<
     "String replace",
     "String Replace",
   ];
+  static override signatureNames = [
+    "Needle",
+    "Replacement",
+    "Haystack",
+    "Result",
+  ];
   static override tooltipInfo =
     "Find all instances of the search term and replace them with the given string, in the given string." as const;
 

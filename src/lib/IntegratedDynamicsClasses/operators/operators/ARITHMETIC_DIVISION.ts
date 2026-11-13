@@ -32,6 +32,8 @@ export class OPERATOR_ARITHMETIC_DIVISION extends BaseOperator<
     "Arithmetic division",
     "Arithmetic Division",
   ];
+  static override signatureNames = ["Dividend", "Divisor", "Quotient"];
+
   static override kind = "arithmetic" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

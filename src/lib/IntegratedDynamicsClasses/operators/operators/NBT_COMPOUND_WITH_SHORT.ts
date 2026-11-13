@@ -126,6 +126,7 @@ export class OPERATOR_NBT_COMPOUND_WITH_SHORT extends BaseOperator<
     "NBT NBT Compound With short",
     "NBT NBT Compound With Short",
   ];
+  static override signatureNames = ["Compound", "Key", "Short", "Result"];
   static override tooltipInfo =
     "Get a copy of the given NBT compound tag with the given Integer as a short entry" as const;
 

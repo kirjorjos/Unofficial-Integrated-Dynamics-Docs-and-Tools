@@ -117,6 +117,7 @@ export class OPERATOR_NBT_FROM_SHORT extends BaseOperator<Integer, ShortTag> {
     "NBT NBT Short From integer",
     "NBT NBT Short From Integer",
   ];
+  static override signatureNames = ["Short", "NBT"];
   static override tooltipInfo =
     "Create an NBT Short tag from the given Integer value" as const;
 

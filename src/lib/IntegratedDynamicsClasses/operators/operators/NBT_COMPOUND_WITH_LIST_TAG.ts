@@ -319,6 +319,7 @@ export class OPERATOR_NBT_COMPOUND_WITH_LIST_TAG extends BaseOperator<
     "NBT NBT Compound With NBT list",
     "NBT NBT Compound With NBT List",
   ];
+  static override signatureNames = ["Compound", "Key", "Tag List", "Result"];
   static override tooltipInfo =
     "Get a copy of the given NBT compound tag with the given NBT List entry" as const;
 

@@ -31,6 +31,8 @@ export class OPERATOR_STRING_JOIN extends BaseOperator<
     "General join",
     "General Join",
   ];
+  static override signatureNames = ["Delimiter", "Elements", "Joined"];
+
   static override kind = "general" as const;
   static override renderPattern = "PREFIX_2" as const;
   constructor(normalizeSignature = true) {

@@ -38,6 +38,7 @@ export class OPERATOR_OBJECT_ENTITY_ISBURNING extends BaseOperator<
     "Entity Is burning",
     "Entity Is Burning",
   ];
+  static override signatureNames = ["Entity", "Burning"];
   static override tooltipInfo = "If the entity is burning" as const;
 
   static override kind = "entity" as const;

@@ -74,6 +74,7 @@ export class OPERATOR_NBT_COMPOUND_UNION extends BaseOperator<
     "NBT NBT Compound union",
     "NBT NBT Compound Union",
   ];
+  static override signatureNames = ["Compound1", "Compound2", "Union"];
   static override tooltipInfo =
     "The union of the given NBT compound tags. Nested tags will be joined recusively." as const;
 

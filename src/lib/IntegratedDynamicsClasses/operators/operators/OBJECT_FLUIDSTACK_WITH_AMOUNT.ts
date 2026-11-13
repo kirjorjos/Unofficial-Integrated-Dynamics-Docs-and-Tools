@@ -199,6 +199,7 @@ export class OPERATOR_OBJECT_FLUIDSTACK_WITH_AMOUNT extends BaseOperator<
     "FluidStack With amount",
     "FluidStack With Amount",
   ];
+  static override signatureNames = ["Fluid", "Amount", "Result"];
   static override tooltipInfo =
     "Copy the given fluid with the given amount" as const;
 

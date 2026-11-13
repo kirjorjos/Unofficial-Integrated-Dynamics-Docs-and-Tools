@@ -50,6 +50,7 @@ export class OPERATOR_ENTITY_HASGUIOPEN extends BaseOperator<Entity, iBoolean> {
     "Entity Has Gui open",
     "Entity Has Gui Open",
   ];
+  static override signatureNames = ["Entity", "Has GUI"];
   static override tooltipInfo =
     "If the given player has an external gui open." as const;
 

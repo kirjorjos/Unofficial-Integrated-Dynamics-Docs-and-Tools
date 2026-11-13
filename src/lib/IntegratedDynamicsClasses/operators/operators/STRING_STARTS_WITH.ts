@@ -36,6 +36,7 @@ export class OPERATOR_STRING_STARTS_WITH extends BaseOperator<
     "String Starts with",
     "String Starts With",
   ];
+  static override signatureNames = ["Beginning", "Haystack", "Matches"];
   static override tooltipInfo =
     "If the given substring matches the start of the given string." as const;
 

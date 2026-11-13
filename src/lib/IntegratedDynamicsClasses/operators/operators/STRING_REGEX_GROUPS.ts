@@ -39,6 +39,7 @@ export class OPERATOR_STRING_REGEX_GROUPS extends BaseOperator<
     "String Regex groups",
     "String Regex Groups",
   ];
+  static override signatureNames = ["Pattern", "Haystack", "Captures"];
   static override tooltipInfo =
     "Search for the given regular expression and return in that match a list of all its groups, in the given string." as const;
 

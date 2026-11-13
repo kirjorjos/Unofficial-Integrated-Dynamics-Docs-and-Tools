@@ -40,6 +40,7 @@ export class OPERATOR_OBJECT_PLAYER_TARGETBLOCK extends BaseOperator<
     "Entity Target block",
     "Entity Target Block",
   ];
+  static override signatureNames = ["Entity", "Target"];
   static override tooltipInfo =
     "The block the given entity is currently looking at." as const;
 

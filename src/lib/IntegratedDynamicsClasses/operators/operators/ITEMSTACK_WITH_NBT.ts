@@ -200,6 +200,8 @@ export class OPERATOR_ITEMSTACK_WITH_NBT extends BaseOperator<
     "ItemStack With Tag",
   ];
   static override kind = "itemstack" as const;
+  static override signatureNames = ["Item", "NBT", "Result"];
+
   static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {
     super({

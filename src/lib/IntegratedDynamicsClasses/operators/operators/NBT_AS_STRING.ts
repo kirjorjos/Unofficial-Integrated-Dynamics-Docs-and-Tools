@@ -116,6 +116,7 @@ export class OPERATOR_NBT_AS_STRING extends BaseOperator<StringTag, iString> {
     "NBT NBT String As string",
     "NBT NBT String As String",
   ];
+  static override signatureNames = ["NBT", "String"];
   static override tooltipInfo =
     "Get the String value of the given NBT String tag" as const;
 

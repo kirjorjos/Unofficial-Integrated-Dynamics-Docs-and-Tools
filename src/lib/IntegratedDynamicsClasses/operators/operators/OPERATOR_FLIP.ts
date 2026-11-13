@@ -22,6 +22,7 @@ export class OPERATOR_OPERATOR_FLIP extends BaseOperator<
     "Operator flip",
     "Operator Flip",
   ];
+  static override signatureNames = ["Operator", "Flipped"];
   static override tooltipInfo =
     "Flip the two first input parameters of an operator." as const;
 

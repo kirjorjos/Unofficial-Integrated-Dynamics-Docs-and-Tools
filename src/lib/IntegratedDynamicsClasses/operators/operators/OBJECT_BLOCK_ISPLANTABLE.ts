@@ -42,6 +42,7 @@ export class OPERATOR_OBJECT_BLOCK_ISPLANTABLE extends BaseOperator<
     "Block Is plant",
     "Block Is Plant",
   ];
+  static override signatureNames = ["Block", "Plantable"];
   static override tooltipInfo = "If the given block is a plant" as const;
 
   static override kind = "block" as const;

@@ -28,6 +28,7 @@ export class OPERATOR_GENERAL_IDENTITY extends BaseOperator<
     "General identity",
     "General Identity",
   ];
+  static override signatureNames = ["Input", "Output"];
   static override tooltipInfo = "A copy of the input value." as const;
 
   static override kind = "general" as const;

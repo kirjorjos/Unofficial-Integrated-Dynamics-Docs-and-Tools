@@ -24,6 +24,7 @@ export class OPERATOR_LIST_COUNT extends BaseOperator<
     "List count",
     "List Count",
   ];
+  static override signatureNames = ["List", "Element", "Count"];
   static override tooltipInfo =
     "The number of times the given element is found in the list." as const;
 

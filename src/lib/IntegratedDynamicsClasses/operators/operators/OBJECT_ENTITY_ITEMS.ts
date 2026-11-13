@@ -41,6 +41,7 @@ export class OPERATOR_OBJECT_ENTITY_ITEMS extends BaseOperator<
     "Entity Entity items",
     "Entity Entity Items",
   ];
+  static override signatureNames = ["Entity", "Items"];
   static override tooltipInfo =
     "The items that are contained within this entity." as const;
 

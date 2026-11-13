@@ -31,6 +31,8 @@ export class OPERATOR_ARITHMETIC_ADDITION extends BaseOperator<
     "Arithmetic addition",
     "Arithmetic Addition",
   ];
+  static override signatureNames = ["Augend", "Addend", "Sum"];
+
   static override kind = "arithmetic" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

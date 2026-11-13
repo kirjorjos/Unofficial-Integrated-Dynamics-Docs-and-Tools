@@ -230,6 +230,7 @@ export class OPERATOR_NBT_COMPOUND_VALUE_LIST_INT extends BaseOperator<
     "NBT NBT Compound Value Integer array",
     "NBT NBT Compound Value Integer Array",
   ];
+  static override signatureNames = ["Compound", "Key", "Int List"];
   static override tooltipInfo =
     "The Integer Array in the given NBT compound tag with the given key as Integer List" as const;
 

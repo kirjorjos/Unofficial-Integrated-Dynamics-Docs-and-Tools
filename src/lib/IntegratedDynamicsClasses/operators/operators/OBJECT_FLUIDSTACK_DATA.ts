@@ -160,6 +160,7 @@ export class OPERATOR_OBJECT_FLUIDSTACK_DATA extends BaseOperator<
     "fluidStack NBT",
     "FluidStack NBT",
   ];
+  static override signatureNames = ["Fluid", "NBT"];
   static override tooltipInfo = "Get the NBT tag of the given fluid." as const;
 
   static override kind = "fluidstack" as const;

@@ -42,6 +42,8 @@ export class OPERATOR_OBJECT_FLUIDSTACK_BUCKET extends BaseOperator<
     "Bucket",
   ];
   static override kind = "fluidstack" as const;
+  static override signatureNames = ["Fluid", "Bucket"];
+
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({

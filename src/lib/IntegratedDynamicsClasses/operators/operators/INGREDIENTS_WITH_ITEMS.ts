@@ -52,6 +52,7 @@ export class OPERATOR_INGREDIENTS_WITH_ITEMS extends BaseOperator<
     "Ingredients Ingredients With items",
     "Ingredients Ingredients With Items",
   ];
+  static override signatureNames = ["Ingredients", "Items", "Result"];
   static override tooltipInfo =
     "Get a copy of the given ingredients with the given list of items at the given ingredient position" as const;
 

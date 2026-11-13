@@ -71,6 +71,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_FE_CAPACITY extends BaseOperator<
     "FE capacity",
     "FE Capacity",
   ];
+  static override signatureNames = ["Item", "FE Capacity"];
   static override tooltipInfo =
     "The maximum amount of FE that can be stored in this item" as const;
 

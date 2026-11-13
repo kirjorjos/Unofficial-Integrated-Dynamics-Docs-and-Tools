@@ -34,6 +34,7 @@ export class OPERATOR_OBJECT_ENTITY_TYPE extends BaseOperator<Entity, iString> {
     "Entity Entity type",
     "Entity Entity Type",
   ];
+  static override signatureNames = ["Entity", "Type"];
   static override tooltipInfo = "The entity type name." as const;
 
   static override kind = "entity" as const;

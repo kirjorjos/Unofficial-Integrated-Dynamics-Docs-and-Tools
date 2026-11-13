@@ -53,6 +53,7 @@ export class OPERATOR_OBJECT_BLOCK_BY_NAME extends BaseOperator<
     "Block By name",
     "Block By Name",
   ];
+  static override signatureNames = ["Namespace", "Block"];
   static override tooltipInfo =
     "Get the block corresponding to the given unique name, add space+number for indicating the metadata." as const;
 

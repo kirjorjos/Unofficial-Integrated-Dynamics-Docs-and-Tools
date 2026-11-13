@@ -55,6 +55,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_MAXDAMAGE extends BaseOperator<
     "Max damage",
     "Max Damage",
   ];
+  static override signatureNames = ["Item", "Max Damage"];
   static override tooltipInfo = "The maximum item damage" as const;
 
   static override kind = "itemstack" as const;

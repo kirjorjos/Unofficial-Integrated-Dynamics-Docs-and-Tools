@@ -74,6 +74,7 @@ export class OPERATOR_OBJECT_ENTITY_ISINLOVE extends BaseOperator<
     "Entity Entity Is In love",
     "Entity Entity Is In Love",
   ];
+  static override signatureNames = ["Entity", "In Love"];
   static override tooltipInfo =
     "If the given entity is in love and is ready to breed." as const;
 

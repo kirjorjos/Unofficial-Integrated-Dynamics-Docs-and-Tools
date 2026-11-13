@@ -24,6 +24,7 @@ export class OPERATOR_LIST_HEAD extends BaseOperator<
     "List head",
     "List Head",
   ];
+  static override signatureNames = ["List", "Head"];
   static override tooltipInfo =
     "Get the first element of the given list." as const;
 

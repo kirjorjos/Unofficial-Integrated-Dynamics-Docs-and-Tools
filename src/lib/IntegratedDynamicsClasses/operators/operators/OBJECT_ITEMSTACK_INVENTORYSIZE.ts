@@ -197,6 +197,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_INVENTORYSIZE extends BaseOperator<
     "ItemStack Inventory size",
     "ItemStack Inventory Size",
   ];
+  static override signatureNames = ["Item", "Inv Size"];
   static override tooltipInfo =
     "Retrieve the inventory size of the given item handler contents" as const;
 

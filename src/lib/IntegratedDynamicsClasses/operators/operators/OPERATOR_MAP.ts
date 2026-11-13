@@ -23,6 +23,7 @@ export class OPERATOR_OPERATOR_MAP extends BaseOperator<
     "Operator map",
     "Operator Map",
   ];
+  static override signatureNames = ["Operator", "Elements", "Mapped"];
   static override tooltipInfo =
     "Apply the given operator on all elements of a list, resulting in a new list of mapped values." as const;
 

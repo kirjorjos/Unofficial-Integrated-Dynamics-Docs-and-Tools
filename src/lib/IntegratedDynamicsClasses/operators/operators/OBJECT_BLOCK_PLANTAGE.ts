@@ -50,6 +50,7 @@ export class OPERATOR_OBJECT_BLOCK_PLANTAGE extends BaseOperator<
     "Block Plant age",
     "Block Plant Age",
   ];
+  static override signatureNames = ["Block", "Plant Age"];
   static override tooltipInfo = "The age of the given plant block" as const;
 
   static override kind = "block" as const;

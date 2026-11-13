@@ -39,6 +39,8 @@ export class OPERATOR_RELATIONAL_LT extends BaseOperator<
     "Relational Less than",
     "Relational Less Than",
   ];
+  static override signatureNames = ["Left", "Right", "Less"];
+
   static override kind = "relational" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

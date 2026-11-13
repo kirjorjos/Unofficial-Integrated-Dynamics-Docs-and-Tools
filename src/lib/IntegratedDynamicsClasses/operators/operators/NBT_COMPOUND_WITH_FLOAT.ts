@@ -126,6 +126,7 @@ export class OPERATOR_NBT_COMPOUND_WITH_FLOAT extends BaseOperator<
     "NBT NBT Compound With float",
     "NBT NBT Compound With Float",
   ];
+  static override signatureNames = ["Compound", "Key", "Float", "Result"];
   static override tooltipInfo =
     "Get a copy of the given NBT compound tag with the given Double as a float entry" as const;
 

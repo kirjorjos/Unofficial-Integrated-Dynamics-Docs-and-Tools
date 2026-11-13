@@ -75,6 +75,7 @@ export class OPERATOR_NBT_COMPOUND_SUBSET extends BaseOperator<
     "NBT NBT Compound subset",
     "NBT NBT Compound Subset",
   ];
+  static override signatureNames = ["Compound1", "Compound2", "Subset"];
   static override tooltipInfo =
     "If the first NBT compound tag is a subset of, or equal to the second NBT compound tag. This will recursively check nested tags." as const;
 

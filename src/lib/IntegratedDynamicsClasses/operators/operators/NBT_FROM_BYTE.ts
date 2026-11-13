@@ -117,6 +117,7 @@ export class OPERATOR_NBT_FROM_BYTE extends BaseOperator<Integer, ByteTag> {
     "NBT NBT Byte From integer",
     "NBT NBT Byte From Integer",
   ];
+  static override signatureNames = ["Byte", "NBT"];
   static override tooltipInfo =
     "Create an NBT Byte tag from the given Integer value" as const;
 

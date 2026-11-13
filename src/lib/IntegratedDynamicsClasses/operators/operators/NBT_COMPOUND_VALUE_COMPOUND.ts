@@ -124,6 +124,7 @@ export class OPERATOR_NBT_COMPOUND_VALUE_COMPOUND extends BaseOperator<
     "NBT NBT Compound Value compound",
     "NBT NBT Compound Value Compound",
   ];
+  static override signatureNames = ["Compound", "Key", "Result"];
   static override tooltipInfo =
     "The Compound value in the given NBT compound tag with the given key" as const;
 

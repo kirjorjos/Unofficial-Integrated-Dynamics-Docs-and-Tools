@@ -74,6 +74,7 @@ export class OPERATOR_NBT_COMPOUND_MINUS extends BaseOperator<
     "NBT NBT Compound minus",
     "NBT NBT Compound Minus",
   ];
+  static override signatureNames = ["Minuend", "Subtrahend", "Difference"];
   static override tooltipInfo =
     "The difference of the given NBT compound tags. Nested tags will be subtracted recusively." as const;
 
