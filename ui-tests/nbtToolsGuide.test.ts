@@ -20,7 +20,7 @@ const section = (page: Page, id: string) =>
 const docsParam = (page: Page) => new URL(page.url()).searchParams.get("docs");
 
 const openGuide = async (page: Page): Promise<void> => {
-  await openNbtTools(page);
+  if ((await guide(page).count()) === 0) await openNbtTools(page);
   await guide(page).locator(".input-docs-summary").click();
   await expect(body(page)).toBeVisible();
 };
