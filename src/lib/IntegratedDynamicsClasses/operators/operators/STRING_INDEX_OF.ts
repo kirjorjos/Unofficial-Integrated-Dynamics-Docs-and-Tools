@@ -35,6 +35,7 @@ export class OPERATOR_STRING_INDEX_OF extends BaseOperator<
     "String Index of",
     "String Index Of",
   ];
+  static override signatureNames = ["Needle", "Haystack", "Index"];
   static override tooltipInfo =
     "Get the index of the first occurrence of a substring matching the search term in the given string." as const;
 

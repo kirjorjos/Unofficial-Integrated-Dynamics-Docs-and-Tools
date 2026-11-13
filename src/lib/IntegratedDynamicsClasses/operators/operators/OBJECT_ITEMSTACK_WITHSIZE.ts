@@ -197,6 +197,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_WITHSIZE extends BaseOperator<
     "ItemStack With stacksize",
     "ItemStack With Stacksize",
   ];
+  static override signatureNames = ["Item", "Size", "Result"];
   static override tooltipInfo = "Set the stacksize for the given item" as const;
 
   static override kind = "itemstack" as const;

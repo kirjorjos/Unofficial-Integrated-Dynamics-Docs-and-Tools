@@ -198,6 +198,7 @@ export class OPERATOR_ITEMSTACK_ITEMLISTCOUNT extends BaseOperator<
     "ItemStack List count",
     "ItemStack List Count",
   ];
+  static override signatureNames = ["Items", "Item", "Count"];
   static override tooltipInfo =
     "Get the total item count of exactly the given item in a list." as const;
 

@@ -77,6 +77,7 @@ export class OPERATOR_NBT_PATH_TEST extends BaseOperator<
     "NBT NBT Path test",
     "NBT NBT Path Test",
   ];
+  static override signatureNames = ["Path", "Compound", "Matches"];
   static override tooltipInfo =
     "Test if the given NBT Path expression matches with the given NBT value" as const;
 

@@ -37,6 +37,7 @@ export class OPERATOR_OBJECT_ENTITY_MOUNTED extends BaseOperator<
     "Entity Mounted entities",
     "Entity Mounted Entities",
   ];
+  static override signatureNames = ["Entity", "Mounted"];
   static override tooltipInfo =
     "The entities that are currently mounted on the given entity." as const;
 

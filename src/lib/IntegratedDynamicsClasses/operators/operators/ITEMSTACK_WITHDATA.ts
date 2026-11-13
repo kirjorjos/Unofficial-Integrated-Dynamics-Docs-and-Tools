@@ -201,6 +201,8 @@ export class OPERATOR_ITEMSTACK_WITHDATA extends BaseOperator<
     "ItemStack With Data",
   ];
   static override kind = "itemstack" as const;
+  static override signatureNames = ["Item", "Key", "NBT", "Result"];
+
   static override renderPattern = "INFIX_2_LONG" as const;
   constructor(normalizeSignature = true) {
     super({

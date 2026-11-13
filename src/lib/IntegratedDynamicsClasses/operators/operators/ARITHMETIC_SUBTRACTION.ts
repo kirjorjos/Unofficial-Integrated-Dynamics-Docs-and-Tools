@@ -32,6 +32,8 @@ export class OPERATOR_ARITHMETIC_SUBTRACTION extends BaseOperator<
     "Arithmetic subtraction",
     "Arithmetic Subtraction",
   ];
+  static override signatureNames = ["Minuend", "Subtrahend", "Difference"];
+
   static override kind = "arithmetic" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

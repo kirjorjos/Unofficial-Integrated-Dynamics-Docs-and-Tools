@@ -30,6 +30,8 @@ export class OPERATOR_LIST_INTERSECTION extends BaseOperator<
     "List intersection",
     "List Intersection",
   ];
+  static override signatureNames = ["List1", "List2", "Intersection"];
+
   static override kind = "list" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

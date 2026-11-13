@@ -117,6 +117,7 @@ export class OPERATOR_NBT_FROM_LONG extends BaseOperator<Long, LongTag> {
     "NBT NBT Long From long",
     "NBT NBT Long From Long",
   ];
+  static override signatureNames = ["Long", "NBT"];
   static override tooltipInfo =
     "Create an NBT Long tag from the given Long value" as const;
 

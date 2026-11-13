@@ -28,6 +28,7 @@ export class OPERATOR_OBJECT_ENTITY_HEIGHT extends BaseOperator<
     "Entity height",
     "Entity Height",
   ];
+  static override signatureNames = ["Entity", "Height"];
   static override tooltipInfo = "The entity height" as const;
 
   static override kind = "entity" as const;

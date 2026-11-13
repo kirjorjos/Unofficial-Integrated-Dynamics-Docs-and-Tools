@@ -48,6 +48,7 @@ export class OPERATOR_OBJECT_ENTITY_ISSHEARABLE extends BaseOperator<
     "Entity Entity Is shearable",
     "Entity Entity Is Shearable",
   ];
+  static override signatureNames = ["Entity", "Shearable"];
   static override tooltipInfo = "If the given entity is shearable" as const;
 
   static override kind = "entity" as const;

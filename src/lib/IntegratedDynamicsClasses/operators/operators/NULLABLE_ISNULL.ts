@@ -41,6 +41,7 @@ export class OPERATOR_NULLABLE_ISNULL extends BaseOperator<
     "General Is null",
     "General Is Null",
   ];
+  static override signatureNames = ["Nullable", "Is Null"];
   static override tooltipInfo = "If the given value is null" as const;
 
   static override kind = "general" as const;

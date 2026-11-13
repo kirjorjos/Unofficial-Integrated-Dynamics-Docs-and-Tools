@@ -48,6 +48,7 @@ export class OPERATOR_INGREDIENTS_ENERGIES extends BaseOperator<
     "Ingredients Ingredient Energy elements",
     "Ingredients Ingredient Energy Elements",
   ];
+  static override signatureNames = ["Ingredients", "Energies"];
   static override tooltipInfo = "The list of energy elements" as const;
 
   static override kind = "ingredients" as const;

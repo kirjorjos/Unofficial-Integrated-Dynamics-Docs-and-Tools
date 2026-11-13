@@ -30,6 +30,8 @@ export class OPERATOR_ARITHMETIC_INCREMENT extends BaseOperator<
     "Arithmetic increment",
     "Arithmetic Increment",
   ];
+  static override signatureNames = ["Number", "Incremented"];
+
   static override kind = "arithmetic" as const;
   static override renderPattern = "SUFFIX_1" as const;
   constructor(normalizeSignature = true) {

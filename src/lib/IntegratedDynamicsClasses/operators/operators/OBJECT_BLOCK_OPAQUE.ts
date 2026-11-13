@@ -29,6 +29,7 @@ export class OPERATOR_OBJECT_BLOCK_OPAQUE extends BaseOperator<
     "Block opaque",
     "Block Opaque",
   ];
+  static override signatureNames = ["Block", "Opaque"];
   static override tooltipInfo =
     "If the given block is opaque, non-transparent" as const;
 

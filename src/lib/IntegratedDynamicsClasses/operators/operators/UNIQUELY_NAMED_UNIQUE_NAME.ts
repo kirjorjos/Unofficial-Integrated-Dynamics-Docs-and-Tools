@@ -39,6 +39,7 @@ export class OPERATOR_UNIQUELY_NAMED_UNIQUE_NAME extends BaseOperator<
     "String Unique name",
     "String Unique Name",
   ];
+  static override signatureNames = ["Named", "Unique Name"];
   static override tooltipInfo = "Get the unique name of an object" as const;
 
   static override kind = "string" as const;

@@ -24,6 +24,7 @@ export class OPERATOR_LIST_CONTAINS extends BaseOperator<
     "List contains",
     "List Contains",
   ];
+  static override signatureNames = ["List", "Element", "Contains"];
   static override tooltipInfo =
     "If the list contains the given element." as const;
 

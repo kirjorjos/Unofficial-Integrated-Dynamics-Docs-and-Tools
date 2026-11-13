@@ -73,6 +73,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_STORED_FE extends BaseOperator<
     "FE stored",
     "FE Stored",
   ];
+  static override signatureNames = ["Item", "Stored FE"];
   static override tooltipInfo = "The amount of FE stored in this item" as const;
 
   static override kind = "itemstack" as const;

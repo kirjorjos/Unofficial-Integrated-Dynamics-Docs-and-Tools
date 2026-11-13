@@ -55,6 +55,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_MAXSIZE extends BaseOperator<
     "Max size",
     "Max Size",
   ];
+  static override signatureNames = ["Item", "Max Size"];
   static override tooltipInfo = "The maximum stack size" as const;
 
   static override kind = "itemstack" as const;

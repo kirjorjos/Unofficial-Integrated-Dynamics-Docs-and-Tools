@@ -197,6 +197,7 @@ export class OPERATOR_ITEMSTACK_ITEMBYNAME extends BaseOperator<iString, Item> {
     "ItemStack By name",
     "ItemStack By Name",
   ];
+  static override signatureNames = ["Namespace", "Item"];
   static override tooltipInfo =
     "Get the item corresponding to the given unique name, add space+number for indicating the metadata." as const;
 

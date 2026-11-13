@@ -32,6 +32,7 @@ export class OPERATOR_OPERATOR_DISJUNCTION extends BaseOperator<
     "Operator disjunction",
     "Operator Disjunction",
   ];
+  static override signatureNames = ["Operator1", "Operator2", "Disjunction"];
   static override tooltipInfo =
     "Takes the disjunction of two predicates." as const;
 

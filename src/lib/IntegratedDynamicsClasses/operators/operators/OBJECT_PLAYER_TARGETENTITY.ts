@@ -38,6 +38,7 @@ export class OPERATOR_OBJECT_PLAYER_TARGETENTITY extends BaseOperator<
     "Entity Target entity",
     "Entity Target Entity",
   ];
+  static override signatureNames = ["Entity", "Target"];
   static override tooltipInfo =
     "The entity the given entity is currently looking at." as const;
 

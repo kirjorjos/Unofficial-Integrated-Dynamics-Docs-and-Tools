@@ -41,6 +41,7 @@ export class OPERATOR_OBJECT_FLUIDSTACK_VISCOSITY extends BaseOperator<
     "viscosity",
     "Viscosity",
   ];
+  static override signatureNames = ["Fluid", "Viscosity"];
   static override tooltipInfo = "The fluid viscosity" as const;
 
   static override kind = "fluidstack" as const;

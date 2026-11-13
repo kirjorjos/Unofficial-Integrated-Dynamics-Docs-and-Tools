@@ -145,6 +145,8 @@ export class OPERATOR_OBJECT_FLUIDSTACK_IS_LIGHTER_THAN_AIR extends BaseOperator
     "Is Lighter Than Air",
   ];
   static override kind = "fluidstack" as const;
+  static override signatureNames = ["Fluid", "Lighter"];
+
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({

@@ -71,6 +71,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISDATAEQUAL extends BaseOperator<
     "NBT equals",
     "NBT Equals",
   ];
+  static override signatureNames = ["Item1", "Item2", "Equal"];
   static override tooltipInfo =
     "If the NBT tags of the given items are equal" as const;
 

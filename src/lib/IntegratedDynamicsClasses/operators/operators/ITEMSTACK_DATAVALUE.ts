@@ -199,6 +199,8 @@ export class OPERATOR_ITEMSTACK_DATAVALUE extends BaseOperator<Item, iBoolean> {
     "ItemStack Data Value",
   ];
   static override kind = "itemstack" as const;
+  static override signatureNames = ["Item", "Key", "NBT"];
+
   static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {
     super({

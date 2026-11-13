@@ -43,6 +43,7 @@ export class OPERATOR_RELATIONAL_NOTEQUALS extends BaseOperator<
     "Relational Not equals",
     "Relational Not Equals",
   ];
+  static override signatureNames = ["Value1", "Value2", "Differs"];
   static override tooltipInfo = "Type one and two must be equal." as const;
 
   static override kind = "relational" as const;

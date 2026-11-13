@@ -40,6 +40,8 @@ export class OPERATOR_ITEMSTACK_TOOLTIP extends BaseOperator<
     "Tooltip",
   ];
   static override kind = "itemstack" as const;
+  static override signatureNames = ["Item", "Tooltip"];
+
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({

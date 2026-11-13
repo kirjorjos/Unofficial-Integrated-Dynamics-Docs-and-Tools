@@ -32,6 +32,7 @@ export class OPERATOR_LIST_EMPTY extends BaseOperator<
     "List empty",
     "List Empty",
   ];
+  static override signatureNames = ["List", "Empty"];
   static override tooltipInfo = "If the list is empty" as const;
 
   static override kind = "list" as const;

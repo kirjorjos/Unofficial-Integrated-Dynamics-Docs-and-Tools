@@ -41,6 +41,7 @@ export class OPERATOR_OBJECT_ENTITY_NBT extends BaseOperator<
     "Entity entity NBT",
     "Entity Entity NBT",
   ];
+  static override signatureNames = ["Entity", "NBT"];
   static override tooltipInfo = "Get the given entity as NBT." as const;
 
   static override kind = "entity" as const;

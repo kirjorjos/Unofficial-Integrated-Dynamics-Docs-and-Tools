@@ -24,6 +24,7 @@ export class OPERATOR_OPERATOR_FILTER extends BaseOperator<
     "Operator filter",
     "Operator Filter",
   ];
+  static override signatureNames = ["Predicate", "List", "Filtered"];
   static override tooltipInfo =
     "Filter a list of elements by matching them all with the given predicate." as const;
 

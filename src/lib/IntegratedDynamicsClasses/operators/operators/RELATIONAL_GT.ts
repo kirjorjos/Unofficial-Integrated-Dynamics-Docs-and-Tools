@@ -38,6 +38,8 @@ export class OPERATOR_RELATIONAL_GT extends BaseOperator<
     "Relational Greater than",
     "Relational Greater Than",
   ];
+  static override signatureNames = ["Left", "Right", "Greater"];
+
   static override kind = "relational" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

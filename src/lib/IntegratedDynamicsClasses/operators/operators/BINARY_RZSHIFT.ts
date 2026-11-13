@@ -54,6 +54,7 @@ export class OPERATOR_BINARY_RZSHIFT extends BaseOperator<
     "Binary Right Zero shift",
     "Binary Right Zero Shift",
   ];
+  static override signatureNames = ["Number", "Bit Count", "Shifted"];
   static override tooltipInfo = "Right Shift with zeros fill" as const;
 
   static override kind = "binary" as const;

@@ -119,6 +119,7 @@ export class OPERATOR_NBT_FROM_BOOLEAN extends BaseOperator<iBoolean, ByteTag> {
     "NBT NBT Byte From boolean",
     "NBT NBT Byte From Boolean",
   ];
+  static override signatureNames = ["Boolean", "NBT"];
   static override tooltipInfo =
     "Create an NBT Byte tag from the given Boolean value" as const;
 

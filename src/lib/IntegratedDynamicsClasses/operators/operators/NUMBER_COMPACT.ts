@@ -19,6 +19,8 @@ export class OPERATOR_NUMBER_COMPACT extends BaseOperator<TypeNumber, iString> {
     "Number compact",
     "Number Compact",
   ];
+  static override signatureNames = ["Number", "Compacted"];
+
   static override kind = "number" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

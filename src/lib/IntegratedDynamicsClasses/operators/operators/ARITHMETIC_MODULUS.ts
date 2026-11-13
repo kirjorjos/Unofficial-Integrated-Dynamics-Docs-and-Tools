@@ -31,6 +31,8 @@ export class OPERATOR_ARITHMETIC_MODULUS extends BaseOperator<
     "Arithmetic modulus",
     "Arithmetic Modulus",
   ];
+  static override signatureNames = ["Dividend", "Divisor", "Remainder"];
+
   static override kind = "arithmetic" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

@@ -111,6 +111,7 @@ export class OPERATOR_NBT_AS_LONG extends BaseOperator<LongTag, Long> {
     "NBT NBT Long As long",
     "NBT NBT Long As Long",
   ];
+  static override signatureNames = ["NBT", "Long"];
   static override tooltipInfo =
     "Get the Long value of the given NBT Long tag" as const;
 

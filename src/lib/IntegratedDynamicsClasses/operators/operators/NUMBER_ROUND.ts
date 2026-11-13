@@ -19,6 +19,8 @@ export class OPERATOR_NUMBER_ROUND extends BaseOperator<TypeNumber, Integer> {
     "Number round",
     "Number Round",
   ];
+  static override signatureNames = ["Number", "Rounded"];
+
   static override kind = "number" as const;
   static override renderPattern = "PREFIX_1" as const;
   constructor(normalizeSignature = true) {

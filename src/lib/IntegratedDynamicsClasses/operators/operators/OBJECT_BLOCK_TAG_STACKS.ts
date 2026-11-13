@@ -54,6 +54,8 @@ export class OPERATOR_OBJECT_BLOCK_TAG_STACKS extends BaseOperator<
     "Block Tag values",
     "Block Tag Values",
   ];
+  static override signatureNames = ["Tag", "Blocks"];
+
   static override kind = "string" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

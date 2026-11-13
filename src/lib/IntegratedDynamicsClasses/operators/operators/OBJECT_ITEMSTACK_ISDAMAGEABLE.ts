@@ -42,6 +42,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISDAMAGEABLE extends BaseOperator<
     "damageable",
     "Damageable",
   ];
+  static override signatureNames = ["Item", "Damageable"];
   static override tooltipInfo = "If the item can take damage." as const;
 
   static override kind = "itemstack" as const;

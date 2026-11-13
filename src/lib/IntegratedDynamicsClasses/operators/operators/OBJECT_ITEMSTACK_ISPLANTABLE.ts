@@ -191,6 +191,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISPLANTABLE extends BaseOperator<
     "ItemStack Is plant",
     "ItemStack Is Plant",
   ];
+  static override signatureNames = ["Item", "Plantable"];
   static override tooltipInfo = "If the given item is a plant" as const;
 
   static override kind = "itemstack" as const;

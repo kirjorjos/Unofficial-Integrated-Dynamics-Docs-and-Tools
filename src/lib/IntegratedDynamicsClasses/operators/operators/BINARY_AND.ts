@@ -26,6 +26,8 @@ export class OPERATOR_BINARY_AND extends BaseOperator<
     "Binary and",
     "Binary And",
   ];
+  static override signatureNames = ["Integer1", "Integer2", "Masked"];
+
   static override kind = "binary" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

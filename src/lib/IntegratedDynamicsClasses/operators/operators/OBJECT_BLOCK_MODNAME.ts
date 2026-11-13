@@ -20,6 +20,7 @@ export class OPERATOR_OBJECT_BLOCK_MODNAME extends BaseOperator<
     "Block mod",
     "Block Mod",
   ];
+  static override signatureNames = ["Block", "Mod Name"];
   static override tooltipInfo =
     "The name of the mod owning the given block" as const;
 

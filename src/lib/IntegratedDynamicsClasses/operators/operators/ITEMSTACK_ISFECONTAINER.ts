@@ -116,6 +116,7 @@ export class OPERATOR_ITEMSTACK_ISFECONTAINER extends BaseOperator<
     "Is FE container",
     "Is FE Container",
   ];
+  static override signatureNames = ["Item", "Has FE"];
   static override tooltipInfo = "If the given item can hold FE" as const;
 
   static override kind = "itemstack" as const;

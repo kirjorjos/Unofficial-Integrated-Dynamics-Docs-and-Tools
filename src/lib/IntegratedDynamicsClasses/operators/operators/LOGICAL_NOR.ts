@@ -30,6 +30,8 @@ export class OPERATOR_LOGICAL_NOR extends BaseOperator<
     "Logical nor",
     "Logical Nor",
   ];
+  static override signatureNames = ["Boolean1", "Boolean2", "Result"];
+
   static override kind = "logical" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

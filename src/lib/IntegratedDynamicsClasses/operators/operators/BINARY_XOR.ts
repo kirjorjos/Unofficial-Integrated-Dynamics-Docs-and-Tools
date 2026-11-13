@@ -29,6 +29,8 @@ export class OPERATOR_BINARY_XOR extends BaseOperator<
     "Binary xor",
     "Binary Xor",
   ];
+  static override signatureNames = ["Integer1", "Integer2", "Differs"];
+
   static override kind = "binary" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

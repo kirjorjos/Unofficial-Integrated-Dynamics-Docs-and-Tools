@@ -153,6 +153,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_NBT extends BaseOperator<
     "itemStack NBT",
     "ItemStack NBT",
   ];
+  static override signatureNames = ["Item", "NBT"];
   static override tooltipInfo = "Get the NBT tag of the given item." as const;
 
   static override kind = "itemstack" as const;

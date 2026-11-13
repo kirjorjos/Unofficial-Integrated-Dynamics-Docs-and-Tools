@@ -193,6 +193,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_PLANTTYPE extends BaseOperator<
     "ItemStack Plant type",
     "ItemStack Plant Type",
   ];
+  static override signatureNames = ["Item", "Type"];
   static override tooltipInfo = "The plant type of the given item" as const;
 
   static override kind = "itemstack" as const;

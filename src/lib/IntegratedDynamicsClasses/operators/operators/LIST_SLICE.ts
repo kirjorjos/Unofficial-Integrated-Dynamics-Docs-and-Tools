@@ -26,6 +26,7 @@ export class OPERATOR_LIST_SLICE extends BaseOperator<
     "List slice",
     "List Slice",
   ];
+  static override signatureNames = ["List", "Start", "End", "Result"];
   static override tooltipInfo =
     "Take a subset of the given list from the given index (inclusive) to the given index (exclusive)." as const;
 
