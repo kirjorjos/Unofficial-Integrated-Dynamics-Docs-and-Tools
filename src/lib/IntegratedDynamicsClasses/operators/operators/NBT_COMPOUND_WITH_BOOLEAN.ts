@@ -127,6 +127,7 @@ export class OPERATOR_NBT_COMPOUND_WITH_BOOLEAN extends BaseOperator<
     "NBT NBT Compound With boolean",
     "NBT NBT Compound With Boolean",
   ];
+  static override signatureNames = ["Compound", "Key", "Boolean", "Result"];
   static override tooltipInfo =
     "Get a copy of the given NBT compound tag with the given Boolean entry" as const;
 

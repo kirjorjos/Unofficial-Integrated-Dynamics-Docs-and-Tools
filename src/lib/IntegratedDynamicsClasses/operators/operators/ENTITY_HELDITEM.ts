@@ -97,6 +97,7 @@ export class OPERATOR_ENTITY_HELDITEM extends BaseOperator<Entity, Item> {
     "Entity Held ItemStack mainhand",
     "Entity Held ItemStack Mainhand",
   ];
+  static override signatureNames = ["Entity", "Main Hand"];
   static override tooltipInfo =
     "The item the given entity is currently holding in its main hand." as const;
 

@@ -30,6 +30,8 @@ export class OPERATOR_STRING_ERROR extends BaseOperator<
     "String error",
     "String Error",
   ];
+  static override signatureNames = ["Message", "Error"];
+
   static override kind = "string" as const;
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

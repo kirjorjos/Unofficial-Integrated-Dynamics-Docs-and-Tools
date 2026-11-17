@@ -31,6 +31,8 @@ export class OPERATOR_DOUBLE_SQRT extends BaseOperator<Double, Double> {
     "Double Square root",
     "Double Square Root",
   ];
+  static override signatureNames = ["Radicand", "Root"];
+
   static override kind = "double" as const;
   static override renderPattern = "PREFIX_1" as const;
   constructor(normalizeSignature = true) {

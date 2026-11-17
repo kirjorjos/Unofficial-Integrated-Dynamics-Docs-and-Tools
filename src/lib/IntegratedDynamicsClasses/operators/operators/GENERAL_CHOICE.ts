@@ -34,6 +34,7 @@ export class OPERATOR_GENERAL_CHOICE extends BaseOperator<
     "General choice",
     "General Choice",
   ];
+  static override signatureNames = ["Condition", "True", "False", "Chosen"];
   static override tooltipInfo =
     "If the first value is true, the second value is taken, otherwise the third value.\\nType two and three must be equal." as const;
 

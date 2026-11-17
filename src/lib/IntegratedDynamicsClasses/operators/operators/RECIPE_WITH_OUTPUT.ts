@@ -74,6 +74,7 @@ export class OPERATOR_RECIPE_WITH_OUTPUT extends BaseOperator<
     "Recipe Recipe With Output ingredients",
     "Recipe Recipe With Output Ingredients",
   ];
+  static override signatureNames = ["Recipe", "Outputs", "Result"];
   static override tooltipInfo =
     "Get a copy of the given recipe with the given ingredients as input" as const;
 

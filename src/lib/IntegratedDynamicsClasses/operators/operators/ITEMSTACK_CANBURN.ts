@@ -57,6 +57,7 @@ export class OPERATOR_ITEMSTACK_CANBURN extends BaseOperator<Item, iBoolean> {
     "Is fuel",
     "Is Fuel",
   ];
+  static override signatureNames = ["Item", "Can Burn"];
   static override tooltipInfo =
     "If the given item can be used as fuel" as const;
 

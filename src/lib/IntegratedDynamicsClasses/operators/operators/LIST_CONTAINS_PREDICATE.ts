@@ -40,6 +40,7 @@ export class OPERATOR_LIST_CONTAINS_PREDICATE extends BaseOperator<
     "List Contains predicate",
     "List Contains Predicate",
   ];
+  static override signatureNames = ["List", "Predicate", "Contains"];
   static override tooltipInfo =
     "If at least one of the elements of the list returns true for the given predicate." as const;
 

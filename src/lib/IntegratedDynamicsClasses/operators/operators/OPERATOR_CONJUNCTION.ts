@@ -32,6 +32,7 @@ export class OPERATOR_OPERATOR_CONJUNCTION extends BaseOperator<
     "Operator conjunction",
     "Operator Conjunction",
   ];
+  static override signatureNames = ["Operator1", "Operator2", "Conjunction"];
   static override tooltipInfo =
     "Takes the conjunction of two predicates." as const;
 

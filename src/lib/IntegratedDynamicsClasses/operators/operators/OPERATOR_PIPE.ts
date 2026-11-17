@@ -32,6 +32,7 @@ export class OPERATOR_OPERATOR_PIPE extends BaseOperator<
     "Operator pipe",
     "Operator Pipe",
   ];
+  static override signatureNames = ["First", "Second", "Piped"];
   static override tooltipInfo =
     "Create a new operator that pipes the output from the first operator to the second operator." as const;
 

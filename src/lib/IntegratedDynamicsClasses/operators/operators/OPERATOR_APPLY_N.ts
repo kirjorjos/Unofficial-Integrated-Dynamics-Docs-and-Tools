@@ -37,6 +37,8 @@ export class OPERATOR_OPERATOR_APPLY_N extends BaseOperator<
     "Operator Apply n",
     "Operator Apply N",
   ];
+  static override signatureNames = ["Operator", "Values", "Applied"];
+
   static override kind = "operator" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

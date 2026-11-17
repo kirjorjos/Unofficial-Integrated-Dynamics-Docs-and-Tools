@@ -38,6 +38,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_MODNAME extends BaseOperator<
     "ItemStack mod",
     "ItemStack Mod",
   ];
+  static override signatureNames = ["Item", "Mod"];
   static override tooltipInfo =
     "The name of the mod owning the given item" as const;
 

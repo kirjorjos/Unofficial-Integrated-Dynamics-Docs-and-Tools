@@ -50,6 +50,7 @@ export class OPERATOR_OBJECT_ENTITY_ISCHILD extends BaseOperator<
     "Entity Entity Is child",
     "Entity Entity Is Child",
   ];
+  static override signatureNames = ["Entity", "Child"];
   static override tooltipInfo = "If the given entity is a child." as const;
 
   static override kind = "entity" as const;

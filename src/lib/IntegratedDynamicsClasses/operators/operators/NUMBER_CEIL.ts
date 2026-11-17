@@ -25,6 +25,8 @@ export class OPERATOR_NUMBER_CEIL extends BaseOperator<TypeNumber, Integer> {
     "Number ceil",
     "Number Ceil",
   ];
+  static override signatureNames = ["Number", "Ceiled"];
+
   static override kind = "number" as const;
   static override renderPattern = "PREFIX_1" as const;
   constructor(normalizeSignature = true) {

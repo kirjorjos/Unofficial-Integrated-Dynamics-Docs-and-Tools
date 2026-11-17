@@ -30,6 +30,7 @@ export class OPERATOR_ARITHMETIC_MAXIMUM extends BaseOperator<
     "Arithmetic maximum",
     "Arithmetic Maximum",
   ];
+  static override signatureNames = ["Number1", "Number2", "Max"];
   static override tooltipInfo = "Takes the largest of two values." as const;
 
   static override kind = "arithmetic" as const;

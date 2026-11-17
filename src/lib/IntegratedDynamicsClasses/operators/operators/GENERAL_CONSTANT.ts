@@ -30,6 +30,7 @@ export class OPERATOR_GENERAL_CONSTANT extends BaseOperator<
     "General constant",
     "General Constant",
   ];
+  static override signatureNames = ["Constant", "Dummy", "Result"];
   static override tooltipInfo = "A copy of the first input value." as const;
 
   static override kind = "general" as const;

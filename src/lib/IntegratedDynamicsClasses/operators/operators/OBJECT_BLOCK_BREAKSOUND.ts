@@ -49,6 +49,7 @@ export class OPERATOR_OBJECT_BLOCK_BREAKSOUND extends BaseOperator<
     "Block Break sound",
     "Block Break Sound",
   ];
+  static override signatureNames = ["Block", "Sound"];
   static override tooltipInfo = "The break sound of the given block" as const;
 
   static override kind = "block" as const;

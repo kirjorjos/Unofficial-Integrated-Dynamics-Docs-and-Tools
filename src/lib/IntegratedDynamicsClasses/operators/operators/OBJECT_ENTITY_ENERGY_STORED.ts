@@ -51,6 +51,7 @@ export class OPERATOR_OBJECT_ENTITY_ENERGY_STORED extends BaseOperator<
     "Entity Entity Energy stored",
     "Entity Entity Energy Stored",
   ];
+  static override signatureNames = ["Entity", "Stored"];
   static override tooltipInfo =
     "The amount of energy that is stored in this entity." as const;
 

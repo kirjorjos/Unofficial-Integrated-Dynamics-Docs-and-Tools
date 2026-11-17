@@ -218,6 +218,7 @@ export class OPERATOR_NBT_FROM_TAG_LIST extends BaseOperator<
     "NBT NBT List From Tag list",
     "NBT NBT List From Tag List",
   ];
+  static override signatureNames = ["Tag List", "NBT"];
   static override tooltipInfo =
     "Create an NBT List tag from the given NBT List value" as const;
 

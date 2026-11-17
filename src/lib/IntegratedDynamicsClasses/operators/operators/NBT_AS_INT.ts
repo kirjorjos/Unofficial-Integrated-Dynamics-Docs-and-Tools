@@ -111,6 +111,7 @@ export class OPERATOR_NBT_AS_INT extends BaseOperator<IntTag, Integer> {
     "NBT NBT Integer As integer",
     "NBT NBT Integer As Integer",
   ];
+  static override signatureNames = ["NBT", "Int"];
   static override tooltipInfo =
     "Get the Integer value of the given NBT Integer tag" as const;
 

@@ -44,6 +44,7 @@ export class OPERATOR_LIST_UNIQ_PREDICATE extends BaseOperator<
     "List Unique predicate",
     "List Unique Predicate",
   ];
+  static override signatureNames = ["List", "Predicate", "Result"];
   static override tooltipInfo =
     "Deduplicate all elements in the list based on the given comparator predicate." as const;
 

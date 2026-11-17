@@ -54,6 +54,8 @@ export class OPERATOR_INTEGER_TO_LONG extends BaseOperator<Integer, Long> {
     "Number Cast Integer To long",
     "Number Cast Integer To Long",
   ];
+  static override signatureNames = ["Integer", "Long"];
+
   static override kind = "number" as const;
   static override renderPattern = "PREFIX_1" as const;
   constructor(normalizeSignature = true) {

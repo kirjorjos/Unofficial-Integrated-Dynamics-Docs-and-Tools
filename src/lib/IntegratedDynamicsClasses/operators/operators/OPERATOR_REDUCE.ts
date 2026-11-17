@@ -20,6 +20,7 @@ export class OPERATOR_OPERATOR_REDUCE extends BaseOperator<any, any> {
     "Operator reduce",
     "Operator Reduce",
   ];
+  static override signatureNames = ["Operator", "List", "Initial", "Reduced"];
   static override tooltipInfo =
     "Apply the given operator on all elements of a list to reduce the list to one value." as const;
 

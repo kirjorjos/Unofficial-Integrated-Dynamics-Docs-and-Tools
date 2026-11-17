@@ -20,6 +20,7 @@ export class OPERATOR_LIST_LENGTH extends BaseOperator<
     "List length",
     "List Length",
   ];
+  static override signatureNames = ["List", "Length"];
   static override tooltipInfo = "The length of the given list" as const;
 
   static override kind = "list" as const;

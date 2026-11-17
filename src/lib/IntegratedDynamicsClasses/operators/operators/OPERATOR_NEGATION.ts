@@ -29,6 +29,7 @@ export class OPERATOR_OPERATOR_NEGATION extends BaseOperator<
     "Operator negation",
     "Operator Negation",
   ];
+  static override signatureNames = ["Predicate", "Negation"];
   static override tooltipInfo = "Takes the negation of a predicate." as const;
 
   static override kind = "operator" as const;

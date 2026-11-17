@@ -39,6 +39,7 @@ export class OPERATOR_OBJECT_FLUIDSTACK_MODNAME extends BaseOperator<
     "FluidStack mod",
     "FluidStack Mod",
   ];
+  static override signatureNames = ["Fluid", "Mod"];
   static override tooltipInfo =
     "The name of the mod owning the given fluid" as const;
 

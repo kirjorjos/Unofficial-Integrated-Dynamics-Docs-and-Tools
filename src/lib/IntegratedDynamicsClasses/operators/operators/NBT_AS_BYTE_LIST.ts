@@ -410,6 +410,7 @@ export class OPERATOR_NBT_AS_BYTE_LIST extends BaseOperator<
     "NBT NBT Byte Array As Byte list",
     "NBT NBT Byte Array As Byte List",
   ];
+  static override signatureNames = ["NBT", "Byte List"];
   static override tooltipInfo =
     "Get the Byte List value of the given NBT Byte Array tag" as const;
 

@@ -38,6 +38,7 @@ export class OPERATOR_OBJECT_ENTITY_ISEATING extends BaseOperator<
     "Entity Is eating",
     "Entity Is Eating",
   ];
+  static override signatureNames = ["Entity", "Eating"];
   static override tooltipInfo = "If the entity is eating" as const;
 
   static override kind = "entity" as const;

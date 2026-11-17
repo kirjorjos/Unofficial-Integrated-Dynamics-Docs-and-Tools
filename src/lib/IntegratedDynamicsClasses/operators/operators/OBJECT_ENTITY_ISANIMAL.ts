@@ -38,6 +38,7 @@ export class OPERATOR_OBJECT_ENTITY_ISANIMAL extends BaseOperator<
     "Entity Is animal",
     "Entity Is Animal",
   ];
+  static override signatureNames = ["Entity", "Animal"];
   static override tooltipInfo = "If the entity is an animal" as const;
 
   static override kind = "entity" as const;

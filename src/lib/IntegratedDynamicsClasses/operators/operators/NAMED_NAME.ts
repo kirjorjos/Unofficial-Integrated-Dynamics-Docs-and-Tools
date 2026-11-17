@@ -36,6 +36,7 @@ export class OPERATOR_NAMED_NAME extends BaseOperator<
     "String To string",
     "String To String",
   ];
+  static override signatureNames = ["Named", "Name"];
   static override tooltipInfo =
     "Get the string or name of a named object or converts it to a string" as const;
 

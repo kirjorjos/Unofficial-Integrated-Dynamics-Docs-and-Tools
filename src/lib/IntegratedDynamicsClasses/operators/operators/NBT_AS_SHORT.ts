@@ -117,6 +117,7 @@ export class OPERATOR_NBT_AS_SHORT extends BaseOperator<ShortTag, Integer> {
     "NBT NBT Short As integer",
     "NBT NBT Short As Integer",
   ];
+  static override signatureNames = ["NBT", "Short"];
   static override tooltipInfo =
     "Get the Integer value of the given NBT Short tag" as const;
 

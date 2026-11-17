@@ -117,6 +117,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_FLUIDSTACKCAPACITY extends BaseOperator<
     "FluidStack capacity",
     "FluidStack Capacity",
   ];
+  static override signatureNames = ["Item", "Capacity"];
   static override tooltipInfo =
     "The fluid capacity of the given item in mB" as const;
 

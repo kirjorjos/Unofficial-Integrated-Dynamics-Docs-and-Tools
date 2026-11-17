@@ -117,6 +117,7 @@ export class OPERATOR_NBT_FROM_STRING extends BaseOperator<iString, StringTag> {
     "NBT NBT String From string",
     "NBT NBT String From String",
   ];
+  static override signatureNames = ["String", "NBT"];
   static override tooltipInfo =
     "Create an NBT String tag from the given String value" as const;
 

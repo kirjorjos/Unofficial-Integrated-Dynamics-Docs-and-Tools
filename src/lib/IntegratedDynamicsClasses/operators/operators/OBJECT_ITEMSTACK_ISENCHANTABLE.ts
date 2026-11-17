@@ -40,6 +40,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISENCHANTABLE extends BaseOperator<
     "enchantable",
     "Enchantable",
   ];
+  static override signatureNames = ["Item", "Enchantable"];
   static override tooltipInfo = "If the item can be enchanted" as const;
 
   static override kind = "itemstack" as const;

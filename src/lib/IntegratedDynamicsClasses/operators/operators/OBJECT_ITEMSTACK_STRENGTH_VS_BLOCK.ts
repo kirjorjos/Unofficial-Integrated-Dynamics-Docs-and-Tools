@@ -85,6 +85,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_STRENGTH_VS_BLOCK extends BaseOperator<
     "Strength Vs block",
     "Strength Vs Block",
   ];
+  static override signatureNames = ["Item", "Block", "Strength"];
   static override tooltipInfo =
     "The strength this item has against the given block" as const;
 

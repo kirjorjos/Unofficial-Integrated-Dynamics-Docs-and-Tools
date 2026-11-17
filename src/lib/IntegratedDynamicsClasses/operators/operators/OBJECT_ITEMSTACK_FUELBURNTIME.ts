@@ -86,6 +86,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_FUELBURNTIME extends BaseOperator<
     "Fuel Burn time",
     "Fuel Burn Time",
   ];
+  static override signatureNames = ["Item", "Fuel"];
   static override tooltipInfo =
     "The fuel burn time in ticks of the given item" as const;
 

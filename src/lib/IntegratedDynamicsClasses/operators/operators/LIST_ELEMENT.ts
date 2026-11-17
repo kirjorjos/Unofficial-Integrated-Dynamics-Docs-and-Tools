@@ -30,6 +30,7 @@ export class OPERATOR_LIST_ELEMENT extends BaseOperator<
     "List get",
     "List Get",
   ];
+  static override signatureNames = ["List", "Index", "Element"];
   static override tooltipInfo =
     "Get the list element at the given position, throws an error if the index is out of bounds." as const;
 

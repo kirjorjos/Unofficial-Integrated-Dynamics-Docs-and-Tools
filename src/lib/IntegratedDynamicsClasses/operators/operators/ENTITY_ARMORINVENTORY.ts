@@ -40,6 +40,7 @@ export class OPERATOR_ENTITY_ARMORINVENTORY extends BaseOperator<
     "Entity Armor inventory",
     "Entity Armor Inventory",
   ];
+  static override signatureNames = ["Entity", "Armor"];
   static override tooltipInfo =
     "The list of items the entity is carrying as armor." as const;
 

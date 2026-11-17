@@ -30,6 +30,7 @@ export class OPERATOR_STRING_SUBSTRING extends BaseOperator<
     "String substring",
     "String Substring",
   ];
+  static override signatureNames = ["Start", "End", "String", "Substring"];
   static override tooltipInfo =
     "Get a substring, from the given index (inclusive) to the given index (exclusive), of the given string." as const;
 

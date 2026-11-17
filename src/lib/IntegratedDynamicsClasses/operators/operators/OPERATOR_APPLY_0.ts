@@ -28,6 +28,8 @@ export class OPERATOR_OPERATOR_APPLY_0 extends BaseOperator<
     "Operator apply 0",
     "Operator Apply 0",
   ];
+  static override signatureNames = ["Function", "Resolved"];
+
   static override kind = "operator" as const;
   static override renderPattern = "PREFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

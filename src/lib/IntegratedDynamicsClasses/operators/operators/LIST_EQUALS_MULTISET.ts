@@ -52,6 +52,8 @@ export class OPERATOR_LIST_EQUALS_MULTISET extends BaseOperator<
     "List List equals (Multiset)",
     "List List Equals (Multiset)",
   ];
+  static override signatureNames = ["List1", "List2", "Equal"];
+
   static override kind = "list" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

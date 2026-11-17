@@ -116,6 +116,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_ISFLUIDSTACK extends BaseOperator<
     "Has fluidStack",
     "Has FluidStack",
   ];
+  static override signatureNames = ["Item", "Has Fluid"];
   static override tooltipInfo = "If the given item has a fluid" as const;
 
   static override kind = "itemstack" as const;

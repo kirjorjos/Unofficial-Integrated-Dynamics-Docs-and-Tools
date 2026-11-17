@@ -32,6 +32,8 @@ export class OPERATOR_PARSE_NBT extends BaseOperator<iString, CompoundTag> {
     "parse NBT",
     "Parse NBT",
   ];
+  static override signatureNames = ["Input", "Parsed"];
+
   static override kind = "parse" as const;
   static override renderPattern = "PREFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

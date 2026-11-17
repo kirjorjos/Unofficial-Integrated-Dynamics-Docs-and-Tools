@@ -50,6 +50,7 @@ export class OPERATOR_STRING_INDEX_OF_REGEX extends BaseOperator<
     "String Index Of regex",
     "String Index Of Regex",
   ];
+  static override signatureNames = ["Pattern", "Haystack", "Index"];
   static override tooltipInfo =
     "Get the index of the first occurrence of a substring matching the pattern in the given string." as const;
 

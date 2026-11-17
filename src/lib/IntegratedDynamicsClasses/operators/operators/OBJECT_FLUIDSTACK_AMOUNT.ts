@@ -41,6 +41,7 @@ export class OPERATOR_OBJECT_FLUIDSTACK_AMOUNT extends BaseOperator<
     "amount",
     "Amount",
   ];
+  static override signatureNames = ["Fluid", "Amount"];
   static override tooltipInfo = "The amount of mB" as const;
 
   static override kind = "fluidstack" as const;

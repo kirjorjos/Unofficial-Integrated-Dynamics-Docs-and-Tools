@@ -24,6 +24,7 @@ export class OPERATOR_LIST_APPEND extends BaseOperator<
     "List append",
     "List Append",
   ];
+  static override signatureNames = ["List", "Element", "Result"];
   static override tooltipInfo =
     "Append to the given list the given item." as const;
 

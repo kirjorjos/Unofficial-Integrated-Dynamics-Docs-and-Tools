@@ -27,6 +27,7 @@ export class OPERATOR_OBJECT_ENTITY_MODNAME extends BaseOperator<
     "Entity mod",
     "Entity Mod",
   ];
+  static override signatureNames = ["Entity", "Mod"];
   static override tooltipInfo =
     "The name of the mod owning the given entity" as const;
 

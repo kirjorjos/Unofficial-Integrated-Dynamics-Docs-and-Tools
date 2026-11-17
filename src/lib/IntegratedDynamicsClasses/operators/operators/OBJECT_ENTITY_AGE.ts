@@ -26,6 +26,7 @@ export class OPERATOR_OBJECT_ENTITY_AGE extends BaseOperator<Entity, Integer> {
     "Entity Entity age",
     "Entity Entity Age",
   ];
+  static override signatureNames = ["Entity", "Age"];
   static override tooltipInfo = "The age of the given entity." as const;
 
   static override kind = "entity" as const;

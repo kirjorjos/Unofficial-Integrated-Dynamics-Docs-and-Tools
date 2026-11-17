@@ -24,6 +24,7 @@ export class OPERATOR_LIST_TAIL extends BaseOperator<
     "List tail",
     "List Tail",
   ];
+  static override signatureNames = ["List", "Tail"];
   static override tooltipInfo =
     "Remove the first element from the list." as const;
 

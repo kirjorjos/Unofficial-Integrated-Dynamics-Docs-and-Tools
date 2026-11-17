@@ -30,6 +30,7 @@ export class OPERATOR_ARITHMETIC_MINIMUM extends BaseOperator<
     "Arithmetic minimum",
     "Arithmetic Minimum",
   ];
+  static override signatureNames = ["Number1", "Number2", "Min"];
   static override tooltipInfo = "Takes the smallest of two values." as const;
 
   static override kind = "arithmetic" as const;

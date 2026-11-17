@@ -196,6 +196,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_TAG extends BaseOperator<
     "ItemStack Tag names",
     "ItemStack Tag Names",
   ];
+  static override signatureNames = ["Item", "Tags"];
   static override tooltipInfo =
     "The Tag names (strings) of the given item" as const;
 

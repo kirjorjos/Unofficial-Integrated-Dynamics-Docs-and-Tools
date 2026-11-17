@@ -39,6 +39,7 @@ export class OPERATOR_OBJECT_ENTITY_ISCROUCHING extends BaseOperator<
     "Entity Is crouching",
     "Entity Is Crouching",
   ];
+  static override signatureNames = ["Entity", "Crouching"];
   static override tooltipInfo = "If the entity is crouching" as const;
 
   static override kind = "entity" as const;

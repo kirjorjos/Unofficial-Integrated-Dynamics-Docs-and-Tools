@@ -33,6 +33,7 @@ export class OPERATOR_OBJECT_BLOCK_ITEMSTACK extends BaseOperator<Block, Item> {
     "Block itemStack",
     "Block ItemStack",
   ];
+  static override signatureNames = ["Block", "Item"];
   static override tooltipInfo =
     "The item representation of the given block" as const;
 

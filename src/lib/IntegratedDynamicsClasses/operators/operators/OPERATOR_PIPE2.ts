@@ -26,6 +26,7 @@ export class OPERATOR_OPERATOR_PIPE2 extends BaseOperator<any, any> {
     "Operator pipe 2",
     "Operator Pipe 2",
   ];
+  static override signatureNames = ["Left", "Right", "Combiner", "Result"];
   static override tooltipInfo =
     "Create a new operator that gives its input to the first and second operators, and pipes the outputs from both of them to the third operator." as const;
 

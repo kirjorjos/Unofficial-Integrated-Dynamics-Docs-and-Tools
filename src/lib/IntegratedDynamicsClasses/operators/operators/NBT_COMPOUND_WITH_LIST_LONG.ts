@@ -223,6 +223,7 @@ export class OPERATOR_NBT_COMPOUND_WITH_LIST_LONG extends BaseOperator<
     "NBT NBT Compound With Long list",
     "NBT NBT Compound With Long List",
   ];
+  static override signatureNames = ["Compound", "Key", "Long List", "Result"];
   static override tooltipInfo =
     "Get a copy of the given NBT compound tag with the given NBT Long Array entry" as const;
 

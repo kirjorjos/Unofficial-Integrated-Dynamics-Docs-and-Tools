@@ -73,6 +73,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_HASNBT extends BaseOperator<
     "has NBT",
     "Has NBT",
   ];
+  static override signatureNames = ["Item", "Has NBT"];
   static override tooltipInfo = "If the item stack has an NBT tag." as const;
 
   static override kind = "itemstack" as const;

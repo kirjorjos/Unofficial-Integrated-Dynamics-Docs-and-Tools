@@ -98,6 +98,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_PLANT extends BaseOperator<Item, Block> {
     "ItemStack plant",
     "ItemStack Plant",
   ];
+  static override signatureNames = ["Item", "Plant"];
   static override tooltipInfo =
     "The resulting block when this item is planted" as const;
 

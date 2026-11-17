@@ -38,6 +38,7 @@ export class OPERATOR_OBJECT_FLUIDSTACK_RARITY extends BaseOperator<
     "FluidStack rarity",
     "FluidStack Rarity",
   ];
+  static override signatureNames = ["Fluid", "Rarity"];
   static override tooltipInfo = "The fluid rarity" as const;
 
   static override kind = "fluidstack" as const;

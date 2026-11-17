@@ -18,6 +18,7 @@ export class OPERATOR_STRING_LENGTH extends BaseOperator<iString, Integer> {
     "String length",
     "String Length",
   ];
+  static override signatureNames = ["String", "Length"];
   static override tooltipInfo = "The length of the given String" as const;
 
   static override kind = "string" as const;

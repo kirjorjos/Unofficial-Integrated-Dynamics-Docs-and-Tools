@@ -37,6 +37,7 @@ export class OPERATOR_OBJECT_FLUIDSTACK_BLOCK extends BaseOperator<
     "FluidStack block",
     "FluidStack Block",
   ];
+  static override signatureNames = ["Fluid", "Block"];
   static override tooltipInfo = "The block of the fluid" as const;
 
   static override kind = "fluidstack" as const;

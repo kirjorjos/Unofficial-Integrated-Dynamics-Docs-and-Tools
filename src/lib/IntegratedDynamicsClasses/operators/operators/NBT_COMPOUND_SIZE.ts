@@ -74,6 +74,7 @@ export class OPERATOR_NBT_COMPOUND_SIZE extends BaseOperator<
     "NBT NBT Compound size",
     "NBT NBT Compound Size",
   ];
+  static override signatureNames = ["Compound", "Size"];
   static override tooltipInfo =
     "The number of entries inside the given NBT compound tag" as const;
 

@@ -38,6 +38,7 @@ export class OPERATOR_OBJECT_ENTITY_ISMOB extends BaseOperator<
     "Entity Is mob",
     "Entity Is Mob",
   ];
+  static override signatureNames = ["Entity", "Mob"];
   static override tooltipInfo = "If the entity is a mob" as const;
 
   static override kind = "entity" as const;

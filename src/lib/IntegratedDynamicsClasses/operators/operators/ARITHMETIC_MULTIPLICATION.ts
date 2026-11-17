@@ -31,6 +31,8 @@ export class OPERATOR_ARITHMETIC_MULTIPLICATION extends BaseOperator<
     "Arithmetic multiplication",
     "Arithmetic Multiplication",
   ];
+  static override signatureNames = ["Multiplicand", "Multiplier", "Product"];
+
   static override kind = "arithmetic" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

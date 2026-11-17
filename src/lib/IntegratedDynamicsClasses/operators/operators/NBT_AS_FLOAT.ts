@@ -116,6 +116,7 @@ export class OPERATOR_NBT_AS_FLOAT extends BaseOperator<FloatTag, Double> {
     "NBT NBT Float As double",
     "NBT NBT Float As Double",
   ];
+  static override signatureNames = ["NBT", "Float"];
   static override tooltipInfo =
     "Get the Double value of the given NBT Float tag" as const;
 

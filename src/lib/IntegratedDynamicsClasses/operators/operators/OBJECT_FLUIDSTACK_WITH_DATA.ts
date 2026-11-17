@@ -201,6 +201,8 @@ export class OPERATOR_OBJECT_FLUIDSTACK_WITH_DATA extends BaseOperator<
     "FluidStack With Data",
   ];
   static override kind = "fluidstack" as const;
+  static override signatureNames = ["Fluid", "Key", "NBT", "Result"];
+
   static override renderPattern = "INFIX_2_LONG" as const;
   constructor(normalizeSignature = true) {
     super({

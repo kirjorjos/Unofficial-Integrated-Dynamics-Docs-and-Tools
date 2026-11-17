@@ -221,6 +221,7 @@ export class OPERATOR_RECIPE_WITH_INPUT_OUTPUT extends BaseOperator<
     "Recipe Recipe With Input And Output ingredients",
     "Recipe Recipe With Input And Output Ingredients",
   ];
+  static override signatureNames = ["Inputs", "Outputs", "Result"];
   static override tooltipInfo =
     "Create a recipe with the first ingredients as input, and the second ingredients as output" as const;
 

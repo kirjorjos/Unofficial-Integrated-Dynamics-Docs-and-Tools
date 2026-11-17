@@ -39,6 +39,7 @@ export class OPERATOR_STRING_CONTAINS_REGEX extends BaseOperator<
     "String Contains regex",
     "String Contains Regex",
   ];
+  static override signatureNames = ["Pattern", "Haystack", "Matches"];
   static override tooltipInfo =
     "If the regular expression given matches any substring of the given string." as const;
 

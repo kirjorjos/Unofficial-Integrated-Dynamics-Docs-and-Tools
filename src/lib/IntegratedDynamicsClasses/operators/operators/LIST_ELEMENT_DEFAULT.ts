@@ -51,6 +51,7 @@ export class OPERATOR_LIST_ELEMENT_DEFAULT extends BaseOperator<
     "List Get Or default",
     "List Get Or Default",
   ];
+  static override signatureNames = ["List", "Index", "Default", "Result"];
   static override tooltipInfo =
     "Safely get the list element at the given position, if that element is not available, return the given default value." as const;
 

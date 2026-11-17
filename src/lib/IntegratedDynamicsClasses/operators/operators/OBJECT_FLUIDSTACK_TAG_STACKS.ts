@@ -104,6 +104,8 @@ export class OPERATOR_OBJECT_FLUIDSTACK_TAG_STACKS extends BaseOperator<
     "String FluidStack Tag Values",
   ];
   static override kind = "string" as const;
+  static override signatureNames = ["Tag", "Fluids"];
+
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({

@@ -127,6 +127,7 @@ export class OPERATOR_NBT_PATH_MATCH_ALL extends BaseOperator<
     "NBT NBT Path Match all",
     "NBT NBT Path Match All",
   ];
+  static override signatureNames = ["Path", "Compound", "Matches"];
   static override tooltipInfo =
     "Apply the given NBT Path expression on the given NBT value, and return all matches as a list" as const;
 

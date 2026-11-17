@@ -26,6 +26,7 @@ export class OPERATOR_ENTITY_HEALTH extends BaseOperator<Entity, Double> {
     "Entity health",
     "Entity Health",
   ];
+  static override signatureNames = ["Entity", "Health"];
   static override tooltipInfo = "The entity health" as const;
 
   static override kind = "entity" as const;

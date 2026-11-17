@@ -196,6 +196,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_HASINVENTORY extends BaseOperator<
     "ItemStack Has inventory",
     "ItemStack Has Inventory",
   ];
+  static override signatureNames = ["Item", "Has Inv"];
   static override tooltipInfo = "If the given item has an inventory" as const;
 
   static override kind = "itemstack" as const;

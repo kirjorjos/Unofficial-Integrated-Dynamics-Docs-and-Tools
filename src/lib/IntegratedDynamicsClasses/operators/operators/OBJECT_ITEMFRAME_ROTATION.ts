@@ -102,6 +102,7 @@ export class OPERATOR_OBJECT_ITEMFRAME_ROTATION extends BaseOperator<
     "ItemStack Frame rotation",
     "ItemStack Frame Rotation",
   ];
+  static override signatureNames = ["Item Frame", "Rotation"];
   static override tooltipInfo =
     "The rotation from the given Item Frame." as const;
 

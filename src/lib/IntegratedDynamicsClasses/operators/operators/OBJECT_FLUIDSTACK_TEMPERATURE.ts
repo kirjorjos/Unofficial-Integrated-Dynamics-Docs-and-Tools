@@ -42,6 +42,8 @@ export class OPERATOR_OBJECT_FLUIDSTACK_TEMPERATURE extends BaseOperator<
     "Temperature",
   ];
   static override kind = "fluidstack" as const;
+  static override signatureNames = ["Fluid", "Temperature"];
+
   static override renderPattern = "SUFFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {
     super({

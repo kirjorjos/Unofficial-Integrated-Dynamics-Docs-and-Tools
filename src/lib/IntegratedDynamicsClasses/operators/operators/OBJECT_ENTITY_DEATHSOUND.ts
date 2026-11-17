@@ -49,6 +49,7 @@ export class OPERATOR_OBJECT_ENTITY_DEATHSOUND extends BaseOperator<
     "Entity Entity Death sound",
     "Entity Entity Death Sound",
   ];
+  static override signatureNames = ["Entity", "Sound"];
   static override tooltipInfo = "The death sound of the given entity." as const;
 
   static override kind = "entity" as const;

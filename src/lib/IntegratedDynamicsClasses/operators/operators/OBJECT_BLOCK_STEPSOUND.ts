@@ -50,6 +50,7 @@ export class OPERATOR_OBJECT_BLOCK_STEPSOUND extends BaseOperator<
     "Block Step sound",
     "Block Step Sound",
   ];
+  static override signatureNames = ["Block", "Step Sound"];
   static override tooltipInfo = "The step sound of the given block" as const;
 
   static override kind = "block" as const;

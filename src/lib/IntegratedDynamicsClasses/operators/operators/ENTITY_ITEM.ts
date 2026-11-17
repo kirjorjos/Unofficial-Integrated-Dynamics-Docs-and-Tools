@@ -36,6 +36,7 @@ export class OPERATOR_ENTITY_ITEM extends BaseOperator<Entity, Item> {
     "Entity itemStack",
     "Entity ItemStack",
   ];
+  static override signatureNames = ["Entity", "Item"];
   static override tooltipInfo = "The item from the item entity" as const;
 
   static override kind = "entity" as const;

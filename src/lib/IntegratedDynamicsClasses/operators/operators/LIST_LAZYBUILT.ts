@@ -51,6 +51,7 @@ export class OPERATOR_LIST_LAZYBUILT extends BaseOperator<
     "List Lazy List builder",
     "List Lazy List Builder",
   ];
+  static override signatureNames = ["Start", "Generator", "List"];
   static override tooltipInfo =
     "Build a list lazily using a start value and an operator that is applied to the previous element to get a next element." as const;
 

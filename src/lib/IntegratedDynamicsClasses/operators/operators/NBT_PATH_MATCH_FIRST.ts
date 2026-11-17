@@ -126,6 +126,7 @@ export class OPERATOR_NBT_PATH_MATCH_FIRST extends BaseOperator<
     "NBT NBT Path Match first",
     "NBT NBT Path Match First",
   ];
+  static override signatureNames = ["Path", "Compound", "First"];
   static override tooltipInfo =
     "Apply the given NBT Path expression on the given NBT value, and return the first match" as const;
 

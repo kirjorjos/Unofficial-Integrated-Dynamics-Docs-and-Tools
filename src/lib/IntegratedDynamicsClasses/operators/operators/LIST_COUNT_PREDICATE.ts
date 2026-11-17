@@ -39,6 +39,7 @@ export class OPERATOR_LIST_COUNT_PREDICATE extends BaseOperator<
     "List Count predicate",
     "List Count Predicate",
   ];
+  static override signatureNames = ["List", "Predicate", "Count"];
   static override tooltipInfo =
     "The number of times the given predicate returns true for the elements in the list." as const;
 

@@ -35,6 +35,7 @@ export class OPERATOR_INGREDIENTS_FLUIDS extends BaseOperator<
     "Ingredients Ingredient fluids",
     "Ingredients Ingredient Fluids",
   ];
+  static override signatureNames = ["Ingredients", "Fluids"];
   static override tooltipInfo = "The list of fluids" as const;
 
   static override kind = "ingredients" as const;

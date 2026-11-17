@@ -26,6 +26,8 @@ export class OPERATOR_LOGICAL_NOT extends BaseOperator<iBoolean, iBoolean> {
     "Logical not",
     "Logical Not",
   ];
+  static override signatureNames = ["Boolean", "Inverted"];
+
   static override kind = "logical" as const;
   static override renderPattern = "PREFIX_1" as const;
   constructor(normalizeSignature = true) {

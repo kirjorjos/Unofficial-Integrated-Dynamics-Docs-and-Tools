@@ -41,6 +41,12 @@ export class OPERATOR_STRING_REPLACE_REGEX extends BaseOperator<
     "String Replace regex",
     "String Replace Regex",
   ];
+  static override signatureNames = [
+    "Pattern",
+    "Replacement",
+    "Haystack",
+    "Result",
+  ];
   static override tooltipInfo =
     "Find all matches of the search pattern and replace them with the given string, in the given string." as const;
 

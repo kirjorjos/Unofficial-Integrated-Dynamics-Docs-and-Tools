@@ -44,6 +44,8 @@ export class OPERATOR_OBJECT_ENTITY_ENTITYITEMTOOLTIP extends BaseOperator<
     "Entity Entity tooltip",
     "Entity Entity Tooltip",
   ];
+  static override signatureNames = ["Entity", "Item", "Tooltip"];
+
   static override kind = "entity" as const;
   static override renderPattern = "INFIX_LONG" as const;
   constructor(normalizeSignature = true) {

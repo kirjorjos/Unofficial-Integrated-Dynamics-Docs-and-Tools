@@ -59,6 +59,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_CANHARVESTBLOCK extends BaseOperator<
     "Can harvest",
     "Can Harvest",
   ];
+  static override signatureNames = ["Item", "Block", "Can Harvest"];
   static override tooltipInfo =
     "If the item can harvest the given block" as const;
 

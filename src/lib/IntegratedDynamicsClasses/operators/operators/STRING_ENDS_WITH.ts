@@ -35,6 +35,7 @@ export class OPERATOR_STRING_ENDS_WITH extends BaseOperator<
     "String Ends with",
     "String Ends With",
   ];
+  static override signatureNames = ["Ending", "Haystack", "Matches"];
   static override tooltipInfo =
     "If the string given matches the end of the given string." as const;
 

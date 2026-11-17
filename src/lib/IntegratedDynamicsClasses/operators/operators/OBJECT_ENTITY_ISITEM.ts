@@ -62,6 +62,7 @@ export class OPERATOR_OBJECT_ENTITY_ISITEM extends BaseOperator<
     "Entity Is itemStack",
     "Entity Is ItemStack",
   ];
+  static override signatureNames = ["Entity", "Item"];
   static override tooltipInfo = "If the entity is an item" as const;
 
   static override kind = "entity" as const;

@@ -74,6 +74,8 @@ export class OPERATOR_RELATIONAL_GE extends BaseOperator<
     "Relational Greater Than Or equal",
     "Relational Greater Than Or Equal",
   ];
+  static override signatureNames = ["Left", "Right", "At Least"];
+
   static override kind = "relational" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

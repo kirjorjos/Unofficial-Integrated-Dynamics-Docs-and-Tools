@@ -37,6 +37,7 @@ export class OPERATOR_OBJECT_BLOCK_PROPERTIES extends BaseOperator<
     "Block properties",
     "Block Properties",
   ];
+  static override signatureNames = ["Block", "Properties"];
   static override tooltipInfo =
     "Get the block properties as NBT compound tag." as const;
 

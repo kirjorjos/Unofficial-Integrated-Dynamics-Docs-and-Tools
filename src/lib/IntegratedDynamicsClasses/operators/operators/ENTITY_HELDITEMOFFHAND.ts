@@ -101,6 +101,7 @@ export class OPERATOR_ENTITY_HELDITEMOFFHAND extends BaseOperator<
     "Entity Held ItemStack offhand",
     "Entity Held ItemStack Offhand",
   ];
+  static override signatureNames = ["Entity", "Off Hand"];
   static override tooltipInfo =
     "The item the given entity is currently holding in its off hand." as const;
 

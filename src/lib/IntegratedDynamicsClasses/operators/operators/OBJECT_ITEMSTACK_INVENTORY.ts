@@ -108,6 +108,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_INVENTORY extends BaseOperator<
     "ItemStack inventory",
     "ItemStack Inventory",
   ];
+  static override signatureNames = ["Item", "Inventory"];
   static override tooltipInfo =
     "Retrieve the inventory of the given item handler contents" as const;
 

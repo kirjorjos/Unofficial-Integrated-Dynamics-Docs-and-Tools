@@ -49,6 +49,7 @@ export class OPERATOR_OBJECT_ENTITY_ENERGY_CAPACITY extends BaseOperator<
     "Entity Entity Energy capacity",
     "Entity Entity Energy Capacity",
   ];
+  static override signatureNames = ["Entity", "Capacity"];
   static override tooltipInfo = "The energy capacity of this entity." as const;
 
   static override kind = "entity" as const;

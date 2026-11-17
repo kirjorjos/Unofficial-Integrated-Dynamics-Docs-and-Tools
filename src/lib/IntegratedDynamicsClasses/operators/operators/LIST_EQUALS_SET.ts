@@ -18,7 +18,7 @@ export class OPERATOR_LIST_EQUALS_SET extends BaseOperator<
     "equals_set",
     "list_equals_set",
     "listEquals_set",
-    "=set",
+    "=set=",
   ];
   static override symbol = "=set=";
   static override interactName = "listEquals_set";
@@ -51,6 +51,8 @@ export class OPERATOR_LIST_EQUALS_SET extends BaseOperator<
     "List List equals (Set)",
     "List List Equals (Set)",
   ];
+  static override signatureNames = ["List1", "List2", "Equal"];
+
   static override kind = "list" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

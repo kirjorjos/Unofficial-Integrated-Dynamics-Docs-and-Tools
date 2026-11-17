@@ -33,6 +33,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_RARITY extends BaseOperator<
     "ItemStack rarity",
     "ItemStack Rarity",
   ];
+  static override signatureNames = ["Item", "Rarity"];
   static override tooltipInfo = "The rarity of the item" as const;
 
   static override kind = "itemstack" as const;

@@ -22,6 +22,8 @@ export class OPERATOR_DOUBLE_POW extends BaseOperator<
     "Double power",
     "Double Power",
   ];
+  static override signatureNames = ["Base", "Exponent", "Power"];
+
   static override kind = "double" as const;
   static override renderPattern = "INFIX" as const;
   constructor(normalizeSignature = true) {

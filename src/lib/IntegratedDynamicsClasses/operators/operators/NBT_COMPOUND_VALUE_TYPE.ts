@@ -125,6 +125,7 @@ export class OPERATOR_NBT_COMPOUND_VALUE_TYPE extends BaseOperator<
     "NBT NBT Compound Entry type",
     "NBT NBT Compound Entry Type",
   ];
+  static override signatureNames = ["Compound", "Key", "Type"];
   static override tooltipInfo =
     "The value type in the given NBT compound tag corresponding to the given key" as const;
 

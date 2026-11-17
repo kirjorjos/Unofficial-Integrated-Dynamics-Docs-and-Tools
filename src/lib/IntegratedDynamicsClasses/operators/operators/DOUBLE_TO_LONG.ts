@@ -50,6 +50,8 @@ export class OPERATOR_DOUBLE_TO_LONG extends BaseOperator<Double, Long> {
     "Number Cast Double To long",
     "Number Cast Double To Long",
   ];
+  static override signatureNames = ["Double", "Long"];
+
   static override kind = "number" as const;
   static override renderPattern = "PREFIX_1" as const;
   constructor(normalizeSignature = true) {

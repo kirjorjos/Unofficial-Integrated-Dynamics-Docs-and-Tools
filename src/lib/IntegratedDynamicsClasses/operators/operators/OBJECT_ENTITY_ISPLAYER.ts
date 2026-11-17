@@ -38,6 +38,7 @@ export class OPERATOR_OBJECT_ENTITY_ISPLAYER extends BaseOperator<
     "Entity Is player",
     "Entity Is Player",
   ];
+  static override signatureNames = ["Entity", "Player"];
   static override tooltipInfo = "If the entity is a player" as const;
 
   static override kind = "entity" as const;

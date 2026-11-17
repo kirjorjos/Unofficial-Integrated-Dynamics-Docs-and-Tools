@@ -36,6 +36,7 @@ export class OPERATOR_OBJECT_ENTITY_INVENTORY extends BaseOperator<
     "Entity Player inventory",
     "Entity Player Inventory",
   ];
+  static override signatureNames = ["Entity", "Inventory"];
   static override tooltipInfo =
     "The list of items the player is carrying." as const;
 

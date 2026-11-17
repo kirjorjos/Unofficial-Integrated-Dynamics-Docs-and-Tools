@@ -52,6 +52,8 @@ export class OPERATOR_INTEGER_TO_DOUBLE extends BaseOperator<Integer, Double> {
     "Number Cast Integer To double",
     "Number Cast Integer To Double",
   ];
+  static override signatureNames = ["Integer", "Double"];
+
   static override kind = "number" as const;
   static override renderPattern = "PREFIX_1" as const;
   constructor(normalizeSignature = true) {

@@ -75,6 +75,7 @@ export class OPERATOR_NBT_COMPOUND_WITHOUT extends BaseOperator<
     "NBT NBT Compound without",
     "NBT NBT Compound Without",
   ];
+  static override signatureNames = ["Compound", "Key", "Result"];
   static override tooltipInfo =
     "Get a copy of the given NBT compound tag without the given key" as const;
 

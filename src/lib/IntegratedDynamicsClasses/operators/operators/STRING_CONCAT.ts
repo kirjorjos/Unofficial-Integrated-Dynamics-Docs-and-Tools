@@ -26,6 +26,7 @@ export class OPERATOR_STRING_CONCAT extends BaseOperator<
     "String concat",
     "String Concat",
   ];
+  static override signatureNames = ["Prefix", "Suffix", "Combined"];
   static override tooltipInfo =
     "Concatenate the two given Strings to one" as const;
 

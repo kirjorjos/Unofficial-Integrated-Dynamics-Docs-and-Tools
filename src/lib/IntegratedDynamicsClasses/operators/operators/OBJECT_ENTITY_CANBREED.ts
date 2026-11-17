@@ -50,6 +50,7 @@ export class OPERATOR_OBJECT_ENTITY_CANBREED extends BaseOperator<
     "Entity Entity Can breed",
     "Entity Entity Can Breed",
   ];
+  static override signatureNames = ["Entity", "Breedable"];
   static override tooltipInfo =
     "If the given entity is ready to be bred." as const;
 

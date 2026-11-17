@@ -39,6 +39,7 @@ export class OPERATOR_STRING_MATCHES_REGEX extends BaseOperator<
     "String Matches regex",
     "String Matches Regex",
   ];
+  static override signatureNames = ["Pattern", "Haystack", "Matches"];
   static override tooltipInfo =
     "If the regular expression given matches the given string." as const;
 

@@ -43,6 +43,7 @@ export class OPERATOR_OBJECT_BLOCK_WITH_PROPERTIES extends BaseOperator<
     "Block Block With properties",
     "Block Block With Properties",
   ];
+  static override signatureNames = ["Block", "Properties", "Result"];
   static override tooltipInfo =
     "Get the given block applied with the given properties." as const;
 

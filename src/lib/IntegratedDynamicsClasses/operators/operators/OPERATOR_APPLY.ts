@@ -22,6 +22,7 @@ export class OPERATOR_OPERATOR_APPLY extends BaseOperator<
     "Operator apply",
     "Operator Apply",
   ];
+  static override signatureNames = ["Operator", "Value", "Applied"];
   static override tooltipInfo =
     "Apply for a given operator a given value." as const;
 

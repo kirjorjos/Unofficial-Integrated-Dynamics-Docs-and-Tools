@@ -38,6 +38,7 @@ export class OPERATOR_OBJECT_ENTITY_ISWET extends BaseOperator<
     "Entity Is wet",
     "Entity Is Wet",
   ];
+  static override signatureNames = ["Entity", "Wet"];
   static override tooltipInfo = "If the entity is wet" as const;
 
   static override kind = "entity" as const;

@@ -29,6 +29,8 @@ export class OPERATOR_PARSE_DOUBLE extends BaseOperator<iString, Double> {
     "Parse double",
     "Parse Double",
   ];
+  static override signatureNames = ["Input", "Parsed"];
+
   static override kind = "parse" as const;
   static override renderPattern = "PREFIX_1_LONG" as const;
   constructor(normalizeSignature = true) {

@@ -36,6 +36,7 @@ export class OPERATOR_STRING_SPLIT_ON extends BaseOperator<
     "String Split on",
     "String Split On",
   ];
+  static override signatureNames = ["Delimiter", "Haystack", "Elements"];
   static override tooltipInfo =
     "Get a list containing pieces, split on the given (literal) delimiter, of the given string." as const;
 

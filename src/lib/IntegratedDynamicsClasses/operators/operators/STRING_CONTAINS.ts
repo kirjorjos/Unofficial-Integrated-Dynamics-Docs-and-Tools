@@ -34,6 +34,7 @@ export class OPERATOR_STRING_CONTAINS extends BaseOperator<
     "String String contains",
     "String String Contains",
   ];
+  static override signatureNames = ["Needle", "Haystack", "Result"];
   static override tooltipInfo =
     "If the given substring is contained within the given string." as const;
 

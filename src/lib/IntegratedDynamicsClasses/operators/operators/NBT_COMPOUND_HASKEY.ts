@@ -125,6 +125,7 @@ export class OPERATOR_NBT_COMPOUND_HASKEY extends BaseOperator<
     "NBT NBT Compound Has key",
     "NBT NBT Compound Has Key",
   ];
+  static override signatureNames = ["Compound", "Key", "Has Key"];
   static override tooltipInfo =
     "If the given NBT compound tag contains the given key" as const;
 

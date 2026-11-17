@@ -33,6 +33,13 @@ export class OPERATOR_OPERATOR_APPLY_3 extends BaseOperator<
     "Operator apply 3",
     "Operator Apply 3",
   ];
+  static override signatureNames = [
+    "Operator",
+    "Value1",
+    "Value2",
+    "Value3",
+    "Applied",
+  ];
   static override tooltipInfo =
     "Apply for a given operator the given three value." as const;
 

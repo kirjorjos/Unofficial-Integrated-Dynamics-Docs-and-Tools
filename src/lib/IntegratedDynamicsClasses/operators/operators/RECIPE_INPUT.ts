@@ -38,6 +38,7 @@ export class OPERATOR_RECIPE_INPUT extends BaseOperator<Recipe, Ingredients> {
     "Recipe Recipe Input ingredients",
     "Recipe Recipe Input Ingredients",
   ];
+  static override signatureNames = ["Recipe", "Inputs"];
   static override tooltipInfo =
     "The input ingredients of the given recipe" as const;
 

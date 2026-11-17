@@ -36,6 +36,7 @@ export class OPERATOR_OBJECT_ITEMSTACK_SIZE extends BaseOperator<
     "size",
     "Size",
   ];
+  static override signatureNames = ["Item", "Size"];
   static override tooltipInfo = "The current stack size" as const;
 
   static override kind = "itemstack" as const;

@@ -19,6 +19,8 @@ export class OPERATOR_NUMBER_FLOOR extends BaseOperator<TypeNumber, Integer> {
     "Number floor",
     "Number Floor",
   ];
+  static override signatureNames = ["Number", "Floored"];
+
   static override kind = "number" as const;
   static override renderPattern = "PREFIX_1" as const;
   constructor(normalizeSignature = true) {

@@ -29,6 +29,7 @@ export class OPERATOR_LIST_UNIQ extends BaseOperator<
     "List uniq",
     "List Uniq",
   ];
+  static override signatureNames = ["List", "Result"];
   static override tooltipInfo =
     "Deduplicate all elements in the list." as const;
 

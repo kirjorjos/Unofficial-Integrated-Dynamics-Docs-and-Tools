@@ -26,6 +26,7 @@ export class OPERATOR_OBJECT_ENTITY_WIDTH extends BaseOperator<Entity, Double> {
     "Entity width",
     "Entity Width",
   ];
+  static override signatureNames = ["Entity", "Width"];
   static override tooltipInfo = "The entity width" as const;
 
   static override kind = "entity" as const;
