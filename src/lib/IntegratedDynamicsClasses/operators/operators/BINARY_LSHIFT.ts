@@ -37,7 +37,7 @@ export class OPERATOR_BINARY_LSHIFT extends BaseOperator<
     "Binary Left shift",
     "Binary Left Shift",
   ];
-  static override signatureNames = ["Number", "Bit Count", "Shifted"];
+  static override signatureNames = ["Number", "Shift Amount", "Shifted"];
 
   static override kind = "binary" as const;
   static override renderPattern = "INFIX" as const;

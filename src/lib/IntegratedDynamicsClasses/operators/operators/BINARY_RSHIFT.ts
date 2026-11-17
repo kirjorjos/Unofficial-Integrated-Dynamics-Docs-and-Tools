@@ -37,7 +37,7 @@ export class OPERATOR_BINARY_RSHIFT extends BaseOperator<
     "Binary Right shift",
     "Binary Right Shift",
   ];
-  static override signatureNames = ["Number", "Bit Count", "Shifted"];
+  static override signatureNames = ["Number", "Shift Amount", "Shifted"];
   static override tooltipInfo = "Right Shift with ones fill" as const;
 
   static override kind = "binary" as const;

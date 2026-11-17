@@ -53,7 +53,7 @@ export class OPERATOR_OPERATOR_BY_NAME extends BaseOperator<
     "Operator Operator By name",
     "Operator Operator By Name",
   ];
-  static override signatureNames = ["Namespace", "Operator"];
+  static override signatureNames = ["Operator ID", "Operator"];
   static override tooltipInfo =
     "Get the operator that has the given unique name." as const;
 
